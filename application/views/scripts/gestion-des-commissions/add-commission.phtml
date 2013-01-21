@@ -1,0 +1,23 @@
+<!-- Formulaire d'ajout d'une commission -->
+<form id='formulaire_commission' action='post' >
+
+	<!-- Formulaire -->
+	<h3>Description de la commission</h3>
+	<dl>
+	
+		<!-- Libellé du groupe -->
+		<dt>Libellé</dt>
+		<dd>
+			<input type='text' value='<?php if(isset($this->groupe["LIBELLE_COMMISSION"])) echo $this->groupe["LIBELLE_COMMISSION"] ?>' name='LIBELLE_COMMISSION' />
+		</dd>
+	
+	</dl>
+	
+	<?php if( isset($this->commission) ) : ?>
+	<p>Voulez-vous <a href='/user/delete-group?gid=<?php echo $this->groupe["ID_COMMISSION"] ?>'>supprimer le groupe</a> ? (Attention cette action est irréversible)</p>
+	<?php endif ?>
+	
+	<input type='hidden' name='cid' value='<?php if(isset($this->groupe["ID_COMMISSION"])) echo $this->groupe["ID_COMMISSION"] ?>' />
+	<input type='hidden' name='ID_COMMISSIONTYPE' value='<?php echo $this->tid ?>' />
+	
+</form>

@@ -1,0 +1,22 @@
+<?php
+	echo "
+		<div id='dossier_Pdroite'>
+			<h2>Suivi du dossier</h2>
+			<h5>Historique du dossier</h5>			
+	";	
+	echo $this->listing($this->evenementsDossier, array(
+		array("Date", "[DATE_DOSSIEREVENEMENT]"),
+		array("Libelle", "[LIBELLE_EVENEMENT]"),
+		array("Description", "[DESCRIPTION_DOSSIEREVENEMENT]"),
+		array("Commentaire", "[COMMENTAIRE_EVENEMENT]")
+	));
+	
+	echo "
+		<h5>Historique des avis du dossier</h5>
+	";
+	echo $this->listing($this->avisDossier, array(
+		array("Date", "[DATE_DOSSIERAVIS]"),
+		array("Avis", "[LIBELLE_AVIS]")
+	));
+	
+?>

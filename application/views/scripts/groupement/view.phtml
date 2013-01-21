@@ -1,0 +1,68 @@
+<h2>
+	<?php echo $this->row->LIBELLE_GROUPEMENT ?>
+	<small><?php echo $this->row->LIBELLE_GROUPEMENTTYPE ?></small>
+</h2>
+
+<h3>Coordonnées du groupement</h3>
+<?php if(count($this->row)<=1) : ?>
+<hr class='clear' /><p><strong>Pas de coordonnées disponibles.</strong></p>
+<?php else : ?>
+<dl>
+	<?php if(!empty($this->row["NOM_UTILISATEURINFORMATIONS"])) : ?>
+	<dt>Nom Prénom du responsable</dt>
+	<dd>
+		<?php echo $this->row["NOM_UTILISATEURINFORMATIONS"]." ".$this->row["PRENOM_UTILISATEURINFORMATIONS"] ?>
+	</dd>
+	<?php endif ?>
+	
+	<?php if(!empty($this->row["TELFIXE_UTILISATEURINFORMATIONS"]) && !empty($this->row["TELPORTABLE_UTILISATEURINFORMATIONS"]) && !empty($this->row["TELFAX_UTILISATEURINFORMATIONS"])) : ?>
+	<dt>Numéro de téléphone</dt>
+	<dd>
+		<ul>
+			<?php if(!empty($this->row["TELFIXE_UTILISATEURINFORMATIONS"])) : ?> <li>Fixe : <?php echo $this->row["TELFIXE_UTILISATEURINFORMATIONS"] ?></li> <?php endif ?>
+			<?php if(!empty($this->row["TELPORTABLE_UTILISATEURINFORMATIONS"])) : ?><li>Portable : <?php echo $this->row["TELPORTABLE_UTILISATEURINFORMATIONS"] ?></li><?php endif ?>
+			<?php if(!empty($this->row["TELFAX_UTILISATEURINFORMATIONS"])) : ?><li>Fax : <?php echo $this->row["TELFAX_UTILISATEURINFORMATIONS"] ?></li><?php endif ?>
+		</ul>
+	</dd>
+	<?php endif ?>
+	
+	<?php if(!empty($this->row["MAIL_UTILISATEURINFORMATIONS"])) : ?>
+	<dt>Courriel</dt>
+	<dd>
+		<?php echo $this->row["MAIL_UTILISATEURINFORMATIONS"] ?>
+	</dd>
+	<?php endif ?>
+	
+	<?php if(
+			!empty($this->row["NUMEROADRESSE_UTILISATEURINFORMATIONS"]) &&
+			!empty($this->row["RUEADRESSE_UTILISATEURINFORMATIONS"]) &&
+			!empty($this->row["CPADRESSE_UTILISATEURINFORMATIONS"]) &&
+			!empty($this->row["VILLEADRESSE_UTILISATEURINFORMATIONS"])
+			) : ?>
+	<dt>Adresse</dt>
+	<dd>
+		<?php
+			echo
+				$this->row["NUMEROADRESSE_UTILISATEURINFORMATIONS"] . " "
+				. $this->row["RUEADRESSE_UTILISATEURINFORMATIONS"] . " "
+				. $this->row["CPADRESSE_UTILISATEURINFORMATIONS"] . " "
+				. $this->row["VILLEADRESSE_UTILISATEURINFORMATIONS"] . " ";
+		?>
+	</dd>
+	<?php endif ?>
+</dl>
+<?php endif ?>
+
+<h3>Préventionnistes affectés</h3>
+<?php if(count($this->prev) == 0 ) : ?>
+<hr class='clear'><p><strong>Aucun préventionnistes.</strong></p>
+<?php else : ?>
+<?php echo $this->partialLoop('user/user.phtml', $this->prev ) ?>
+<hr class="clear" />
+<?php endif ?>
+
+<h3>Contacts du groupement</h3>
+<div id='contact-content'></div>
+<script type="text/javascript">
+	$("#contact-content").load("/contact?item=groupement&id=<?php echo $_GET["id"] ?>&ajax=1&read=1");
+</script>

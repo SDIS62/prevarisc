@@ -1,0 +1,310 @@
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".valid").button({
+		icons: {
+			primary: 'ui-icon-circle-check'
+		},
+		text: true
+	});
+	
+	$(".cancel").button({
+		icons: {
+			primary: 'ui-icon-circle-close'
+		},
+		text: true
+	});
+	
+	$(".validDoc").button({
+		icons: {
+			primary: 'ui-icon-check'
+		},
+		text: false
+	});
+	
+	$(".cancelDoc").button({
+		icons: {
+			primary: 'ui-icon-close'
+		},
+		text: false
+	});
+	
+	$(".deleteDoc").button({
+		icons: {
+			primary: 'ui-icon-trash'
+		},
+		text: false
+	});
+	
+	$(".editDoc").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		},
+		text: false
+	});
+});
+
+
+$.fn.hideModif = function(idPasCacher) {
+	//alert('pad cacher : '+idPasCacher);
+	var idModif = "modif_"+idPasCacher;
+	$(".modif").each(function(){
+		//alert("#modif_"+$(this).attr('id')+"    -     "+idPasCacher);
+		if($(this).attr('id') != idModif){
+			$("#"+$(this).attr('id')).hide();
+		}
+	});
+	$("#docAjout").hide();
+}
+
+$.fn.showModif = function(idPasCacher) {
+	//alert('first : '+idPasCacher);
+	var idModif = "modif_"+idPasCacher;
+	$(".modif").each(function(){
+		//alert("#modif_"+$(this).attr('id')+"    -     "+idPasCacher);
+		if($(this).attr('id') != idModif){
+			$("#"+$(this).attr('id')).show();
+		}
+	});
+	$("#docAjout").show();
+}
+
+$.fn.blockCheck = function(idPasCacher) {
+	//alert('first : '+idPasCacher);
+	$(".divDocConsulte input:checkbox").each(function(){
+		//alert($(this).attr('id')+' et '+'check_'+idPasCacher+ $(this).attr('checked'));
+		if($(this).attr('id') != 'check_'+idPasCacher && $(this).attr('checked') == false){
+			$(this).attr('disabled','disabled');
+		}
+	});
+}
+
+$.fn.activeCheck = function(idPasCacher) {
+	$(".divDocConsulte input:checkbox").each(function(){
+		if($(this).attr('id') != 'check_'+idPasCacher && $(this).attr('checked') == false){
+			$(this).attr('disabled','');
+		}
+	});
+}
+
+//permet l'enregistrement du document consulté ajouté
+$.fn.ajoutDocDialog = function(idNatureDoc) {
+	//alert($("#formNewDoc").serialize());
+	
+	$.ajax({
+		url: "/dossier/fonction",
+		data: "do=ajoutDocValid&idDossier="+$("#idDossier").val()+"&"+$("#formNewDoc").serialize(),
+		type:"POST",
+		beforeSend: function(){
+			//VERIFICATION SUR L'integrité des données &| chargement icone
+		},
+		success: function(affichageResultat){
+			//alert("#listeDocs_"+idNatureDoc); 
+			$("#listeDocs_"+idNatureDoc+" > li:last").after(affichageResultat);
+
+			$("#libelleNewDoc").attr('value','');
+			$("#dossier_Pdroite").activeCheck('qsd');
+
+			$(".validDoc").button({
+				icons: {
+					primary: 'ui-icon-check'
+				},
+				text: false
+			});
+			
+			$(".cancelDoc").button({
+				icons: {
+					primary: 'ui-icon-close'
+				},
+				text: false
+			});
+			
+			$(".editDoc").button({
+				icons: {
+					primary: 'ui-icon-pencil'
+				},
+				text: false
+			});
+
+			$(".deleteDoc").button({
+				icons: {
+					primary: 'ui-icon-trash'
+				},
+				text: false
+			});
+			
+			return false;
+		},
+		error: function(){
+			return false;
+		}
+	});
+	return false;
+}
+
+$('.divDocConsulte input:checkbox').live('click',function(){
+	//alert($(this).attr("id"));
+	var idcheckbox = $(this).attr("id");
+	//alert($(this).attr("id"));
+	var nomTab = $(this).attr('id').split('_');
+	
+	if(nomTab.length == 3){
+		var nom = nomTab[1]+"_"+nomTab[2];
+	}else if(nomTab.length == 4){
+		var nom = nomTab[1]+"_"+nomTab[2]+"_aj";
+	}
+	//alert(nom);
+	if($(this).attr('checked'))
+	{
+		$("#ref_"+nom).attr('readonly','');
+		$("#date_"+nom).attr('readonly','');
+		$("#modif_"+nom).hide();
+		$("#div_input_"+nom).fadeIn();				
+		$("#tmp").attr('value','new');
+
+		$("#dossier_Pdroite").hideModif(nom);
+		$("#dossier_Pdroite").blockCheck(nom);
+	}else{
+		$("#div_input_"+nom).hide();
+		$("#modif_"+nom).fadeIn();
+		$("#ref_"+nom).attr('readonly','true').attr('value','');
+		$("#date_"+nom).attr('readonly','true').attr('value','');
+
+		$("#dossier_Pdroite").showModif(nom);
+		$("#dossier_Pdroite").activeCheck(nom);
+	}
+});
+
+
+$(".validDoc").live('click',function(){
+		
+	var ref = $(this).parent().parent().prev().prev().children("input");
+	var date = $(this).parent().parent().prev().children("input");
+	/*
+	if(date.val() == ''){
+		date.focus();
+		return false;
+	}
+	*/
+	var data = $("#docConsulteForm").serialize();
+	var idTab = $(this).parent().attr('id').split('_');
+	
+	var valRef = $(this).parent().parent().prev().prev().children("input[type=text]").val();
+	var valDate = $(this).parent().parent().prev().children("input[type=text]").val();
+
+	if(idTab.length == 3){
+		var idValid = idTab[1]+"_"+idTab[2];
+	}else if(idTab.length == 4){
+		var idValid = idTab[1]+"_"+idTab[2]+"_aj";
+	}
+
+	$.ajax({
+		url: "/dossier/validdoc",
+		data: "do=validDoc&id="+idValid+"&"+data+"&idDossier="+$("#idDossier").val(),
+		type:"POST",			
+		beforeSend: function(){
+			//VERIFICATION SUR L'integrité des données
+		},
+		success: function(affichageResultat){
+			//$("#tabs").tabs('load', $("#tabs").tabs('option', 'selected'));
+			$("#dossier_Pdroite").showModif(idValid);
+			$("#dossier_Pdroite").activeCheck(idValid);
+			
+			$("#modif_"+idValid).show();
+			$("#valid_"+idValid).hide();
+			$("#ref_"+idValid).attr('readonly','true');
+			$("#date_"+idValid).attr('readonly','true').attr('disabled','disabled');
+			$("#check_"+idValid).attr('disabled','disabled');
+			
+			$("#tmpRef").attr('value','');
+			$("#tmpDate").attr('value','');
+			return false;
+		},
+		error: function(){
+			return false;
+		}
+	});
+	return false;
+
+});
+</script>
+<?php
+
+echo $this->headScript()->appendFile('/js/dossier/dossierDocConsulte.js','text/javascript');
+/*
+ TRUNCATE TABLE `listedocajout`;
+ TRUNCATE TABLE `dossierdocconsulte`;
+*/
+echo "
+	<div id='dossier_Pdroite' class='divDocConsulte'>
+		<form name='docConsulteForm' id='docConsulteForm' method='post' action='' class='grid_15'>
+		<input type='hidden' name='action' id='action' value='view' />
+		<input type='hidden' name='tmp' id='tmp' value='' />
+		<input type='hidden' name='tmpRef' id='tmpRef' value='' />
+		<input type='hidden' name='tmpDate' id='tmpDate' value='' />
+		<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />
+";
+
+foreach($this->listeNatures as $index => $nature){
+
+	echo "
+		<div id='".$nature["ID_NATURE"]."' class='nature'>	
+			<h4 class='hideDocConsulte' >Liste des documents consultés concernant la nature '".$nature["LIBELLE_DOSSIERNATURE"]."'</h4>
+			<p class='grid_8 alpha' style='padding-left:20px;'><strong>Libelle</strong></p>
+			<p class='grid_3'><strong>Reférence</strong></p>
+			<p class='grid_2 omega'><strong>Date</strong></p>
+			<br class='clear' />
+			<ul id='listeDocs_".$nature["ID_NATURE"]."'>
+	";
+	
+	//on boucle sur les documents de base à afficher
+	foreach($this->listeDocs[$nature["ID_NATURE"]] as $document){
+		$exist = false;	
+		foreach($this->dossierDocConsutle[$nature["ID_NATURE"]] as $docExistant){
+			if($docExistant['ID_DOC'] == $document['ID_DOC']){
+				$exist = true;
+				$ref = $docExistant['REF_CONSULTE'];
+				$date = $docExistant['DATE_CONSULTE'];
+			}
+		}
+		if($exist){
+			echo $this->afficheDoc($nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC'],$ref,$date);
+		}else{
+			echo $this->afficheDoc($nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC']);
+		}
+	}
+	
+	//on boucle sur les documents ajoutés à afficher
+	foreach($this->listeDocsAjout[$nature["ID_NATURE"]] as $documentAjout)
+		echo $this->afficheDoc($nature["ID_NATURE"],$documentAjout['ID_DOCAJOUT'],$documentAjout['LIBELLE_DOCAJOUT'],$documentAjout['REF_DOCAJOUT'],$documentAjout['DATE_DOCAJOUT'],"_aj");
+
+	echo "
+			</ul>
+			<hr class='clear' />
+			<p><a href='' id='docAjout_".$nature["ID_NATURE"]."' class='docAjout' >+ Ajouter un nouveau document</a></p>
+		</div>
+		<hr class='clear' />
+	";
+}
+
+echo "
+		</form>
+	</div>
+	<div id='dialogDocConsulte' style='display:none;'>
+		<form id='formNewDoc' name='formNewDoc'>
+				<input type='hidden' name='natureDocAjout' id='natureDocAjout' value='' />
+				Saisir le libellé du document :<br/>
+				<textarea name='libelleNewDoc' id='libelleNewDoc' cols='100' rows='3' ></textarea>
+		</form>
+	</div>
+	<div id='dialogConfirmSuppDoc' style='display:none;'>
+		<form id='confirmSuppDoc' name='confirmSuppDoc'>
+				<input type='hidden' name='docInfos' id='docInfos' value='' />
+				<span id='affichageDocSupp'></span><br/>
+				Référence :
+				<span id='refDocSupp'></span><br/>
+				Date :
+				<span id='dateDocSupp'></span><br/>
+		</form>
+	</div>
+";
+?>

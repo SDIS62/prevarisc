@@ -1,0 +1,107 @@
+/*
+
+	form.css
+	
+*/
+
+/* Balises */
+input,
+textarea,
+select,
+fieldset {
+
+	border: 1px solid #cfcfcf;
+	background-color: white;
+	font-family: inherit;
+	resize: none;
+	font-size: 1em;
+	
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+input[disabled],
+textarea[disabled],
+select[disabled],
+fieldset[disabled] {
+
+	background: #EEE;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+
+	border-color: gray;
+}
+
+input.bigger,
+select.bigger,
+textarea.bigger {
+	font-size: 1.5em;
+}
+
+
+/* Fieldset */
+fieldset {
+
+	border-right: none;
+	border-left: none;
+	border-bottom: none;
+	background: none;
+	margin-bottom: 10px;
+	padding-top: 5px;
+}
+
+fieldset legend {
+
+	color: black;
+	padding-right: 5px;
+}
+
+/* Positionnement */
+ul.list li .right ,
+dl dd {
+
+	overflow: hidden;
+	margin: .75em 0 .75em 0;
+	padding: .2em 0 .2em 0;
+}
+ul.list li .right {
+	display: inline-block;
+	position: relative;
+	top: -1em;
+}
+
+ul.list li .left ,
+dl dt {
+
+	float: left;
+	width: 190px;
+}
+
+#save_div {
+	margin-top: 20px;
+	border-top: 1px solid #CFCFCF;
+	padding: 6px;
+	background-color: #eee;
+}
+
+button.save,
+button.save.ui-state-default,
+.ui-state-default2 {
+	background: none;
+	background: url("images/button-submit.jpg");
+	color: white;
+	border: 1px solid #65924c;
+	border-bottom: 1px solid #3e6e21;
+}
+
+button.save .ui-icon {
+	background-image: url("/css/images/ui-icons_FFFFFF_256x240.png");
+}
+
+.ui-button-text {
+	font-weight: bold;
+}

@@ -1,0 +1,48 @@
+<script type="text/javascript">
+	$("#descTech").button({
+		icons: {
+			primary: 'ui-icon-disk'
+		},
+		text: true
+	}).click(function(){
+		//$("#DESCTECH_DOSSIER")
+		
+	});
+	
+	$("#descEff").button({
+		icons: {
+			primary: 'ui-icon-disk'
+		},
+		text: true
+	}).click(function(){
+		//$("#DESCTECH_DOSSIER")
+		
+	});
+	
+</script>
+<?php
+echo "
+	<div>
+		<h4>Descriptifs</h4>
+	</div>
+	<div id='contact-content'>
+		<ul>
+			<li id='DESCTECH' >
+				<div class='grid_3 alpha libelle'>Descriptif technique</div>
+				<div class='grid_10 form'>
+					<textarea id='DESCTECH_DOSSIER' name='DESCTECH_DOSSIER' cols='90' rows='5'>".$this->infosDossier['DESCTECH_DOSSIER']."</textarea><br/>
+				</div>
+				<div class='grid_2 omega' ><button id='descTech'>Sauvegarder le descriptif technique</button></div>
+				<hr class='clear'/>
+			</li>
+			<li id='DESCEFF' >
+				<div class='grid_3 alpha libelle'>Descriptif effectif</div>
+				<div class='grid_10 form' >
+					<textarea id='DESCTECH_DOSSIER' name='DESCTECH_DOSSIER' cols='90' rows='5'>".$this->infosDossier['DESCEFF_DOSSIER']."</textarea><br/>
+				</div>
+				<div class='grid_2 omega' ><button id='descEff' >Sauvegarder le descriptif effectif</button></div>
+				<hr class='clear'/>
+			</li>
+		</ul>
+	</div>
+";

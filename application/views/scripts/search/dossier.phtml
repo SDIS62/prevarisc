@@ -1,0 +1,82 @@
+<!-- Formulaire -->
+<form id='recherche' method='get' action='' class='grid_15' >
+	
+	<!-- Nature -->
+	<select id='nature' name='ID_DOSSIERNATURE[]' multiple='multiple'>
+		<?php foreach( $this->DB_nature as $nature ) : ?>
+		<option value='<?php echo $nature["ID_DOSSIERNATURE"] ?>'><?php echo $nature["LIBELLE_DOSSIERNATURE"] ?></option>
+		<?php endforeach ?>
+	</select>
+	
+	<!-- Numéro de doc urba.-->
+	<input type='text' id='docurba' name='NUM_DOCURBA' class='bigger' size=32 />
+	
+	<span><a href='' onclick="$('#extra').show(); $(this).hide(); return false" >[+ Plus de critères]</a></span>
+	
+	<div id='extra' class='ui-helper-hidden' >
+	
+		<br />
+		
+		<!-- Commune -->
+		<input type='text' id='commune' name='LIBELLE_COMMUNE' class='bigger' size=25 />
+		
+		<!-- Etablissement -->
+		<input type='text' id='libelle' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' size=30 />
+	
+	</div>
+	
+</form>
+
+<script type="text/javascript">
+	
+	$("#nature").multiselect({
+		header: false,
+		noneSelectedText: "Nature du dossier",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 150
+	});
+	
+	$("#commune").toggleText("Commune");
+	$("#docurba").toggleText("Numéro de document d'urbanisme");
+	$("#libelle").toggleText("Libellé de l'établissement");
+	
+	$("#commune").autocomplete("/adresse/get?format=json", {
+		minChars: 3,
+		max: 100,
+		parse: function(data) {
+			return $.map(data["resultats"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_COMMUNE,
+					result: row.LIBELLE_COMMUNE
+				}
+			});
+		},
+		formatItem: function(item) {
+			return item.LIBELLE_COMMUNE;
+		}
+	}).result(function(e, item) {
+		// window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
+	});
+	
+	$("#libelle").autocomplete("/etablissement/get?format=json", {
+		minChars: 3,
+		max: 100,
+		parse: function(data) {
+			return $.map(data["resultats"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
+					result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+				}
+			});
+		},
+		formatItem: function(item) {
+			return item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+		}
+	}).result(function(e, item) {
+		// window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
+	});
+	
+</script>

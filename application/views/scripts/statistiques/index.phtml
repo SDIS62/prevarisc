@@ -1,0 +1,116 @@
+<div class="grid_16">
+
+	<h2>Statistiques et extractions</h2>
+
+		<form id="formulaire_stats">
+
+			<select id="demande">
+				<option href="">Choisir des données à générer ...</option>
+				<?php foreach($this->liste as $url => $titre) : ?>
+				<option href="/statistiques/<?php echo $url ?>"><?php echo $titre ?></option>
+				<?php endforeach ?>
+			</select>
+			
+			<span id="champssupps"></span>
+			
+			<button id="voir" disabled>Voir</button>
+			<button id="export" disabled>Exporter vers XML</button>
+			
+		</form>
+	
+</div>
+
+<hr class="clear" />
+
+<div class="grid_16">
+
+	<p id="loading" class="ui-helper-hidden" style="font-size: 3em; color: silver; text-align: center; margin-top: 100px;">Génération en cours ...</p>
+	
+	<div id="results"></div>
+	
+</div>
+
+<script>
+
+	$("#demande").change(function() {
+	
+		$("#champssupps").html(""); // on vide les champs supplémentaires
+		$("#voir, #export").attr("disabled", true); // On disable les boutons
+		
+		var href = $(this).find("option:selected").attr("href");
+	
+		// On charge les champs supplémentaires
+		if(href != "") {
+			$.getJSON(href + "?format=json", function(data) {
+			
+				// Si il n'y a pas de champs supplémentaire, on annule
+				if(data.result == undefined)
+					return;
+			
+				$.each(data.result, function(key, val) {
+				
+					// Création du label
+					var label = "<label>" + val.label + "</label>";
+					
+					// Création du champ en fonction du type
+					var champ = "";
+					switch(val.type) {
+						case "select" :
+							champ += "<select name='" + key + "'>";
+							for(var labelOption in val.data) {
+								champ += "<option value='" + val.data[labelOption] + "'>" + labelOption + "</option>";
+							}
+							champ += "</select>";
+							break;
+							
+						case "date" :
+							champ = "<input type='text' class='date' name='" + key + "' value='" + val.data + "' size=7 style='text-align: center' />";
+							break;
+							
+						default :
+							alert("Type inconnu : " + val.type);
+							return;
+							break;
+					}
+					
+					// On ajoute le champ
+					var oldhtml = $("#champssupps").html();
+					$("#champssupps").html( oldhtml + label + champ);
+				});
+			});
+			
+			// On enable les boutons
+			$("#voir, #export").attr("disabled", false); // On disable les boutons
+		}
+	});
+	
+	$("#voir").click(function() {
+	
+		$.ajax({
+			url: $("#demande").find("option:selected").attr("href") + "?" + $("#formulaire_stats").serialize(),
+			beforeSend: function() {
+				$("#results").html("");
+				$("#loading").show();
+			},
+			success: function(data) {
+			$('.result').html(data);
+				$("#results").html(data);
+				$("#loading").hide();
+			}
+		});
+		
+		return false;
+	});
+	
+	$("#export").click(function() {
+	
+		window.location.href = $("#demande").find("option:selected").attr("href") + "?" + "format=xml&" + $("#formulaire_stats").serialize();
+	
+		return false;
+	});
+	
+	$('.date').live('click', function() {
+		$(this).datepicker({showOn:'focus', dateFormat: 'dd/mm/yy', firstDay: 1}).focus();
+	});
+	
+</script>

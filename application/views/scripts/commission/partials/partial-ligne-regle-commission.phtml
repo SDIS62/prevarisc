@@ -1,0 +1,81 @@
+<tr>
+	<td  style='width: 150px' >
+		<!-- ID de la règle -->
+		<input type='hidden' name='ID_REGLE[]' value='<?php echo $this->id_regle ?>' />
+	
+		<!-- Emplacement géographique (Si c'est une communale, c'est une commune sinon un groupement) -->
+		<?php if($this->infos["ID_COMMISSIONTYPE"] == 2) : ?>
+			<p>
+				Commune
+				<input type='text' class='commune' value='<?php echo $this->commune["LIBELLE_COMMUNE"] ?>' class='bigger' size=25 <?php if($this->commune["NUMINSEE_COMMUNE"]) echo "style='background-color: #EEE'" ?> />
+				<input type='hidden' name='<?php echo $this->id_regle ?>_NUMINSEE_COMMUNE' value='<?php echo $this->commune["NUMINSEE_COMMUNE"] ?>' />
+			</p>
+		<?php else : ?>
+			<?php
+				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], array(
+					"name" => $this->id_regle . "_ID_GROUPEMENT"
+				));
+			?>
+		<?php endif ?>
+	</td>
+	
+	<!-- Catégorie -->
+	<td class='checkbox_area' style='width: 150px' >
+		<p>
+		<?php foreach( $this->categories as $categorie ) : ?>
+			<input name='<?php echo $this->id_regle ?>_ID_CATEGORIE[]' type='checkbox' value='<?php echo $categorie["ID_CATEGORIE"] ?>' <?php if( $categorie["ID_REGLE"] != null ) echo "checked" ?> />
+			<?php echo $categorie["LIBELLE_CATEGORIE"] ?>
+			<br/>
+		<?php endforeach ?>
+		</p>
+	</td>
+	
+	<!-- Le type -->
+	<td class='checkbox_area' >
+		<?php foreach( $this->types as $type ) : ?>
+		<span style='white-space: nowrap; ' >
+			<input name='<?php echo $this->id_regle ?>_ID_TYPE[]' type='checkbox' value='<?php echo $type["ID_TYPE"] ?>' <?php if( $type["ID_REGLE"] != null ) echo "checked" ?> />
+			<?php echo $type["ID_TYPE"] ?>
+		</span>
+		<?php endforeach ?>
+	</td>
+	
+	<!-- Classes -->
+	<td class='checkbox_area' style='width: 150px' >
+		<?php foreach( $this->classes as $classe ) : ?>
+			<span style='white-space: nowrap; ' >
+			<input name='<?php echo $this->id_regle ?>_ID_CLASSE[]' type='checkbox' value='<?php echo $classe["ID_CLASSE"] ?>' <?php if( $classe["ID_REGLE"] != null ) echo "checked" ?> />
+			<?php echo $classe["LIBELLE_CLASSE"] ?>
+			</span>
+		<?php endforeach ?>
+	</td>
+	
+	<!-- Local sommeil ou non -->
+	<td  class='checkbox_area' style='width: 75px'>
+		<p>
+			<input type='checkbox' name='<?php echo $this->id_regle ?>_LOCALSOMMEIL[]' value='1' <?php if(in_array(1, $this->local_sommeil)) echo "checked" ?> />
+			Oui
+		<br/>
+			<input type='checkbox' name='<?php echo $this->id_regle ?>_LOCALSOMMEIL[]' value='0' <?php if(in_array(0, $this->local_sommeil)) echo "checked" ?> />
+			Non
+		</p>
+	</td>
+	
+	<!-- Etude et/ou visite -->
+	<td  class='checkbox_area' style='width: 75px'>
+		<p>
+			<input type='checkbox' name='<?php echo $this->id_regle ?>_ETUDEVISITE[]' value='1' <?php if(in_array(1, $this->etude_visite)) echo "checked" ?> />
+			Étude
+		<br/>
+			<input type='checkbox' name='<?php echo $this->id_regle ?>_ETUDEVISITE[]' value='0' <?php if(in_array(0, $this->etude_visite)) echo "checked" ?> />
+			Visite
+		</p>
+	</td>
+	
+	<!-- Action -->
+	<td style='text-align: center;' >
+		<a class='delete-regle' href='/commission/delete-regle?id_regle=<?php echo $this->id_regle ?>' title='Supprimer' >
+			<i class='sprite sprite-bin' ></i>
+		</a>
+	</td>
+</tr>

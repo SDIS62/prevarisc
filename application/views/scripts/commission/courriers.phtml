@@ -1,0 +1,91 @@
+<?php if(count($this->rowset_membres) == 0) : ?>
+
+	<br />
+	<p><strong>Il n'existe pas de membres pour cette commission.</p>
+
+<?php else : ?>
+
+<?php foreach($this->rowset_membres as $row_membre) : ?>
+
+	<h3><?php echo $row_membre->LIBELLE_COMMISSIONMEMBRE ?></h3>
+
+	<!-- Tableau contenant les documents -->
+	<table class='table-custom commission'>
+		<thead>
+			<tr>
+				<th>Bordereau d'envoi</th>
+				<th>Convocation</th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr>
+				
+				<?php
+					// Bordereau d'envoi
+					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
+						"type" => "BE",
+						"name_courrier" => $row_membre->COURRIER_BE,
+						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
+					));
+					
+					// Convocation
+					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
+						"type" => "CONVOCATION",
+						"name_courrier" => $row_membre->COURRIER_CONVOCATION,
+						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
+					));
+				?>
+			
+			</tr>
+			
+		</tbody>
+	</table>
+	
+	<iframe id='iframe' name="iframe" marginheight="0" marginwidth="0" height="0" width="0"></iframe>
+
+<?php endforeach ?>
+
+<?php endif ?>
+
+<script type="text/javascript">
+
+	// Callback
+	function callback(error) {
+	
+		if(error != 'null') {
+			
+			alert(error);
+		}
+		else {
+			
+			// On recharge l'onglet
+			var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
+			$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+		}
+	}
+	
+	// Gestion de l'envoi auto du formulaire
+	$("form.courrier input[type=file]").change(function() {
+		
+		$(this).parent().submit();
+	});
+	
+	// Gestion de la suppression d'un courrier
+	$("a.delete-courrier").click(function() {
+	
+		var a = this;
+		
+		$.ajax({
+			url: a.href,
+			success: function(result) {
+			
+				var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
+				$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+			}
+		});
+
+		return false;
+	});
+	
+</script>

@@ -1,0 +1,95 @@
+<!-- Menu vertical d'action -->
+<div id='index-left' class='grid_3'>
+	
+	<!-- Général -->
+	<fieldset>
+		<legend>Général</legend>
+		<ul class='link_activated' >
+			<? if($this->droits->DROITADMINSYS_GROUPE == 1) : ?>
+			<li><a href='/admin'><i class='sprite sprite-cog' ></i>Administration système</a></li>
+			<? endif ?>
+			<? if($this->droits->DROITADMINPREV_GROUPE == 1) : ?>
+			<li><a href='/calendrier-des-commissions' ><i class='sprite sprite-calendar' ></i>Calendrier des commissions</a></li>
+			<? endif ?>
+			<li><a href='/index/help' ><i class='sprite sprite-help' ></i>Aide</a></li>
+		</ul>
+	</fieldset>
+	
+	<!-- Paramétrage du logiciel -->
+	<? if($this->droits->DROITADMINPREV_GROUPE == 1) : ?>
+	<fieldset>
+		<legend>Paramétrage du logiciel</legend>
+		<ul>
+			<li class='link_activated' ><a href='/periodicite' ><i class='sprite sprite-table' ></i>Tableau des périodicités</a></li>
+			<li class='link_activated'><a href='/gestion-des-communes' ><i class='sprite sprite-table' ></i>Gestion des communes</a></li>
+			<li class='link_activated'><a href='/groupement' ><i class='sprite sprite-table' ></i>Groupements de communes</a></li>
+			<li class='link_activated'><a href='/gestion-des-commissions' ><i class='sprite sprite-table' ></i>Gestion des commissions</a></li>
+			<li class='link_activated'><a href='/gestion-des-documents' ><i class='sprite sprite-table' ></i>Gestion des documents</a></li>
+		</ul>
+	</fieldset>
+	<? endif ?>
+	
+	<!-- Les options du fil d'actualité -->
+	<fieldset>
+		<legend>Fil d'actualité</legend>
+		<ul class='link_activated' >
+			<li id="news_li" class='active' ><a href='/news'><i class='sprite sprite-comment' ></i>Tous les messages<span class="count ui-helper-hidden">0</span></a></li>
+		</ul>
+	</fieldset>
+	
+	<!-- Actions -->
+	<? if($this->droits->DROITETSCREATION_GROUPE == 1 || $this->droits->DROITDOSSCREATION_GROUPE == 1) : ?>
+	<fieldset>
+		<legend>Actions</legend>
+		<ul>
+			<? if($this->droits->DROITETSCREATION_GROUPE == 1) : ?> <li><a href='/etablissement/add' ><i class='sprite sprite-add' ></i>Ajouter un établissement</a></li> <? endif ?>
+			<? if($this->droits->DROITDOSSCREATION_GROUPE == 1) : ?><li><a href='/dossier/add' ><i class='sprite sprite-add' ></i>Ajouter un dossier</a></li> <? endif ?>
+		</ul>
+	</fieldset>
+	<? endif ?>
+	
+</div>
+
+<!-- Fil d'actualité -->
+<div class='grid_11' id='index-content' >
+
+	<?php echo $this->action("index", "news"); ?>
+	
+</div>
+
+<!-- Alertes -->
+<div id='index-right' class='grid_2' >
+
+	<h3>
+		<i class='sprite sprite-bell' ></i>
+		Vos alertes
+	</h3>
+	
+	
+	<div id='rappels'></div>
+
+</div>
+
+<br class='clear' />
+
+<script type="text/javascript">
+	
+	// Gestion du cadre central
+	$(".link_activated a").click(function() {
+		$("#index-content").load(this.href);
+		$("#index-left ul li").removeClass("active");
+		$(this).parent().addClass("active");
+		return false;
+	});
+  
+  $("#news_li a").click(function() {
+       $("#news_li .count").html("0").hide();
+  });
+	
+	$(window).bind("resize", function() {
+		$("#index-left, #index-right").css("height", $(".container_16").innerHeight() );
+	}).resize();
+	
+	$("#rappels").load("/index/rappels");
+
+</script>

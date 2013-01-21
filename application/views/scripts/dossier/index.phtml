@@ -1,0 +1,44 @@
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		//utilisé pour la génération du/des rapports
+		
+		
+		
+	});
+</script>
+
+<?php
+
+$action = $this->do;
+
+if($action == "new" && !isset($this->idEtablissement)){
+	$urlGeneral = "do/new";
+}else if($action == "edit"){
+	$urlGeneral = "id/".$this->idDossier;
+}else if(isset($this->idEtablissement)){
+	$urlGeneral = "idEtablissement/".$this->idEtablissement;
+}
+
+echo "
+	<div id='tabs' class='grid_16 tabs' >
+	<!--
+		<input type='hidden' name='preview' id='preview' value='' />
+		<ul id='listeOnglets'>
+			<li><a href='/dossier/general/".$urlGeneral."'>Informations générales</a></li>
+			<li><a href='/dossier/descriptifs/".$urlGeneral."' ".( ($action == 'new')?"style='display:none'":"" ).">Descriptifs</a></li>
+			<li><a href='/dossier/docconsulte/id/".$this->idDossier."' ".( ($action == 'new')?"style='display:none'":"" ).">Documents consultés</a></li>
+			<li><a href='/dossier/prescription/id/".$this->idDossier."' ".( ($action == 'new')?"style='display:none'":"" ).">Prescriptions</a></li>			
+			<li><a href='/dossier/liees/id/".$this->idDossier."' ".( ($action == 'new')?"style='display:none'":"" ).">Établissements et dossiers liés</a></li>
+			<li><a href='/contact?item=dossier&id=".$this->idDossier." ' ".( ($action == 'new')?"style='display:none'":"" ).">Contacts</a></li>
+			<li><a href='/piece-jointe?dossier=".$this->idDossier."' ".( ($action == 'new')?"style='display:none'":"" ).">Pièces jointes</a></li>
+		</ul>
+		<div id='tabs-1' >
+			&nbsp;
+		</div>
+	-->
+		
+	</div>
+";
+?>

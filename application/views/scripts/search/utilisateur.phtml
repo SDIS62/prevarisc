@@ -1,0 +1,28 @@
+<!-- Formulaire -->
+<form id='recherche' method='get' action='' class='grid_15' >
+	
+	<!-- Nom -->
+	<input type='text' id='nom' name='NOM_PRENOM' class='bigger' size=50 />
+	
+	<!-- Fonction -->
+	<select id='fonction' name='ID_FONCTION[]' multiple='multiple'>
+		<?php foreach( $this->DB_fonction as $fonction ) : ?>
+		<option value='<?php echo $fonction["ID_FONCTION"] ?>'><?php echo $fonction["LIBELLE_FONCTION"] ?></option>
+		<?php endforeach ?>
+	</select>
+	
+</form>
+
+<script type="text/javascript">
+
+	$("#nom").toggleText("Nom de l'utilisateur");
+	
+	$("#fonction").multiselect({
+		header: false,
+		noneSelectedText: "Fonction de l'utilisateur",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 175
+	});
+	
+</script>

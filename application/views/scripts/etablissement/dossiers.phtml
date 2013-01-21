@@ -1,0 +1,20 @@
+<p style='float: right;'><a href='/dossier?id_etablissement=<?php echo $this->DB_etablissement["ID_ETABLISSEMENT"] ?>'>+ Créer un nouveau dossier</a></p>
+
+<hr class='clear' />
+
+<div id="content_dossiers_ets">
+<?php
+	echo $this->partial('search/search.phtml', array('item' => 'dossier', 'resultats' => $this->dossiers)); 
+?>
+</div>
+
+<script type="text/javascript">
+/*
+	$("#content_dossiers_ets a").fancybox({
+		'autoDimensions': false,
+		"height": "90%",
+		"width": "90%",
+		'overlayShow': false
+	});
+*/
+</script>

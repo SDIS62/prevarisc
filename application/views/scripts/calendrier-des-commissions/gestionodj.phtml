@@ -1,0 +1,453 @@
+<script type="text/javascript">
+$(document).ready(function() {
+
+	$('#external-events div.external-event').each(function() {
+		// create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+		// it doesn't need to have a start or end
+		var eventObject = {
+			title: $.trim($(this).text()) // use the element's text as the event title
+		};
+		// store the Event Object in the DOM element so we can get to it later
+		$(this).data('eventObject', eventObject);
+		
+		// make the event draggable using jQuery UI
+		$(this).draggable({
+			zIndex: 999,
+			revert: true,      // will cause the event to go back to its
+			revertDuration: 0  //  original position after the drag
+		});
+		
+	});
+	
+	( function($) {
+		$.fn.afficheCalendar = function(jour,mois,annee,hDeb,hFin) {			
+			var calendar = $('#calendar').fullCalendar( {
+				date:jour,
+				month:mois,
+				year:annee,
+				header: {
+					left: '',
+					center: 'title',
+					right: ''
+				},
+				columnFormat : {
+					month: 'dddd',
+					week: 'dddd dd',
+					day: 'dddd dd MMMM yyyy'
+				},
+				defaultView: 'agendaDay',
+				timeFormat:'H:mm{ - H:mm}',
+				allDaySlot: false,
+				axisFormat: 'H(:mm)',
+				slotMinutes: 5, //Permet d'afficher un interval de 10 minutes au lieu de 30 par défaut
+				selectHelper: true,
+				weekends: false,
+				monthNames : ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin','Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'],
+				monthAbbrevs : ['Jan','Fev','Mar','Avr','Mai','Juin','Juil','Aout','Sep','Oct','Nov','Dec'],
+				dayNames : ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+				dayNamesShort : ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
+				lazyFetching: false, //permet de ne pas réafficher les évenements en cache
+				minTime: hDeb,
+				maxTime: hFin,
+				editable: true,
+				disableResizing: false,
+				selectable: true,
+				droppable: true,
+				theme: true,
+				aspectRatio: 0,
+				defaultEventMinutes: 5,
+				events: function(start, end, callback) {
+					mois++;
+					var myDate = new Date(annee+"/"+mois+"/"+jour);	
+
+					$.ajax({
+						url: '/calendrier-des-commissions/recupevenementodj?start='+myDate.getTime()+"&end="+myDate.getTime(),
+						data: {
+							format: 'json',
+							dateCommId: $("#dateCommId").val(),
+						},
+						success: function( result ) {
+							var events = [];
+							for( var x in result["items"] ) {
+								events.push({
+									id: result["items"][x]["id"],
+									title: result["items"][x]["title"],
+									start: result["items"][x]["start"],
+									end: result["items"][x]["end"],
+									allDay: result["items"][x]["allDay"],
+									url: result["items"][x]["url"],
+								});
+							}
+							callback(events);
+						}
+					});
+				},
+				// Lorsque l'on selectionne une ou plusieurs dates on ouvre la boite de dialogue correspondante
+				select: function(start, end, allDay) {
+					$(this).fullCalendar('refetchEvents');
+					
+				},
+				eventClick: function( event, jsEvent, view ) {
+					/*
+					// Boite de dialogue
+					my_dialog("/calendrier-des-commissions/dialogcomm", "idComm="+$("#commissionId").val()+"&idDateComm="+event.id+"&do=edit");
+					return false;
+					*/
+				},
+				eventDrop: function( event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view ) {
+					var heureDeb = event.start;
+					var heureFin = event.end;
+					
+					var hrefTab = $(this).attr('href').split("/");
+					var tailleTab = hrefTab.length;
+					var idDossier = hrefTab[tailleTab-1];
+					
+					$.ajax({
+						url: "/calendrier-des-commissions/dropodj?heureDebut="+heureDeb+"&heureFin="+heureFin,
+						data: {
+							format: 'json',
+							dateCommId: $("#dateCommId").val(),
+							idDossier : idDossier,
+						},
+						success: function( result ) {
+							//alert(result);
+						}
+					});
+
+				},
+				drop: function(date, allDay) {
+					var idDossier = $(this).attr('id');
+					//alert(date);
+					//alert(date);
+					
+					$.ajax({
+						url: "/calendrier-des-commissions/affecteDossOdj?datadebut="+date,
+						data: {
+							format: 'json',
+							dateCommId: $("#dateCommId").val(),
+							idDossier : idDossier,
+						},
+						success: function( result ) {
+							
+						}
+					});
+					// retrieve the dropped element's stored Event Object
+					var originalEventObject = $(this).data('eventObject');
+					// we need to copy it, so that multiple events don't have a reference to the same object
+					var copiedEventObject = $.extend({}, originalEventObject);
+					// assign it the date that was reported
+					copiedEventObject.start = date;
+					copiedEventObject.url = "/dossier/index/id/"+idDossier;
+					copiedEventObject.allDay = allDay;
+					
+					// render the event on the calendar
+					// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+					$('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
+					// is the "remove after drop" checkbox checked?
+					// if so, remove the element from the "Draggable Events" list
+					$(this).remove();
+				},
+				//eventResize: function( event, jsEvent, ui, view ) {
+				eventResize: function( event,dayDelta,minuteDelta,revertFunc) {
+					var dateFin = event.end;
+					//var idDossier = $(this).attr('id');
+					
+					var hrefTab = $(this).attr('href').split("/");
+					var tailleTab = hrefTab.length;
+					var idDossier = hrefTab[tailleTab-1];
+					
+					//alert(dateFin);
+					$.ajax({
+						url: "/calendrier-des-commissions/resizeodj?dateFin="+dateFin,
+						data: {
+							format: 'json',
+							dateCommId: $("#dateCommId").val(),
+							idDossier : idDossier,
+							//dateFin: dateFin,
+						},
+						success: function( result ) {
+							//alert(result);
+						}
+					});
+				}
+			});
+		}
+	})(jQuery);
+	
+	var date;
+	var myDate = new Date($("#dateOdj").val());
+
+	//alert($("#heureDeb").val());
+	
+	$("#calendar").afficheCalendar(myDate.getDate(),myDate.getMonth(),myDate.getFullYear(),$("#heureDeb").val(),$("#heureFin").val());
+
+	$(".fc-agenda-allday").hide();
+	$(".fc-header").hide();
+	
+	/*
+		INITIALISATION ET GESTION DES BOUTONS PJ, ODJ et CONVOC
+	*/
+	
+	var dialogDateCommission = $('<div style="display:none"></div>').appendTo('body');
+	
+	dialogDateCommission.dialog({
+		title: "Gestion des pièces jointes",
+		modal: true,
+		autoOpen: false,
+		width: 800,
+		height: 600,
+		buttons: {
+
+			"annuler": function() {
+				dialogDateCommission.dialog("close");
+				return false;
+			}
+		},
+		close: function(event, ui){
+			
+		}
+	});	
+	
+
+	$("#commissionPj").button({
+		icons: {
+			primary: 'ui-icon-folder-open'
+		},
+		text: true
+	}).click(function(){
+		$.ajax({
+			type: "POST",
+			url: "/piece-jointe?type=dateCommission&id="+$("#dateCommId").val(),
+			success: function(msg){				
+				dialogDateCommission.html(msg);
+				dialogDateCommission.dialog("open");
+			}
+		});
+	
+	});
+	
+	$("#createConvoc").button({
+		icons: {
+			primary: 'ui-icon-clipboard'
+		},
+		text: true
+	}).click(function(){
+		if($("#external-events").children("div").children("div").length == 0){
+			$.ajax({
+				url: "/dossier/generationconvoc",
+				data: "dateCommId="+$("#dateCommId").val(),
+				type:"POST",
+				//async: false,
+				beforeSend: function(){
+					$("#infoGeneration").html("Création en cours, veuillez patienter");
+				},
+				success: function(affichageResultat){
+					$("#infoGeneration").html(affichageResultat);
+				},
+				error: function(){
+					return false;
+				}
+			});	
+		}else{
+			$("#infoGeneration").html("<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Certains dossiers prévus n'ont pas été placés dans le calendrier</span><br/><br/><br/>");
+		}
+	});
+	
+	$("#createOdj").button({
+		icons: {
+			primary: 'ui-icon-clipboard'
+		},
+		text: true
+	}).click(function(){
+		if($("#external-events").children("div").children("div").length == 0){
+			$.ajax({
+				url: "/dossier/generationodj",
+				data: "dateCommId="+$("#dateCommId").val(),
+				type:"POST",
+				//async: false,
+				beforeSend: function(){
+					$("#infoGeneration").html("Création en cours, veuillez patienter");
+				},
+				success: function(affichageResultat){
+					$("#infoGeneration").html(affichageResultat);
+				},
+				error: function(){
+					return false;
+				}
+			});
+		}else{
+			$("#infoGeneration").html("<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Certains dossiers prévus n'ont pas été placés dans le calendrier</span><br/><br/><br/>");
+		}
+	});
+	
+	$(".heures").button({
+		icons: {
+			primary: 'ui-icon-clock'
+		},
+		text: true
+	}).click(function(){
+		var gestionHeures = $(this).attr('id');
+		$.ajax({
+			url: "/calendrier-des-commissions/gestionheures",
+			data: "dateCommId="+$("#dateCommId").val()+"&gestionHeure="+gestionHeures,
+			type:"POST",
+			beforeSend: function(){
+				
+			},
+			success: function(affichageResultat){
+				//alert(affichageResultat);
+				window.location.reload();
+			},
+			error: function(){
+				return false;
+			}
+		});	
+
+	});
+	
+	$( ".sortable" ).sortable({
+		update: function(event, ui) {	
+			var listeDossierUpdate = new Array();
+			var num = 0;
+			$(".sortable > li").each(function(){
+				//on parcour les li pour récolter les changements et mettre à jour dans la base
+				
+				//on change le num de li
+				$(this).attr('num',num);
+				
+				//on récupere l'id du dossier
+				listeDossierUpdate.push($(this).children("div").attr('id'));
+
+				num = num + 1;
+			});
+			//alert(listeDossierUpdate);
+			$.ajax({
+				url: "/calendrier-des-commissions/changementordre",
+				data: "dateCommId="+$("#dateCommId").val()+"&ordreDossier="+listeDossierUpdate,
+				type:"POST",
+				beforeSend: function(){
+					
+				},
+				success: function(affichageResultat){
+					//alert(affichageResultat);
+					return false;
+				},
+				error: function(){
+					return false;
+				}
+			});	
+		}	
+	});
+	
+});
+
+</script>
+<?php
+
+	echo "
+		<div class='grid_16' >
+			<input type='hidden' name='dateOdj' id='dateOdj' value='".$this->infosDateComm['DATE_COMMISSION']."' />
+			<input type='hidden' name='heureDeb' id='heureDeb' value='".$this->infosDateComm['HEUREDEB_COMMISSION']."' />
+			<input type='hidden' name='heureFin' id='heureFin' value='".$this->infosDateComm['HEUREFIN_COMMISSION']."' />
+			<h2>Ordre du jour de la <a href='http://srv-prevarisc/calendrier-des-commissions?idComm=".$this->infosDateComm["COMMISSION_CONCERNE"]."' >".$this->infosCommission['LIBELLE_COMMISSION']."</a> du ".$this->dateFr."</h2><br/>
+			<h3>".$this->infosDateComm['LIBELLE_DATECOMMISSION']."</h3>";
+				
+			if($this->infosDateComm['GESTION_HEURES'] == 1){
+				echo "<button class='heures' id='non' >Ne pas prendre en compte les heures</button>";
+			}else{
+				echo "<button class='heures' id='oui' >Prendre en compte les heures</button>";
+			}
+	echo "	
+			<br/>
+			<input type='hidden' name='dateCommId' id='dateCommId' value='".$this->infosDateComm['ID_DATECOMMISSION']."' />
+			<br/>
+	";
+
+	
+	if(count($this->recupCommLiees) > 1){	
+		echo "<h4 style='margin:0px;'>Autres dates de la commission</h4>";
+		$i = 0;
+		echo "<br/><table><tr>";
+		foreach($this->recupCommLiees as $commLiees){
+			// && $this->infosDateComm['DATECOMMISSION_LIEES'] 
+			if($commLiees['ID_DATECOMMISSION'] != $this->infosDateComm['ID_DATECOMMISSION']){			
+				$dateLiees =  new Zend_Date($commLiees['DATE_COMMISSION'],'yyyy-MM-dd');
+				echo "<td style='width:200px;text-align:center;' ><a href='/calendrier-des-commissions/gestionodj/dateCommId/".$commLiees['ID_DATECOMMISSION']."' >".$dateLiees->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR,'fr')."</a></td>";
+			}else{
+				$dateLiees =  new Zend_Date($commLiees['DATE_COMMISSION'],'yyyy-MM-dd');
+				echo "<td style='width:200px;text-align:center;' >".$dateLiees->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR,'fr')."</td>";
+			}
+			if($i<5){
+				
+				$i++;
+			}else{
+				echo "</td></tr>";
+				$i=0;
+			}
+		}
+		echo "</table>";
+		echo "<br/><br/>";
+	}
+	
+	echo "
+			<button id='commissionPj' >Pièces jointes</button>
+			&nbsp;
+			<button id='createConvoc' >Générer Convocations</button>
+			&nbsp;
+			<button id='createOdj' >Génerer l'ordre du jour</button>
+			<br/><br/><br/>
+			<div id='infoGeneration'></div>
+			<br/>
+	";
+	
+	if($this->infosDateComm['GESTION_HEURES'] == 1){
+		//dans le cas ou on prend en compte les heures (cas par défaut)
+		echo "
+				<div id='calendar' name='calendar' class='grid_11 omega'>
+				</div>
+				<div id='external-events' class='grid_5 alpha' style='width:300px;margin-left:20px;position:fixed;color:black;border:1px solid black;text-align:center;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
+					<div style='' >
+		";			
+				echo "<h3>Liste des dossiers prévus</h3>";
+				if( count($this->listeDossierNonAffect) != 0 ){
+					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
+						echo "
+							<div class='external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
+								<img src='/images/folder.png' alt='' />&nbsp;&nbsp;".$dossierNonAffect['OBJET_DOSSIER']."
+							</div>
+						";
+					}
+				}else{
+					echo "<h5>Tous les dossiers ont déjà été affectés</h5>";
+				}
+				echo "
+					</div>
+				</div>			
+			</div>
+		";
+	}else if($this->infosDateComm['GESTION_HEURES'] == 0){
+		//dans le cas ou on ne prend pas en compte les heures (cas par défaut)
+		echo "
+			<h3>Liste des dossiers prévus</h3>
+			<ul id='listeDossierNoHours' class='sortable'>
+		";
+		//Zend_Debug::dump($this->listeDossierNonAffect);
+		if( count($this->listeDossierNonAffect) != 0 ){
+			foreach ($this->listeDossierNonAffect as $dossierNonAffect){
+				echo "
+					<li style='cursor: move;' num='".$dossierNonAffect['NUM_DOSSIER']."'  >
+						<div class='external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
+							<img src='/images/folder.png' alt='' />&nbsp;&nbsp;
+							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."'>".$dossierNonAffect['OBJET_DOSSIER']."</a>
+						</div>
+					</li>
+				";
+			}
+		}else{
+			echo "<h5>Aucun dossier n'est associé à cette commission</h5>";
+		}
+		echo "
+			</ul>
+		";
+	
+	}

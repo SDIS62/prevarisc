@@ -1,0 +1,21 @@
+<?php
+//Page utilisée uniquement pour l'auto complétion- Retourne infos en json
+$q = strtolower($_GET["q"]);
+if(!$q)
+	return;
+
+$items = array();
+foreach($this->selectEtab as $etab)
+{
+	$id = $etab['ID_ETABLISSEMENT'];
+	$libelleEtab= $etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." (".$etab['LIBELLE_GENRE'].") ";		
+	array_push($items, array(
+		"id" => $id,
+		"infos" => $libelleEtab
+	));
+}
+
+//Zend_Debug::dump($this->contactListe);
+echo json_encode($items);
+
+?>

@@ -1,0 +1,56 @@
+<h3 float='left'>Géolocalisation de l'établissement</h3>
+
+<!-- Boutons -->
+<div float='right' >
+	
+	<button id='back_button'>Retour à la fiche de présentation</button>
+</div>
+
+<br class='clear' />
+
+<div id="geoportail">
+	
+	<?php
+		$this->Carte()
+			->initCarte(650)
+			->addMarker(2.732931, 50.301608)
+			->setCenter(2.732931, 50.301608, 15);
+	?>
+	
+</div>
+
+<script>
+	/*
+	var ignfxx = new OpenLayers.Projection("IGNF:GEOPORTALFXX");
+	
+	var map = new OpenLayers.Map("geo-content", OpenLayers.Util.extend({maxResolution: 1024,numZoomLevels: 15}));
+
+	var cat = new Geoportal.Catalogue(map, gGEOPORTALRIGHTSMANAGEMENT);
+	var zon = cat.getTerritory('EUE');
+	var couche = cat.getLayerParameters(zon, 'ORTHOIMAGERY.ORTHOPHOTOS:WMSC');
+	couche.options.opacity = 1.0;
+	couche.transitionEffect = 'resize';
+	couche.options.isBaseLayer = true;
+	couche.options.maxExtent = new OpenLayers.Bounds(-1181626.0, 3815715.0, 2340591.0, 7071932.0);
+	couche.options["GeoRM"] = Geoportal.GeoRMHandler.addKey(
+		gGEOPORTALRIGHTSMANAGEMENT.apiKey,
+		gGEOPORTALRIGHTSMANAGEMENT[gGEOPORTALRIGHTSMANAGEMENT.apiKey[0]].tokenServer.url,
+		gGEOPORTALRIGHTSMANAGEMENT[gGEOPORTALRIGHTSMANAGEMENT.apiKey[0]].tokenServer.ttl,
+		map
+	);
+	var layer = new couche.classLayer('IGN', 'http://wxs.ign.fr/geoportail/wmsc', couche.params, couche.options);
+		
+	map.addLayer(layer);
+	map.addControl(new OpenLayers.Control.LayerSwitcher());
+	map.zoomToMaxExtent();*/
+</script>
+
+<script type="text/javascript">
+	
+	$("#back_button").button({
+		icons: { primary: "ui-icon-triangle-1-w" }
+	}).click(function() {
+		window.location = "<?php echo $this->url(array("action" => "index")) ?>";
+	});
+	
+</script>

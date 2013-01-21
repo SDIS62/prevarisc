@@ -1,0 +1,217 @@
+<div class='grid_16'>
+	
+	<!-- Titre -->
+	<div>
+	
+		<div style='float: right'>
+			<button id='back' >Retour à la gestion des utilisateurs</button>
+		</div>
+
+		<h2>
+			<i class='sprite sprite-user' ></i>
+			Administration système &rsaquo; Gestion des utilisateurs &rsaquo; Matrice des droits
+		</h2>
+	
+	</div>
+
+	<form id="form_matrice" >
+	
+		<table class="commission table-custom ui-widget-content" >
+			<thead>
+				<tr>
+					<th rowspan="2" >Groupe</th>
+					<th colspan="5" >Droits sur les établissements</th>
+					<th colspan="1" >Droits sur les dossiers (hérite des règles établissement)</th>
+					<th rowspan="2" >Droit administrateur</th>
+					<th rowspan="2" >Divers</th>
+				</tr>
+				<tr>
+					<th>Droits de lecture et d'écriture</th>
+					<th>Commission</th>
+					<th>Géographie</th>
+					<th>Type</th>
+					<th>Accès à l'établissement</th>
+					<th>Accès aux dossiers</th>
+				</tr>
+			</thead>
+			
+			<tbody>
+				
+				<? foreach($this->rowset_groupes as $groupe) : ?>
+				<tr>
+					<!-- Groupe -->
+					<td><h4><? echo $groupe->LIBELLE_GROUPE ?></h4></td>
+					
+					<!-- Genre -->
+					<td>
+						<table class="no_deco">
+							<tr style="text-align: center;">
+								<th></th>
+								<th>Lecture</th>
+								<th>Ecriture</th>
+							</tr>
+							<? foreach($this->rowset_genres as $genre) : ?>
+							<tr>
+								<td><? echo $genre->LIBELLE_GENRE ?></td>
+								<td style="text-align: center" ><input type="checkbox" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][ID_GENRE][<? echo $genre->ID_GENRE ?>][DROITLECTURE_GROUPEGENRE]" <? if(isset($groupe->ID_GENRE[$genre->ID_GENRE]) && $groupe->ID_GENRE[$genre->ID_GENRE]["DROITLECTURE_GROUPEGENRE"] == 1) echo "checked" ?> /></td>
+								<td style="text-align: center" ><input type="checkbox" class="checkbox_ecriture" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][ID_GENRE][<? echo $genre->ID_GENRE ?>][DROITECRITURE_GROUPEGENRE]" <? if(isset($groupe->ID_GENRE[$genre->ID_GENRE]) && $groupe->ID_GENRE[$genre->ID_GENRE]["DROITECRITURE_GROUPEGENRE"] == 1) echo "checked" ?> /></td>
+							</tr>
+							<? endforeach ?>
+						</table>
+						
+						<input type="checkbox" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITETSCREATION_GROUPE]" <? if($groupe->DROITETSCREATION_GROUPE == 1) echo "checked" ?> /> Droit de création ?
+
+					</td>
+					
+					<!-- Commission -->
+					<td>
+						<input type="radio" value="0" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITCOMMISSION_GROUPE]" <? if($groupe->DROITCOMMISSION_GROUPE == 0) echo "checked" ?> /> Ignorer<br/>
+						<input type="radio" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITCOMMISSION_GROUPE]" <? if($groupe->DROITCOMMISSION_GROUPE == 1) echo "checked" ?> /> La commission rattachée à l'utilisateur
+					</td>
+					
+					<!-- Géographie -->
+					<td>
+						<input type="radio" value="0" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITGEOGRAPHIE_GROUPE]" <? if($groupe->DROITGEOGRAPHIE_GROUPE == 0) echo "checked" ?> /> Ignorer<br/>
+						<input type="radio" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITGEOGRAPHIE_GROUPE]" <? if($groupe->DROITGEOGRAPHIE_GROUPE == 1) echo "checked" ?> /> La commune rattachée à l'utilisateur<br/>
+						<input type="radio" value="2" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITGEOGRAPHIE_GROUPE]" <? if($groupe->DROITGEOGRAPHIE_GROUPE == 2) echo "checked" ?> /> Les groupements rattachés à l'utilisateur
+					</td>
+					
+					<!-- Types -->
+					<td class="checkbox_area" >
+						<? foreach( $this->rowset_types as $key => $type ) : ?>
+						<? if($key != 0 && $key%5 == 0) echo "<br/>"; ?>
+						<span style="white-space: nowrap; " >
+							<input type="checkbox" value="<? echo $type->ID_TYPE ?>"  name="droits[<? echo $groupe->ID_GROUPE ?>][ID_TYPE][<? echo $type->ID_TYPE ?>]" <? if(in_array($type->ID_TYPE, $groupe->ID_TYPE)) echo "checked" ?> />
+							<? echo $type->ID_TYPE ?>
+						</span>
+						<? endforeach ?>
+					</td>
+					
+					<!-- Accès établissement-->
+					<td>
+						<input type="radio" value="0" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITETABLISSEMENT_GROUPE]" <? if($groupe->DROITETABLISSEMENT_GROUPE == 0) echo "checked" ?> /> Tout<br/>
+						<input type="radio" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITETABLISSEMENT_GROUPE]" <? if($groupe->DROITETABLISSEMENT_GROUPE == 1) echo "checked" ?> /> Seulement Onglet général<br/>
+						<input type="radio" value="2" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITETABLISSEMENT_GROUPE]" <? if($groupe->DROITETABLISSEMENT_GROUPE == 2) echo "checked" ?> /> Seulement champs prévision
+					</td>
+					
+					<!-- Natures des dossiers -->
+					<td class="" >
+						<div class="checkbox_area">
+						<? foreach( $this->rowset_natures as $key => $nature ) : ?>
+						<? if($key != 0 && $key%3 == 0) echo "<br/>"; ?>
+						<span style='white-space: nowrap; ' >
+							<input type='checkbox' value='<? echo $nature->ID_DOSSIERNATURE ?>' name="droits[<? echo $groupe->ID_GROUPE ?>][ID_DOSSIERNATURE][<? echo $nature->ID_DOSSIERNATURE ?>]"  <? if(in_array($nature->ID_DOSSIERNATURE, $groupe->ID_DOSSIERNATURE)) echo "checked" ?> />
+							<? echo $nature->LIBELLE_DOSSIERNATURE ?>
+						</span>
+						<? endforeach ?>
+						</div>
+						<input type="checkbox" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITDOSSCREATION_GROUPE]" <? if($groupe->DROITDOSSCREATION_GROUPE == 1) echo "checked" ?> /> Droit de création ?
+					</td>
+					
+					<!-- Accès admin-->
+					<td>
+						<input type="checkbox" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITADMINPREV_GROUPE]" <? if($groupe->DROITADMINPREV_GROUPE == 1) echo "checked" ?> /> Interface administration prévention ?<br/>
+						<input type="checkbox" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITADMINSYS_GROUPE]" <? if($groupe->DROITADMINSYS_GROUPE == 1) echo "checked" ?> /> Interface administration système ?
+					</td>
+					
+					<!-- Divers -->
+					<td>
+						<input type="checkbox" value="1" name="droits[<? echo $groupe->ID_GROUPE ?>][DROITFILACTU_GROUPE]" <? if($groupe->DROITFILACTU_GROUPE == 1) echo "checked" ?> /> Ecrire sur le fil d'actualité ?<br/>
+					</td>
+					
+				</tr>
+				<? endforeach ?>
+				
+			</tbody>
+		</table>
+	
+	</form>
+	
+	<div id="save_div" style="text-align: center">
+		<button id='save' class="save">Sauvegarder la matrice des droits</button>
+		<span id='notif' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>La matrice des droits a bien été sauvegardée.</span>
+	</div>
+	
+</div>
+
+<script>
+	
+	$(".checkbox_ecriture").click(function() {
+
+		if($(this).attr("checked")) {
+			$(this).parent().prev().find("input").attr("checked", "checked");
+		}
+	});
+
+	$("#back").button({
+		icons: { primary: "ui-icon-triangle-1-w" }
+	}).click(function() {
+		window.location = "/user";
+	});
+	
+	$( "#save" ).button({
+		icons: { primary: "ui-icon-disk" }
+	}).click( function() {
+	
+		$.ajax({
+			url: "/matrice-des-droits/save",
+			data: $("#form_matrice").serialize(),
+			type: "post",
+			beforeSend: function() {
+				$("#save").button("disable");
+			},
+			success: function() {
+				$("#save").button("enable");
+				$("#notif").show();
+				setTimeout( function() { $("#notif").fadeOut(); }, 2500);
+			}
+		});
+	
+		return false;
+	} );
+	
+	// On met en place la structure pour les checkbox area
+	$(".checkbox_area").each(function() {
+		// On place le contenu dans checkbox_area_content
+		$(this).html("<div class='checkbox_area_content'><a href='' class='close' onclick=\"return check_checkboxes($('td:hover'), false)\" >&times;</a>"+$(this).html()+"</div>")
+		
+		// On append le code HTML du delta
+		$(this).append("<p class='checkbox_area_lambda ui-helper-hidden'>&lambda; (<a href='' onclick=\"return check_checkboxes($('td:hover'), false)\" >modifier ?</a>)</p>");
+		
+		// On check si on affiche le tout ou pas
+		check_checkboxes($(this), true);
+	});
+	
+	function check_checkboxes(conteneur, change) {
+	
+		// Si toutes les cases sont cochées
+		// :not(.ignore_check)
+		if( conteneur.find("input[type=checkbox]:checked:not(.ignore_check)").length == conteneur.find("input[type=checkbox]:not(.ignore_check)").length) {
+		
+			// Si on est en mode changement
+			if(change === true) {
+				
+				// Si on veut tout cocher
+				conteneur.find(".checkbox_area_content").hide();
+				conteneur.find("input[type=checkbox]:not(.ignore_check)").attr("checked", "checked");
+				conteneur.find(".checkbox_area_lambda").show();
+			} else if(change === false) {
+			
+				// Si on veut modifier
+				conteneur.find(".checkbox_area_content").show();
+				conteneur.find("input[type=checkbox]:not(.ignore_check)").attr("checked", "");
+				conteneur.find(".checkbox_area_lambda").hide();
+			}
+		}
+		else if(!change) {
+		
+			// Si on veut tout cocher
+			conteneur.find(".checkbox_area_content").hide();
+			conteneur.find("input[type=checkbox]:not(.ignore_check)").attr("checked", "checked");
+			conteneur.find(".checkbox_area_lambda").show();
+		}
+		
+		return false;
+	}
+	
+</script>

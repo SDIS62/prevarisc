@@ -1,0 +1,661 @@
+<script type="text/javascript">
+	/**
+	***
+	***CHARGEMENT DES DIFFERETES BOUTONS VIA JQUERY UI
+	***
+	**/
+	$(".edition").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		},
+		text: false
+	});
+	$(".annulation").button({
+		icons: {
+			primary: 'ui-icon-circle-close'
+		},
+		text: false
+	});
+	$(".validation").button({
+		icons: {
+			primary: 'ui-icon-circle-check'
+		},
+		text: false
+	});
+	
+	$(".validPeriodicite").button({
+		icons: {
+			primary: 'ui-icon-circle-check'
+		},
+		text: false
+	});
+	$(".suppression").button({
+		icons: {
+			primary: 'ui-icon-trash'
+		},
+		text: false
+	});
+	$(".addDate").button({
+		icons: {
+			primary: 'ui-icon-circle-plus'
+		},
+		text: false
+	});
+	$(".validAddDate").button({
+		icons: {
+			primary: 'ui-icon-circle-check'
+		},
+		text: false
+	});
+	$(".cancelAddDate").button({
+		icons: {
+			primary: 'ui-icon-circle-close'
+		},
+		text: false
+	});
+	$(".dateDefaut").button({
+		icons: {
+			primary: 'ui-icon-transferthick-e-w'
+		},
+		text: false
+	});
+
+	/**
+	***
+	***APPLIQUER DES CLASSES JQUERY SUR LES INPUT DATE ET HEURE
+	***
+	**/	
+	$('.time').live('focus', function() {
+		$(this).timeEntry($.timeEntry.regional['fr']);
+	});
+	$('.date').live('click', function() {
+		$(this).datepicker({showOn:'focus', dateFormat: 'dd/mm/yy', firstDay: 1}).focus();
+	});
+
+	/**
+	***
+	***FAIT APPARAITRE LA DIV PERMETTANT D'AJOUTER UNE DATE A UNE COMMISSION
+	***
+	**/
+	$(".addDate").live('click', function(){
+		$("#divAddDate").show();
+		$("#dialogComm").buttonHide();
+		return false;
+	});
+
+	/**
+	***
+	***GESTION DE L'AJOUT DE DATE DANS LA BOITE DE DIALOGUE
+	***
+	**/
+	$('.validAddDate').live('click',function(){
+		var dateSelect = $("#addDate").val();
+		$("#addDate").attr('value','');
+		if(dateSelect != ''){
+			//Dans le cas d'une édition on fait l'insertion toute suite sur le calendrier et on le raffraichi
+			if($("#dateCommission").val()){
+				$.ajax({
+					data: "do=addDateS&date="+dateSelect+"&idDateCommLiee="+$("#dateCommission").val(),
+					type:"POST",
+					url:"/calendrier-des-commissions/dialogcomm",
+					beforeSend: function(){
+						$("#divAddDate").hide();
+					},
+					success: function(affichageResultat){
+						$("#listeDates").last("ul").append(affichageResultat);
+						$("#calendar").fullCalendar('refetchEvents');
+					},
+					error: function(){
+						return false;
+					}
+				});			
+			}else{
+				//Dans le cas d'une création on ajoute simplement la ligne
+				$.ajax({
+					data: "do=addDateN&date="+dateSelect,
+					type:"POST",
+					url:"/calendrier-des-commissions/dialogcomm",
+					beforeSend: function(){
+						$("#divAddDate").hide();
+					},
+					success: function(affichageResultat){
+						$("#listeDates").last("ul").append(affichageResultat);
+						$(".suppression").last().button({
+							icons: {
+								primary: 'ui-icon-trash'
+							},
+							text: false
+						});
+					},
+					error: function(){
+						return false;
+					}
+				});
+			}
+		}
+		$("#dialogComm").buttonShow();
+		$("#listeDates").countLigne('add','edit');
+		return false;
+	});
+
+
+
+	$(".cancelAddDate").live('click',function(){
+		//Annulation de l'ajout de date 
+		$("#addDate").attr('value','');
+		$("#divAddDate").hide();
+		$("#dialogComm").buttonShow();
+		return false;
+	});
+
+	$("#repeat").live('click',function(){
+		if($(this).attr('checked')){
+			$("#planification").fadeIn();
+			$("#dialogComm").buttonHide();
+		}else{
+			$("#planification").fadeOut();
+			$("#dateFin").attr('value','');
+			$("#periodicite").val("1");
+			$("#dialogComm").buttonShow();
+		}
+	});
+
+	$("#valid_periodicite").live('click',function(){
+		$("#dialogComm").buttonShow();
+		$("#dialogComm").reapeatHide();
+	});
+	
+	$("#annule_periodicite").live('click',function(){		
+		$("#dialogComm").buttonShow();
+		$("#dialogComm").reapeatHide();
+	});
+	
+	$("#valid_periodicite").live('click',function(){
+		//alert('');
+	});
+
+	//Fonction que devra être utlisée si l'on veux pourvoir afficher une periodicitée sur 1 seule date de départ
+	(function($){
+		//permet de vérifier le nombre de date selectionnées.. Si 1 date alors on peux utiliser la périodicité
+		$.fn.countLigne = function(action,type){
+			//alert(action+" - "+type+" - "+$("#listeDates ul").length);
+			if(action == 'add'){
+				$("#addReapeat").hide();
+				//$("#repeat").attr('checked',false);	
+				$("#planification").hide();
+			}else if(action == 'supp'){
+				if(type == 'edit'){
+					if($("#listeDates ul").length == 3)
+						$("#addReapeat").show();
+				}else if(type == 'new'){
+					if($("#listeDates ul").length == 2)
+						$("#addReapeat").show();
+				}
+			}
+		};
+		$.fn.buttonHide = function(){
+			//alert('');
+			$(".edition").hide();
+			$(".suppression").hide();
+			$(".dateDefaut").hide();
+			$(".addDate").hide();
+		};
+		$.fn.buttonShow = function(){
+			//alert('');
+			$(".edition").show();
+			$(".suppression").show();
+			$(".dateDefaut").show();
+			$(".addDate").show();
+		};
+		$.fn.reapeatHide = function(){
+			$("#addReapeat").hide();
+			$("#planification").hide();
+		};
+		$.fn.reapeatShow = function(){
+			$("#addReapeat").show();
+			$("#planification").show();
+			$("#listeDates").countLigne('new');		
+		};
+	})(jQuery);
+</script>
+
+<?php
+if(isset($this->do) && $this->do == 'edit'){
+	/**
+	***
+	***CODE JAVASCRIPT ET PHP AFFICHE LORS DE L'EDITION D'UNE COMMISSION 
+	*** 
+	**/
+?>
+	<script type="text/javascript">
+		//$(document).ready(function() {
+			//INTEGRALITE DU CODE ENVOYé DANS INDEX.phtml de calendrier commission
+		//});
+	</script>
+<?php
+	echo "
+		<form name='formDateComm' id='formDateComm' methode='POST'>
+			<input type='hidden' name='dateCommission' id='dateCommission' value='".$this->dateCommission."' />
+			<input type='hidden' name='dateClick' id='dateClick' value='".$this->dateClick."' />
+			<p>
+			<div id='div_libelleCom' >
+				".afficheLibelleDateComm($this->libelleDateComm)."
+			</div>
+			</p>
+			<p>
+			<div id='div_typeCom' >
+				".afficheTypeDateComm($this->typeComLibelle)."
+			</div>
+			</p>
+				".afficheTabListeDates($this->listeDates)."	
+			<br/>				
+				".divAddDate()."
+			<br/>
+	";
+	echo afficheDivPeriodicite(count($this->listeDates),$this->do);
+	//Pour la planification elle n'es possible que l'orsque l'on choisi une seule date
+	echo "
+			</form>
+	";
+}else if(isset($this->do) && $this->do == 'newComm'){
+		/**
+		***
+		***AFFICHAGE BOITE DIALOGUE PERMETTANT LA CREATION DES COMMISSIONS 
+		***
+		**/
+?>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$(".supp").button({
+				icons: {
+					primary: 'ui-icon-trash'
+				},
+				text: false
+			});
+			$(".addDate").button({
+				icons: {
+					primary: 'ui-icon-circle-plus'
+				},
+				text: false
+			});
+			$(".validAddDate").button({
+				icons: {
+					primary: 'ui-icon-check'
+				},
+				text: false
+			});
+			$(".cancelAddDate").button({
+				icons: {
+					primary: 'ui-icon-close'
+				},
+				text: false
+			});
+			//Applique les restrictions des heures sur les input
+			$('.time').live('focus', function() {
+				$(this).timeEntry($.timeEntry.regional['fr']);
+			});
+		});
+	</script>		
+<?php
+	$periodicite = array();
+	for($i = 1; $i <=4; $i++){
+		array_push($periodicite, $i);
+	}
+	echo "
+		<form name='formDateComm' id='formDateComm' methode='POST'>
+			<br/>
+			<p>
+			<div id='div_libelleCom' >
+				Saisissez le libellé de la commission
+				<input type='text' name='libelle_comm' id='libelle_comm' value='' />
+			</div>
+			</p>
+			<br/>
+			<p>
+				<div id='div_typeCom' >
+					Veuillez selectionner le type de la commission :
+					<select name='typeCom' id='typeCom'>
+	";
+	foreach($this->listeCommType as $value){
+		echo "<option value='".$value['ID_COMMISSIONTYPEEVENEMENT']."' >".$value['LIBELLE_COMMISSIONTYPEEVENEMENT']."</option>";
+	}
+	echo "
+					</select>
+				</div>
+			</p>
+			<br/>
+			<div style='width:500px;text-align:center;' id='listeDates'>
+				<ul style='text-align:center;font-weight:bold;border-bottom:1px solid black;float:left;padding:3px 0 3px 0;'>
+					<li style='width:200px;padding-top:10px;float:left;'>Date</li>
+					<li style='width:100px;padding-top:10px;float:left;'>Heure début</li>
+					<li style='width:100px;padding-top:10px;float:left;'>Heure fin</li>
+					<li style='width:100px;float:left;float:left;text-align:left;'>
+						<button class='addDate'>Ajouter une date</button>
+					</li>
+				</ul>
+	";
+	$paspremier = 0;
+	foreach($this->listeDates as $dates){
+		if($dates['heureD'] == '00:00' && $dates['heureF'] == '00:00'){
+			$HD = '09:00';
+			$HF = '18:00';
+		}else{
+			$HD = $dates['heureD'];
+			$HF = $dates['heureF'];
+		}
+		echo "
+					<ul style='text-align: center; font-weight: bold; float: left; padding: 3px 0pt;'>
+						<li style='width:200px;padding-top:10px;float:left;'>".$dates['date']."</li>
+						<li style='width:100px;padding-top:10px;float:left;'><input type='text' size='8' class='time' id='D_".$dates['inputH']."' name='D_".$dates['inputH']."' value='".$HD."' /></li>
+						<li style='width:100px;padding-top:10px;float:left;'><input type='text' size='8' class='time' id='F_".$dates['inputH']."' name='F_".$dates['inputH']."' value='".$HF."'/></li>
+						<li style='width: 100px; float: left; text-align: left;'>
+		";
+		if($paspremier != 0)
+			echo "<button class='suppression'>Supprimer cette date</button>";
+		echo "
+						</li>
+					</ul>
+		";
+		$paspremier++;
+	}
+	echo "
+				</div>
+				".divAddDate()."
+			<br/>
+	";
+	echo afficheDivPeriodicite(count($this->listeDates),$this->do);
+		/*
+			//Pour la planification elle n'es possible que l'orsque l'on choisi une seule date
+			if(count($this->listeDates) > 1)
+				$disp = "none";
+			else
+				$disp = "block";
+			echo "
+					<p id='addReapeat' style='display:".$disp."'; >
+						Souhaitez vous planifier cette commission sur une période donnée ?<input type='checkbox' name='repeat' id='repeat'/>
+					</p>
+					<br/>
+					<p id='planification' style='display:none;'>
+						Saisissez la date jusqu'à laquelle vous souhaitez planifier cette commission :
+						<input type='text' class='date' name='dateFin' id='dateFin' />
+						<br/>
+						La commission a lieu toute les
+							<select name='periodicite' id='periodicite'>
+			";
+			foreach($periodicite as $num => $jour){
+					echo "<option value='".$jour."' >".$jour."</option>";
+			}
+			echo "
+						</select>&nbsp;semaines
+				</p>
+			";
+		*/
+	echo "
+			</form>
+	";
+}else{
+	switch($this->do){
+		case 'addDateN':
+			echo "
+				<ul style='text-align:center;font-weight:bold;float:left;padding:3px 0 3px 0;'>
+					<li style='width:200px;padding-top:10px;float:left;'>".$this->dateAjoutee."</li>
+					<li style='width:100px;padding-top:10px;float:left;'><input type='text' size='8' class='time' id='D_".$this->dateAjouteeInput."' name='D_".$this->dateAjouteeInput."' value='09:00'/></li>
+					<li style='width:100px;padding-top:10px;float:left;'><input type='text' size='8' class='time' id='F_".$this->dateAjouteeInput."' name='F_".$this->dateAjouteeInput."' value='18:00'/></li>
+					<li style='width:100px;float:left;float:left;text-align:left;'>
+						<button class='suppression' >Supprimer cette date</button>
+					</li>
+			";
+		break;
+		case 'libelleCom':
+			echo "
+				Saisissez le libellé de la commission <input type='text' name='value_libelleCom' id='value_libelleCom' value='".$this->libelleDateComm."' />
+				<button class='validation' id='valid_libelleCom'>Sauvegarder la modification</button>
+				<button class='annulation' id='annule_libelleCom'>Annuler la modification</button>
+			";
+		break;
+		case 'valid_libelleCom':
+			echo afficheLibelleDateComm($this->libelleDateComm);
+		break;
+		case 'annule_libelleCom':
+			echo afficheLibelleDateComm($this->libelleDateComm);
+		break;
+		case "typeCom":
+			echo modifTypeComm($this->listeCommType,$this->typeComSelect);
+		break;
+		case "valid_typeCom":
+			echo afficheTypeDateComm($this->libelleType);
+		break;
+		case "annule_typeCom":
+			echo afficheTypeDateComm($this->libelleType);
+		break;
+		case 'dateComm':
+			echo afficheDateEdit($this->dateCommDetail,$this->first);
+		break;
+		case 'valid_dateCom':
+			echo afficheDateValid($this->updateDateComm,$this->first);
+		break;
+		case 'annule_dateCom':
+			echo afficheDateValid($this->dateCommDetail,$this->first);
+		break;
+		case 'addDateS':
+			echo ajoutDateLiee($this->TabNouvelleDate,$this->nouvelleDate);
+		break;
+	}
+}//FIN DU IF $POST
+
+/**
+***
+***FONCTIONS GENERIQUES POUR L'AFFICHAGES DES DIFFERENTES DONNEES
+***
+**/
+function afficheLibelleDateComm($libelle){
+	//affiche le libelle  de la commission en mode lectude d'infos
+	return "
+		Libelle de la commission : ".$libelle."
+		<button id='edit_libelleCom' class='edition'>Modifier le libelle</button>
+	";
+}
+
+function afficheTypeDateComm($libelleCom){
+	//affiche le type de la commission en mode lecture d'infos
+	$affiche = "
+		Le type de commission est :
+	".$libelleCom."
+		<button id='edit_typeCom' class='edition'>Modifier le type de commission</button>
+	";
+	return $affiche;
+}
+
+function modifTypeComm($listeCommType, $idSelect){
+	//affiche le formulaire permettant d'editer le type d'une commission
+	$affiche = "
+		Veuillez selectionner le type de la commission :
+		<select name='typeCom' id='typeCom' readonly='readonly'>
+	";
+	foreach($listeCommType as $value){
+		if($idSelect == $value['ID_COMMISSIONTYPEEVENEMENT']){
+			$select = "selected='selected'";
+		}else{
+			$select = "";
+		}
+		$affiche .= "<option value='".$value['ID_COMMISSIONTYPEEVENEMENT']."' ".$select.">".$value['LIBELLE_COMMISSIONTYPEEVENEMENT']."</option>";
+	}
+	$affiche .= "
+		</select>
+		<button class='validation' id='valid_typeCom'>Sauvegarder le nouveau type</button>
+		<button class='annulation' id='annule_typeCom'>Annuler la modification</button>
+	";
+	return $affiche;
+}
+
+function afficheTabListeDates($listeDates){
+	//Affiche la liste des dates pour une édition
+	$affiche = "
+				<div style='width:500px;text-align:center;' id='listeDates'>
+					<ul style='text-align:center;font-weight:bold;border-bottom:1px solid black;float:left;padding:3px 0 3px 0;'>
+						<li style='width:200px;padding-top:10px;float:left;'>Date</li>
+						<li style='width:100px;padding-top:10px;float:left;'>Heure début</li>
+						<li style='width:100px;padding-top:10px;float:left;'>Heure fin</li>
+						<li style='width:100px;float:left;float:left;text-align:left;'>
+							<button class='addDate'>Ajouter une date</button>
+						</li>
+					</ul>
+	";
+	$paspremier = 0;
+	foreach($listeDates as $dates){
+		$heureDebut = $chaine=substr($dates['HEUREDEB_COMMISSION'],0,5);
+		$heureFin = $chaine=substr($dates['HEUREFIN_COMMISSION'],0,5);
+		$date = new Zend_Date($dates['DATE_COMMISSION'],'yyyy.MM.dd','fr');
+		$dateLibelle = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR,'fr');
+		$affiche .= "
+					<ul id='ligne_".$dates['ID_DATECOMMISSION']."' style='text-align:center;font-weight:bold;float:left;padding:3px 0 3px 0;'>
+						<li style='width:200px;padding-top:10px;float:left;'>".$dateLibelle."</li>
+						<li style='width:100px;padding-top:10px;float:left;'> ".$heureDebut." </li>
+						<li style='width:100px;padding-top:10px;float:left;'> ".$heureFin." </li>
+						<li style='width:100px;float:left;float:left;text-align:left;'>
+		";
+		$affiche .= "
+						<button class='edition' name='edition' id='edit_dateComm_".$dates['ID_DATECOMMISSION']."'>Modifier</button>
+		";
+		if($dates['DATECOMMISSION_LIEES']){
+			$affiche .= "<button class='suppression' id='supp_dateComm_".$dates['ID_DATECOMMISSION']."'>Supprimer cette date</button>";
+			$affiche .= "<button style='float:right;' class='dateDefaut' id='defaut_dateComm_".$dates['ID_DATECOMMISSION']."'>Faire devenir date principale de cette commission</button>";
+		}
+		$affiche .= "
+						</li>
+					</ul>
+		";
+		$paspremier++;
+	}
+	$affiche .= "
+				</div>
+	";
+	return $affiche;
+}
+
+function afficheDateEdit($dateInfos,$first=null){
+	//affiche la partie formulaire affichée lors de l'ajout d'une date à une commission
+	$heureDebut = $chaine=substr($dateInfos['HEUREDEB_COMMISSION'],0,5);
+	$heureFin = $chaine=substr($dateInfos['HEUREFIN_COMMISSION'],0,5);
+	$date = new Zend_Date($dateInfos['DATE_COMMISSION'],'yyyy.MM.dd','fr');
+	$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+	$affiche = "
+		<li style='width:200px;padding-top:10px;float:left;'>
+			<input type='text' class='date' value='".$date."' id='date_".$dateInfos['ID_DATECOMMISSION']."' />
+		</li>
+		<li style='width:100px;padding-top:10px;float:left;'>
+			<input type='text' size='8' class='time' id='D_".$dateInfos['ID_DATECOMMISSION']."' name='D_".$dateInfos['ID_DATECOMMISSION']."' value='".$heureDebut."' />
+		</li>
+		<li style='width:100px;padding-top:10px;float:left;'>
+			<input type='text' size='8' class='time' id='F_".$dateInfos['ID_DATECOMMISSION']."' name='F_".$dateInfos['ID_DATECOMMISSION']."' value='".$heureFin."' />
+		</li>
+		<li style='width:100px;float:left;float:left;text-align:left;'>
+			<button class='validation' name='validation' id='annule_dateCom_".$dateInfos['ID_DATECOMMISSION']."'>Sauvegarder la modification</button>
+			<button class='annulation' name='annulation' id='annule_dateCom_".$dateInfos['ID_DATECOMMISSION']."'>Annuler la modification</button>
+			<input type='hidden' name='first' id='first' value='".$first."' />
+		</li>
+	";
+	return $affiche;
+}
+
+function afficheDateValid($date,$first=null){
+	//affiche la date après l'avoir inseree dans la base de données cas édition
+	$heureDebut = $chaine=substr($date['HEUREDEB_COMMISSION'],0,5);
+	$heureFin = $chaine=substr($date['HEUREFIN_COMMISSION'],0,5);
+	$dateE = new Zend_Date($date['DATE_COMMISSION'],'yyyy.MM.dd','en');
+	$dateLibelle = $dateE->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR,'fr');
+	$buttonEdition = $date['ID_DATECOMMISSION'];
+	$affiche = "
+			<ul id='ligne_".$date['ID_DATECOMMISSION']."' style='text-align:center;font-weight:bold;float:left;padding:3px 0 3px 0;'>
+				<li style='width:200px;padding-top:10px;float:left;'>".$dateLibelle."</li>
+				<li style='width:100px;padding-top:10px;float:left;'>".$heureDebut." </li>
+				<li style='width:100px;padding-top:10px;float:left;'>".$heureFin." </li>
+				<li style='width:100px;float:left;float:left;text-align:left;'>
+					<button class='edition' id='edit_dateComm_".$buttonEdition."'>Modifier</button>
+	";
+	if($date['DATECOMMISSION_LIEES']){
+		$affiche.= "<button class='suppression' id='supp_dateComm_".$buttonEdition."'>Supprimer cette date</button>";
+		$affiche .= "<button style='float:right;' class='dateDefaut' id='defaut_dateComm_".$date['ID_DATECOMMISSION']."'>Faire devenir date principale de cette commission</button>";
+	}
+	$affiche .= "
+				</li>
+			</ul>
+	";
+	return $affiche;
+}
+
+function ajoutDateLiee($tabDate,$date){
+	//ajoute une date à une comm dans le cas d'une édition
+	$heureDebut = $chaine=substr($tabDate['HEUREDEB_COMMISSION'],0,5);
+	$heureFin = $chaine=substr($tabDate['HEUREFIN_COMMISSION'],0,5);
+	$affiche = "
+		<ul id='ligne_".$tabDate['ID_DATECOMMISSION']."' style='text-align:center;font-weight:bold;float:left;padding:3px 0 3px 0;'>
+			<li style='width:200px;padding-top:10px;float:left;'>".$date."</li>
+			<li style='width:100px;padding-top:10px;float:left;'>".$heureDebut."</li>
+			<li style='width:100px;padding-top:10px;float:left;'>".$heureFin."</li>
+			<li style='width:100px;float:left;float:left;text-align:left;'>
+				<button class='edition' id='edit_dateComm_".$tabDate['ID_DATECOMMISSION']."'>Modifier</button>
+				<button class='suppression' id='supp_dateComm_".$tabDate['ID_DATECOMMISSION']."'>Supprimer cette date</button>
+				<button style='float:right;' class='dateDefaut' id='defaut_dateComm_".$tabDate['ID_DATECOMMISSION']."'>Faire devenir date principale de cette commission</button>
+			</li>
+		</ul>
+	";
+	return $affiche;
+}
+
+function afficheDivPeriodicite($countLigne,$doVal){
+	//fonction affichant la div permetant de selectionner les criteres de periodicite
+	$periodicite = array();
+	for($i = 1; $i <=4; $i++){
+		array_push($periodicite, $i);
+	}
+	if($countLigne > 1)
+		$disp = "none";
+	else
+		$disp = "block";
+	$affiche = "
+			<p id='addReapeat' style='float:left;display:".$disp."'; >
+				Souhaitez vous planifier cette commission sur une période donnée ?<input type='checkbox' name='repeat' id='repeat'/>
+			</p>
+			<br/>
+			<div id='planification' style='display:none;float:left;' class='box'>
+				Saisissez la date jusqu'à laquelle vous souhaitez planifier cette commission :<br/><br/>
+				<input type='text' class='date' name='dateFin' id='dateFin' />
+				<br/>
+				La commission a lieu toute les
+					<select name='periodicite' id='periodicite'>
+	";
+	foreach($periodicite as $num => $jour){
+			$affiche .= "<option value='".$jour."' >".$jour."</option>";
+	}
+	$affiche .= "
+					</select>&nbsp;semaines
+	";
+	
+	if($doVal == 'edit')
+		$affiche . "<button class='validPeriodicite'>Ajouter cette date</button>";
+		
+	$affiche . "
+			</div>
+	";
+	return $affiche;
+}
+
+function divAddDate(){
+	//fonction affichant la div permettant d'ajouter une ligne 'date'
+	$affiche = "
+		<div id='divAddDate'  style='display:none;'>
+			&nbsp;&nbsp;
+			<ul style='text-align:center;font-weight:bold;float:left;padding:3px 0 3px 0;'>
+				<li style='width:400px;padding-top:10px;float:left;'>
+					Selectionnez la date <input type='text' class='date' id='addDate' />
+				</li>
+				<li style='width:90px;float:left;text-align:left;'>
+					<button class='validAddDate'>Ajouter cette date</button>
+					<button class='cancelAddDate'>Annuler l'ajout de date</button>
+				</li>
+			</ul>
+		</div>
+	";
+	return $affiche;
+}

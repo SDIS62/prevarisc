@@ -1,0 +1,48 @@
+<form id="form-gdc">
+	<ul id="ul-gdc">
+		<?php foreach($this->rowset_commissions as $row_commission) : ?>
+		<li>
+			<p>
+				<input type="hidden" name="id_commission[]" value="<?php echo $row_commission["ID_COMMISSION"] ?>" />
+				<input type="text" size="50" name="nom_commission[]" value="<?php echo $row_commission["LIBELLE_COMMISSION"] ?>" />
+				<select name="idtype_commission[]">
+					<?php foreach($this->rowset_typesDesCommissions as $row_typeDesCommissions) : ?>
+					<option value="<?php echo $row_typeDesCommissions["ID_COMMISSIONTYPE"] ?>" <?php if($row_typeDesCommissions["ID_COMMISSIONTYPE"] == $row_commission["ID_COMMISSIONTYPE"]) echo "selected" ?>><?php echo $row_typeDesCommissions["LIBELLE_COMMISSIONTYPE"] ?></option>
+					<?php endforeach ?>
+				</select>
+				<a href="/commission/delete?id=<?php echo $row_commission["ID_COMMISSION"] ?>" class="delete-gdc">&times;</a>
+			</p>
+		</li>
+		<?php endforeach ?>
+	</ul>
+</form>
+<p><a href="#" onclick="$('#prototype-gdc').clone().appendTo( $('#ul-gdc') ).removeAttr('id')">+ Ajouter une commission</a></p>
+<p>Note: Les suppressions sont définitives.</p>
+<ul class="ui-helper-hidden">
+	<li id="prototype-gdc" >
+		<p>
+			<input type="hidden" name="id_commission[]" value="0" />
+			<input type="text" size="50" name="nom_commission[]" />
+			<select name="idtype_commission[]">
+				<?php foreach($this->rowset_typesDesCommissions as $row_typeDesCommissions) : ?>
+				<option value="<?php echo $row_typeDesCommissions["ID_COMMISSIONTYPE"] ?>" ><?php echo $row_typeDesCommissions["LIBELLE_COMMISSIONTYPE"] ?></option>
+				<?php endforeach ?>
+			</select>
+		</p>
+	</li>
+<ul>
+
+<script>
+	// Suppression d'une com
+	$("#dialog-gdc a.delete-gdc").click(function() {
+		var a = this;
+		$.ajax({
+			url: a.href,
+			success: function () {
+				$(a).parent().parent().remove();
+				$("#index-left ul li.active a").click();
+			}
+		});
+		return false;
+	});
+</script>

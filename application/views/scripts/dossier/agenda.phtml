@@ -1,0 +1,148 @@
+<?php
+if(!isset($_POST['do']))
+{
+?>
+	<script type='text/javascript'>
+		
+		$(document).ready(function(){
+			//appel la fonction qui charge l'agenda
+			$("#agendaMois").chargementAgendaMois();
+			//lorsque l'on clique sur un jour de l'agenda mois alors : on affiche le détail de la journée en dessous
+			$(".case_agenda").click(function(){
+				var numJour = $(this).attr('id');
+				if(numJour != 0){
+					$.ajax({
+						data: "do=afficherJour&jour="+numJour,
+						type:"POST",
+						async: false,	
+						beforeSend: function(){
+							$("#agendaJour").html("<img src='/images/template/load/load.gif' alt='chargement' title='loading'/>");
+						},
+						success: function(affichageResultat){
+							$("#agendaJour").html(affichageResultat);
+							$("#agendaJour").fadeIn();
+						},
+						error: function(){
+							return false;
+						}
+					});
+				}else{
+					return false;
+				}
+			});
+	
+		});
+	
+		//fonction qui charge automatiquement l'agenda du mois
+		(function($) {
+			$.fn.chargementAgendaMois = function() {
+				$.ajax({
+					data: "do=agendaMois",
+					type:"POST",
+					async: false,	
+					beforeSend: function(){
+						$("#agendaMois").html("<img src='/images/template/load/load.gif' alt='chargement' title='loading'/>");
+					},
+					success: function(affichageResultat){
+						$("#agendaMois").html(affichageResultat);
+						$("#agendaMois").fadeIn();
+					},
+					error: function(){
+						return false;
+					}
+				});
+			};
+		})(jQuery);
+	
+		$("#ajoutEvenement").live('click',function(){
+			var idJour = $("#idJour").val();
+			$.ajax({
+				data: "do=addEventForm",
+				type:"POST",
+				async: false,	
+				beforeSend: function(){
+					$("#divFormEvent").html("<img src='/images/template/load/load.gif' alt='chargement' title='loading'/>");
+				},
+				success: function(affichageResultat){
+					$("#ajoutEvenement").hide();
+					$("#divFormEvent").html(affichageResultat).slideDown();
+				},
+				error: function(){
+					return false;
+				}
+			});
+			return false;
+		});
+		
+		$("#mois").live('change',function(){
+			$("#choixDate").submit();
+		});
+		
+		$("#annee").live('change',function(){
+			$("#choixDate").submit();
+		});
+	</script>
+
+<?php
+		//div appelant des helper en ajax
+		echo "
+			<div id='agendaMois' class='agenda'></div>
+			<div id='agendaJour' class='agenda'></div>
+		";
+}else{
+	switch($_POST['do'])
+	{
+		case "agendaMois":
+			if(isset($_GET['mois']) && isset($_GET['annee'])){
+				echo $this->agendaMois($this->evenement, $_GET['mois'],$_GET['annee']);
+			}else{
+				echo $this->agendaMois($this->evenement);
+			}
+		break;
+		case "afficherJour":
+			$tab_mois = array("","Janvier","Fevrier","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre");
+			if(isset($_GET['mois']) && $_GET['mois'] <= 12 && $_GET['mois'] >= 1){
+				$gestionDate = new Zend_Date($_GET['annee']."-".$_GET['mois']."-".$_POST['jour'],Zend_Date::DATES);
+				//$show = $_POST['jour']." ".$_GET['mois']." ".$_GET['annee'];
+				//$show= $_POST['jour']." ".$_GET['mois']." ".$_GET['annee'];
+			}else{
+				$gestionDate = new Zend_Date(date("Y")."-".date("m")."-".$_POST['jour'],Zend_Date::DATES);
+			}
+			echo "<input type='hidden' name='idJour' id='idJour' value='".$gestionDate->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY)."' />";
+			$affichageDate = $gestionDate->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
+							
+			echo "
+				<div id='eventJour'>
+				<h5>Evenement(s) du ".$affichageDate."</h5><br/><a href='' id='ajoutEvenement'>+ Ajouter un évenement</a>
+				<div id='divFormEvent' style='display:none;' class='box' ></div>
+			";
+			
+			$donnees = $this->evenement;
+			foreach($donnees as $boucle1 => $boucle2)
+			{
+				foreach($boucle2 as $libelle => $value)
+				{
+					if($libelle == 'DATE_DEBUT')
+					{
+						$date = new Zend_Date($value, Zend_Date::DATES);
+						$jour = $date->get(Zend_Date::DAY);
+						
+						if($jour == $_POST['jour']){
+							switch($boucle2['TYPE_EVENEMENT'])
+							{
+								case "1":
+									$img = "<img src='/images/template/icons/house_go.png'>&nbsp;";
+								break;
+								case "2":
+									$img = "<img src='/images/template/icons/book.png'>&nbsp;";
+								break;
+							}								
+							echo "<div class='evenement' id='".$boucle2['ID_AGENDA']."'>".$img."(".$boucle2['LIBELLE_EVENEMENT'].") <br/>".$boucle2['COMMENTAIRE']."</div>";
+						}
+					}
+				}
+			}
+		break;
+	}		
+}
+?>

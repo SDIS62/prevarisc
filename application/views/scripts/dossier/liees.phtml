@@ -1,0 +1,487 @@
+<script type="text/javascript">
+
+	$(document).ready(function(){
+	
+		function loadDossierLies(){
+			//permet de charcher les dossier lier dynamiquement
+			$.ajax({
+				url: "/dossier/fonction",
+				data: "do=showDossiersLies&idDossier="+$("#idDossier").val(),
+				type:"POST",
+				beforeSend: function(){
+					$("#listeDossier").html("<img alt='chargement' src='/images/load.gif'>");
+				},
+				success: function(affichageResultat){
+					//alert(affichageResultat);
+					$("#listeDossier").html(affichageResultat);
+					//On affecte les images sur les bouttons
+					$(".deleteLienDossier").button({
+						icons: {
+							primary: 'ui-icon-trash'
+						},
+						text: false
+					});
+					$(".cancelDeleteLienDossier").button({
+						icons: {
+							primary: 'ui-icon-circle-close'
+						},
+						text: true
+					});
+					
+					$(".confirmDeleteLienDossier").button({
+						icons: {
+							primary: 'ui-icon-circle-check'
+						},
+						text: true
+					});					
+					return false;
+				},
+				error: function()	{
+					return false;
+				}
+				
+			});
+		};
+	
+		loadDossierLies();
+		
+		var dialogDossier = $('<div style="display:none"></div>').appendTo('body');
+		
+		dialogDossier.dialog({
+			title: "Liste des dossiers",
+			modal: true,
+			width: 700,
+			autoOpen: false,
+			buttons: {
+				"Lier ce dossier aux dossiers selectionnés": function() {
+					//alert($('#listeDossierCheckBox').serialize());
+					$.ajax({
+						url: "/dossier/fonction",
+						data: "do=liaisonDossier&idDossier="+$("#idDossier").val()+"&"+$('#listeDossierCheckBox').serialize(),
+						type:"POST",
+						beforeSend: function(){
+							$("#listeDossier").html("<img alt='chargement' src='/images/load.gif'>");
+						},
+						success: function(affichageResultat){
+							//alert(affichageResultat);
+							loadDossierLies();
+							return false;
+						},
+						error: function()	{
+							return false;
+						}
+						
+					});
+					dialogDossier.dialog("close");
+				},
+				"annuler": function() {
+					dialogDossier.dialog("close");
+				}
+			},
+			close: function(event, ui){
+				
+			}
+		});	
+		
+		$("#add").button({
+			icons: {
+				primary: 'ui-icon-circle-plus'
+			},
+			text: true
+		});
+		
+	
+		$("#cancelAdd").button({
+			icons: {
+				primary: 'ui-icon-circle-close'
+			},
+			text: false
+		});
+			
+		$(".deleteChoix").button({
+			icons: {
+				primary: 'ui-icon-trash'
+			},
+			text: false
+		});
+		
+		$(".cancelDelete").button({
+			icons: {
+				primary: 'ui-icon-circle-close'
+			},
+			text: true
+		});
+		
+		$(".confirmDelete").button({
+			icons: {
+				primary: 'ui-icon-circle-check'
+			},
+			text: true
+		});
+		
+		$(".LinkToDossier").button({
+			icons: {
+				primary: 'ui-icon-circle-plus'
+			},
+			text: true
+		}).click(function(){
+			var numEtab = $("[name=idEtablissement]").length;
+			var idListeEtab = "";
+			
+			$("[name=idEtablissement]").each(function(){
+				idListeEtab += $(this).val();
+				numEtab--;
+				if(numEtab != 0)
+					idListeEtab += "-";
+			});
+			//alert(idListeEtab);
+			
+			$.ajax({
+				type: "POST",
+				url: "/dossier/fonction",
+				//data: "do=showListeDossierEtab&numDoc="+$("#NUM_DOCURBA").val()+"&idDossier="+$("#idDossier").val(),
+				data: "do=showListeDossierEtab&idDossier="+$("#idDossier").val()+"&idListeEtab="+idListeEtab,
+				success: function(msg){
+					dialogDossier.html(msg);
+					dialogDossier.dialog("open");
+				}
+			});
+
+		});
+		
+		$("#saisieEtab").toggleText("Saisissez le libelle de l'etablissement");
+		$("#saisieDossier").toggleText("Saisissez le libelle du dossier");
+		
+		function loadInfosEtabs(){
+			//recharge la page pour afficher les établissements correctement
+			window.location.reload();
+		}
+		
+		$("#add").live('click',function(){
+			//on récup le type (dossier ou etablissement)
+			var typeAdd = $('[name=linkType]').val();
+			if(typeAdd == 'etablissement'){
+				//alert("idDossier="+$("#idDossier").val()+"&idSelect="+$("#idSelect").val()+"&libelleSelect="+$("#saisieEtab").val());
+				
+				$.ajax({
+					url: "/dossier/addetablissement",
+					data: "idDossier="+$("#idDossier").val()+"&idSelect="+$("#idSelect").val()+"&libelleSelect="+$("#saisieEtab").val(),
+					type:"POST",
+					beforeSend: function(){
+						//$("#sortable").html("<img src='/images/template/load/load.gif' />");
+					},
+					success: function(affichageResultat){
+						$("#listeEtab").prepend(affichageResultat);
+						$("#listeEtab").affichageBoutton();
+						loadInfosEtabs();
+						return false;
+					},
+					error: function()	{
+						return false;
+					}
+				});
+			}else if(typeAdd == 'dossier'){
+			
+			}
+			$(".form").reinitialiseForm();
+		});
+		
+		(function($) {
+		//permet de réinitialiser tous les champs. Suivant le type c'est soit les association soit les type
+			$.fn.affichageBoutton = function() {
+				$(".deleteChoix").button({
+					icons: {
+						primary: 'ui-icon-trash'
+					},
+					text: false
+				});
+				
+				$(".cancelDelete").button({
+					icons: {
+						primary: 'ui-icon-circle-close'
+					},
+					text: true
+				});
+				
+				$(".confirmDelete").button({
+					icons: {
+						primary: 'ui-icon-circle-check'
+					},
+					text: true
+				});
+			};
+			
+			$.fn.reinitialiseForm = function(){
+				//alert('');
+				$("#saisieEtab").val('').blur();
+				$("#saisieDossier").val('').blur();
+				$("#saisieEtab").removeAttr('disabled');
+				$("#saisieDossier").removeAttr('disabled');
+				$("#idSelect").val('');
+				$("#add").hide();
+				$("#cancelAdd").hide();
+			};
+		
+			
+		})(jQuery);
+		
+		$("#cancelAdd").live('click',function(){
+			$(".form").reinitialiseForm();
+		});
+		
+		$(".deleteChoix").live('click',function(){
+			//Lorsque l'on clique sur le boutton pour supprimer le lien avec un établissement
+			$(this).parent().hide();
+			$(this).parent().next().show();
+		});
+		
+		$(".deleteLienDossier").live('click',function(){
+			//Lorsque l'on clique sur le boutton pour supprimer le lien avec le dossier
+			$(this).parent().hide();
+			$(this).parent().next().show();
+		});
+		
+		$(".cancelDelete").live('click',function(){
+			$(this).parent().hide();
+			$(this).parent().prev().show();
+		});
+		
+		$(".cancelDeleteLienDossier").live('click',function(){
+			$(this).parent().hide();
+			$(this).parent().prev().show();
+		});
+		
+		
+		$(".confirmDelete").live('click',function(){
+			var idEtabDossier = $(this).parent().parent().children("[name=idEtablissementDossier]").val();
+			var divDelete = $(this);
+			$.ajax({
+				url: "/dossier/deleteetablissement",
+				data: "idEtabDossier="+idEtabDossier,
+				type:"POST",
+				beforeSend: function(){
+					//$("#sortable").html("<img src='/images/template/load/load.gif' />");
+				},
+				success: function(affichageResultat){
+					$(divDelete).parent().parent().remove();
+					loadInfosEtabs();
+					return false;
+				},
+				error: function()	{
+					return false;
+				}
+			});
+		});
+		
+		$(".confirmDeleteLienDossier").live('click',function(){
+			//Suppression dans la base du lien avec le dossier
+			//alert('fuuuuuu on supp');
+			
+			var idLienDossier = $(this).parent().parent().children("[name=idDossierLie]").val();
+			var divDelete = $(this);
+			//alert(idLienDossier);
+
+			$.ajax({
+				url: "/dossier/deleteliendossier",
+				data: "idLienDossier="+idLienDossier,
+				type:"POST",
+				beforeSend: function(){
+					//$("#sortable").html("<img src='/images/template/load/load.gif' />");
+				},
+				success: function(affichageResultat){
+					$(divDelete).parent().parent().remove();
+					loadDossierLies();
+					return false;
+				},
+				error: function()	{
+					return false;
+				}
+			});
+
+		});
+		
+		$("[name=linkType]").live('click',function(){
+			var choix = $(this).val();
+			if($(this).val() == 'etablissement'){
+				$("#saisieEtab").show();
+				$("#saisieDossier").hide();
+			}else{
+				$("#saisieEtab").hide();
+				$("#saisieDossier").show();
+			}			
+		});
+		
+	});
+	
+	$(function(){
+		$("#saisieEtab").autocomplete("/dossier/selectionetab?format=json",{
+			minChars: 2,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["resultats"], function(row) {
+					return {
+						data: row,
+						value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
+						result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+					}
+				});
+			},
+			formatItem: function(item) {
+				return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+			}
+		}).result(function(e, item) {
+			//$("#texteId").val(item.ID_TEXTE);
+			$("#idSelect").val(item.ID_ETABLISSEMENT);
+			$(this).attr('disabled','disabled');
+			$(".add").show();
+			$(".cancelAdd").show();
+		});
+	
+		/*
+		function format(info){
+			return info.infos;
+		}
+
+		function affiche(info){
+			return info.id;
+		}
+		
+		$("#saisieEtab").autocomplete('/dossier/selectionetab',
+		{
+			dataType: "json",
+			width: 400,
+			minChars: 1,
+			parse: function(data) {
+				return $.map(data, function(row) {
+					return {
+						data: row,
+						value: row.infos,
+						result: row.infos
+					}
+				});
+			},
+			formatItem: function(item) {
+				return format(item);
+			}
+		}).result(function(e, item) {
+			$("#idSelect").val(affiche(item));
+			$(this).attr('disabled','disabled');
+			$(".add").show();
+			$(".cancelAdd").show();
+		});
+		
+		$("#saisieDossier").autocomplete('/dossier/selectiondossier',
+		{
+			dataType: "json",
+			width: 400,
+			minChars: 1,
+			parse: function(data) {
+				return $.map(data, function(row) {
+					return {
+						data: row,
+						value: row.infos,
+						result: row.infos
+					}
+				});
+			},
+			formatItem: function(item) {
+				return format(item);
+			}
+		}).result(function(e, item) {
+			$("#idSelect").val(affiche(item));
+			$(this).attr('disabled','disabled');
+			$(".add").show();
+			$(".cancel").show();
+		});
+		*/
+	});
+</script>
+
+<?php
+/*
+
+TRUNCATE TABLE  `etablissementdossier`;
+
+*/
+
+echo "
+	<div>
+		<h2>Liste des établissements liés au dossier</h2>
+			<div id='listeEtab'>
+			";
+				foreach($this->listeEtablissement as $etab){
+					echo "
+						<div class='grid_14 alpha'>
+							<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; (".$etab['LIBELLE_GENRE'].")</a>
+							<input type='hidden' name='idEtablissementDossier' value='".$etab['ID_ETABLISSEMENTDOSSIER']."' />
+							<input type='hidden' name='idEtablissement' value='".$etab['ID_ETABLISSEMENT']."' />
+							&nbsp;&nbsp;
+							<span>
+								<button class='deleteChoix' >Supprimer l'etablissement</button>
+							</span>
+							<span style='display:none;' >
+								<button class='confirmDelete' >Supprimer l'etablissement</button>
+								<button class='cancelDelete' >Annuler</button>
+							</span>
+						</div>
+						<!--
+						<hr class='clear'/>
+						-->
+					";
+				}
+				
+			echo "
+				<hr class='clear'/>
+				<input type='radio' name='linkType' value='etablissement'>Etablissement&nbsp;&nbsp;
+				<input type='text' id='saisieEtab' value='' style='width:250px;display:none;' />
+				
+				<button class='add' id='add' style='display:none;' >Lier l'établissement au dossier</button>
+				<button class='cancelAdd' id='cancelAdd' style='display:none;' >Choisir un autre établissement</button>
+				<input type='hidden' name='idSelect' id='idSelect' value=''  />
+			</div>
+
+			<br/><br/><br/><br/>
+		
+			<h2>Liste des dossiers liés au dossier</h2>
+			<div id='listeDossier'>
+
+			";
+			
+			/*
+			foreach($this->listeDossier as $etab){
+				echo "
+					<div class='grid_14 alpha'>
+						<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; ( ".$etab['LIBELLE_GENRE']." )</a>
+					<input type='hidden' name='idEtablissementDossier' value='".$etab['ID_ETABLISSEMENTDOSSIER']."' />
+					&nbsp;&nbsp;
+					<span>
+						<button class='deleteChoix' >Supprimer l'etablissement</button>
+					</span>
+					<span style='display:none;' >
+						<button class='confirmDelete' >Supprimer l'etablissement</button>
+						<button class='cancelDelete' >Annuler</button>
+					</span>
+					</div>
+					<hr class='clear'/>
+				";
+			}
+			*/
+			echo "	
+				</div>
+			<br/>
+			<div class='grid_14 alpha form'>
+
+				<button class='LinkToDossier' >Lier à un dossier</button>
+
+				
+				<!--
+				<input type='radio' name='linkType' value='dossier'>Dossier<br/><br/>
+				<input type='text' id='saisieDossier' value='' style='width:250px;display:none;' />
+				-->
+				
+			</div>
+			<hr class='clear'/>
+		</div>
+	</div>
+";
+?>

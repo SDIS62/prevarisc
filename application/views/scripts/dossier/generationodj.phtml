@@ -1,0 +1,218 @@
+<?php
+
+/*
+//Zend_Debug::dump($this->membresFiles->toArray());
+if(count($this->membresFiles) == 0){
+	echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun membre n'a été renseigné pour la commission</span><br/><br/><br/>";
+	return false;
+}
+foreach($this->membresFiles as $val => $membre){
+	//On boucle sur les membres
+	if($membre->ID_GROUPEMENT == NULL && $membre->ID_UTILISATEURINFORMATIONS == NULL){
+		//génération du document par commune pour les maires par exemple		
+		//si le document concernant ce membre existe alors on rentre dans la boucle
+
+			//$odf = new odf("./data/uploads/courriers/ordreDuJour.odt");
+			//Generation du segment membres
+			$membreLoop = $odf->setSegment('membresComm');
+			
+			foreach($this->listeCommunes as $val => $commune){
+				//Zend_Debug::dump($commune);
+				//LIBELLE COMMUNE = 0
+				//Array des infos de la commune = 1
+				$firstLetter = $commune[0]{0}; 
+				if(in_array($firstLetter, $consonne)){
+					$communeShow = "d'".$commune[0];
+				}else{
+					$communeShow = "de ".$commune[0];
+				}
+				
+				//Zend_Debug::dump($commune[1]);
+				if(count($commune[1]) == 1){
+					foreach($commune[1] as $comm => $info){	
+						addChamp($membreLoop,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
+						addChamp($membreLoop,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
+						addChamp($membreLoop,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
+						addChamp($membreLoop,'communeMairie',$info["VILLEADRESSE_UTILISATEURINFORMATIONS"]);
+					}
+				}else{
+					addChamp($membreLoop,'numMairie','');
+					addChamp($membreLoop,'rueMairie','');
+					addChamp($membreLoop,'cpMairie','');
+					addChamp($membreLoop,'communeMairie','');
+					echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le contact de la commune ".$commune[0]." n'a pas été renseigné</span><br/><br/><br/>";
+				}
+
+				//addChamp($villeODF,'communeEtab',$communeShow);
+				addChamp($membreLoop,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
+				
+				$dateDuJour = new Zend_Date();
+				addChamp($membreLoop,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+				
+				$dateComm = new Zend_Date($this->dateComm);				
+				addChamp($membreLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+				
+				addChamp($membreLoop,'heureDebutComm',$this->heureDeb);
+
+				//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
+				//Generation du segment pour l'affichage des différentes infos du dossier	
+				//Zend_Debug::dump($this->dossierComm);
+				foreach($this->dossierComm as $val => $dossierInfos){
+					//echo $dossierInfos["LIBELLE_COMMUNE"]." ".$commune[0]."<br/>";
+					
+					//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
+					$membreLoop->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
+					$membreLoop->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
+					$membreLoop->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
+					$membreLoop->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
+					$membreLoop->infosDoss->heureDebDossier(utf8_decode($dossierInfos["HEURE_DEB_AFFECT"]));
+					$membreLoop->infosDoss->heureFinDossier(utf8_decode($dossierInfos["HEURE_FIN_AFFECT"]));
+					$membreLoop->infosDoss->communeConcerne(utf8_decode($dossierInfos["LIBELLE_COMMUNE"]));
+					$membreLoop->infosDoss->merge(); 
+
+				}
+				$membreLoop->merge();
+
+			}
+			$odf->mergeSegment($membreLoop);
+
+			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré </span><br/><br/><br/>";
+		
+	}else if($membre->ID_GROUPEMENT != NULL){
+		//génération du document par groupement de commune pour les gendarmerie/police par exemple
+		//echo "membre de groupement ".$membre->LIBELLE_COMMISSIONMEMBRE."<br/>";
+		
+			//si le membre du groupement en question posède un document le concernant on génére la convocation
+
+			$model_groupement = new Model_DbTable_Groupement();
+			$infosGroupement = $model_groupement->get($membre->ID_GROUPEMENT);
+			//Zend_Debug::dump($infosGroupement->toArray());
+
+
+			//$ville_du_groupement = $membre->ID_GROUPEMENT->findModel_DbTable_AdresseCommuneViaModel_DbTable_GroupementCommune()->toArray();
+
+			//Zend_Debug::dump($listeVillesGroupement);
+
+			//Zend_Debug::dump($infosGroupement);
+
+			//On commence par selectionner le document approprié
+			//$odf = new odf("./data/uploads/courriers/ordreDuJour.odt");
+
+			//Generation du segment grpLoop
+
+			$grpLoop = $odf->setSegment('grpLoop');
+
+			//Liste des champs à ajouter
+			//echo $this->commissionInfos[0]['LIBELLE_COMMISSION']."<br/>";
+
+			addChamp($grpLoop,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
+			
+			$dateDuJour = new Zend_Date();
+			addChamp($grpLoop,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+			//echo "groupement info : ".$infosGroupement["RUEADRESSE_UTILISATEURINFORMATIONS"];
+			addChamp($grpLoop,'communeGrp',$infosGroupement["VILLEADRESSE_UTILISATEURINFORMATIONS"]);
+			addChamp($grpLoop,'numGrp',$infosGroupement["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
+			addChamp($grpLoop,'rueGrp',$infosGroupement["RUEADRESSE_UTILISATEURINFORMATIONS"]);
+			addChamp($grpLoop,'cpGrp',$infosGroupement["CPADRESSE_UTILISATEURINFORMATIONS"]);
+
+			$dateComm = new Zend_Date($this->dateComm);
+
+			//echo $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." - ".$this->heureDeb." <br/><br/><br/>";
+			addChamp($grpLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+			addChamp($grpLoop,'heureDebutComm',$this->heureDeb);
+
+			//On commence par parcourir les dossier pour récuperer la ville concernée
+
+			//Zend_Debug::dump($this->dossierComm);
+			
+			//chercher les communes du groupement. Si nécessaire voir pour filtrer selon les communes pour l'ordre du jour
+
+			//Zend_Debug::dump(
+			foreach($this->dossierComm as $val => $dossierInfos){
+				//On parcour la liste des ville du groupement concerné pour comparer avec la ville du dossier
+
+				//echo "Dossier de la ville de ".$val['LIBELLE_COMMUNE']." concerné<br/>";
+				//ici on peux traiter les dossiers !
+				//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
+				
+				$grpLoop->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
+				$grpLoop->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
+				$grpLoop->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
+				$grpLoop->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
+				$grpLoop->infosDoss->heureDebDossier(utf8_decode($dossierInfos["HEURE_DEB_AFFECT"]));
+				$grpLoop->infosDoss->heureFinDossier(utf8_decode($dossierInfos["HEURE_FIN_AFFECT"]));
+				$grpLoop->infosDoss->communeConcerne(utf8_decode($dossierInfos["LIBELLE_COMMUNE"]));
+				$grpLoop->infosDoss->merge(); 
+
+			}
+			
+			$grpLoop->merge();
+			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré </span><br/><br/><br/>";
+	}
+}
+
+$odf->mergeSegment($grpLoop);
+*/
+require_once("odtphp/odf.php");
+
+$consonne = array("a", "e", "i", "o", "u", "y", "A", "E", "I", "O", "U", "Y");
+
+$odf = new odf("./data/uploads/courriers/ordreDuJour.odt");
+
+addChamp($odf,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
+$dateDuJour = new Zend_Date();
+addChamp($odf,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+$dateComm = new Zend_Date($this->dateComm);				
+addChamp($odf,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+addChamp($odf,'heureDebutComm',$this->heureDeb);
+$dossierLoop = $odf->setSegment('infosDoss');
+
+foreach($this->dossierComm as $val => $dossierInfos){
+
+	$dossierLoop->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
+	$dossierLoop->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
+	$dossierLoop->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
+	$dossierLoop->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
+	$dossierLoop->heureDebDossier(utf8_decode($dossierInfos["HEURE_DEB_AFFECT"]));
+	$dossierLoop->heureFinDossier(utf8_decode($dossierInfos["HEURE_FIN_AFFECT"]));
+	$dossierLoop->communeConcerne(utf8_decode($dossierInfos["LIBELLE_COMMUNE"]));
+	$dossierLoop->merge(); 
+
+}
+$odf->mergeSegment($dossierLoop);
+
+$idPj = savePj($this->idComm);
+$odf->saveToDisk("./data/uploads/pieces-jointes/".$idPj.".odt");
+
+function addChamp($odfName, $nomOdf, $variable){
+	try{
+		$odfName->setVars($nomOdf,$variable,true,'UTF8');
+		//$segment->$nomOdf(utf8_decode($variable));
+	}catch (OdfException $e) {
+
+	}
+}
+
+function savePj($dateCommId){
+	//ENREGISTEMENT DANS PIECE JOINTES
+	//echo "on enregistre ici";
+	$dateDuJour = new Zend_Date();
+	$DBpieceJointe = new Model_DbTable_PieceJointe;
+	$nouvellePJ = $DBpieceJointe->createRow();
+	$nouvellePJ->NOM_PIECEJOINTE = "Ordre du jour";
+	$nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
+	$nouvellePJ->DESCRIPTION_PIECEJOINTE = "Ordre du jour générée le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR." à ".Zend_Date::HOUR.":".Zend_Date::MINUTE);
+	$nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY." ".Zend_Date::HOUR.":".Zend_Date::MINUTE.":".Zend_Date::SECOND);
+	$nouvellePJ->save();
+	
+	//ENREGISTREMENT DE LA PIECE JOINTE DANS DATECOMMISSIONPJ
+
+	$DBsave = new Model_DbTable_DateCommissionPj;
+	$linkPj = $DBsave->createRow();
+	$linkPj->ID_DATECOMMISSION = $dateCommId;
+	$linkPj->ID_PIECEJOINTE = $nouvellePJ->ID_PIECEJOINTE;
+	$linkPj->save();
+
+	return $nouvellePJ->ID_PIECEJOINTE;
+}
+?>

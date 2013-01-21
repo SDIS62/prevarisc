@@ -1,0 +1,26 @@
+<td style='width: 50%; text-align: center;' >
+		
+	<p style='line-height: 37px; padding-top: 16px;' >
+	
+		<?php if($this->name_courrier != null) : ?>
+			<span><img src='/images/file.gif' alt='' /></span>
+			<span style='vertical-align: top;'>
+				<strong style='font-size: 1.3em;' >
+					<a href='/data/uploads/courriers/<?php echo $this->id_membre . $this->type . "_". $this->name_courrier ?>' style='color: #0174A7' ><?php echo $this->name_courrier ?></a>
+				</strong>
+				(<a class='delete-courrier' href='/commission/delete-courrier?type=<?php echo $this->type ?>&id_membre=<?php echo $this->id_membre ?>' >supprimer</a>)
+			</span>
+		<?php else : ?>
+			<strong>Aucun document défini.</strong>
+		<?php endif ?>
+	</p>
+
+	<p>	
+		<form class='courrier' action='/commission/add-courrier' enctype='multipart/form-data' method='post' target='iframe' >
+			<input id='add-file' type='file' name='COURRIER' />
+			<input type='hidden' name='type' value='<?php echo $this->type ?>' />
+			<input type='hidden' name='id_membre' value='<?php echo $this->id_membre ?>' />
+		</form>
+	</p>
+	
+</td>

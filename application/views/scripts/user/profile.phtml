@@ -1,0 +1,124 @@
+<!-- Coté gauche -->
+<div id='user-profile-left' class="grid_3" >
+	
+	<!-- Avatar -->
+	<p id="avatar_img"><?php $this->avatar($this->user["ID_UTILISATEUR"], "large") ?></p>
+	
+	<!-- informations utilisateur -->
+	<?php if( !empty($this->user_info->TELFIXE_UTILISATEURINFORMATIONS) && !empty($this->user_info->TELPORTABLE_UTILISATEURINFORMATIONS) && !empty($this->user_info->TELFAX_UTILISATEURINFORMATIONS) ) : ?>
+	<h4>Coordonnées téléphoniques</h4>
+	<p>
+		<?php if($this->user_info->TELFIXE_UTILISATEURINFORMATIONS) : ?> <i class='sprite sprite-telephone' ></i> <?php echo $this->user_info->TELFIXE_UTILISATEURINFORMATIONS; ?> <br/> <?php endif ?>
+		<?php if($this->user_info->TELPORTABLE_UTILISATEURINFORMATIONS) : ?> <i class='sprite sprite-phone' ></i> <?php echo $this->user_info->TELPORTABLE_UTILISATEURINFORMATIONS; ?> <br/> <?php endif ?>
+		<?php if($this->user_info->TELFAX_UTILISATEURINFORMATIONS) : ?> <i class='sprite sprite-printer_empty' ></i> <?php echo $this->user_info->TELFAX_UTILISATEURINFORMATIONS; ?> <br/> <?php endif ?>
+	</p>
+	<?php endif ?>
+	
+	<!-- Groupe -->
+	<h4>Groupe</h4>
+	<p>
+		<i class='sprite sprite-group' /></i> <a href='#' ><?php echo $this->groupe["LIBELLE_GROUPE"] ?></a>
+		
+		<h5>Autres utilisateurs du groupe</h5>
+		<?php echo $this->partialLoop('user/user.phtml', $this->users ); ?>
+	</p>
+
+	
+	<!-- Autre -->
+	<!--
+	<h4>Autres informations</h4>
+	<p>
+		<i class='sprite sprite-vcard' /></i> <a href='/group/' >Récupérer la VCARD</a>
+	</p>
+	-->
+	
+	<!-- Date des préventionnistes -->
+	<h4>Dates</h4>
+	<p>
+		Date PRV2: <?php if($this->user_info["DATE_PRV2"] != "0000-00-00 00:00:00") { $date = new Zend_Date($this->user_info["DATE_PRV2"], Zend_Date::DATES); echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;"; }	else echo "Aucune date entrée."	?><br/>
+		Date Recyclage: <?php if($this->user_info["DATE_RECYCLAGE"] != "0000-00-00 00:00:00") { $date = new Zend_Date($this->user_info["DATE_RECYCLAGE"], Zend_Date::DATES); echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;"; }	else echo "Aucune date entrée."	?><br/>
+		Date SID: <?php if($this->user_info["DATE_SID"] != "0000-00-00 00:00:00") { $date = new Zend_Date($this->user_info["DATE_SID"], Zend_Date::DATES); echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;"; }	else echo "Aucune date entrée."	?>
+	</p>
+	
+</div>
+
+<!-- Contenu de l'utilisateur -->
+<div class="grid_13" >
+
+	<!-- En-tête-->
+	<!-- Boutons-->
+	<div float='right' >
+		<? if(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR != $this->user["ID_UTILISATEUR"]) : ?>
+		<?php if($this->user_info["MAIL_UTILISATEURINFORMATIONS"]) : ?><button id='mail-user' >Envoyer un message</button><?php endif ?>
+		<? endif ?>
+		
+		<? if($this->edit_bool) : ?>
+		<button id='edit-user' >Modifier</button>
+		<? endif ?>
+	</div>
+
+	<!-- Nom et prénom -->
+	<h2>
+		<?php if(file_exists(session_save_path() . "/sess_" . $this->user["SESSIONID_UTILISATEUR"])) : ?>
+		<i class='sprite sprite-status_online' ></i>
+		<?php else : ?>
+		<i class='sprite sprite-status_offline' ></i>
+		<?php endif ?>
+		
+		<?php if( count( $this->user_grade ) != 0 ) echo $this->DB_grades[$this->user_grade[0]["ID_GRADE"]-1]["LIBELLE_GRADE"] ?> <?php echo $this->user_info["NOM_UTILISATEURINFORMATIONS"] . " " . $this->user_info["PRENOM_UTILISATEURINFORMATIONS"] ?>
+	</h2>
+
+	<!-- établissements surveillés -->
+	<h4>Etablissements surveillés</h4>
+	<div style=''>
+	<?php
+	echo $this->partial('search/search.phtml', array('item' => 'etablissement', 'resultats' => $this->etablissements)); 
+	?>
+	</div>
+	
+	<hr class='clear' />
+		
+	<!-- Commission / groupement / communes -->
+	<!--
+	<div class='user-profile-box' >
+		<p>Groupement de communes</p>
+	</div>
+	
+	<div class='user-profile-box' >
+		<p>Communes</p>
+	</div>
+	
+	<div class='user-profile-box ' >
+		<p>Commission</p>
+	</div>
+	-->
+</div>
+
+<hr class='clear' />
+
+<script type="text/javascript">
+	
+	/*
+	$(window).bind("resize", function() {
+		// var width = $(".container_16").innerWidth() - $("#user-profile-left").outerWidth(true) - ( $("#user-profile-right").outerWidth(true) - $("#user-profile-right").outerWidth(false) );
+		var width =  $(".container_16").width() - $("#user-profile-left").outerWidth(true) - ( $("#user-profile-right").outerWidth(true) - $("#user-profile-right").outerWidth(false) ) - 15;
+		$("#user-profile-right").css("width", Math.floor(width) );
+	}).resize();
+	*/
+	$("#edit-user").button({
+		icons: { primary: "ui-icon-pencil" }
+	}).click(function() {
+		//window.location = "/user/edit/uid/<?php echo $this->user["ID_UTILISATEUR"] ?>?ref=<?php echo $this->user["ID_UTILISATEUR"] ?>";
+	});
+	
+	$("#edit-user").fancybox({
+		'href': '/user/edit/uid/<?php echo $this->user["ID_UTILISATEUR"] ?>?ref=<?php echo $this->user["ID_UTILISATEUR"] ?>&ajax=1',
+	});
+	
+	$("#mail-user").button({
+		icons: { primary: "ui-icon-mail-open" }
+	}).click(function() {
+		window.location = "mailto:<?php echo $this->user_info["MAIL_UTILISATEURINFORMATIONS"] ?>";
+	});
+
+</script>

@@ -1,0 +1,221 @@
+<?php
+require_once("odtphp/odf.php");
+
+/*
+	echo $this->infosDossier['TYPE_DOSSIER'];
+	echo $this->infosDossier['TYPE_DOSSIER']." et ".$this->dossierType;
+
+	if($this->infosDossier['TYPE_DOSSIER'] == '1'){
+		//etude
+		$odf = new odf("./data/uploads/documents/modele_rapport_etude.odt");
+	}else{
+		//visite
+		$odf = new odf("./data/uploads/documents/modele_rapport_visite.odt");
+	}
+*/
+
+$odf = new odf(".".$this->fichierSelect);
+
+try {
+	$odf->setVars('libelle_commission',$this->commissionInfos['LIBELLE_COMMISSION'],true,'UTF8');
+} catch (OdfException $e) {
+
+}
+try {
+	$odf->setVars('date_commEntete',$this->dateCommEntete,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try {
+	$odf->setVars('numWinPrev',$this->numWinPrev,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+
+/* PARTIE DOC CONSULTE */
+	try{
+		//Generation du segment ListePrescription
+		$docConsulte = $odf->setSegment('listeDocs');
+		foreach($this->listeDocs as $document){
+			$exist = false;	
+			foreach($this->dossierDocConsutle as $docExistant){
+				if($docExistant['ID_DOC'] == $document['ID_DOC']){
+					$exist = true;
+					$ref = $docExistant['REF_CONSULTE'];
+					$date = $docExistant['DATE_CONSULTE'];
+				}
+			}
+			$docConsulte->libelledoc(utf8_decode($document['LIBELLE_DOC']));
+			if($exist){
+				$docConsulte->exist('X');
+				$docConsulte->refdoc(utf8_decode($ref));
+				$docConsulte->datedoc(utf8_decode($date));
+			}else{
+				$docConsulte->exist('', true, "ISO-8859-15");
+				$docConsulte->refdoc('', true, "ISO-8859-15");
+				$docConsulte->datedoc('', true, "ISO-8859-15");
+			}
+			$docConsulte->merge();
+		}
+		$odf->mergeSegment($docConsulte);
+	} catch (OdfException $e) {
+
+	}
+	
+	try{
+		//Liste des doncuments conusltés ajoutés s'il y en à
+		$listeDocAjout = $this->listeDocsAjout;
+		$docAjout = $odf->setSegment('listeDocsAjout');
+		foreach($this->listeDocsAjout as $documentAjout){
+			$docAjout->exist('X');
+			$docAjout->libelledoc(utf8_decode($documentAjout['LIBELLE_DOCAJOUT']));
+			$docAjout->refdoc(utf8_decode($documentAjout['REF_DOCAJOUT']));
+			$docAjout->datedoc(utf8_decode($documentAjout['DATE_DOCAJOUT']));
+			$docAjout->merge();
+		}
+		$odf->mergeSegment($docAjout);
+	} catch (OdfException $e) {
+
+	}
+	
+/* PARTIE PRESCRIPTION */
+	try{
+	//Generation du segment ListePrescription
+		$prescription = $odf->setSegment('listePrescription');
+		for($i = 0; $i < $this->nbPrescription; $i++){
+			$texte = '';
+			for($t = 0; $t < count($this->listeTextes[$i]); $t++){
+				if($this->listeTextes[$i][$t] != NULL){
+					$texte .= $this->listeTextes[$i][$t]."\n";
+					//$prescription->texte(utf8_decode($this->listeTextes[$i][$t]."\n"));
+				}else if($this->listeTextes[$i][$t] == NULL && $this->listeArticles[$i][$t] != NULL){
+					$texte .=  "\n";
+					//$prescription->texte(utf8_decode("\n"));
+				}
+			}
+			$prescription->texte(utf8_decode($texte));
+			$article = '';
+			for($a = 0; $a < count($this->listeArticles[$i]); $a++){
+				
+				if($this->listeArticles[$i][$a] != NULL){
+					$article .= $this->listeArticles[$i][$a]."\n"; 
+					//$prescription->article(utf8_decode($this->listeArticles[$i][$a]."\n"));
+				}else if($this->listeArticles[$i][$a] == NULL && $this->listeTextes[$i][$a] != NULL){
+					$article .= "\n"; 
+					//$prescription->article(utf8_decode("\n"));
+				}
+			}
+			$prescription->article(utf8_decode($article));
+			
+			$prescription->num(utf8_decode($this->listePrescription[$i]['NUM_PRESCRIPTIONDOSSIER']));
+			$prescription->libelle(utf8_decode($this->ListePrescriptionsLibelle[$i]));
+			$prescription->merge();
+		}
+		$odf->mergeSegment($prescription);	
+	} catch (OdfException $e) {
+
+	}
+	
+//GESTION DATES
+	try{
+		$odf->setVars('dateDepotMairie',$this->DATEMAIRIE,true,'UTF8');
+	} catch (OdfException $e) {
+
+	}
+	
+	try{
+		$odf->setVars('dateDepotSec',$this->DATESECRETARIAT,true,'UTF8');
+	} catch (OdfException $e) {
+
+	}
+	
+	try{
+		$odf->setVars('dateSDIS',$this->DATESDIS,true,'UTF8');
+	} catch (OdfException $e) {
+
+	}
+	
+//INFORMATIONS CONCERNANT L'ETABLISSEMENT
+try{
+	$odf->setVars('etablissementLibelle',$this->etablissementLibelle,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('typeLettreP',$this->typeLettreP,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('activiteP',$this->libelleActiviteP,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('typeLettreS',$this->typeSecondaire,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('activiteS',$this->activiteSecondaire,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('communeEtab',$this->communeEtab,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('etablissementAdresse',$this->etablissementAdresse,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('numDocUrba',$this->listeDocUrba,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('categorieEtab',$this->categorieEtab,true,'UTF8');	
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('numPublic',$this->numPublic,true,'UTF8');	
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('numPersonnel',$this->numPersonnel,true,'UTF8');		
+} catch (OdfException $e) {
+
+}
+
+try{	
+	$odf->setVars('avisDossier',$this->avisDossier,true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+//echo $this->idPieceJointe;
+try{
+	$odf->saveToDisk("./data/uploads/pieces-jointes/" . $this->idPieceJointe . ".odt");
+} catch (OdfException $e) {
+
+}
+
+$content_dir = './data/uploads/pieces-jointes/'.$this->idRapportPj.'/';
+?>

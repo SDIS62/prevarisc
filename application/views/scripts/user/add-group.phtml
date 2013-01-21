@@ -1,0 +1,27 @@
+<!-- Formulaire d'ajout d'un groupe -->
+<form id='formulaire_groupe' action='post' >
+
+	<!-- Formulaire -->
+	<h3>Description du groupe</h3>
+	<dl>
+	
+		<!-- Libellé du groupe -->
+		<dt>Libellé</dt>
+		<dd>
+			<input type='text' value='<?php if(isset($this->groupe["LIBELLE_GROUPE"])) echo $this->groupe["LIBELLE_GROUPE"] ?>' name='LIBELLE_GROUPE' />
+		</dd>
+		
+		<dt>Description</dt>
+		<dd>
+			<textarea name="DESC_GROUPE" ><?php if(isset($this->groupe["DESC_GROUPE"])) echo $this->groupe["DESC_GROUPE"] ?></textarea>
+		</dd>
+	
+	</dl>
+	
+	<?php if( isset($this->groupe) ) : ?>
+	<p>Voulez-vous <a href='/user/delete-group?gid=<?php echo $this->groupe["ID_GROUPE"] ?>'>supprimer le groupe</a> ? (Attention cette action est irréversible)</p>
+	<?php endif ?>
+	
+	<input type='hidden' name='gid' value='<?php if(isset($this->groupe["ID_GROUPE"])) echo $this->groupe["ID_GROUPE"] ?>' />
+
+</form>

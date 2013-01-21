@@ -1,0 +1,192 @@
+<!-- Titre -->
+<h2>
+	<i class='sprite sprite-newspaper' ></i>
+	Fil d'actualité
+</h2>
+
+<? if($this->droits->DROITFILACTU_GROUPE == 1) : ?>
+<!-- Formulaire d'ajout de messages -->
+<form id='ajouter_news' class='box' action='' >
+	<textarea id='textarea' class='bigger' name='text' cols='' rows=''></textarea>
+	<button id='submit' class="save" >Envoyer le message</button>
+	<button id='conf' >Confidentialité</button>
+	<select name="type" class="bigger" style="float: right">
+		<option>Message personnel</option>
+		<option>Autre</option>
+	</select>
+</form>
+
+<br />
+<? endif ?>
+
+<!-- Liste des messages-->
+<ul id='index-newsfeed' class='liste_informations'>
+	<?php echo $this->partialLoop('news/display.phtml', $this->flux); ?>
+</ul>
+
+<?php if(count($this->flux) > 0) : ?>
+<p><a href='' id="plus" >Voir plus d'actualités</a></p>
+<?php else : ?>
+<div id='no-messages' >
+	<hr class='clear' />
+	<p><strong>Il n'y a pour l'instant aucune actualité à afficher.</strong></p>
+</div>
+<?php endif?>
+
+<!-- Boite de dialogue -->
+<div id="dialog-confirm" title="Supprimer" class='ui-helper-hidden' >
+	<p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin: 0 7px 20px 0;"></span>
+		Voulez vous vraiment supprimer cette actualité ?
+	</p>
+</div>
+
+<!-- Confidentialité -->
+<form id="dialog-conf" title="Confidentialité" class='ui-helper-hidden'>
+	<?php foreach($this->groupes as $groupe) : ?>
+	<input type="checkbox" name="conf[]" value="<?php echo $groupe["ID_GROUPE"] ?>" checked="checked" /><?php echo $groupe["LIBELLE_GROUPE"] ?><br/>
+	<?php endforeach; ?>
+</form>
+
+<script type="text/javascript" >
+
+	var data = null;
+	var page = 1;
+
+	$("#plus").click(function() {
+		$.ajax({
+			url: "/news/next?format=json&page=" + (page+1),
+			data: data,
+			success: function( result ) {
+
+				page =  (page+1);
+				$("#index-newsfeed").append( result["html"] );
+			},
+			error: function(r) {
+				alert(r.responseText);
+			}
+		});
+	
+		return false;
+	});
+
+	// Bouton et textarea du formulaire
+	$("#conf").button({
+		icons: {
+			primary: "ui-icon-locked"
+		},
+		text: false
+	}).click(function() {
+		$("#dialog-conf").dialog("open");
+		return false;
+	});
+	
+	$("#dialog-conf").dialog({
+		resizable: false,
+		draggable: false,
+		autoOpen: false,
+		buttons: {
+			"Okay": function() {
+				$( "#dialog-conf" ).dialog( "close" );
+			}
+		}
+	});
+	
+	$("#submit").button();
+	$("#textarea").elastic().toggleText("Entrez ici votre message d'information.");
+	
+	// Gestion d'envoi du formulaire
+	$('#submit').click(function() {
+		if( $("#textarea").val() != "Entrez ici votre message d'information." )
+			$.ajax({
+				url: "/news/add?" + $('#ajouter_news').serialize() + "&" + $('#dialog-conf').serialize() + "&format=json",
+				success: function(result) {
+					$("#textarea").css("height", "2em");
+					$("#textarea").val("Entrez ici votre message d'information.");
+					window.clearTimeout(myInterval);
+					updateNews(result["int_timestamp"]);
+				}
+			});
+		return false;
+	});
+	
+	// Dialogue de la supp. de news
+	$( "#dialog-confirm" ).dialog({
+		resizable: false,
+		draggable: false,
+		height: 150,
+		autoOpen: false,
+		buttons: {
+			"Supprimer le message": function() {
+				$.ajax({
+					url: "/news/delete",
+					data: "id=" + $(this).data('id'),
+					beforeSend: function() {
+						$("#content_index").css("opacity", 0.5);
+					},
+					success: function () {
+						$("#content_index").css("opacity", 1);
+						$( "#" + $("#dialog-confirm").data("id") ).slideUp("normal", function() {
+							$( "#" + $("#dialog-confirm").data("id") ).remove();
+						});
+						$( "#dialog-confirm" ).dialog( "close" );
+					}
+				});
+			},
+			"Annuler": function() {
+				$( "#dialog-confirm" ).dialog( "close" );
+			}
+		}
+	});
+	
+	// Update du fil d'actualité
+	var time = 20000;
+	// myInterval = window.setTimeout( "updateNews(<?php echo time() ?>);" , time);
+	
+	function updateNews( timestamp ) {
+	
+		$.ajax({
+		
+			url: "/news/get?format=json",
+			type: "GET",
+			data: "timestamp="+timestamp,
+			success: function(result) {
+			
+				$("ul#index-newsfeed li").removeClass("highlight");
+				
+				if(result.html != "") {
+				
+					$("#no-messages").hide();
+				}
+					
+				if( !timestamp ) {
+				
+					$("ul#index-newsfeed").append(result["html"]);
+					$("ul#index-newsfeed li").show();
+				}
+				else {
+
+					$("ul#index-newsfeed").prepend(result["html"]);
+					$("ul#index-newsfeed li.highlight").effect("highlight", {}, 5000);
+					$("ul#index-newsfeed > li:gt(19)").slideUp("slow", function() {
+						$(this).remove();
+					});
+          
+				  // Notifications
+				  if(!$("#news_li").hasClass("active")) {
+					  var value = result["int_count"] + parseInt($("#news_li .count").html());
+					  if(value != 0) {
+						$("#news_li .count").show();
+						$("#news_li .count").html(value);   
+					  }
+				  }
+				  else {
+					  $("#news_li .count").html("0").hide();
+				  }
+				}
+
+				myInterval = window.setTimeout( "updateNews(" + result["int_timestamp"] + ");" , time);
+			}
+		});
+	}
+</script>

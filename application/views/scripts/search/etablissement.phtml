@@ -1,0 +1,266 @@
+<!-- Formulaire -->
+<form id='recherche' method='get' action='' class='grid_15' >
+	
+	<!-- Code et Libelle -->
+	<input type='text' id='code' name='NUMEROID_ETABLISSEMENT' class='bigger' size=10 />
+	<input type='text' id='libelle' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' size=30 />
+
+	<input type='radio' name='par' value='niveau' checked /> Par niveau hiérarchique
+	<input type='radio' name='par' value='criteres' /> Par critères personnalisés
+
+
+	<!-- Par niveau hierarchique -->
+	<div id='par-niveau' style='display: inline' >
+		
+	</div>
+	
+	<!-- Par genre-->
+	<div id='par-genre' style='display: inline' >
+		<!-- Genre -->
+		<select id='genre' name='ID_GENRE[]' multiple='multiple' disabled>
+			<?php foreach( $this->DB_genre as $genre ) : ?>
+			<option value='<?php echo $genre["ID_GENRE"] ?>' ><?php echo $genre["LIBELLE_GENRE"] ?></option>
+			<?php endforeach ?>
+		</select>
+		
+		<!-- Catégorie -->
+		<span id='categorie_span' class='ui-helper-hidden'>
+			<select id='categorie' name='ID_CATEGORIE[]' multiple='multiple' disabled>
+				<?php foreach( $this->DB_categorie as $categorie ) : ?>
+				<option value='<?php echo $categorie["ID_CATEGORIE"] ?>'><?php echo $categorie["LIBELLE_CATEGORIE"] ?></option>
+				<?php endforeach ?>
+			</select>
+		</span>
+		
+		<!-- Classe -->
+		<span id='classe_span' class='ui-helper-hidden' >
+			<select id='classe' name='ID_CLASSE[]' multiple='multiple' disabled >
+				<?php foreach( $this->DB_classe as $classe ) : ?>
+				<option value='<?php echo $classe["ID_CLASSE"] ?>'><?php echo $classe["LIBELLE_CLASSE"] ?></option>
+				<?php endforeach ?>
+			</select>
+		</span>
+		
+		<!-- Famille -->
+		<span id='famille_span' class='ui-helper-hidden'>
+			<select id='famille' name='ID_FAMILLE[]' multiple='multiple' disabled >
+				<?php foreach( $this->DB_famille as $famille ) : ?>
+				<option value='<?php echo $famille["ID_FAMILLE"] ?>'><?php echo $famille["LIBELLE_FAMILLE"] ?></option>
+				<?php endforeach ?>
+			</select>
+		</span>
+		
+		<!-- Types -->
+		<span id='type_span' class='ui-helper-hidden'>
+			<select id='type' name='ID_TYPE[]' multiple='multiple' disabled >
+				<?php foreach( $this->DB_type as $type ) : ?>
+				<option value='<?php echo $type["ID_TYPE"] ?>'><?php echo $type["ID_TYPE"] ?></option>
+				<?php endforeach ?>
+			</select>
+		</span>
+		
+		<span><a href='' onclick="$('#extra').show(); $(this).hide(); return false" >[+ Plus de critères]</a></span>
+		
+	</div>
+
+	<div id='extra' class='ui-helper-hidden' >
+	
+		<br />
+		
+		<!-- Commune -->
+		<input type='text' id='commune' name='LIBELLE_COMMUNE' class='bigger' size=25 />
+		
+		<!-- Avis -->
+		<select id='avis' name='ID_AVIS[]' multiple='multiple'>
+			<?php foreach( $this->DB_avis as $avis ) : ?>
+			<option value='<?php echo $avis["ID_AVIS"] ?>'><?php echo $avis["LIBELLE_AVIS"] ?></option>
+			<?php endforeach ?>
+		</select>
+		
+		<!-- Statut -->
+		<select id='statut' name='ID_STATUT[]' multiple='multiple'>
+			<?php foreach( $this->DB_statut as $statut ) : ?>
+			<option value='<?php echo $statut["ID_STATUT"] ?>'><?php echo $statut["LIBELLE_STATUT"] ?></option>
+			<?php endforeach ?>
+		</select>
+		
+		<!-- Local sommeil -->
+		Local sommeil
+		<input type='checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' />
+		
+		<!-- -date de la dernière visite -->
+		Date de la dernière visite
+		<input type='text' class='date ' name='DATEVISITE_DOSSIER'  size=7 />
+	
+	</div>
+	
+</form>
+
+
+<script type="text/javascript">
+
+	$('.date').live('click', function() {
+		$(this).datepicker({showOn:'focus', dateFormat: 'dd/mm/yy', firstDay: 1}).focus();
+	});
+
+	$("#code").toggleText("Numéro d'id");
+	$("#libelle").toggleText("Libellé de l'établissement");
+	$("#commune").toggleText("Commune");
+	
+	$("input[name='par']").click(function() {
+	
+		if($(this).val() == "niveau") {
+		
+			$("#par-genre").hide();
+			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("disable");
+			$("#commune").val("Commune");
+			$("#extra").hide();
+		}
+		else {
+		
+			$("#par-genre").show();
+			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("enable");
+		}
+	});
+	
+	$("input[name='par'][value='niveau']").click();
+	
+	$("#commune").autocomplete("/adresse/get?format=json", {
+		minChars: 3,
+		max: 100,
+		parse: function(data) {
+			return $.map(data["resultats"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_COMMUNE,
+					result: row.LIBELLE_COMMUNE
+				}
+			});
+		},
+		formatItem: function(item) {
+			return item.LIBELLE_COMMUNE;
+		}
+	}).result(function(e, item) {
+		// window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
+	});
+	
+	$("#libelle").autocomplete("/etablissement/get?format=json", {
+		minChars: 3,
+		max: 100,
+		parse: function(data) {
+			return $.map(data["resultats"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
+					result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+				}
+			});
+		},
+		formatItem: function(item) {
+			return item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+		}
+	}).result(function(e, item) {
+		window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
+	});
+	
+	$("#avis").multiselect({
+		header: false,
+		noneSelectedText: "Avis",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 175
+	});
+
+	$("#genre").multiselect({
+		header: false,
+		noneSelectedText: "Genre",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 175
+	});
+	
+	$("#categorie").multiselect({
+		header: false,
+		noneSelectedText: "Catégorie",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 150
+	});
+	
+	$("#famille").multiselect({
+		header: false,
+		noneSelectedText: "Famille",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 175
+	});
+	
+	$("#classe").multiselect({
+		header: false,
+		noneSelectedText: "Classe",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 100
+	});
+	
+	$("#type").multiselect({
+		header: false,
+		noneSelectedText: "Type",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 100
+	});
+	
+	$("#statut").multiselect({
+		header: false,
+		noneSelectedText: "Statut",
+		selectedList: 1,
+		height: "auto",
+		minWidth: 175
+	});
+	
+	$("#genre").bind("multiselectclick", function(event, ui) {
+	
+		$("#categorie_span, #classe_span, #famille_span, #type_span").hide();
+		
+		var array = $("#genre").multiselect("getChecked").each(function() {
+
+			if ( this.value == 2 )
+				$("#type_span, #categorie_span").show();
+			else if ( this.value == 3 )
+				$("#type_span, #categorie_span").show();
+			else if( this.value == 4 ) 
+				$("#famille_span").show();
+			else if( this.value == 5 ) 
+				$("#classe_span").show();
+		});
+
+	});
+
+	$(".slide").live("click", function() {
+					
+		var container = this;
+		
+		if( $(this).hasClass("active") ) {
+			
+			$(container).next().slideUp(400, function() {$(container).next().remove()});
+			$(container).toggleClass("active");
+		}
+		else {
+			$.ajax({
+				url: "/search/search-child?format=json&id="+$(this).attr("id"),
+				beforeSend: function() {
+					$(container).find(".load").show();
+				},
+				success: function( result ) {
+					$(container).find(".load").hide();
+					$(container).after("<li class='ui-helper-hidden' >" + result.html + "</li>").next().slideDown();
+					$(container).toggleClass("active");
+				}
+			});
+		}
+	});
+	
+	// $("#type").multiselect("disable");
+	
+</script>

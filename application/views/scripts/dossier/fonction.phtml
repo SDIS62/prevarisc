@@ -1,0 +1,153 @@
+<?php
+ switch($this->do){
+	case "infosEtabs":
+		//Récupére l'ensemble des établissements, sites liés
+		$nbEtab = count($this->listeEtablissement);
+		
+		if($nbEtab > 0){
+			if($nbEtab == 1 && $this->listeEtablissement[0]["LIBELLE_GENRE"] == "Site"){
+				echo "Site concerné : &nbsp;";
+				
+				echo "
+					<a href='/etablissement/index/id/".$this->listeEtablissement[0]['ID_ETABLISSEMENT']."'>
+						".$this->listeEtablissement[0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." 
+					</a>
+				";
+			}else{
+				echo "Etablissement(s) concerné(s) : &nbsp;";
+				$i = 0;			
+				foreach($this->listeEtablissement as $etab => $value){
+					$dbEtabAddr = new Model_DbTable_EtablissementAdresse;
+
+					$EtabAddr = $dbEtabAddr->get($value['ID_ETABLISSEMENT']);
+					//Zend_Debug::dump($EtabAddr);
+					//echo count($EtabAddr);
+					echo "
+						<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."'>
+						".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+					if(count($EtabAddr) != 0){
+						echo " (".$EtabAddr[0]["LIBELLE_COMMUNE"].")";
+					}else{
+						echo " ( adresse non renseignée )";
+					}
+					echo "
+						</a>
+					";
+					if($i < $nbEtab-1){
+						echo " | ";
+					}
+					$i++;
+				}
+			}
+		}
+	break;
+	case "showNature":
+		echo '
+			<script type="text/javascript">
+				$("#ajoutNature").button({
+					icons: {
+						primary: "ui-icon-circle-plus"
+					},
+					text: false
+				});
+			</script>
+		';
+		echo '
+			<div id="listeNature">			
+				<select id="selectNature" name="selectNature">
+					<option value="0">Veuillez selectionner une nature</option>
+			';
+			foreach($this->dossierNatureListe as $listeNature)
+			{
+				echo "
+					<option value='".$listeNature['ID_DOSSIERNATURE']."'>".$listeNature['LIBELLE_DOSSIERNATURE']."</option>
+				";
+			}
+			echo "
+				</select>
+				<br/>
+			</div>
+		";
+	break;
+	case "showMadContent":
+		
+	break;
+	case "showListeDossierEtab":
+		//Zend_Debug::dump($this->listeDossierEtab);
+		$dbEtablissement = new Model_DbTable_Etablissement;
+		
+
+		echo "
+			<form name='listeDossierCheckBox' id='listeDossierCheckBox'>
+			<div id='content_dossiers_ets'>
+				";
+				
+		foreach($this->listeEtab as $lib => $val){
+			//echo $val."<br/>";
+			$etabEnCours = $dbEtablissement->getInformations($val);
+			//Zend_Debug::dump($etabEnCours->toArray());
+			
+			echo "<ul id='liste_doss'><font  style='font-weight:bold;'>".$etabEnCours['LIBELLE_ETABLISSEMENTINFORMATIONS']."</font>";
+			foreach($this->listeDossierEtab[$val] as $idEtab => $infoDossier){
+				//echo $infoDossier['LIBELLE_DOSSIERTYPE'];
+				//Transformation date
+				if($infoDossier['ID_DOSSIER'] != $this->idDossier){
+					$dateInsert = new Zend_Date($infoDossier["DATEINSERT_DOSSIER"], Zend_Date::DATES);
+					$dateInsert = $dateInsert->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);				
+					echo "
+						<li>
+							<span>
+								<input type='checkbox' name='idDossierLie[]' value='".$infoDossier['ID_DOSSIER']."' />
+							</span>
+							<span class='doss-nom'>
+								".$infoDossier["LIBELLE_DOSSIERTYPE"]."
+							</span>
+							<span class='doss-date'>
+								".$dateInsert."
+							</span>
+							<span class='doss-objet'>
+								".$infoDossier["OBJET_DOSSIER"]."
+							</span>
+							<span class='doss-donneur-avis'></span>
+						</li>
+					";
+				}
+			}
+			echo "</ul>";
+		}
+		/*
+		foreach($this->listeDossierEtab as $val => $ue){
+			//Transformation date
+			$dateInsert = new Zend_Date($ue["DATEINSERT_DOSSIER"], Zend_Date::DATES);
+			$dateInsert = $dateInsert->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+			
+			echo "
+				<li>
+					<span>
+						<input type='checkbox' name='idDossierLie[]' value='".$ue['ID_DOSSIER']."' />
+					</span>
+					<span class='doss-nom'>
+						".$ue["LIBELLE_DOSSIERTYPE"]."
+					</span>
+					<span class='doss-date'>
+						".$dateInsert."
+					</span>
+					<span class='doss-objet'>
+						".$ue["OBJET_DOSSIER"]."
+					</span>
+					<span class='doss-donneur-avis'></span>
+				</li>
+			";
+			
+		}
+		*/
+		echo "
+			</div>";
+
+	break;
+	case 'showDossiersLies':
+	
+	
+
+	break;
+}

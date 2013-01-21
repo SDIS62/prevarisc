@@ -1,0 +1,25 @@
+
+<div class='grid_16'>
+	<div class='box' style='color: #FF1A00; font-weight: bold; font-size: 2em;'>
+		<?php echo $this->message ?>
+	</div>
+	
+	<hr class ='clear'/>
+
+	<?php if (isset($this->exception)): ?>
+
+	<h3>Exception information:</h3>
+	<p>
+	  <b>Message:</b> <?php echo $this->exception->getMessage() ?>
+	</p>
+
+	<h3>Stack trace:</h3>
+	<pre><?php echo $this->exception->getTraceAsString() ?>
+	</pre>
+
+	<h3>Request Parameters:</h3>
+	<pre><?php echo var_export($this->request->getParams(), true) ?>
+	</pre>
+	<?php endif ?>
+	
+</div>

@@ -1,0 +1,24 @@
+<?php
+$items = array();
+foreach($this->listeFirstCommission as $commissionEvent)
+{
+	$id = $commissionEvent['ID_DATECOMMISSION'];
+	$date = $commissionEvent['DATE_COMMISSION'];
+	$heureD = $commissionEvent['HEUREDEB_COMMISSION'];
+	$heureF = $commissionEvent['HEUREFIN_COMMISSION'];
+	$type = $commissionEvent['ID_COMMISSIONTYPEEVENEMENT'];
+	$libelle = $commissionEvent['LIBELLE_DATECOMMISSION'];
+
+	array_push($items, array(
+		"id" => $id,
+		"title" => $libelle,
+		"start" => date($date." ".$heureD),
+		"end" => date($date." ".$heureF),
+		"url" => "commission/id/".$id,
+		"className" => "display-".$type,
+		"allDay" => false,
+	));
+}
+
+echo json_encode($items);
+?>

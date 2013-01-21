@@ -1,0 +1,83 @@
+<!-- Open Layer -->
+<div id="geoportail-content"></div>
+
+<script src="/js/carto/OpenLayers.js"></script>
+
+<script src="http://api.ign.fr/geoportail/api?v=1.2-e&amp;key=<?php echo $this->cleapis["CLE_IGN"] ?>&amp;includeEngine=false"></script>
+<script src="/js/carto/GeoportalExtended.js"></script>
+<script src="/js/carto/GeoRMHandler.js"></script>
+
+<script>
+
+	// Nouvel objet carte, paramètre : id du div contenant la carte
+	var map = new OpenLayers.Map('geoportail-content');
+
+	// On ajoute des contrôles
+	map.addControl(new OpenLayers.Control.LayerSwitcher());
+
+	// On ajoute des couches (cartho + marqueurs)
+	var couches = new Array();
+	var markers = new OpenLayers.Layer.Markers("Marqueurs");
+
+	couches.push(new OpenLayers.Layer.OSM());
+
+	// On ajoute les autres couches
+	couches.push(
+		new OpenLayers.Layer.WMS(
+			'Poteaux d\'eau',
+			'http://172.16.4.101:8080/geoserver/SDIS62/wms',
+			{
+				layers: 'SDIS62:DECI_CORRI',
+				format: 'image/png',
+				transparent: true
+			}, {
+				isBaseLayer: false
+			}
+		)
+	);
+	
+	couches.push(
+		new OpenLayers.Layer.WMS(
+			'IGN', 
+			'http://wxs.ign.fr/geoportail/wmsc',
+			{
+				layers: 'ORTHOIMAGERY.ORTHOPHOTOS',
+				exceptions: 'text/xml',
+				tiled: true
+			},	{
+				isBaseLayer: true,
+				projection: new OpenLayers.Projection('IGNF:GEOPORTALFXX'),
+				resolutions: [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048],
+				maxExtent: new OpenLayers.Bounds(-1181626.0, 3815715.0, 2340591.0, 7071932.0),
+				GeoRM: Geoportal.GeoRMHandler.addKey(
+				  gGEOPORTALRIGHTSMANAGEMENT.apiKey,
+				  gGEOPORTALRIGHTSMANAGEMENT[gGEOPORTALRIGHTSMANAGEMENT.apiKey].tokenServer.url,
+				  gGEOPORTALRIGHTSMANAGEMENT[gGEOPORTALRIGHTSMANAGEMENT.apiKey].tokenServer.ttl,
+				  map),
+				getURL: function(bounds) {
+				  bounds = this.adjustBounds(bounds);
+				  var imageSize = this.getImageSize();
+				  var newParams = {
+					'BBOX': this.encodeBBOX ?  bounds.toBBOX() : bounds.toArray(),
+					'WIDTH': imageSize.w,
+					'HEIGHT': imageSize.h
+				  };
+				  newParams = OpenLayers.Util.extend(newParams, this.GeoRM.getToken());
+				  var requestString = this.getFullRequestString(newParams);
+				  return requestString;
+				}
+			}
+		)
+	);
+
+	// Ajoute un marqueur
+	/* TODO */
+
+	// On ajoute les couches (cartho + marqueurs)
+	map.addLayers(couches);
+	map.addLayer(markers);
+
+	// On zoom sur les coordonnées 2.73421,50.3003
+	map.setCenter(new OpenLayers.LonLat(2.73421, 50.3003).transform(new OpenLayers.Projection("EPSG:4326"), map.getProjectionObject()), 17);
+
+</script>

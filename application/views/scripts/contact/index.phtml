@@ -1,0 +1,208 @@
+<?php if( !$this->ajax && $this->droit_ecriture == true) : ?>
+	<p style='float: right;' >+ <a id='add-contact' href="/contact/form?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>">Ajouter un nouveau contact</a></p>
+	<p style='float: right; margin-right: 1em' >+ <a id='add-contact-existant' href="/contact/form?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>">Ajouter un contact existant</a></p>
+	<hr class='clear' />
+<?php endif ?>
+
+<div id='contact-content-ajax'>
+	
+	<!-- Contacts parents pour les ets -->
+	<?php if(isset($this->contacts_parent) && count($this->contacts_parent) > 0) : ?>
+	<h3>Contacts des établissements parents</h3>
+	<?php
+		foreach($this->contacts_parent as $contacts){
+			echo $this->partialLoop("contact/partial_fiche_read.phtml", $contacts);
+		}
+	?>
+	<hr />
+	<?php endif ?>
+
+	<!-- Contacts de l'ets -->
+	<?php if(isset($this->contacts_parent) && count($this->contacts_parent) > 0) : ?>
+	<h3>Contacts de l'établissement</h3>
+	<?php endif ?>
+	
+	<?php
+		if( count($this->contacts) != 0 )
+			echo $this->partialLoop($this->droit_ecriture ? "contact/partial_fiche.phtml" : "contact/partial_fiche_read.phtml", $this->contacts);
+		else
+			echo "<hr class='clear'><p><strong>Aucun contact.</strong></p>";
+	?>
+</div>
+
+<?php if( !$this->ajax && $this->droit_ecriture == true) : ?>
+	<div id='dialog-delete-contact' class='ui-helper-hidden' >
+		<p>
+			<span class="ui-icon ui-icon-alert" style="float:left; margin: 0 7px 20px 0;"></span>
+			Voulez vous vraiment supprimer ce contact ?
+		</p>
+	</div>
+
+	<div id='dialog-add-contact'></div>
+	<div id='dialog-add-contact-existant'>
+		<dl>
+			<dt>Nom du contact</dt>
+			<dd>
+				<input type="text" id="nom_contact_existant" />
+			</dd>
+		</dl>
+	</div>
+
+	<script type="text/javascript">
+
+		// Suppression d'un contact
+		$("a.contact-delete").live("click", function() {
+			var a = this; 
+			$("#dialog-delete-contact").dialog({
+				title: "Confirmation de suppression",
+				autoOpen: true,
+				autoResize: true,
+				width: "auto",
+				position: 'center',
+				draggable: false,
+				resizable: false,
+				buttons: {
+					"Supprimer": function() {
+						$.ajax({
+							url: a.href + "&format=json",
+							type: "POST",
+							success: function () {
+								$("#contact-content-ajax").load("/contact?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>&ajax=1");
+								$( "#dialog-delete-contact" ).dialog( "destroy" );
+							}
+						});
+					},
+					Cancel: function() {
+						$( "#dialog-delete-contact" ).dialog( "destroy" );
+					}
+				}
+			});
+			return false;
+		});
+		
+		// Ajout d'un contact
+		$("a#add-contact").click(function() {
+			var a = this;
+			$.ajax({
+				url: a.href + "&format=html",
+				success: function(result) {
+				
+					$("#dialog-add-contact").html(result).dialog({
+						title: "Ajout d'un contact",
+						height: 350,
+						width: 650,
+						draggable: false,
+						resizable: false,
+						buttons: {
+							"Ajouter": function() {
+								$.ajax({
+									url: "/contact/add?format=json",
+									data: $("#formulaire_contact").serialize(),
+									type: "POST",
+									success: function () {
+										$('#dialog-add-contact').dialog("destroy");
+										$("#contact-content-ajax").load("/contact?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>&ajax=1");
+									}
+								});
+							},
+							"Annuler": function() {
+								$('#dialog-add-contact').dialog("destroy");
+							}
+						}
+					});
+				}
+			});
+			return false;
+		});
+		
+		// Edition d'un contact
+		$(".fiche_edit a").live("click", function() {
+			var a = this;
+			$.ajax({
+				url: a.href + "&format=html",
+				success: function(result) {
+				
+					$("#dialog-add-contact").html(result).dialog({
+						title: "Modification d'un contact",
+						height: 350,
+						width: 650,
+						draggable: false,
+						resizable: false,
+						buttons: {
+							"Modifier": function() {
+								$.ajax({
+									url: "/contact/edit",
+									data: $("#formulaire_contact").serialize(),
+									type: "POST",
+									success: function () {
+										$('#dialog-add-contact').dialog("destroy");
+										$("#contact-content-ajax").load("/contact?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>&ajax=1");
+									}
+								});
+							},
+							"Annuler": function() {
+								$('#dialog-add-contact').dialog("destroy");
+							}
+						}
+					});
+				}
+			});
+			return false;
+		});
+		
+		// Ajout d'un contact existant
+		$("#dialog-add-contact-existant").dialog({
+			autoOpen: false,
+			title: "Ajout d'un contact existant",
+			height: 150,
+			width: 650,
+			resizable: false,
+			buttons: {
+				"Annuler": function() {
+					$('#dialog-add-contact-existant').dialog("close");
+				}
+			}
+		});
+		
+		$("a#add-contact-existant").click(function() {
+			
+			$('#dialog-add-contact-existant').dialog("open");
+			$('#dialog-add-contact-existant input').val("");
+			return false;
+		});
+		
+		$("#nom_contact_existant").autocomplete("/contact/get?format=json", {
+			minChars: 3,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["resultats"], function(row) {
+					return {
+						data: row,
+						value: row.NOM_UTILISATEURINFORMATIONS + " " + row.PRENOM_UTILISATEURINFORMATIONS,
+						result: row.NOM_UTILISATEURINFORMATIONS + " " + row.PRENOM_UTILISATEURINFORMATIONS
+					}
+				});
+			},
+			formatItem: function(item) {
+				return item.NOM_UTILISATEURINFORMATIONS + " " + item.PRENOM_UTILISATEURINFORMATIONS;
+			}
+		}).result(function(e, item) {
+			$.ajax({
+				url: "/contact/add",
+				data: {
+					format: "json",
+					exist: true,
+					ID_UTILISATEURINFORMATIONS: item.ID_UTILISATEURINFORMATIONS,
+					item: "<?php echo $this->item ?>",
+					id: "<?php echo $this->id ?>"
+				},
+				type: "POST",
+				success: function () {
+					$('#dialog-add-contact-existant').dialog("close");
+					$("#contact-content-ajax").load("/contact?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>&ajax=1");
+				}
+			});
+		});
+	
+	</script>
+<?php endif ?>

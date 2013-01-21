@@ -1,0 +1,46 @@
+<?php
+header('Content-disposition: attachment; filename="' . $this->titre["normalize"] . date("-_-d_m_Y", time()) . '.xml"');
+
+$xml = new SimpleXMLElement('<resultats/>');
+
+// Etablissements
+$etablissements = $xml->addChild('etablissements');
+foreach($this->results as $row) {
+	
+	$etablissement = $etablissements->addChild('etablissement');
+	
+	foreach($this->columns as $column => $db) {
+	
+		$val = "";
+
+		if(is_array($db)) {
+			while (list($key, $val) = each($db)) {
+				
+				$val .= $row[$val] . " ";
+			}
+		}
+		else if(preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $row[$db])) {
+			$date = new Zend_Date($row[$db], Zend_Date::DATES);
+			$val = $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
+		}
+		else $val = $row[$db];
+		
+		// Normalisation
+		$column_normalize = strtolower($column);
+		$column_normalize = strtr($column_normalize, array('à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'a'=>'a', 'a'=>'a', 'a'=>'a', 'ç'=>'c', 'c'=>'c', 'c'=>'c', 'c'=>'c', 'c'=>'c', 'd'=>'d', 'd'=>'d', 'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'e'=>'e', 'e'=>'e', 'e'=>'e', 'e'=>'e', 'e'=>'e', 'g'=>'g', 'g'=>'g', 'g'=>'g', 'h'=>'h', 'h'=>'h', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'i'=>'i', 'i'=>'i', 'i'=>'i', 'i'=>'i', 'i'=>'i', '?'=>'i', 'j'=>'j', 'k'=>'k', '?'=>'k', 'l'=>'l', 'l'=>'l', 'l'=>'l', '?'=>'l', 'l'=>'l', 'ñ'=>'n', 'n'=>'n', 'n'=>'n', 'n'=>'n', '?'=>'n', '?'=>'n', 'ð'=>'o', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'o'=>'o', 'o'=>'o', 'o'=>'o', 'œ'=>'o', 'ø'=>'o', 'r'=>'r', 'r'=>'r', 's'=>'s', 's'=>'s', 's'=>'s', 'š'=>'s', '?'=>'s', 't'=>'t', 't'=>'t', 't'=>'t', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ü'=>'u', 'u'=>'u', 'u'=>'u', 'u'=>'u', 'u'=>'u', 'u'=>'u', 'u'=>'u', 'w'=>'w', 'ý'=>'y', 'ÿ'=>'y', 'y'=>'y', 'z'=>'z', 'z'=>'z', 'ž'=>'z'));
+		$column_normalize = preg_replace("/ /", "_", $column_normalize);
+		
+		$etablissement->addChild($column_normalize, $val)->addAttribute('label', $column);
+	}
+}
+
+// Informations
+$informations = $xml->addChild('informations');
+$informations->addChild('date', date("d/m/Y", time()))->addAttribute('label', "Requête effectuée le");
+$informations->addChild('total', count($this->results))->addAttribute('label', "Nombre total d'établissements concernés");
+$informations->addChild('nom', $this->titre["full"])->addAttribute('label', "Nom de la requête");
+$informations->addChild('resume', $this->resume)->addAttribute('label', "Résumé de la requête");
+
+echo $xml->saveXML();
+
+?>

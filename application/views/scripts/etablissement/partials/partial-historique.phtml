@@ -1,0 +1,25 @@
+<table class='table-custom'>
+
+	<thead>
+		<tr>
+			<th style='width: 250px' >Date</th>
+			<th></th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		<?php foreach( $this->array as $item ) : ?>
+		<tr>
+			<td>Du <?php echo $item["debut"] . " " . ( (isset($item["fin"])) ? "au " . $item["fin"] : "à aujourd'hui" ) ?> </td>
+			<td>
+				<?php echo $item["valeur"] ?>
+				<span style="font-size: 0.8em">
+					(Dernière modification par 
+					<?php echo $item["author"] == null ? "<em>Inconnu</em>" : "<a href='/user/profile/uid/".$item["author"]["id"]."'>".$item["author"]["object"]->NOM_UTILISATEURINFORMATIONS." ". $item["author"]["object"]->PRENOM_UTILISATEURINFORMATIONS . "</a>"?>)
+				</span>
+			</td>
+		</tr>
+		<?php endforeach ?>
+	</tbody>
+	
+</table>

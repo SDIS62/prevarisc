@@ -1,0 +1,68 @@
+<script type="text/javascript">
+	
+
+</script>
+
+<?php
+	echo $this->headScript()->appendFile('/js/dossier/calendrier.js','text/javascript');
+
+	if($this->idComm){
+		//lorsque l'on affiche le calendrier depuis un ordre du jour
+		$_GET["id"] = $this->idComm;
+	}
+
+	if( isset($_GET["id"]) ) {
+		echo "
+			<script type='text/javascript'>
+				$(document).ready( function() {
+					$('#infosCom').html('<input type=\"hidden\" name=\"commissionId\" id=\"commissionId\" value=\"".$_GET['id']."\" />');
+					$('#aff_calendar').button( 'option', 'disabled', false );
+					$('#ordre_jour').button( 'option', 'disabled', false );
+					$('#commissionSelect').val(".$_GET['id'].");
+					$('#calendar').html('').afficheCalendar(".$_GET['id'].");					
+					$('#selectComm').hide();
+				});
+			</script>
+		";
+	}
+?>
+
+<!-- Titre -->
+<h2>
+	<i class='sprite sprite-calendar' ></i>
+	Calendrier des commissions
+</h2>
+
+<!-- Selection de la commission -->
+<!--
+	<div id='selectComm'>
+		<form id="commSelect" name="commSelect" method="" action="">
+			<input id="commissionSelect" class='bigger' style='width: 400px; color:gray;' value='Tapez le nom de la commission'/>
+		</form>
+	</div>
+-->
+
+<select id='commissionSelect' class='bigger' >
+	<option>Choix d'une commission ...</option>
+	<?php foreach($this->array_commissions as $array_commission) : ?>
+	<optgroup label='<?php echo htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES) ?>' >
+		<?php foreach($array_commission["ARRAY"] as $item) : ?>
+		<option value='<?php echo $item["ID_COMMISSION"] ?>' ><?php echo htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES) ?></option>
+		<?php endforeach ?>
+	</optgroup>
+	<?php endforeach ?>
+</select>
+<span style='margin-left:50px;'>
+	<font style='background-color:blue;color:white;padding:3px;'>En salle</font>
+	<font style='background-color:green;color:white;margin-left:20px;padding:3px;'>Visite</font>
+	<font style='background-color:orange;color:white;margin-left:20px;padding:3px;'>Groupe de visite</font>
+</span>
+<div id='infosCom' style='display:none;'></div>
+
+<hr class='clear'/>
+
+<!-- Calendrier -->
+<div id="calendar"></div>
+
+<!-- Boite de dialogue -->
+<div id="dialogComm" title="Planification commission" class='ui-helper-hidden' ></div>

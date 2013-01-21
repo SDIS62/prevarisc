@@ -1,0 +1,28 @@
+<h2>
+	<i class='sprite sprite-application_view_columns' ></i>
+	Gestion des communes
+</h2>
+
+<?php if(count($this->rowset_communes) == 0) : ?>
+
+	<p><strong>Il n'y a pas de communes dans la base de données.</strong></p>
+
+<?php else : ?>
+
+<p>
+	<select id="choix_commune" class="bigger">
+		<?php foreach($this->rowset_communes as $row_commune) : ?>
+		<option value="<?php echo $row_commune->NUMINSEE_COMMUNE ?>"><?php echo $row_commune->LIBELLE_COMMUNE ?></option>
+		<?php endforeach ?>
+	</select>
+</p>
+
+<div id="display_commune" ></div>
+
+<script>
+	$("select#choix_commune").change(function() {
+		$('#display_commune').load('/gestion-des-communes/display?numinsee=' + $(this).val());
+	}).change();
+</script>
+
+<?php endif ?>

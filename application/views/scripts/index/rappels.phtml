@@ -1,0 +1,16 @@
+<?php if($this->array_rappels == null) : ?>
+	<p>Vous ne suivez actuellement aucun établissement.</p>
+<?php else : ?>
+
+	<h4>Visites à venir</h4>
+	<?php if(count($this->array_rappels["visites_a_venir"]) == 0) : ?>
+		<p>Aucune visite à venir.</p>
+	<?php else : ?>
+		<ul>
+			<?php foreach($this->array_rappels["visites_a_venir"] as $item) : ?>
+			<li><?php echo $item ?></li>
+			<?php endforeach ?>
+		</ul>
+	<?php endif ?>
+
+<?php endif ?>

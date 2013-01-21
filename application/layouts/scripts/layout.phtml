@@ -1,0 +1,31 @@
+<?php echo $this->doctype() ?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+	<head>
+		<?php
+		echo $this->headTitle($this->title);
+		echo $this->headMeta();
+		echo $this->headLink();
+		echo $this->inlineScript();
+		echo $this->headScript();
+		?>
+	</head>
+	
+	<body>
+	
+		<div id='wrapper'>
+			<div id='layout-content' >
+			
+				<?php $this->header(); ?>
+				
+				<div class='container_16' >
+					<?php echo $this->layout()->content; ?>
+				</div>
+				
+			</div>
+		</div>
+		
+		<!-- Footer -->
+		<?php $this->footer(); ?>
+		
+	</body>
+</html>

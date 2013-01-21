@@ -1,0 +1,133 @@
+<?php
+
+	// Si il y a un résultat
+	if( count($this->resultats) > 0 ) {
+
+		// On lance la rechercher par le genre d'item a rechercher
+		switch( $this->item ) {
+		
+			// Genre établissement
+			case "etablissement":
+			
+				//Zend_Debug::Dump($this->resultats);
+			
+				?> <ul class='recherche_liste'> <?php
+				foreach( $this->resultats as $item ) : ?>
+				<li class="etablissement <?php if($item["NB_ENFANTS"] > 0 && $this->niveau) echo "slide" ?>" id='<?php echo $item["ID_ETABLISSEMENT"] ?>'>
+				<?php if($item["NB_ENFANTS"] > 0 && $this->niveau) : ?>
+					<span><i class='ui-icon ui-icon-triangle-1-e' style='float: left; margin-top: 1px; position: absolute; top: 0; left: -20px' ></i></span>
+				<?php endif ?>
+				<span title="Type <?php echo $item["ID_TYPE"] ?>" class="icone">
+				<?php if( $item["ID_TYPE"] ) : ?>
+				<img src="/images/types/b/icone-type-<?php echo $item["ID_TYPE"] ?>.png" alt="icone"/>
+				<?php else : ?>
+				<span style='display: inline-block; height: 16px; width: 16px;'></span>
+				<?php endif; ?>
+				</span>
+				<span class="type"><?php echo ($item["ID_TYPE"] ? $item["ID_TYPE"] . "&nbsp;-&nbsp;" : "") . strtoupper(substr($item["LIBELLE_GENRE"], 0 , 4)) ?></span>
+				<span class="nom-etablissement"><a href='/etablissement/index/id/<?php echo $item["ID_ETABLISSEMENT"] ?>'><?php echo $item["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?></a></span>
+				<?php if($item["NB_ENFANTS"] > 0) : ?>
+					<span class='load ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement ...' /></span>
+				<?php endif ?>
+				<?php if(isset($item["DATEVISITE_DOSSIER"])) {
+					$date = new Zend_Date($item["DATEVISITE_DOSSIER"], Zend_Date::DATES);
+				}
+				?>
+				<span class="ville"><?php echo ( $item["DATEVISITE_DOSSIER"] ? "Dernière visite périodique : " . $date->get( Zend_Date::DATE_MEDIUM ) . " - " : "" ) . $item["LIBELLE_COMMUNE"] ?></span>
+				<?php if( isset($item["ID_AVIS"]) ) : ?>
+				<span class="avis <?php echo $item["LIBELLE_AVIS"][0] ?>">
+				<?php
+				switch( $item["ID_AVIS"] ) {
+					case 1:
+						echo "?";
+						break;
+					case 2:
+						echo "F";
+						break;
+					case 3:
+						echo "D";
+						break;
+					case 4:
+						echo "›";
+						break;
+				}
+				?>
+				</span>
+				<?php endif; ?>
+				</li>
+				<?php endforeach;
+				?> </ul> 
+				<?php
+
+				break;
+
+			// Genre dossier
+			case "dossier":
+
+				// Traitement des résultats
+				foreach(  $this->resultats as $item ) {
+					
+					$liste[$item["ID_DOSSIER"]]["nature"][]= $item["LIBELLE_DOSSIERNATURE"];
+					$liste[$item["ID_DOSSIER"]]["etablissement"][] = $item["LIBELLE_ETABLISSEMENTINFORMATIONS"];
+					$liste[$item["ID_DOSSIER"]]["type"] = $item["LIBELLE_DOSSIERTYPE"];
+					$liste[$item["ID_DOSSIER"]]["docurba"] = $item["NUM_DOCURBA"];
+					$liste[$item["ID_DOSSIER"]]["OBJET_DOSSIER"] = $item["OBJET_DOSSIER"];
+					$liste[$item["ID_DOSSIER"]]["NUMCHRONO_DOSSIER"] = "Numéro de chrono : " . ( empty($item["NUMCHRONO_DOSSIER"]) ? "/" : $item["NUMCHRONO_DOSSIER"] );
+					
+					if( isset($item["ID_AVIS"]) ) {
+					
+						$liste[$item["ID_DOSSIER"]]["ID_AVIS"] = $item["ID_AVIS"];
+						$liste[$item["ID_DOSSIER"]]["LIBELLE_AVIS"] = $item["LIBELLE_AVIS"];
+					}
+					
+					$date = new Zend_Date($item["DATEINSERT_DOSSIER"], Zend_Date::DATES);
+					$liste[$item["ID_DOSSIER"]]["DATEINSERT_DOSSIER"] = $date->get( Zend_Date::DATE_MEDIUM );
+				}
+				
+				?>
+				
+				<ul id="liste_doss">
+				<?php foreach( $liste as $id => $item ) : ?>
+				<li>
+					<i class='sprite sprite-folder' ></i>
+					<span class="doss-nom"><a href='/dossier/index/id/<?php echo $id ?>'><?php echo implode(", ", (array)$item["type"]) ?></a></span>
+					<span class="doss-date"><?php echo $item["DATEINSERT_DOSSIER"] . " - " . $item["NUMCHRONO_DOSSIER"]?></span>
+					<span class="doss-objet" style="margin-left: 200px;" ><a href='/dossier/index/id/<?php echo $id ?>' title='<?php echo htmlspecialchars($item["OBJET_DOSSIER"], ENT_QUOTES) ?>' ><?php echo substr($item["OBJET_DOSSIER"], 0, 50) . ( strlen($item["OBJET_DOSSIER"]) > 50 ? "(...)" : "" )?></a></span>
+					<span class="doss-donneur-avis"><?php echo implode(", ", array_unique($item["etablissement"])) ?></span>
+					<?php if( isset($item["ID_AVIS"]) ) : ?>
+					<span class="avis <?php echo $item["LIBELLE_AVIS"][0] ?>" title='<?php echo htmlspecialchars($item["LIBELLE_AVIS"] , ENT_QUOTES)?>'>
+					<?php
+					switch( $item["ID_AVIS"] ) {
+						case 1:
+							echo "?";
+							break;
+						case 2:
+							echo "F";
+							break;
+						case 3:
+							echo "D";
+							break;
+						case 4:
+							echo "›";
+							break;
+					}
+					?>
+					</span>
+					<?php endif; ?>
+				</li>
+				<?php endforeach;
+				?> </ul> <?php
+
+				break;
+
+			// Genre utilisateur
+			case "utilisateur":
+				echo $this->partialLoop('user/user_medium.phtml', $this->resultats );
+				break;
+		}
+
+	}
+	else {
+	
+		echo "<hr class='clear' /><p class='grid_16 alpha' ><strong>Aucun résultat.</strong></p>";
+	}

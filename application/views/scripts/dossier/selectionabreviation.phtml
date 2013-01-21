@@ -1,0 +1,20 @@
+<?php
+//Page utilisée uniquement pour l'auto complétion. Retourne infos en json
+$q = strtolower($_GET["q"]);
+if(!$q)
+	return;
+
+$items = array();
+foreach($this->selectAbreviation as $abreviation)
+{
+	$id = $abreviation['ID_PRESCRIPTIONTYPE'];
+	$abreviation = $abreviation['ABREVIATION_PRESCRIPTIONTYPE'];		
+	array_push($items, array(
+		"id" => $id,
+		"infos" => $abreviation
+	));
+}
+//Zend_Debug::dump($this->contactListe);
+echo json_encode($items);
+
+?>

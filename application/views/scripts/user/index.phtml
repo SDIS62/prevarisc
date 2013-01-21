@@ -1,0 +1,137 @@
+<div class='grid_16'>
+	
+	<!-- Titre -->
+	<div>
+	
+		<div style='float: right'>
+			<p id='notification_sauvegarde' class='ui-state-highlight <?php if( !$_GET["confirm"] ) echo "ui-helper-hidden"; ?>' style='padding: .5em; margin-bottom: 1em; float: left; '>
+				L'utilisateur est bien enregistré.
+			</p>
+			&nbsp;
+			<button id='matrice' >Matrice des droits</button>
+			<button id='add-maire' >Ajouter un maire</button>
+			<button id='add-user' >Ajouter un utilisateur</button>
+		</div>
+
+		<h2>
+			<i class='sprite sprite-user' ></i>
+			<a href="/admin" >Administration système</a> &rsaquo; Gestion des utilisateurs
+		</h2>
+	
+	</div>
+	
+</div>
+
+<hr class='clear' />
+
+<div id='index-left' class='grid_3'>
+	
+	<ul>
+		<li class='active'><span float='left'><a href='/user/get-group' class='a_group'>Tous les utilisateurs</a></span></li>
+	</ul>
+	
+	<fieldset>
+		<ul>
+			<?php foreach($this->groupes as $groupe) : ?>
+			<li>
+				<span float='left' ><a href='/user/get-group?gid=<?php echo $groupe["ID_GROUPE"] ?>' class='a_group'><?php echo $groupe["LIBELLE_GROUPE"] ?></a></span>
+				<span float='right'><a href='<?php echo $groupe["ID_GROUPE"] ?>' class='a_edit' ><img src="/images/pen.png" height="9" width="10" alt="Éditer" /></a></span>
+			</li>
+			<?php endforeach ?>
+		</ul>
+	</fieldset>
+	
+	<hr class='clear' />
+	
+	<button id='add-group' >Créer un groupe</button>
+
+</div>
+
+<div id='content_group' class='grid_13'>
+	<?php echo $this->action("get-group", "user"); ?>
+</div>
+
+<div id='dialog-add-groupe'></div>
+
+
+<script type="text/javascript">
+
+	setTimeout( function() { $("#notification_sauvegarde").fadeOut(); }, 2500);
+	
+	$("a.edit").fancybox();
+	
+	$("#index-left ul a.a_group").click(function() {
+	
+		$("#content_group").load( $(this).attr("href") );
+		$("#index-left ul li").removeClass("active");
+		$(this).parent().parent().addClass("active");
+		
+		return false;
+	});
+	
+	$("#index-left ul a.a_edit").click(function() {
+	
+		dialog_groupe($(this).attr("href"));
+		return false;
+	});
+
+	$("#add-user").button({
+		icons: { primary: "ui-icon-plus" }
+	}).click(function() {
+		window.location = "/user/add";
+	});
+	
+	$("#add-maire").button({
+		icons: { primary: "ui-icon-plus" }
+	}).click(function() {
+		window.location = "/user/maire-add";
+	});
+	
+	$("#matrice").button({
+		icons: { primary: "ui-icon-unlocked" }
+	}).click(function() {
+		window.location = "/matrice-des-droits";
+	});
+	
+	// Ajout d'un groupe
+	$("#add-group").button({
+		icons: { primary: "ui-icon-plus" }
+	}).click(function() {
+
+		dialog_groupe();
+		return false;
+	});
+	
+	function dialog_groupe( gid ) {
+
+		$('#dialog-add-groupe').dialog("destroy");
+	
+		$("#dialog-add-groupe").dialog({
+			title: gid ? "Modification du groupe" : "Ajout d'un groupe",
+			height: 300,
+			width: 650,
+			draggable: false,
+			resizable: false,
+			create: function() {
+				$('#dialog-add-groupe').load( "/user/add-group" + ( gid ? "?gid=" + gid : "" ) );
+				$("#dialog-add-groupe input").val("");
+			},
+			buttons: {
+				"Sauvegarder" : function() {
+					$.ajax({
+						url: "/user/save-group?format=json",
+						data: $("#formulaire_groupe").serialize(),
+						type: "POST",
+						success: function () {
+							window.location.reload() ;
+						}
+					});
+				},
+				Cancel: function() {
+					$('#dialog-add-groupe').dialog("destroy");
+				}
+			}
+		});
+	}
+
+</script>

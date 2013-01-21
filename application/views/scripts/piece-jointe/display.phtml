@@ -1,0 +1,57 @@
+<?php foreach ($this->listePj as $pj) : ?>
+	<tr>
+		<!-- Type-->
+		<td style='text-align: center' >
+			<?php
+			switch( $pj['EXTENSION_PIECEJOINTE'] ) {
+				case ".jpg":
+				case ".jpeg":
+				case ".png":
+					echo "<i class='sprite sprite-image' ></i><span class='ui-helper-hidden' >A</span>";
+				break;
+				case ".pdf":
+					echo "<i class='sprite sprite-page_white_acrobat' ></i><span class='ui-helper-hidden' >B</span>";
+				break;
+				case ".doc":
+				case ".docx":
+				case ".odt":
+					echo "<i class='sprite sprite-page_white_text' ></i><span class='ui-helper-hidden' >C</span>";
+				break;
+				default:
+					echo "<i class='sprite sprite-page_white' ></i><span class='ui-helper-hidden' >D</span>";
+				break;
+			}
+			?>
+		</td>
+		
+		<!-- Lien de la pièce jointe -->
+		<td><a href='<?php echo $this->path . $pj['ID_PIECEJOINTE'] . $pj['EXTENSION_PIECEJOINTE'] ?>' title='<?php echo $pj['DESCRIPTION_PIECEJOINTE'] ?>' target='_blank' ><?php echo $pj['NOM_PIECEJOINTE'] ?></a></td>
+		
+		<!-- Description -->
+		<td><?php echo nl2br(str_replace("<br />", "" ,$pj['DESCRIPTION_PIECEJOINTE'])) ?></td>
+		
+		<!-- date de création-->
+		<td>
+			<?php
+				$date = new Zend_Date($pj['DATE_PIECEJOINTE'], Zend_Date::DATES);
+				echo $date->get( Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR_SHORT );
+			?>
+		</td>
+		
+		<!-- Action-->
+		<td>
+			<? if($this->droit_ecriture) : ?>
+			<a id='delete' href='/piece-jointe/delete?id_pj=<?php echo $pj["ID_PIECEJOINTE"] ?>&type=<? echo $this->type ?>&id=<? echo $this->id ?>' style='text-decoration: none' >&times;</a>
+			<? endif ?>
+		</td>
+	</tr>
+<?php endforeach ?>
+
+<script type="text/javascript">
+	$('a[href$=png], a[href$=jpg], a[href$=jpeg]').fancybox({
+		'transitionIn'	:	'elastic',
+		'transitionOut'	:	'elastic',
+		'speedIn'		:	600, 
+		'speedOut'		:	200, 
+	});
+</script>

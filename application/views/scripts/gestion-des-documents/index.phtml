@@ -1,0 +1,183 @@
+<script type="text/javascript">
+
+$(document).ready(function() {
+	
+	$("body").append("<iframe name='hiddeniframe' id='hiddeniframe' src='about:blank' style='width:0px; height:0px' >");
+
+	// Ajout d'un type
+	$("#button-aud").button({
+		icons: { primary: "ui-icon-plus" }
+	}).click(function() {
+		dialog_aud();
+	});
+	
+	function dialog_aud() {
+		$('#dialog-aud').dialog("destroy");
+		$("#dialog-aud").remove();
+		
+		var dialog_aud = $("<div id='dialog-aud'></div>").appendTo("body");
+
+		dialog_aud.dialog({
+			title: "Ajouter un document type",
+			width: 650,
+			draggable: false,
+			resizable: false,
+			modal: true,
+			create: function() {
+				dialog_aud.load( "/gestion-des-documents/form" );
+			},
+			buttons: {
+				"Envoyer" : function() {
+					if(!$("#fichier").val()){
+						$("#fichier").click();
+					}else{
+						$("#formDocType").submit();
+						
+						$(this).dialog('close'); 
+						
+						// On ouvre la barre de chargement
+						$("<div id='load' style='text-align: center'><img src='/images/bar.gif' alt='Upload en cours' /></div>").dialog({
+							resizable: false,
+							height: 28,
+							width: 250,
+							modal: true,
+							dialogClass: 'noTitleStuff'
+						});
+					}
+					
+				},
+				"Annuler": function() {
+					dialog_aud.dialog("destroy");
+				}
+			}
+		});
+
+	}
+	
+	$(".supp").click(function(){
+		//alert($(this).attr('id'));
+		
+		dialog_supp($(this));
+		//alert($("#nnnn.jpg").attr('class'));
+		return false;
+	});
+	
+	
+	function dialog_supp(elementDoc) {
+		var nomFichier = elementDoc.attr('id');
+	
+		$('#dialog-supp').dialog("destroy");
+		$("#dialog-supp").remove();
+
+		var dialog_supp = $("<div id='dialog-supp'></div>").appendTo("body");
+		
+		dialog_supp.html("Vous êtes sur le point de supprimer le fichier "+nomFichier+".<br/> Une fois ce fichier supprimer il ne pourra plus être utilisé lors de la génération des rapports");
+
+		dialog_supp.dialog({
+			title: "Suprresion document",
+			width: 650,
+			draggable: false,
+			resizable: false,
+			modal: true,
+			buttons: {
+				"Supprimer" : function() {
+
+					$.ajax({
+						type: "POST",
+						url: "/gestion-des-documents/suppdoc",
+						data:"name="+nomFichier,
+						success: function(msg){					
+							//suppression de la ligne
+							elementDoc.parent().parent().remove();
+							alert(msg);
+						}
+					});
+
+
+					
+					dialog_supp.dialog("destroy");
+					return false;
+				},
+				"Annuler": function() {
+					dialog_supp.dialog("destroy");
+					return false;
+				}
+			}
+		});
+
+	}
+	
+});
+
+// Si un fichier est bien uploadé, on l'ajoute à la liste
+function callback(nomFich) {
+	$.ajax({
+		url: "/gestion-des-documents/check",
+		data: {
+			"format": "json",
+			"nomFich": nomFich
+		},
+		type: "post",
+		success: function(result) {
+			// On détruit la fenetre de load
+			$("#load").remove();
+			
+			if( result.exists ) {
+				$("#infosGdd").html("<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>Le document a bien été envoyé</span><br/><br/><br/>");
+				$("a[href='/gestion-des-documents']").click();
+			} else {
+				alert('fail');				
+			}
+		}
+	});
+}
+</script>
+<!-- Titre -->
+<span style="float: right">
+	<button id='button-aud' >Ajouter un document</button>
+</span>
+
+<h2 class='grid_xx'>
+	<i class='sprite sprite-application_view_columns' ></i>
+	Gestion des commissions
+</h2>
+<span>
+	Liste des documents pouvant être générés depuis la partie dossiers<br/><br/>
+</span>
+<div id='infosGdd'></div>
+
+
+<?
+	if(!empty($this->listeFichiers)){
+		echo "
+			<table id='documentType'>
+				<tr style='height:20px;'>
+					<th>
+						Nom du fichier
+					</th>
+					<th>
+						Supprimer
+					</th>
+				</tr>
+		";
+		sort($this->listeFichiers); // pour le tri croissant, rsort() pour le tri décroissant
+		foreach($this->listeFichiers as $lien) {
+			echo "
+				<tr style='height:20px;'>
+					<td>
+						<a href='".$this->path."/".$lien."'>".$lien."</a>
+					</td>
+					<td>
+						<a href='/' class='supp' id='".$lien."'>x</a>
+					</td>
+				</tr>
+			";
+		}
+		echo "
+			</table>
+		";
+	 }else{
+		echo "Actuellement aucun document disponible";
+	 }
+	 
+?>

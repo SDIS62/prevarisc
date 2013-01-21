@@ -1,0 +1,104 @@
+<!-- Formulaire d'ajout d'un contact -->
+<form id='formulaire_contact' action='post' >
+
+	<!-- Formulaire -->
+	<dl>
+	
+		<? if(!isset($this->droitsSYS) || $this->droitsSYS == 1) : ?>
+		<!-- Groupe -->
+		<?php if( $this->item == "user" ) : ?>
+		<dt>Groupe</dt>
+		<dd>
+			<select name='ID_GROUPE' >
+				<?php foreach( $this->groupes as $item ) : ?>
+				<option value='<?php echo $item["ID_GROUPE"] ?>' <?php if($item["ID_GROUPE"] == $this->user["ID_GROUPE"]) echo "selected" ?> ><?php echo $item["LIBELLE_GROUPE"] ?></option>
+				<?php endforeach ?>
+			</select>
+		</dd>
+		<?php endif ?>
+		
+		<!-- Fonction du contact -->
+		<?php if( $this->item != "groupement_coord" ) : ?>
+		<dt <?php if($this->item == "commune") echo "style='display: none'"; ?>>Fonction</dt>
+		<dd <?php if($this->item == "commune") echo "style='display: none'"; ?>>
+			<select name='ID_FONCTION' >
+				<?php foreach( $this->contact_fonction_list as $item ) : ?>
+				<?php
+					if($item["ID_FONCTION"] == 2 && $this->user_info == null) {
+										
+					}
+					else {
+				?>
+				<option value='<?php echo $item["ID_FONCTION"] ?>' <?php if(($item["ID_FONCTION"] == $this->user_info["ID_FONCTION"]) || ($this->item == "commune" && $item["ID_FONCTION"] == 2)) echo "selected" ?> ><?php echo $item["LIBELLE_FONCTION"] ?></option>
+				<?php } ?>
+				<?php endforeach ?>
+			</select>
+		</dd>
+		<? endif ?>
+		
+		<!-- Société du contact-->
+		<?php if( $this->item != "user" && $this->item != "commune") : ?>
+		<dt>Société</dt>
+		<dd>
+			<input type='text' value='<?php if(isset($this->user_info["SOCIETE_UTILISATEURINFORMATIONS"])) echo $this->user_info["SOCIETE_UTILISATEURINFORMATIONS"] ?>' name='SOCIETE_UTILISATEURINFORMATIONS' />
+		</dd>
+		<?php endif ?>
+		
+		<?php endif ?>
+		
+		<!-- Nom et prénom du contact-->
+		<dt>Nom</dt>
+		<dd>
+			<select name='ID_UTILISATEURCIVILITE' >
+				<option value='null' >--</option>
+				<?php foreach( $this->civilite_list as $item ) : ?>
+				<option value='<?php echo $item["ID_UTILISATEURCIVILITE"] ?>' <?php if($item["ID_UTILISATEURCIVILITE"] == $this->user_info["ID_UTILISATEURCIVILITE"]) echo "selected" ?> ><?php echo $item["LIBELLE_UTILISATEURCIVILITE"] ?></option>
+				<?php endforeach ?>
+			</select>
+			Nom : <input type='text' value='<?php if(isset($this->user_info["NOM_UTILISATEURINFORMATIONS"])) echo $this->user_info["NOM_UTILISATEURINFORMATIONS"] ?>' name='NOM_UTILISATEURINFORMATIONS' />
+			Prénom : <input type='text' value='<?php if(isset($this->user_info["PRENOM_UTILISATEURINFORMATIONS"])) echo $this->user_info["PRENOM_UTILISATEURINFORMATIONS"] ?>' name='PRENOM_UTILISATEURINFORMATIONS' />
+		</dd>
+		
+		<!-- Téléphone fixe du contact -->
+		<dt>Numéros de téléphone</dt>
+		<dd>
+			<span><i class='sprite sprite-telephone' ></i> <input type='text' value='<?php if(isset($this->user_info["TELFIXE_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELFIXE_UTILISATEURINFORMATIONS"] ?>' name='TELFIXE_UTILISATEURINFORMATIONS'/></span><br/>
+			<span><i class='sprite sprite-printer_empty' ></i> <input type='text' value='<?php if(isset($this->user_info["TELFAX_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELFAX_UTILISATEURINFORMATIONS"] ?>' name='TELFAX_UTILISATEURINFORMATIONS' /></span><br/>
+			<span><i class='sprite sprite-phone' ></i> <input type='text' value='<?php if(isset($this->user_info["TELPORTABLE_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELPORTABLE_UTILISATEURINFORMATIONS"] ?>' name='TELPORTABLE_UTILISATEURINFORMATIONS' /></span>
+		</dd>
+		
+		<!-- Mail du contact-->
+		<dt>Courriel</dt>
+		<dd>
+			<input type='text' value='<?php if(isset($this->user_info["MAIL_UTILISATEURINFORMATIONS"])) echo $this->user_info["MAIL_UTILISATEURINFORMATIONS"] ?>' name='MAIL_UTILISATEURINFORMATIONS' />
+		</dd>
+		
+		<!-- Site web du contact-->
+		<dt>Site web</dt>
+		<dd>
+			<input type='text' value='<?php if(isset($this->user_info["WEB_UTILISATEURINFORMATIONS"])) echo $this->user_info["WEB_UTILISATEURINFORMATIONS"] ?>' name='WEB_UTILISATEURINFORMATIONS' />
+		</dd>
+		
+		<!-- Localisation du contact -->
+		<?php // if( $this->item != "user" ) : ?>
+		<dt>Adresse</dt>
+		<dd>
+			<span>Numéro : <input type='text' value='<?php if(isset($this->user_info["NUMEROADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] ?>' name='NUMEROADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
+			<span>Rue : <input type='text' value='<?php if(isset($this->user_info["RUEADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["RUEADRESSE_UTILISATEURINFORMATIONS"] ?>' name='RUEADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
+			<span>Code postal : <input type='text' value='<?php if(isset($this->user_info["CPADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["CPADRESSE_UTILISATEURINFORMATIONS"] ?>' name='CPADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
+			<span>Ville : <input type='text' value='<?php if(isset($this->user_info["VILLEADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["VILLEADRESSE_UTILISATEURINFORMATIONS"] ?>' name='VILLEADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
+			
+		</dd>
+		<?php // endif ?>
+		
+		<!-- Observation -->
+		<dt>Observation</dt>
+		<dd>
+			<textarea name='OBS_UTILISATEURINFORMATIONS' style="width: 100%"><?php if(isset($this->user_info["OBS_UTILISATEURINFORMATIONS"])) echo $this->user_info["OBS_UTILISATEURINFORMATIONS"] ?></textarea>
+		</dd>
+	</dl>
+	
+	<input type='hidden' name='item' value='<?php echo $this->item ?>' />
+	<input type='hidden' name='id' value='<?php echo $this->id ?>' />
+	
+</form>

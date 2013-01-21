@@ -1,0 +1,1479 @@
+<script type='text/javascript' >
+
+	$(document).ready(function(){
+
+		// Texte de l'auto complete utilisateurs
+		$("#preventionnistes-autocomplete").toggleText("Saisissez le nom d'un préventionniste ...");
+		$("#preventionnistes-autocomplete").autocomplete("/user/getpreventionniste?format=json", {
+			minChars: 3,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["resultats"], function(row) {
+					return {
+						data: row,
+						value: row.NOM_UTILISATEURINFORMATIONS,
+						result: row.NOM_UTILISATEURINFORMATIONS
+					}
+				});
+			},
+			formatItem: function(item) {
+				return item.NOM_UTILISATEURINFORMATIONS + " " + item.PRENOM_UTILISATEURINFORMATIONS;
+			}
+		}).result(function(e, item) {
+			var prevAdd = "<span class='ui-state-highlight' style='float: left; padding: 2px; margin: 0pt 2px 1em 0pt; display: block;' >";
+			prevAdd += "<input type='hidden' name='preventionniste[]' value='"+item.uid+"' />";
+			prevAdd += "<span>";
+			prevAdd += item.NOM_UTILISATEURINFORMATIONS+" "+item.PRENOM_UTILISATEURINFORMATIONS;
+			prevAdd += "</span>";
+			prevAdd += "<a onclick='$(this).parent().remove(); return false;' style='text-decoration: none;' href=''>×</a>";
+			prevAdd += "</span>";
+			$("#liste_prev").append(prevAdd);
+		});	
+		//FIN gestion de l'autocomplession pour les préventionniste attachés au dossier
+		
+		//Gestion selection commission via l'autocomplétion
+		//FONCTION d'autocompletion
+		$("#commissionSelect").toggleText("Saisissez le libellé d'une commission ...");
+		//Action lorsque l'on souhaite modifier une commission
+		
+		$("#commissionSelect").autocomplete("/calendrier-des-commissions/commissionselection?format=json",{
+			minChars: 2,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["commissionsListe"], function(row) {
+					return {
+						data: row,
+						value: row.LIBELLE_COMMISSION,
+						result: row.LIBELLE_COMMISSION
+					}
+				});
+			},
+			formatItem: function(item) {
+				//alert(item.LIBELLE_COMMISSION);
+				return item.LIBELLE_COMMISSION;
+			}
+		}).result(function(e, item) {
+			$("#COMMISSION_DOSSIER").val(item.ID_COMMISSION);
+			$(".showCalendar").show();
+			if($("#TYPE_DOSSIER").val() == 2){
+				$("#showCommission").hide();
+			}
+			return false;
+		});
+		//FIN AUTO COMPLETE
+		
+		
+		$("#commissionSelect").click( function(){
+			if( $(this).val() != "Tapez le nom de la commission" ) {
+				$("#COMMISSION_DOSSIER").attr('value','');
+			}
+			
+			$(this).attr('value','');
+			
+			$("#calendar").parent().hide();
+			$("#COMMISSION_DOSSIER").val('');
+			$("#commissionSelect").attr('disabled','').val('').focus();
+
+			//On réinitalise tous les composant de date
+			$(".calendar").html('');
+			$(".showCalendar").hide();
+			
+			$("#DATEVISITE_INPUT").val('');
+			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
+			
+			$("#DATECOMM_INPUT").val('');
+			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
+
+		});
+		
+		$(".showCalendar").live('click',function(){
+			//alert($(this).attr('id'));
+			var typeCalendar = $(this).parent().parent().attr('id');
+			var divName;
+			if(typeCalendar == 'DATEVISITE'){
+				//alert('visite');
+				divName = 'calendarVisite';
+			
+			}else if (typeCalendar == 'DATECOMM'){
+				//alert('commission');
+				divName = 'calendar';
+			}
+
+			$("#"+divName).show();
+			$("#"+divName).parent().show();
+			$("#"+divName).afficheCalendar($("#COMMISSION_DOSSIER").val(),'dossier',$('#TYPE_DOSSIER').val(),divName,$(this).attr('id'));
+			
+			$(this).hide();
+			$("#"+typeCalendar).find(".hideCalendar").show();
+
+			return false;
+		});
+		
+		$(".hideCalendar").live('click',function(){
+			
+			var typeCalendar = $(this).parent().parent().attr('id');
+			var divName;
+			if(typeCalendar == 'DATEVISITE'){
+				//alert('visite');
+				divName = 'calendarVisite';
+			
+			}else if (typeCalendar == 'DATECOMM'){
+				//alert('commission');
+				divName = 'calendar';
+			}
+
+			$("#"+divName).hide();
+			$("#"+divName).parent().hide();
+			$("#"+divName).html('');
+			
+			$(this).hide();
+			$("#"+typeCalendar).find(".showCalendar").show();
+
+			return false;
+		});
+
+		$(".changeCommission").live('click',function(){
+			//ICI SUPPRIMER TOUTES LES LIGNES CORRESPONDANT AU DOSSIER DANS  dossieraffectation ou dans le save...
+			$("#DATEVISITE_INPUT").val('');
+			$("ID_AFFECTATION_DOSSIER_VISITE").val('');
+			$("#DATECOMM_INPUT").val('');
+			$("ID_AFFECTATION_DOSSIER_COMMISSION").val('');
+			
+			
+			$(".showCalendar").hide();
+			$(".hideCalendar").hide();
+			
+			
+			//a verifier
+			$("#calendar").hide();
+			$("#calendar").parent().hide();
+			$("#calendar").html('');
+			
+			$("#calendarVisite").hide();
+			$("#calendarVisite").parent().hide();
+			$("#calendarVisite").html('');
+			
+			$("#COMMISSION_DOSSIER").val('');
+			
+			$("#commissionSelect").attr('disabled','').val('').focus();
+			
+			return false;
+		});
+		
+		//Affichage de la nature en fonction du type choisi... Si on choisi le type 0 Alors on cache la nature
+		//génére via la vue fonction le select
+		//$("#TYPE_DOSSIER").live('change',function(){
+		$("#TYPE_DOSSIER").change(function(){
+			var idType = $(this).val();
+			$("#InfosDossier > li").hide();
+			$("#creationDossier").hide();
+			if(idType == 0){
+				$("#nature").hide();
+			}else{
+				$.ajax({
+					url: "/dossier/fonction",
+					data: "do=showNature&idType="+idType,
+					type:"POST",
+					//async: false,
+					beforeSend: function(){
+						$("#chargement").html("<img src='/images/load.gif' />");
+					},
+					success: function(affichageResultat){
+						$("#nature > .form").html(affichageResultat);
+						$("#nature").show();
+						$("#chargement").html("");
+						//alert('');
+						return false;
+						/*
+						alert($("#TYPE_DOSSIER").val());
+						$("#libelleCalendar").html($(this).val());
+						*/
+					},
+					error: function(){
+						return false;
+					}
+				});
+			}
+			return false;
+		});
+	
+	});
+	//FIN DOC READY FUNCTION
+	
+	
+	$.fn.afficheCalendar = function(idComm,emplacement,type,divInfo,infoCalendar) {
+		//alert(idComm+" "+emplacement+" "+type);
+		var calendar = $("#"+divInfo).fullCalendar( {
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			columnFormat : {
+				month: 'dddd',
+				week: 'dddd dd',
+				day: 'dddd dd MMMM yyyy'
+			},
+			defaultView: 'month',
+			timeFormat:'H:mm{ - H:mm}',
+			axisFormat: 'H(:mm)',
+			slotMinutes: 5, //Permet d'afficher un interval de 10 minutes au lieu de 30 par défaut
+			selectHelper: true,
+			firstDay: 1,
+			weekends: false,
+			monthNames : ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin','Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'],
+			monthAbbrevs : ['Jan','Fev','Mar','Avr','Mai','Juin','Juil','Aout','Sep','Oct','Nov','Dec'],
+			dayNames : ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+			dayNamesShort : ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
+			lazyFetching: false, //permet de ne pas réafficher les évenements en cache
+			minTime: 8,
+			maxTime: 19,
+			editable: true,
+			disableResizing: false,
+			selectable: true,
+			droppable: false,
+			theme: true,
+			aspectRatio: 2,
+			events: function(start, end, callback) {
+				var type;
+				if($("#TYPE_DOSSIER").val() == 1){
+					//cas type dossier étude. On affiche alors que les commissions de type En Salle
+					type = 1;
+				}else if($("#TYPE_DOSSIER").val() == 2){
+					//cas type de dossier visite ou groupe de visite suivant le champ infoCalendar on choisi ce que l'on affiche
+					type = $("#TYPE_DOSSIER").val();			
+				}else if($("#TYPE_DOSSIER").val() == 3){
+					if(infoCalendar == 'showVisite'){
+						type = $("#TYPE_DOSSIER").val();
+					}else if(infoCalendar == 'showCommission'){
+						type = 1;
+					}	
+				}
+					
+				$.ajax({
+					url: '/calendrier-des-commissions/recupevenement?start='+start.getTime()+"&end="+end.getTime()+"&type="+type,
+					data: {
+						format: 'json',
+						idComm: idComm,
+					},
+					success: function( result ) {
+
+						var events = [];
+						for( var x in result["items"] ) {
+
+							var colorCal;
+							switch(result["items"][x]["className"]){
+								case "display-1":
+									//En salle
+									colorCal = "blue";
+								break;
+								case "display-2":
+									//Visite
+									colorCal = "green";
+								break;
+								case "display-3":
+									//Groupe de visite
+									colorCal = "orange";
+								break;
+							}
+							events.push({
+								id: result["items"][x]["id"],
+								title: result["items"][x]["title"],
+								start: result["items"][x]["start"],
+								end: result["items"][x]["end"],
+								allDay: result["items"][x]["allDay"],
+								//url: result["items"][x]["url"],
+								color: colorCal
+							});
+						}
+						callback(events);
+						return false;
+					}
+				});
+			},
+			// Lorsque l'on selectionne une ou plusieurs dates on ouvre la boite de dialogue correspondante
+			select: function(start, end, allDay) {
+				var dateSelected = new Date(start);
+				// On empêche la selection d'un samedi ou d'un dimanche
+				if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
+					// Boite de dialogue en ajoutant en callback le traitement du formulaire
+					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end, function() {	
+						$("#dialogComm").dialog("option", "buttons", {
+							'Enregistrer dans le calendrier': function() {
+								// Lors de la validation de la boite de dialogue
+								$.ajax({
+									data: $("#formDateComm").serialize() + "&idComm=" + idComm,
+									url: "/calendrier-des-commissions/adddates",
+									type:"POST",
+									success: function(affichageResultat) {
+										//En cas de succes il faut inserer tous les évenements dans le calendrier et la BD
+										//Récupération du Json et affichage de celui-ci
+										var rez = eval("("+affichageResultat+")");
+										for( var i in rez ) {
+											calendar.fullCalendar('renderEvent',{
+												id: rez[i]['id'],
+												title: rez[i]['title'],
+												className: rez[i]['className'],
+												start: rez[i]['start'],
+												end: rez[i]['end'],
+												allDay: false,
+												//url: "/calendrier-des-commissions/view/id="+rez[i]['id']
+												url: "/commission/id/"+rez[i]['id']
+											});
+										}
+										$("#"+divInfo).fullCalendar('refetchEvents');
+										$("#dialogComm").dialog('close').html('');
+									}
+								});
+							},
+							'Fermer la fenêtre d\'édition': function() {
+								$("#dialogComm").dialog('close').html('');
+							}
+						});
+					});
+				}
+			},
+			eventClick: function( event, jsEvent, view ) {
+				// Boite de dialogue
+				if(emplacement == 'calendrierComm'){
+					my_dialog("/calendrier-des-commissions/dialogcomm", "idComm="+idComm+"&idDateComm="+event.id+"&do=edit");
+				}else if(emplacement == 'dossier'){
+					//Lorsque l'on clique sur une commission la date s'ajoute automatiquement dans l'input en dessous
+					//Faire vérification du nombre de date liée
+					if($("#TYPE_DOSSIER").val() == 1){
+						//Si une seule date on la renseinge aussi dans l'input date de passage en commission
+						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');					
+						var date = new Date(event.end);					
+						dd = date.getUTCDate();
+						mm = date.getUTCMonth()+1;
+						aa = date.getUTCFullYear();
+						if(dd<10)
+							dd='0'+dd						
+						if(mm<10)
+							mm='0'+mm
+						
+						//alert(infoCalendar);
+						if(dateSelect == "DATEVISITE"){
+						//if(infoCalendar == 'showVisite'){
+							$("#DATEVISITE_INPUT").val(dd+"/"+mm+"/"+aa);
+							$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
+						}else if(dateSelect == "DATECOMM"){
+						//}else if(dateSelect == "showCommission"){
+							$("#DATECOMM_INPUT").val(dd+"/"+mm+"/"+aa);
+							$("#ID_AFFECTATION_DOSSIER_COMMISSION").val(event.id);
+						}
+						$("#"+dateSelect).find(".hideCalendar").click();
+					
+					}else if($("#TYPE_DOSSIER").val() == 2){
+						$.ajax({
+							data: "idDate=" + event.id,
+							url: "/calendrier-des-commissions/recupdateliee",
+							type:"GET",
+							success: function(affichageResultat) {
+								//On récupere toutes les dates liées et on les affiche
+								var rez = eval("("+affichageResultat+")");
+
+								if(rez.length == 1){
+									//alert(rez.length);
+									//Si une seule date on la renseinge aussi dans l'input date de passage en commission
+									var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');					
+									var date = new Date(event.end);					
+									dd = date.getUTCDate();
+									mm = date.getUTCMonth()+1;
+									aa = date.getUTCFullYear();
+									if(dd<10)
+										dd='0'+dd						
+									if(mm<10)
+										mm='0'+mm
+									
+	
+									$("#DATEVISITE_INPUT").val(dd+"/"+mm+"/"+aa);
+									$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
+									$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
+									$("#DATECOMM_INPUT").val(dd+"/"+mm+"/"+aa);
+									if($('#nature_21').val() == 21){
+										$("#DATEVISITE_PERIODIQUE").val(dateFr);
+									}
+
+									$("#hideVisite").click();
+								}else if(rez.length > 1){
+									//Si plusieurs date on prend uniquement la dernière en date de commission et on affiche toutes les dates de visite
+									//Si une seule date on la renseinge aussi dans l'input date de passage en commission
+									var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');					
+
+									var nbResultats = rez.length;
+									var nbResultatsTotal = nbResultats;
+									
+									var listeDates = "";
+									for( var i in rez ) {
+										//alert(nbResultats+" - "+rez[i]['DATE_COMMISSION']);
+										if(nbResultats == nbResultatsTotal){
+											//On prend l'id de la premiere date pour la lier au dossier
+											$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
+											
+										}
+										var dateFr = convertDateAngToFr(rez[i]['DATE_COMMISSION']);
+										if(nbResultats > 2){
+											listeDates += dateFr+", "; 
+										}else if(nbResultats == 2){
+											listeDates += dateFr;
+										}else if(nbResultats == 1){
+											//ici on met la date dans l'input de commission
+											$("#DATECOMM_INPUT").val(dateFr);
+											if($('#nature_21').val() == 21){
+												$("#DATEVISITE_PERIODIQUE").val(dateFr);
+											}
+											$("#ID_AFFECTATION_DOSSIER_COMMISSION").val(rez[i]['ID_DATECOMMISSION']);
+										}
+										nbResultats--;
+										
+										//alert(rez[i]['DATE_COMMISSION']);
+									}
+									$("#DATEVISITE_INPUT").val(listeDates);
+
+									$("#hideVisite").click();
+								}
+								
+							}
+						});
+						//Fin du cas pour les visites
+					}else if($("#TYPE_DOSSIER").val() == 3){
+						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');	
+						if(dateSelect == "DATEVISITE"){
+							$.ajax({
+								data: "idDate=" + event.id,
+								url: "/calendrier-des-commissions/recupdateliee",
+								type:"GET",
+								success: function(affichageResultat) {
+									//On récupere toutes les dates liées et on les affiche
+									var rez = eval("("+affichageResultat+")");
+									//alert(rez.length);
+									if(rez.length == 1){
+										//alert(rez.length);
+										//Si une seule date on la renseinge aussi dans l'input date de passage en commission
+													
+										var date = new Date(event.end);					
+										dd = date.getUTCDate();
+										mm = date.getUTCMonth()+1;
+										aa = date.getUTCFullYear();
+										if(dd<10)
+											dd='0'+dd						
+										if(mm<10)
+											mm='0'+mm
+										
+		
+										$("#DATEVISITE_INPUT").val(dd+"/"+mm+"/"+aa);
+										$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
+
+										$("#hideVisite").click();
+									}else if(rez.length > 1){
+										//Si plusieurs date on prend uniquement la dernière en date de commission et on affiche toutes les dates de visite
+										//Si une seule date on la renseinge aussi dans l'input date de passage en commission
+
+										var nbResultats = rez.length;
+										var nbResultatsTotal = nbResultats;
+										
+										var listeDates = "";
+										for( var i in rez ) {
+											//alert(nbResultats+" - "+rez[i]['DATE_COMMISSION']);
+											if(nbResultats == nbResultatsTotal){
+												//On prend l'id de la premiere date pour la lier au dossier
+												$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
+												
+											}
+											var dateFr = convertDateAngToFr(rez[i]['DATE_COMMISSION']);
+											if(nbResultats > 1){
+												listeDates += dateFr+", "; 
+											}else if(nbResultats == 1){
+												listeDates += dateFr;
+											}
+											nbResultats--;
+											
+											//alert(rez[i]['DATE_COMMISSION']);
+										}
+										$("#DATEVISITE_INPUT").val(listeDates);
+
+										$("#hideVisite").click();
+									}
+									
+								}
+							});
+						}else if(dateSelect == "DATECOMM"){
+							var date = new Date(event.end);					
+							dd = date.getUTCDate();
+							mm = date.getUTCMonth()+1;
+							aa = date.getUTCFullYear();
+							if(dd<10)
+								dd='0'+dd						
+							if(mm<10)
+								mm='0'+mm
+							$("#DATECOMM_INPUT").val(dd+"/"+mm+"/"+aa);
+							$("#ID_AFFECTATION_DOSSIER_COMMISSION").val(event.id);
+							$("#hideCommission").click();
+						}
+					
+					}
+					//$(".hideCalendar").click();
+				}
+				return false;
+			},
+			eventDrop: function( event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view ) {
+				//Lorsque l'on déplace un élément
+				var tabDateSelect = event.end;
+				tabDateSelect = tabDateSelect.toString();
+				tabDateSplited = tabDateSelect.split(" ");
+
+				if(tabDateSplited[0] == "Sun" || tabDateSplited[0] == "Sat"){
+					$("#"+divInfo).fullCalendar('refetchEvents');
+				}else{
+					//alert("idComm="+event.id+"&debut="+event.start+"&fin="+event.end);
+					$.ajax({
+						data: "idComm="+event.id+"&debut="+event.start+"&fin="+event.end,
+						url: "/calendrier-des-commissions/deplacecommissiondate",
+						type:"POST",
+						success: function(affichageResultat){
+							//$("#calendar").html(affichageResultat);
+						},
+					});
+					
+				}
+			},
+			eventResize: function( event, jsEvent, ui, view ) {
+			
+				//heure de fin change uniquement fonctionne uniquement sur la vue semaine et jour. Pas sur mois
+				var view = $("#"+divInfo).fullCalendar('getView');
+				var vueInfo = view.title;
+				vueInfo = vueInfo.split(" ");
+				if(vueInfo.length == 2){
+					//permet d'empecher la modification en mode mois (Ajouter message d'indication si besoin)
+					$("#"+divInfo).fullCalendar('refetchEvents');
+					return false;
+				}
+				$.ajax({
+					data: "idComm="+event.id+"&fin="+event.end,
+					url: "/calendrier-des-commissions/resizecommissiondate",
+					type:"POST",
+				});
+			}
+			
+			
+		});	
+	};
+	
+	// Dialogue standard
+	function my_dialog( url, data, callback ) {
+		// Récupération du contenu de la boite de dialogue
+		$.ajax({
+			data: data,
+			url: url,
+			type:"POST",
+			success: function( result ) {
+			
+				$("#dialogComm").html( result );
+				
+				// On créé la boite de dialogue
+				$("#dialogComm").dialog({
+					resizable: false,
+					height: 500,
+					width: 700,
+					modal: true,
+					buttons: {
+						'Fermer la fenêtre d\'édition': function() {
+							$("#dialogComm").dialog('close').html('');
+						}
+					}
+				});
+				
+				if( callback )
+					callback();
+			}
+		});
+	}
+	
+	function convertDateAngToFr(dateAng){
+		var tabDate = dateAng.split("-");
+		return tabDate[2]+"/"+tabDate[1]+"/"+tabDate[0];
+	}
+	
+	$(".today").live('click',function(){
+		var objetDate = new Date();
+		//alert(jour.lenght());
+		$(this).prev().attr('value',$("#dateToday").val());
+		return false;
+	});
+	
+	//Fonction qui retourne la liste des natures sélectionnées
+	$.fn.recupNatures = function() {
+		var listeIdNature = "";
+		var compteur = 1;
+		var idNature;
+		$("#listeNature > .nature  input[name='natureId[]']").each(function(){
+			//alert($(this).attr('id'));
+			var idSplit = $(this).attr('id').split('_');
+			if(compteur == 1)
+				listeIdNature += idSplit[1];
+			else
+				listeIdNature += "_"+idSplit[1];
+			compteur++;
+		});
+		return listeIdNature;
+	};
+	
+	//Cache les natures de la liste
+	$.fn.cacherNatureDuSelect = function(listeNatures) {
+		//Dans le cas d'une édition on cache dans le select des natures ceux qui sont déjà présentes
+		//alert(listeNatures);
+		var tabNature = listeNatures.split('_');
+		//alert(tabNature.length);
+		//alert(tabNature[0]+" - "+tabNature[1]+" - "+tabNature[2]+" - "+tabNature[3]);
+		if(tabNature.length > 0){
+			$("#selectNature [value=0]").text("Ajouter une nature supplémentaire");
+		}
+		for(var i = 0; i < tabNature.length;i++){
+			//alert("i : "+i+" - "+tabNature[i]);
+			$("#selectNature [value="+tabNature[i]+"]").hide();
+		}
+	};
+	
+	//Permet dans le cas d'édition d'empécher la suppression de toutes les natures. Cache les .suppNature quand il n'en reste qu'une
+	$.fn.gestionSuppNature = function(){
+		if($("#listeNature > .nature").length == 1){
+			$(".suppNature").hide();
+		}else{
+			$(".suppNature").show();
+		}
+	};
+	
+	
+	//Affichage des champs en fonction des natures
+	$.fn.afficheChamps = function(listeNature) {
+		//alert(listeNature);
+		$("#InfosDossier > li").hide();
+		$.ajax({
+			url: "/dossier/fonction",
+			data: "do=showChamps&listeNature="+listeNature,
+			type:"POST",
+			//async: false,
+			beforeSend: function(){
+				
+			},
+			success: function(affichageResultat){
+				//On affiche tous les champs
+				//alert(affichageResultat);
+				if(affichageResultat != ''){
+					var rez = eval("("+affichageResultat+")");					
+					for(var i in rez){
+						if(rez[i] == 'AVIS'){
+							//Si l'avis est défavorable alors on affiche l'anomalie constatée
+							if($("#AVIS_DOSSIER").val() == 3){
+								$("#ANOMALIE").show();
+							}
+						}
+						$("#InfosDossier > #"+rez[i]).show();
+					}
+				}
+				$("#chargement").html('');
+
+			},
+			error: function(){
+				return false;
+			}
+		});
+	};
+
+	//Action lorsque l'on appuie sur le bouton modifier MODE EDITION
+	$("#modificationDossier").live('click',function(){
+		$(this).hide();
+		$("#save_div").hide();
+		$("#InfosDossier > li").hide();
+		$("#validModification").show();
+		
+		$("#InfosDossier > li > .value").hide();
+		$("#InfosDossier > li > .form").show();
+		
+		//on fait apparaitre la liste des natures puis on cache les natures déja affichées
+		//$("#selectNature").show();
+		$("#selectNature").attr('disabled','');
+		
+		//var listeNature = $("#listeNature").recupNatures();
+		//$("#selectNature").cacherNatureDuSelect(listeNature);
+		
+		
+	
+		
+		$("#NUM_DOCURBA").show();
+		$("#addNumDoc").show();
+		
+		$(".suppDocUrba").show();
+		if($("#do").val() == 'edit'){
+			$("#listeNature").gestionSuppNature();
+		}
+		
+		//$("#InfosDossier").afficheChamps(listeNature);
+		$("#InfosDossier").afficheChamps($("#selectNature").val());
+		
+		//Gestion des cas calendrier comm visite en fonction du type de dossier
+		$(".hideCalendar").hide();
+		if($("#TYPE_DOSSIER").val() == 2){
+			$("#showCommission").hide();
+		}
+		return false;
+	});
+
+	//Selection d'une nature et affichage des champs en fonction de la ou des natures
+	$("#selectNature").live('change',function(){
+		var idNature = $("#selectNature").val();
+		var idNatureBd;			
+		//alert(idNature);
+		if(idNature != 0){
+							
+			if($("#do").val() == 'edit'){
+				/*
+				//alert('');
+				$.ajax({
+					url: "/dossier/fonction",
+					data: "do=addNatureDossier&idNatureAdd="+$("#selectNature").val()+"&idDossier="+$("#idDossier").val(),
+					type:"POST",
+					beforeSend: function(){
+						
+					},
+					success: function(affichageResultat){
+						
+						idNatureBd = affichageResultat;
+						$("#selectNature").parent().prepend("<div class='nature' style=''><input type='hidden' name='natureId[]' id='nature_"+$("#selectNature").val()+"' value='"+idNatureBd+"' />"+$("#selectNature option:selected").text()+" <a href='' idNature='"+idNatureBd+"'class='suppNature'>&times;</a></div>");
+						var listeNature = $("#listeNature").recupNatures();
+
+						//alert(listeNature);
+						$("#InfosDossier").afficheChamps(listeNature);
+
+						$("#selectNature [value=0]").text("Ajouter une nature supplémentaire");
+
+						$("#selectNature [value="+$("#selectNature").val()+"]").hide();
+						$("#selectNature").val(0);
+						
+						$("#listeNature").gestionSuppNature();
+						
+					},
+					error: function(){
+						return false;
+					}
+				});
+				*/
+				
+				var listeNature = $("#listeNature").recupNatures();
+				
+				$("#InfosDossier").afficheChamps($(this).val());
+
+			}else{
+	
+				//idNatureBd = $("#selectNature").val();
+				//$("#selectNature").parent().prepend("<div class='nature' style=''><input type='hidden' name='natureId[]' id='nature_"+$("#selectNature").val()+"' value='"+idNatureBd+"' />"+$("#selectNature option:selected").text()+" <a href='' idNature='"+idNatureBd+"'class='suppNature'>&times;</a></div>");
+
+				var listeNature = $("#listeNature").recupNatures();
+				
+				$("#InfosDossier").afficheChamps($(this).val());
+				$("#creationDossier").show();
+				
+	/*
+				$("#InfosDossier").afficheChamps(listeNature);
+				$("#selectNature [value=0]").text("Ajouter une nature supplémentaire");
+
+				$("#selectNature [value="+$("#selectNature").val()+"]").hide();
+				$("#selectNature").val(0);
+				
+				$(this).attr('disabled','disabled');
+	*/
+			}
+		}
+	});
+
+	
+/*	
+	//Gestion de la suppression de nature affichage des champs correspondant aux natures restantes
+	$(".suppNature").live('click',function(){
+		//alert('');
+		if($("#do").val() == 'edit'){
+			//alert($(this).attr('idNature'));
+			$.ajax({
+				url: "/dossier/fonction",
+				data: "do=deleteNatureDossier&idNatureSupp="+$(this).attr('idNature'),
+				type:"POST",
+				beforeSend: function(){
+					
+				},
+				success: function(affichageResultat){
+					
+				},
+				error: function(){
+					return false;
+				}
+			});
+		}
+
+		$(this).parent().remove();			
+		var compteur = 0;
+
+		var compteur = $("#listeNature > .nature").length;
+		if(compteur == 0){
+			$("#selectNature [value=0]").text("Veuillez selectionner une nature");
+			$("#creationDossier").hide();
+		}			
+		var listeNature = $("#listeNature").recupNatures();
+		$("#InfosDossier").afficheChamps(listeNature);
+		//alert('3');
+		var idNatureListe = $(this).prev("input").attr('id').split("_");
+		//alert(idNatureListe[1]);
+		$("#selectNature [value="+idNatureListe[1]+"]").show();
+		$("#selectNature").val(0);
+		if($("#do").val() == 'edit'){
+			$("#listeNature").gestionSuppNature();
+		}
+		$("selectNature").removeAttr('disabled');
+		return false;
+	});
+*/
+		
+	function ValidateDate(dateValue)
+	{
+		var date_temp = dateValue.split('/');
+		date_temp[1] -=1;        // On rectifie le mois !!!
+		var ma_date = new Date();
+		ma_date.setFullYear(date_temp[2]);
+		ma_date.setMonth(date_temp[1]);
+		ma_date.setDate(date_temp[0]);
+		if(ma_date.getFullYear()==date_temp[2] && ma_date.getMonth()==date_temp[1] && ma_date.getDate()==date_temp[0]){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	function verifDossier(){
+		
+		
+		if($("#OBJET_DOSSIER").val() == ''){
+			$("#OBJET_DOSSIER").focus();
+			$("#OBJET_DOSSIER").css("border-color","red");
+			return false;
+		}
+
+		if($("#DATEINSERT_INPUT").val() == ''){
+			$("#DATEINSERT_INPUT").next(".today").click();
+			return true;
+		}else{
+			var valeurDATE = ValidateDate($("#DATEINSERT_INPUT").val());
+			if(!valeurDATE){
+				$("#DATEINSERT_INPUT").focus();
+				$("#DATEINSERT_INPUT").css("border-color","red");
+				return false;
+			}else{
+				return true;
+			}
+		}
+		
+	}
+
+
+	//Action lorsque l'on crée le dossier on redirige vers la page de consultation
+	$("#creationDossier").live('click',function(){
+		if(!verifDossier())
+			return false;
+
+		/*
+		if($("#NUMDOCURBA").css('display') != 'none'){
+			if($("#NUM_DOCURBA").val() == '' && $(".docurba").length == 0){
+				$("#NUM_DOCURBA").focus();
+				$("#NUM_DOCURBA").css("border-color","red");
+				return false;
+			}else{ 
+				$("#addNumDoc").click();
+			}
+		}
+		*/
+		
+		$("#creationDossier").button({ disabled: true });
+		var data = $("#newDossier").serialize();
+		
+		
+		if($("#TYPE_DOSSIER").val() == 2 && $("#selectNature").val() == 21){
+			var tabDateVisite = $("#DATEVISITE_INPUT").val().split(',');
+			data += "&DATEVISITE_PERIODIQUE="+tabDateVisite[0];
+		}
+		
+		//$("#newDossier").submit();
+		$.ajax({
+			url: "/dossier/save",
+			data: data,
+			type:"POST",
+			//async: false,
+			beforeSend: function(){
+				//$("#"+nomTab[1]).html("<img src='/images/template/load/load.gif' />");
+			},
+			success: function(affichageResultat){
+				//alert(affichageResultat);
+				window.location='/dossier/index/id/'+affichageResultat;
+				return false;
+			},
+			error: function(){
+				return false;
+			}
+		});
+		return false;
+	});
+	
+	$("#rapport").live('click',function(){
+		//On charge le contenu de la boite de dialogue en Ajax (liste des établissements concernés)
+		$.ajax({
+			url: "/dossier/dialoggenrapport",
+			data: "idDossier="+$("#idDossier").val(),
+			type:"POST",
+			//async: false,
+			beforeSend: function(){
+				//$(".checkbox_generate input").remove();
+			},
+			success: function(affichageResultat){
+				$("#dialogComm").html('').html(affichageResultat).dialog({
+					resizable: false,
+					height:400,
+					width:650,
+					modal: true,
+					title: 'Génération des rapports',
+					buttons: {
+						'Annuler': function() {
+							$(this).dialog('close');
+							$("#dialogComm").html('');
+						}
+					},
+					close: function(event, ui){
+						$("body").css('overflow','auto');
+						$("#dialogComm").html('');
+					}
+				});				
+			},
+			error: function(){
+				return false;
+			}
+		});
+		
+		return false;		
+	});
+	
+	$("#generate").live('click',function() {
+		var selected = false;
+		$(".etabCheck").each(function(){
+
+			if($(this).attr('checked')){
+				selected = $(this).attr('checked');
+			}
+
+		});
+		
+		if(selected){
+			$.ajax({
+				url: "/dossier/generationrapport",
+				data: $("#etabRapport").serialize()+"&idDossier="+$("#idDossier").val(),
+				type:"POST",
+				//async: false,
+				beforeSend: function(){
+					$("#dialogComm").html("<img src='/images/load.gif' />");
+				},
+				success: function(affichageResultat){
+					var successMess = "<h3>Génération effectuée avec succès</h3><br/>";
+					$("#dialogComm").html(successMess+affichageResultat);
+					$("#dialogComm").append("Vous pouvez retrouver ces documents dans la partie pièces jointes");
+				},
+				error: function(){
+					$("#dialogComm").html("<h3>Erreur lors de la génération du rapport</h3><br/>Si le problème persiste veuillez contacter votre administrateur");
+					return false;
+				}
+			});
+		}
+
+		return false;		
+	});
+	
+	//Action lorsque l'on valide les modifications apportées à un dossier
+	$("#validModification").live('click',function(){
+		if(!verifDossier())
+			return false;
+			
+		var data = $("#editDossier").serialize();
+		
+		//alert($("#editDossier").serialize());
+		
+		$.ajax({
+			url: "/dossier/save",
+			data: data,
+			type:"POST",
+			//async: false,
+			beforeSend: function(){
+				//$("#"+nomTab[1]).html("<img src='/images/template/load/load.gif' />");
+			},
+			success: function(affichageResultat){
+				//alert(affichageResultat);
+				window.location= affichageResultat;
+				//$("#formulaire").submit();
+			},
+			error: function(){
+				return false;
+			}
+		});
+		return false;		
+	});
+	
+	
+	
+	
+
+
+	
+</script>
+<?php
+echo $this->headScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
+//echo $this->headScript()->appendFile('/js/dossier/calendrier.js','text/javascript');
+
+$action = $this->do;
+
+if($action == 'edit'){
+	$formUrl = "/dossier/index/id/".$this->idDossier;
+}else{
+	$formUrl = "";
+}
+
+echo "
+	<div id='dossierInfos'>
+		<input type='hidden' id='dateToday' value='".$this->dateToday."' />
+		<form id='".$action."Dossier' name='".$action."Dossier' method='POST' >
+			<input type='hidden' name='idEtablissement' id='idEtablissement' value='".$this->idEtablissement."' />
+			<input type='hidden' name='do' id='do' value='".$action."' />	
+			".( ($action == 'edit')? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "" )."
+			<div id='boutons' style='float: right'>
+				<button id='modificationDossier' style='".( ($action == 'new')? "display:none;" : "" )."'>Modifier le dossier</button>
+				<button id='validModification' class='save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Sauvegarder le dossier</button>
+				<button id='creationDossier' class='save' style='display:none; z-index:150;'>Créer le dossier</button>
+				<div id='chargement'></div>
+			</div>
+			
+			<h3>Informations générales</h3>
+			
+			<!-- BEGIN UL Type/Nature -->
+			<h4>Type et natures du dossier</h4>
+			<ul class='list'>
+				<li id='type'>
+					<div class='left libelle'>Type</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'":"" ).">".$this->libelleType."</div>
+					<div class='right form' ". ( ($action != 'new')? "style='display:none'":"").">
+						<select name='TYPE_DOSSIER' id='TYPE_DOSSIER' >
+							<option value='0' >Selectionnez un type</option>
+					";
+					foreach ($this->dossierType as $value){
+						echo "<option value='".$value["ID_DOSSIERTYPE"]."' ".( ($this->infosDossier['TYPE_DOSSIER'] == $value["ID_DOSSIERTYPE"])? "selected='selected'" : ""  )." >".$value["LIBELLE_DOSSIERTYPE"]."</option>";
+					}
+					echo "
+						</select>
+					</div>
+				</li>
+				<li id='nature' ".( ($action == 'new')?"style='display:none;'":"").">
+					<div class='left libelle'>Nature</div>
+					<div class='right value'></div>
+					<div class='right form' ".( ($action != 'new' && $action != 'edit' )?"style='display:none;'":"").">
+						<div id='listeNature' >
+						";
+						/*
+						if($action == 'edit'){
+							foreach($this->natureConcerne as $value){
+								echo "<div class='nature' style=''><input type='hidden' name='natureId[]' id='nature_".$value['ID_NATURE']."' value='".$value['ID_DOSSIERNATURE']."' />".$value['LIBELLE_DOSSIERNATURE']." <a href='' idNature='".$value['ID_DOSSIERNATURE']."'class='suppNature' ".( ($action == 'edit' )?"style='display:none;'":"").">&times;</a></div>";
+							}
+						}
+						*/
+						echo "
+							<select name='selectNature' id='selectNature' ".( ($action == 'edit' )?"disabled='disabled'":"")." >
+									<option value='0' >Selectionnez un type</option>
+						";
+							foreach($this->dossierNatureListe as $value){
+								if($this->natureConcerne[0]['ID_NATURE'] == $value["ID_DOSSIERNATURE"]){
+									$selected="selected='selected'";
+								}else{
+									$selected="";
+								}
+								echo "<option value='".$value["ID_DOSSIERNATURE"]."' ".$selected.">".$value['LIBELLE_DOSSIERNATURE']."</div>";
+							}
+						echo "
+							</select>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<!-- FIN UL Type/Nature -->
+			
+			<h4>Informations sur le dossier</h4>
+			<!-- BEGIN UL InfosDossier -->
+			
+			<ul id='InfosDossier' class='list' >
+				<li id='DATEINSERT' ".( (in_array('DATEINSERT', $this->afficherChamps) && $this->infosDossier['DATEINSERT_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date de création du dossier</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINSERT_DOSSIER']."</div >
+					<div class='right form' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
+						<input type='text' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".( ($this->DATEINSERT_INPUT)?$this->DATEINSERT_INPUT:"" )."' />
+						&nbsp;<button class='today'>Aujourd'hui</button>
+					</div>
+				</li>
+				<li id='OBJET' ".( (in_array('OBJET', $this->afficherChamps) && $this->infosDossier['OBJET_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Objet</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['OBJET_DOSSIER'])."</div >
+					<div class='right form' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
+						<!--
+							<input type='text' name='OBJET_DOSSIER' id='OBJET_DOSSIER' value='".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."' style='width:400px;' />
+						-->
+						<textarea rows='2' cols='100' name='OBJET_DOSSIER' id='OBJET_DOSSIER'>".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					</div>
+				</li>
+				<li id='NUMDOCURBA' ".( (in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0 )? "": "style='display:none;margin-bottom:10px;'" ).">
+					<div class='left libelle'>Numéro document d'urbanisme</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."></div>
+					<div class='right form'> 
+						<div id='listeDocUrba' >
+							<input type='text' name='NUM_DOCURBA' id='NUM_DOCURBA' value='' ".( ($action != 'new')? "style='display:none;'" : "" )." />
+							&nbsp;<button id='addNumDoc' ".( ($action != 'new')? "style='display:none;'" : "" ).">Ajouter le numéro de document d'urbanisme</button>
+							";
+							if($action != 'new'){
+								foreach($this->dossierDocUrba as $docUrba){
+									echo "<div class='docurba' style=''><input type='hidden' name='docUrba[]' value='".$docUrba['ID_DOCURBA']."' id='urba_".$docUrba['ID_DOCURBA']."'/>".$docUrba['NUM_DOCURBA']."<a href='' idDocUrba='".$docUrba['ID_DOCURBA']."' class='suppDocUrba'  ".( ($action == 'edit' )?"style='display:none;'":"").">&times;</a></div>";
+								}
+							}
+							echo "
+						</div>
+					</div>
+				</li>
+				<li id='NUMCHRONO' ".( ($action != 'new' && in_array('NUMCHRONO', $this->afficherChamps) && $this->infosDossier['NUMCHRONO_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Numéro chrono</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['NUMCHRONO_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' name='NUMCHRONO_DOSSIER' id='NUMCHRONO_DOSSIER' value='".( ($this->infosDossier['NUMCHRONO_DOSSIER'])?$this->infosDossier['NUMCHRONO_DOSSIER']:"" )."' />						
+					</div>
+				</li>
+				<li id='DATEMAIRIE' ".( ($action != 'new' && in_array('DATEMAIRIE', $this->afficherChamps) && $this->infosDossier['DATEMAIRIE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date réception mairie</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['DATEMAIRIE_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<div>
+							<input type='text' class='date' name='DATEMAIRIE_DOSSIER' id='DATEMAIRIE_INPUT' value='".( ($this->DATEMAIRIE_INPUT)?$this->DATEMAIRIE_INPUT:"" )."' />
+							&nbsp;<button class='today'>Aujourd'hui</button>
+						</div>
+					</div>
+				</li>
+				<li id='DATESECRETARIAT' ".( ($action != 'new' && in_array('DATESECRETARIAT', $this->afficherChamps) && $this->infosDossier['DATESECRETARIAT_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date réception secrétariat commission</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESECRETARIAT_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"")."> 
+						<input type='text' class='date' name='DATESECRETARIAT_DOSSIER' id='DATESECRETARIAT_INPUT' value='".( ($this->DATESECRETARIAT_INPUT)?$this->DATESECRETARIAT_INPUT:"" )."' />
+						&nbsp;<button class='today'>Aujourd'hui</button>
+					</div>
+				</li>
+				<li id='DATESDIS' ".( ($action != 'new' && in_array('DATESDIS', $this->afficherChamps) && $this->infosDossier['DATESDIS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date de réception SDIS</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESDIS_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='date' id='DATESDIS_INPUT' name='DATESDIS_DOSSIER' value='".( ($this->DATESDIS_INPUT)?$this->DATESDIS_INPUT:"" )."' />
+						&nbsp;<button class='today'>Aujourd'hui</button>
+					</div>
+				</li>	
+				<li id='SERVICEINSTRUC' ".( ($action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Service instructeur</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"")."> 
+						<!--
+							<input type='text' name='SERVICEINSTRUC_DOSSIER' id='SERVICEINSTRUC_DOSSIER' value='".( ($this->infosDossier['SERVICEINSTRUC_DOSSIER'])?htmlspecialchars($this->infosDossier['SERVICEINSTRUC_DOSSIER'], ENT_QUOTES):"" )."' />
+							<div id='servInstrInfos' style='displaye:none;'>
+								<input type='hidden' name='SERVICEINSTRUC_DOSSIER' id='SERVICEINSTRUC_DOSSIER' value='' />
+							</div>
+						-->
+					";
+					
+					echo $this->listeGroupement($this->serviceInstructeurId, array(
+						"id" => "SERVICEINSTRUC_DOSSIER",
+						"name" => "SERVICEINSTRUC_DOSSIER",
+						"class" => "bigger",
+						"style" => "width: 400px"
+					));
+					echo "
+						
+					</div>
+				</li>
+				<li id='COMMISSION' ".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Commission concernée</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input id='commissionSelect' style='width: 400px; color:gray;' value='".( ($action != 'new')? ( ($this->commissionInfos['LIBELLE_COMMISSION'] != '')? htmlspecialchars($this->commissionInfos['LIBELLE_COMMISSION'], ENT_QUOTES): "Tapez le nom de la commission"):"Tapez le nom de la commission")."' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "" )."/>
+						<div id='commissionInfos' style='display:none;' >
+							<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".$this->commissionInfos['ID_COMMISSION']."' />
+						</div>
+						<button class='changeCommission' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Choisir une autre commission</button>
+					</div>
+				</li>
+				<li id='DATEVISITE' ".( ($action != 'new' && in_array('DATEVISITE', $this->afficherChamps) && $this->dateVisiteValue != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date de visite</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+						".$this->dateVisiteValue.( ( $this->dateVisiteValue != '' )?"":"")."
+					</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".( ($this->dateVisiteInput)?$this->dateVisiteInput:"" )."'  disabled='disabled'/>
+						<input type='hidden' name='ID_AFFECTATION_DOSSIER_VISITE' id='ID_AFFECTATION_DOSSIER_VISITE' value='".( ($this->idDateVisiteAffect)?$this->idDateVisiteAffect:"" )."' />
+						<button id='showVisite' class='showCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Afficher le calendrier</button>
+						<button id='hideVisite' class='hideCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Cacher le calendrier</button>
+					</div>
+				</li>
+				<li style='display:none;'>
+					<h1>Choisir une date de visite</h1>
+					<div id='calendarVisite' class='grid_14 calendar' style='display:none;'></div>
+					<hr class='clear'/>				
+				</li>
+				<li id='DATECOMM' ".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date de passage en commission</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+						".$this->dateCommValue.( ( $this->idDateCommissionAffect != '' )? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='sprite sprite-date_magnify' ></i></a>" : "" )."				
+					</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".( ($this->dateCommInput)?$this->dateCommInput:"" )."' disabled='disabled'/>
+						<input type='hidden' name='ID_AFFECTATION_DOSSIER_COMMISSION' id='ID_AFFECTATION_DOSSIER_COMMISSION' value='".( ($this->idDateCommissionAffect)?$this->idDateCommissionAffect: "" )."' />
+						<input type='hidden' name='DATEVISITE_PERIODIQUE' id='DATEVISITE_PERIODIQUE' value='".( ($this->dateCommInput)?$this->dateCommInput:"" )."'/>
+						<button id='showCommission' class='showCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Afficher le calendrier</button>
+						<button id='hideCommission' class='hideCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Cacher le calendrier</button>
+					</div>
+				</li>
+				<li style='display:none;'>
+					<h1>Choisir une date de passage en commission</h1>
+					<div id='calendar' class='grid_14 calendar' style='display:none;'></div>
+					<hr class='clear'/>				
+				</li>
+				<!--
+					<li id='DESCGEN' ".( ($action != 'new' && in_array('DESCGEN', $this->afficherChamps) && $this->infosDossier['DESCGEN_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+						<div class='left libelle'>Descriptif général</div>
+						<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCGEN_DOSSIER']."</div>
+						<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+							<textarea id='DESCGEN_DOSSIER' name='DESCGEN_DOSSIER' cols='80' rows='5'>".( ($this->infosDossier['DESCGEN_DOSSIER'])?$this->DESCGEN_INPUT:"" )."</textarea><br/>
+						</div>
+					</li>
+				-->
+				<li id='DESCANAL' ".( ($action != 'new' && in_array('DESCANAL', $this->afficherChamps) && $this->infosDossier['DESCANAL_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Descriptif analyse de risque</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCANAL_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='DESCANAL_DOSSIER' name='DESCANAL_DOSSIER' value='".( ($this->infosDossier['DESCANAL_DOSSIER'])?$this->infosDossier['DESCANAL_DOSSIER']:"" )."' />
+					</div>
+				</li>
+				<li id='JUSTIFDEROG' ".( ($action != 'new' && in_array('JUSTIFDEROG', $this->afficherChamps) && $this->infosDossier['JUSTIFDEROG_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Justification de la dérogation</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['JUSTIFDEROG_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='JUSTIFDEROG_DOSSIER' name='JUSTIFDEROG_DOSSIER' style='width:800px;' value='".( ($this->infosDossier['JUSTIFDEROG_DOSSIER'])?$this->infosDossier['JUSTIFDEROG_DOSSIER']:"" )."' />
+					</div>
+				</li>
+				<li id='MESURESCOMPENS' ".( ($action != 'new' && in_array('MESURESCOMPENS', $this->afficherChamps) && $this->infosDossier['MESURESCOMPENS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Mesures proposées</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['MESURESCOMPENS_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='MESURESCOMPENS_DOSSIER' name='MESURESCOMPENS_DOSSIER' style='width:800px;' value='".( ($this->infosDossier['MESURESCOMPENS_DOSSIER'])?$this->infosDossier['MESURESCOMPENS_DOSSIER']:"" )."' />
+					</div>
+				</li>
+				<li id='MESURESCOMPLE' ".( ($action != 'new' && in_array('MESURESCOMPLE', $this->afficherChamps) && $this->infosDossier['MESURESCOMPLE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Mesures à respecter</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['MESURESCOMPLE_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='MESURESCOMPLE_DOSSIER' name='MESURESCOMPLE_DOSSIER' style='width:800px;' value='".( ($this->infosDossier['MESURESCOMPLE_DOSSIER'])?$this->infosDossier['MESURESCOMPLE_DOSSIER']:"" )."' />
+					</div>
+				</li>
+				<li id='AVIS' ".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Avis</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>".$this->AVIS_VALUE['LIBELLE_AVIS']."</span></div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<select name='AVIS_DOSSIER' id='AVIS_DOSSIER' >
+							<option value='0' >".( ($action == 'new')?"Selectionnez l'avis du dossier": "Cacher l'avis du dossier" )."</option>
+						";
+						foreach($this->listeAvis as $avis){
+							echo "<option value='".$avis["ID_AVIS"]."' ".( ( $this->AVIS_VALUE['ID_AVIS'] == $avis["ID_AVIS"] )? "selected='selected'" :"" )." >".$avis['LIBELLE_AVIS']."</option>";
+						}
+						echo "
+						</select>
+					</div>
+				</li>
+				<li id='ANOMALIE' ".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Anomalie constatée</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['ANOMALIE_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='ANOMALIE_DOSSIER' name='ANOMALIE_DOSSIER' value='".( ($this->infosDossier['ANOMALIE_DOSSIER'])?$this->infosDossier['ANOMALIE_DOSSIER']:"" )."' />
+					</div>
+				</li>	
+				<!--
+					<li id='COORDSSI' ".( ($action != 'new' && in_array('COORDSSI', $this->afficherChamps) && $this->infosDossier['COORDSSI_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+						<div class='left libelle'>Coordinateur Système de Sécurité Incendie</div>
+						<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['COORDSSI_DOSSIER']."</div>
+						<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+							<input type='text' id='COORDSSI_DOSSIER' name='COORDSSI_DOSSIER' value='".( ($this->infosDossier['COORDSSI_DOSSIER'])?$this->infosDossier['COORDSSI_DOSSIER']:"" )."' />
+						</div>
+					</li>
+				-->
+				<li id='DATEPREF' ".( ($action != 'new' && in_array('DATEPREF', $this->afficherChamps) && $this->infosDossier['DATEPREF_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date réception préfecture</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEPREF_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='date' id='DATEPREF_DOSSIER' name='DATEPREF_DOSSIER' value='".( ($this->DATEPREF_INPUT)?$this->DATEPREF_INPUT:"" )."' />
+						&nbsp;<button class='today'>Aujourd'hui</button>
+					</div>
+				</li>
+				<li id='DATEREP' ".( ($action != 'new' && in_array('DATEREP', $this->afficherChamps) && $this->infosDossier['DATEREP_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date de réponse</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREP_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='date' id='DATEREP_DOSSIER' name='DATEREP_DOSSIER' value='".( ($this->DATEREP_INPUT)?$this->DATEREP_INPUT:"" )."' />
+						&nbsp;<button class='today'>Aujourd'hui</button>
+					</div>
+				</li>				
+				<li id='DATEREUN' ".( ($action != 'new' && in_array('DATEREUN', $this->afficherChamps) && $this->infosDossier['DATEREUN_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date réunion</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREUN_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='date' id='DATEREUN_DOSSIER' name='DATEREUN_DOSSIER' value='".( ($this->DATEREUN_INPUT)?$this->DATEREUN_INPUT:"" )."' />
+						&nbsp;<button class='today'>Aujourd'hui</button>
+					</div>
+				</li>
+				<li id='OPERSDIS' ".( ($action != 'new' && in_array('OPERSDIS', $this->afficherChamps) && $this->infosDossier['OPERSDIS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Opération (intervention) SDIS</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+				";
+				if($this->infosDossier['OPERSDIS_DOSSIER'] == 1){
+					echo "oui";
+				}else if($this->infosDossier['OPERSDIS_DOSSIER'] == 0){
+					echo "non";
+				}					
+				echo "
+					</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<div id='operationsdis_infos'>
+							<input type='radio' name='OPERSDIS_DOSSIER' value='1' ".( ($this->infosDossier['OPERSDIS_DOSSIER'] == 1)?"checked":"" ).">Oui<br/>
+							<input type='radio' name='OPERSDIS_DOSSIER' value='0' ".( ($this->infosDossier['OPERSDIS_DOSSIER'] == 0)?"checked":"" ).">Non<br/>
+						</div>
+					</div>
+				</li>
+				<li id='RCCI' ".( ($action != 'new' && in_array('RCCI', $this->afficherChamps) && $this->infosDossier['RCCI_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>RCCI (oui/non) lien rapport</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+				";
+				if($this->infosDossier['RCCI_DOSSIER'] == 1){
+					echo "oui";
+				}else if($this->infosDossier['RCCI_DOSSIER'] == 0){
+					echo "non";
+				}					
+				echo "
+					</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<div id='rrci_infos'>
+							<input type='radio' name='RCCI_DOSSIER' value='1' ".( ($this->infosDossier['RCCI_DOSSIER'] == 1)?"checked":"" ).">Oui<br/>
+							<input type='radio' name='RCCI_DOSSIER' value='0' ".( ($this->infosDossier['RCCI_DOSSIER'] == 0)?"checked":"" ).">Non<br/>
+						</div>
+					</div>
+				</li>
+				<li id='REX' ".( ($action != 'new' && in_array('REX', $this->afficherChamps) && $this->infosDossier['REX_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>REX</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['REX_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='REX_DOSSIER' name='REX_DOSSIER' value='".( ($this->infosDossier['REX_DOSSIER'])?$this->infosDossier['REX_DOSSIER']:"" )."' />
+					</div>
+				</li>
+				<li id='CHARGESEC' ".( ($action != 'new' && in_array('CHARGESEC', $this->afficherChamps) && $this->infosDossier['CHARGESEC_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Chargé de sécurité (T)</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['CHARGESEC_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='CHARGESEC_DOSSIER' name='CHARGESEC_DOSSIER' value='".( ($this->CHARGESEC_DOSSIER)?$this->CHARGESEC_DOSSIER:"" )."' />
+					</div>
+				</li>
+				<li id='DUREEDEPL' ".( ($action != 'new' && in_array('DUREEDEPL', $this->afficherChamps) && $this->infosDossier['DUREEDEPL_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Durée de déplacement</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DUREEDEPL_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='DUREEDEPL_DOSSIER' name='DUREEDEPL_DOSSIER' value='".( ($this->DUREEDEPL_DOSSIER)?$this->DUREEDEPL_DOSSIER:"" )."' />
+					</div>
+				</li>
+				<li id='GRAVPRESC' ".( ($action != 'new' && in_array('GRAVPRESC', $this->afficherChamps) && $this->infosDossier['GRAVPRESC_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Gravité prescription</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['GRAVPRESC_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='GRAVPRESC_DOSSIER' name='GRAVPRESC_DOSSIER' value='".( ($this->GRAVPRESC_DOSSIER)?$this->GRAVPRESC_DOSSIER:"" )."' />
+					</div>
+				</li>
+				<li id='NUMINTERV' ".( ($action != 'new' && in_array('NUMINTERV', $this->afficherChamps) && $this->infosDossier['NUMINTERV_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Numéro d'intervention</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['NUMINTERV_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' id='NUMINTERV_DOSSIER' name='NUMINTERV_DOSSIER' value='".( ($this->infosDossier['NUMINTERV_DOSSIER'])?$this->infosDossier['NUMINTERV_DOSSIER']:"" )."' />
+					</div>
+				</li>
+				<li id='DATEINTERV' ".( ($action != 'new' && in_array('DATEINTERV', $this->afficherChamps) && $this->infosDossier['DATEINTERV_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date et heure d'intervention</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINTERV_DOSSIER']." - ".$this->HEUREINTERV_INPUT."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='date' id='DATEINTERV_DOSSIER' name='DATEINTERV_DOSSIER' value='".( ($this->DATEINTERV_INPUT)?$this->DATEINTERV_INPUT:"" )."' />
+						<input type='text' style='width:40px;' class='time' id='HEUREINTERV_DOSSIER' name='HEUREINTERV_DOSSIER' value='".( ($this->HEUREINTERV_INPUT)?$this->HEUREINTERV_INPUT:"" )."' />					
+					</div>
+				</li>
+				<li id='DUREEINTERV' ".( ($action != 'new' && in_array('DUREEINTERV', $this->afficherChamps) && $this->infosDossier['DUREEINTERV_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Durée intervention</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DUREEINTERV_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='time' id='DUREEINTERV_DOSSIER' name='DUREEINTERV_DOSSIER' value='".( ($this->infosDossier['DUREEINTERV_DOSSIER'])?$this->infosDossier['DUREEINTERV_DOSSIER']:"" )."' />
+					</div>
+				</li>
+				<li id='DATESIGN' ".( ($action != 'new' && in_array('DATESIGN', $this->afficherChamps) && $this->infosDossier['DATESIGN_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date de signature</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESIGN_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='date' id='DATESIGN_INPUT' name='DATESIGN_DOSSIER' value='".( ($this->DATESIGN_INPUT)?$this->DATESIGN_INPUT:"" )."' />
+						&nbsp;<button class='today'>Aujourd'hui</button>
+					</div>
+				</li>
+				<li id='PREVENTIONNISTE' ".( (in_array('PREVENTIONNISTE', $this->afficherChamps) && count($this->preventionnistes) != 0 )? "": "style='display:none;margin-bottom:10px;'" ).">
+					<div class='left libelle'>Préventionniste(s)</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+						".$this->partialLoop('user/user.phtml', $this->preventionnistes )."
+					</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<ul>
+							<li style='liste-style-type:none' id='liste_prev'>
+					";
+					if(count($this->preventionnistes) > 0){
+						foreach($this->preventionnistes as $prev){
+							echo "
+								<span class='ui-state-highlight' style='float: left; padding: 2px; margin: 0pt 2px 1em 0pt; display: block;'>
+									<input type='hidden' name='preventionniste[]' value='".$prev["uid"]."' />
+									<span>
+										".$prev["NOM_UTILISATEURINFORMATIONS"]." ".$prev["PRENOM_UTILISATEURINFORMATIONS"]."
+									</span>
+									<a onclick='$(this).parent().remove(); return false;' style='text-decoration: none;' href=''>×</a>
+								</span>
+							";
+						}
+					}		
+					echo "
+							</li>
+						</ul>
+						<div style='display: block;'>
+							<input type='text' value='' id='preventionnistes-autocomplete' style='width:200px;' >
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div id='save_div' style='text-align: center; ".( ($action == 'new')? "display:none;" : "" )."' >
+				<div ".( ($action == 'new')? "style='display:none;'" : "" ).">
+					<button class='generation' id='rapport' >Générer le(s) rapport(s)</button>
+					<!--
+					<button class='generation' id='rapport' style='".( ($this->infosDossier['TYPE_DOSSIER'] == '1' || $this->infosDossier['TYPE_DOSSIER'] == '2')? "" : "display:none;" )."'>Générer le(s) rapport(s)</button>
+					&nbsp;
+					<button class='generation' id='' style='".( ($this->infosDossier['TYPE_DOSSIER'] == '1' || $this->infosDossier['TYPE_DOSSIER'] == '2')? "" : "display:none;" )."'>Générer le procés verbal</button>
+					-->
+				</div>
+			</div>
+		</form>
+		<div id='dialogComm' style='display:none;'></div>
+	</div>
+";
+?>

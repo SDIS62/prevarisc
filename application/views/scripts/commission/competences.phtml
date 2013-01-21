@@ -1,0 +1,140 @@
+<?php if(count($this->array_regles) == 0) : ?>
+
+	<br />
+	<p><strong>Pas de règles définies pour cette commission. <a class='add-regle' href='/commission/add-regle?id_commission=<?php echo $_GET["id_commission"] ?>'>Vous pouvez en ajouter une ici.</a></strong></p>
+
+<?php else : ?>
+
+	<p style='text-align: right' ><a class='add-regle' href='/commission/add-regle?id_commission=<?php echo $_GET["id_commission"] ?>'>+ Ajouter une règle</a></p>
+
+	<form method='post' action='/commission/saveRegles?id_commission=<?php echo $_GET["id_commission"] ?>' >
+
+		<!-- Tableau contenant les règles -->
+		<table class='table-custom commission'>
+			<thead>
+				<tr>
+					<th rowspan="2" >Zone géographique</th>
+					<th colspan="2" >ERP</th>
+					<th colspan="1" >IGH</th>
+					<th rowspan="2" >Local Sommeil</th>
+					<th rowspan="2" >Étude / visite</th>
+					<th rowspan="2" ></th>
+				</tr>
+				<tr>
+					<th>Catégorie</th>
+					<th>Type</th>
+					<th>Classe</th>
+				</tr>
+			</thead>
+			
+			<tbody>
+				<?php echo $this->partialLoop("commission/partials/partial-ligne-regle-commission.phtml", $this->array_regles); ?>
+			</tbody>
+		</table>
+	
+	</form>
+	
+	<div id="save_div" style="text-align: center" >
+			<button class='save-competences save' >Sauvegarder les règles</button>
+			<button class='apply-competences save' >Appliquer les règles</button>
+			
+			<span id='<?php echo $_GET["id_commission"] ?>_notification' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>
+				Les compétences de la commission ont bien été sauvegardées.
+			</span>
+			
+			<span id='<?php echo $_GET["id_commission"] ?>_application' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>
+				Les compétences de la commission ont bien été appliquées sur les établissements de Prevarisc.
+			</span>
+	</div>
+
+<?php endif ?>
+
+<script type="text/javascript">
+
+	// $(".commune, .save-competences, .add-regle, .delete-regle").unbind();
+	
+	// Auto complétion de la Commune
+	$(".commune").autocomplete("/adresse/get?format=json", {
+		minChars: 3,
+		max: 100,
+		parse: function(data) {
+			return $.map(data["resultats"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_COMMUNE,
+					result: row.LIBELLE_COMMUNE
+				}
+			});
+		},
+		formatItem: function(item) {
+			return item.LIBELLE_COMMUNE;
+		}
+	}).result(function(e, item) {
+		$(this).css("background-color", "#EEE").blur();
+		$(this).next().val(item.NUMINSEE_COMMUNE);
+	});
+	
+	$(".commune").click(function() {
+		$(this).val("").css("background-color", "white");
+	});
+	
+	// Bouton de sauvegarde
+	$("#<?php echo $_GET["id_commission"] ?>_tabs .save-competences").button({
+		icons: { primary: "ui-icon-disk" }
+	}).click(function() {
+		$.ajax({
+			url: "/commission/save-regles",
+			data: $(this).parent().prev().serialize(),
+			type: "post",
+			success: function() {
+				$("#<?php echo $_GET["id_commission"] ?>_notification").show();
+				setTimeout( function() { $("#<?php echo $_GET["id_commission"] ?>_notification").fadeOut(); }, 2500);
+			}
+		});
+	});
+	
+	// Bouton d'application
+	$("#<?php echo $_GET["id_commission"] ?>_tabs .apply-competences").button({
+		icons: { primary: "ui-icon-check" }
+	}).click(function() {
+		$.ajax({
+			url: "/commission/apply-regles",
+			data: $(this).parent().prev().serialize(),
+			type: "post",
+			success: function() {
+				$("#<?php echo $_GET["id_commission"] ?>_application").show();
+				setTimeout( function() { $("#<?php echo $_GET["id_commission"] ?>_notification").fadeOut(); }, 2500);
+			}
+		});
+	});
+	
+	// Lien pour ajouter une règle
+	$("#<?php echo $_GET["id_commission"] ?>_tabs .add-regle").click(function() {
+		var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
+		string = string.replace("ui-tabs-", "");
+		var a = this;
+		$.ajax({
+			url: a.href,
+			success: function() {
+				$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+			}
+		});
+		return false;
+	});
+	
+	// Lien pour supprimer une règle
+	$("#<?php echo $_GET["id_commission"] ?>_tabs .delete-regle").click(function() {
+		var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
+		string = string.replace("ui-tabs-", "");
+		var a = this;
+		$.ajax({
+			url: a.href,
+			success: function() {
+				//$(".delete-regle").parent().parent().remove();
+				$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+			}
+		});
+		return false;
+	});
+
+</script>

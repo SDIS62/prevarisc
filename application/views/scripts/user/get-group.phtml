@@ -1,0 +1,97 @@
+<!-- Libellé du groupe -->
+<?php if($this->groupe != null) : ?>
+<div>
+
+	<?php if($this->users != null) : ?>
+	<div style='float: right'>
+		<button id='deactivate-group' >Désactiver le groupe</button>
+		<button id='activate-group' >Activer le groupe</button>
+	</div>
+	<?php endif ?>
+
+	<h3><?php echo $this->groupe["LIBELLE_GROUPE"] ?></h3>
+
+</div>
+
+<?php else : ?>
+
+<h3>Tous les utilisateurs</h3>
+
+<?php endif ?>
+
+<!-- Liste des utilisateurs -->
+<?php if($this->users != null) : ?>
+<table class='table-custom'>
+
+	<thead>
+		<tr>
+			<th>Login</th>
+			<th>Nom et prénom</th>
+			<th>Fonction</th>
+			<th style='width: 150px' >Etat</th>
+			<th style='width: 150px' >Actions</th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		<?php foreach( $this->users as $user ) : ?>
+		<tr <?php if(!$user["ACTIF_UTILISATEUR"]) echo "style='color:silver'" ?> >
+			<td style='font-style: italic' ><?php echo $user["USERNAME_UTILISATEUR"] ?></td>
+			<td><a href='/user/profile?uid=<?php echo $user["ID_UTILISATEUR"] ?>' ><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></a></td>
+			<td><?php echo $user["LIBELLE_FONCTION"] ?></td>
+			<td><?php echo file_exists(session_save_path() . "/sess_" . $user["SESSIONID_UTILISATEUR"]) ? "<span style='color: #008C00; font-weight: bold'>Connecté</span>" : "<span style='color: silver'>Déconnecté</span>" ?></td>
+			<td style='text-align: center' >
+				<a href='/user/edit/uid/<?php echo $user["ID_UTILISATEUR"] ?>' class="edit">Modifier</a>
+				<a class='act_deact' href='/user/actived?uid=<?php echo $user["ID_UTILISATEUR"] ?>' ><?php echo ($user["ACTIF_UTILISATEUR"]) ? "Désactiver" : "Activer" ?></a>
+			</td>
+		</tr>
+		<?php endforeach ?>
+	</tbody>
+	
+</table>
+
+<script type="text/javascript">
+
+	function activate_deactivate_group(bool) {
+		
+		$.ajax({
+			url: "/user/actived-group?gid=<?php echo $this->groupe["ID_GROUPE"] ?>&act=" + bool,
+			success: function () {
+				$("#content_group").load( $("#index-left ul li.active a.a_group").attr("href") );
+			}
+		});
+	}
+	
+	$("a.act_deact").click(function() {
+	
+		var a = this;
+		$.ajax({
+			url: a.href,
+			success: function () {
+				$("#content_group").load( $("#index-left ul li.active a.a_group").attr("href") );
+			}
+		});
+		
+		return false;
+	})
+
+	$("#deactivate-group").button({
+		icons: { primary: "ui-icon-locked" }
+	}).click(function() {
+		activate_deactivate_group(0);
+	});
+	
+	$("#activate-group").button({
+		icons: { primary: "ui-icon-unlocked" }
+	}).click(function() {
+		activate_deactivate_group(1);
+	});
+
+</script>
+
+<?php else : ?>
+
+<p class='grid_16 alpha' ><strong>Aucun résultat.</strong></p>
+
+<?php endif ?>
+

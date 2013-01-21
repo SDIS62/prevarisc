@@ -1,0 +1,104 @@
+
+<!-- Titre -->
+<h2 style='float: left'>
+	<i class='sprite sprite-cog' ></i>
+	Administration système
+</h2>
+
+<p style='float: right'>
+	<button id='user'>Gestion des utilisateurs</button>
+	<button id='couche'>Gestion des couches cartographiques</button>
+</p>
+
+<hr class='clear' />
+
+<form id='form' action='/admin/save' method='post' >
+
+	<!-- Version courante -->
+	<h4>Version courante</h4>
+	<dl class='liste_informations' >
+		<dt>Version</dt>
+		<dd>
+			<?php echo $this->info["ID_VERSION"] ?>
+			<input type='hidden' name='ID_VERSION' value='<?php echo $this->info["ID_VERSION"] ?>' />
+		</dd>
+		
+		<dt>Serveur</dt>
+		<dd><span class="label label_<?php echo strtoupper(APPLICATION_ENV) ?>"><?php echo strtoupper(APPLICATION_ENV) ?></span></dd>
+	</dl>
+	
+	<br />
+	
+	<!-- Actions -->
+	<h4>LDAP <input type='checkbox' value='1' name='LDAP_ACTIF' <?php if($this->info["LDAP_ACTIF"]) echo "checked" ?> /></h4>
+	<dl id='ldap' class='liste_informations' >
+		<dt>Host</dt><dd><input type='text' name='LDAP_HOST' value='<?php echo $this->info["LDAP_HOST"] ?>' /></dd>
+		<dt>Username</dt><dd><input type='text' name='LDAP_USERNAME' value='<?php echo $this->info["LDAP_USERNAME"] ?>' /></dd>
+		<dt>Password</dt><dd><input type='password' name='LDAP_PASSWORD' value='<?php echo $this->info["LDAP_PASSWORD"] ?>' /></dd>
+		<dt>BaseDn</dt><dd><input type='text' name='LDAP_BASEDN' value='<?php echo $this->info["LDAP_BASEDN"] ?>' /></dd>
+		<dd>Autoriser la connexion automatique via l'annuaire LDAP ? <input type='checkbox' value='1' name='LDAP_LOGIN' <?php if($this->info["LDAP_LOGIN"]) echo "checked" ?> /></dd>
+	</dl>
+	
+	<br />
+	
+	<!-- Actions -->
+	<h4>Actions</h4>
+	<dl class='liste_informations' >
+	<dt>Base de données</dt>
+		<dd><a href='/admin/backup'>[Faire une sauvegarde des données]</a></dd>
+	</dl>
+	
+	<div id="save_div" style="text-align: center">
+		<button id='save' class='save'>Sauvegarder les paramètres</button>
+		<span id='notif' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>Sauvegarde terminée.</span>
+	</div>
+
+</form>
+
+<script type="text/javascript">
+
+	$("input[name=LDAP_ACTIF]").change(function() {
+		
+		if($(this).attr("checked")) {
+			$("#ldap").css("opacity", 1);
+			$("#ldap input").attr("disabled", null);
+		} else {
+			$("#ldap").css("opacity", 0.5);
+			$("#ldap input").attr("disabled", "disabled");
+		}
+	}).change();
+
+	$("#user").button({
+		icons: { primary: "ui-icon-person" }
+	}).click(function() {
+		window.location = "/user";
+	});
+	
+	$("#couche").button({
+		icons: { primary: "ui-icon-calculator" }
+	}).click(function() {
+		window.location = "/couche-cartographique";
+	});
+	
+	$("#save").button({
+		icons: { primary: "ui-icon-disk" }
+	}).click(function() {
+	
+		$.ajax({
+			url: "/admin/save",
+			data: $("#form").serialize(),
+			type: "post",
+			beforeSend: function() {
+				$("#save").button("disable");
+			},
+			success: function() {
+				$("#save").button("enable");
+				$("#notif").show();
+				setTimeout( function() { $("#notif").fadeOut(); }, 2500);
+			}
+		});
+	
+		return false;
+	});
+	
+</script>
