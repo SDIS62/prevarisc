@@ -30,6 +30,7 @@
 	<br />
 	
 	<!-- Actions -->
+    <?php if(function_exists("ldap_connect")) : ?>
 	<h4>LDAP <input type='checkbox' value='1' name='LDAP_ACTIF' <?php if($this->info["LDAP_ACTIF"]) echo "checked" ?> /></h4>
 	<dl id='ldap' class='liste_informations' >
 		<dt>Host</dt><dd><input type='text' name='LDAP_HOST' value='<?php echo $this->info["LDAP_HOST"] ?>' /></dd>
@@ -38,8 +39,8 @@
 		<dt>BaseDn</dt><dd><input type='text' name='LDAP_BASEDN' value='<?php echo $this->info["LDAP_BASEDN"] ?>' /></dd>
 		<dd>Autoriser la connexion automatique via l'annuaire LDAP ? <input type='checkbox' value='1' name='LDAP_LOGIN' <?php if($this->info["LDAP_LOGIN"]) echo "checked" ?> /></dd>
 	</dl>
-	
 	<br />
+    <?php endif ?>
 	
 	<!-- Actions -->
 	<h4>Actions</h4>
