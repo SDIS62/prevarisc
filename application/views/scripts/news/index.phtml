@@ -4,7 +4,7 @@
 	Fil d'actualité
 </h2>
 
-<? if($this->droits->DROITFILACTU_GROUPE == 1) : ?>
+<?php if($this->droits->DROITFILACTU_GROUPE == 1) : ?>
 <!-- Formulaire d'ajout de messages -->
 <form id='ajouter_news' class='box' action='' >
 	<textarea id='textarea' class='bigger' name='text' cols='' rows=''></textarea>
@@ -17,7 +17,7 @@
 </form>
 
 <br />
-<? endif ?>
+<?php endif ?>
 
 <!-- Liste des messages-->
 <ul id='index-newsfeed' class='liste_informations'>

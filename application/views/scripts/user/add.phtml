@@ -67,7 +67,7 @@
 			<h4>Informations de l'utilisateur</h4>
 			<?php echo $this->action('form', 'contact', null, array("item" => "user")) ?>
 			
-			<? if(!isset($this->droitsSYS) || $this->droitsSYS == 1) : ?>
+			<?php if(!isset($this->droitsSYS) || $this->droitsSYS == 1) : ?>
 			<hr class='clear' />
 			
 			<h4>Domaines de compétences</h4>
@@ -115,7 +115,7 @@
 					</div>
 				</dd>
 			</dl>
-			<? endif ?>
+			<?php endif ?>
 			
 			<hr class='clear' />
 			

@@ -4,7 +4,7 @@
 	<!-- Formulaire -->
 	<dl>
 	
-		<? if(!isset($this->droitsSYS) || $this->droitsSYS == 1) : ?>
+		<?php if(!isset($this->droitsSYS) || $this->droitsSYS == 1) : ?>
 		<!-- Groupe -->
 		<?php if( $this->item == "user" ) : ?>
 		<dt>Groupe</dt>
@@ -34,7 +34,7 @@
 				<?php endforeach ?>
 			</select>
 		</dd>
-		<? endif ?>
+		<?php endif ?>
 		
 		<!-- Société du contact-->
 		<?php if( $this->item != "user" && $this->item != "commune") : ?>

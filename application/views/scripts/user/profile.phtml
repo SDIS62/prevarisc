@@ -48,13 +48,13 @@
 	<!-- En-tête-->
 	<!-- Boutons-->
 	<div float='right' >
-		<? if(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR != $this->user["ID_UTILISATEUR"]) : ?>
+		<?php if(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR != $this->user["ID_UTILISATEUR"]) : ?>
 		<?php if($this->user_info["MAIL_UTILISATEURINFORMATIONS"]) : ?><button id='mail-user' >Envoyer un message</button><?php endif ?>
-		<? endif ?>
+		<?php endif ?>
 		
-		<? if($this->edit_bool) : ?>
+		<?php if($this->edit_bool) : ?>
 		<button id='edit-user' >Modifier</button>
-		<? endif ?>
+		<?php endif ?>
 	</div>
 
 	<!-- Nom et prénom -->

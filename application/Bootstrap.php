@@ -63,13 +63,6 @@
 									->appendFile('/js/jquery.fancybox-1.3.4.js');
 		}
 		
-		protected function _initRouter() {
-
-			$config = new Zend_Config_Xml(APPLICATION_PATH . '/configs/routes.xml');
-			$router = Zend_Controller_Front::getInstance()->getRouter();
-			$router->addConfig($config, 'routes');
-		}
-		
 		protected function _initActionHelpers() {
 		
 			Zend_Controller_Action_HelperBroker::addPath(APPLICATION_PATH . '/controllers/helpers', 'Application_Controller_Helper_');
