@@ -25,7 +25,7 @@
 			<dd>
 				<select name="ID_COUCHECARTOTYPE">
 					<?php foreach($this->rowset_couchecartotypes as $row) : ?>
-					<option value="<?php echo $row->ID_COUCHECARTOTYPE ?>" <?php if($this->row->ID_COUCHECARTOTYPE == $row->ID_COUCHECARTOTYPE) echo "selected" ?> ><?php echo $row->NOM_COUCHECARTOTYPE ?></option>
+					<option value="<?php echo $row->ID_COUCHECARTOTYPE ?>" <?php if(isset($this->row) && $this->row->ID_COUCHECARTOTYPE == $row->ID_COUCHECARTOTYPE) echo "selected" ?> ><?php echo $row->NOM_COUCHECARTOTYPE ?></option>
 					<?php endforeach ?>
 				</select>
 			</dd>
@@ -57,7 +57,7 @@
 				Couche de base ?
 			</dt>
 			<dd>
-				<input type="checkbox" name="ISBASELAYER_COUCHECARTO" value="1" <?php if($this->row->ISBASELAYER_COUCHECARTO) echo "checked" ?> />
+				<input type="checkbox" name="ISBASELAYER_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->ISBASELAYER_COUCHECARTO) echo "checked" ?> />
 			</dd>
 			
 			<!-- Base layer ? -->
@@ -65,7 +65,7 @@
 				Nom de la couche dans le flux
 			</dt>
 			<dd>
-				<input type="text" name="LAYERS_COUCHECARTO" value="<?php echo $this->row ? $this->row->LAYERS_COUCHECARTO : "" ?>" />
+				<input type="text" name="LAYERS_COUCHECARTO" value="<?php echo isset($this->row) ? $this->row->LAYERS_COUCHECARTO : "" ?>" />
 			</dd>
 
 			<!-- Base layer ? -->
@@ -74,8 +74,8 @@
 			</dt>
 			<dd>
 				<select name="FORMAT_COUCHECARTO">
-					<option value="image/png" <?php if($this->row->FORMAT_COUCHECARTO == "image/png") echo "selected" ?> >image/png</option>
-					<option value="image/jpg" <?php if($this->row->FORMAT_COUCHECARTO == "image/jpg") echo "selected" ?> >image/jpg</option>
+					<option value="image/png" <?php if(isset($this->row) && $this->row->FORMAT_COUCHECARTO == "image/png") echo "selected" ?> >image/png</option>
+					<option value="image/jpg" <?php if(isset($this->row) && $this->row->FORMAT_COUCHECARTO == "image/jpg") echo "selected" ?> >image/jpg</option>
 				</select>
 			</dd>
 
@@ -84,7 +84,7 @@
 				Couche transparente ?
 			</dt>
 			<dd>
-				<input type="checkbox" name="TRANSPARENT_COUCHECARTO" value="1" <?php if($this->row->TRANSPARENT_COUCHECARTO) echo "checked" ?> />
+				<input type="checkbox" name="TRANSPARENT_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->TRANSPARENT_COUCHECARTO) echo "checked" ?> />
 			</dd>
 			
 			<!--Intrecative ? -->
@@ -92,7 +92,7 @@
 				Interactive ?
 			</dt>
 			<dd>
-				<input type="checkbox" name="INTERACT_COUCHECARTO" value="1" <?php if($this->row->INTERACT_COUCHECARTO) echo "checked" ?> />
+				<input type="checkbox" name="INTERACT_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->INTERACT_COUCHECARTO) echo "checked" ?> />
 			</dd>
 		
 		</dl>

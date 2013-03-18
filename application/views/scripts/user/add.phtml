@@ -31,7 +31,7 @@
 
 		<h4>Informations de connexion</h4>
 		<!-- Avatar -->
-		<?php if( $this->user ) : ?>
+		<?php if( $this->user && function_exists("imagecopyresampled")) : ?>
 		<dl>
 			<dt><?php $this->avatar($this->user["ID_UTILISATEUR"], "small") ?></dt>
 			<dd style='padding-bottom: 25px'><a href='' id='change_avatar' >Modifier l'image de profil</a></dd>
@@ -215,7 +215,7 @@
 		resizable: false,
 		draggable: false,
 		autoOpen: false,
-		width: 600,
+		width: 700,
 		zIndex: 9999,
 		modal: true
 	});

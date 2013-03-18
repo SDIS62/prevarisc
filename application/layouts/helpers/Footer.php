@@ -15,27 +15,20 @@
                     <hr />
 
                     <p id='layout-footer-images'>
-                        <img src='/images/favicon.ico' alt='Prevarisc' height=16 width=16 /> ® 2011
+                        <img src='/images/favicon.ico' alt='Prevarisc' height=16 width=16 /> ® <?php echo date("Y") ?>
                         <a href='http://www.interieur.gouv.fr' >Ministère de l'intérieur</a> -
                         <a href='http://www.sdis62.fr' >SDIS 62</a>.
                         Tous droits réservés.
                     </p>
 
                     <p id='layout-footer-copyright'>
-                        <strong>Prevarisc <span style='font-size: 0.8em'>version finale 1.0.0</span></strong> | <a href='/index/about?format=html' id='layout-footer-copyright-about' >A propos</a>
+                        <a href='https://github.com/SDIS62/prevarisc/blob/master/README.md#-propos'>A propos</a>
                     </p>
 
                 </div>
 
                 <script type="text/javascript">
-
-                    // Boite de dialogue
-                    $('a#layout-footer-copyright-about').fancybox({
-                        autoDimensions: false,
-                        height: 460,
-                        width: 800
-                    });
-
+                
                     // Vérification pérdiodique de la validité de la session utilisateur
                     function checkActive()
                     {

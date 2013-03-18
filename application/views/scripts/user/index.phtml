@@ -4,18 +4,17 @@
 	<div>
 	
 		<div style='float: right'>
-			<p id='notification_sauvegarde' class='ui-state-highlight <?php if( !$_GET["confirm"] ) echo "ui-helper-hidden"; ?>' style='padding: .5em; margin-bottom: 1em; float: left; '>
+			<p id='notification_sauvegarde' class='ui-state-highlight <?php if( !isset($_GET["confirm"]) ) echo "ui-helper-hidden"; ?>' style='padding: .5em; margin-bottom: 1em; float: left; '>
 				L'utilisateur est bien enregistré.
 			</p>
 			&nbsp;
-			<button id='matrice' >Matrice des droits</button>
 			<button id='add-maire' >Ajouter un maire</button>
 			<button id='add-user' >Ajouter un utilisateur</button>
 		</div>
 
 		<h2>
 			<i class='sprite sprite-user' ></i>
-			<a href="/admin" >Administration système</a> &rsaquo; Gestion des utilisateurs
+			Administration système &rsaquo; Gestion des utilisateurs
 		</h2>
 	
 	</div>
@@ -43,7 +42,8 @@
 	
 	<hr class='clear' />
 	
-	<button id='add-group' >Créer un groupe</button>
+	<p><button id='add-group' >Créer un groupe</button></p>
+    <p><button id='matrice' >Gérer les droits des groupes</button></p>
 
 </div>
 

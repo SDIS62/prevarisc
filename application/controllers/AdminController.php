@@ -27,7 +27,7 @@
             // Modèle de données
             $model_admin = new Model_DbTable_Admin;
 
-            $infos = $model_admin->find( $this->_request->ID_VERSION )->current();
+            $infos = $model_admin->find(1)->current();
             $infos->LDAP_ACTIF = 0;
             $infos->LDAP_LOGIN = 0;
             $infos->setFromArray(array_intersect_key($_POST, $model_admin->info('metadata')))->save();

@@ -20,20 +20,6 @@
             $this->view->droits = $this->_helper->Droits()->get();
         }
 
-        // Le a-propos du site
-        public function aboutAction()
-        {
-            // Titre
-            $this->view->title = "A Propos";
-        }
-
-        // L'aide du site
-        public function helpAction()
-        {
-            // Titre
-            $this->view->title = "Aide";
-        }
-
         // Rappels utilisateur
         public function rappelsAction()
         {
