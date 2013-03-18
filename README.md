@@ -21,8 +21,8 @@ Prevarisc est un logiciel national open-source gérant l'ensemble de l'activité
 
 ## Installation et configuration
 
-[Voir la documentation d'installation](https://github.com/SDIS62/prevarisc/blob/master/extras/documentation_installation.md).
-Voir la documentation d'utilisation - en cours. (Mais ne vous inquiétez pas, le logiciel est très ergonomique ! ;-))
+* [Voir la documentation d'installation](https://github.com/SDIS62/prevarisc/blob/master/extras/documentation_installation.md).
+* Voir la documentation d'utilisation - en cours. (Mais ne vous inquiétez pas, le logiciel est très ergonomique ! ;-))
 
 ## Participation au projet
 
