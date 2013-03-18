@@ -183,3 +183,4 @@ composer.phar
 #################
 
 *.odt
+php-cs-fixer.phar
