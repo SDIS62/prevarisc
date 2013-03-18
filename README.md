@@ -85,6 +85,8 @@ resources.db.params.dbname = #DBNAME (la table contenant les données de prevari
 (...)
 ```
 
+Vous devez extraire la table de prevarisc dans votre serveur de base de données. Le fichier contenant les données de prevarisc se trouve ici : [Vers le dossier extras](https://github.com/SDIS62/prevarisc/tree/master/extras).
+
 A ce point vous devez être capable d'accéder à Prevarisc ! Le premier compte utilisateur est celui-ci : root / )8oB3AUK3E
 
 ## Guide utilisateur
