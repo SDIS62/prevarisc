@@ -44,7 +44,6 @@
 								->appendStylesheet('/css/jquery/jquery.fullcalendar.css')
 								->appendStylesheet('/css/jquery/jquery.fancybox-1.3.4.css')
 								->appendStylesheet('/css/jquery/jquery.tipsy.css')
-								//->appendStylesheet('/js/carto/theme/geoportal/style.css')
 								->headLink(array('rel' => 'shortcut icon', 'href' => '/images/favicon.ico', 'type' => 'image/x-icon'), 'PREPEND')
 								->headLink(array('rel' => 'icon', 'href' => '/images/favicon_32.png', 'sizes' => '32x32'));
 									
