@@ -29,6 +29,9 @@
 
             // Envoi dans la vue les groupements et leur types
             $this->view->array_groupementstypes = $array_groupementstypes;
+            
+            $commune = new Model_DbTable_AdresseCommune;
+            $this->view->villes_tests = $commune->fetchAll()->toArray();
         }
 
         public function displayAction()

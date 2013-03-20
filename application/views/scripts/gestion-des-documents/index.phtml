@@ -139,26 +139,26 @@ function callback(nomFich) {
 
 <h2 class='grid_xx'>
 	<i class='sprite sprite-application_view_columns' ></i>
-	Gestion des commissions
+	Gestion des documents
 </h2>
-<span>
-	Liste des documents pouvant être générés depuis la partie dossiers<br/><br/>
-</span>
 <div id='infosGdd'></div>
 
 
-<?
+<?php
 	if(!empty($this->listeFichiers)){
 		echo "
-			<table id='documentType'>
+			<table id='documentType' class='table-custom'>
+                <thead>
 				<tr style='height:20px;'>
 					<th>
 						Nom du fichier
 					</th>
 					<th>
-						Supprimer
+						Actions
 					</th>
 				</tr>
+                </thead>
+                <tbody>
 		";
 		sort($this->listeFichiers); // pour le tri croissant, rsort() pour le tri décroissant
 		foreach($this->listeFichiers as $lien) {
@@ -168,16 +168,17 @@ function callback(nomFich) {
 						<a href='".$this->path."/".$lien."'>".$lien."</a>
 					</td>
 					<td>
-						<a href='/' class='supp' id='".$lien."'>x</a>
+						<a href='/' class='supp' id='".$lien."'>Suppression du document</a>
 					</td>
 				</tr>
 			";
 		}
 		echo "
+            </tbody>
 			</table>
 		";
 	 }else{
-		echo "Actuellement aucun document disponible";
+		echo "<p><strong>Actuellement aucun document disponible.</strong></p>";
 	 }
 	 
 ?>

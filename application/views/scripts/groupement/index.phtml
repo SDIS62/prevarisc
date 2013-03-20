@@ -1,3 +1,5 @@
+<?php if(is_array($this->villes_tests) && count($this->villes_tests) > 0) : ?>
+
 <div class='grid_16'>
 	
 	<!-- Titre -->
@@ -202,3 +204,15 @@
 
 
 </script>
+
+<?php else : ?>
+
+<div class='grid_16'>
+    <h2>
+		<i class='sprite sprite-application_view_columns' ></i>
+		Groupements de communes
+	</h2>
+    <p><strong>Il n'y a pas de communes dans la base de données.</strong></p>
+</div>
+
+<?php endif ?>

@@ -31,10 +31,10 @@
 			<dd>
 				<select id='liste_villes' class='grid_5 alpha' multiple size=20 style='height: 300px; width: 45%;'>
 					<?php
-						foreach($this->villes as $value) {
+                            foreach($this->villes as $value) {
 						
-							echo "<option id='".$value["NUMINSEE_COMMUNE"]."' value='".$value["NUMINSEE_COMMUNE"]."'>".$value["NUMINSEE_COMMUNE"]." ".$value["LIBELLE_COMMUNE"]."</option>";
-						}
+                                echo "<option id='".$value["NUMINSEE_COMMUNE"]."' value='".$value["NUMINSEE_COMMUNE"]."'>".$value["NUMINSEE_COMMUNE"]." ".$value["LIBELLE_COMMUNE"]."</option>";
+                            }
 					?>
 				</select>
 
@@ -45,10 +45,13 @@
 
 				<select id='villes_groupement' name='villes[]' class='grid_5 omega' multiple size=20 style='height: 300px; width: 45%;'>
 					<?php
-						foreach($this->ville_du_groupement as $value) {
+                        if(is_array($this->ville_du_groupement))
+                        {
+                            foreach($this->ville_du_groupement as $value) {
 					
-							echo "<option id='".$value["NUMINSEE_COMMUNE"]."' value='".$value["NUMINSEE_COMMUNE"]."' >".$value["NUMINSEE_COMMUNE"]." ".$value["LIBELLE_COMMUNE"]."</option>";
-						}
+                                echo "<option id='".$value["NUMINSEE_COMMUNE"]."' value='".$value["NUMINSEE_COMMUNE"]."' >".$value["NUMINSEE_COMMUNE"]." ".$value["LIBELLE_COMMUNE"]."</option>";
+                            }
+                        }
 					?>
 				</select>
 			</dd>
