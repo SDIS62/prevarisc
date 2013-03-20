@@ -518,28 +518,51 @@
                     // Données dans une table a part
                     else {
 
+                        // est ce que l'on veut ajouter une ligne dans la bonne table ?
                         if ( array_key_exists($key, $DB_tab) ) {
 
+                            // on parcourt les données du tableau envoyé
                             for ( $i=0; $i<count($data); $i++ ) {
 
                                 // CrÃ©ation de la ligne
                                 $item = $DB_tab[$key]->createRow();
 
-
                                 foreach ( $DB_tab[$key]->info(Zend_Db_Table_Abstract::COLS) as $col ) {
 
                                     if ( isset($_GET[$col][$i]) ) {
+                                    
+                                        // On check si lenfant correspondant bien a l'établissement actuel
+                                        if($key == "ID_FILS_ETABLISSEMENT")
+                                        {
+                                            $genre_actuel = $_GET["ID_GENRE"];
+                                            $genre_enfant = $this->DB_etablissement->getInformations($_GET[$col][$i])->ID_GENRE;
+                                            
+                                            switch($genre_actuel)
+                                            {
+                                                case 1:
+                                                    if($genre_enfant != 2)
+                                                        throw new Exception('L\'établissement enfant n\'est pas compatible (Un Site ne ne peut contenir que des établissements)', 500);
+                                                    break;
+                                                    
+                                                case 2:
+                                                    if($genre_enfant != 3)
+                                                        throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
+                                                        
+                                                default:
+                                                    if($genre_enfant != null)
+                                                        throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
+                                            }
+                                        }
 
                                         $item->$col = $col == "DATE_ETABLISSEMENTPLAN" ? $this->getDate($_GET[$col][$i]) : $_GET[$col][$i];
                                     }
                                 }
-
+                                
+                                // Ajout de la clé étrangère
                                 // Gestion historique ou pas
                                 if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
-
                                     $item->ID_ETABLISSEMENTINFORMATIONS = $informations->ID_ETABLISSEMENTINFORMATIONS;
                                 } else {
-
                                     $item->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
                                 }
 
@@ -563,7 +586,28 @@
                     $pere = $DB_tab["ID_FILS_ETABLISSEMENT"]->fetchRow("ID_ETABLISSEMENT = " . $this->_request->ID_PERE . " AND ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
 
                     if (!$pere) {
-
+                    
+                         $pere_information = $this->DB_etablissement->getInformations($this->_request->ID_PERE);
+                        
+                        // on test si le père peut être enregistré (genre)
+                        // si l'établissement = site alors pas de pere
+                        // si l'établissement = cellule alos père = etablissement
+                        switch($informations->ID_GENRE)
+                        {
+                            case 2:
+                                if($pere_information->ID_GENRE != 1)
+                                    throw new Exception('Le père n\'est pas compatible (Un établissement a comme père un site)', 500);
+                                break;
+                            case 3:
+                                if($pere_information->ID_GENRE != 2)
+                                    throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
+                                break;
+                            default:
+                                if($this->_request->ID_PERE !=null)
+                                    throw new Exception('Le père n\'est pas compatible (Les sites, habitation, IGH et EIC n\'ont pas de père)', 500);
+                                break;
+                        }
+                        
                         $item = $DB_tab["ID_FILS_ETABLISSEMENT"]->createRow();
                         $item->ID_ETABLISSEMENT = (int) $this->_request->ID_PERE;
                         $item->ID_FILS_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;

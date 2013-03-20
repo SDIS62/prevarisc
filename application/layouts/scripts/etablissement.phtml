@@ -80,7 +80,7 @@
 							
 							<!-- Statut -->
 							<div class='read'>
-								<p>Statut : <?php echo $this->DB_statut[$this->DB_informations["ID_STATUT"]-1]["LIBELLE_STATUT"] ?></p>
+								<p>Statut : <?php if(isset($this->DB_statut[$this->DB_informations["ID_STATUT"]-1])) echo $this->DB_statut[$this->DB_informations["ID_STATUT"]-1]["LIBELLE_STATUT"] ?></p>
 							</div>
 
 							<!--<button id='donnees_operationelles_button'>Données opérationnelles</button>-->
@@ -91,13 +91,13 @@
 						<ul id='onglets_horizontaux' class='read' >
 							<li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
 							
-							<? if($this->droits->DROITETABLISSEMENT_GROUPE == 0) : ?>
+							<?php if($this->droits->DROITETABLISSEMENT_GROUPE == 0) : ?>
 								<?php if($this->genre != "\"Site\"" ) : ?>
 									<li class='<?php echo ( $this->action == "descriptif" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li>
 								<?php endif ?>
 								<li class='<?php echo ( $this->action == "pieces-jointes" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
 								<li class='<?php echo ( $this->action == "contacts" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>
-							<? endif ?>
+							<?php endif ?>
 							
 							<li class='<?php echo ( $this->action == "dossiers" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'>Dossiers</a></li>
 							<li class='<?php echo ( $this->action == "historique" ) ? "selection_onglets_hor" : "read" ?>' style='float: right;' ><a style='border-right: none' href='<?php echo $this->url(array("action"=>"historique")) ?>'>Afficher l'historique</a></li>

@@ -1,6 +1,6 @@
 <form id='formulaire_etablissement_footer' action='' onsubmit='return false;' >
 
-	<? if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1) || ($this->DB_informations == null && $this->droits->DROITETSCREATION_GROUPE == 1)) : ?>
+	<?php if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1) || ($this->DB_informations == null && $this->droits->DROITETSCREATION_GROUPE == 1)) : ?>
 		<div class='grid_16' >
 		
 			<input type='submit' class='ui-helper-hidden' />
@@ -38,14 +38,14 @@
 			
 			
 		</div>
-	<? endif ?>
-	
+	<?php endif ?>
+
 	<br class='clear' />
 
 	<!-- Informations générales de l'établissement en fonction de son genre -->
 	<div class='grid_9 change_historique'>
 	
-		<? if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
+		<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
 	
 		<div class='edit'>
 			<h4>Général</h4>
@@ -103,7 +103,7 @@
 					</select>
 				</div>
 				<div class='read'>
-					<strong><?php echo $this->DB_genre[$this->DB_informations["ID_GENRE"]-1]["LIBELLE_GENRE"]." " ?></strong>
+					<strong><?php if(isset($this->DB_genre[$this->DB_informations["ID_GENRE"]-1])) echo $this->DB_genre[$this->DB_informations["ID_GENRE"]-1]["LIBELLE_GENRE"]." " ?></strong>
 				</div>
 			</dd>
 		</dl>
@@ -416,7 +416,7 @@
 			</div>
 		</div>
 		
-		<? endif ?>
+		<?php endif ?>
 		
 		<!-- Plan -->
 		<h4>Plans <a href='' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="$('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('ui-helper-hidden').attr('id', ''); return false;">Ajouter un plan</a></h4>
@@ -509,7 +509,7 @@
 			
 			<?php if( count($this->etablissement_lies) == 1 && $this->DB_informations["ID_GENRE"] != 3) echo "<p class='read' style='text-align: center;'><em>Pas d'établissement liés</em></p>"; ?>
 			
-			<? if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
+			<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
 			<dl class='edit' >
 			
 				<?php if($this->DB_informations["ID_GENRE"] != 1) : ?>
@@ -538,7 +538,7 @@
 				</dd>
 				<?php endif ?>
 			</dl>
-			<? endif ?>
+			<?php endif ?>
 			
 			<div class='read' style='max-height: 400px; overflow: auto; ' >
 				<?php
@@ -612,7 +612,7 @@
 			</div>
 			<?php endforeach ?>
 			
-			<? if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
+			<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
 			
 			<!-- Informations générales -->
 			<h4>Informations générales</h4>
@@ -816,11 +816,11 @@
 				</dd>
 			</dl>
 			
-			<? endif ?>
+			<?php endif ?>
 			
 		</div>
 		
-		<? if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
+		<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
 		
 		<hr class="clear" ./>
 		
@@ -891,21 +891,23 @@
 			
 		</div>
 		
-		<? endif ?>
+		<?php endif ?>
 		
 	</div>
 
 </form>
 
-<? if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1) || ($this->DB_informations == null && $this->droits->DROITETSCREATION_GROUPE == 1)) : ?>
+<?php if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1) || ($this->DB_informations == null && $this->droits->DROITETSCREATION_GROUPE == 1)) : ?>
 <!-- Boite de dialogue des valeurs par défauts -->
 <div id='dialog-default' class='ui-helper-hidden' >
 	<br/>
-	<p id='dialog-perio' class='ui-helper-hidden' >La périodicité n'a pas été renseignée, la valeur par défaut est de <strong><span id='dialog-perio-value' ></span> mois</strong>.</p>
-	<p id='dialog-cat' class='ui-helper-hidden' >La catégorie n'a pas été renseignée, la valeur par défaut est la <strong><span id='dialog-cat-value' ></span>e catégorie</strong>.</p>
-	<p id='dialog-classe' class='ui-helper-hidden' >La classe n'a pas été renseignée, la valeur par défaut est la <strong><span id='dialog-classe-value' ></span>e classe</strong>.</p>
-	<p id='dialog-commission' class='ui-helper-hidden' >La commission n'a pas été renseignée, la commission par défaut est "<strong><span id='dialog-commission-text' ></span></strong>".<span id='dialog-commission-value' class='ui-helper-hidden' ></span></p>
-	<p id='dialog-prev' class='ui-helper-hidden' >Les préventionnistes n'ont pas été renseignés, les préventionnistes proposés par défauts sont <strong><span id='dialog-prev-text' ></span></strong>.<span id='dialog-prev-value' class='ui-helper-hidden' ></span></p>
+    <div id="def-values">
+        <p id='dialog-perio' class='ui-helper-hidden' >La périodicité n'a pas été renseignée, la valeur par défaut est de <strong><span id='dialog-perio-value' ></span> mois</strong>.</p>
+        <p id='dialog-cat' class='ui-helper-hidden' >La catégorie n'a pas été renseignée, la valeur par défaut est la <strong><span id='dialog-cat-value' ></span>e catégorie</strong>.</p>
+        <p id='dialog-classe' class='ui-helper-hidden' >La classe n'a pas été renseignée, la valeur par défaut est la <strong><span id='dialog-classe-value' ></span>e classe</strong>.</p>
+        <p id='dialog-commission' class='ui-helper-hidden' >La commission n'a pas été renseignée, la commission par défaut est "<strong><span id='dialog-commission-text' ></span></strong>".<span id='dialog-commission-value' class='ui-helper-hidden' ></span></p>
+        <p id='dialog-prev' class='ui-helper-hidden' >Les préventionnistes n'ont pas été renseignés, les préventionnistes proposés par défauts sont <strong><span id='dialog-prev-text' ></span></strong>.<span id='dialog-prev-value' class='ui-helper-hidden' ></span></p>
+    </div>
 	<br/>
 	<p id='dialog-ask' class='ui-helper-hidden' >Validez vous ce changement ?</p>
 	<p id="dialog-pb" style="color: red; font-weight: bold" class='ui-helper-hidden' >Attention, certaines valeurs "par défauts" n'ont pu être résolues et cela peut créer des erreurs dans la fiche établissement. Voulez vous continuer ?</p>
@@ -960,7 +962,7 @@
 <div id='dialog-comeback' class='ui-helper-hidden'>
 	<p>L'établissement a bien été créé. Voulez vous restez sur cette page, ou revenir sur la fiche établissement de "<?php echo htmlspecialchars($_GET["libelle"], ENT_QUOTES) ?>" ?</p>
 </div>
-<? endif ?>
+<?php endif ?>
 
 <script type="text/javascript">
 
@@ -1413,7 +1415,14 @@
 
 						$("#dialog-default").dialog("open");
 						//if($("#dialog-pb").is(':hidden'))
-							$("#dialog-ask").show();
+                        $("#dialog-ask").show();
+                        
+                        // est ce que lon doit vraiment afficher ce message ?
+                        if( $("#dialog-default > #def-values p").filter(":hidden").size() == 5 )
+                        {
+                            $("#dialog-default").dialog("close");
+                            sauvegarder( historique, true );
+                        }
 					}
 				},
 				error: function(e) {
@@ -1552,7 +1561,7 @@
 		$("#formulaire_etablissement_footer button").hide();
 		$( ( mode == "read" ) ? "#modifier_button, #donnees_operationelles_button" : "#back_button, #save_historique_button, #save_button" ).show();
 
-		<? if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
+		<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
 		if( typeof(drag) != "undefined" ) {
 
 			if( mode == "read" ) {
@@ -1562,7 +1571,7 @@
 				drag.activate();
 			}
 		}
-		<? endif ?>
+		<?php endif ?>
 	}
 	
 	function callback_geo(i, d) {
@@ -1608,7 +1617,8 @@
 
 	// Fonction pour mettre à jour le total
 	function update_total() {
-
+        
+        return;
 		if( $("#effectif_public_text").val() == "" )			$("#effectif_public_text").val(0);
 		if( $("#effectif_personnel_text").val() == "" )			$("#effectif_personnel_text").val(0);
 		$("#effectif_total_text").val( parseInt($("#effectif_public_text").val()) + parseInt($("#effectif_personnel_text").val()));
