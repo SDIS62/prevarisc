@@ -103,8 +103,11 @@
 				success: function(result) {
 					$("#textarea").css("height", "2em");
 					$("#textarea").val("Entrez ici votre message d'information.");
+                    /*
 					window.clearTimeout(myInterval);
 					updateNews(result["int_timestamp"]);
+                    */
+                    $("ul li#news_li a").click();
 				}
 			});
 		return false;
@@ -140,11 +143,12 @@
 	});
 	
 	// Update du fil d'actualité
+    /*
 	var time = 20000;
-	// myInterval = window.setTimeout( "updateNews(<?php echo time() ?>);" , time);
+    updateNews();
 	
 	function updateNews( timestamp ) {
-	
+    
 		$.ajax({
 		
 			url: "/news/get?format=json",
@@ -188,5 +192,11 @@
 				myInterval = window.setTimeout( "updateNews(" + result["int_timestamp"] + ");" , time);
 			}
 		});
+        
+        alert(timestamp);
+       
+        
 	}
+    
+     */
 </script>

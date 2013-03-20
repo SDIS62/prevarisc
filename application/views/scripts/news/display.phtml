@@ -21,11 +21,11 @@
 	</p>
 	
 	<p class='date' >
-		<? if($this->ID_UTILISATEUR == Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR || $this->DROITADMINSYS_GROUPE == 1) : ?>
+		<?php if($this->ID_UTILISATEUR == Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR || $this->DROITADMINSYS_GROUPE == 1) : ?>
 		<span class='action' >
 			<a href='' onclick="$( '#dialog-confirm' ).data('id', '<?php echo $this->ID_NEWS ?>' ).dialog( 'open' ); return false; " >Supprimer ce message</a>
 		</span>
-		<? endif ?>
+		<?php endif ?>
 		
 		<?php echo (( $d->get(Zend_Date::DATES) != $actual->get(Zend_Date::DATES) ) ?  $d->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT)." ".$d->get(Zend_Date::TIME_SHORT) : $d->get(Zend_Date::TIME_SHORT)) . " - " . $this->NOM_UTILISATEURINFORMATIONS . " " . $this->PRENOM_UTILISATEURINFORMATIONS . " dans <em>" . $this->TYPE_NEWS . "</em>" ?>
 	</p>
