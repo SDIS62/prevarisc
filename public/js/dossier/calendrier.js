@@ -219,7 +219,7 @@ $(document).ready(function() {
 					modal: true,
 					buttons: {
 						'Afficher l\'ordre du jour': function() {
-							window.location.replace("http://srv-prevarisc/calendrier-des-commissions/gestionodj/dateCommId/"+$("#dateClick").val());								
+							window.location.replace("./calendrier-des-commissions/gestionodj/dateCommId/"+$("#dateClick").val());								
 						},
 						'Fermer la fenêtre d\'édition': function() {
 							$("#dialogComm").dialog('close').html('');
