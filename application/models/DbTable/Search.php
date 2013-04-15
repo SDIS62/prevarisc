@@ -30,8 +30,16 @@
 
                 $paginatorAdapt = new Zend_Paginator_Adapter_DbTableSelect($this->select);
                 $items = $paginatorAdapt->getItems(($numero_de_page - 1) * $this->NB_ITEMS, $this->NB_ITEMS);
+                
+                $liste = $items->toArray();
+                
+                 foreach ($liste as $key => $row) {
+                    if (($this->item == "etablissement" && Zend_Controller_Action_HelperBroker::getStaticHelper('Droits')->checkEtablissement($row["ID_ETABLISSEMENT"])) || ($this->item == "dossier" && Zend_Controller_Action_HelperBroker::getStaticHelper('Droits')->checkDossier($row["ID_DOSSIER"]))) {
+                        unset($liste[$key]);
+                    }
+                }
 
-                $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($items->toArray()));
+                $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($liste));
                 $paginator->setItemCountPerPage($this->NB_ITEMS);
                 $paginator->setCurrentPageNumber($numero_de_page);
                 $liste = $paginator;
@@ -39,18 +47,16 @@
             } else {
 
                 $liste = $this->fetchAll($this->select)->toArray();
+                
+                 foreach ($liste as $key => $row) {
+                    if (($this->item == "etablissement" && Zend_Controller_Action_HelperBroker::getStaticHelper('Droits')->checkEtablissement($row["ID_ETABLISSEMENT"])) || ($this->item == "dossier" && Zend_Controller_Action_HelperBroker::getStaticHelper('Droits')->checkDossier($row["ID_DOSSIER"]))) {
+                        unset($liste[$key]);
+                    }
+                }
             }
             // On execute la requete
             //$liste = $this->fetchAll($this->select)->toArray();
             // echo $this->select->__toString();
-
-            // A FIX
-            foreach ($liste as $key => $row) {
-                if (($this->item == "etablissement" && Zend_Controller_Action_HelperBroker::getStaticHelper('Droits')->checkEtablissement($row["ID_ETABLISSEMENT"])) || ($this->item == "dossier" && Zend_Controller_Action_HelperBroker::getStaticHelper('Droits')->checkDossier($row["ID_DOSSIER"]))) {
-                    unset($liste[$key]);
-                }
-            }
-
             return $liste;
         }
 
