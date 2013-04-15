@@ -1,4 +1,4 @@
-<? if($this->droit_ecriture) : ?>
+<?php if($this->droit_ecriture) : ?>
 <script type="text/javascript">
 
 	$(document).ready(function() {
@@ -113,14 +113,14 @@
 	}
 
 </script>
-<? endif ?>
+<?php endif ?>
 
 <input type='hidden' name='typePJ' id='typePJ' value='<?php echo $this->type ?>' />
 <input type='hidden' name='idLinkPJ' id='idLinkPJ' value='<?php echo $this->identifiant ?>' />
 
 <h3 float='left'>Liste de pièces jointes</h3>
 
-<? if($this->droit_ecriture) : ?>
+<?php if($this->droit_ecriture) : ?>
 <!-- Boutons -->
 <div float='right' >
 	
@@ -137,11 +137,11 @@
 	<div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>		
 	
 </div>
-<? endif ?>
+<?php endif ?>
 
 <br class='clear' />
 
-<?php if(count($this->listePj)==0) : ?>
+<?php if(count($this->listePj) == 0) : ?>
 	<p id='listePieceJointe-no' ><strong>Aucune pièce jointe ajoutée.</strong></p>
 <?php endif ?>
 
