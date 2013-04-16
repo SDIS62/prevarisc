@@ -26,5 +26,28 @@
             //echo $select;
             return $this->getAdapter()->fetchRow($select);
         }
+		
+		public function getPrescType()
+        {
+            //Autocomplétion sur la liste des abréviations
+            $select = "SELECT *
+                FROM prescriptiontype, prescriptionlibelle
+                WHERE prescriptiontype.LIBELLE_PRESCRIPTIONTYPE = prescriptionlibelle.ID_PRESCRIPTIONLIBELLE
+            ";
+            //echo $select;
+            return $this->getAdapter()->fetchAll($select);
+        }
+		
+		public function getPrescTypeInfo($idPrescType)
+        {
+            //Autocomplétion sur la liste des abréviations
+            $select = "SELECT *
+                FROM prescriptiontype, prescriptionlibelle
+                WHERE prescriptiontype.LIBELLE_PRESCRIPTIONTYPE = prescriptionlibelle.ID_PRESCRIPTIONLIBELLE
+				AND prescriptiontype.ID_PRESCRIPTIONTYPE = '".$idPrescType."'
+            ";
+            //echo $select;
+            return $this->getAdapter()->fetchRow($select);
+        }
 
     }

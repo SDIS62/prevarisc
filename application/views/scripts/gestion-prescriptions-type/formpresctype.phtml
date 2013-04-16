@@ -1,0 +1,200 @@
+<script type='text/javascript' >
+$(document).ready(function(){
+
+
+	$("#addTexteArticle").button({
+		icons: {
+			primary: 'ui-icon-circle-plus'
+		},
+		text: false
+	});
+	
+
+	//permer d'ajouter un couple texte article à la prescription type
+	$("#addTexteArticle").live('click',function(){
+		//récupération des éléments
+		var texte = $("#LIBELLE_TEXTE").val();
+		var article = $("#LIBELLE_ARTICLE").val();
+		var texteId = $("#texteId").val();
+		var articleId = $("#articleId").val();
+		
+		if(texte == '' && article == '')
+			return false;
+		
+		var textInput;
+		if(texteId == ''){
+			textInput = texte;
+		}else{
+			textInput = texteId;
+		}
+		
+		var articleInput;
+		if(articleId == ''){
+			articleInput = article;
+		}else{
+			articleInput = articleId;
+		}			
+		//On compte le nombre d'élément
+		var nbElement = $("#listeTexteArticle > ul").size();
+		var nbElementAjout = nbElement+1;
+		$("#listeTexteArticle").append("<ul><span style='float:left;width:100px;margin-left:40px;'><input type='hidden' name='texte[]' value='"+textInput+"' />&nbsp;"+texte+"</span><span style='padding-left:60px;' ><input type='hidden' name='article[]' value='"+articleInput+"' />"+article+"</span>&nbsp;&nbsp;<a href='' class='suppTextArticle' >&times;</a><br/></ul>");
+		
+		//On active le bouton d'ajout de selection
+		$( "#addPresc" ).button({ disabled: false });
+		
+		//on vide les champs
+		$("#LIBELLE_TEXTE").val('');
+		$("#LIBELLE_ARTICLE").val('');
+		$("#texteId").val('');
+		$("#articleId").val('');
+		
+		return false;
+	});
+
+	//FONCTION d'autocompletion
+	$(function(){		
+		//FONCTION d'autocompletion
+		//$("#LIBELLE_TEXTE").toggleText("Saisissez le libellé d'un texte ...");
+		$("#LIBELLE_TEXTE").autocomplete("/dossier/selectiontexte?format=json",{
+			minChars: 2,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["selectTexte"], function(row) {
+					return {
+						data: row,
+						value: row.LIBELLE_TEXTE,
+						result: row.LIBELLE_TEXTE
+					}
+				});
+			},
+			formatItem: function(item) {
+				//alert(item.LIBELLE_COMMISSION);
+				return item.LIBELLE_TEXTE;
+			}
+		}).result(function(e, item) {
+			$("#texteId").val(item.ID_TEXTE);
+
+		});
+		
+		//$("#LIBELLE_ARTICLE").toggleText("Saisissez le libellé d'un article ...");
+		$("#LIBELLE_ARTICLE").autocomplete("/dossier/selectionarticle?format=json",{
+			minChars: 2,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["selectArticle"], function(row) {
+					return {
+						data: row,
+						value: row.LIBELLE_ARTICLE,
+						result: row.LIBELLE_ARTICLE
+					}
+				});
+			},
+			formatItem: function(item) {
+				//alert(item.LIBELLE_COMMISSION);
+				return item.LIBELLE_ARTICLE;
+			}
+		}).result(function(e, item) {
+			$("#articleId").val(item.ID_ARTICLE);
+		});
+		
+	});
+	
+
+	$("#LIBELLE_TEXTE").live('focus',function(){
+		$("#texteId").val('');
+	});	
+	$("#LIBELLE_ARTICLE").live('focus',function(){
+		$("#articleId").val('');
+	});
+});	
+
+$(".suppTextArticle").live('click',function(){
+	$(this).parent('ul').remove();
+	//alert('');
+	return false;
+});
+
+
+</script>
+<?php
+	//Zend_Debug::dump($this->prescInfo);
+echo "
+	<div id='divFormPrescription' name='divFormPrescription' style='margin-top:15px;'>
+		<div id='liste_informations'>
+			<form name='formPrescription' id='formPrescription' action='' method='POST'>
+			<input type='hidden' name='idPrescType' id='idPrescType' value='".$this->idPrescType."' />
+			<span  class='form'>
+				Abréviation : 
+				<input type='text' id='ABREVIATION' name='ABREVIATION' value='".$this->prescInfo['ABREVIATION_PRESCRIPTIONTYPE']."' style='width:100px;' />
+			</span>
+			<ul>
+				<li>
+					<span class='libelle'>
+						Texte :
+					</span>
+					<span class='form'>
+						<input type='text' id='LIBELLE_TEXTE' name='LIBELLE_TEXTE' value='' style='width:100px;' />
+						<input type='hidden' name='texteId' id='texteId' value='' />
+					</span>
+					<span class='libelle'>
+						Article :
+					</span>
+					<span  class='form'>
+						<input type='text' id='LIBELLE_ARTICLE' name='LIBELLE_ARTICLE' value='' style='width:100px;' />
+						<input type='hidden' name='articleId' id='articleId' value='' />
+					</span>
+					<button id='addTexteArticle' >Ajouter à la prescription</button>
+				</li>
+				<li id='listeTexteArticle'>
+";
+$taille = count($this->textes);
+for($i = 0; $i < $taille-1; $i++){
+	echo "<ul>";
+	if(isset($this->textes[$i])){
+		echo "
+			<span style='float:left;width:100px;margin-left:40px;'>
+				<input type='hidden' value='".$this->textes[$i]."' name='texte[]'>
+				 ".$this->textes[$i]."
+			</span>
+		";
+		
+	}else{
+		echo "
+			<span style='float:left;width:100px;margin-left:40px;'>
+				<input type='hidden' value='' name='texte[]'>&nbsp;
+			</span>
+		";
+	}
+
+	if(isset($this->articles[$i])){
+		echo "
+			<span style='float:left;width:100px;margin-left:40px;'>
+				<input type='hidden' value='".$this->articles[$i]."' name='article[]'>
+				 ".$this->articles[$i]."
+			</span>
+		";
+	
+	}else{
+		echo "
+			<span style='float:left;width:100px;margin-left:40px;'>
+				<input type='hidden' value='' name='texte[]'>&nbsp;
+			</span>
+		";
+	}
+	echo "<a class='suppTextArticle' href=''>&times;</a><br/></ul>";
+}
+echo "
+				<li>
+				<li>
+					<span class='libelle'>
+						Prescription :
+						<br/>
+						<textarea name='PRESCRIPTIONLIBELLE' id='PRESCRIPTIONLIBELLE' style='width:800px;height:150px;'>".$this->prescInfo['LIBELLE_PRESCRIPTIONLIBELLE']."</textarea>
+						<br/><br/>
+					</span>
+				</li>
+			</form>	
+		</div>
+	</div>
+";
+?>

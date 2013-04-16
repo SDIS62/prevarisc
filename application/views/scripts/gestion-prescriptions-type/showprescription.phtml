@@ -1,0 +1,157 @@
+<script type='text/javascript' >
+	var dialogEditPrescType = $('<div style="display:none"></div>').appendTo('body');
+
+	$(".editPrescType").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		},
+		text: false
+	}).click(function(){
+		//alert($(this).attr('id'));
+		
+		//On ouvre la boite de dialogue
+		var tabId = $(this).attr('id').split('_');
+		var id = tabId[1];
+		
+		$.ajax({
+			type: "POST",
+			url: "/gestion-prescriptions-type/formpresctype/id/"+id,
+			success: function(msg){
+				//alert(msg);
+				dialogEditPrescType.html(msg);
+				dialogEditPrescType.dialog("open");
+			}
+		});
+	});
+	
+	dialogEditPrescType.dialog({
+		title: "Modification prescription type",
+		modal: true,
+		autoOpen: false,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			"Sauvegarder les modifications ": function() {
+				//alert($("#formPrescription").serialize());
+				//alert($("#listeTexteArticle").html());
+				//alert($("#listeTexteArticle ul").length);  
+				if($("#ABREVIATION").val() == ''){
+					$("#ABREVIATION").focus();
+					return false;
+				}else if($("#listeTexteArticle ul").length == 0){
+					//alert('');
+					$("#LIBELLE_TEXTE").focus();
+					return false;
+				}else{
+					$.ajax({
+						type: "POST",
+						data: "format=html&"+$("#formPrescription").serialize(),
+						url: "/gestion-prescriptions-type/save",
+						beforeSend: function(){
+							//alert('before');
+							
+						},
+						success: function(msg){
+
+							//dialogEditPrescType.dialog("close");
+							$.ajax({
+								type: "POST",
+								url: "/gestion-prescriptions-type",
+								success: function(msg){
+									dialogEditPrescType.remove();
+									$("#index-content").html(msg);
+								}
+							});
+							return false;
+						},
+						error: function(){
+							return false;
+						}
+					});
+				}
+				return false;
+			},
+			"annuler": function() {
+				dialogEditPrescType.dialog("close");
+				//$("#dialogDiv").html('');
+			}
+		},
+		close: function(event, ui){
+			
+		}
+
+	});
+	
+
+</script>
+
+<?php
+//entete tableau
+echo "
+	<div>
+		<div class='grid_2 alpha' >
+			<h3>Abreviation</h3>
+		</div>
+		<div class='grid_2 alpha' >
+			<h3>Texte(s)</h3>
+		</div>
+		<div class='grid_2' >
+			<h3>Article(s)</h3>
+		</div>
+		<div class='grid_8' >
+			<h3>Libelle</h3>
+		</div>
+		<hr class='clear'/>
+	</div>
+";
+
+//Zend_Debug::dump($this->listePrescription);
+if($this->type == "loadPrescriptionAjax"){
+	
+	for($i = 0; $i < $this->nbPrescription; $i++){
+		echo "
+			<div id='".$this->listePrescription[$i]['ID_PRESCRIPTIONTYPE']."' >
+				<div class='grid_2 alpha' >
+					".$this->listePrescription[$i]['ABREVIATION_PRESCRIPTIONTYPE']."
+				</div>
+				<div class='grid_2' >
+		";
+		
+		//if(isset($this->listeTextes[$i])){
+			for($t = 0; $t < count($this->listeTextes[$i]); $t++){
+				if($this->listeTextes[$i][$t] != NULL){
+					echo $this->listeTextes[$i][$t]."<br/>";			
+				}else if($this->listeTextes[$i][$t] == NULL && $this->listeArticles[$i][$t] != NULL){
+					echo "<br/>";
+				}
+			}
+		//}
+		echo "
+				</div>
+				<div class='grid_2' >
+		";
+		//if(isset($this->listeArticles[$i])){
+			for($a = 0; $a < count($this->listeArticles[$i]); $a++){
+				if($this->listeArticles[$i][$a] != NULL){
+					echo $this->listeArticles[$i][$a]."<br/>";
+				}else if($this->listeArticles[$i][$a] == NULL && $this->listeTextes[$i][$a] != NULL){
+					echo "<br/>";
+				}
+			}
+		//}
+		
+		echo "
+				</div>
+				<div class='grid_8' >
+		";
+		echo nl2br(str_replace("<br />", "" ,$this->ListePrescriptionsLibelle[$i]));
+		echo "
+				</div>
+				<div class='grid_2  button' >
+					<button class='editPrescType' id='edit_".$this->listePrescription[$i]['ID_PRESCRIPTIONTYPE']."'>Editer</button>
+				</div>
+				<hr class='clear'/>
+			</div>
+		";
+	}
+}
