@@ -601,14 +601,38 @@
 				return false;
 			},
 			error: function()	{
-				//bonne question les error je ne sais pas vraiment à quel moment elle sont remontée -_-
-				//vieux dev de MRD
+
 				return false;
 			}
 		});
 		return false;
 	});
 	
+	
+	$(".motiveAvisDef").live('click',function(){
+		//Sauvegarde en base que la prescription motive un avis defavorable
+		var idSelected = $(this).parent().parent().attr('id');
+		var tabId = idSelected.split('_');
+		var idPrescMAD = tabId[1];
+		//alert($(this).attr('checked'));
+		$.ajax({
+			url: "/dossier/fonction",
+			data: "do=motiveAvisDefPresc&idPrescMAD="+idPrescMAD+"&checked="+$(this).attr('checked'),
+			type:"POST",
+			beforeSend: function(){
+				
+			},
+			success: function(affichageResultat){
+			
+			},
+			error: function()	{
+
+				return false;
+			}
+		});
+		
+		//return false;
+	});
 	
 	
 	
@@ -637,14 +661,12 @@ TRUNCATE TABLE `dossierlisteprescription`;  POSSIBLE DE LA SUPPRIMER
 					<div id='listePrescription' name='listePrescription'>
 						<ul>
 							<li>
-								<div class='grid_2 alpha'>Texte</div>
-								<div class='grid_2'>Article</div>
-								<div class='grid_1'>N°</div>
-								<div class='grid_8'>Prescription</div>
+								<div class='grid_2 alpha'><h3>Texte</h3></div>
+								<div class='grid_2'><h3>Article</h3></div>
+								<div class='grid_1'><h3>N°</h3></div>
+								<div class='grid_7'><h3>Prescription</h3></div>
+								<div class='grid_2 omega'><h3>Motive avis défavorable</h3></div>	
 								<div class='grid_2'>&nbsp;</div>
-								<!--
-								<div class='grid_2 omega'>Motive avis défavorable</div>	
-								-->
 								<hr class='clear' />
 							</li>
 						</ul>						

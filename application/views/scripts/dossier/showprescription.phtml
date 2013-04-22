@@ -48,19 +48,17 @@ if($this->type == "loadPrescriptionAjax"){
 				<div class='grid_1 numPresc' >
 					".$this->listePrescription[$i]['NUM_PRESCRIPTIONDOSSIER']."
 				</div>
-				<div class='grid_8' >
+				<div class='grid_7' >
 		";
 		echo nl2br(str_replace("<br />", "" ,$this->ListePrescriptionsLibelle[$i]));
 		echo "
 				</div>
+				<div class='grid_2  omega'>
+					<input type='checkbox' class='motiveAvisDef' value='".$this->listePrescription[$i]['ID_PRESCRIPTIONDOSSIER']."' ".( ($this->listePrescription[$i]['MAD_PRESCRIPTIONDOSSIER'] == 1)?"checked='checked'":"")." />
+				</div>
 				<div class='grid_2  button' >
 					<button class='editPresc' id='edit_".$this->listePrescription[$i]['ID_PRESCRIPTIONDOSSIER']."'>Editer</button>
 				</div>
-				<!--
-				<div class='grid_2  omega'>
-					<input type='checkbox' class='motiveAvisDef' value='".$this->listePrescription[$i]['ID_PRESCRIPTIONDOSSIER']."' />
-				</div>
-				-->
 				<hr class='clear'/>
 			</li>
 		";
@@ -89,19 +87,23 @@ if($this->type == "loadPrescriptionAjax"){
 		<div class='grid_1 numPresc' >
 			".$this->numPresc."
 		</div>
-		<div class='grid_8'>
+		<div class='grid_7'>
 	";
 	echo nl2br(str_replace("<br />", "" ,$this->listeLibelles));
 	echo "
 		</div>
-		<div class='grid_2  button' >
-			<button class='editPresc' id='edit_".$this->idPrescDossier."'>Editer</button>
-		</div>
-		<!--
+	";
+/*
+	echo "
 		<div class='grid_2  omega'>
 			<input type='checkbox' class='motiveAvisDef' value='".$this->idPrescDossier."' />
 		</div>
-		-->
+	";
+*/
+	echo "
+		<div class='grid_2  button' >
+			<button class='editPresc' id='edit_".$this->idPrescDossier."'>Editer</button>
+		</div>
 		<hr class='clear'/>
 	";
 

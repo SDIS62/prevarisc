@@ -747,6 +747,18 @@ class DossierController extends Zend_Controller_Action
                 $this->view->numPresc = $this->_getParam('numPresc');
                 $this->showprescriptionAction($texteArray,$articleArray,$prescriptionLibelle,$idPrescriptionDossier,"addPrescAssoc");
             break;
+			case "motiveAvisDefPresc":
+                //echo $this->_getParam('idPrescMAD')." ".$this->_getParam('checked');
+				$dbPrecDoss = new Model_DbTable_PrescriptionDossier;
+				$prescDossEdit = $dbPrecDoss->find($this->_getParam('idPrescMAD'))->current();
+				if($this->_getParam('checked') == 'true'){
+					$prescDossEdit->MAD_PRESCRIPTIONDOSSIER = 1;
+				}else if($this->_getParam('checked') == 'false'){
+					$prescDossEdit->MAD_PRESCRIPTIONDOSSIER = 0;
+				}
+				$prescDossEdit->save();
+				
+            break;
             case "verifAbreviation":
                 $DBprescType = new Model_DbTable_PrescriptionType;
                 $abreviationExist = $DBprescType->searchIfAbreviationExist($this->_getParam('abreviation'));
