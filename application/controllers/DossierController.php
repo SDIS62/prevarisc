@@ -748,7 +748,7 @@ class DossierController extends Zend_Controller_Action
                 $this->showprescriptionAction($texteArray,$articleArray,$prescriptionLibelle,$idPrescriptionDossier,"addPrescAssoc");
             break;
 			case "motiveAvisDefPresc":
-                //echo $this->_getParam('idPrescMAD')." ".$this->_getParam('checked');
+				//Permet de distinguer les prescriptions qui motivent un avis défavorable sur le dossier
 				$dbPrecDoss = new Model_DbTable_PrescriptionDossier;
 				$prescDossEdit = $dbPrecDoss->find($this->_getParam('idPrescMAD'))->current();
 				if($this->_getParam('checked') == 'true'){
@@ -757,7 +757,6 @@ class DossierController extends Zend_Controller_Action
 					$prescDossEdit->MAD_PRESCRIPTIONDOSSIER = 0;
 				}
 				$prescDossEdit->save();
-				
             break;
             case "verifAbreviation":
                 $DBprescType = new Model_DbTable_PrescriptionType;
