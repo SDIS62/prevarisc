@@ -180,6 +180,7 @@ if( !isset($_POST['do']))
 	echo "
 		</div>
 	";
+
 }else{
 	if($_POST['do'] == 'deletePj'){
 		echo unlink("pj/dossier/".$this->id_dossier."/".$_POST['name']);

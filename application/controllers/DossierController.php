@@ -176,10 +176,14 @@ class DossierController extends Zend_Controller_Action
 
     public function pieceJointeAction()
     {
+		
+		
         $this->_forward("index", "piece-jointe", null, array(
             "type" => "dossier",
-            "id" => $this->_request->id
+            "id" => $this->_request->id,
         ));
+		
+		
     }
 
     public function addAction()
@@ -928,6 +932,23 @@ class DossierController extends Zend_Controller_Action
                         $newLien->save();
                     }
                 }
+            break;
+			case "pjPassageCommission":
+				//Permet de distinguer les prescriptions qui motivent un avis défavorable sur le dossier
+				$dbDossierPj = new Model_DbTable_DossierPj;
+				//$dossierPjEdit = $dbDossierPj->getdossierpj($this->_getParam('idDossier'),$this->_getParam('idPjCommission'));
+				$dossierPjEdit = $dbDossierPj->find($this->_getParam('idDossier'),$this->_getParam('idPjCommission'))->current();
+
+				if($this->_getParam('checked') == 'true'){
+					$dossierPjEdit->PJ_COMMISSION = 1;
+				}else if($this->_getParam('checked') == 'false'){
+					$dossierPjEdit->PJ_COMMISSION = 0;
+				}
+				//echo get_class($dossierPjEdit);
+				//Zend_debug::dump($dossierPjEdit);
+				$dossierPjEdit->save();
+								
+
             break;
         }
     }

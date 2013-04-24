@@ -176,6 +176,11 @@
 				<th>Nom</th> 
 				<th>Description</th>
 				<th>Date d'ajout</th>
+<?php
+	if($this->type == 'dossier'){
+		echo "<th>Rapport final</th>";
+	}
+?>
 				<th>&nbsp;</th>
 			</tr> 
 		</thead> 

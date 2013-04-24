@@ -59,11 +59,14 @@
         {
             // Modèles
             $DBused = new Model_DbTable_PieceJointe;
-
+			
+			
+			
             // Cas dossier
-            if ($this->_request->type == "dossier") {
+            if ($this->_request->type == "dossier") {				
                 $this->view->type = "dossier";
                 $this->view->identifiant = $this->_request->id;
+				$this->view->pjcomm = $this->_request->pjcomm;
                 $listePj = $DBused->affichagePieceJointe("dossierpj", "dossierpj.ID_DOSSIER", $this->_request->id);
             }
 
@@ -83,6 +86,7 @@
 
             // On envoi la liste des PJ dans la vue
             $this->view->listePj = $listePj;
+			//Zend_Debug::dump($this->view->listePj);
             $this->view->path = $this->path;
         }
 
@@ -236,11 +240,12 @@
 
         public function checkAction()
         {
+			
             // Si elle existe
             $this->view->exists = file_exists("." . $this->path . $this->_request->idpj . $this->_request->ext);
 
             if ($this->view->exists) {
-
+				
                 // Modèle
                 $DBused = new Model_DbTable_PieceJointe;
 
@@ -250,7 +255,7 @@
                     "listePj" => $DBused->fetchAll("ID_PIECEJOINTE = " . $this->_request->idpj)->toArray(),
                     "droit_ecriture" => true,
                     "type" => $this->_request->type,
-                    "id" => $this->_request->id
+                    "id" => $this->_request->id,
                 ));
             }
         }

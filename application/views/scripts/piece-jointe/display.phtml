@@ -1,4 +1,7 @@
-<?php foreach ($this->listePj as $pj) : ?>
+<?php
+
+ foreach ($this->listePj as $pj) : 
+?>
 	<tr>
 		<!-- Type-->
 		<td style='text-align: center' >
@@ -37,7 +40,15 @@
 				echo $date->get( Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR_SHORT );
 			?>
 		</td>
-		
+		<?php
+			if($this->type == 'dossier'){
+				echo "
+					<td>
+						<input type='checkbox' id='select_".$pj['ID_PIECEJOINTE']."' class='select' ".( ($pj['PJ_COMMISSION'] == '1')? "checked='checked'" : "" )." />
+					</td>
+				";
+			}
+		?>	
 		<!-- Action-->
 		<td>
 			<? if($this->droit_ecriture) : ?>
@@ -54,4 +65,56 @@
 		'speedIn'		:	600, 
 		'speedOut'		:	200, 
 	});
+	
+	$(".select").live('click',function(){
+		var idAvantSplit = $(this).attr('id');
+		var tabId = idAvantSplit.split('_');
+		var id = tabId[1];
+		var checked = $(this).attr('checked');
+		$.ajax({
+			url: "/dossier/fonction",
+			data: "do=pjPassageCommission&idPjCommission="+id+"&idDossier="+$("#idDossier").val()+"&checked="+checked,
+			type:"POST",
+			beforeSend: function(){
+				
+			},
+			success: function(affichageResultat){
+				//alert(checked);
+				if(checked == true){
+					$(".select").each(function(){
+						$(this).attr('disabled','disabled');
+					});
+					$("#"+idAvantSplit).attr('disabled','');
+				}else{
+					$(".select").each(function(){
+						$(this).attr('disabled','');
+					});
+				}
+			},
+			error: function()	{
+
+				return false;
+			}
+		});
+	});
+	
+	function disabledTest(){
+		var test = 0;
+		$(".select").each(function(){
+			if($(this).attr('checked')){
+				test = 1;
+			}
+			
+		});
+		if(test == 1){
+			$(".select").each(function(){
+				if(!$(this).attr('checked')){
+					$(this).attr('disabled','disabled');
+				}			
+			});
+		}
+	
+	}
+	disabledTest();
+			
 </script>
