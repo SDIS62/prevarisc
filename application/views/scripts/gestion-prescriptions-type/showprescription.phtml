@@ -104,11 +104,12 @@ echo "
 		<hr class='clear'/>
 	</div>
 ";
-
+//echo $this->type;
 //Zend_Debug::dump($this->listePrescription);
 if($this->type == "loadPrescriptionAjax"){
 	
 	for($i = 0; $i < $this->nbPrescription; $i++){
+		
 		echo "
 			<div id='".$this->listePrescription[$i]['ID_PRESCRIPTIONTYPE']."' >
 				<div class='grid_2 alpha' >
@@ -116,25 +117,29 @@ if($this->type == "loadPrescriptionAjax"){
 				</div>
 				<div class='grid_2' >
 		";
-		
+		$num = $i+1;
+
 		//if(isset($this->listeTextes[$i])){
-			for($t = 0; $t < count($this->listeTextes[$i]); $t++){
-				if($this->listeTextes[$i][$t] != NULL){
-					echo $this->listeTextes[$i][$t]."<br/>";			
-				}else if($this->listeTextes[$i][$t] == NULL && $this->listeArticles[$i][$t] != NULL){
+			//Corrige le problème d'array
+			for($t = 0; $t < count($this->listeTextes[$num]); $t++){
+				//echo "on passe ici";
+				if($this->listeTextes[$num][$t] != NULL){
+					echo $this->listeTextes[$num][$t]."<br/>";			
+				}else if($this->listeArticles[$num][$t] != NULL){
 					echo "<br/>";
 				}
 			}
+
 		//}
 		echo "
 				</div>
 				<div class='grid_2' >
 		";
 		//if(isset($this->listeArticles[$i])){
-			for($a = 0; $a < count($this->listeArticles[$i]); $a++){
-				if($this->listeArticles[$i][$a] != NULL){
-					echo $this->listeArticles[$i][$a]."<br/>";
-				}else if($this->listeArticles[$i][$a] == NULL && $this->listeTextes[$i][$a] != NULL){
+			for($a = 0; $a < count($this->listeArticles[$num]); $a++){
+				if($this->listeArticles[$num][$a] != NULL){
+					echo $this->listeArticles[$num][$a]."<br/>";
+				}else if($this->listeTextes[$num][$a] != NULL){
 					echo "<br/>";
 				}
 			}

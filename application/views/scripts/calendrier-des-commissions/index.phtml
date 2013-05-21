@@ -1,9 +1,8 @@
-<script type="text/javascript">
-	
 
-</script>
 
 <?php
+
+	
 	echo $this->headScript()->appendFile('/js/dossier/calendrier.js','text/javascript');
 
 	if($this->idComm){
@@ -15,11 +14,12 @@
 		echo "
 			<script type='text/javascript'>
 				$(document).ready( function() {
+					//alert('');
 					$('#infosCom').html('<input type=\"hidden\" name=\"commissionId\" id=\"commissionId\" value=\"".$_GET['id']."\" />');
 					$('#aff_calendar').button( 'option', 'disabled', false );
 					$('#ordre_jour').button( 'option', 'disabled', false );
 					$('#commissionSelect').val(".$_GET['id'].");
-					$('#calendar').html('').afficheCalendar(".$_GET['id'].");					
+					$('#calendar').html('').afficheCalendar(".$_GET['id'].");
 					$('#selectComm').hide();
 				});
 			</script>
@@ -43,7 +43,7 @@
 -->
 
 <select id='commissionSelect' class='bigger' >
-	<option>Choix d'une commission ...</option>
+	<option value='0'>Choix d'une commission ...</option>
 	<?php foreach($this->array_commissions as $array_commission) : ?>
 	<optgroup label='<?php echo htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES) ?>' >
 		<?php foreach($array_commission["ARRAY"] as $item) : ?>
@@ -66,3 +66,15 @@
 
 <!-- Boite de dialogue -->
 <div id="dialogComm" title="Planification commission" class='ui-helper-hidden' ></div>
+
+<?php
+	if(isset($_GET["idComm"])){
+?>
+		<script type="text/javascript">
+			//$("#commissionSelect").select('<?php echo $_GET["idComm"]; ?>');
+			//alert($("#commissionSelect>option").length);
+			$("#commissionSelect").change();
+		</script>
+<?php
+	}
+?>

@@ -29,7 +29,7 @@ class GestionPrescriptionsTypeController extends Zend_Controller_Action
         //On initialise pour le premier
         $listeTextePresc = array();
         $listeArticlePresc = array();
-
+		//Zend_Debug::dump($this->view->listePrescription);
         foreach ($this->view->listePrescription as $indPresc => $val) {
             //On liste les prescriptions
             $numPrescription = $val['ID_PRESCRIPTIONTYPE'];
@@ -51,7 +51,7 @@ class GestionPrescriptionsTypeController extends Zend_Controller_Action
             $tabTexte = explode("_",$val['TEXTE_PRESCRIPTIONTYPE']);
 
             foreach ($tabTexte as $indText => $valText) {
-                //echo $valText."<br/>";
+                //secho $valText."<br/>";
                 $texte = $dbtexte->find($valText)->current();
                 //echo $texte['LIBELLE_TEXTE'];
                 array_push($listeTextePresc, $texte['LIBELLE_TEXTE'] );
@@ -69,7 +69,10 @@ class GestionPrescriptionsTypeController extends Zend_Controller_Action
         }
         array_push($Textes, $listeTextePresc);
         array_push($Articles, $listeArticlePresc);
-
+		/*
+		unset($Textes[0]);
+		unset($Articles[0]);
+		*/
         $this->view->nbPrescription = count($this->view->listePrescription);
         $this->view->listeTextes = $Textes;
         //Zend_Debug::dump($this->view->listeTextes);
@@ -179,7 +182,7 @@ class GestionPrescriptionsTypeController extends Zend_Controller_Action
 					//si vide
 					$listeTexte .= "_";
 					$valueTexte = '';
-				}else	if (is_numeric($valueTexte)) {
+				}else if(is_numeric($valueTexte)) {
 					//si il s'agit d'un id
 					$listeTexte .= $valueTexte."_";
 					$libelleTexte = $DBtexte->find($valueTexte)->current();

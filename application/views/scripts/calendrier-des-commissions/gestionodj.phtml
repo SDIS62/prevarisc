@@ -349,7 +349,7 @@ $(document).ready(function() {
 			<input type='hidden' name='dateOdj' id='dateOdj' value='".$this->infosDateComm['DATE_COMMISSION']."' />
 			<input type='hidden' name='heureDeb' id='heureDeb' value='".$this->infosDateComm['HEUREDEB_COMMISSION']."' />
 			<input type='hidden' name='heureFin' id='heureFin' value='".$this->infosDateComm['HEUREFIN_COMMISSION']."' />
-			<h2>Ordre du jour de la <a href='./calendrier-des-commissions?idComm=".$this->infosDateComm["COMMISSION_CONCERNE"]."' >".$this->infosCommission['LIBELLE_COMMISSION']."</a> du ".$this->dateFr."</h2><br/>
+			<h2>Ordre du jour de la <a href='/calendrier-des-commissions?idComm=".$this->infosDateComm["COMMISSION_CONCERNE"]."' >".$this->infosCommission['LIBELLE_COMMISSION']."</a> du ".$this->dateFr."</h2><br/>
 			<h3>".$this->infosDateComm['LIBELLE_DATECOMMISSION']."</h3>";
 				
 			if($this->infosDateComm['GESTION_HEURES'] == 1){

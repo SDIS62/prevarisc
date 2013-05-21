@@ -4,37 +4,36 @@
 </script>
 
 <?php
-
+echo "plpop";
 if($this->type == "loadPrescriptionAjax"){
-	
+
 	for($i = 0; $i < $this->nbPrescription; $i++){
+
 		echo "
 			<li id='presc_".$this->listePrescription[$i]['ID_PRESCRIPTIONDOSSIER']."' num='".$this->listePrescription[$i]['NUM_PRESCRIPTIONDOSSIER']."'>
 				<div class='grid_2 alpha' >
 		";
 		
-		//if(isset($this->listeTextes[$i])){
-			for($t = 0; $t < count($this->listeTextes[$i]); $t++){
-				if($this->listeTextes[$i][$t] != NULL){
-					echo $this->listeTextes[$i][$t]."<br/>";			
-				}else if($this->listeTextes[$i][$t] == NULL && $this->listeArticles[$i][$t] != NULL){
-					echo "<br/>";
-				}
+		for($t = 0; $t < count($this->listeTextes[$i]); $t++){
+			if($this->listeTextes[$i][$t] != NULL){
+				echo $this->listeTextes[$i][$t]."<br/>";			
+			}else if($this->listeTextes[$i][$t] == NULL && $this->listeArticles[$i][$t] != NULL){
+				echo "<br/>";
 			}
-		//}
+		}
+
 		echo "
 				</div>
 				<div class='grid_2' >
 		";
-		//if(isset($this->listeArticles[$i])){
-			for($a = 0; $a < count($this->listeArticles[$i]); $a++){
-				if($this->listeArticles[$i][$a] != NULL){
-					echo $this->listeArticles[$i][$a]."<br/>";
-				}else if($this->listeArticles[$i][$a] == NULL && $this->listeTextes[$i][$a] != NULL){
-					echo "<br/>";
-				}
+
+		for($a = 0; $a < count($this->listeArticles[$i]); $a++){
+			if($this->listeArticles[$i][$a] != NULL){
+				echo $this->listeArticles[$i][$a]."<br/>";
+			}else if($this->listeArticles[$i][$a] == NULL && $this->listeTextes[$i][$a] != NULL){
+				echo "<br/>";
 			}
-		//}
+		}
 		
 		echo "
 				</div>
