@@ -157,7 +157,7 @@
 			});
 		},
 		formatItem: function(item) {
-			return item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+			return item.LIBELLE_ETABLISSEMENTINFORMATIONS  + ( (item.LIBELLE_COMMUNE != null) ? " (" + item.LIBELLE_COMMUNE + ")" : " (non localisé)");
 		}
 	}).result(function(e, item) {
 		window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
