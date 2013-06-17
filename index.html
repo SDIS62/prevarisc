@@ -13,8 +13,6 @@
         padding-top: 20px;
         padding-bottom: 40px;
       }
-
-      /* Custom container */
       .container-narrow {
         margin: 0 auto;
         max-width: 700px;
@@ -22,8 +20,6 @@
       .container-narrow > hr {
         margin: 30px 0;
       }
-
-      /* Main marketing message and sign up button */
       .jumbotron {
         margin: 60px 0;
         text-align: center;
@@ -36,13 +32,78 @@
         font-size: 21px;
         padding: 14px 24px;
       }
-
-      /* Supporting marketing content */
       .marketing {
         margin: 60px 0;
       }
       .marketing p + h4 {
         margin-top: 28px;
+      }
+      @media (min-width: 1200px) {
+        .jumbotron h1 {
+          font-size: 72px;
+          line-height: 1;
+        }
+        .jumbotron .btn {
+          font-size: 21px;
+          padding: 14px 24px;
+        }
+      }
+      @media (min-width: 768px) and (max-width: 1199px) {
+        body {
+            margin-top: 20px;
+        }
+        .jumbotron h1 {
+          font-size: 72px;
+          line-height: 1;
+        }
+        .jumbotron .btn {
+          font-size: 21px;
+          padding: 14px 24px;
+        }
+      }
+      @media (max-width: 767px) {
+      body {
+            margin-top: 20px;
+        }
+        h3 {
+            padding-top: 20px;
+            text-align: center;
+        }
+        .jumbotron h1 {
+          font-size: 40px;
+          line-height: 1;
+        }
+        .jumbotron .btn {
+          font-size: 20px;
+          padding: 10px 20px;
+          display: block;
+          margin-bottom: 10px;
+        }
+        .jumbotron .btn + .btn {
+          margin-bottom: 10px;
+        }
+      }
+      @media (max-width: 480px) {
+        h3 {
+            padding-top: 20px;
+            text-align: center;
+        }
+        .jumbotron {
+          margin: 20px 0;
+        }
+        .jumbotron h1 {
+          font-size: 40px;
+          line-height: 1;
+        }
+        .jumbotron .btn {
+          font-size: 15px;
+          padding: 7px 12px;
+          display: block;
+          margin-bottom: 10px;
+        }
+        .jumbotron .btn + .btn {
+          margin-bottom: 10px;
+        }
       }
     </style>
     <link href="http://sdis62.github.io/prevarisc/css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -53,12 +114,12 @@
     <div class="container-narrow">
 
       <div class="masthead">
-        <ul class="nav nav-pills pull-right">
+        <ul class="nav nav-pills pull-right hidden-phone">
           <li class="active"><a href="#">Accueil</a></li>
           <li><a href="https://github.com/SDIS62">À propos</a></li>
           <li><a href="http://www.google.com/recaptcha/mailhide/d?k=01j6rZu6rU6BWonRhHd2LQLw==&c=DKhjgEaj941xmMzeFNaqJPyL36uxJsKNPySspEpO7tk=">Contact</a></li>
         </ul>
-        <h3 class="muted">Prevarisc</h3>
+        <h3 class="muted"><img src="https://raw.github.com/SDIS62/prevarisc/master/public/css/images/layout-header-logo.png" alt="Prevarisc" /></h3>
       </div>
 
       <hr>
@@ -67,10 +128,8 @@
         <h1>Gérez plus simplement votre service prévention!</h1>
         <p class="lead">Prevarisc est un logiciel national open-source gérant l'ensemble de l'activité du service prévention au sein d'un SDIS.</p>
         <a class="btn btn-large btn-success" href="https://github.com/SDIS62/prevarisc/archive/v1.0.0.zip"><i class="icon-download-alt icon-white"></i>Téléchargez la version 1.0.0</a>
-        <a class="btn btn-large" href="https://github.com/SDIS62/prevarisc">Voir la page projet &raquo;</a>
+        <a class="btn btn-large" href="https://github.com/SDIS62/prevarisc">En savoir plus &raquo;</a>
       </div>
-
-      <hr>
 
       <div class="row-fluid marketing">
         <div class="span6">
