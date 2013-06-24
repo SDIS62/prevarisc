@@ -1,6 +1,4 @@
-![Prevarisc](https://raw.github.com/SDIS62/prevarisc/master/public/images/logo_prevarisc_big.jpg)
-
-# [SDIS 62 : Prevarisc](http://sdis62.github.com/prevarisc/) - Application web de gestion du service prévention
+![Prevarisc](https://raw.github.com/SDIS62/prevarisc/master/extras/logo_prevarisc_readme.jpg)
 
 ## Présentation
 
@@ -17,7 +15,8 @@ Prevarisc est un logiciel national open-source gérant l'ensemble de l'activité
 
 * [Travail en cours / jalons](https://github.com/SDIS62/prevarisc/issues/milestones) ;
 * [Suivi des bugs et corrections](https://github.com/SDIS62/prevarisc/issues) ;
-* [Le forum - communauté d'utilisateur de prevarisc](http://prevarisc.sdis62.fr).
+* [Le forum - communauté d'utilisateur de prevarisc](http://prevarisc.sdis62.fr/forum) ;
+* [La démo en ligne](http://prevarisc.sdis62.fr/demo).
 
 ## Installation et configuration
 
@@ -33,5 +32,6 @@ Ps : Nous sommes conscient que le projet contient du dirty-code, la prochaine gr
 ## À propos
 
 SDIS 62 - 2013
+Groupement GSIC
 Chef de projet : Stéphane CONTAL
 Développement : Rémi KINOWSKI & Kévin DUBUC
