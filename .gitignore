@@ -179,8 +179,15 @@ composer.phar
 *.mwb.beforefix
 
 #################
-## Prevarisc DATA
+## StarUML
 #################
 
-*.odt
-php-cs-fixer.phar
+*.~ml
+
+
+#################
+## Minified
+#################
+
+*.min.css
+*.min.js
