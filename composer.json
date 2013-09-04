@@ -1,0 +1,13 @@
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/kdubuc/odtphp"
+        }
+    ],
+    "require": {
+        "zendframework/zendframework1": "1.*",
+        "cybermonde/odtphp": "dev-master",
+        "michelf/php-markdown": "1.*"
+    }
+}
