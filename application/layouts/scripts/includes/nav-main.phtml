@@ -1,0 +1,18 @@
+<p id='layout-header-connexion'><a href='/user/logout'><img src='/images/logout.png' alt='deconnexion' /></a></p>
+
+<div id='layout-header'>
+    
+    <!-- Titre -->
+    <h1>Prevarisc</h1>
+    <?php
+    echo strtoupper(APPLICATION_ENV) == "DEVELOPMENT" ? "<span id='version_flag'>Développeur</span>" : "";
+    ?>
+
+    <!-- Menu -->
+    <ul id='layout-header-menu'>
+        <li><a href='/'>Accueil</a></li>
+        <li><a href='/statistiques'>Extractions - Statistiques</a></li>
+        <li><a href='/search'>Recherche</a></li>
+        <li><a href='/user/me'> <?php echo $this->auth_user->NOM_UTILISATEURINFORMATIONS . " " . $this->auth_user->PRENOM_UTILISATEURINFORMATIONS ?></a></li>
+    </ul>
+</div>

@@ -1,21 +1,14 @@
-<?php echo $this->doctype() ?>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
-	<head>
-		<?php
-		echo $this->headTitle($this->title);
-		echo $this->headMeta();
-		echo $this->headLink();
-		echo $this->inlineScript();
-		echo $this->headScript();
-		?>
-	</head>
-	
-	<body>
-	
-		<div id='wrapper'>
+<!doctype html>
+<html lang="fr" >
+
+    <?php echo $this->render("includes/header.phtml"); ?>
+
+    <body>
+    
+        <div id='wrapper'>
 			<div id='layout-content' >
 			
-				<?php $this->header(); ?>
+				<?php echo $this->render("includes/nav-main.phtml"); ?>
 				
 				<div class='container_16' >
 					<?php echo $this->layout()->content; ?>
@@ -23,9 +16,9 @@
 				
 			</div>
 		</div>
-		
-		<!-- Footer -->
-		<?php $this->footer(); ?>
-		
-	</body>
+        
+        <?php echo $this->render("includes/footer.phtml"); ?>
+
+    </body>
+    
 </html>

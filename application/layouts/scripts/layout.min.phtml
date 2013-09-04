@@ -1,17 +1,12 @@
-<?php echo $this->doctype() ?>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
-	<head>
-		<?php
-		echo $this->headTitle($this->title);
-		echo $this->headMeta();
-		echo $this->headLink();
-		echo $this->inlineScript();
-		echo $this->headScript();
-		?>
-	</head>
-	
-	<body style='background-image: none' >
-		<!-- Contenu -->
+<!doctype html>
+<html lang="fr" >
+
+    <?php echo $this->render("includes/header.phtml"); ?>
+
+    <body style='background-image: none' >
+    
 		<?php echo $this->layout()->content; ?>
+        
 	</body>
+    
 </html>

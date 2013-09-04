@@ -1,14 +1,66 @@
-<?php echo $this->doctype() ?>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
-	<head>
-		<?php
-			echo $this->headTitle($this->title);
-			echo $this->headMeta();
-			echo $this->headLink();
-			echo $this->inlineScript();
-			echo $this->headScript();
-		?>
-		<script type='text/javascript'>
+<!doctype html>
+<html lang="fr" >
+
+    <?php echo $this->render("includes/header.phtml"); ?>
+
+    <body>
+    
+        <div id='wrapper'>
+			<div id='layout-content' >
+			
+				<?php echo $this->render("includes/nav-main.phtml"); ?>
+                
+                <div class='container_16' >	
+                
+					<?php if($this->action == "add" || $this->do == "new" ) : ?>
+						<h2 class='grid_16'>
+							<i class='sprite sprite-folder_add' ></i>
+							Création d'un nouveau dossier <div style='margin:10px;' id='infosEtablissement'></div>
+						</h2>
+					<?php else : ?>
+						<h3 class='grid_16' >
+							<span style="color: #333333"><?php echo $this->libelleType; ?></span>
+							<small><br/><?php echo nl2br($this->objetDossier) ?></small>
+							<div style='margin:10px;' id='infosEtabs'></div>
+						</h3>
+						<ul id='onglets_horizontaux' class='grid_16' >
+							<li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'>
+								<a href='<?php echo $this->url(array("action"=>"index")) ?>'>Informations générales</a>
+							</li>
+							<li class='<?php echo ( $this->action == "docconsulte" ) ? "selection_onglets_hor" : "read" ?>'>
+								<a href='<?php echo $this->url(array("action"=>"docconsulte")) ?>'>Documents consultés</a>
+							</li>
+							<li class='<?php echo ( $this->action == "prescription" ) ? "selection_onglets_hor" : "read" ?>'>
+								<a href='<?php echo $this->url(array("action"=>"prescription")) ?>'>Prescriptions</a>
+							</li>
+							<li class='<?php echo ( $this->action == "liees" ) ? "selection_onglets_hor" : "read" ?>'>
+								<a href='<?php echo $this->url(array("action"=>"liees")) ?>'>Établissements et dossiers liés</a>
+							</li>
+							<li class='<?php echo ( $this->action == "contact" ) ? "selection_onglets_hor" : "read" ?>' >
+								<a href='<?php echo $this->url(array("action"=>"contact")) ?>'>Contacts</a>
+							</li>
+							<li class='<?php echo ( $this->action == "piece-jointe" ) ? "selection_onglets_hor" : "read" ?>' >
+								<a style='border-right: none' href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'>Pièces jointes</a>
+							</li>
+						</ul>
+					<?php endif ?>
+                    
+
+					<div class='grid_16' >
+					<?php
+						echo "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />";
+						echo $this->layout()->content;
+					?>
+					</div>
+                    
+				</div>
+				
+			</div>
+		</div>
+        
+        <?php echo $this->render("includes/footer.phtml"); ?>
+        
+        <script type='text/javascript'>
 			$(document).ready(function(){
 				if($("#infosEtabs").html() == ''){
 					$.ajax({
@@ -48,57 +100,7 @@
 				}
 			});
 		</script>
-	</head>
-	<body>
-		<div id='wrapper'>
-			<div id='layout-content' >
-				<!-- Header -->
-				<?php $this->header(); ?>
-				
-				<div class='container_16' >	
-					<?php if($this->action == "add" || $this->do == "new" ) : ?>
-						<h2 class='grid_16'>
-							<i class='sprite sprite-folder_add' ></i>
-							Création d'un nouveau dossier <div style='margin:10px;' id='infosEtablissement'></div>
-						</h2>
-					<?php else : ?>
-						<h3 class='grid_16' >
-							<span style="color: #333333"><?php echo $this->libelleType; ?></span>
-							<small><br/><?php echo nl2br($this->objetDossier) ?></small>
-							<div style='margin:10px;' id='infosEtabs'></div>
-						</h3>
-						<ul id='onglets_horizontaux' class='grid_16' >
-							<li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'>
-								<a href='<?php echo $this->url(array("action"=>"index")) ?>'>Informations générales</a>
-							</li>
-							<li class='<?php echo ( $this->action == "docconsulte" ) ? "selection_onglets_hor" : "read" ?>'>
-								<a href='<?php echo $this->url(array("action"=>"docconsulte")) ?>'>Documents consultés</a>
-							</li>
-							<li class='<?php echo ( $this->action == "prescription" ) ? "selection_onglets_hor" : "read" ?>'>
-								<a href='<?php echo $this->url(array("action"=>"prescription")) ?>'>Prescriptions</a>
-							</li>
-							<li class='<?php echo ( $this->action == "liees" ) ? "selection_onglets_hor" : "read" ?>'>
-								<a href='<?php echo $this->url(array("action"=>"liees")) ?>'>Établissements et dossiers liés</a>
-							</li>
-							<li class='<?php echo ( $this->action == "contact" ) ? "selection_onglets_hor" : "read" ?>' >
-								<a href='<?php echo $this->url(array("action"=>"contact")) ?>'>Contacts</a>
-							</li>
-							<li class='<?php echo ( $this->action == "piece-jointe" ) ? "selection_onglets_hor" : "read" ?>' >
-								<a style='border-right: none' href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'>Pièces jointes</a>
-							</li>
-						</ul>
-					<?php endif ?>
-					<!-- Contenu -->
-					<div class='grid_16' >
-					<?php
-						echo "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />";
-						echo $this->layout()->content;
-					?>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- Footer -->
-		<?php $this->footer(); ?>
-	</body>
+
+    </body>
+    
 </html>
