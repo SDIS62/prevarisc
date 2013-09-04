@@ -42,6 +42,7 @@
                 $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($liste));
                 $paginator->setItemCountPerPage($this->NB_ITEMS);
                 $paginator->setCurrentPageNumber($numero_de_page);
+                
                 $liste = $paginator;
 
             } else {

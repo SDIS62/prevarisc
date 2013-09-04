@@ -32,14 +32,14 @@ html, body, #wrapper {height: 100%;}
 }
 
 #version_flag {
-	-moz-border-radius: 5px;
+	border-radius: 5px;
 	color: white;
 	background-color: black;
-	padding: 3px;
 	vertical-align: top;
 	margin-left: 10px;
 	text-transform: uppercase;
-	font-weight: bold;
+    padding: 3px;
+    font-weight: bold;
 }
 
 ul#layout-header-menu {

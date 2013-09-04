@@ -4,8 +4,6 @@
         protected $_name="utilisateur";
         protected $_primary = "ID_UTILISATEUR";
 
-        // Mot de passe crypt� : md5($username."7aec3ab8e8d025c19e8fc8b6e0d75227".$passwd)
-
         public function getDroits($id_user)
         {
             $auth = Zend_Auth::getInstance()->getIdentity();

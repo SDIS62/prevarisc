@@ -11,7 +11,7 @@
 			<?php if($this->droits->DROITADMINPREV_GROUPE == 1) : ?>
 			<li><a href='/calendrier-des-commissions' ><i class='sprite sprite-calendar' ></i>Calendrier des commissions</a></li>
 			<?php endif ?>
-			<!--<li><a href='/index/help' ><i class='sprite sprite-help' ></i>Aide</a></li>-->
+			<li><a href='/index/help' ><i class='sprite sprite-help' ></i>Aide</a></li>
 		</ul>
 	</fieldset>
 	
@@ -52,13 +52,14 @@
 </div>
 
 <!-- Fil d'actualité -->
-<div class='grid_11' id='index-content' >
+<div class='grid_13' id='index-content' >
 
 	<?php echo $this->action("index", "news"); ?>
 	
 </div>
 
 <!-- Alertes -->
+<!--
 <div id='index-right' class='grid_2' >
 
 	<h3>
@@ -70,6 +71,8 @@
 	<div id='rappels'></div>
 
 </div>
+
+-->
 
 <br class='clear' />
 

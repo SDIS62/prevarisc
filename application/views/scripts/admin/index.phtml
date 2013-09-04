@@ -19,7 +19,7 @@
 	<dl class='liste_informations' >
 		<dt>Version</dt>
 		<dd>
-			<a href="https://github.com/SDIS62/prevarisc/issues?milestone=1&state=open">Prevarisc 1.1.0</a>
+			<a href="https://github.com/SDIS62/prevarisc/issues/milestones">Prevarisc <?php echo $this->version_prevarisc ?></a>
 		</dd>
 		
 		<dt>Serveur</dt>
@@ -32,12 +32,12 @@
 	
 	<!-- Actions -->
     <?php if(function_exists("ldap_connect")) : ?>
-	<h4>LDAP <input type='checkbox' value='1' name='LDAP_ACTIF' <?php if($this->info["LDAP_ACTIF"]) echo "checked" ?> /></h4>
+	<h4>Connexion avec l'Active Directory du SDIS <input type='checkbox' value='1' name='LDAP_ACTIF' <?php if($this->info["LDAP_ACTIF"]) echo "checked" ?> /></h4>
 	<dl id='ldap' class='liste_informations' >
 		<dt>Hôte (adresse IP)</dt><dd><input type='text' name='LDAP_HOST' value='<?php echo $this->info["LDAP_HOST"] ?>' /></dd>
 		<dt>Nom d'utilisateur</dt><dd><input type='text' name='LDAP_USERNAME' value='<?php echo $this->info["LDAP_USERNAME"] ?>' /></dd>
 		<dt>Mot de passe</dt><dd><input type='password' name='LDAP_PASSWORD' value='<?php echo $this->info["LDAP_PASSWORD"] ?>' /></dd>
-		<dt>Hiérarchie Active Directory</dt><dd><input type='text' name='LDAP_BASEDN' value='<?php echo $this->info["LDAP_BASEDN"] ?>' /></dd>
+		<dt>Hiérarchie vers les utilisateurs</dt><dd><input type='text' name='LDAP_BASEDN' value='<?php echo $this->info["LDAP_BASEDN"] ?>' /></dd>
 		<dd>Autoriser la connexion automatique via l'annuaire LDAP ? <input type='checkbox' value='1' name='LDAP_LOGIN' <?php if($this->info["LDAP_LOGIN"]) echo "checked" ?> /></dd>
 	</dl>
 	<br />

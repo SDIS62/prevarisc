@@ -19,6 +19,16 @@
             // On check si l'utilisateur peut accéder à cette partie
             $this->view->droits = $this->_helper->Droits()->get();
         }
+        
+        // Page d'accueil
+        public function helpAction()
+        {
+            // Titre
+            $this->view->title = "Aide";
+            
+            // Aide d'installation
+            $homepage = file_get_contents('https://raw.github.com/SDIS62/prevarisc/master/extras/documentation_installation.md');
+        }
 
         // Rappels utilisateur
         public function rappelsAction()

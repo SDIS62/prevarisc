@@ -349,7 +349,7 @@
 
         public function loginAction()
         {
-            //echo md5("kdubuc" . "7aec3ab8e8d025c19e8fc8b6e0d75227". "test");
+            echo md5("root" . "7aec3ab8e8d025c19e8fc8b6e0d75227". "root");
 
             try {
 
@@ -510,7 +510,7 @@
                 }
             } catch (Zend_Exception $e) {
 
-                $this->view->error = "<strong>Erreur:</strong> Un problème est survenu lors de la connexion à la base de données.";
+                $this->view->error = "<strong>Erreur:</strong> Un problème est survenu lors de la connexion à la base de données. (" . $e->getMessage() . ")";
             }
 
         }
