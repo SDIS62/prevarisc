@@ -21,7 +21,7 @@
 				data: "id=" + $("#idLinkPJ").val() + "&type=" + $("#typePJ").val(),
 				type: "post",
 				success: function(result) {
-				
+					
 					$("#formAddPJ").html(result).dialog({
 						resizable: false,
 						height: 500,
@@ -29,7 +29,7 @@
 						modal: true,
 						buttons: {
 							'Ajouter la pièce jointe': function() {
-							
+								
 								// Envoi du formulaire dans form
 								$("#formUpload").submit();
 								
