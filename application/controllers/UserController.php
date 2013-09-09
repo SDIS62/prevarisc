@@ -349,7 +349,7 @@
 
         public function loginAction()
         {
-            echo md5("root" . "7aec3ab8e8d025c19e8fc8b6e0d75227". "root");
+            // echo md5("root" . "7aec3ab8e8d025c19e8fc8b6e0d75227". "root");
 
             try {
 

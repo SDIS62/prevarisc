@@ -9,7 +9,7 @@ class Plugin_GlobalAction extends Zend_Controller_Plugin_Abstract
                 $request->setControllerName("user");
                 $request->setActionName("login");
         }
-        else
+        elseif(Zend_Auth::getInstance()->hasIdentity())
         {
             // On update la dernière action effectuée par l'utilisateur
             $model_user = new Model_DbTable_Utilisateur;
