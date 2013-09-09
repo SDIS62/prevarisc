@@ -181,10 +181,10 @@
 			<dt>Périodicité</dt>
 			<dd>
 				<div class='edit'>
-					<input type='text' id='periodicite_text' name='PERIODICITE__ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["PERIODICITE__ETABLISSEMENTINFORMATIONS"] ?>' size='2' /> mois
+					<input type='text' id='periodicite_text' name='PERIODICITE_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"] ?>' size='2' /> mois
 				</div>
 				<div class='read'>
-					<?php echo $this->DB_informations["PERIODICITE__ETABLISSEMENTINFORMATIONS"]." mois" ?>
+					<?php echo $this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"]." mois" ?>
 				</div>
 			</dd>
 		</dl>
@@ -219,7 +219,7 @@
 						<li>
 							<select id='type_principal_select' class='type_select' name='ID_TYPE' style='width: 20%'>
 								<?php foreach( $this->DB_type as $item ) : ?>
-								<option value='<?php echo $item["ID_TYPE"] ?>' <?php if( $item["ID_TYPE"] == $this->DB_informations["ID_TYPE"] ) echo "selected" ?> ><?php echo $item["ID_TYPE"] ?></option>
+								<option value='<?php echo $item["ID_TYPE"] ?>' <?php if( $item["ID_TYPE"] == $this->DB_informations["ID_TYPE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_TYPE"] ?></option>
 								<?php endforeach ?>
 							</select>
 							<select id='activite_principal_select' class='activite_select' name='ID_TYPEACTIVITE' style='width: 75%'>
@@ -235,7 +235,7 @@
 						<li <?php if( $key == -1 ) echo "id='prototype_types_activites_secondaires' class='ui-helper-hidden'" ?> >
 							<select name='ID_TYPE_SECONDAIRE[]' class='type_select' style='width: 20%' >
 								<?php foreach( $this->DB_type as $item ) : ?>
-								<option value='<?php echo $item["ID_TYPE"] ?>' <?php if( $item["ID_TYPE"] == $type_activite_secondaire["ID_TYPE_SECONDAIRE"] ) echo "selected" ?> ><?php echo $item["ID_TYPE"] ?></option>
+								<option value='<?php echo $item["ID_TYPE"] ?>' <?php if( $item["ID_TYPE"] == $type_activite_secondaire["ID_TYPE_SECONDAIRE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_TYPE"] ?></option>
 								<?php endforeach ?>
 							</select>
 							<select id='activite_secondaire_select' class='activite_select' name='ID_TYPEACTIVITE_SECONDAIRE[]' style='width: 75%'>
@@ -258,7 +258,7 @@
 			
 			<dl class='read'>
 				<dt>Type principal</dt>
-				<dd><?php echo $this->DB_informations["ID_TYPE"] ?></dd>
+				<dd><?php echo $this->DB_informations["LIBELLE_TYPE"] ?></dd>
 				
 				<?php if($this->types_activites_secondaires) : ?>
 				<dt>Types secondaires</dt>
@@ -513,16 +513,16 @@
 			<dl class='edit' >
 			
 				<?php if($this->DB_informations["ID_GENRE"] != 1) : ?>
-				<dt>Père de l'établissement</dt>
-				<dd>	
+				<dt class="pere_de_letablissement" >Père de l'établissement</dt>
+				<dd class="pere_de_letablissement">	
 					<input type='text' size='50' id='pere-autocomplete' <?php if(isset($this->pere) || isset($_GET["libelle"])) : ?> class="ui-state-highlight" <?php endif ?> value='<?php if(isset($this->pere)) echo htmlspecialchars($this->pere["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES); elseif( isset($_GET["libelle"]) ) echo htmlspecialchars($_GET["libelle"], ENT_QUOTES)  ?>' style='width: 100%' />
 					<input type='hidden' id='ID_PERE' name='ID_PERE' value='<?php if(isset($this->pere)) echo $this->pere["ID_ETABLISSEMENT"]; elseif( isset($_GET["pere"]) ) echo $_GET["pere"] ?>' />
 				</dd>
 				<?php endif ?>
 			
 				<?php if($this->DB_informations["ID_GENRE"] != 3) : ?>
-				<dt>Enfants de l'établissement</dt>
-				<dd>
+				<dt class="enfants_de_letablissement">Enfants de l'établissement</dt>
+				<dd class="enfants_de_letablissement">
 					<ul>
 						<?php foreach( $this->etablissement_lies as $key => $item ) : ?>
 						<li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_etablissement_lies' class='ui-helper-hidden'" ?> >
@@ -882,7 +882,7 @@
 				<dt>Dernière visite périodique</dt>
 				<dd><?php echo $this->last_visite ?></dd>
 				
-				<?php if($this->DB_informations["PERIODICITE__ETABLISSEMENTINFORMATIONS"] != 0) : ?>
+				<?php if($this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"] != 0) : ?>
 				<dt>Prochaine visite périodique</dt>
 				<dd><?php echo $this->next_visite ?></dd>
 				<?php endif ?>
@@ -999,6 +999,18 @@
 			$("#mise_secu").attr("checked", false);
 		}
 	});
+    
+    // Champ parent / enfant
+    // dangerosite_niv
+	$("select[name=ID_GENRE]").change(function() {
+        $(".pere_de_letablissement").show();
+		if($(this).val() == 1) {
+			$(".pere_de_letablissement").hide();
+		}
+        if($(this).val() == 3) {
+			$(".enfants_de_letablissement").hide();
+		}
+	}).change();
 	
 	$("input[name=disable_date]").live("change", function() {
 
