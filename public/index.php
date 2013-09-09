@@ -7,6 +7,10 @@ defined('APPLICATION_PATH')
 // Define application environment
 defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
+    
+// Define path to application directory
+defined('DATA_PATH')
+    || define('DATA_PATH', realpath(dirname(__FILE__) . '/../data'));
 
 // Get include path
 set_include_path(implode(PATH_SEPARATOR, array(

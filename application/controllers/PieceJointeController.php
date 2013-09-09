@@ -2,7 +2,7 @@
 
     class PieceJointeController extends Zend_Controller_Action
     {
-        public $path = "/data/uploads/pieces-jointes/";
+        public $path = DATA_PATH . "/uploads/pieces-jointes/";
 
         public function init()
         {
