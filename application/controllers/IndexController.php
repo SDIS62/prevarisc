@@ -1,5 +1,7 @@
 <?php
 
+    use \Michelf\Markdown;
+    
     class IndexController extends Zend_Controller_Action
     {
         // Initialisation
@@ -27,12 +29,13 @@
             $this->view->title = "Aide";
             
             // Aide d'installation
-            $homepage = file_get_contents('https://raw.github.com/SDIS62/prevarisc/master/extras/documentation_installation.md');
+            $this->view->doc_install = Markdown::defaultTransform(file_get_contents('http://raw.github.com/SDIS62/prevarisc/master/docs/documentation_installation.md'));
         }
 
         // Rappels utilisateur
         public function rappelsAction()
         {
+            /*
             // Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR
 
             // Modèles
@@ -77,7 +80,7 @@
 
                             $array_rappels["visites_a_venir"][] = "L'établissement <a href='/etablissement/index/id/" . $row["ID_ETABLISSEMENT"] . "'>" . $row["LIBELLE_ETABLISSEMENTINFORMATIONS"] ."</a> n'a pas été visité dans les temps.";
                         }
-                    } elseif ($row["PERIODICITE__ETABLISSEMENTINFORMATIONS"] != 0) {
+                    } elseif ($row["PERIODICITE_ETABLISSEMENTINFORMATIONS"] != 0) {
 
                         $array_rappels["visites_a_venir"][] = "L'établissement <a href='/etablissement/index/id/" . $row["ID_ETABLISSEMENT"] . "'>" . $row["LIBELLE_ETABLISSEMENTINFORMATIONS"] ."</a> n'a pas encore reçu de visite.";
                     }
@@ -85,6 +88,7 @@
             }
 
             $this->view->array_rappels = $array_rappels;
+            */
         }
 
     }
