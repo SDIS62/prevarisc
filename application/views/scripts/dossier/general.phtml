@@ -32,6 +32,7 @@
 		//FIN gestion de l'autocomplession pour les préventionniste attachés au dossier
 		
 		//Gestion selection commission via l'autocomplétion
+		/*
 		//FONCTION d'autocompletion
 		$("#commissionSelect").toggleText("Saisissez le libellé d'une commission ...");
 		//Action lorsque l'on souhaite modifier une commission
@@ -61,8 +62,49 @@
 			return false;
 		});
 		//FIN AUTO COMPLETE
+		*/
+		$("#commissionSelect").live('change',function(){
+			if($(this).val()){
+				//alert($(this).val());
+				$("#COMMISSION_DOSSIER").val($(this).val());
+				$(".showCalendar").show();
+				if($("#TYPE_DOSSIER").val() == 2){
+					$("#showCommission").hide();
+				}
+			}else{
+				alert('');
+			}
+			return false;
+		});
 		
-		
+		$(".changeCommission").live('click',function(){
+			//alert('');
+			//ICI SUPPRIMER TOUTES LES LIGNES CORRESPONDANT AU DOSSIER DANS  dossieraffectation ou dans le save...
+			$("#DATEVISITE_INPUT").val('');
+			$("ID_AFFECTATION_DOSSIER_VISITE").val('');
+			$("#DATECOMM_INPUT").val('');
+			$("ID_AFFECTATION_DOSSIER_COMMISSION").val('');
+			
+			//$(".showCalendar").hide();
+			$(".hideCalendar").hide();
+			
+			//a verifier
+			$("#calendar").hide();
+			$("#calendar").parent().hide();
+			$("#calendar").html('');
+			
+			$("#calendarVisite").hide();
+			$("#calendarVisite").parent().hide();
+			$("#calendarVisite").html('');
+			
+			//$("#COMMISSION_DOSSIER").val('');
+			$("#commissionSelect").attr('disabled','');
+			//$("#commissionSelect").attr('disabled','').val('').focus();
+			//alert('');
+			return false;
+		});
+
+		/*
 		$("#commissionSelect").click( function(){
 			if( $(this).val() != "Tapez le nom de la commission" ) {
 				$("#COMMISSION_DOSSIER").attr('value','');
@@ -85,7 +127,7 @@
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 
 		});
-		
+		*/
 		$(".showCalendar").live('click',function(){
 			//alert($(this).attr('id'));
 			var typeCalendar = $(this).parent().parent().attr('id');
@@ -131,7 +173,7 @@
 
 			return false;
 		});
-
+		/*
 		$(".changeCommission").live('click',function(){
 			//ICI SUPPRIMER TOUTES LES LIGNES CORRESPONDANT AU DOSSIER DANS  dossieraffectation ou dans le save...
 			$("#DATEVISITE_INPUT").val('');
@@ -159,7 +201,7 @@
 			
 			return false;
 		});
-		
+		*/
 		//Affichage de la nature en fonction du type choisi... Si on choisi le type 0 Alors on cache la nature
 		//génére via la vue fonction le select
 		//$("#TYPE_DOSSIER").live('change',function(){
@@ -372,7 +414,9 @@
 							success: function(affichageResultat) {
 								//On récupere toutes les dates liées et on les affiche
 								var rez = eval("("+affichageResultat+")");
-
+								
+								//alert(rez.length);
+								
 								if(rez.length == 1){
 									//alert(rez.length);
 									//Si une seule date on la renseinge aussi dans l'input date de passage en commission
@@ -385,7 +429,6 @@
 										dd='0'+dd						
 									if(mm<10)
 										mm='0'+mm
-									
 	
 									$("#DATEVISITE_INPUT").val(dd+"/"+mm+"/"+aa);
 									$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
@@ -409,7 +452,7 @@
 										//alert(nbResultats+" - "+rez[i]['DATE_COMMISSION']);
 										if(nbResultats == nbResultatsTotal){
 											//On prend l'id de la premiere date pour la lier au dossier
-											$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
+											$("#ID_AFFECTATION_DOSSIER_VISITE").val(rez[0]['ID_DATECOMMISSION']);
 											
 										}
 										var dateFr = convertDateAngToFr(rez[i]['DATE_COMMISSION']);
@@ -1022,11 +1065,7 @@
 	});
 	
 	
-	
-	
 
-
-	
 </script>
 <?php
 echo $this->headScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
@@ -1125,7 +1164,14 @@ echo "
 						<!--
 							<input type='text' name='OBJET_DOSSIER' id='OBJET_DOSSIER' value='".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."' style='width:400px;' />
 						-->
-						<textarea rows='2' cols='100' name='OBJET_DOSSIER' id='OBJET_DOSSIER'>".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+						<textarea name='OBJET_DOSSIER' id='OBJET_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					</div>
+				</li>
+				<li id='DESCTECH' ".( ($action != 'new' && in_array('DESCTECH', $this->afficherChamps) && $this->infosDossier['DESCTECH_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Descriptif technique</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCTECH_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<textarea id='DESCTECH_DOSSIER' name='DESCTECH_DOSSIER' rows='3' cols='100' >".( ($this->infosDossier['DESCTECH_DOSSIER'])?$this->DESCTECH_INPUT:"" )."</textarea><br/>
 					</div>
 				</li>
 				<li id='NUMDOCURBA' ".( (in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0 )? "": "style='display:none;margin-bottom:10px;'" ).">
@@ -1196,12 +1242,45 @@ echo "
 						"class" => "bigger",
 						"style" => "width: 400px"
 					));
-					echo "
-						
+				echo "						
 					</div>
 				</li>
-				<li id='COMMISSION' ".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+				<li id='COMMISSION' ".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' && $this->infosDossier['COMMISSION_DOSSIER'] != 'null')? "": "style='display:none;'" ).">
 					<div class='left libelle'>Commission concernée</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".$this->infosDossier['COMMISSION_DOSSIER']."' />
+						<select name='commissionSelect' id='commissionSelect' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "")." >
+							<option value=''>Aucune commission</option>
+				";
+				
+				/*
+				
+				foreach($this->commissionsInfos as $commission){
+					echo "<option value='".$commission['ID_COMMISSION']."'";
+					if($this->infosDossier['COMMISSION_DOSSIER'] == $commission['ID_COMMISSION']){
+						echo "selected='selected'";
+					}
+					echo ">".$commission['LIBELLE_COMMISSION']."</option>";
+				}
+				*/
+				
+			?>
+				
+				<?php foreach($this->array_commissions as $array_commission) : ?>
+				<optgroup label='<?php echo htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES) ?>' >
+					<?php foreach($array_commission["ARRAY"] as $item) : ?>
+					<option value='<?php echo $item["ID_COMMISSION"] ?>' ><?php echo htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES) ?></option>
+					<?php endforeach ?>
+				</optgroup>
+				<?php endforeach ?>
+				
+			<?php
+				echo "
+						</select>
+						<button class='changeCommission' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Choisir une autre commission</button>
+					</div>
+					<!--
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input id='commissionSelect' style='width: 400px; color:gray;' value='".( ($action != 'new')? ( ($this->commissionInfos['LIBELLE_COMMISSION'] != '')? htmlspecialchars($this->commissionInfos['LIBELLE_COMMISSION'], ENT_QUOTES): "Tapez le nom de la commission"):"Tapez le nom de la commission")."' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "" )."/>
@@ -1210,6 +1289,7 @@ echo "
 						</div>
 						<button class='changeCommission' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Choisir une autre commission</button>
 					</div>
+					-->
 				</li>
 				<li id='DATEVISITE' ".( ($action != 'new' && in_array('DATEVISITE', $this->afficherChamps) && $this->dateVisiteValue != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Date de visite</div>

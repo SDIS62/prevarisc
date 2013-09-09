@@ -32,14 +32,14 @@ html, body, #wrapper {height: 100%;}
 }
 
 #version_flag {
-	border-radius: 5px;
+	-moz-border-radius: 5px;
 	color: white;
 	background-color: black;
+	padding: 3px;
 	vertical-align: top;
 	margin-left: 10px;
 	text-transform: uppercase;
-    padding: 3px;
-    font-weight: bold;
+	font-weight: bold;
 }
 
 ul#layout-header-menu {
@@ -1138,7 +1138,7 @@ input.date {
 
 	background: url("images/calendar.gif") left no-repeat;
 	padding-left: 14px;
-	width: 75px;
+	width: 83px;
 }
 
 input.date:hover {

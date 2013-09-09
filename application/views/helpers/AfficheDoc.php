@@ -54,6 +54,7 @@
                     </div>
                     <br class='clear'/>
                 </li>
+				<br class='clear'/>
             ";
         }
 
