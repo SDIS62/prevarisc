@@ -14,7 +14,7 @@ class DossierController extends Zend_Controller_Action
         //AT - OK
         "2" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE"),
         //Dérogation - OK
-        "3" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","JUSTIFDEROG","MESURESCOMPENS","MESURESCOMPLE","DESCTECH","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE"),
+        "3" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","JUSTIFDEROG","MESURESCOMPENS","MESURESCOMPLE","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE"),
         //Cahier des charges fonctionnel du SSI - OK
         "4" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE"),
         //Cahier des charges de type T - OK
@@ -22,55 +22,55 @@ class DossierController extends Zend_Controller_Action
         //Salon type T - OK
         "6" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","CHARGESEC","PREVENTIONNISTE"),
         //RVRMD (diag sécu) - OK
-        "7" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
+        "7" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
         //Documents divers - OK
-        "8" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","DATEPREF","DATEREP","PREVENTIONNISTE"),
+        "8" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","DATEPREF","DATEREP","PREVENTIONNISTE"),
         //Changement de DUS - OK
         "9" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
         //Suivi organisme formation SSIAP - OK
         "10" => array("DATEINSERT","OBJET","NUMCHRONO","AVIS","DATESDIS","DATEPREF","DATEREP","PREVENTIONNISTE"),
         //Demande de registre de sécurité CTS - OK
-        "11" => array("DATEINSERT","OBJET","NUMCHRONO","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","DATEPREF","PREVENTIONNISTE"),
+        "11" => array("DATEINSERT","OBJET","NUMCHRONO","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","DATEPREF","PREVENTIONNISTE"),
         //Demande d'implantation CTS <6mois - OK
-        "12" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
+        "12" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
         //Déclaration préalable - OK
-        "13" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","DESCGEN","DESCTECH","DESCEFF","DATESDIS","PREVENTIONNISTE"),
+        "13" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","DESCGEN","DESCEFF","DATESDIS","PREVENTIONNISTE"),
         //Permis d'aménager - OK
-        "14" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","DESCGEN","DESCTECH","DESCEFF","DATESDIS","PREVENTIONNISTE"),
+        "14" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","DESCGEN","DESCEFF","DATESDIS","PREVENTIONNISTE"),
         //Permis de démolir - OK
-        "15" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
+        "15" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
         //CR de visite des organismes d'ins.... - OK
-        "16" => array("DATEINSERT","OBJET","NUMCHRONO","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","DATEPREF","PREVENTIONNISTE"),
+        "16" => array("DATEINSERT","OBJET","NUMCHRONO","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","DATEPREF","PREVENTIONNISTE"),
         //Etude suite a un avis ne se prononce pas - OK MAIS VOIR POUR PARTICULARITé TABLEAU
-        "17" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
+        "17" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
         //Utilisation exceptionnelle de locaux - OK
-        "18" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
+        "18" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
         //Levée de réserves - OK
-        "19" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
+        "19" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
         //RVRMD (diag sécu) - OK
-        "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
+        "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE"),
     //VISITE DE COMMISSION
         //Réception de travaux avant ouverture - OK
-        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE"),
+        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Périodique - OK
-        "21" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE"),
+        "21" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE"),
         //Chantier - OK
-        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE"),
+        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
-        "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE"),
+        "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Inopinéee - OK
-        "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE"),
+        "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE"),
     //GROUPE DE VISITE
         //Réception de travaux avant ouverture - OK
-        "25" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
+        "25" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Périodique - OK
-        "26" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
+        "26" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
         //Chantier - OK
-        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
+        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
-        "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
+        "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Inopinéee - OK
-        "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
+        "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
     //REUNION
         //Visite ou sur site - OK"DATEVISITE",
         "30" => array("DATEINSERT","OBJET","PREVENTIONNISTE"),
@@ -206,6 +206,42 @@ class DossierController extends Zend_Controller_Action
         }
         $today = new Zend_Date();
         $this->view->dateToday = $today->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+		
+		$DBdossierCommission = new Model_DbTable_Commission;
+		//$this->view->commissionsInfos = $DBdossierCommission->getAllCommissions();
+		
+		
+		
+		
+		
+		// Modèle de données
+        $model_typesDesCommissions = new Model_DbTable_CommissionType;
+        $model_commission = new Model_DbTable_Commission;
+
+        // On cherche tous les types de commissions
+        $rowset_typesDesCommissions = $model_typesDesCommissions->fetchAll();
+
+        // Tableau de résultats
+        $array_commissions = array();
+
+        // Pour tous les types, on cherche leur commission
+        foreach ($rowset_typesDesCommissions as $row_typeDeCommission) {
+            $array_commissions[$row_typeDeCommission->ID_COMMISSIONTYPE] = array(
+                "LIBELLE" => $row_typeDeCommission->LIBELLE_COMMISSIONTYPE,
+                "ARRAY" => $model_commission->fetchAll("ID_COMMISSIONTYPE = " . $row_typeDeCommission->ID_COMMISSIONTYPE )->toArray()
+            );
+        }
+        $this->view->array_commissions = $array_commissions;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
         if ((int) $this->_getParam("id")) {
             //Cas d'affichage des infos d'un dossier existant
             $this->view->do = 'edit';
@@ -327,10 +363,11 @@ class DossierController extends Zend_Controller_Action
             $DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
             $this->view->dossierDocUrba = $DBdossierDocUrba->getDossierDocUrba($idDossier);
 
+			//On récupére l'ensemble des commissions pour l'affichage du select
+			
             //ICI RéCUPERATION DU LIBELLE DE LA COMMISSION !!!!!!!!!!! PUIS AFFICHAGE DANS LE INPUT !!!
-            $DBdossierCommission = new Model_DbTable_Commission;
             $this->view->commissionInfos = $DBdossierCommission->find($this->view->infosDossier['COMMISSION_DOSSIER'])->current();
-
+					
             //On récupère la liste de tous les champs que l'on doit afficher en fonction des natures
             //Si il y à plusieurs natures on les fait une par une pour savoir tous les champs à afficher
             $premiereNature = 1;
@@ -972,7 +1009,7 @@ class DossierController extends Zend_Controller_Action
             //  !  \\
             //Il  faudrait idéalement: Récuperer le tableau concernant les champs à faire afficher et si : le champ passé n'y apparait pas le mettre à null
             //
-            if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste") {
+            if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect") {
                 //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
                 if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER") {
                     if ($value) {
@@ -1092,8 +1129,8 @@ class DossierController extends Zend_Controller_Action
                 $savePrev->save();
             }
         }
-
-        /*else if ($this->_getParam('do') == 'edit') {
+	/*
+		else if ($this->_getParam('do') == 'edit') {
 
             $dbDossierAffectation = new Model_DbTable_DossierAffectation;
             $affectation = $dbDossierAffectation->find(NULL,$nouveauDossier->ID_DOSSIER)->current();
@@ -1101,16 +1138,15 @@ class DossierController extends Zend_Controller_Action
             $affectation->save();
 
         }
-        */
+	*/
+	
         //echo $idDossier;
         //Sauvegarde des informations concernant l'affectation d'un dossier à une commission
 
         //$affectation = $dbDossierAffectation->find(NULL,$idDossier)->current();
 
         //if(count($affectation) == 0)
-
-
-        //echo $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE')+" - "+$this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
+		//echo $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE')+" - "+$this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
 
 
         $dbDossierAffectation = new Model_DbTable_DossierAffectation;
@@ -1132,7 +1168,8 @@ class DossierController extends Zend_Controller_Action
                 $affectation->save();
             }
         }
-        /*
+
+	/*
         if ($this->_getParam('ID_AFFECTATION_DOSSIER') && $this->_getParam('ID_AFFECTATION_DOSSIER') != '') {
             $affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER');
             $affectation->ID_DOSSIER_AFFECT = $idDossier;
@@ -1141,7 +1178,7 @@ class DossierController extends Zend_Controller_Action
             $affectation->delete();
         }
 
-        */
+	*/
         //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
         echo $idDossier;
     }

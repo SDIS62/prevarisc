@@ -90,9 +90,15 @@
 				<?php foreach( $liste as $id => $item ) : ?>
 				<li>
 					<i class='sprite sprite-folder' ></i>
-					<span class="doss-nom"><a href='/dossier/index/id/<?php echo $id ?>'><?php echo implode(", ", (array)$item["type"]) ?></a></span>
-					<span class="doss-date"><?php echo $item["DATEINSERT_DOSSIER"] . " - " . $item["NUMCHRONO_DOSSIER"]?></span>
-					<span class="doss-objet" style="margin-left: 200px;" ><a href='/dossier/index/id/<?php echo $id ?>' title='<?php echo htmlspecialchars($item["OBJET_DOSSIER"], ENT_QUOTES) ?>' ><?php echo substr($item["OBJET_DOSSIER"], 0, 50) . ( strlen($item["OBJET_DOSSIER"]) > 50 ? "(...)" : "" )?></a></span>
+					<span class="doss-nom">
+						<a href='/dossier/index/id/<?php echo $id ?>'><?php echo implode(", ", (array)$item["type"]) ?></a>
+					</span>
+					<span class="doss-date">
+						<?php echo $item["DATEINSERT_DOSSIER"] . " - " . substr($item["NUMCHRONO_DOSSIER"],0,26). ( strlen($item["NUMCHRONO_DOSSIER"]) > 26 ? ".." : "" )?>
+					</span>
+					<span class="doss-objet" style="margin-left: 200px;" >
+						<a href='/dossier/index/id/<?php echo $id ?>' title='<?php echo htmlspecialchars($item["OBJET_DOSSIER"], ENT_QUOTES) ?>' ><?php echo substr($item["OBJET_DOSSIER"], 0, 70) . ( strlen($item["OBJET_DOSSIER"]) > 70 ? "(...)" : "" )?></a>
+					</span>
 					<span class="doss-donneur-avis"><?php echo implode(", ", array_unique($item["etablissement"])) ?></span>
 					<?php if( isset($item["ID_AVIS"]) ) : ?>
 					<span class="avis <?php echo $item["LIBELLE_AVIS"][0] ?>" title='<?php echo htmlspecialchars($item["LIBELLE_AVIS"] , ENT_QUOTES)?>'>
