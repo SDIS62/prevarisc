@@ -195,6 +195,7 @@
             }
 
             // Si un pÃ¨re est donnÃ©, on diminue la liste des genres possible
+            /*
             if (isset($_GET["pere"]) || count($this->view->etablissement_parents) > 0) {
 
                 if(is_array($this->view->etablissement_parents))
@@ -219,6 +220,7 @@
                         break;
                 }
             }
+            */
 
             if (count($adresses) > 1) {
                 // Envoi des groupements de l'ets
