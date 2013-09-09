@@ -492,7 +492,7 @@
 
                                 // On écrit dans la base de données le cookie de session
                                 $model_utilisateur->update(
-                                    array("SESSIONID_UTILISATEUR" => session_id()),
+                                    array("LASTACTION_UTILISATEUR" => session_id()),
                                     "ID_UTILISATEUR = " . $row_utilisateur->ID_UTILISATEUR
                                 );
                             }
