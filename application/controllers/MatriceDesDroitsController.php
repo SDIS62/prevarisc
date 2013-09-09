@@ -72,12 +72,14 @@
 
                                 $row = $porteuse["model"]->createRow();
                                 $row->ID_GROUPE = $id_groupe;
-
+                                $row->$key = $primary;
+                                
                                 if (is_array($data)) {
+                                    Zend_Debug::Dump(array_intersect_key($data, $porteuse["model"]->info('metadata')));
                                     $row->setFromArray(array_intersect_key($data, $porteuse["model"]->info('metadata')))->save();
                                 }
 
-                                $row->$key = $primary;
+                                
                                 $row->save();
                             }
                         }

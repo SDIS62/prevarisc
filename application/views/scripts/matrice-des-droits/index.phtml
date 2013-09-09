@@ -78,7 +78,7 @@
 						<?php if($key != 0 && $key%5 == 0) echo "<br/>"; ?>
 						<span style="white-space: nowrap; " >
 							<input type="checkbox" value="<?php echo $type->ID_TYPE ?>"  name="droits[<?php echo $groupe->ID_GROUPE ?>][ID_TYPE][<?php echo $type->ID_TYPE ?>]" <?php if(in_array($type->ID_TYPE, $groupe->ID_TYPE)) echo "checked" ?> />
-							<?php echo $type->ID_TYPE ?>
+							<?php echo $type->LIBELLE_TYPE ?>
 						</span>
 						<?php endforeach ?>
 					</td>
