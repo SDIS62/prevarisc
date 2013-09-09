@@ -33,7 +33,7 @@
                                  "ID_UTILISATEURINFORMATIONS",
                                  "ACTIF_UTILISATEUR",
                                  "ID_GROUPE",
-                                 "SESSIONID_UTILISATEUR"
+                                 "LASTACTION_UTILISATEUR"
                             ))
                              ->join("utilisateurinformations", "u.ID_UTILISATEURINFORMATIONS = utilisateurinformations.ID_UTILISATEURINFORMATIONS")
                              ->join("fonction", "utilisateurinformations.ID_FONCTION = fonction.ID_FONCTION")
