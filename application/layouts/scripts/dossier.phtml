@@ -27,6 +27,9 @@
 							<li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'>
 								<a href='<?php echo $this->url(array("action"=>"index")) ?>'>Informations générales</a>
 							</li>
+                                                        <li class='<?php echo( $this->action == "descriptif") ? "selection_onglets_hor" : "read" ?>'>
+                                                            <a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a>
+                                                        </li>
 							<li class='<?php echo ( $this->action == "docconsulte" ) ? "selection_onglets_hor" : "read" ?>'>
 								<a href='<?php echo $this->url(array("action"=>"docconsulte")) ?>'>Documents consultés</a>
 							</li>

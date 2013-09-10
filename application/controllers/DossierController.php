@@ -2,7 +2,6 @@
 
 class DossierController extends Zend_Controller_Action
 {
-    private $id_etablissement;
     private $id_dossier;
 
     //liste des champs à afficher en fonction de la nature
@@ -111,49 +110,49 @@ class DossierController extends Zend_Controller_Action
 
     public function init()
     {
-            $this->_helper->layout->setLayout('dossier');
+        $this->_helper->layout->setLayout('dossier');
 
-            // Actions à effectuées en AJAX
-            $ajaxContext = $this->_helper->getHelper('AjaxContext');
-            $ajaxContext->addActionContext('selectiontexte', 'json')
-                            ->addActionContext('selectionarticle', 'json')
-                            ->addActionContext('selectionabreviation', 'json')
-                            ->addActionContext('selectionetab', 'json')
-                            ->initContext();
+        // Actions à effectuées en AJAX
+        $ajaxContext = $this->_helper->getHelper('AjaxContext');
+        $ajaxContext->addActionContext('selectiontexte', 'json')
+                        ->addActionContext('selectionarticle', 'json')
+                        ->addActionContext('selectionabreviation', 'json')
+                        ->addActionContext('selectionetab', 'json')
+                        ->initContext();
 
-            if( !isset($this->view->action) )
-                    $this->view->action = $this->_request->getActionName();
+        if( !isset($this->view->action) )
+                $this->view->action = $this->_request->getActionName();
+
+        $this->view->idDossier = ($this->_getParam("id"));
+
+        $id_dossier = null;
+        $id_dossier = $this->_getParam("id");
+        if ($id_dossier == null) { $id_dossier = $this->_getParam("idDossier"); }
+
+        if ($id_dossier != null) {
+
+            if($this->_helper->Droits()->checkDossier($id_dossier))
+                $this->_helper->Droits()->redirect();
+
+            //Si on à l'id d'un dossier, on récupére tous les établissements liés à ce dossier
+            $DBdossier = new Model_DbTable_Dossier;
+            $dossier = $DBdossier->find($id_dossier)->current();
+
+            $DBdossierType = new Model_DbTable_DossierType;
+            $libelleType = $DBdossierType->find($dossier->TYPE_DOSSIER)->current();
+
+            //Zend_Debug::dump($libelleType);
+            $this->view->objetDossier = $dossier->OBJET_DOSSIER;
+            $this->view->libelleType = $libelleType['LIBELLE_DOSSIERTYPE'];
 
             $this->view->idDossier = ($this->_getParam("id"));
+        } else {
 
-            $id_dossier = null;
-            $id_dossier = $this->_getParam("id");
-            if ($id_dossier == null) { $id_dossier = $this->_getParam("idDossier"); }
+            if ($this->_helper->Droits()->get()->DROITDOSSCREATION_GROUPE != 1) {
 
-            if ($id_dossier != null) {
-
-                if($this->_helper->Droits()->checkDossier($id_dossier))
-                    $this->_helper->Droits()->redirect();
-
-                //Si on à l'id d'un dossier, on récupére tous les établissements liés à ce dossier
-                $DBdossier = new Model_DbTable_Dossier;
-                $dossier = $DBdossier->find($id_dossier)->current();
-
-                $DBdossierType = new Model_DbTable_DossierType;
-                $libelleType = $DBdossierType->find($dossier->TYPE_DOSSIER)->current();
-
-                //Zend_Debug::dump($libelleType);
-                $this->view->objetDossier = $dossier->OBJET_DOSSIER;
-                $this->view->libelleType = $libelleType['LIBELLE_DOSSIERTYPE'];
-
-                $this->view->idDossier = ($this->_getParam("id"));
-            } else {
-
-                if ($this->_helper->Droits()->get()->DROITDOSSCREATION_GROUPE != 1) {
-
-                    $this->_helper->Droits()->redirect();
-                }
+                $this->_helper->Droits()->redirect();
             }
+        }
     }
 
     public function indexAction()
@@ -207,14 +206,10 @@ class DossierController extends Zend_Controller_Action
         $today = new Zend_Date();
         $this->view->dateToday = $today->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 		
-		$DBdossierCommission = new Model_DbTable_Commission;
-		//$this->view->commissionsInfos = $DBdossierCommission->getAllCommissions();
-		
-		
-		
-		
-		
-		// Modèle de données
+        $DBdossierCommission = new Model_DbTable_Commission;
+        //$this->view->commissionsInfos = $DBdossierCommission->getAllCommissions();
+	
+        // Modèle de données
         $model_typesDesCommissions = new Model_DbTable_CommissionType;
         $model_commission = new Model_DbTable_Commission;
 
@@ -233,15 +228,6 @@ class DossierController extends Zend_Controller_Action
         }
         $this->view->array_commissions = $array_commissions;
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
         if ((int) $this->_getParam("id")) {
             //Cas d'affichage des infos d'un dossier existant
             $this->view->do = 'edit';
@@ -253,25 +239,25 @@ class DossierController extends Zend_Controller_Action
             $this->view->infosDossier = $DBdossier->find($idDossier)->current();
             //Zend_Debug::dump($this->view->infosDossier->toArray());
 
-                //Conversion de la date d'insertion du dossier
-                if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATEINSERT_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATEINSERT_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATEINSERT_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
+            //Conversion de la date d'insertion du dossier
+            if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
+                $date = new Zend_Date($this->view->infosDossier['DATEINSERT_DOSSIER'], Zend_Date::DATES);
+                $this->view->infosDossier['DATEINSERT_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+                $this->view->DATEINSERT_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+            }
 
-                //Conversion de la date de dépot en mairie pour l'afficher
-                if ($this->view->infosDossier['DATEMAIRIE_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATEMAIRIE_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATEMAIRIE_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATEMAIRIE_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-                //Conversion de la date de dépot en secrétariat pour l'afficher
-                if ($this->view->infosDossier['DATESECRETARIAT_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATESECRETARIAT_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATESECRETARIAT_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATESECRETARIAT_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
+            //Conversion de la date de dépot en mairie pour l'afficher
+            if ($this->view->infosDossier['DATEMAIRIE_DOSSIER'] != '') {
+                $date = new Zend_Date($this->view->infosDossier['DATEMAIRIE_DOSSIER'], Zend_Date::DATES);
+                $this->view->infosDossier['DATEMAIRIE_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+                $this->view->DATEMAIRIE_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+            }
+            //Conversion de la date de dépot en secrétariat pour l'afficher
+            if ($this->view->infosDossier['DATESECRETARIAT_DOSSIER'] != '') {
+                $date = new Zend_Date($this->view->infosDossier['DATESECRETARIAT_DOSSIER'], Zend_Date::DATES);
+                $this->view->infosDossier['DATESECRETARIAT_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+                $this->view->DATESECRETARIAT_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+            }
 
                 //Conversion de la date de réception SDIS
                 if ($this->view->infosDossier['DATESDIS_DOSSIER'] != '') {
@@ -2095,6 +2081,20 @@ class DossierController extends Zend_Controller_Action
         //Zend_Debug::dump($listeDossiers);
         $this->view->dossierComm = $listeDossiers;
 
+    }
+    
+    public function descriptifAction()
+    {
+        if ($this->_request->DESCRIPTIF_DOSSIER)
+        {
+            $DBdossier = new Model_DbTable_Dossier;
+            $dossier = $DBdossier->find($this->_request->id)->current();
+            $dossier->DESCRIPTIF_DOSSIER = $this->_request->DESCRIPTIF_DOSSIER;
+            $dossier->save();
+            
+            $this->_helper->_redirector("descriptif", $this->_request->getControllerName(), null, array("id" => $this->_request->id));
+        }
+        
     }
 
 }
