@@ -1,10 +1,16 @@
-<h3 float='left' >Descriptif de l'établissement</h3>
+<h3 float='left' >Descriptif du dossier</h3>
 
 <!-- Boutons -->
-<?php if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1)) : ?>
 <div float='right' >
-	
-	<div class="read">
+ <!--   <div id='boutons' style='float: right'>
+            <button id='modificationDossier' style='".( ($action == 'new')? "display:none;" : "" )."'>Modifier le dossier</button>
+            <button id='validModification' class='save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Sauvegarder le dossier</button>
+            <button id='creationDossier' class='save' style='display:none; z-index:150;'>Créer le dossier</button>
+            <div id='chargement'></div>
+    </div>
+    -->
+    
+<!-- <div class="read">
 		<button id='modifier_button'>Modifier</button>
 	</div>
 	
@@ -12,21 +18,20 @@
 		<button id='cancel_button'>Annuler</button>
 		<button id='save_button' class="save" >Sauvegarder</button>
 	</div>
-	
+	-->
 </div>
-<?php endif ?>
 
 <br class='clear' />
 
 <h4>Descriptif général</h4>
 <div class="read">
-	<p><?php echo empty($this->DB_etablissement->DESCRIPTIF_ETABLISSEMENT) ? "Aucun descriptif disponible pour cet établissement." : nl2br($this->DB_etablissement->DESCRIPTIF_ETABLISSEMENT) ?></p>
+	<p><?php echo empty($this->view->infosDossier['DESCRIPTIF_DOSSIER']) ? "Aucun descriptif disponible pour ce dossier." : nl2br($this->view->infosDossier['DESCRIPTIF_DOSSIER']) ?></p>
 </div>
 
 <?php if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1)) : ?>
 
 <form class="edit" id="descriptif" action="" method="POST" >
-	<textarea name='DESCRIPTIF_ETABLISSEMENT' id='descriptif_general' cols='' rows='' style='width: 100%; height: 500px;' ><?php echo $this->DB_etablissement->DESCRIPTIF_ETABLISSEMENT ?></textarea>
+	<textarea name='DESCRIPTIF_DOSSIER' id='descriptif_general' cols='' rows='' style='width: 100%; height: 500px;' ><?php echo $this->view->infosDossier['DESCRIPTIF_DOSSIER'] ?></textarea>
 </form>
 
 <script type="text/javascript">
