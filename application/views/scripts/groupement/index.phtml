@@ -40,7 +40,7 @@
 	<!-- affichage des onglets et de leur contenu -->
 	<form id='form' action='post' >
 		<input type='hidden' id='id_gpt' name='id_gpt' value='0' />
-		<div id='content'><p>Chargement en cours ...</p></div>
+		<div id='content'><p>Pas de groupement disponible ...</p></div>
 	</form>
 	
 	<div id='confirm' class='ui-helper-hidden' >
@@ -180,24 +180,32 @@
 	
 	// Gestion des évenements de la liste déroulante
 	$("#gpt").change( function() {
-	
-		if( $("#gpt").val() == 0 )
-			$("#delete").button("disable");
-		else
-			$("#delete").button("enable");
-		
-		$.ajax({
-			url: "/groupement/display?id=" + $("#gpt").val(),
-			beforeSend: function() {
-				$("#form > #content").css( "opacity", 0.5 );
-			},
-			success: function(result) {
-				$("#form > #content").html(result);
-				$("#form > #content").css( "opacity", 1 );
-			}
-		});
-		
-		$("#id_gpt").val( $("#gpt").val() ); // On change la valeur de l'id en cours
+    
+        if($("#gpt").val() != null)
+        {
+            if( $("#gpt").val() == 0 )
+                $("#delete").button("disable");
+            else
+                $("#delete").button("enable");
+            
+            $.ajax({
+                url: "/groupement/display?id=" + $("#gpt").val(),
+                beforeSend: function() {
+                    $("#form > #content").css( "opacity", 0.5 );
+                },
+                success: function(result) {
+                    $("#form > #content").html(result);
+                    $("#form > #content").css( "opacity", 1 );
+                }
+            });
+            
+            $("#id_gpt").val( $("#gpt").val() ); // On change la valeur de l'id en cours
+            $("#save").button("enable");
+        }
+        else
+        {
+            $("#save").button("disable");
+        }
 	});
 	
 	$("#gpt").change(); // Initalisation

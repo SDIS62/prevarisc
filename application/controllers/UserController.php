@@ -34,6 +34,33 @@
                 $this->view->groupe = $DB_groupe->find( $this->_request->gid )->current();
             }
         }
+        
+        public function deleteGroupAction()
+        {
+            $DB_user = new Model_DbTable_Utilisateur;
+            $DB_groupe = new Model_DbTable_Groupe;
+            
+            if ($this->_request->gid && $this->_request->gid != 1) {
+
+                $all = $DB_user->fetchAll("ID_GROUPE = " . $this->_request->gid);
+
+                // On bouge les users dans le groupe par défaut
+                if ($all != null) {
+
+                    foreach ( $all->toArray() as $item ) {
+
+                        $user = $DB_user->find( $item["ID_UTILISATEUR"] )->current();
+                        $user->ID_GROUPE = 1;
+                        $user->save();
+                    }
+                }
+                
+                // On supprime le groupe
+                $DB_groupe->delete( $this->_request->gid );
+            }
+            
+            $this->_helper->redirector->gotoUrl("/user");
+        }
 
         public function saveGroupAction()
         {
@@ -48,8 +75,6 @@
 
         public function getGroupAction()
         {
-            // $this->_helper->layout->disableLayout();
-
             // Modèles
             $DB_user = new Model_DbTable_Utilisateur;
             $DB_groupe = new Model_DbTable_Groupe;
@@ -117,9 +142,9 @@
 
                 if ($_FILES["AVATAR"]["size"] < 1024 * 1024) {
 
-                    GD_resize($_FILES["AVATAR"]["tmp_name"], "./data/uploads/avatars/small/" . $_POST["id"] . ".jpg", 25, 25);
-                    GD_resize($_FILES["AVATAR"]["tmp_name"], "./data/uploads/avatars/medium/" . $_POST["id"] . ".jpg", 150);
-                    GD_resize($_FILES["AVATAR"]["tmp_name"], "./data/uploads/avatars/large/" . $_POST["id"] . ".jpg", 224);
+                    GD_resize($_FILES["AVATAR"]["tmp_name"], DATA_PATH . "/uploads/avatars/small/" . $_POST["id"] . ".jpg", 25, 25);
+                    GD_resize($_FILES["AVATAR"]["tmp_name"], DATA_PATH . "/uploads/avatars/medium/" . $_POST["id"] . ".jpg", 150);
+                    GD_resize($_FILES["AVATAR"]["tmp_name"], DATA_PATH . "/uploads/avatars/large/" . $_POST["id"] . ".jpg", 224);
 
                     // CALLBACK
                     echo "<script type='text/javascript'>window.top.window.callback();</script>";
@@ -154,7 +179,6 @@
             $this->view->rowset_groupements = $model_groupements->fetchAll();
 
             $this->render('add');
-
         }
 
         private function getDate($input)
@@ -218,6 +242,8 @@
                             $id = $commune->ID_UTILISATEURINFORMATIONS;
                         }
                     }
+                    
+                    $_POST["ID_GROUPE"] = 1;
                 }
 
                 if ($id== null) {
@@ -349,8 +375,6 @@
 
         public function loginAction()
         {
-            // echo md5("root" . "7aec3ab8e8d025c19e8fc8b6e0d75227". "root");
-
             try {
 
                 // Modèles de données
@@ -518,10 +542,16 @@
         // Logout
         public function logoutAction()
         {
+            // On update la dernière action effectuée par l'utilisateur
+            $model_user = new Model_DbTable_Utilisateur;
+            $user = $model_user->find(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR)->current();
+            $user->LASTACTION_UTILISATEUR = null;
+            $user->save();
+            
             $this->_helper->viewRenderer->setNoRender();
             Zend_Auth::getInstance()->clearIdentity();
+            
             $this->_helper->redirector->gotoUrl($this->view->url(array("controller" => null, "action" => null)));
-            //$this->_helper->redirector("index", "index");
         }
 
         public function getpreventionnisteAction()

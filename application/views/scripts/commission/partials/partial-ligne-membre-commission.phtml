@@ -84,7 +84,7 @@
 		<?php foreach( $this->types as $type ) : ?>
 		<span style='white-space: nowrap; ' >
 			<input name='<?php echo $this->id_membre ?>_ID_TYPE[]' type='checkbox' value='<?php echo $type["ID_TYPE"] ?>' <?php if( $type["ID_COMMISSIONMEMBRE"] != null ) echo "checked" ?> />
-			<?php echo $type["ID_TYPE"] ?>
+			<?php echo $type["LIBELLE_TYPE"] ?>
 		</span>
 		<?php endforeach ?>
 	</td>

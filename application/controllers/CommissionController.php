@@ -74,12 +74,12 @@
             $model_reglesLocalSommeil = new Model_DbTable_CommissionRegleLocalSommeil;
 
             // On supprime la règle
-            $model_regles->delete("ID_REGLE = " .  $this->_request->id_regle);
             $model_reglesTypes->delete("ID_REGLE = " .  $this->_request->id_regle);
             $model_reglesCategories->delete("ID_REGLE = " .  $this->_request->id_regle);
             $model_reglesClasses->delete("ID_REGLE = " .  $this->_request->id_regle);
             $model_reglesLocalSommeil->delete("ID_REGLE = " .  $this->_request->id_regle);
             $model_reglesEtudeVisite->delete("ID_REGLE = " .  $this->_request->id_regle);
+            $model_regles->delete("ID_REGLE = " .  $this->_request->id_regle);
         }
 
         public function saveReglesAction()
@@ -246,12 +246,12 @@
             unlink("./data/uploads/courriers/" . $this->_request->id_membre . "CONVOCATION_" . $row_membre->COURRIER_CONVOCATION);
 
             // On supprime la règle
-            $row_membre->delete();
             $model_membresTypes->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
             $model_membresCategories->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
             $model_membresClasses->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
             $model_membresDossierNatures->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
             $model_membresDossierTypes->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
+            $row_membre->delete();
         }
 
         public function saveMembresAction()
@@ -375,7 +375,7 @@
             // On check si on veut uploader un document odt
             if ($string_extension == ".odt") {
 
-                if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], "./data/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $_FILES['COURRIER']['name']) ) {
+                if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $_FILES['COURRIER']['name']) ) {
 
                     // Les modèles
                     $model_membres = new Model_DbTable_CommissionMembre;
@@ -387,7 +387,7 @@
                     // Si il y a déjà un courrier, on le supprime
                     if ($row_membre->$row != null) {
 
-                        unlink("./data/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
+                        unlink(DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
                     }
 
                     // On met à jour le libellé du courrier modifié
@@ -420,7 +420,7 @@
             $row = "COURRIER_" . $this->_request->type;
 
             // On supprime le fichier
-            unlink("./data/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
+            unlink(DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
 
             // On met à null dans la DB
             $row_membre->$row = null;

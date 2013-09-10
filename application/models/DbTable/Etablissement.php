@@ -86,7 +86,7 @@
         // P�riodicit�
         public function getDefaultPeriodicite($request)
         {
-          if ((!isset($request["PERIODICITE__ETABLISSEMENTINFORMATIONS"]) || $request["PERIODICITE__ETABLISSEMENTINFORMATIONS"] != "") && $request["ID_GENRE"] != 3) {
+          if ((!isset($request["PERIODICITE_ETABLISSEMENTINFORMATIONS"]) || $request["PERIODICITE_ETABLISSEMENTINFORMATIONS"] != "") && $request["ID_GENRE"] != 3) {
               return null;
           }
 
@@ -258,14 +258,14 @@
             $select = $this->select()->setIntegrityCheck(false);
 
             $select	->from(array("e" => "etablissement"), null)
-                    ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", "PERIODICITE__ETABLISSEMENTINFORMATIONS")
+                    ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", "PERIODICITE_ETABLISSEMENTINFORMATIONS")
                     ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                     ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
                     ->where("e.ID_ETABLISSEMENT = ?", $id_etablissement);
 
             if(null != ($row = $this->getAdapter()->fetchRow($select)))
 
-                return $row["PERIODICITE__ETABLISSEMENTINFORMATIONS"];
+                return $row["PERIODICITE_ETABLISSEMENTINFORMATIONS"];
             else
                 return null;
         }

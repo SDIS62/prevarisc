@@ -152,7 +152,7 @@
 	}).click(function() {
 		$('#liste_villes option:selected').each( function() {
 			$("#villes_groupement").append( $("<option></option>").val( $(this).val() ).html( $(this).text() ) );
-			$(this).css("display", "none").attr("selected", "");
+			$(this).attr("disabled","disabled").attr("selected", "");
 		});
 		$('#liste_villes').change();
 		return false;
@@ -164,7 +164,7 @@
 	}).click(function() {
 		$('#villes_groupement option:selected').each( function() {
 			$(this).remove();
-			$("#liste_villes option[value=" + $(this).val() + "]").css("display", "block").attr("selected", "selected");
+			$("#liste_villes option[value=" + $(this).val() + "]").attr("disabled","").attr("selected", "selected");
 		});
 		$('#liste_villes').change();
 		$('#villes_groupement').change();
@@ -210,7 +210,7 @@
 	
 	// On cache les villes déjà selectionnées
 	$("#villes_groupement option").each( function() {
-		$( "#liste_villes option[id='" + $(this).attr("id")  + "']" ).hide();
+		$( "#liste_villes option[id='" + $(this).attr("id")  + "']" ).attr("disabled","disabled");
 	});
 	
 </script>

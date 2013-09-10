@@ -19,7 +19,7 @@
 	</dl>
 	
 	<?php if( isset($this->groupe) ) : ?>
-	<!--<p>Voulez-vous <a href='/user/delete-group?gid=<?php echo $this->groupe["ID_GROUPE"] ?>'>supprimer le groupe</a> ? (Attention cette action est irréversible)</p>-->
+	<p>Voulez-vous <a href='/user/delete-group?gid=<?php echo $this->groupe["ID_GROUPE"] ?>'>supprimer le groupe</a> ? (Attention cette action est irréversible)</p>
 	<?php endif ?>
 	
 	<input type='hidden' name='gid' value='<?php if(isset($this->groupe["ID_GROUPE"])) echo $this->groupe["ID_GROUPE"] ?>' />

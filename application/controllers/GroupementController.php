@@ -100,6 +100,9 @@
                     $id = $DB_informations->insert(array_intersect_key($_POST, $DB_informations->info('metadata')));
                     $new_groupement->ID_UTILISATEURINFORMATIONS = $id;
                 } else {
+                    if($_POST["ID_UTILISATEURCIVILITE"] == "null")
+                        unset($_POST["ID_UTILISATEURCIVILITE"]);
+                    unset($_POST["ID_FONCTION"]);
                     $info->setFromArray(array_intersect_key($_POST, $DB_informations->info('metadata')))->save();
                 }
             }
@@ -144,8 +147,15 @@
             $this->_helper->viewRenderer->setNoRender(); // On desactive la vue
 
             // On supprime le groupement
-            $table = new Model_DbTable_Groupement();
-            $table->deleteGroupement($_GET["id"]);
+            $groupements = new Model_DbTable_Groupement();
+            $communes = new Model_DbTable_GroupementCommune();
+            $prev = new Model_DbTable_GroupementPreventionniste();
+            $contacts = new Model_DbTable_GroupementContact();
+            
+            $contacts->delete("ID_GROUPEMENT = " . $_GET["id"]);
+            $communes->delete("ID_GROUPEMENT = " . $_GET["id"]);
+            $prev->delete("ID_GROUPEMENT = " . $_GET["id"]);
+            $groupements->delete("ID_GROUPEMENT = " . $_GET["id"]);
         }
 
         public function addTypeAction()

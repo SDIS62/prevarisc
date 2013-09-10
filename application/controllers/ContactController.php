@@ -113,9 +113,9 @@
 
         public function addAction()
         {
-            // Update
-            // $row->setFromArray($form->getValues('postForm'))->save();
-
+            if(isset($_POST["ID_UTILISATEURCIVILITE"]) && $_POST["ID_UTILISATEURCIVILITE"] == "null")
+                unset($_POST["ID_UTILISATEURCIVILITE"]);
+                        
             $key = null;
             $DB_contact = null;
 
@@ -149,7 +149,7 @@
                 $id = $DB_informations->insert(array_intersect_key($_POST, $DB_informations->info('metadata')));
             }
 
-            // Association du contact
+            // Association du contact.
             $contact = $DB_contact->createRow();
             $contact->$key = $id_item;
             $contact->ID_UTILISATEURINFORMATIONS = $exist ? $_POST["ID_UTILISATEURINFORMATIONS"] : $id;

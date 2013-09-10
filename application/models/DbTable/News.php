@@ -56,8 +56,8 @@
 
         public function deleteNews($id_news)
         {
-            $this->delete( "ID_NEWS = " . $id_news );
             $this->getAdapter()->query( "DELETE FROM newsgroupe WHERE ID_NEWS = " . $id_news );
+            $this->delete( "ID_NEWS = " . $id_news );
 
         }
     }

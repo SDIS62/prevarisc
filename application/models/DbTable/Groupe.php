@@ -10,6 +10,11 @@
     {
         protected $_name="groupe"; // Nom de la base
         protected $_primary = "ID_GROUPE"; // Clé primaire
+        
+        public function delete($id_groupe)
+        {
+            parent::delete("ID_GROUPE = " . $id_groupe);
+        }
 
         public function getDroits($id_groupe)
         {

@@ -127,8 +127,6 @@
                          ->from(array("u" => "utilisateur"), array("uid" => "ID_UTILISATEUR"))
                          ->join("utilisateurinformations", "u.ID_UTILISATEURINFORMATIONS = utilisateurinformations.ID_UTILISATEURINFORMATIONS")
                          ->join("fonction", "utilisateurinformations.ID_FONCTION = fonction.ID_FONCTION", "LIBELLE_FONCTION")
-                         ->joinLeft("utilisateurgrade", "utilisateurgrade.ID_UTILISATEUR = u.ID_UTILISATEUR", null)
-                         ->joinLeft("grade", "utilisateurgrade.ID_GRADE = grade.ID_GRADE AND utilisateurgrade.DATE_UTILISATEURGRADE = ( SELECT MAX(utilisateurgrade.DATE_UTILISATEURGRADE) FROM utilisateurgrade WHERE utilisateurgrade.ID_UTILISATEUR = u.ID_UTILISATEUR )")
                          ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_UTILISATEUR = u.ID_UTILISATEUR")
                          ->joinLeft("etablissementinformations", "etablissementinformations.ID_ETABLISSEMENTINFORMATIONS = etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS")
                          ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(infos.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations as infos WHERE etablissementinformations.ID_ETABLISSEMENT = infos.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL")

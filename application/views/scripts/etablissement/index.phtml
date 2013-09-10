@@ -258,7 +258,7 @@
 			
 			<dl class='read'>
 				<dt>Type principal</dt>
-				<dd><?php echo $this->DB_informations["LIBELLE_TYPE"] ?></dd>
+				<dd><?php echo $this->DB_type[$this->DB_informations["ID_TYPE"]-1]["LIBELLE_TYPE"] ?></dd>
 				
 				<?php if($this->types_activites_secondaires) : ?>
 				<dt>Types secondaires</dt>
@@ -465,10 +465,13 @@
 				</div>
 				<div class='read'>
 					<?php
-						if(!empty($plan["DATE_ETABLISSEMENTPLAN"])) {
+						if(!empty($plan["DATE_ETABLISSEMENTPLAN"]) && $plan["DATE_ETABLISSEMENTPLAN"] != "0000-00-00 00:00:00") {
 							$date = new Zend_Date($plan["DATE_ETABLISSEMENTPLAN"], Zend_Date::DATES);
 							echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;";
 						}
+                        else {
+                            echo "<em>Pas de date.</em>";
+                        }
 					?>
 				</div>
 			</dd>
@@ -492,8 +495,8 @@
 							case "1" : echo "N'existe pas"; 	break;
 							case "2" : echo "Projet"; 			break;
 							case "3" : echo "En cours"; 		break;
-							case "4" : echo "N'existe pas";		break;
-							case "5" : echo "Existant"; 		break;
+							case "4" : echo "Existant";		    break;
+							case "5" : echo "A modifier"; 		break;
 						}
 					?>
 				</div>
@@ -627,14 +630,15 @@
 						</div>
 					</dd>
 				<?php endif ?>
-				
-				<dt <?php if(empty($this->DB_etablissement["NUMEROID_ETABLISSEMENT"])) echo "class='edit'" ?> >Numéro d'identification</dt>
-				<dd <?php if(empty($this->DB_etablissement["NUMEROID_ETABLISSEMENT"])) echo "class='edit'" ?> >
+                
+                <!-- Numéro ID Winprev -->
+				<dt <?php if($this->idwinprev == false) echo "class='edit'" ?> >Numéro d'identification WINPREV</dt>
+				<dd <?php if($this->idwinprev == false) echo "class='edit'" ?> >
 					<div class='edit'>
-						<input type='text'  name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["NUMEROID_ETABLISSEMENT"] ?>' maxlength="10" />
+						<input type='text'  name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->idwinprev ?>' />
 					</div>
 					<div class='read'>
-						<?php echo $this->DB_etablissement["NUMEROID_ETABLISSEMENT"]."&nbsp;" ?>
+						<?php echo $this->idwinprev."&nbsp;" ?>
 					</div>
 				</dd>
 				
@@ -727,19 +731,6 @@
 				</dd>
 			</dl>
 			<?php endif; ?>
-			
-			<!-- Numérotation -->
-			<dl id='numerotation' class='champs'>
-				<dt>Numérotation de la cellule</dt>
-				<dd>
-					<div class='edit'>
-						<input type='text'  name='NUMEROTATION_ETABLISSEMENTINFORMATION' value='<?php echo $this->DB_informations["NUMEROTATION_ETABLISSEMENTINFORMATION"] ?>' />
-					</div>
-					<div class='read'>
-						<?php echo $this->DB_informations["NUMEROTATION_ETABLISSEMENTINFORMATION"]."&nbsp;" ?>
-					</div>
-				</dd>
-			</dl>
 
 			<!-- Contact -->
 			<dl>
@@ -747,7 +738,7 @@
 				<dt <?php if(empty($this->DB_etablissement["TELEPHONE_ETABLISSEMENT"])) echo "class='edit'" ?> >Téléphone</dt>
 				<dd <?php if(empty($this->DB_etablissement["TELEPHONE_ETABLISSEMENT"])) echo "class='edit'" ?> >
 					<div class='edit'>
-						<input type='text'  name='TELEPHONE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["TELEPHONE_ETABLISSEMENT"] ?>' maxlength="10" />
+						<input type='text'  name='TELEPHONE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["TELEPHONE_ETABLISSEMENT"] ?>' />
 					</div>
 					<div class='read'>
 						<?php echo $this->DB_etablissement["TELEPHONE_ETABLISSEMENT"]."&nbsp;" ?>
@@ -758,7 +749,7 @@
 				<dt <?php if(empty($this->DB_etablissement["FAX_ETABLISSEMENT"])) echo "class='edit'" ?> >Fax</dt>
 				<dd <?php if(empty($this->DB_etablissement["FAX_ETABLISSEMENT"])) echo "class='edit'" ?> >
 					<div class='edit'>
-						<input type='text'  name='FAX_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["FAX_ETABLISSEMENT"] ?>' maxlength="10" />
+						<input type='text'  name='FAX_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["FAX_ETABLISSEMENT"] ?>' />
 					</div>
 					<div class='read'>
 						<?php echo $this->DB_etablissement["FAX_ETABLISSEMENT"]."&nbsp;" ?>
