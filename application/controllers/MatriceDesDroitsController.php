@@ -49,6 +49,7 @@
                 // On supprime les checkbox
                 $row_groupe->DROITADMINSYS_GROUPE = 0;
                 $row_groupe->DROITADMINPREV_GROUPE = 0;
+                $row_groupe->DROITADMINCOMMISSION_GROUPE = 0;
                 $row_groupe->DROITFILACTU_GROUPE = 0;
                 $row_groupe->DROITDOSSCREATION_GROUPE= 0;
                 $row_groupe->DROITETSCREATION_GROUPE = 0;
@@ -75,7 +76,7 @@
                                 $row->$key = $primary;
                                 
                                 if (is_array($data)) {
-                                    Zend_Debug::Dump(array_intersect_key($data, $porteuse["model"]->info('metadata')));
+                                    // Zend_Debug::Dump(array_intersect_key($data, $porteuse["model"]->info('metadata')));
                                     $row->setFromArray(array_intersect_key($data, $porteuse["model"]->info('metadata')))->save();
                                 }
 
