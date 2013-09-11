@@ -514,16 +514,13 @@
 			
 			<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
 			<dl class='edit' >
-			
-				<?php if($this->DB_informations["ID_GENRE"] != 1) : ?>
+
 				<dt class="pere_de_letablissement" >Père de l'établissement</dt>
 				<dd class="pere_de_letablissement">	
 					<input type='text' size='50' id='pere-autocomplete' <?php if(isset($this->pere) || isset($_GET["libelle"])) : ?> class="ui-state-highlight" <?php endif ?> value='<?php if(isset($this->pere)) echo htmlspecialchars($this->pere["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES); elseif( isset($_GET["libelle"]) ) echo htmlspecialchars($_GET["libelle"], ENT_QUOTES)  ?>' style='width: 100%' />
 					<input type='hidden' id='ID_PERE' name='ID_PERE' value='<?php if(isset($this->pere)) echo $this->pere["ID_ETABLISSEMENT"]; elseif( isset($_GET["pere"]) ) echo $_GET["pere"] ?>' />
 				</dd>
-				<?php endif ?>
-			
-				<?php if($this->DB_informations["ID_GENRE"] != 3) : ?>
+
 				<dt class="enfants_de_letablissement">Enfants de l'établissement</dt>
 				<dd class="enfants_de_letablissement">
 					<ul>
@@ -539,7 +536,7 @@
 					</ul>
 					<input type='text' size='50' id='etablissement-autocomplete' value='' style='width: 100%' />
 				</dd>
-				<?php endif ?>
+
 			</dl>
 			<?php endif ?>
 			
@@ -994,11 +991,14 @@
     // Champ parent / enfant
     // dangerosite_niv
 	$("select[name=ID_GENRE]").change(function() {
+    
         $(".pere_de_letablissement").show();
+        $(".enfants_de_letablissement").show();
+        
 		if($(this).val() == 1) {
 			$(".pere_de_letablissement").hide();
 		}
-        if($(this).val() == 3) {
+        else if($(this).val() == 3) {
 			$(".enfants_de_letablissement").hide();
 		}
 	}).change();
