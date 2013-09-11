@@ -632,13 +632,13 @@
 				<?php endif ?>
                 
                 <!-- Numéro ID Winprev -->
-				<dt <?php if($this->idwinprev == false) echo "class='edit'" ?> >Numéro d'identification WINPREV</dt>
-				<dd <?php if($this->idwinprev == false) echo "class='edit'" ?> >
+				<dt <?php if(empty($this->DB_etablissement["NUMEROID_ETABLISSEMENT"])) echo "class='edit'" ?> >Numéro d'identification</dt>
+				<dd <?php if(empty($this->DB_etablissement["NUMEROID_ETABLISSEMENT"])) echo "class='edit'" ?> >
 					<div class='edit'>
-						<input type='text'  name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->idwinprev ?>' />
+						<input type='text' name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["NUMEROID_ETABLISSEMENT"] ?>' />
 					</div>
 					<div class='read'>
-						<?php echo $this->idwinprev."&nbsp;" ?>
+                        <?php echo $this->DB_etablissement["NUMEROID_ETABLISSEMENT"]."&nbsp;" ?>
 					</div>
 				</dd>
 				
@@ -852,7 +852,7 @@
 						<li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_preventionniste_lies' class='ui-helper-hidden'" ?> >
 							<span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
 								<input type='hidden' value='<?php echo $item["ID_UTILISATEUR"] ?>' name='ID_UTILISATEUR[]' />
-								<span><?php $item["NOM_UTILISATEURINFORMATIONS"]." ".$item["PRENOM_UTILISATEURINFORMATIONS"] ?></span>
+								<span><?php echo $item["NOM_UTILISATEURINFORMATIONS"]." ".$item["PRENOM_UTILISATEURINFORMATIONS"] ?></span>
 								<a href='' style='text-decoration: none;' onclick='$(this).parent().parent().remove(); return false;'>&times;</a>
 							</span>
 						</li>
