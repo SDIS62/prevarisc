@@ -114,7 +114,7 @@
                     foreach ($request["ID_FILS_ETABLISSEMENT"] as $item) {
                         if ($item > 0) {
 
-                            $tmp = $this->getInformations( $item )->PERIODICITE__ETABLISSEMENTINFORMATIONS;
+                            $tmp = $this->getInformations( $item )->PERIODICITE_ETABLISSEMENTINFORMATIONS;
                             if($periodicite == null || $tmp < $periodicite)
                                 $periodicite = $tmp;
                         }
@@ -130,7 +130,7 @@
 
                 // Utilise celle du parent
                 case 3:
-                    return $this->getInformations( $request["ID_PERE"] )->PERIODICITE__ETABLISSEMENTINFORMATIONS;
+                    return $this->getInformations( $request["ID_PERE"] )->PERIODICITE_ETABLISSEMENTINFORMATIONS;
                     break;
 
                 // Selon la classe
@@ -239,7 +239,7 @@
             $select = $this->select()
                 ->setIntegrityCheck(false)
                 ->from(array("e" => "etablissement"), "ID_ETABLISSEMENT")
-                ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", array("LIBELLE_ETABLISSEMENTINFORMATIONS", "PERIODICITE__ETABLISSEMENTINFORMATIONS"))
+                ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", array("LIBELLE_ETABLISSEMENTINFORMATIONS", "PERIODICITE_ETABLISSEMENTINFORMATIONS"))
                 ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS = etablissementinformations.ID_ETABLISSEMENTINFORMATIONS", null)
                 ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = e.ID_ETABLISSEMENT ) ")
                 ->where("etablissementinformationspreventionniste.ID_UTILISATEUR = " . $id_user)
@@ -424,9 +424,9 @@
                 $row_etablissement = $this->getInformations($ets["ID_ETABLISSEMENT"]);
 
                 // Periodicité
-                if ($etablissement->PERIODICITE__ETABLISSEMENTINFORMATIONS != $row_etablissement->PERIODICITE__ETABLISSEMENTINFORMATIONS) {
+                if ($etablissement->PERIODICITE_ETABLISSEMENTINFORMATIONS != $row_etablissement->PERIODICITE_ETABLISSEMENTINFORMATIONS) {
 
-                    $row_etablissement->PERIODICITE__ETABLISSEMENTINFORMATIONS = $etablissement->PERIODICITE__ETABLISSEMENTINFORMATIONS;
+                    $row_etablissement->PERIODICITE_ETABLISSEMENTINFORMATIONS = $etablissement->PERIODICITE_ETABLISSEMENTINFORMATIONS;
                 }
 
                 // Catégorie

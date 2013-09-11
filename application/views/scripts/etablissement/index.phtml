@@ -1663,7 +1663,7 @@
 			});
 		},
 		formatItem: function(item) {
-			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + item.LIBELLE_COMMUNE + ")";
 		}
 	}).result(function(e, item) {
 		$n = $("#prototype_etablissement_lies").clone().appendTo( $("#prototype_etablissement_lies").parent() ).removeClass('ui-helper-hidden').attr('id', '');
@@ -1688,7 +1688,7 @@
 			});
 		},
 		formatItem: function(item) {
-			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + item.LIBELLE_COMMUNE + ")";
 		}
 	}).result(function(e, item) {
 
