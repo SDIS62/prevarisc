@@ -617,7 +617,7 @@
 		//alert($(this).attr('checked'));
 		$.ajax({
 			url: "/dossier/fonction",
-			data: "do=motiveAvisDefPresc&idPrescMAD="+idPrescMAD+"&checked="+$(this).attr('checked'),
+			data: "do=motiveAvisDefPresc&idPrescMAD="+idPrescMAD+"&checked="+$(this).attr('checked')+"&idDossier="+$("#idDossier").val(),
 			type:"POST",
 			beforeSend: function(){
 				

@@ -783,7 +783,17 @@ class DossierController extends Zend_Controller_Action
 				}else if($this->_getParam('checked') == 'false'){
 					$prescDossEdit->MAD_PRESCRIPTIONDOSSIER = 0;
 				}
-				$prescDossEdit->save();
+				
+				//On passe l'avis du dossier sur défavorable (idAvis = 3)
+				$dbDossier = new Model_DbTable_Dossier;
+				$dossier = $dbDossier->find($this->_getParam('idDossier'))->current();
+				$avisActuel = $dossier->AVIS_DOSSIER;
+				$dossier->AVIS_DOSSIER = 3;
+								
+				if($avisActuel != 3)
+					$dossier->save();
+				
+				$prescDossEdit->save();				
             break;
             case "verifAbreviation":
                 $DBprescType = new Model_DbTable_PrescriptionType;
