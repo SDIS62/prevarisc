@@ -4,7 +4,7 @@
     {
         public function avatar($id, $size="small")
         {
-            $src = "/data/uploads/avatars/$size/";
+            $src = DATA_PATH . "/uploads/avatars/$size/";
             echo "<img src='" . $src . ( file_exists($_SERVER['DOCUMENT_ROOT'].$src.$id.".jpg") ? $id : "default" ) . ".jpg' alt='Avatar' />";
         }
     }
