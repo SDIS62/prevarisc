@@ -892,14 +892,15 @@
 	}
 	
 	function verifDossier(){
-		
-		
-		if($("#OBJET_DOSSIER").val() == ''){
-			$("#OBJET_DOSSIER").focus();
-			$("#OBJET_DOSSIER").css("border-color","red");
-			return false;
+		//Dans le cas d'une visite périodique on ne vérifie pas l'objet (id 21 et 26)
+		if($("#selectNature").val() != 21 && $("#selectNature").val() != 26){
+			if($("#OBJET_DOSSIER").val() == ''){
+				$("#OBJET_DOSSIER").focus();
+				$("#OBJET_DOSSIER").css("border-color","red");
+				return false;
+			}
 		}
-
+		
 		if($("#DATEINSERT_INPUT").val() == ''){
 			$("#DATEINSERT_INPUT").next(".today").click();
 			return true;
