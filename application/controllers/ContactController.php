@@ -22,21 +22,29 @@
 
             // Droits sur la page
             if (isset($this->_request->item)) {
+            
                 switch ($this->_request->item) {
 
                     case "etablissement" :
-                        if($this->_helper->Droits()->checkEtablissement($this->_request->id))
+                        $id_etablissement = $this->_request->id_item == null ? $this->_request->id : $this->_request->id_item;
+                        
+                         // $id_etablissement = 2;
+                        if($this->_helper->Droits()->checkEtablissement($id_etablissement))
+                        {
                             $this->_helper->Droits()->redirect();
+                        }
                         else {
 
                             $model_etablissement = new Model_DbTable_Etablissement;
-                            $informations = $model_etablissement->getInformations( $this->_request->id );
+                            $informations = $model_etablissement->getInformations( $id_etablissement );
 
                             $droit_ecriture = $droits->ID_GENRE[$informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"];
                             $this->view->droit_ecriture = $droit_ecriture;
 
                             if($droit_ecriture == 0 && !in_array($this->getRequest()->getActionName(), array("index", "get", "form")))
+                            {
                                 $this->_helper->Droits()->redirect();
+                            }
                         }
                         break;
 
@@ -158,6 +166,9 @@
 
         public function editAction()
         {
+            if(isset($_POST["ID_UTILISATEURCIVILITE"]) && $_POST["ID_UTILISATEURCIVILITE"] == "null")
+                unset($_POST["ID_UTILISATEURCIVILITE"]);
+                
             $DB_informations = new Model_DbTable_UtilisateurInformations;
             $row = $DB_informations->find( $this->_request->id )->current();
             $this->view->user_info = $row;
