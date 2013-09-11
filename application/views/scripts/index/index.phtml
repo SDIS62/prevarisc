@@ -28,7 +28,14 @@
 			<li class='link_activated'><a href='/gestion-prescriptions-type' ><i class='sprite sprite-table' ></i>Gestion des prescriptions type</a></li>
 		</ul>
 	</fieldset>
-	<?php endif ?>
+	<?php elseif($this->droits->DROITADMINCOMMISSION_GROUPE == 1) : ?>
+    <fieldset>
+		<legend>Paramétrage du logiciel</legend>
+		<ul>
+			<li class='link_activated'><a href='/gestion-des-commissions' ><i class='sprite sprite-table' ></i>Gestion des commissions</a></li>
+		</ul>
+	</fieldset>
+    <?php endif ?>
 	
 	<!-- Les options du fil d'actualité -->
 	<fieldset>
