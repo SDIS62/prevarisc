@@ -59,13 +59,11 @@
 
 	<!-- Nom et prénom -->
 	<h2>
-		<?php if(file_exists(session_save_path() . "/sess_" . $this->user["SESSIONID_UTILISATEUR"])) : ?>
-		<i class='sprite sprite-status_online' ></i>
-		<?php else : ?>
-		<i class='sprite sprite-status_offline' ></i>
-		<?php endif ?>
+        <?php
+        echo ( time() - strtotime($this->user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime') ) ? "<i class='sprite sprite-status_online' ></i>" : "<i class='sprite sprite-status_offline' ></i>"
+        ?>
 		
-		<?php if( count( $this->user_grade ) != 0 ) echo $this->DB_grades[$this->user_grade[0]["ID_GRADE"]-1]["LIBELLE_GRADE"] ?> <?php echo $this->user_info["NOM_UTILISATEURINFORMATIONS"] . " " . $this->user_info["PRENOM_UTILISATEURINFORMATIONS"] ?>
+        <?php echo $this->user_info["NOM_UTILISATEURINFORMATIONS"] . " " . $this->user_info["PRENOM_UTILISATEURINFORMATIONS"] ?>
 	</h2>
 
 	<!-- établissements surveillés -->

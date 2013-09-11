@@ -852,7 +852,7 @@
 						<li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_preventionniste_lies' class='ui-helper-hidden'" ?> >
 							<span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
 								<input type='hidden' value='<?php echo $item["ID_UTILISATEUR"] ?>' name='ID_UTILISATEUR[]' />
-								<span><?php echo $item["LIBELLE_GRADE"]." ".$item["NOM_UTILISATEURINFORMATIONS"]." ".$item["PRENOM_UTILISATEURINFORMATIONS"] ?></span>
+								<span><?php $item["NOM_UTILISATEURINFORMATIONS"]." ".$item["PRENOM_UTILISATEURINFORMATIONS"] ?></span>
 								<a href='' style='text-decoration: none;' onclick='$(this).parent().parent().remove(); return false;'>&times;</a>
 							</span>
 						</li>
@@ -1342,6 +1342,13 @@
 	
 	// Gestion de la sauvegarde
 	function sauvegarder( hist, ignore ) {
+    
+        // On rend bloquant la liste des prev
+        if($("ul#list_prev li").length == 1)
+        {
+            alert("Pas de préventionnistes liés.");
+            return;
+        }
 	
 		historique = hist;
 		ignore = (ignore) ? true : false;

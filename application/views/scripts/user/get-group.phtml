@@ -41,11 +41,7 @@
 			<td><?php echo $user["LIBELLE_FONCTION"] ?></td>
 			<td>
                 <?php
-                $date_last_action = strtotime($user["LASTACTION_UTILISATEUR"]);
-                $date_last_action_plus_session_timeout = $date_last_action + ini_get('session.gc_maxlifetime');
-                
-                
-                echo $date_last_action != null && $date_last_action_plus_session_timeout > $date_last_action ? "<span style='color: #008C00; font-weight: bold'>Connecté</span>" : "<span style='color: silver'>Déconnecté</span>"
+                echo ( time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime') ) ? "<span style='color: #008C00; font-weight: bold'>Connecté</span>" : "<span style='color: silver'>Déconnecté</span>"
                 ?>
             </td>
 			<td style='text-align: center' >
