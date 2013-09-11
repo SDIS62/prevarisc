@@ -166,6 +166,7 @@
                         return 2;
                     elseif($request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] > 1500 )
                         return 1;
+                    break;
 
                 case 3:
                     return $this->getInformations( $request["ID_PERE"] )->ID_CATEGORIE;
