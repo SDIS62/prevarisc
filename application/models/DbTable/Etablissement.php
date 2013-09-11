@@ -49,18 +49,32 @@
             }
 
             // Etape 2 : Code commune
-            $codecommune = str_pad($adresses[0]["NUMINSEE_COMMUNE"], 6, "0", STR_PAD_LEFT);
+            if($genre != "S" || $genre != "C" || count($adresses) > 0)
+            {
+                $codecommune = str_pad($adresses[0]["NUMINSEE_COMMUNE"], 6, "0", STR_PAD_LEFT);
+            }
+            else
+            {
+                $codecommune = "000000";
+            }
 
             // Etape 3 : Ordre sur la commune
-            $select = $this->select()
-                ->setIntegrityCheck(false)
-                ->distinct()
-                ->from("adressecommune", null)
-                ->join("etablissementadresse", "etablissementadresse.NUMINSEE_COMMUNE =adressecommune.NUMINSEE_COMMUNE", "etablissementadresse.ID_ETABLISSEMENT")
-                ->join("etablissement", "etablissementadresse.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT", null)
-                ->where("adressecommune.NUMINSEE_COMMUNE = ?", $adresses[0]["NUMINSEE_COMMUNE"])
-                ->where("etablissement.DATEENREGISTREMENT_ETABLISSEMENT  <= ( SELECT etablissement.DATEENREGISTREMENT_ETABLISSEMENT FROM etablissement WHERE etablissement.ID_ETABLISSEMENT = '".($genre == "B" ? $parent["ID_ETABLISSEMENT"] : $id)."')");
-            $nbetscommune = str_pad(count($this->fetchAll($select)), 5, "0", STR_PAD_LEFT);
+            if($genre != "S" || $genre != "C" || count($adresses) > 0)
+            {
+                $select = $this->select()
+                    ->setIntegrityCheck(false)
+                    ->distinct()
+                    ->from("adressecommune", null)
+                    ->join("etablissementadresse", "etablissementadresse.NUMINSEE_COMMUNE =adressecommune.NUMINSEE_COMMUNE", "etablissementadresse.ID_ETABLISSEMENT")
+                    ->join("etablissement", "etablissementadresse.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT", null)
+                    ->where("adressecommune.NUMINSEE_COMMUNE = ?", $adresses[0]["NUMINSEE_COMMUNE"])
+                    ->where("etablissement.DATEENREGISTREMENT_ETABLISSEMENT  <= ( SELECT etablissement.DATEENREGISTREMENT_ETABLISSEMENT FROM etablissement WHERE etablissement.ID_ETABLISSEMENT = '".($genre == "B" ? $parent["ID_ETABLISSEMENT"] : $id)."')");
+                $nbetscommune = str_pad(count($this->fetchAll($select)), 5, "0", STR_PAD_LEFT);
+            }
+            else
+            {
+                $nbetscommune = "00000";
+            }
 
             // Etape 4 : Rang de la cellule
             if ($genre == "B") {
@@ -180,30 +194,44 @@
         // Commission
         public function getDefaultCommission($request)
         {
-            $index = isset($request["NUMINSEE_COMMUNE"][1]) && $request["NUMINSEE_COMMUNE"][1] != "" ? 1 : 0;
+            if(isset($request["NUMINSEE_COMMUNE"]))
+            {
+                $index = isset($request["NUMINSEE_COMMUNE"][1]) && $request["NUMINSEE_COMMUNE"][1] != "" ? 1 : 0;
 
-            switch ($request["ID_GENRE"]) {
-                case 2:
-                    $model_commission = new Model_DbTable_Commission;
+                switch ($request["ID_GENRE"]) {
+                    case 2:
+                        $model_commission = new Model_DbTable_Commission;
 
-                    return $model_commission->getCommission($request["NUMINSEE_COMMUNE"][$index], $request["ID_CATEGORIE"], $request["ID_TYPE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) && $request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] == 1 ? true : false);
-                    break;
-                case 5:
-                    $model_commission = new Model_DbTable_Commission;
+                        return $model_commission->getCommission($request["NUMINSEE_COMMUNE"][$index], $request["ID_CATEGORIE"], $request["ID_TYPE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) && $request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] == 1 ? true : false);
+                        break;
+                    case 5:
+                        $model_commission = new Model_DbTable_Commission;
 
-                    return $model_commission->getCommissionIGH($request["NUMINSEE_COMMUNE"][$index], $request["ID_CLASSE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) && $request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] == 1 ? true : false);
-                    break;
+                        return $model_commission->getCommissionIGH($request["NUMINSEE_COMMUNE"][$index], $request["ID_CLASSE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) && $request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] == 1 ? true : false);
+                        break;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
 
         // Pr�ventionnistes
         public function getDefaultPrev($request)
         {
-            $index = isset($request["NUMINSEE_COMMUNE"][1]) && $request["NUMINSEE_COMMUNE"][1] != "" ? 1 : 0;
-            include_once 'Preventioniste.php';
-            $model_prev = new Model_DbTable_Preventionniste;
+            if(isset($request["NUMINSEE_COMMUNE"]))
+            {
+                $index = isset($request["NUMINSEE_COMMUNE"][1]) && $request["NUMINSEE_COMMUNE"][1] != "" ? 1 : 0;
+                include_once 'Preventioniste.php';
+                $model_prev = new Model_DbTable_Preventionniste;
 
-            return $model_prev->getPrev($request["NUMINSEE_COMMUNE"][$index], isset($request["ID_PERE"]) ? $request["ID_PERE"] : '');
+                return $model_prev->getPrev($request["NUMINSEE_COMMUNE"][$index], isset($request["ID_PERE"]) ? $request["ID_PERE"] : '');
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public function getByUser($id_user)

@@ -407,7 +407,7 @@
             
             try {
             
-                if(!isset($_GET["ID_UTILISATEUR"]) || count($_GET["ID_UTILISATEUR"]) == 0)
+                if(!isset($_GET["ID_UTILISATEUR"]) || count($_GET["ID_UTILISATEUR"]) == 0 || $_GET["ID_UTILISATEUR"][0] == null)
                 {
                     throw new Exception("Pas de préventionnistes liés.");
                 }
