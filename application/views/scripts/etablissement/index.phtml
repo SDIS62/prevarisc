@@ -1342,14 +1342,7 @@
 	
 	// Gestion de la sauvegarde
 	function sauvegarder( hist, ignore ) {
-    
-        // On rend bloquant la liste des prev
-        if($("ul#list_prev li").length == 1)
-        {
-            alert("Pas de préventionnistes liés.");
-            return;
-        }
-	
+
 		historique = hist;
 		ignore = (ignore) ? true : false;
 		// Gestion des valeurs par défauts

@@ -406,6 +406,11 @@
             $new = false;
             
             try {
+            
+                if(!isset($_GET["ID_UTILISATEUR"]) || count($_GET["ID_UTILISATEUR"]) == 0)
+                {
+                    throw new Exception("Pas de préventionnistes liés.");
+                }
 
                 // Si il n'y a pas d'id
                 if (!$this->_request->id) {
