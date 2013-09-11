@@ -2,10 +2,12 @@
 
     class PieceJointeController extends Zend_Controller_Action
     {
-        public $path = DATA_PATH . "/uploads/pieces-jointes/";
+        public $path;
 
         public function init()
         {
+            $this->path = DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;
+            
             // Actions à effectuées en AJAX
             $ajaxContext = $this->_helper->getHelper('AjaxContext');
             $ajaxContext->addActionContext('check', 'json')
@@ -107,6 +109,7 @@
         public function addAction()
         {
             $this->_helper->viewRenderer->setNoRender(true);
+            $this->_helper->layout->disableLayout();
 
             // Modèles
             $DBpieceJointe = new Model_DbTable_PieceJointe;
@@ -130,7 +133,7 @@
             $nouvellePJ->save();
 
             // On check si l'upload est okay
-            if (!move_uploaded_file($_FILES['fichier']['tmp_name'], "." . $this->path . $nouvellePJ->ID_PIECEJOINTE . $extension) ) {
+            if (!move_uploaded_file($_FILES['fichier']['tmp_name'], $this->path . $nouvellePJ->ID_PIECEJOINTE . $extension) ) {
 
                 $nouvellePJ->delete();
             } else {
@@ -171,11 +174,8 @@
                     // Mise en avant d'une pièce jointe (null = nul part, 0 = plan, 1 = diapo)
                     if ( $this->_request->PLACEMENT_ETABLISSEMENTPJ != "null" && in_array($extension, array(".jpg", ".jpeg", ".png", ".gif")) ) {
 
-                        // Lib pour resize l'image
-                        require_once 'GD/GD_resize.php';
-
                         // On resize l'image
-                        GD_resize("." . $this->path . $nouvellePJ->ID_PIECEJOINTE . $extension, "." . $this->path . "miniatures/" . $nouvellePJ->ID_PIECEJOINTE . ".jpg", 450);
+                        GD_Resize::run($this->path . $nouvellePJ->ID_PIECEJOINTE . $extension, $this->path . "miniatures" . DIRECTORY_SEPARATOR . $nouvellePJ->ID_PIECEJOINTE . ".jpg", 450);
 
                         $linkPj->PLACEMENT_ETABLISSEMENTPJ = $this->_request->PLACEMENT_ETABLISSEMENTPJ;
                     }
@@ -231,10 +231,10 @@
             // On supprime dans la BDD et physiquement
             if ($DBitem != null) {
 
-                if( file_exists("." . $this->path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )					unlink("." . $this->path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
-                if( file_exists("." . $this->path . "miniatures/" . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )	unlink("." . $this->path . "miniatures/" . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
-                $pj->delete();
+                if( file_exists($this->path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )					unlink($this->path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
+                if( file_exists($this->path . "miniatures/" . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )	unlink($this->path . "miniatures/" . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
                 $DBitem->delete("ID_PIECEJOINTE = " . (int) $this->_request->id_pj);
+                $pj->delete();
             }
         }
 
@@ -242,7 +242,7 @@
         {
 			
             // Si elle existe
-            $this->view->exists = file_exists("." . $this->path . $this->_request->idpj . $this->_request->ext);
+            $this->view->exists = file_exists($this->path . $this->_request->idpj . $this->_request->ext);
 
             if ($this->view->exists) {
 				
