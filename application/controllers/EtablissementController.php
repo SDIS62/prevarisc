@@ -150,14 +150,12 @@
             $this->view->etablissement_lies = $etablissement_lies;
 
             $preventionnistes = ( $this->_request->id ) ? $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $this->_request->id)->run() : null;
-            $preventionnistes[-1] = array_fill_keys ( array( "LIBELLE_GRADE", "NOM_UTILISATEURINFORMATIONS", "PRENOM_UTILISATEURINFORMATIONS" ) , null );
+            $preventionnistes[-1] = array_fill_keys ( array( "ID_UTILISATEUR", "LIBELLE_GRADE", "NOM_UTILISATEURINFORMATIONS", "PRENOM_UTILISATEURINFORMATIONS" ) , null );
             $this->view->preventionnistes = $preventionnistes;
 
             $adresses = $DB_adresse->get($this->_request->id);
             $adresses[-1] = array_fill_keys ( array( "LON_ETABLISSEMENTADRESSE", "LAT_ETABLISSEMENTADRESSE", "NUMERO_ADRESSE", "ID_RUE", "NUMINSEE_COMMUNE", "COMPLEMENT_ADRESSE", "LIBELLE_COMMUNE", "LIBELLE_RUE", "CODEPOSTAL_COMMUNE" ) , null );
             $this->view->adresses = $adresses;
-
-            $this->view->idwinprev = $this->DB_etablissement->getIDWinprev($this->_request->id);
 
             // Si c'est un Ã©tablissement existant
             if ($this->_request->id) {
@@ -405,13 +403,15 @@
 
             // Variable pour savoir si on créé ou Update
             $historique = false;
-
+            $new = false;
+            
             try {
 
                 // Si il n'y a pas d'id
                 if (!$this->_request->id) {
                     // On créé un nouvel Ã©tablissement
                     $etablissement = $this->DB_etablissement->createRow();
+                    $new = true;
                 } else {
                     // On récupère l'instance d'un établissement
                     $etablissement = $this->DB_etablissement->find( $this->_request->id )->current();
@@ -503,7 +503,7 @@
                 foreach ($_GET as $key => $data) {
 
                     // DonnÃ©es non historisÃ©es
-                    if ( in_array($key, array("NUMEROID_ETABLISSEMENT", "TELEPHONE_ETABLISSEMENT", "FAX_ETABLISSEMENT", "COURRIEL_ETABLISSEMENT")) ) {
+                    if ( in_array($key, array("NUMEROID_ETABLISSEMENT", "TELEPHONE_ETABLISSEMENT", "FAX_ETABLISSEMENT", "COURRIEL_ETABLISSEMENT", "NUMEROID_ETABLISSEMENT")) ) {
 
                         $etablissement->$key = $data;
                     }
@@ -620,16 +620,20 @@
                     if($this->droits->DROITETABLISSEMENT_GROUPE != 2)
                         $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                 }
+                
+                // On créé son numéro d'id
+                if($new)
+                {
+                    $etablissement->NUMEROID_ETABLISSEMENT = $this->DB_etablissement->getIDWinprev($etablissement->ID_ETABLISSEMENT);
+                }
 
                 $db->commit();
 
-                // On ajoute la news dans la db
-                // $model = new Model_DbTable_News;
-                //$model->add("informations", "La fiche Ã©tablissement de <a href='/etablissement/index/id/".$etablissement->ID_ETABLISSEMENT."'>" . $informations->LIBELLE_ETABLISSEMENTINFORMATIONS . "</a> a Ã©tÃ© mise Ã  jour.", array(1) );
-
                 // On donne le lien vers l'Ã©tablissement pour le rechargement
                 if( $etablissement->ID_ETABLISSEMENT )
+                {
                     $this->view->url = "/etablissement/index/id/".$etablissement->ID_ETABLISSEMENT."?confirm=1";
+                }
 
                 // On update les cat et la perio des celulles enfants si il y en a
                 $this->DB_etablissement->recalcEnfants($etablissement->ID_ETABLISSEMENT, $informations->ID_ETABLISSEMENTINFORMATIONS, $historique);
