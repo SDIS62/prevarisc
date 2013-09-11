@@ -19,7 +19,7 @@ Prevarisc est une application web, vous devez l'héberger sur un serveur web sup
 * Heberger Prevarisc soi-même (voici des bon tutoriels pour installer et configurer votre serveur : [Installer un serveur](http://www.siteduzero.com/informatique/tutoriels/apprenez-a-installer-un-serveur-web-sous-debian) et [le sécuriser](http://www.siteduzero.com/informatique/tutoriels/securiser-son-serveur-linux)).
 
 Les modules apache à activer : rewrite, deflate, expires ;
-Les extensions PHP à activer : ldap, gd2
+Les extensions PHP à activer : ldap, gd2, exif
 
 #### Zend Framework
 
