@@ -8,6 +8,7 @@
     "require": {
         "zendframework/zendframework1": "1.*",
         "cybermonde/odtphp": "dev-master",
-        "michelf/php-markdown": "1.*"
+        "michelf/php-markdown": "1.*",
+        "kdubuc/gd_resize": "dev-master"
     }
 }
