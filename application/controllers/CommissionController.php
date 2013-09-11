@@ -5,7 +5,7 @@
         public function init()
         {
             // On check si l'utilisateur peut accéder à cette partie
-            if($this->_helper->Droits()->get()->DROITADMINPREV_GROUPE == 0)
+            if($this->_helper->Droits()->get()->DROITADMINCOMMISSION_GROUPE == 0)
                 $this->_helper->Droits()->redirect();
         }
 
