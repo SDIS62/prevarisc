@@ -333,11 +333,8 @@
             // Modèles
             $DB_user = new Model_DbTable_Utilisateur;
             $DB_informations = new Model_DbTable_UtilisateurInformations;
-            $DB_user_grades = new Model_DbTable_UtilisateurGrade;
             $search = new Model_DbTable_Search;
             $DB_groupe = new Model_DbTable_Groupe;
-
-            $DB_grades = new Model_DbTable_Grade;			$this->view->DB_grades = $DB_grades->fetchAll()->toArray();
 
             // Récupération des données
             $user = $DB_user->find( $this->_request->uid )->current();
@@ -352,7 +349,6 @@
 
             $this->view->user = $user;
             $this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
-            $this->view->user_grade = $DB_user_grades->fetchAll("ID_UTILISATEUR = " . $user->ID_UTILISATEUR, "DATE_UTILISATEURGRADE DESC")->toArray();
             $this->view->groupe = $DB_groupe->find( $user["ID_GROUPE"] )->current();
 
             // Récupération des utilisateurs du groupe de l'user
