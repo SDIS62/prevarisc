@@ -1,58 +1,73 @@
+<?php
+echo $this->headScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
+?>
+
+<div id='dossierInfos'>
+
 <h3 float='left' >Descriptif du dossier</h3>
+
 
 <!-- Boutons -->
 <div float='right' >
- <!--   <div id='boutons' style='float: right'>
-            <button id='modificationDossier' style='".( ($action == 'new')? "display:none;" : "" )."'>Modifier le dossier</button>
-            <button id='validModification' class='save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Sauvegarder le dossier</button>
-            <button id='creationDossier' class='save' style='display:none; z-index:150;'>Créer le dossier</button>
+
+
+    <?php    
+    $action = $this->do;
+    echo "  
+        <div id='boutons' style='float: right'>
+            <button id='modificationDossier' style='".( ($action == 'new')? "display:none;" : "" )."'>Modifier</button>
+            <button id='annulModification' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Annuler</button>
+            <button id='validModification' class='save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Sauvegarder</button>
             <div id='chargement'></div>
+    </div>"
+ ?>
+
+<!--
+    <div class="read">
+        <button id='modifier_button'>Modifier</button>
     </div>
-    -->
-    
-<!-- <div class="read">
-		<button id='modifier_button'>Modifier</button>
-	</div>
-	
-	<div class="edit">
-		<button id='cancel_button'>Annuler</button>
-		<button id='save_button' class="save" >Sauvegarder</button>
-	</div>
-	-->
+
+    <div class="edit">
+        <button id='cancel_button'>Annuler</button>
+        <button id='save_button' class="save" >Sauvegarder</button>
+    </div>
+-->
 </div>
 
 <br class='clear' />
 
-<h4>Descriptif général</h4>
-<div class="read">
-	<p><?php echo empty($this->view->infosDossier['DESCRIPTIF_DOSSIER']) ? "Aucun descriptif disponible pour ce dossier." : nl2br($this->view->infosDossier['DESCRIPTIF_DOSSIER']) ?></p>
+    <h4>Descriptif général</h4>
+    <div class="lecture">
+            <p><?php echo empty($this->infosDossier['DESCRIPTIF_DOSSIER']) ? "Aucun descriptif disponible pour ce dossier." : nl2br($this->infosDossier['DESCRIPTIF_DOSSIER']) ?></p>
+    </div>
+
+    <form class="edit" id="descriptif" action="" method="POST" >
+            <textarea name='DESCRIPTIF_DOSSIER' id='descriptif_general' cols='' rows='' style='width: 100%; height: 500px;' ><?php echo $this->infosDossier['DESCRIPTIF_DOSSIER'] ?></textarea>
+    </form>
+    
+    
 </div>
-
-<?php if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1)) : ?>
-
-<form class="edit" id="descriptif" action="" method="POST" >
-	<textarea name='DESCRIPTIF_DOSSIER' id='descriptif_general' cols='' rows='' style='width: 100%; height: 500px;' ><?php echo $this->view->infosDossier['DESCRIPTIF_DOSSIER'] ?></textarea>
-</form>
-
 <script type="text/javascript">
-
+    $(document).ready(function(){
 	$("#descriptif_general").elastic();
 	
-	$("#modifier_button").button().click(function() {
-		$(".read").hide();
+	$("#modificationDossier").button().click(function() {
+                $(".lecture").hide();
+                $("#modificationDossier").hide();
 		$(".edit").show();
+                $("#annulModification").show();
+                $("#validModification").show();
 	});
 	
-	$("#cancel_button").button().click(function() {
+	$("#annulModification").button().click(function() {
 		window.location.reload();
 	});
 	
-	$("#save_button").button().click(function() {
+	$("#validModification").button().click(function() {
 		$("#descriptif").submit();
 	});
 	
 	$(".edit").hide();
-	
+    });
 </script>
 
-<?php endif ?>

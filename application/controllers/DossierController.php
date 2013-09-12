@@ -328,6 +328,10 @@ class DossierController extends Zend_Controller_Action
                     $this->view->infosDossier["DESCTECH_DOSSIER"] = nl2br($this->view->infosDossier["DESCTECH_DOSSIER"]);
                     $this->view->DESCTECH_INPUT = str_replace("<br />", "" ,$this->view->infosDossier["DESCTECH_DOSSIER"]);
                 }
+                if ($this->view->infosDossier["DESCRIPTIF_DOSSIER"] != '') {
+                    $this->view->infosDossier["DESCRIPTIF_DOSSIER"] = nl2br($this->view->infosDossier["DESCRIPTIF_DOSSIER"]);
+                    $this->view->DESCRIPTIF_INPUT = str_replace("<br />", "" ,$this->view->infosDossier["DESCRIPTIF_DOSSIER"]);
+                }
                 if ($this->view->infosDossier["AVIS_DOSSIER"] != '') {
                     $this->view->AVIS_VALUE = $DBlisteAvis->getAvisLibelle($this->view->infosDossier["AVIS_DOSSIER"]);
                 }
@@ -2095,6 +2099,17 @@ class DossierController extends Zend_Controller_Action
     
     public function descriptifAction()
     {
+        if ((int) $this->_getParam("id")) {
+            //Cas d'affichage des infos d'un dossier existant
+            $this->view->do = 'edit';
+            //On récupère l'id du dossier
+            $idDossier = (int) $this->_getParam("id");
+            $this->view->idDossier = $idDossier;
+            //Récupération de tous les champs de la table dossier
+            $DBdossier = new Model_DbTable_Dossier;
+            $this->view->infosDossier = $DBdossier->find($idDossier)->current();
+        }
+        
         if ($this->_request->DESCRIPTIF_DOSSIER)
         {
             $DBdossier = new Model_DbTable_Dossier;

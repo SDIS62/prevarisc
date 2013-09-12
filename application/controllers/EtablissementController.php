@@ -246,7 +246,6 @@
         public function descriptifAction()
         {
             if ($this->_request->DESCRIPTIF_ETABLISSEMENT) {
-
                 $etablissement = $this->DB_etablissement->find( $this->_request->id )->current();
                 $etablissement->DESCRIPTIF_ETABLISSEMENT = $this->_request->DESCRIPTIF_ETABLISSEMENT;
                 $etablissement->save();
