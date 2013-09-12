@@ -528,7 +528,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->do = 'new';
             //echo $this->_getParam("id_etablissement");
             $search = new Model_DbTable_Search;
-            $preventionnistes = ( $this->_getParam("id_etablissement") ) ? $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $this->_getParam("id_etablissement"))->run() : null;
+            $preventionnistes = ( $this->_getParam("id_etablissement") ) ? $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $this->_getParam("id_etablissement"))->run()->getAdapter()->getItems(0, 99999999999)->toArray() : null;
             $preventionnistes[-1] = array_fill_keys ( array( "LIBELLE_GRADE", "NOM_UTILISATEURINFORMATIONS", "PRENOM_UTILISATEURINFORMATIONS" ) , null );
             unset($preventionnistes[-1]);
             $this->view->preventionnistes = $preventionnistes;
@@ -1448,7 +1448,7 @@ class DossierController extends Zend_Controller_Action
         $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $this->_request->q, false);
 
         // On balance le résultat sur la vue
-        $this->view->resultats = $search->run();
+        $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
     }
 
 

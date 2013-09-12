@@ -145,11 +145,11 @@
             $rubriques[-1] = array_fill_keys ( array( "NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE", "NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE", "VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE", "CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE" ) , null );
             $this->view->rubriques = $rubriques;
 
-            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $this->_request->id)->run();
+            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $this->_request->id)->run()->getAdapter()->getItems(0, 99999999999)->toArray();
             $etablissement_lies[-1] = array_fill_keys ( array( "ID_FILS_ETABLISSEMENT", "LIBELLE_ETABLISSEMENTINFORMATIONS" ) , null );
             $this->view->etablissement_lies = $etablissement_lies;
 
-            $preventionnistes = ( $this->_request->id ) ? $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $this->_request->id)->run() : null;
+            $preventionnistes = ( $this->_request->id ) ? $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $this->_request->id)->run()->getAdapter()->getItems(0, 99999999999)->toArray() : null;
             $preventionnistes[-1] = array_fill_keys ( array( "ID_UTILISATEUR", "LIBELLE_GRADE", "NOM_UTILISATEURINFORMATIONS", "PRENOM_UTILISATEURINFORMATIONS" ) , null );
             $this->view->preventionnistes = $preventionnistes;
 
@@ -246,6 +246,7 @@
         public function descriptifAction()
         {
             if ($this->_request->DESCRIPTIF_ETABLISSEMENT) {
+
                 $etablissement = $this->DB_etablissement->find( $this->_request->id )->current();
                 $etablissement->DESCRIPTIF_ETABLISSEMENT = $this->_request->DESCRIPTIF_ETABLISSEMENT;
                 $etablissement->save();
@@ -546,7 +547,7 @@
                                             switch($genre_actuel)
                                             {
                                                 case 1:
-                                                    if($genre_enfant != 2)
+                                                    if($genre_enfant != 2 && $genre_enfant != 4 && $genre_enfant != 5 && $genre_enfant != 6)
                                                         throw new Exception('L\'établissement enfant n\'est pas compatible (Un Site ne ne peut contenir que des établissements)', 500);
                                                     break;
                                                     
@@ -671,16 +672,11 @@
             $search->setItem("etablissement");
             $search->limit(5);
 
-            /*
-            if( array_key_exists("ID_GENRE", $_GET) )
-                $search->setCriteria("genre.ID_GENRE", $this->_request->ID_GENRE);
-            */
-
-            // On recherche avec le libellÃ©
+            // On recherche avec le libellé
             $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $this->_request->q, false);
 
             // On balance le rÃ©sultat sur la vue
-            $this->view->resultats = $search->run();
+            $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
         }
 
         public function getDefaultValuesAction()

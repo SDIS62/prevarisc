@@ -1,0 +1,38 @@
+<li>
+    <!-- Icone du dossier-->
+    <i class='sprite sprite-folder' ></i>
+    
+    <!-- Nom du dossier -->
+    <span class="doss-nom">
+        <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>'><?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE ?></a>
+    </span>
+    
+    <!-- Date du dossier -->
+    <span class="doss-date">
+        <?php echo $this->DATEINSERT_DOSSIER . " - " . substr($this->NUMCHRONO_DOSSIER,0,26). ( strlen($this->NUMCHRONO_DOSSIER) > 26 ? ".." : "" )?>
+    </span>
+    
+    <!-- Objet du dossier -->
+    <span class="doss-objet" style="margin-left: 200px;" >
+        <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->OBJET_DOSSIER, ENT_QUOTES) ?>' ><?php echo substr($this->OBJET_DOSSIER, 0, 70) . ( strlen($this->OBJET_DOSSIER) > 70 ? "(...)" : "" )?></a>
+    </span>
+    
+    <!-- Dossier affecté à quels établissements ? -->
+    <span class="doss-donneur-avis">
+        <?php echo $this->NOMS_ETABLISSEMENTS ?>
+    </span>
+        
+    <!-- Avis du dossier -->
+    <?php if( isset($this->ID_AVIS) ) : ?>
+    <span class="avis <?php echo $this->LIBELLE_AVIS[0] ?>" title='<?php echo htmlspecialchars($this->LIBELLE_AVIS , ENT_QUOTES)?>'>
+    <?php
+        switch( $this->ID_AVIS ) {
+            case 1: echo "?"; break;
+            case 2: echo "F"; break;
+            case 3: echo "D"; break;
+            case 4: echo "›";break;
+        }
+    ?>
+    </span>
+    <?php endif; ?>
+</li>

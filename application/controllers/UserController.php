@@ -566,6 +566,6 @@
             $search->setCriteria("NOM_UTILISATEURINFORMATIONS", $this->_request->getQuery("q"), false);
 
             // On balance le résultat sur la vue
-            $this->view->resultats = $search->run();
+            $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
         }
     }

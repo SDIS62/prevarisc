@@ -12,66 +12,46 @@
 				
 				<div class='container_16' >
 				
+                    <!-- Titre -->
 					<h2 class='grid_16' >
 						<i class='sprite sprite-zoom' ></i>
 						Recherche
 					</h2>
 
+                    <!-- Onglets permettant de selectionner les entités à rechercher -->
 					<ul id='onglets_horizontaux' class='grid_16' >
 						<li class='<?php echo ( $this->action == "etablissement" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"etablissement")) ?>'>Établissement</a></li>
 						<li class='<?php echo ( $this->action == "dossier" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossier")) ?>'>Dossier</a></li>
 						<li class='<?php echo ( $this->action == "utilisateur" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"utilisateur")) ?>'>Utilisateur</a></li>
 					</ul>
 						
-					<?php
-						// Contenu
-						echo $this->layout()->content;
-					?>
+                    <!-- Formulaire de recherche -->
+                    <div class="grid_16">
+                        <?php echo $this->layout()->content; ?>
+                    </div>
 
-					<!-- Lance la recherche -->
-					<div class='grid_1'>
-						<button id='search' style='float: right' >Rechercher</button>
-						<p id='loader' class='ui-helper-hidden' style='float: right; position: relative; top: 5px'><img src='/images/load.gif' alt='Chargement' /></p>
-					</div>
-
-					<hr class='clear' />
-
+                    <!-- Résultats -->
 					<div id='content_resultats' class='grid_16' ></div>
-					<div class="grid_16" >
-						<p><a href="/" id="plus" class='ui-helper-hidden'>Plus de résultats</a></p>
-					</div>
+                    
+                    <hr class="clear" />
+                    
+                    <!-- Bouton lançant la recherche -->
+					<p style="text-align: center">
+						<button id='search' href="/search/run" >Rechercher</button>
+						<span id='loader' class='ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement' /></span>
+					</p>
 
 					<script type="text/javascript">
-					
-						$("#plus").click(function() {
-							$.ajax({
-								url: "/search/next?format=json&item=<?php echo $this->action; ?>&page=" + (page+1),
-								data: data,
-								success: function( result ) {
 
-									page =  (page+1);
-									$("#content_resultats").append( result["html"] );
-								},
-								error: function(r) {
-									alert(r.responseText);
-								}
-							});
-						
-							return false;
-						});
-						
-						var data = null;
-						var page = 1;
-						
 						$("#search").button({
 							icons: {
 								primary: "ui-icon-search"
-							},
-							text: false
-						}).click(function() {
-							
+							}
+						});
+                        
+                        $("#search, div.paginationControl a").live("click", function() {
 							$.ajax({
-								url: "/search/run?format=json&item=<?php echo $this->action; ?>",
+								url: $(this).attr("href"),
 								data: $("#recherche").serialize(),
 								beforeSend: function() {
 								
@@ -80,13 +60,17 @@
 									$("#content_resultats").css("opacity", 0.5);
 								},
 								success: function( result ) {
-								
-									page = 1;
-									data = $("#recherche").serialize();
 									$("#loader").hide();
-									$("#search, #plus").show();
+									$("#search").show();
 									$("#content_resultats").css("opacity", 1);
 									$("#content_resultats").html( result["html"] );
+                                    
+                                    if($("form input[name='item']").val() == "etablissement") {
+                                        if($("form input[name='par']:checked").val() == "criteres") {
+                                            $("#content_resultats").find('li').removeClass("slide");
+                                            $("#content_resultats").find('li').find("span.icone_enfants").remove();
+                                        }
+                                    }
 								},
 								error: function(r) {
 									alert(r.responseText);

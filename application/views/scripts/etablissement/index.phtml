@@ -541,13 +541,15 @@
 			<?php endif ?>
 			
 			<div class='read' style='max-height: 400px; overflow: auto; ' >
+                <ul class='recherche_liste'>
 				<?php
 					unset($this->etablissement_lies[-1]);
 					if( count($this->etablissement_lies) > 0 ) {
 
-						echo $this->partial('search/search.phtml', array('item' => 'etablissement', 'resultats' => $this->etablissement_lies)); 
+						echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissement_lies); 
 					}
 				?>
+                </ul>
 				<br/>
 			</div>
 		</div>

@@ -63,7 +63,9 @@
             $search->setItem("etablissement");
 
             // On gère l'affichage
-            $html = $this->view->partial("search/search.phtml", array('item' => "etablissement", 'resultats' => $search->run($this->_request->id), 'niveau' => true));
+            $html = "<ul class='recherche_liste'>";
+            $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/etablissement.phtml', $search->run($this->_request->id) );
+            $html .= "</ul>";
 
             // Envoi du html sur la vue
             $this->view->html = $html;
@@ -74,12 +76,7 @@
             // On execute la requete si il y a quelquechose a traiter
             if ( count($this->_request->getQuery()) > 0 ) {
 
-                $this->view->html = $this->_helper->Search($_GET, 1);
+                $this->view->html = $this->_helper->Search($_GET, isset($this->_request->page) ? $this->_request->page : 1);
             }
-        }
-
-        public function nextAction()
-        {
-            $this->view->html = $this->_helper->Search($_GET, $this->_request->page);
         }
     }

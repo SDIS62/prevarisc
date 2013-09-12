@@ -1,0 +1,54 @@
+<li class="etablissement <?php if($this->NB_ENFANTS > 0) echo "slide" ?>" id="<?php echo $this->ID_ETABLISSEMENT ?>">
+    <!-- Icone représentant le dropdown des fils -->
+    <?php if($this->NB_ENFANTS > 0) : ?>
+    <span class="icone_enfants" ><i class='ui-icon ui-icon-triangle-1-e' style='float: left; margin-top: 1px; position: absolute; top: 0; left: -20px' ></i></span>
+    <?php endif ?>
+
+    <!-- Icone du type -->
+    <span title="Type <?php echo $this->ID_TYPE ?>" class="icone">
+        <?php if( $this->ID_TYPE ) : ?>
+        <img src="/images/types/b/icone-type-<?php echo $this->LIBELLE_TYPE ?>.png" alt="icone"/>
+        <?php else : ?>
+        <span style='display: inline-block; height: 16px; width: 16px;'></span>
+        <?php endif ?>
+    </span>
+    
+    <!-- Affichage du libellé du type -->
+    <span class="type">
+        <?php echo ($this->ID_TYPE ? $this->LIBELLE_TYPE . "&nbsp;-&nbsp;" : "") . strtoupper(substr($this->LIBELLE_GENRE, 0 , 4)) ?>
+    </span>
+    
+    <!-- nom de l'établissement -->
+    <span class="nom-etablissement">
+        <a href='/etablissement/index/id/<?php echo $this->ID_ETABLISSEMENT ?>'><?php echo $this->LIBELLE_ETABLISSEMENTINFORMATIONS ?></a>
+    </span>
+    
+    <!-- Icone de chargement des enfants (si il y'en a, et si on est en mode niveau -->
+    <?php if($this->NB_ENFANTS > 0) : ?>
+        <span class='load ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement ...' /></span>
+    <?php endif ?>
+    
+    <!-- Affichage de la ville et la date de dernière visite périodique -->
+    <?php if(isset($this->DATEVISITE_DOSSIER))
+    {
+        $date = new Zend_Date($this->DATEVISITE_DOSSIER, Zend_Date::DATES);
+    }
+    ?>
+    <span class="ville">
+        <?php echo ( $this->DATEVISITE_DOSSIER ? "Dernière visite périodique : " . $date->get( Zend_Date::DATE_MEDIUM ) . " - " : "" ) . $this->LIBELLE_COMMUNE ?>
+    </span>
+    
+    <!-- Avis -->
+    <?php if( isset($this->ID_AVIS) ) : ?>
+        <span class="avis <?php echo $this->LIBELLE_AVIS[0] ?>">
+        <?php
+        switch( $this->ID_AVIS ) {
+            case 1: echo "?"; break;
+            case 2: echo "F"; break;
+            case 3: echo "D"; break;
+            case 4: echo "›";break;
+        }
+        ?>
+        </span>
+    <?php endif ?>
+</li>

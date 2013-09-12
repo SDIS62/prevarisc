@@ -1,5 +1,5 @@
 <!-- Formulaire -->
-<form id='recherche' method='get' action='' class='grid_15' >
+<form id='recherche' method='get' action='' >
 	
 	<!-- Nature -->
 	<select id='nature' name='ID_DOSSIERNATURE[]' multiple='multiple'>
@@ -10,20 +10,15 @@
 	
 	<!-- Numéro de doc urba.-->
 	<input type='text' id='docurba' name='NUM_DOCURBA' class='bigger' size=32 />
-	
-	<span><a href='' onclick="$('#extra').show(); $(this).hide(); return false" >[+ Plus de critères]</a></span>
-	
-	<div id='extra' class='ui-helper-hidden' >
-	
-		<br />
-		
-		<!-- Commune -->
-		<input type='text' id='commune' name='LIBELLE_COMMUNE' class='bigger' size=25 />
-		
-		<!-- Etablissement -->
-		<input type='text' id='libelle' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' size=30 />
-	
-	</div>
+
+    <!-- Commune -->
+    <input type='text' id='commune' name='LIBELLE_COMMUNE' class='bigger' size=25 />
+    
+    <!-- Etablissement -->
+    <input type='text' id='libelle' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' size=30 />
+    
+    <input type="hidden" name="format" value="json" />
+    <input type="hidden" name="item" value="dossier" />
 	
 </form>
 
@@ -57,7 +52,6 @@
 			return item.LIBELLE_COMMUNE;
 		}
 	}).result(function(e, item) {
-		// window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
 	});
 	
 	$("#libelle").autocomplete("/etablissement/get?format=json", {
@@ -76,7 +70,6 @@
 			return item.LIBELLE_ETABLISSEMENTINFORMATIONS;
 		}
 	}).result(function(e, item) {
-		// window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
 	});
 	
 </script>

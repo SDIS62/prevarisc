@@ -69,9 +69,11 @@
 	<!-- établissements surveillés -->
 	<h4>Etablissements surveillés</h4>
 	<div style=''>
+    <ul class='recherche_liste'>
 	<?php
-	echo $this->partial('search/search.phtml', array('item' => 'etablissement', 'resultats' => $this->etablissements)); 
+	echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissements); 
 	?>
+    </ul>
 	</div>
 	
 	<hr class='clear' />

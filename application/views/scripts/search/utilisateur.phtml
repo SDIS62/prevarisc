@@ -1,15 +1,23 @@
 <!-- Formulaire -->
-<form id='recherche' method='get' action='' class='grid_15' >
+<form id='recherche' method='get' action='' >
 	
 	<!-- Nom -->
-	<input type='text' id='nom' name='NOM_PRENOM' class='bigger' size=50 />
+	<input type='text' id='nom' name='NOM_PRENOM' class='bigger' style="width: 100%; padding: 8px; font-size: 1.5em;" />
+    
+    <div id="plus_critere_div" style="padding: 15px">
 	
-	<!-- Fonction -->
-	<select id='fonction' name='ID_FONCTION[]' multiple='multiple'>
-		<?php foreach( $this->DB_fonction as $fonction ) : ?>
-		<option value='<?php echo $fonction["ID_FONCTION"] ?>'><?php echo $fonction["LIBELLE_FONCTION"] ?></option>
-		<?php endforeach ?>
-	</select>
+        <div>
+            <!-- Fonction -->
+            <select id='fonction' name='ID_FONCTION[]' multiple='multiple'>
+                <?php foreach( $this->DB_fonction as $fonction ) : ?>
+                <option value='<?php echo $fonction["ID_FONCTION"] ?>'><?php echo $fonction["LIBELLE_FONCTION"] ?></option>
+                <?php endforeach ?>
+            </select>
+        </div>
+    </div>
+    
+    <input type="hidden" name="format" value="json" />
+    <input type="hidden" name="item" value="utilisateur" />
 	
 </form>
 

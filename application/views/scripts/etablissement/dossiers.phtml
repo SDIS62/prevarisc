@@ -3,18 +3,11 @@
 <hr class='clear' />
 
 <div id="content_dossiers_ets">
-<?php
-	echo $this->partial('search/search.phtml', array('item' => 'dossier', 'resultats' => $this->dossiers)); 
-?>
+<?php if( count($this->dossiers) > 0 ) : ?>
+    <ul id="liste_doss">
+    <?php
+	echo $this->partialLoop('search/results/dossier.phtml', $this->dossiers); 
+    ?>
+    </ul>
+<?php endif ?>
 </div>
-
-<script type="text/javascript">
-/*
-	$("#content_dossiers_ets a").fancybox({
-		'autoDimensions': false,
-		"height": "90%",
-		"width": "90%",
-		'overlayShow': false
-	});
-*/
-</script>

@@ -36,7 +36,7 @@
                 $search->setCriteria("ID_CLASSE", $criteres["ID_CLASSE"]);
 
             if( array_key_exists("ID_TYPE", $criteres) && count($criteres["ID_TYPE"]) > 0 )
-                $search->setCriteria("ID_TYPE", $criteres["ID_TYPE"]);
+                $search->setCriteria("type.ID_TYPE", $criteres["ID_TYPE"]);
 
             if( array_key_exists("ID_AVIS", $criteres) && count($criteres["ID_AVIS"]) > 0 )
                 $search->setCriteria("avis.ID_AVIS", $criteres["ID_AVIS"]);
@@ -74,10 +74,13 @@
             $resultats = $search->run( isset($criteres["par"]) && $criteres["par"] == "niveau", $page );
 
             // On gère l'affichage
-            $html = Zend_Layout::getMvcInstance()->getView()->partial("search/search.phtml", array('item' => $criteres["item"], 'resultats' => $resultats, 'niveau' => isset($criteres["par"]) && $criteres["par"] == "niveau"));
+            $html = Zend_Layout::getMvcInstance()->getView()->partial("search/search.phtml", array(
+                "item" => $criteres["item"],
+                "niveau" => isset($criteres["par"]) && $criteres["par"] == "niveau",
+                "paginator" => $resultats
+            ));
 
             // Envoi du html sur la vue
             return $html;
         }
-
     }

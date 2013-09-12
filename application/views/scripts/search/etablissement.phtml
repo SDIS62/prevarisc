@@ -1,99 +1,113 @@
 <!-- Formulaire -->
-<form id='recherche' method='get' action='' class='grid_15' >
+<form id='recherche' method='get' action='' >
 	
-	<!-- Code et Libelle -->
-	<input type='text' id='code' name='NUMEROID_ETABLISSEMENT' class='bigger' size=10 />
-	<input type='text' id='libelle' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' size=30 />
+	<!-- Libelle -->
+	<input type='text' id='libelle' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' style="width: 100%; padding: 8px; font-size: 1.5em;" />
+    
+    <!-- Par niveau hierarchique -->
+	<div id='par-niveau' ></div>
+    
+    <div id="plus_critere_div">
 
-	<input type='radio' name='par' value='niveau' checked /> Par niveau hiérarchique
-	<input type='radio' name='par' value='criteres' /> Par critères personnalisés
+        <!-- Par genre-->
+        <div id='par-genre' >
+        
+            <br />
+        
+            <!-- Genre -->
+            <select id='genre' name='ID_GENRE[]' multiple='multiple' disabled >
+                <?php foreach( $this->DB_genre as $genre ) : ?>
+                <option value='<?php echo $genre["ID_GENRE"] ?>' ><?php echo $genre["LIBELLE_GENRE"] ?></option>
+                <?php endforeach ?>
+            </select>
+            
+            <!-- Catégorie -->
+            <span id='categorie_span' class='ui-helper-hidden'>
+                <select id='categorie' name='ID_CATEGORIE[]' multiple='multiple' disabled>
+                    <?php foreach( $this->DB_categorie as $categorie ) : ?>
+                    <option value='<?php echo $categorie["ID_CATEGORIE"] ?>'><?php echo $categorie["LIBELLE_CATEGORIE"] ?></option>
+                    <?php endforeach ?>
+                </select>
+            </span>
+            
+            <!-- Classe -->
+            <span id='classe_span' class='ui-helper-hidden' >
+                <select id='classe' name='ID_CLASSE[]' multiple='multiple' disabled >
+                    <?php foreach( $this->DB_classe as $classe ) : ?>
+                    <option value='<?php echo $classe["ID_CLASSE"] ?>'><?php echo $classe["LIBELLE_CLASSE"] ?></option>
+                    <?php endforeach ?>
+                </select>
+            </span>
+            
+            <!-- Famille -->
+            <span id='famille_span' class='ui-helper-hidden'>
+                <select id='famille' name='ID_FAMILLE[]' multiple='multiple' disabled >
+                    <?php foreach( $this->DB_famille as $famille ) : ?>
+                    <option value='<?php echo $famille["ID_FAMILLE"] ?>'><?php echo $famille["LIBELLE_FAMILLE"] ?></option>
+                    <?php endforeach ?>
+                </select>
+            </span>
+            
+            <!-- Types -->
+            <span id='type_span' class='ui-helper-hidden'>
+                <select id='type' name='ID_TYPE[]' multiple='multiple' disabled >
+                    <?php foreach( $this->DB_type as $type ) : ?>
+                    <option value='<?php echo $type["ID_TYPE"] ?>'><?php echo $type["LIBELLE_TYPE"] ?></option>
+                    <?php endforeach ?>
+                </select>
+            </span>
+            
+            <span><a href='' onclick="$('#extra').show(); $(this).hide(); return false" >[+ Plus de critères]</a></span>
+            
+            <br />
+            <br />
 
+        </div>
 
-	<!-- Par niveau hierarchique -->
-	<div id='par-niveau' style='display: inline' >
-		
-	</div>
-	
-	<!-- Par genre-->
-	<div id='par-genre' style='display: inline' >
-		<!-- Genre -->
-		<select id='genre' name='ID_GENRE[]' multiple='multiple' disabled>
-			<?php foreach( $this->DB_genre as $genre ) : ?>
-			<option value='<?php echo $genre["ID_GENRE"] ?>' ><?php echo $genre["LIBELLE_GENRE"] ?></option>
-			<?php endforeach ?>
-		</select>
-		
-		<!-- Catégorie -->
-		<span id='categorie_span' class='ui-helper-hidden'>
-			<select id='categorie' name='ID_CATEGORIE[]' multiple='multiple' disabled>
-				<?php foreach( $this->DB_categorie as $categorie ) : ?>
-				<option value='<?php echo $categorie["ID_CATEGORIE"] ?>'><?php echo $categorie["LIBELLE_CATEGORIE"] ?></option>
-				<?php endforeach ?>
-			</select>
-		</span>
-		
-		<!-- Classe -->
-		<span id='classe_span' class='ui-helper-hidden' >
-			<select id='classe' name='ID_CLASSE[]' multiple='multiple' disabled >
-				<?php foreach( $this->DB_classe as $classe ) : ?>
-				<option value='<?php echo $classe["ID_CLASSE"] ?>'><?php echo $classe["LIBELLE_CLASSE"] ?></option>
-				<?php endforeach ?>
-			</select>
-		</span>
-		
-		<!-- Famille -->
-		<span id='famille_span' class='ui-helper-hidden'>
-			<select id='famille' name='ID_FAMILLE[]' multiple='multiple' disabled >
-				<?php foreach( $this->DB_famille as $famille ) : ?>
-				<option value='<?php echo $famille["ID_FAMILLE"] ?>'><?php echo $famille["LIBELLE_FAMILLE"] ?></option>
-				<?php endforeach ?>
-			</select>
-		</span>
-		
-		<!-- Types -->
-		<span id='type_span' class='ui-helper-hidden'>
-			<select id='type' name='ID_TYPE[]' multiple='multiple' disabled >
-				<?php foreach( $this->DB_type as $type ) : ?>
-				<option value='<?php echo $type["ID_TYPE"] ?>'><?php echo $type["ID_TYPE"] ?></option>
-				<?php endforeach ?>
-			</select>
-		</span>
-		
-		<span><a href='' onclick="$('#extra').show(); $(this).hide(); return false" >[+ Plus de critères]</a></span>
-		
-	</div>
+        <div id='extra' class='ui-helper-hidden' >
 
-	<div id='extra' class='ui-helper-hidden' >
-	
-		<br />
-		
-		<!-- Commune -->
-		<input type='text' id='commune' name='LIBELLE_COMMUNE' class='bigger' size=25 />
-		
-		<!-- Avis -->
-		<select id='avis' name='ID_AVIS[]' multiple='multiple'>
-			<?php foreach( $this->DB_avis as $avis ) : ?>
-			<option value='<?php echo $avis["ID_AVIS"] ?>'><?php echo $avis["LIBELLE_AVIS"] ?></option>
-			<?php endforeach ?>
-		</select>
-		
-		<!-- Statut -->
-		<select id='statut' name='ID_STATUT[]' multiple='multiple'>
-			<?php foreach( $this->DB_statut as $statut ) : ?>
-			<option value='<?php echo $statut["ID_STATUT"] ?>'><?php echo $statut["LIBELLE_STATUT"] ?></option>
-			<?php endforeach ?>
-		</select>
-		
-		<!-- Local sommeil -->
-		Local sommeil
-		<input type='checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' />
-		
-		<!-- -date de la dernière visite -->
-		Date de la dernière visite
-		<input type='text' class='date ' name='DATEVISITE_DOSSIER'  size=7 />
-	
-	</div>
-	
+            <!-- Numéro ID -->
+            <input type='text' id='code' name='NUMEROID_ETABLISSEMENT' class='bigger ui-helper-hidden' size=10 />
+            
+            <!-- Commune -->
+            <input type='text' id='commune' name='LIBELLE_COMMUNE' class='bigger' size=25 />
+            
+            <!-- Avis -->
+            <select id='avis' name='ID_AVIS[]' multiple='multiple'>
+                <?php foreach( $this->DB_avis as $avis ) : ?>
+                <option value='<?php echo $avis["ID_AVIS"] ?>'><?php echo $avis["LIBELLE_AVIS"] ?></option>
+                <?php endforeach ?>
+            </select>
+            
+            <!-- Statut -->
+            <select id='statut' name='ID_STATUT[]' multiple='multiple'>
+                <?php foreach( $this->DB_statut as $statut ) : ?>
+                <option value='<?php echo $statut["ID_STATUT"] ?>'><?php echo $statut["LIBELLE_STATUT"] ?></option>
+                <?php endforeach ?>
+            </select>
+            
+            <!-- Local sommeil -->
+            Local sommeil
+            <input type='checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' />
+            
+            <!-- -date de la dernière visite -->
+            Date de la dernière visite
+            <input type='text' class='date ' name='DATEVISITE_DOSSIER'  size=7 />
+            
+            <hr class="clear" />
+        
+        </div>
+        
+    </div>
+
+    <p style="text-align: center">
+        <input type='radio' name='par' value='niveau' checked /> Recherche simple (affichage par niveau)
+        <input type='radio' name='par' value='criteres' /> Recherche avancée
+    </p>
+    
+    <input type="hidden" name="format" value="json" />
+    <input type="hidden" name="item" value="etablissement" />
+
 </form>
 
 

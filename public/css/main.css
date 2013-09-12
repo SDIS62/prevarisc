@@ -395,7 +395,6 @@ ul#onglets_horizontaux li a {
 ul#onglets_horizontaux .selection_onglets_hor a {
 
 	font-weight: bold;
-	/*color: gray;*/
 	color: inherit;
 }
 
@@ -417,11 +416,16 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 }
 
 /* Recherche */
-#recherche input {
-	/*
-	position: relative;
-	top: 3px;
-	*/
+#recherche #plus_critere_div {
+    background-color: #F5F5F5
+}
+
+#recherche #plus_critere_div > div {
+	text-align: center;
+}
+
+#recherche #plus_critere_div > div div {
+	text-align: left;
 }
 
 #recherche fieldset {
@@ -443,147 +447,6 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 
 }
 
-/*
-
-box-sizing: border-box;
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing: border-box;
-	
-	
-	
-.niveau1 { margin-left: 2em; }
-.niveau2 { margin-left: 4em; }
-
-
-#depli-cont{
-	position: absolute;
-	text-align: right;
-	top: 8px;
-}
-#tout_deplier{
-	background-image: url(/images/template/icons/fleche-grise-bas.png);
-	background-repeat: no-repeat;
-	background-position: right center;
-	padding-right: 14px;
-	text-decoration: none;
-}
-li.etablissement{
-	position: relative;
-	background-color: #ebebeb;
-	font-size: 11px;
-	min-height: 18px;
-	line-height: 20px;
-	margin: 0 18px 2px 0;
-}
-.icone{
-	padding: 0 2px 0 3px;
-	float: left;
-	width: 16px;
-	height: 16px;
-}
-.type{
-	position: relative;
-	bottom: 2px;
-	font-weight: bold;
-	color: black;
-	font-size: 9px;
-	font-family: Arial;
-	margin: 0 8px 0 5px;
-	float: left;
-	width: 150px;
-}
-.nom-etablissement{
-	position: relative;
-	bottom: 3px;
-}
-.avis{
-	color: white;
-	-moz-border-radius: 2px;
-	height: 14px;
-	line-height: 14px;
-	font-size: 10px;
-	font-variant: small-caps;
-	padding: 0 3px 0 3px;
-}
-ul#recherche_liste .avis {
-	position: absolute;
-	right: -18px;
-	text-align: center;
-	width: 14px;
-	top: 2px;
-}
-.child{
-	display: none;
-	margin-left: 25px;
-}
-.child div{
-	background-color: rgb(245,245,245);
-}
-.sous-child{
-	display: none;
-	margin-left: 50px;
-}
-.sous-child div{
-	background-color: #fafafa;
-}
-.fleche{
-	position: absolute;
-	left: -12px;
-	bottom: 7px;
-}
-.ville{
-	position: absolute;
-	right: 4px;
-	font-style: italic;
-	bottom: 5px;
-	line-height: 9px;
-	font-size: 9px
-}
-
-.F { background-color:#8eb571; }
-.D{ background-color:#CC0000; }
-.R { background-color: #000000; color: white; }
-.S { background-color:#808080; color: white; }
-
-#resume{
-	color: #464646;
-	font-size: 10px;
-}
-#resume h3 {
-	color: #000;
-	float: none;
-	font-size: 11px;
-	font-weight: bold;
-	margin: 0 0 18px 0;
-}
-#resume p{
-	margin: 0 0 9px 0;
-	line-height: 13px;
-}
-#resume p a{
-	text-decoration: none;
-}
-#resume p a:hover{
-	text-decoration: underline;
-}
-#resume p img {
-	margin:0 5px 0 0;
-	vertical-align: bottom;
-}	
-.highlight{
-	color: #ca0425;
-}
-#pagination{
-	color: #383838;
-	font-size: 11px;
-	margin: 27px 0 0 0;
-}
-#pagination span{
-	border-top: 1px dotted #949494;
-	padding: 3px 0 0 0;
-}
-*/
-
 /* Liste des cellules + Résumé des cellules */
 #liste_cell_conteneur,
 #results_container {
@@ -592,7 +455,7 @@ ul#recherche_liste .avis {
 }
 
 #content_resultats {
-	min-height: 400px;
+	/*min-height: 400px;*/
 }
 
 #result_etablissement{
