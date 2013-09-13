@@ -191,3 +191,10 @@ composer.phar
 
 *.min.css
 *.min.js
+
+
+#################
+## Netbeans
+#################
+
+nbproject
