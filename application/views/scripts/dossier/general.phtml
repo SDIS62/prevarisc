@@ -1224,6 +1224,16 @@ echo "
 						&nbsp;<button class='today'>Aujourd'hui</button>
 					</div>
 				</li>
+				
+				<li id='DATEENVTRANSIT' ".( ($action != 'new' && in_array('DATEENVTRANSIT', $this->afficherChamps) && $this->infosDossier['DATEENVTRANSIT_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Date d'envoi/transit</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEENVTRANSIT_DOSSIER']."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"")."> 
+						<input type='text' class='date' name='DATEENVTRANSIT_DOSSIER' id='DATEENVTRANSIT_INPUT' value='".( ($this->DATEENVTRANSIT_INPUT)?$this->DATEENVTRANSIT_INPUT:"" )."' />
+						&nbsp;<button class='today'>Aujourd'hui</button>
+					</div>
+				</li>
+				
 				<li id='DATESDIS' ".( ($action != 'new' && in_array('DATESDIS', $this->afficherChamps) && $this->infosDossier['DATESDIS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Date de réception SDIS</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESDIS_DOSSIER']."</div>
