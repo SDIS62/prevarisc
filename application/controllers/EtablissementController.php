@@ -508,7 +508,7 @@
                 foreach ($_GET as $key => $data) {
 
                     // DonnÃ©es non historisÃ©es
-                    if ( in_array($key, array("NUMEROID_ETABLISSEMENT", "TELEPHONE_ETABLISSEMENT", "FAX_ETABLISSEMENT", "COURRIEL_ETABLISSEMENT", "NUMEROID_ETABLISSEMENT")) ) {
+                    if ( in_array($key, array("NUMEROID_ETABLISSEMENT", "TELEPHONE_ETABLISSEMENT", "FAX_ETABLISSEMENT", "COURRIEL_ETABLISSEMENT", "NUMEROID_ETABLISSEMENT", "NBPREV_ETABLISSEMENT", "DUREEVISITE_ETABLISSEMENT")) ) {
 
                         $etablissement->$key = $data;
                     }

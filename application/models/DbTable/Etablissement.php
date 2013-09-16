@@ -8,11 +8,11 @@
         {
             return array (
                     "Site" => array( "periodicite", "etablissement_lies", "preventionnistes" ),
-                    "Établissement" => array( "adresse", "categorie", "periodicite", "r123_20", "type_principal", "activite_principale", "types_secondaires", "activite_secondaires", "commission", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_total", "preventionnistes", "avis", "etablissement_lies", "datepc", "dangerosite", "mise_secu" ),
-                    "Cellule" => array( "adresse_cellule", "r123_20", "type_principal", "activite_principale", "types_secondaires", "activite_secondaires", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_total", "preventionnistes", "avis", "periodicite", "categorie", "numerotation", "etablissement_lies", "datepc" ),
-                    "Habitation" => array( "adresse", "famille", "preventionnistes", "datepc"),
-                    "IGH" => array( "adresse", "classe", "periodicite", "commission", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_total", "preventionnistes", "avis", "datepc" ),
-                    "EIC" => array( "icpe", "adresse", "effectifs", "effectif_personnel", "effectif_total", "preventionnistes", "datepc" )
+                    "Établissement" => array( "adresse", "categorie", "periodicite", "r123_20", "type_principal", "activite_principale", "types_secondaires", "activite_secondaires", "commission", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_total", "preventionnistes", "avis", "etablissement_lies", "datepc", "dangerosite", "mise_secu", "stat_prev" ),
+                    "Cellule" => array( "adresse_cellule", "r123_20", "type_principal", "activite_principale", "types_secondaires", "activite_secondaires", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_total", "preventionnistes", "avis", "periodicite", "categorie", "numerotation", "etablissement_lies", "datepc", "stat_prev" ),
+                    "Habitation" => array( "adresse", "famille", "preventionnistes", "datepc", "stat_prev"),
+                    "IGH" => array( "adresse", "classe", "periodicite", "commission", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_total", "preventionnistes", "avis", "datepc", "stat_prev" ),
+                    "EIC" => array( "icpe", "adresse", "effectifs", "effectif_personnel", "effectif_total", "preventionnistes", "datepc", "stat_prev" )
                 );
         }
 

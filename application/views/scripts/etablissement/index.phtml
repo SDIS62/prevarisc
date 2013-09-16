@@ -868,7 +868,7 @@
 					</div>
 				</dd>
 			</dl>
-			
+
 			<?php if( $this->last_visite ) : ?>
 			<dl class='read'>
 				<dt>Dernière visite périodique</dt>
@@ -882,6 +882,29 @@
 			<?php endif ?>
 			
 		</div>
+        
+        <!-- Durée et nombre de prev -->
+        <dl id='stat_prev' class='champs'>
+            <dt <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >Nombre de préventionnistes / visite</dt>
+            <dd <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >
+                <div class='edit'>
+                    <input type='number'  name='NBPREV_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["NBPREV_ETABLISSEMENT"] ?>' />
+                </div>
+                <div class='read'>
+                    <?php echo $this->DB_etablissement["NBPREV_ETABLISSEMENT"]."&nbsp;" ?>
+                </div>
+            </dd>
+
+            <dt <?php if(empty($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"]) || $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] == "00:00:00") echo "class='edit'" ?> >Durée d'une visite</dt>
+            <dd <?php if(empty($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"]) || $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] == "00:00:00") echo "class='edit'" ?> >
+                <div class='edit'>
+                    <input type='time'  name='DUREEVISITE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] ?>' />
+                </div>
+                <div class='read'>
+                    <?php echo date("H", strtotime($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"])) . " heures et " . date("i", strtotime($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"])) ." minutes &nbsp;" ?>
+                </div>
+            </dd>
+        </dl>
 		
 		<?php endif ?>
 		
