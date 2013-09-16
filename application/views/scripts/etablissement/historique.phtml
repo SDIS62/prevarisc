@@ -7,7 +7,7 @@
 		<ul>
 			<li><a href='' id='a_libelle' >Historique du libellé</a></li>
 			<li><a href='' id='a_statut' >Historique du statut</a></li>
-			<li><a href='' id='a_avis' >Historique de l'avis</a></li>
+			<li><a href='' id='a_avis' >Historique de l'avis d'exploitation</a></li>
 			
 			<?php if( in_array("categorie", $this->classement) ) : ?>
 			<li><a href='' id='a_categorie' >Historique de la catégorie</a></li>
@@ -74,7 +74,7 @@
 	</div>
 	
 	<div id='div_avis'>
-		<h3>Historique de l'avis</h3>
+		<h3>Historique de l'avis d'exploitation</h3>
 		<?php
 			echo $this->partial(
 				"etablissement/partials/partial-historique.phtml",
