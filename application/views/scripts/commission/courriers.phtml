@@ -13,8 +13,9 @@
 	<table class='table-custom commission'>
 		<thead>
 			<tr>
-				<th>Bordereau d'envoi</th>
-				<th>Convocation</th>
+				<th>Convocation en visite</th>
+				<th>Convocation en salle</th>
+				<th>Ordre du jour</th>
 			</tr>
 		</thead>
 		
@@ -22,17 +23,24 @@
 			<tr>
 				
 				<?php
-					// Bordereau d'envoi
+					// Convocation visite
 					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
-						"type" => "BE",
-						"name_courrier" => $row_membre->COURRIER_BE,
+						"type" => "CONVOCATIONVISITE",
+						"name_courrier" => $row_membre->COURRIER_CONVOCATIONVISITE,
 						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
 					));
 					
-					// Convocation
+					// Convocation salle
 					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
-						"type" => "CONVOCATION",
-						"name_courrier" => $row_membre->COURRIER_CONVOCATION,
+						"type" => "CONVOCATIONSALLE",
+						"name_courrier" => $row_membre->COURRIER_CONVOCATIONSALLE,
+						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
+					));
+                    
+                    // ODJ
+					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
+						"type" => "ODJ",
+						"name_courrier" => $row_membre->COURRIER_ODJ,
 						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
 					));
 				?>
