@@ -2,11 +2,24 @@
 
 <hr class='clear' />
 
-<div id="content_dossiers_ets">
-<?php if( count($this->dossiers) > 0 ) : ?>
+<div id="content_visites_ets">
+<?php if( count($this->visites) > 0 ) : ?>
+    <h3>Visites</h3>
     <ul id="liste_doss">
     <?php
-	echo $this->partialLoop('search/results/dossier.phtml', $this->dossiers); 
+	echo $this->partialLoop('search/results/dossier.phtml', $this->visites); 
+    ?>
+    </ul>
+<?php endif ?>
+</div>
+
+<div id="content_etudes_ets">
+<?php if( count($this->etudes) > 0 ) : ?>
+    <?php if( count($this->visites) > 0 ) echo "<hr />"; ?>
+    <h3>Études</h3>
+    <ul id="liste_doss">
+    <?php
+	echo $this->partialLoop('search/results/dossier.phtml', $this->etudes); 
     ?>
     </ul>
 <?php endif ?>
