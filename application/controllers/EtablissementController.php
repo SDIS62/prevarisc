@@ -35,9 +35,13 @@
                     $this->view->action = $this->_request->getActionName();
 
                 // ModÃ¨les commun aux actions
-                $DB_avis = new Model_DbTable_Avis;								$this->view->DB_avis = $DB_avis->fetchAll()->toArray();
-                $DB_statut = new Model_DbTable_Statut;							$this->view->DB_statut = $DB_statut->fetchAll()->toArray();
-                $DB_genre = new Model_DbTable_Genre;							$this->view->DB_genre = $DB_genre->fetchAll()->toArray();
+                $DB_avis = new Model_DbTable_Avis;
+                // On récupère que les avis utilisés sur les établissements
+                $this->view->DB_avis = $DB_avis->getAvis(0);
+                $DB_statut = new Model_DbTable_Statut;							
+                $this->view->DB_statut = $DB_statut->fetchAll()->toArray();
+                $DB_genre = new Model_DbTable_Genre;							
+                $this->view->DB_genre = $DB_genre->fetchAll()->toArray();
 
                 // Liste des champs à afficher en fonction du genre
                 $liste_champs = $this->DB_etablissement->getListeChamps();
