@@ -729,7 +729,8 @@
 		$(this).hide();
 		$("#save_div").hide();
 		$("#InfosDossier > li").hide();
-		$("#validModification").show();
+		if($("#do").val() != 'new')
+			$("#validModification").show();
 		
 		$("#InfosDossier > li > .value").hide();
 		$("#InfosDossier > li > .form").show();
@@ -1346,23 +1347,30 @@ echo "
 				</li>
 				<li id='JUSTIFDEROG' ".( ($action != 'new' && in_array('JUSTIFDEROG', $this->afficherChamps) && $this->infosDossier['JUSTIFDEROG_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Justification de la dérogation</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['JUSTIFDEROG_DOSSIER']."</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['JUSTIFDEROG_DOSSIER'])."</div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='JUSTIFDEROG_DOSSIER' name='JUSTIFDEROG_DOSSIER' style='width:800px;' value='".( ($this->infosDossier['JUSTIFDEROG_DOSSIER'])?$this->infosDossier['JUSTIFDEROG_DOSSIER']:"" )."' />
+						<textarea name='JUSTIFDEROG_DOSSIER' id='JUSTIFDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['JUSTIFDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['JUSTIFDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					</div>
+				</li>
+				<li id='REGLEDEROG' ".( ($action != 'new' && in_array('REGLEDEROG', $this->afficherChamps) && $this->infosDossier['REGLEDEROG_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Règles auxquelles il est demandé de déroger</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['REGLEDEROG_DOSSIER'])."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<textarea name='REGLEDEROG_DOSSIER' id='REGLEDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['REGLEDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['REGLEDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
 				<li id='MESURESCOMPENS' ".( ($action != 'new' && in_array('MESURESCOMPENS', $this->afficherChamps) && $this->infosDossier['MESURESCOMPENS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Mesures proposées</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['MESURESCOMPENS_DOSSIER']."</div>
+					<div class='left libelle'>Mesures compensatoires proposées</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['MESURESCOMPENS_DOSSIER'])."</div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='MESURESCOMPENS_DOSSIER' name='MESURESCOMPENS_DOSSIER' style='width:800px;' value='".( ($this->infosDossier['MESURESCOMPENS_DOSSIER'])?$this->infosDossier['MESURESCOMPENS_DOSSIER']:"" )."' />
+						<textarea name='MESURESCOMPENS_DOSSIER' id='MESURESCOMPENS_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['MESURESCOMPENS_DOSSIER'])?htmlspecialchars($this->infosDossier['MESURESCOMPENS_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
 				<li id='MESURESCOMPLE' ".( ($action != 'new' && in_array('MESURESCOMPLE', $this->afficherChamps) && $this->infosDossier['MESURESCOMPLE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Mesures à respecter</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['MESURESCOMPLE_DOSSIER']."</div>
+					<div class='left libelle'>Mesures complémentaires à respecter</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['MESURESCOMPLE_DOSSIER'])."</div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='MESURESCOMPLE_DOSSIER' name='MESURESCOMPLE_DOSSIER' style='width:800px;' value='".( ($this->infosDossier['MESURESCOMPLE_DOSSIER'])?$this->infosDossier['MESURESCOMPLE_DOSSIER']:"" )."' />
+						<textarea name='MESURESCOMPLE_DOSSIER' id='MESURESCOMPLE_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['MESURESCOMPLE_DOSSIER'])?htmlspecialchars($this->infosDossier['MESURESCOMPLE_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
 				<li id='AVIS' ".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
@@ -1381,9 +1389,9 @@ echo "
 				</li>
 				<li id='ANOMALIE' ".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Anomalie constatée</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['ANOMALIE_DOSSIER']."</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['ANOMALIE_DOSSIER'])."</div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='ANOMALIE_DOSSIER' name='ANOMALIE_DOSSIER' value='".( ($this->infosDossier['ANOMALIE_DOSSIER'])?$this->infosDossier['ANOMALIE_DOSSIER']:"" )."' />
+						<textarea name='ANOMALIE_DOSSIER' id='ANOMALIE_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['ANOMALIE_DOSSIER'])?htmlspecialchars($this->infosDossier['ANOMALIE_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>	
 				<!--

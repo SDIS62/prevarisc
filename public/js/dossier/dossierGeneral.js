@@ -10,14 +10,14 @@ $(document).ready(function(){
 				return false;
 		}
 	);
-	*/
+	
 	$("#editDossier").bind("keypress",
 		function(e){
 			if(e.keyCode == 13)
 				return false;
 		}
 	);
-
+	*/
 
 	//JQuery UI Date picker
 	$('.date').live('click', function() {
