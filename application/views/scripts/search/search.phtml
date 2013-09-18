@@ -1,5 +1,9 @@
 <?php if( count($this->paginator) > 0 ) : ?>
-    <p><strong>Nombre total d'éléments : <?php echo $this->paginator->getTotalItemCount() ?></strong></p>
+    <p class="grid_13 alpha">
+        <strong>Nombre total d'éléments : <?php echo $this->paginator->getTotalItemCount() ?></strong> (<a href="" id="clear" >&times; Annuler la recherche</a>)
+    </p>
+    <div style="clear: both"></div>
+    <?php echo $this->paginator ?><br/>
     <?php if($this->item == "etablissement") : ?>
         <ul class='recherche_liste'>
             <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->paginator ) ?>

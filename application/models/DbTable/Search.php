@@ -82,10 +82,11 @@
                     $this->select
                          ->from(array("d" => "dossier"))
                          ->columns(array(
-                            "NOMS_ETABLISSEMENTS" => "( SELECT group_concat(etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS separator ', ')
+                            "NOMS_ETABLISSEMENTS" => "( SELECT group_concat(DISTINCT etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS separator ', ')
                                 FROM etablissementinformations
                                 INNER JOIN etablissementdossier AS ets_d ON etablissementinformations.ID_ETABLISSEMENT = ets_d.ID_ETABLISSEMENT
-                                WHERE ets_d.ID_DOSSIER = d.ID_DOSSIER AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS >= ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = ets_d.ID_ETABLISSEMENT ) )"
+                                WHERE ets_d.ID_DOSSIER = d.ID_DOSSIER AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS >= ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = ets_d.ID_ETABLISSEMENT )
+                                )"
                          ))
                          ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
                          ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))

@@ -276,14 +276,9 @@
             // CrÃ©ation de l'objet recherche
             $search = new Model_DbTable_Search;
 
-            // On set le type de recherche
-            $search->setItem("dossier");
-
-            // On recherche avec l'id de l'Ã©tablissement
-            $search->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id);
-
             // On balance le rÃ©sultat sur la vue
-            $this->view->dossiers = $search->run();
+            $this->view->etudes = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("TYPE_DOSSIER", 1)->run();
+            $this->view->visites = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("TYPE_DOSSIER", array(2, 3))->run();
         }
 
         public function historiqueAction()
