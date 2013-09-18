@@ -9,9 +9,9 @@ class DossierController extends Zend_Controller_Action
     private $listeChamps = array(
     //ETUDES
         //PC - OK
-        "1" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
+        "1" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
         //AT - OK
-        "2" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCTECH","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
+        "2" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
         //Dérogation - OK
         "3" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","JUSTIFDEROG","MESURESCOMPENS","MESURESCOMPLE","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
         //Cahier des charges fonctionnel du SSI - OK
@@ -49,8 +49,10 @@ class DossierController extends Zend_Controller_Action
         //Echéncier de travaux - OK
         "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
     //VISITE DE COMMISSION
-        //Réception de travaux avant ouverture - OK
+        //Réception de travaux - OK
         "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+		//Avant ouverture - OK
+        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
         //Périodique - OK
         "21" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE","DEMANDEUR"),
         //Chantier - OK
@@ -60,8 +62,10 @@ class DossierController extends Zend_Controller_Action
         //Inopinéee - OK
         "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE","DEMANDEUR"),
     //GROUPE DE VISITE
-        //Réception de travaux avant ouverture - OK
+        //Réception de travaux - OK
         "25" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+		//Avant ouverture - OK
+        "48" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
         //Périodique - OK
         "26" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DEMANDEUR"),
         //Chantier - OK
@@ -330,10 +334,6 @@ class DossierController extends Zend_Controller_Action
                 if ($this->view->infosDossier["DESCGEN_DOSSIER"] != '') {
                     $this->view->infosDossier["DESCGEN_DOSSIER"] = nl2br($this->view->infosDossier["DESCGEN_DOSSIER"]);
                     $this->view->DESCGEN_INPUT = str_replace("<br />", "" ,$this->view->infosDossier["DESCGEN_DOSSIER"]);
-                }
-                if ($this->view->infosDossier["DESCTECH_DOSSIER"] != '') {
-                    $this->view->infosDossier["DESCTECH_DOSSIER"] = nl2br($this->view->infosDossier["DESCTECH_DOSSIER"]);
-                    $this->view->DESCTECH_INPUT = str_replace("<br />", "" ,$this->view->infosDossier["DESCTECH_DOSSIER"]);
                 }
                 if ($this->view->infosDossier["DESCRIPTIF_DOSSIER"] != '') {
                     $this->view->infosDossier["DESCRIPTIF_DOSSIER"] = nl2br($this->view->infosDossier["DESCRIPTIF_DOSSIER"]);

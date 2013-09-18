@@ -1168,13 +1168,6 @@ echo "
 						<textarea name='OBJET_DOSSIER' id='OBJET_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
-				<li id='DESCTECH' ".( ($action != 'new' && in_array('DESCTECH', $this->afficherChamps) && $this->infosDossier['DESCTECH_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Descriptif technique</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCTECH_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<textarea id='DESCTECH_DOSSIER' name='DESCTECH_DOSSIER' rows='3' cols='100' >".( ($this->infosDossier['DESCTECH_DOSSIER'])?$this->DESCTECH_INPUT:"" )."</textarea><br/>
-					</div>
-				</li>
 				<li id='DEMANDEUR' ".( ($action != 'new' && in_array('DEMANDEUR', $this->afficherChamps) && $this->infosDossier['DEMANDEUR_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Demandeur</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DEMANDEUR_DOSSIER']."</div>
@@ -1344,15 +1337,6 @@ echo "
 					<div id='calendar' class='grid_14 calendar' style='display:none;'></div>
 					<hr class='clear'/>				
 				</li>
-				<!--
-					<li id='DESCGEN' ".( ($action != 'new' && in_array('DESCGEN', $this->afficherChamps) && $this->infosDossier['DESCGEN_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-						<div class='left libelle'>Descriptif général</div>
-						<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCGEN_DOSSIER']."</div>
-						<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-							<textarea id='DESCGEN_DOSSIER' name='DESCGEN_DOSSIER' cols='80' rows='5'>".( ($this->infosDossier['DESCGEN_DOSSIER'])?$this->DESCGEN_INPUT:"" )."</textarea><br/>
-						</div>
-					</li>
-				-->
 				<li id='DESCANAL' ".( ($action != 'new' && in_array('DESCANAL', $this->afficherChamps) && $this->infosDossier['DESCANAL_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Descriptif analyse de risque</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCANAL_DOSSIER']."</div>
