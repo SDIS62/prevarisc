@@ -54,7 +54,7 @@
 								url: $(this).attr("href"),
 								data: $("#recherche").serialize(),
 								beforeSend: function() {
-								
+                                    $('html, body').animate({ scrollTop: 0 }, 'slow');
 									$("#loader").show();
 									$("#search").hide();
 									$("#content_resultats").css("opacity", 0.5);
@@ -71,12 +71,19 @@
                                             $("#content_resultats").find('li').find("span.icone_enfants").remove();
                                         }
                                     }
+                                    
+                                    
 								},
 								error: function(r) {
 									alert(r.responseText);
 								}
 							});
 							
+							return false;
+						});
+                        
+                        $("#clear").live("click", function() {
+							$("#content_resultats").empty();
 							return false;
 						});
 						

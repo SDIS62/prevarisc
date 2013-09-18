@@ -4,7 +4,9 @@
     
     <!-- Nom du dossier -->
     <span class="doss-nom">
-        <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>'><?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE ?></a>
+        <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE, ENT_QUOTES) ?>'>
+            <?php echo substr($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE, 0, 40) . ( strlen($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE) > 40 ? "(...)" : "" )?>
+        </a>
     </span>
     
     <!-- Date du dossier -->
@@ -14,7 +16,7 @@
     
     <!-- Objet du dossier -->
     <span class="doss-objet" style="margin-left: 200px;" >
-        <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->OBJET_DOSSIER, ENT_QUOTES) ?>' ><?php echo substr($this->OBJET_DOSSIER, 0, 70) . ( strlen($this->OBJET_DOSSIER) > 70 ? "(...)" : "" )?></a>
+        <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->OBJET_DOSSIER, ENT_QUOTES) ?>' ><?php echo substr($this->OBJET_DOSSIER, 0, 100) . ( strlen($this->OBJET_DOSSIER) > 100 ? "(...)" : "" )?></a>
     </span>
     
     <!-- Dossier affecté à quels établissements ? -->
