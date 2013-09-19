@@ -409,25 +409,29 @@ echo "
 		<h2>Liste des établissements liés au dossier</h2>
 			<div id='listeEtab'>
 			";
+				$idEtabEnCour = null;
 				foreach($this->listeEtablissement as $etab){
-					echo "
-						<div class='grid_14 alpha'>
-							<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; (".$etab['LIBELLE_GENRE'].")</a>
-							<input type='hidden' name='idEtablissementDossier' value='".$etab['ID_ETABLISSEMENTDOSSIER']."' />
-							<input type='hidden' name='idEtablissement' value='".$etab['ID_ETABLISSEMENT']."' />
-							&nbsp;&nbsp;
-							<span>
-								<button class='deleteChoix' >Supprimer l'etablissement</button>
-							</span>
-							<span style='display:none;' >
-								<button class='confirmDelete' >Supprimer l'etablissement</button>
-								<button class='cancelDelete' >Annuler</button>
-							</span>
-						</div>
-						<!--
-						<hr class='clear'/>
-						-->
-					";
+					if($etab['ID_ETABLISSEMENTDOSSIER'] != $idEtabEnCour){
+						$idEtabEnCour = $etab['ID_ETABLISSEMENTDOSSIER'];
+						echo "
+							<div class='grid_14 alpha'>
+								<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; (".$etab['LIBELLE_GENRE'].")</a>
+								<input type='hidden' name='idEtablissementDossier' value='".$etab['ID_ETABLISSEMENTDOSSIER']."' />
+								<input type='hidden' name='idEtablissement' value='".$etab['ID_ETABLISSEMENT']."' />
+								&nbsp;&nbsp;
+								<span>
+									<button class='deleteChoix' >Supprimer l'etablissement</button>
+								</span>
+								<span style='display:none;' >
+									<button class='confirmDelete' >Supprimer l'etablissement</button>
+									<button class='cancelDelete' >Annuler</button>
+								</span>
+							</div>
+							<!--
+							<hr class='clear'/>
+							-->
+						";
+					}
 				}
 				
 			echo "
