@@ -567,11 +567,14 @@ class DossierController extends Zend_Controller_Action
                 if ($this->_getParam("idEtablissement")) {
                     $DBetab = new Model_DbTable_Etablissement;
                     $etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
-                    echo "pour l'établissement ".$etabTab->LIBELLE_ETABLISSEMENTINFORMATIONS;
+                    //echo "pour l'établissement ".$etabTab->LIBELLE_ETABLISSEMENTINFORMATIONS;
                     //Zend_Debug::dump($this->view->etablissement);
                 } elseif ($this->_getParam("idDossier")) {
                     $DBdossier = new Model_DbTable_Dossier;
-                    $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
+                    $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
+					$this->view->listeEtablissement = $tabEtablissement;
+					//echo count($this->view->listeEtablissement);
+					//Zend_Debug::dump($this->view->listeEtablissement);
                 }
             break;
             case "showNature":

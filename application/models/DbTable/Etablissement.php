@@ -259,7 +259,7 @@
                 ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = '$id_etablissement' ) ");
 
                 //echo $select->__toString();
-
+				//Zend_Debug::dump($DB_information->fetchRow($select));
             if ( $DB_information->fetchRow($select) != null ) {
                 $result = $DB_information->fetchRow($select)->toArray();
 

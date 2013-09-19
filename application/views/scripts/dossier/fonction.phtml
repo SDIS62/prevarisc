@@ -15,28 +15,35 @@
 				";
 			}else{
 				echo "Etablissement(s) concerné(s) : &nbsp;";
-				$i = 0;			
+				$i = 0;
+				$idEtabEnCour = null;
+				$compteur = 0;
 				foreach($this->listeEtablissement as $etab => $value){
-					$dbEtabAddr = new Model_DbTable_EtablissementAdresse;
-
-					$EtabAddr = $dbEtabAddr->get($value['ID_ETABLISSEMENT']);
-					//Zend_Debug::dump($EtabAddr);
-					//echo count($EtabAddr);
-					echo "
-						<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."'>
-						".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
-					if(count($EtabAddr) != 0){
-						echo " (".$EtabAddr[0]["LIBELLE_COMMUNE"].")";
-					}else{
-						echo " ( adresse non renseignée )";
+					if($value['ID_ETABLISSEMENTDOSSIER'] != $idEtabEnCour){
+						$compteur++;
+						//echo $value['ID_ETABLISSEMENTDOSSIER']." --- ".$idEtabEnCour;
+						$idEtabEnCour = $value['ID_ETABLISSEMENTDOSSIER'];
+						$dbEtabAddr = new Model_DbTable_EtablissementAdresse;					
+						$idEtab = $dbEtabAddr->get($value['ID_ETABLISSEMENT']);
+						$EtabAddr = $dbEtabAddr->get($value['ID_ETABLISSEMENT']);
+						//Zend_Debug::dump($EtabAddr);
+						//echo count($EtabAddr);
+						echo "
+							<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."'>
+							".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+						if(count($EtabAddr) != 0){
+							echo " (".$EtabAddr[0]["LIBELLE_COMMUNE"].")";
+						}else{
+							echo " ( adresse non renseignée )";
+						}
+						echo "
+							</a>
+						";
+						if($i < $nbEtab-1 && $compteur > 1){
+							echo " | ";
+						}
+						$i++;
 					}
-					echo "
-						</a>
-					";
-					if($i < $nbEtab-1){
-						echo " | ";
-					}
-					$i++;
 				}
 			}
 		}
