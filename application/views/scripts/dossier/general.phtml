@@ -707,7 +707,7 @@
 					var rez = eval("("+affichageResultat+")");					
 					for(var i in rez){
 						if(rez[i] == 'AVIS'){
-							//Si l'avis est défavorable alors on affiche l'anomalie constatée
+							//Si l'avis est défavorable alors on affiche l'anomalie constatée (analyse de risque)
 							if($("#AVIS_DOSSIER").val() == 3){
 								$("#ANOMALIE").show();
 							}
@@ -1388,7 +1388,7 @@ echo "
 					</div>
 				</li>
 				<li id='ANOMALIE' ".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Anomalie constatée</div>
+					<div class='left libelle'>Analyse de risque</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['ANOMALIE_DOSSIER'])."</div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
 						<textarea name='ANOMALIE_DOSSIER' id='ANOMALIE_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['ANOMALIE_DOSSIER'])?htmlspecialchars($this->infosDossier['ANOMALIE_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
