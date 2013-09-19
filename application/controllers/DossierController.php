@@ -1155,12 +1155,13 @@ class DossierController extends Zend_Controller_Action
         //if(count($affectation) == 0)
 		//echo $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE')+" - "+$this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
 
-
         $dbDossierAffectation = new Model_DbTable_DossierAffectation;
         if ($this->_getParam('COMMISSION_DOSSIER') == '') {
             $dbDossierAffectation->deleteDateDossierAffect($idDossier);
+			
         } else {
-            $dbDossierAffectation->deleteDateDossierAffect($idDossier);
+            
+			$dbDossierAffectation->deleteDateDossierAffect($idDossier);
             $affectation = $dbDossierAffectation->createRow();
             if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
                 $affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE');
