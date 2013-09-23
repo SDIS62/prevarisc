@@ -15,8 +15,11 @@
 					<?php if($this->action == "add" || $this->do == "new" ) : ?>
 						<h2 class='grid_16'>
 							<i class='sprite sprite-folder_add' ></i>
-							Création d'un nouveau dossier <div style='margin:10px;' id='infosEtablissement'></div>
+							Création d'un nouveau dossier
 						</h2>
+						<h3 class='grid_16' >
+							<div style='margin:10px;' id='infosEtablissement'></div>						
+						</h3>
 					<?php else : ?>
 						<h3 class='grid_16' >
 							<span style="color: #333333"><?php echo $this->libelleType; ?></span>
@@ -65,7 +68,9 @@
         
         <script type='text/javascript'>
 			$(document).ready(function(){
+			
 				if($("#infosEtabs").html() == ''){
+					//cas d'affichage d'un dossier
 					$.ajax({
 						url: "/dossier/fonction",
 						data: "do=infosEtabs&idDossier="+$("#idDossier").val(),
@@ -75,7 +80,7 @@
 							
 						},
 						success: function(affichageResultat){
-							//alert(affichageResultat);				
+							//alert("1-"+affichageResultat);				
 							$("#infosEtabs").html(affichageResultat);
 						},
 						error: function(){
@@ -83,17 +88,17 @@
 						}
 					});
 				}else if($("#infosEtablissement").html() == ''){
-					//alert($("#idEtablissement").val());
+					//cas de création d'un dossier depuis un établissement
 					$.ajax({
 						url: "/dossier/fonction",
-						data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val(),
+						data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val()+"&type="+$("#do").val(),
 						type:"POST",
 						//async: false,
 						beforeSend: function(){
 							
 						},
 						success: function(affichageResultat){
-							//alert(affichageResultat);				
+							//alert("2-"+affichageResultat);				
 							$("#infosEtablissement").html(affichageResultat);
 						},
 						error: function(){
@@ -101,6 +106,7 @@
 						}
 					});
 				}
+				//alert($("#infosEtabs").html()+" = div "+$("#infosEtablissement").html()+" = rien existe pas");
 			});
 		</script>
 

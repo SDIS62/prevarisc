@@ -47,6 +47,19 @@
 				}
 			}
 		}
+		//echo count($this->etablissement);
+		if($this->etablissement){
+			echo "Etablissement(s) concerné(s) : &nbsp;";
+			echo "
+				<a href='/etablissement/index/id/".$this->etablissement['ID_ETABLISSEMENT']."'>
+							".$this->etablissement['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+			if($this->adresseEtab){
+				echo "&nbsp;(".$this->adresseEtab[0]['LIBELLE_COMMUNE'].")";
+			}
+			echo "
+				</a>
+			";
+		}
 	break;
 	case "showNature":
 		echo '

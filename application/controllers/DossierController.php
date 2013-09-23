@@ -568,7 +568,11 @@ class DossierController extends Zend_Controller_Action
                     $DBetab = new Model_DbTable_Etablissement;
                     $etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
                     //echo "pour l'établissement ".$etabTab->LIBELLE_ETABLISSEMENTINFORMATIONS;
-                    //Zend_Debug::dump($this->view->etablissement);
+					$this->view->etablissement = $etabTab->toArray();
+					//Zend_Debug::dump($this->view->etablissement);
+					$DbAdresse = new Model_DbTable_EtablissementAdresse;
+					$this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
+					//Zend_Debug::dump($adresse);
                 } elseif ($this->_getParam("idDossier")) {
                     $DBdossier = new Model_DbTable_Dossier;
                     $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));

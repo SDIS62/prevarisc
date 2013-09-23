@@ -307,7 +307,7 @@ if(isset($this->do) && $this->do == 'edit'){
 			<p>
 			<div id='div_libelleCom' >
 				Saisissez le libellé de la commission
-				<input type='text' name='libelle_comm' id='libelle_comm' value='' />
+				<input type='text' name='libelle_comm' id='libelle_comm' value='".$this->libelleCom."' style='width:400px;'/>
 			</div>
 			</p>
 			<br/>
@@ -317,7 +317,7 @@ if(isset($this->do) && $this->do == 'edit'){
 					<select name='typeCom' id='typeCom'>
 	";
 	foreach($this->listeCommType as $value){
-		echo "<option value='".$value['ID_COMMISSIONTYPEEVENEMENT']."' >".$value['LIBELLE_COMMISSIONTYPEEVENEMENT']."</option>";
+		echo "<option value='".$value['ID_COMMISSIONTYPEEVENEMENT']."' ".( ($this->typeDoss ==  $value['ID_COMMISSIONTYPEEVENEMENT'])? "selected" : "" ).">".$value['LIBELLE_COMMISSIONTYPEEVENEMENT']."</option>";
 	}
 	echo "
 					</select>

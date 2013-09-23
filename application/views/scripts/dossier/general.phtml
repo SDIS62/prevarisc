@@ -346,7 +346,15 @@
 				// On empêche la selection d'un samedi ou d'un dimanche
 				if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
 					// Boite de dialogue en ajoutant en callback le traitement du formulaire
-					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end, function() {	
+					if(document.getElementById("infosEtabs")){
+						var nomEtab = $("#infosEtabs > a").html().trim();
+					}else{
+						var nomEtab = $("#infosEtablissement > a").html().trim();
+					}
+					var nomNature = $("#selectNature option:selected").text().trim();
+					var nomCom = nomNature+" - "+nomEtab;
+					//alert(nomEtab+" --- "+nomNature);
+					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end+"&libelleCom="+nomCom+"&type="+$("#TYPE_DOSSIER option:selected").val(), function() {	
 						$("#dialogComm").dialog("option", "buttons", {
 							'Enregistrer dans le calendrier': function() {
 								// Lors de la validation de la boite de dialogue

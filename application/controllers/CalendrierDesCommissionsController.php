@@ -316,6 +316,19 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             }
             //Envoi à la vue la liste des dates selectionnées
             $this->view->listeDates = $listeDates;
+			
+			if($this->_getParam('libelleCom')){
+				$this->view->libelleCom = $this->_getParam('libelleCom');
+			}else{
+				$this->view->libelleCom = "";
+			}
+			
+			if($this->_getParam('type')){
+				$this->view->typeDoss = $this->_getParam('type');
+			}else{
+				$this->view->typeDoss = "";
+			}
+			
         } else {
             switch ($this->view->do) {
                 case "addDateN":
