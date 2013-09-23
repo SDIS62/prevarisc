@@ -36,7 +36,6 @@ echo $this->headScript()->appendFile('/js/dossier/dossierGeneral.js','text/javas
 
 <br class='clear' />
 
-    <h4>Descriptif général</h4>
     <div class="lecture">
             <p><?php echo empty($this->infosDossier['DESCRIPTIF_DOSSIER']) ? "Aucun descriptif disponible pour ce dossier." : nl2br($this->infosDossier['DESCRIPTIF_DOSSIER']) ?></p>
     </div>
