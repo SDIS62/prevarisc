@@ -264,8 +264,19 @@ $(document).ready(function(){
 		};
 	})(jQuery);
 */
+	$("#addNumDoc").live('click',function(){
+		if($("#NUM_DOCURBA").val() != ''){
+			$("#listeDocUrba").append("<div class='docurba' style=''><input type='hidden' name='docUrba[]' value='"+$("#NUM_DOCURBA").val()+"' id='urba_"+$("#NUM_DOCURBA").val()+"'/>"+$("#NUM_DOCURBA").val()+" <a href='' idDocurba='"+$("#selectNature").val()+"'class='suppDocUrba'>&times;</a></div>");
+			$("#NUM_DOCURBA").val('');
+		}
+		return false;
+	});
 	
+	$(".suppDocUrba").live('click',function(){
+		$(this).parent().remove();
+	});
 	
+	/*
 	//Gestion de l'ajout de documents d'urbanisme
 	$("#addNumDoc").live('click',function(){
 		if($("#NUM_DOCURBA").val() != ''){
@@ -315,7 +326,7 @@ $(document).ready(function(){
 		}
 		return false;
 	});
-	
+	*/
 	
 	$("#OBJET_DOSSIER").blur(function(){
 		if($("#OBJET_DOSSIER").val() != ''){

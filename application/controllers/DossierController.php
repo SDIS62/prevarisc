@@ -9,13 +9,13 @@ class DossierController extends Zend_Controller_Action
     private $listeChamps = array(
     //ETUDES
         //PC - OK
-        "1" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
+        "1" => array("type","DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
         //AT - OK
-        "2" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
+        "2" => array("type","DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
         //Dérogation - OK
-        "3" => array("DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","JUSTIFDEROG","MESURESCOMPENS","MESURESCOMPLE","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR","REGLEDEROG"),
+        "3" => array("type","DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","JUSTIFDEROG","MESURESCOMPENS","MESURESCOMPLE","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR","REGLEDEROG"),
         //Cahier des charges fonctionnel du SSI - OK
-        "4" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
+        "4" => array("type","DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
         //Cahier des charges de type T - OK
         "5" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR"),
         //Salon type T - OK
@@ -63,7 +63,7 @@ class DossierController extends Zend_Controller_Action
         "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE","DEMANDEUR"),
     //GROUPE DE VISITE
         //Réception de travaux - OK
-        "25" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "25" => array("type","DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
 		//Avant ouverture - OK
         "48" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
         //Périodique - OK
@@ -346,7 +346,7 @@ class DossierController extends Zend_Controller_Action
             //Récupération du libellé du type de dossier
             $libelleType = $DBdossierType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
             $this->view->libelleType = $libelleType['LIBELLE_DOSSIERTYPE'];
-
+			
             //Récupération tous les libellé des natures du dossier concerné
             $DBdossierNature = new Model_DbTable_DossierNature;
             $this->view->natureConcerne = $DBdossierNature->getDossierNaturesLibelle($idDossier);
@@ -597,8 +597,6 @@ class DossierController extends Zend_Controller_Action
                     $tabListeIdNature = explode("_",$listeNature);
                     $premiereNature = 1;
                     $afficherChamps = array();
-
-
                     //$afficherChamps = $this->listeChamps[$idNature];
 
                     foreach ($tabListeIdNature as $idNature) {
@@ -1015,8 +1013,21 @@ class DossierController extends Zend_Controller_Action
             $nouveauDossier = $DBdossier->createRow();
         } elseif ($this->_getParam('do') == 'edit') {
             $nouveauDossier = $DBdossier->find($this->_getParam('idDossier'))->current();
+			$typeDossier = $nouveauDossier['TYPE_DOSSIER'];
+			if($typeDossier != $this->_getParam("TYPE_DOSSIER")){
+				//si le type a changé on supprime les documents consultés et les documents d'urbanisme
+				$dbDocAjout = new Model_DbTable_ListeDocAjout;
+     			$where = $dbDocAjout->getAdapter()->quoteInto('ID_DOSSIER = ?', $this->_getParam('idDossier'));
+				$dbDocAjout->delete($where);
+				
+				$dbDocConsulte = new Model_DbTable_DossierDocConsulte;
+     			$where = $dbDocConsulte->getAdapter()->quoteInto('ID_DOSSIER = ?', $this->_getParam('idDossier'));
+				$dbDocConsulte->delete($where);
+				
+				
+			}
         }
-
+		
         foreach ($_POST as $libelle => $value) {
             //On exclu la lecture de selectNature => select avec les natures;
             //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
@@ -1051,9 +1062,6 @@ class DossierController extends Zend_Controller_Action
             }
         }
 
-
-
-
         $nouveauDossier->save();
 
         $idDossier = $nouveauDossier->ID_DOSSIER;
@@ -1086,6 +1094,7 @@ class DossierController extends Zend_Controller_Action
                     }
             }
             */
+			
             $DBdossierNature = new Model_DbTable_DossierNature;
 
             $saveNature = $DBdossierNature->createRow();
@@ -1105,18 +1114,8 @@ class DossierController extends Zend_Controller_Action
                 }
             }
 
-
-
-            //Sauvegarde des numéro de document d'urbanisme du dossier
-            $DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
-            if (isset($_POST['docUrba'])) {
-                foreach ($_POST['docUrba']  as $libelle => $value) {
-                    $saveDocUrba = $DBdossierDocUrba->createRow();
-                    $saveDocUrba->ID_DOSSIER = $idDossier;
-                    $saveDocUrba->NUM_DOCURBA = $value;
-                    $saveDocUrba->save();
-                }
-            }
+			
+			
 
         } else {
             //gestion des natures en mode édition
@@ -1127,9 +1126,31 @@ class DossierController extends Zend_Controller_Action
             $nature = $DBdossierNature->find($natureCheck['ID_DOSSIERNATURE'])->current();
 
             $nature->ID_NATURE = $this->_getParam("selectNature");
-
+			
             $nature->save();
+			
         }
+		
+		
+		//Sauvegarde des numéro de document d'urbanisme du dossier
+		$DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
+		$where = $DBdossierDocUrba->getAdapter()->quoteInto('ID_DOSSIER = ?',  $idDossier);
+		//echo $where);
+		$DBdossierDocUrba->delete($where);
+		
+		if (isset($_POST['docUrba'])) {
+			
+			foreach ($_POST['docUrba']  as $libelle => $value) {				
+				$saveDocUrba = $DBdossierDocUrba->createRow();
+				$saveDocUrba->ID_DOSSIER = $idDossier;
+				$saveDocUrba->NUM_DOCURBA = $value;
+				$saveDocUrba->save();
+				echo $value."<br/>";
+			}
+		}
+		
+		
+
 
 
         //Sauvegarde des préventionnistes
