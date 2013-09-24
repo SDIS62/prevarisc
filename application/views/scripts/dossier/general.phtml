@@ -74,6 +74,7 @@
 				$("#showCommission").hide();
 				if($("#TYPE_DOSSIER").val() == 2 || $("#TYPE_DOSSIER").val() == 3){
 					$("#showVisite").show();
+					$("#showCommission").show();
 				}else{
 					$("#showCommission").show();
 				}
@@ -298,7 +299,11 @@
 					type = 1;
 				}else if($("#TYPE_DOSSIER").val() == 2){
 					//cas type de dossier visite ou groupe de visite suivant le champ infoCalendar on choisi ce que l'on affiche
-					type = $("#TYPE_DOSSIER").val();			
+					if(infoCalendar == 'showVisite'){
+						type = $("#TYPE_DOSSIER").val();
+					}else if(infoCalendar == 'showCommission'){
+						type = 1;
+					}		
 				}else if($("#TYPE_DOSSIER").val() == 3){
 					if(infoCalendar == 'showVisite'){
 						type = $("#TYPE_DOSSIER").val();
@@ -306,7 +311,7 @@
 						type = 1;
 					}	
 				}
-					
+				//alert(type);
 				$.ajax({
 					url: '/calendrier-des-commissions/recupevenement?start='+start.getTime()+"&end="+end.getTime()+"&type="+type,
 					data: {
@@ -361,8 +366,31 @@
 					}
 					var nomNature = $("#selectNature option:selected").text().trim();
 					var nomCom = nomNature+" - "+nomEtab;
+					/*
+					}else{
+						var nomCom = "";
+					}
+					*/
+					var type;
+					if($("#TYPE_DOSSIER").val() == 1){
+						//cas type dossier étude. On affiche alors que les commissions de type En Salle
+						type = 1;
+					}else if($("#TYPE_DOSSIER").val() == 2){
+						//cas type de dossier visite ou groupe de visite suivant le champ infoCalendar on choisi ce que l'on affiche
+						if(infoCalendar == 'showVisite'){
+							type = $("#TYPE_DOSSIER").val();
+						}else if(infoCalendar == 'showCommission'){
+							type = 1;
+						}		
+					}else if($("#TYPE_DOSSIER").val() == 3){
+						if(infoCalendar == 'showVisite'){
+							type = $("#TYPE_DOSSIER").val();
+						}else if(infoCalendar == 'showCommission'){
+							type = 1;
+						}	
+					}
 					//alert(nomEtab+" --- "+nomNature);
-					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end+"&libelleCom="+nomCom+"&type="+$("#TYPE_DOSSIER option:selected").val(), function() {	
+					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end+"&libelleCom="+nomCom+"&type="+type, function() {	
 						$("#dialogComm").dialog("option", "buttons", {
 							'Enregistrer dans le calendrier': function() {
 								// Lors de la validation de la boite de dialogue
@@ -399,6 +427,7 @@
 				}
 			},
 			eventClick: function( event, jsEvent, view ) {
+				//alert(event.id);
 				// Boite de dialogue
 				if(emplacement == 'calendrierComm'){
 					my_dialog("/calendrier-des-commissions/dialogcomm", "idComm="+idComm+"&idDateComm="+event.id+"&do=edit");
@@ -428,8 +457,9 @@
 							$("#ID_AFFECTATION_DOSSIER_COMMISSION").val(event.id);
 						}
 						$("#"+dateSelect).find(".hideCalendar").click();
-					
-					}else if($("#TYPE_DOSSIER").val() == 2){
+
+				/*	}else if($("#TYPE_DOSSIER").val() == 2){
+						
 						$.ajax({
 							data: "idDate=" + event.id,
 							url: "/calendrier-des-commissions/recupdateliee",
@@ -503,7 +533,9 @@
 							}
 						});
 						//Fin du cas pour les visites
-					}else if($("#TYPE_DOSSIER").val() == 3){
+					*/
+					}else if($("#TYPE_DOSSIER").val() == 3 ||$("#TYPE_DOSSIER").val() == 2){
+				
 						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');	
 						if(dateSelect == "DATEVISITE"){
 							$.ajax({
@@ -790,9 +822,13 @@
 		
 		//Gestion des cas calendrier comm visite en fonction du type de dossier
 		$(".hideCalendar").hide();
+		
+		
+		/*
 		if($("#TYPE_DOSSIER").val() == 2){
 			$("#showCommission").hide();
 		}
+		*/
 		return false;
 	});
 
@@ -990,7 +1026,7 @@
 			},
 			success: function(affichageResultat){
 				//alert(affichageResultat);
-				//window.location='/dossier/index/id/'+affichageResultat;
+				window.location='/dossier/index/id/'+affichageResultat;
 				//return false;
 			},
 			error: function(){
@@ -1090,7 +1126,7 @@
 			},
 			success: function(affichageResultat){
 				//alert(affichageResultat);
-				//window.location= affichageResultat;
+				window.location= affichageResultat;
 			},
 			error: function(){
 				return false;

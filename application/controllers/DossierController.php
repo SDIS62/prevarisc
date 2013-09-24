@@ -400,7 +400,9 @@ class DossierController extends Zend_Controller_Action
 
             $dbDateComm = new Model_DbTable_DateCommission;
             $dateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
-
+			
+			//Zend_Debug::dump($listeDateAffectDossier);
+			
             //En fonction du type de dossier on traite les dates d'affectation existantes differement
             if ($this->view->infosDossier['TYPE_DOSSIER'] == 1) {
                 // CAS D'UNE éTUDE
@@ -411,10 +413,84 @@ class DossierController extends Zend_Controller_Action
                     $this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
                     $this->view->idDateCommissionAffect = $dateComm['ID_DATECOMMISSION'];
                 }
-            } elseif ($this->view->infosDossier['TYPE_DOSSIER'] == 2) {
+            } elseif ($this->view->infosDossier['TYPE_DOSSIER'] == 2 || $this->view->infosDossier['TYPE_DOSSIER'] == 3) {
+
                 // CAS D'UNE VISITE
                 //echo "dossier de type 2".count($listeDateAffectDossier);
-                $nbDateExist = count($listeDateAffectDossier);
+                
+				foreach($listeDateAffectDossier as $val => $ue){
+					if($ue['ID_COMMISSIONTYPEEVENEMENT'] == 1){
+						//COMMISSION EN SALLE
+						 $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
+						$this->view->dateCommValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+						$this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+						$this->view->idDateCommissionAffect = $ue['ID_DATECOMMISSION'];
+					}else{
+						//VISITE OU GROUPE DE VISITE
+						$nbDateExist = count($listeDateAffectDossier);						
+						
+						 if ($nbDateExist == 1) {
+							//Si 1 seule date alors la date de viste et de commission est la même
+							$date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
+							$this->view->dateVisiteValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+							$this->view->dateVisiteInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+							$this->view->dateCommValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+							$this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+							$this->view->idDateVisiteAffect = $dateComm['ID_DATECOMMISSION'];
+							//$this->view->idDateCommissionAffect = $dateComm['ID_DATECOMMISSION_AFFECT'];
+						} elseif ($nbDateExist == 2) {
+							//Si 2 dates alors on affiche toutes les dates -1 dans visite et la dernière dans date de passage en comm
+							$infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
+							//Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
+							if (!$infosDateComm['DATECOMMISSION_LIEES']) {
+								$commPrincipale = $affectDossier['ID_DATECOMMISSION_AFFECT'];
+							} else {
+								$commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
+							}
+							//récupération de l'ensemble des dates liées
+							$recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
+							$nbDatesTotal = count($recupCommLiees);
+							$nbDateDecompte = $nbDatesTotal;
+							$listeDateValue = "";
+							$listeDateInput = "";
+							//echo "nb dates total = ".$nbDatesTotal."<br/>";
+							foreach ($recupCommLiees as  $val => $ue) {
+								$date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
+								if ($nbDateDecompte == $nbDatesTotal) {
+									//premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
+									$this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
+								}
+								if ($nbDateDecompte > 1) {
+									$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR).", ";
+									$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR).", ";
+								} elseif ($nbDateDecompte == 1) {
+									$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+									$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+								}
+
+								$this->view->dateVisiteValue = $listeDateValue;
+								$this->view->dateVisiteInput = $listeDateInput;
+
+								//echo $nbDateDecompte." --- ".$ue['DATE_COMMISSION']."<br/>";
+
+								$nbDateDecompte--;
+							}
+
+							//echo "<br/>";
+							//Zend_Debug::dump($recupCommLiees);
+						}
+						
+						
+						
+
+					}
+				}
+			}
+				
+				
+				
+				
+				/*
                 if ($nbDateExist == 1) {
                     //Si 1 seule date alors la date de viste et de commission est la même
                     $date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
@@ -470,6 +546,7 @@ class DossierController extends Zend_Controller_Action
                     //echo "<br/>";
                     //Zend_Debug::dump($recupCommLiees);
                 }
+				
             } elseif ($this->view->infosDossier['TYPE_DOSSIER'] == 3) {
                 //CAS D'UN GROUPE DE VISITE
                 //$listeDateAffectDossier doit contenir deux dates. Une pour la visite et une pour le passage en commission
@@ -525,8 +602,7 @@ class DossierController extends Zend_Controller_Action
                     }
                 }
             }
-
-
+			*/
 
             $DBdossierPrev = new Model_DbTable_DossierPreventionniste;
             $this->view->preventionnistes = $DBdossierPrev->getPrevDossier($this->_getParam("id"));
@@ -1186,9 +1262,7 @@ class DossierController extends Zend_Controller_Action
         $dbDossierAffectation = new Model_DbTable_DossierAffectation;
         if ($this->_getParam('COMMISSION_DOSSIER') == '') {
             $dbDossierAffectation->deleteDateDossierAffect($idDossier);
-			
         } else {
-            
 			$dbDossierAffectation->deleteDateDossierAffect($idDossier);
             $affectation = $dbDossierAffectation->createRow();
             if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
