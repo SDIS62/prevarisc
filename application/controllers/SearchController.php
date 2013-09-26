@@ -43,6 +43,7 @@
             // Modèles
             $DB_nature = new Model_DbTable_DossierNatureliste();
             $this->view->DB_nature = $DB_nature->fetchAll()->toArray();
+			//Zend_Debug::dump($this->view->DB_nature);
         }
 
         public function utilisateurAction()

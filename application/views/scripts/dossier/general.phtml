@@ -1368,6 +1368,16 @@ echo "
 					<div id='calendarVisite' class='grid_14 calendar' style='display:none;'></div>
 					<hr class='clear'/>				
 				</li>
+				<li id='INCOMPLET' ".( ($action != 'new' && in_array('INCOMPLET', $this->afficherChamps) && $this->infosDossier['INCOMPLET_DOSSIER'] != NULL )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Etat dossier</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+						".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == '0' )? "Complet" : "Incomplet" )."				
+					</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='radio' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || !$this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Complet
+						<input type='radio' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Incomplet					
+					</div>
+				</li>
 				<li id='DATECOMM' ".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Date de passage en &nbsp;commission</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
