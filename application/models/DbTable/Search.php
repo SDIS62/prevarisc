@@ -94,7 +94,8 @@
                          ->joinLeft("dossierdocurba", "d.ID_DOSSIER = dossierdocurba.ID_DOSSIER", "NUM_DOCURBA")
                          ->joinLeft(array("e" => "etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
                          ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )", "LIBELLE_ETABLISSEMENTINFORMATIONS")
-                         ->joinLeft("avis", "d.AVIS_DOSSIER = avis.ID_AVIS");
+                         ->joinLeft("avis", "d.AVIS_DOSSIER = avis.ID_AVIS")
+                         ->group("d.ID_DOSSIER");
                     break;
 
                 // Pour les utilisateurs
