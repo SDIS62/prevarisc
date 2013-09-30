@@ -356,30 +356,44 @@
 
         public function getVisiteNextPeriodique($id_etablissement)
         {
-            $select = "SELECT MIN( dossier.DATEVISITE_DOSSIER ) AS DATEVISITE_DOSSIER FROM etablissementdossier, dossier, dossiernature, etablissement
+            $select_visite_commission = "SELECT MIN( dossier.DATEVISITE_DOSSIER ) AS DATEVISITE_DOSSIER FROM etablissementdossier, dossier, dossiernature, etablissement
                 WHERE dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
                 AND dossiernature.ID_DOSSIER = dossier.ID_DOSSIER
                 AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                 AND etablissement.ID_ETABLISSEMENT = '".$id_etablissement."'
                 AND dossiernature.ID_NATURE = '21'
-                AND ( dossier.TYPE_DOSSIER = '2' || dossier.TYPE_DOSSIER = '3')
+                AND dossier.TYPE_DOSSIER = '2'
+                AND UNIX_TIMESTAMP(dossier.DATEVISITE_DOSSIER) >= UNIX_TIMESTAMP(NOW())
+                GROUP BY etablissement.ID_ETABLISSEMENT";
+                
+            $select_visite_groupe_de_visite = "SELECT MIN( dossier.DATEVISITE_DOSSIER ) AS DATEVISITE_DOSSIER FROM etablissementdossier, dossier, dossiernature, etablissement
+                WHERE dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
+                AND dossiernature.ID_DOSSIER = dossier.ID_DOSSIER
+                AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
+                AND etablissement.ID_ETABLISSEMENT = '".$id_etablissement."'
+                AND dossiernature.ID_NATURE = '21'
+                AND dossier.TYPE_DOSSIER = '3'
                 AND UNIX_TIMESTAMP(dossier.DATEVISITE_DOSSIER) >= UNIX_TIMESTAMP(NOW())
                 GROUP BY etablissement.ID_ETABLISSEMENT";
 
-            if (null != ($row = $this->getAdapter()->fetchRow($select))) {
+            if (null != ($row = $this->getAdapter()->fetchRow($select_visite_commission))) {
                 return new Zend_Date($row["DATEVISITE_DOSSIER"], Zend_Date::DATES);
             } else {
-
-                $last_visite = $this->getVisiteLastPeriodique( $id_etablissement );
-
-                if ($last_visite != null) {
-
-                    $date = new Zend_Date($last_visite, Zend_Date::DATES);
-                    $date->add($this->getPeriodicite($id_etablissement), Zend_Date::MONTH);
-
-                    return $date;
+            
+                if (null != ($row = $this->getAdapter()->fetchRow($select_visite_groupe_de_visite))) {
+                    return new Zend_Date($row["DATEVISITE_DOSSIER"], Zend_Date::DATES);
                 } else {
-                    return null;
+                    $last_visite = $this->getVisiteLastPeriodique( $id_etablissement );
+
+                    if ($last_visite != null) {
+
+                        $date = new Zend_Date($last_visite, Zend_Date::DATES);
+                        $date->add($this->getPeriodicite($id_etablissement), Zend_Date::MONTH);
+
+                        return $date;
+                    } else {
+                        return null;
+                    }
                 }
             }
         }
