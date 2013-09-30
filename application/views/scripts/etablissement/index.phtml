@@ -719,6 +719,18 @@
 				</dd>
 			</dl>
 			<?php endif ?>
+            
+            <!-- Adresses héritées des enfants (pour le site) -->
+			<?php if(isset($this->adresse_site) && $this->adresse_site != null) : ?>
+			<dl>
+				<dt class='read edit' >Adresse héritées des établissements enfants</dt>
+				<dd>
+					<div class='read'>
+					<p style='margin-bottom: 3px'><?php echo $this->adresse_site ?></p>
+					</div>
+				</dd>
+			</dl>
+			<?php endif ?>
 			
 			<?php if(count($this->array_groupements) > 0) : ?>
 			<dl class="read">

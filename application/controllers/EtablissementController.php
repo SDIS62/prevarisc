@@ -183,6 +183,45 @@
                         $this->view->cell_categorie = $this->DB_etablissement->getDefaultCategorie(array("ID_GENRE" => 3, "ID_PERE" => $pere["ID_ETABLISSEMENT"]));
                     }
                 }
+                
+                // Adresses du site
+                if($this->view->DB_genre[$this->informations["ID_GENRE"]-1]["LIBELLE_GENRE"] == "Site")
+                {
+                    $etablissement_enfants = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $this->_request->id)->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+                    
+                    if(count($etablissement_enfants) > 0)
+                    {
+                        $i = 0;
+                        
+                        foreach($etablissement_enfants as $key => $ets)
+                        {
+                            if($ets["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] > $etablissement_enfants[$i]["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"])
+                            {
+                                $i = $key;
+                            }
+                        }
+                        
+                        $adresse_site = $etablissement_enfants[$i]["ID_ETABLISSEMENT"];
+                    }
+                    else
+                    {
+                        $adresse_site = null;
+                    }
+                    
+                    if($adresse_site === null)
+                    {
+                        $this->view->adresse_site = "Aucune adresse";
+                    }
+                    else
+                    {
+                        $row_adresse = $DB_adresse->get($etablissement_enfants[$i]["ID_ETABLISSEMENT"]);
+                        
+                        foreach($row_adresse as $adresse)
+                        {
+                            $this->view->adresse_site .= $adresse["NUMERO_ADRESSE"] . " " . $adresse["LIBELLE_RUE"] . " " . $adresse["CODEPOSTAL_COMMUNE"] . " " . $adresse["LIBELLE_COMMUNE"] . " - ";
+                        }
+                    }
+                }
 
                 // Les dernières et prochaines visites
                 $this->view->last_visite =  $this->DB_etablissement->getVisiteLastPeriodique( $this->_request->id ) != null ? $this->DB_etablissement->getVisiteLastPeriodique( $this->_request->id )->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ) : null;
