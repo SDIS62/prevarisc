@@ -50,7 +50,8 @@
                     SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS)
                     FROM etablissementdossier, etablissementinformations
                     WHERE etablissementinformations.ID_ETABLISSEMENT = t1.ID_ETABLISSEMENT
-                );
+                )
+				GROUP BY ID_ETABLISSEMENT;
 
             ";
 

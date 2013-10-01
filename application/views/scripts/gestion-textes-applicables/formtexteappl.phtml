@@ -1,0 +1,26 @@
+<?php
+echo "
+	<form name='formTexteAppl' id='formTexteAppl' action='' method='POST'>
+";
+if($this->idTexteAppl)
+{
+	echo "<input type='hidden' name='idTexteAppl' id='idTexteAppl' value='".$this->texteEdit[0]['ID_TEXTESAPPL']."' />";
+}
+echo "	
+		<select name='type' id='type'>
+";
+	foreach($this->listeType as $var => $ue)
+	{
+		echo "<option value='".$ue['ID_TYPETEXTEAPPL']."' ".( ($this->idTexteAppl && $this->texteEdit[0]['ID_TYPETEXTEAPPL'] == $ue['ID_TYPETEXTEAPPL'])? "selected='selected'" : "" ).">".$ue['LIBELLE_TYPETEXTEAPPL']."</option>";
+	}		
+echo "
+		</select>
+		<hr class='clear'>
+		<textarea name='libelle' cols='150' rows='5'>".( ($this->idTexteAppl && $this->texteEdit[0]['LIBELLE_TEXTESAPPL'] != '')? $this->texteEdit[0]['LIBELLE_TEXTESAPPL'] : "" )."</textarea>
+		<hr class='clear'>
+		<select name='visible' id='visible'>
+			<option value='1' ".( ($this->idTexteAppl && $this->texteEdit[0]['VISIBLE_TEXTESAPPL'] == 1)?"selected='selected'": "" ).">Afficher</option>
+			<option value='0' ".( ($this->idTexteAppl && $this->texteEdit[0]['VISIBLE_TEXTESAPPL'] == 0)?"selected='selected'": "" ).">Masquer</option>
+		</select>
+	</form>
+";

@@ -413,7 +413,7 @@ $(document).ready(function() {
 					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 						echo "
 							<div class='external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
-								<img src='/images/folder.png' alt='' />&nbsp;&nbsp;".$dossierNonAffect['OBJET_DOSSIER']."
+								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >".$dossierNonAffect['OBJET_DOSSIER']."</a>
 							</div>
 						";
 					}
@@ -435,10 +435,10 @@ $(document).ready(function() {
 		if( count($this->listeDossierNonAffect) != 0 ){
 			foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 				echo "
-					<li style='cursor: move;' num='".$dossierNonAffect['NUM_DOSSIER']."'  >
+					<li num='".$dossierNonAffect['NUM_DOSSIER']."'  >
 						<div class='external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
 							<img src='/images/folder.png' alt='' />&nbsp;&nbsp;
-							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."'>".$dossierNonAffect['OBJET_DOSSIER']."</a>
+							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >".$dossierNonAffect['OBJET_DOSSIER']."</a>
 						</div>
 					</li>
 				";

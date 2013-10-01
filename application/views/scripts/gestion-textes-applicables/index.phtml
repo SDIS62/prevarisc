@@ -1,0 +1,109 @@
+<?php
+echo "
+    <h2>
+        <i class='sprite sprite-application_view_columns' ></i>
+        Gestion des textes applicables
+    </h2>
+	<button id='createTexteAppl'>Ajouter un texte applicable</button><br/><br/>
+";
+
+$idTypeMarq = "";
+foreach($this->listeTextesAppl as $val => $ue){
+	$idType = $ue['ID_TYPETEXTEAPPL'];
+	if($idTypeMarq != $idType){
+		//Pour l'affichage par catégorie
+		echo "
+			<div class='grid_14 alpa' style='font-weight:bold;font-size:25px;'>".$ue['LIBELLE_TYPETEXTEAPPL']."</div>
+			<hr class='clear'>
+		";
+		$idTypeMarq = $idType;
+	}
+	echo "
+		<div class='grid_12 alpha'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
+		<div class='grid_1'><button class='editTexteAppl' id='".$ue['ID_TEXTESAPPL']."'>Editer</button></div>
+		<div class='grid_1'>".( ($ue['VISIBLE_TEXTESAPPL'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."</div>
+		<hr class='clear'>
+	";
+
+}
+
+?>
+<script type='text/javascript' >
+$(document).ready(function() {
+	var dialogEditTexteAppl = $('<div style="display:none"></div>').appendTo('body');
+	
+	$(".editTexteAppl").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		},
+		text: false
+	}).click(function(){
+		//On ouvre la boite de dialogue
+		var id = $(this).attr('id');
+		$.ajax({
+			type: "POST",
+			url: "/gestion-textes-applicables/formtexteappl",
+			data: "&id="+id,
+			success: function(msg){
+				//alert(msg);
+				dialogEditTexteAppl.html(msg);
+				dialogEditTexteAppl.dialog("open");
+			}
+		});
+	});
+	
+	$("#createTexteAppl").button({
+		icons: {
+			primary: 'ui-icon-circle-plus'
+		},
+		text: true
+	}).click(function(){
+		$.ajax({
+			type: "POST",
+			url: "/gestion-textes-applicables/formtexteappl",
+			success: function(msg){
+				//alert(msg);
+				dialogEditTexteAppl.html(msg);
+				dialogEditTexteAppl.dialog("open");
+			}
+		});
+	});
+	
+	dialogEditTexteAppl.dialog({
+		title: "Modification texte applicable",
+		modal: true,
+		autoOpen: false,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			"Sauvegarder": function() {
+				$.ajax({
+					type: "POST",
+					url: "/gestion-textes-applicables/save",
+					data: $("#formTexteAppl").serialize(),
+					success: function(msg){
+						//alert(msg);
+						dialogEditTexteAppl.html("");
+						dialogEditTexteAppl.dialog("close");
+						if($("#gestionTextesAppl").length){
+							$("#gestionTextesAppl").click();
+						}else{
+							window.location='/gestion-textes-applicables';
+						}
+						
+					}
+				});
+				return false;
+			},
+			"Annuler": function() {
+				dialogEditTexteAppl.dialog("close");
+			}
+		},
+		close: function(event, ui){
+			
+		}
+
+	});
+
+});
+</script>

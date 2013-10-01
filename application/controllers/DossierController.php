@@ -125,7 +125,7 @@ class DossierController extends Zend_Controller_Action
                         ->initContext();
 
         if( !isset($this->view->action) )
-                $this->view->action = $this->_request->getActionName();
+			$this->view->action = $this->_request->getActionName();
 
         $this->view->idDossier = ($this->_getParam("id"));
 
@@ -134,7 +134,6 @@ class DossierController extends Zend_Controller_Action
         if ($id_dossier == null) { $id_dossier = $this->_getParam("idDossier"); }
 
         if ($id_dossier != null) {
-
             if($this->_helper->Droits()->checkDossier($id_dossier))
                 $this->_helper->Droits()->redirect();
 
@@ -145,11 +144,12 @@ class DossierController extends Zend_Controller_Action
             $DBdossierType = new Model_DbTable_DossierType;
             $libelleType = $DBdossierType->find($dossier->TYPE_DOSSIER)->current();
 
-            //Zend_Debug::dump($libelleType);
             $this->view->objetDossier = $dossier->OBJET_DOSSIER;
+			$this->view->idTypeDossier = $dossier->TYPE_DOSSIER;
             $this->view->libelleType = $libelleType['LIBELLE_DOSSIERTYPE'];
 
             $this->view->idDossier = ($this->_getParam("id"));
+			
         } else {
 
             if ($this->_helper->Droits()->get()->DROITDOSSCREATION_GROUPE != 1) {
@@ -1072,9 +1072,22 @@ class DossierController extends Zend_Controller_Action
 				//echo get_class($dossierPjEdit);
 				//Zend_debug::dump($dossierPjEdit);
 				$dossierPjEdit->save();
-								
-
-            break;
+			break;
+			case "texteApplicable":
+				$this->_helper->viewRenderer->setNoRender();
+				//echo $this->_getParam('toDo');
+				$dbDossierTexteApplicable = new Model_DbTable_DossierTextesAppl;
+				if($this->_getParam('toDo') == 'save'){
+					//$row = $dbDossierTexteApplicable->
+					$row = $dbDossierTexteApplicable->createRow();
+					$row->ID_TEXTESAPPL = $this->_getParam('idTexte');
+					$row->ID_DOSSIER = $this->_getParam('idDossier');
+					$row->save();
+				}else if ($this->_getParam('toDo') == 'delete'){
+					$row = $dbDossierTexteApplicable->find($this->_getParam('idTexte'),$this->_getParam('idDossier'))->current();
+					$row->delete();
+				}
+			break;
         }
     }
 
@@ -1098,9 +1111,7 @@ class DossierController extends Zend_Controller_Action
 				
 				$dbDocConsulte = new Model_DbTable_DossierDocConsulte;
      			$where = $dbDocConsulte->getAdapter()->quoteInto('ID_DOSSIER = ?', $this->_getParam('idDossier'));
-				$dbDocConsulte->delete($where);
-				
-				
+				$dbDocConsulte->delete($where);				
 			}
         }
 		
@@ -1561,8 +1572,6 @@ class DossierController extends Zend_Controller_Action
         $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
     }
 
-
-
     //Action permettant de lister les établissements et les dossiers liés
     public function lieesAction()
     {
@@ -1577,8 +1586,6 @@ class DossierController extends Zend_Controller_Action
         */
         //Zend_Debug::dump($this->view->listeEtablissement);
     }
-
-
 
     public function contactAction()
     {
@@ -1794,7 +1801,7 @@ class DossierController extends Zend_Controller_Action
         //Permet de charger la liste des établissements liés au dossier pour la selection des rapports à generer
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
-
+		//Zend_Debug::dump($this->view->listeEtablissement);
     }
 
     public function generationrapportAction()
@@ -2231,5 +2238,23 @@ class DossierController extends Zend_Controller_Action
         }
         
     }
-
+	
+	public function textesapplicablesAction()
+    {
+		//on commence par afficher tous les texte applicables qui sont visible regroupés par leurs type
+		$dbTextesAppl = new Model_DbTable_TextesAppl;
+		$this->view->listeTextesAppl = $dbTextesAppl->recupTextesApplVisible();
+		
+		//on recupere tout les textes applicables qui ont été cochés dans le dossier
+		$dbDossierTextesAppl = new Model_DbTable_DossierTextesAppl;
+		$liste = $dbDossierTextesAppl->recupTextesDossier($this->_getParam("id"));
+		//Zend_Debug::dump($liste);
+		$listeId = array();
+		foreach($liste as $val => $ue){
+			array_push($listeId,$ue['ID_TEXTESAPPL']);
+		}
+		
+		$this->view->listeIdTexte = $listeId;
+		//Zend_Debug::dump($this->view->listeIdTexte);
+	}
 }
