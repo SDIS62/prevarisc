@@ -622,26 +622,13 @@
 			<h4>Informations générales</h4>
 			<dl>
 				
-				<!-- Numéro d'identification winprev -->
-				<?php if($this->idwinprev != false ) : ?>
-					<dt class='read' >Numéro d'identification WINPREV</dt>
-					<dd class='read' >
-						<div class='read'>
-							<?php echo $this->idwinprev."&nbsp;" ?>
-						</div>
-					</dd>
-				<?php endif ?>
-                
-                <!-- Numéro ID Winprev -->
-				<dt <?php if(empty($this->DB_etablissement["NUMEROID_ETABLISSEMENT"])) echo "class='edit'" ?> >Numéro d'identification</dt>
-				<dd <?php if(empty($this->DB_etablissement["NUMEROID_ETABLISSEMENT"])) echo "class='edit'" ?> >
-					<div class='edit'>
-						<input type='text' name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["NUMEROID_ETABLISSEMENT"] ?>' />
-					</div>
-					<div class='read'>
-                        <?php echo $this->DB_etablissement["NUMEROID_ETABLISSEMENT"]."&nbsp;" ?>
-					</div>
-				</dd>
+				<!-- Numéro d'identification -->
+                <dt class='read' >Numéro d'identification</dt>
+                <dd class='read' >
+                    <div class='read'>
+                        <?php echo $this->idwinprev."&nbsp;" ?>
+                    </div>
+                </dd>
 				
 			</dl>
 

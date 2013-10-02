@@ -226,6 +226,9 @@
                 // Les dernières et prochaines visites
                 $this->view->last_visite =  $this->DB_etablissement->getVisiteLastPeriodique( $this->_request->id ) != null ? $this->DB_etablissement->getVisiteLastPeriodique( $this->_request->id )->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ) : null;
                 $this->view->next_visite =  $this->DB_etablissement->getVisiteNextPeriodique( $this->_request->id ) != null ? $this->DB_etablissement->getVisiteNextPeriodique( $this->_request->id )->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ) : null;
+                
+                // récupération de l'id de l'établissement
+                $this->view->idwinprev = $this->view->DB_etablissement->NUMEROID_ETABLISSEMENT == "" ? $this->_request->id : $this->view->DB_etablissement->NUMEROID_ETABLISSEMENT;
 
                 //Zend_Debug::dump($this->view->last_visite);
             }
@@ -665,10 +668,12 @@
                 }
                 
                 // On créé son numéro d'id
+                /*
                 if($new)
                 {
                     $etablissement->NUMEROID_ETABLISSEMENT = $this->DB_etablissement->getIDWinprev($etablissement->ID_ETABLISSEMENT);
                 }
+                */
 
                 $db->commit();
 
