@@ -5,6 +5,7 @@
 		<!-- Logo prevarisc -->
 		<p id='user-login-content-logo'>
 			<img src='/images/logo_prevarisc_big.jpg' alt='Prevarisc' />
+            <span class="version">Version <?php echo $this->version_prevarisc ?></span>
 		</p>
 		
 		<!-- Formulaire de connexion -->
@@ -12,7 +13,7 @@
 			<form id='user-login-content-form' action='/user/login' method='post' class="ui-widget ui-widget-content ui-corner-all" >
 
 				<p>
-					<label>Login</label>
+					<label>Nom d'utilisateur</label>
 					<input type='text' name='username' />
 
 					<label>Mot de passe</label>

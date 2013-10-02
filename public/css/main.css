@@ -138,6 +138,14 @@ p#layout-footer-copyright {
 
 /* Connexion utilisateur */
 
+.version {
+    font-size: 20px;
+    font-weight: 200;
+    color: #898989;
+    display: block;
+    margin-top: 20px;
+}
+
 #user-login {
 
 	margin-top: 250px;
