@@ -35,7 +35,23 @@
     }
     ?>
     <span class="ville">
-        <?php echo ( $this->DATEVISITE_DOSSIER ? "Dernière visite périodique : " . $date->get( Zend_Date::DATE_MEDIUM ) . " - " : "" ) . $this->LIBELLE_COMMUNE ?>
+        <?php
+            echo ( $this->DATEVISITE_DOSSIER ? "Dernière visite périodique : " . $date->get( Zend_Date::DATE_MEDIUM ) . " - " : "" );
+            
+            switch($this->ID_GENRE)
+            {
+                case 1:
+                    echo $this->LIBELLE_COMMUNE_ADRESSE_SITE;
+                    break;
+                    
+                case 3:
+                    echo $this->LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                    break;
+                    
+                default:
+                    echo $this->LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+            }
+        ?>
     </span>
     
     <!-- Avis -->

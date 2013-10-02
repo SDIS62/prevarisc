@@ -595,7 +595,8 @@
                                                 case 2:
                                                     if($genre_enfant != 3)
                                                         throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
-                                                        
+                                                    break;
+                                                    
                                                 default:
                                                     if($genre_enfant != null)
                                                         throw new Exception('L\'établissement enfant n\'est pas compatible', 500);

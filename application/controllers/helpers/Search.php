@@ -42,7 +42,32 @@
                 $search->setCriteria("avis.ID_AVIS", $criteres["ID_AVIS"]);
 
             if( array_key_exists("LIBELLE_COMMUNE", $criteres) && $criteres["LIBELLE_COMMUNE"] != "Commune" )
-                $search->setCriteria("LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
+            {
+                if( array_key_exists("ID_GENRE", $criteres) && count($criteres["ID_GENRE"]) > 0 )
+                {
+                    foreach($criteres["ID_GENRE"] as $genre) {
+                        switch($genre)
+                        {
+                            case "1": 
+                                $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_SITE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                                break;
+                                
+                            case "3":
+                                $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_CELLULE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                                break;
+                                
+                            default:
+                                $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_DEFAULT", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                        }
+                    }
+                }
+                else
+                {
+                    $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_SITE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                    $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_CELLULE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_DEFAULT", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                }
+            }
 
             if( array_key_exists("LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", $criteres) )
                 $search->setCriteria("LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", (bool) $criteres["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]);
