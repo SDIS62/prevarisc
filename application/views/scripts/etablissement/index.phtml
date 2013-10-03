@@ -162,19 +162,6 @@
 			</dd>
 		</dl>
 			
-		<!-- Local Sommeil ? -->
-		<dl id='local_sommeil' class='champs'>
-			<dt>Présence de local à sommeil</dt>
-			<dd>
-				<div class='edit'>
-					<input type='checkbox' id='local_sommeil_checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
-				</div>
-				<div class='read'>
-					<?php echo ($this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
-				</div>
-			</dd>
-		</dl>
-			
 		<!-- Périodicité -->
 		<dl id='periodicite' class='champs'>
 			<dt>Périodicité</dt>
@@ -284,6 +271,19 @@
 			</dl>
 			
 		</div>
+        
+        <!-- Local Sommeil ? -->
+		<dl id='local_sommeil' class='champs'>
+			<dt>Présence de local à sommeil</dt>
+			<dd>
+				<div class='edit'>
+					<input type='checkbox' id='local_sommeil_checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+				</div>
+				<div class='read'>
+					<?php echo ($this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
+				</div>
+			</dd>
+		</dl>
 
 		<!-- Classe -->
 		<dl id='classe' class='champs'>
