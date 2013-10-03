@@ -130,7 +130,6 @@
 				
 				<div class='edit'>
 					<select  id='categorie_select' name='ID_CATEGORIE'>
-						<option value='0'>Par défaut</option>
 						<?php foreach( $this->DB_categorie as $item ) : ?>
 						<option value='<?php echo $item["ID_CATEGORIE"] ?>' <?php if( $item["ID_CATEGORIE"] == $this->DB_informations["ID_CATEGORIE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_CATEGORIE"] ?></option>
 						<?php endforeach ?>
