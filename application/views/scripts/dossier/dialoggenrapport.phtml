@@ -24,7 +24,7 @@
 		if($file != '.' && $file != '..' && !is_dir($dirname.$file))
 		{
 			//echo '<a href="'.$dirname.$file.'">'.$file.'</a>';
-			echo "<option value='/data/uploads/documents/".$file."'>".$file."</option>";
+			echo "<option value='".DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents".DIRECTORY_SEPARATOR.$file."'>".$file."</option>";
 		}
 	}
 	echo "</select><br/><br/>";

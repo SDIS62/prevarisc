@@ -1,5 +1,5 @@
 <?php
-require_once("/vendor/cybermonde/odtphp/library/odf.php");
+//require_once("./vendor/cybermonde/odtphp/library/odf.php");
 
 /*
 	echo $this->infosDossier['TYPE_DOSSIER'];
@@ -13,28 +13,37 @@ require_once("/vendor/cybermonde/odtphp/library/odf.php");
 		$odf = new odf("./data/uploads/documents/modele_rapport_visite.odt");
 	}
 */
+//echo DATA_PATH.$this->fichierSelect;
 
-$odf = new odf(".".$this->fichierSelect);
+function verifInfos($var){
+	if($var == ''){
+		return "néant";
+	}else{
+		return $var;
+	}
+}
+
+$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR.$this->fichierSelect);
 
 try {
-	$odf->setVars('libelle_commission',$this->commissionInfos['LIBELLE_COMMISSION'],true,'UTF8');
+	$odf->setVars('libelle_commission',verifInfos($this->commissionInfos['LIBELLE_COMMISSION']),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 try {
-	$odf->setVars('date_commEntete',$this->dateCommEntete,true,'UTF8');
+	$odf->setVars('date_commEntete',verifInfos($this->dateCommEntete),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try {
-	$odf->setVars('numWinPrev',$this->numWinPrev,true,'UTF8');
+	$odf->setVars('numWinPrev',verifInfos($this->numWinPrev),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 
-/* PARTIE DOC CONSULTE */
+// PARTIE DOC CONSULTE
 	try{
 		//Generation du segment ListePrescription
 		$docConsulte = $odf->setSegment('listeDocs');
@@ -52,12 +61,15 @@ try {
 				$docConsulte->exist('X');
 				$docConsulte->refdoc(utf8_decode($ref));
 				$docConsulte->datedoc(utf8_decode($date));
-			}else{
+				$docConsulte->merge();
+			}
+			/*
+			else{
 				$docConsulte->exist('', true, "ISO-8859-15");
 				$docConsulte->refdoc('', true, "ISO-8859-15");
 				$docConsulte->datedoc('', true, "ISO-8859-15");
 			}
-			$docConsulte->merge();
+			*/
 		}
 		$odf->mergeSegment($docConsulte);
 	} catch (OdfException $e) {
@@ -80,7 +92,7 @@ try {
 
 	}
 	
-/* PARTIE PRESCRIPTION */
+// PARTIE PRESCRIPTION
 	try{
 	//Generation du segment ListePrescription
 		$prescription = $odf->setSegment('listePrescription');
@@ -117,105 +129,145 @@ try {
 	} catch (OdfException $e) {
 
 	}
-	
+
+	//PARTIE TEXTE APPLICABLE
+	try{
+		$texteAppl = $odf->setSegment('texteAppl');
+		foreach($this->listeTextesAppl as $texteappl){
+			$texteAppl->libelleTexteAppl(utf8_decode($texteappl['LIBELLE_TEXTESAPPL']),true,'UTF8');
+			$texteAppl->merge();
+		}
+		$odf->mergeSegment($texteAppl);	
+	} catch (OdfException $e) {
+
+	}
+
 //GESTION DATES
 	try{
-		$odf->setVars('dateDepotMairie',$this->DATEMAIRIE,true,'UTF8');
+		$odf->setVars('dateDepotMairie',verifInfos($this->DATEMAIRIE),true,'UTF8');
 	} catch (OdfException $e) {
 
 	}
 	
 	try{
-		$odf->setVars('dateDepotSec',$this->DATESECRETARIAT,true,'UTF8');
+		$odf->setVars('dateDepotSec',verifInfos($this->DATESECRETARIAT),true,'UTF8');
 	} catch (OdfException $e) {
 
 	}
 	
 	try{
-		$odf->setVars('dateSDIS',$this->DATESDIS,true,'UTF8');
+		$odf->setVars('dateSDIS',verifInfos($this->DATESDIS),true,'UTF8');
 	} catch (OdfException $e) {
 
 	}
 	
 //INFORMATIONS CONCERNANT L'ETABLISSEMENT
 try{
-	$odf->setVars('etablissementLibelle',$this->etablissementLibelle,true,'UTF8');
+	$odf->setVars('etablissementLibelle',verifInfos($this->etablissementLibelle),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('typeLettreP',$this->typeLettreP,true,'UTF8');
+	$odf->setVars('typeLettreP',verifInfos($this->typeLettreP),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('activiteP',$this->libelleActiviteP,true,'UTF8');
+	$odf->setVars('activiteP',verifInfos($this->libelleActiviteP),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('typeLettreS',$this->typeSecondaire,true,'UTF8');
+	$odf->setVars('typeLettreS',verifInfos($this->typeSecondaire),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('activiteS',$this->activiteSecondaire,true,'UTF8');
+	$odf->setVars('activiteS',verifInfos($this->activiteSecondaire),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('communeEtab',$this->communeEtab,true,'UTF8');
+	$odf->setVars('communeEtab',verifInfos($this->communeEtab),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('etablissementAdresse',$this->etablissementAdresse,true,'UTF8');
+	$odf->setVars('etablissementAdresse',verifInfos($this->etablissementAdresse),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('numDocUrba',$this->listeDocUrba,true,'UTF8');
+	$odf->setVars('numDocUrba',verifInfos($this->listeDocUrba),true,'UTF8');
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('categorieEtab',$this->categorieEtab,true,'UTF8');	
+	$odf->setVars('categorieEtab',verifInfos($this->categorieEtab),true,'UTF8');	
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('numPublic',$this->numPublic,true,'UTF8');	
+	$odf->setVars('numPublic',verifInfos($this->numPublic),true,'UTF8');	
 } catch (OdfException $e) {
 
 }
 
 try{
-	$odf->setVars('numPersonnel',$this->numPersonnel,true,'UTF8');		
+	$odf->setVars('numPersonnel',verifInfos($this->numPersonnel),true,'UTF8');		
 } catch (OdfException $e) {
 
 }
 
 try{	
-	$odf->setVars('avisDossier',$this->avisDossier,true,'UTF8');
+	$odf->setVars('avisDossier',verifInfos($this->avisDossier),true,'UTF8');
 } catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('etatDossier',verifInfos($this->etatDossier),true,'UTF8');
+} catch (OdfException $e){
+
+}
+
+try{
+	$odf->setVars('idDossier',verifInfos($this->idDossier),true,'UTF8');
+} catch (OdfException $e){
+
+}
+
+try{
+	$odf->setVars('numTelEtab',verifInfos($this->numTelEtab),true,'UTF8');
+} catch (OdfException $e){
+
+}
+
+try{
+	$odf->setVars('numFaxEtab',verifInfos($this->numFaxEtab),true,'UTF8');
+} catch (OdfException $e){
 
 }
 
 //echo $this->idPieceJointe;
 try{
-	$odf->saveToDisk("./data/uploads/pieces-jointes/" . $this->idPieceJointe . ".odt");
+	$chemin = DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
+	$odf->saveToDisk($chemin);
 } catch (OdfException $e) {
 
 }
 
-$content_dir = './data/uploads/pieces-jointes/'.$this->idRapportPj.'/';
+$content_dir = DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
+
+//echo DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
+//echo DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
 ?>

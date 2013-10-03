@@ -50,17 +50,17 @@ class DossierController extends Zend_Controller_Action
         "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET"),
     //VISITE DE COMMISSION
         //Réception de travaux - OK
-        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
 		//Avant ouverture - OK
-        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
         //Périodique - OK
-        "21" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE","DEMANDEUR"),
+        "21" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE","DEMANDEUR"),
         //Chantier - OK
-        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
         //Controle - OK
-        "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
         //Inopinéee - OK
-        "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","DATECOMM","AVIS","PREVENTIONNISTE","DEMANDEUR"),
+        "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE","DEMANDEUR"),
     //GROUPE DE VISITE
         //Réception de travaux - OK
         "25" => array("type","DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
@@ -1839,36 +1839,46 @@ class DossierController extends Zend_Controller_Action
 
         $model_etablissement = new Model_DbTable_Etablissement;
         $etablissement = $model_etablissement->find($idEtab)->current();
-
+		//Zend_Debug::dump($etablissement);
+		
         $this->view->numWinPrev = $etablissement['NUMEROID_ETABLISSEMENT'];
+		$this->view->numTelEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
+		$this->view->numFaxEtab = $etablissement['FAX_ETABLISSEMENT'];
 
         //Informations de l'établissement (catégorie, effectifs, activité / type principal)
         $object_informations = $model_etablissement->getInformations($idEtab);
 
+		//Zend_Debug::dump($object_informations);
+		
         $this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
         $this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
         $this->view->categorieEtab = $object_informations["ID_CATEGORIE"];
 
         $this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
-        $this->view->typeLettreP = $object_informations['ID_TYPE'];
+		$dbType = new Model_DbTable_Type;
+		$lettreType = $dbType->find($object_informations['ID_TYPE'])->current();
+        $this->view->typeLettreP = $lettreType['LIBELLE_TYPE'];
 
         $activitePrincipale = $model_typeactivite->find($object_informations["ID_TYPEACTIVITE"])->current();
         $this->view->libelleActiviteP = $activitePrincipale["LIBELLE_ACTIVITE"];
 
-        //Zend_Debug::dump($object_informations);
-
+		
+		
+		
         //echo "ID ETAB INFO ".$object_informations->ID_ETABLISSEMENTINFORMATIONS;
         // Types / activités secondaires
         $model_typesactivitessecondaire = new Model_DbTable_EtablissementInformationsTypesActivitesSecondaires;
         $array_types_activites_secondaires = $model_typesactivitessecondaire->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $object_informations->ID_ETABLISSEMENTINFORMATIONS)->toArray();
 
-
+		//Zend_Debug::dump($array_types_activites_secondaires);
+		
         $typeS = "";
         $actS = "";
 
         foreach ($array_types_activites_secondaires as $var) {
-            $typeS .= $var['ID_TYPE_SECONDAIRE'].", ";
+			$lettreTypeS = $dbType->find($var['ID_TYPE_SECONDAIRE'])->current();
+            $typeS .= $lettreTypeS['LIBELLE_TYPE'].", ";
             $activiteSearchLibelle = $model_typeactivite->find($var['ID_TYPEACTIVITE_SECONDAIRE'])->current();
             $actS .= $activiteSearchLibelle["LIBELLE_ACTIVITE"].", ";
         }
@@ -1890,7 +1900,7 @@ class DossierController extends Zend_Controller_Action
         //Récupération de tous les champs de la table dossier
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->infosDossier = $DBdossier->find($idDossier)->current();
-
+		//Zend_Debug::dump($this->view->infosDossier);
 
         //$avisDossier = $this->view->infosDossier["AVIS_DOSSIER"];
         $DBavisDossier = new Model_DbTable_Avis;
@@ -1903,6 +1913,12 @@ class DossierController extends Zend_Controller_Action
         } else {
             $this->view->commissionInfos = "Aucune commission";
         }
+		
+		if($this->view->infosDossier['INCOMPLET_DOSSIER'] == 1){
+			$this->view->etatDossier = "Incomplet";
+		}else{
+			$this->view->etatDossier = "Complet";
+		}
         //$this->view->commissionLibelle = $this->view->commissionInfos['LIBELLE_COMMISSION'];
 
         //récup de l'id de la piece jointe qu'aura le rapport
@@ -2089,6 +2105,18 @@ class DossierController extends Zend_Controller_Action
             $linkPj->ID_PIECEJOINTE = $nouvellePJ->ID_PIECEJOINTE;
             $linkPj->save();
 
+					
+		/*
+        PARTIE TEXTES APPLICABLES
+        */
+
+			//on recupere tout les textes applicables qui ont été cochés dans le dossier
+			$dbDossierTextesAppl = new Model_DbTable_DossierTextesAppl;
+			$this->view->listeTextesAppl = $dbDossierTextesAppl->recupTextesDossierGenDoc($this->_getParam('idDossier'));
+			
+			//Zend_Debug::dump($this->view->listeTextesAppl);
+			
+			
             $this->render('creationdoc');
 
         //Zend_Debug::dump($this->view->infosDossier);
