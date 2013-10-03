@@ -130,7 +130,6 @@
             $DB_classe = new Model_DbTable_Classe;							$this->view->DB_classe = $DB_classe->fetchAllPK();
             $DB_adresse = new Model_DbTable_EtablissementAdresse;
             $DB_plans = new Model_DbTable_EtablissementInformationsPlan;
-            $DB_typeactsecondaires = new Model_DbTable_EtablissementInformationsTypesActivitesSecondaires;
             $DB_rubriques = new Model_DbTable_EtablissementInformationsRubrique;
             $search = new Model_DbTable_Search;
             $model_groupement = new Model_DbTable_Groupement;
@@ -141,7 +140,7 @@
             $plans[-1] = array_fill_keys ( array( "ID_TYPEPLAN", "NUMERO_ETABLISSEMENTPLAN", "DATE_ETABLISSEMENTPLAN", "ID_STATUTPLAN" ) , null );
             $this->view->plans = $plans;
 
-            $types_activites_secondaires = ( isset($this->informations) ) ? $DB_typeactsecondaires->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $this->informations->ID_ETABLISSEMENTINFORMATIONS)->toArray() : null;
+            $types_activites_secondaires = ( isset($this->informations) ) ? $this->DB_etablissement->getTypesActivitesSecondaires($this->informations->ID_ETABLISSEMENTINFORMATIONS) : null;
             $types_activites_secondaires[-1] = array_fill_keys ( array( "ID_TYPE_SECONDAIRE", "ID_TYPEACTIVITE_SECONDAIRE" ) , null );
             $this->view->types_activites_secondaires = $types_activites_secondaires;
 

@@ -3,6 +3,19 @@
     {
         protected $_name="etablissement";
         protected $_primary = "ID_ETABLISSEMENT";
+        
+        public function getTypesActivitesSecondaires($id_ets_info)
+        {
+            $select = $this->select()
+                    ->setIntegrityCheck(false)
+                    ->from("etablissementinformationstypesactivitessecondaires")
+                    ->join("type", "ID_TYPE_SECONDAIRE = ID_TYPE", "LIBELLE_TYPE")
+                    ->join("typeactivite", "ID_TYPEACTIVITE_SECONDAIRE = ID_TYPEACTIVITE", "LIBELLE_ACTIVITE")
+                    ->where("ID_ETABLISSEMENTINFORMATIONS = ?", $id_ets_info);
+                    
+            $result = $this->fetchAll($select);
+            return $result == null ? null : $result->toArray();
+        }
 
         public function getListeChamps()
         {

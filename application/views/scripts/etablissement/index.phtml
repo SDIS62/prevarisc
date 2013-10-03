@@ -259,22 +259,27 @@
 				<dt>Type principal</dt>
 				<dd><?php echo $this->DB_type[$this->DB_informations["ID_TYPE"]-1]["LIBELLE_TYPE"] ?></dd>
 				
-				<?php if($this->types_activites_secondaires) : ?>
-				<dt>Types secondaires</dt>
-				<?php foreach($this->types_activites_secondaires as $type_activite_secondaire) $typesec[] = $type_activite_secondaire["ID_TYPE_SECONDAIRE"]; ?>
-				<dd><?php echo implode(", ", array_unique($typesec)) ?></dd>
-				<?php endif ?>
-				
 				<?php if( $this->DB_informations["ID_TYPEACTIVITE"] ) : ?>
 				<dt>Activité principale</dt>
 				<dd><?php echo $this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"] ?></dd>
 				<?php endif ?>
+                
+                <?php if($this->types_activites_secondaires) : ?>
+				<dt>Types secondaires</dt>
+				<dd>
+                    <?php foreach($this->types_activites_secondaires as $type) : ?>
+                    <?php echo $type["LIBELLE_TYPE"] . " " ?>
+                    <?php endforeach ?>
+                </dd>
+				<?php endif ?>
 				
 				<?php if($this->types_activites_secondaires) : ?>
-				<?php $actsec = null ; ?>
 				<dt>Activités secondaires</dt>
-				<?php foreach($this->types_activites_secondaires as $type_activite_secondaire) if( $type_activite_secondaire["ID_TYPEACTIVITE_SECONDAIRE"] > 0 ) $actsec[] = $this->DB_activite[$type_activite_secondaire["ID_TYPEACTIVITE_SECONDAIRE"]-1]["LIBELLE_ACTIVITE"]; ?>
-				<dd><?php echo implode(", ", (array)$actsec) ?></dd>
+				<dd>
+                    <?php foreach($this->types_activites_secondaires as $type) : ?>
+                    <?php echo $type["LIBELLE_ACTIVITE"] . "<br/>" ?>
+                    <?php endforeach ?>
+                </dd>
 				<?php endif ?>
 			</dl>
 			
