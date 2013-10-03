@@ -514,7 +514,7 @@
 		
 		<!-- Etablissement lié -->
 		<div id='etablissement_lies' class='champs'>
-			<h4 <?php if($this->DB_informations["ID_GENRE"] == 3) echo "class='edit'" ?>>Établissements liés  <?php if($this->DB_etablissement) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->DB_etablissement->ID_ETABLISSEMENT ?>&libelle=<?php echo htmlspecialchars($this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
+			<h4 <?php if($this->DB_informations["ID_GENRE"] == 3) echo "class='edit'" ?>>Établissements liés  <?php echo count($this->etablissement_lies) > 1 ? "(" . (count($this->etablissement_lies) - 1) . " établissements)" : "" ?> <?php if($this->DB_etablissement) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->DB_etablissement->ID_ETABLISSEMENT ?>&libelle=<?php echo htmlspecialchars($this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
 			
 			<?php if( count($this->etablissement_lies) == 1 && $this->DB_informations["ID_GENRE"] != 3) echo "<p class='read' style='text-align: center;'><em>Pas d'établissement liés</em></p>"; ?>
 			

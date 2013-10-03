@@ -148,7 +148,7 @@
             $rubriques[-1] = array_fill_keys ( array( "NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE", "NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE", "VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE", "CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE" ) , null );
             $this->view->rubriques = $rubriques;
 
-            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $this->_request->id)->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $this->_request->id)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray();
             $etablissement_lies[-1] = array_fill_keys ( array( "ID_FILS_ETABLISSEMENT", "LIBELLE_ETABLISSEMENTINFORMATIONS" ) , null );
             $this->view->etablissement_lies = $etablissement_lies;
 

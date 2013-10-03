@@ -154,4 +154,11 @@
 
             return $this;
         }
+        
+        public function order( $value )
+        {
+            $this->select->order( $value );
+
+            return $this;
+        }
     }
