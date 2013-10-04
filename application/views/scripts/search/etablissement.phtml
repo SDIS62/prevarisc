@@ -171,7 +171,24 @@
 			});
 		},
 		formatItem: function(item) {
-			return item.LIBELLE_ETABLISSEMENTINFORMATIONS  + ( (item.LIBELLE_COMMUNE != null) ? " (" + item.LIBELLE_COMMUNE + ")" : " (non localisé)");
+        
+            var LIBELLE_COMMUNE = "non localisé";
+            
+            switch(item.ID_GENRE)
+            {
+                case 1:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
+                    break;
+                    
+                case 3:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                    break;
+                    
+                default:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+            }
+            
+			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
 		}
 	}).result(function(e, item) {
 		window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;

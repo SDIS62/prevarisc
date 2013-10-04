@@ -751,6 +751,26 @@
 
             // On recherche avec le libellé
             $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $this->_request->q, false);
+            
+            // On filtre par le genre
+            if($this->_request->g)
+            {
+                if($this->_request->genre_pere == 1)
+                {
+                    if($this->_request->g == 2)
+                        $search->setCriteria("etablissementinformations.ID_GENRE", 1);
+                    elseif($this->_request->g == 3)
+                        $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+                }
+                
+                if($this->_request->genre_enfant == 1)
+                {
+                    if($this->_request->g == 1)
+                        $search->setCriteria("etablissementinformations.ID_GENRE", array(2,4,5,6));
+                    elseif($this->_request->g == 2)
+                        $search->setCriteria("etablissementinformations.ID_GENRE", 3);
+                }
+            }
 
             // On balance le rÃ©sultat sur la vue
             $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();

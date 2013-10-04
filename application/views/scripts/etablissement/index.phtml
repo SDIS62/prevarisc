@@ -1739,7 +1739,8 @@
 		minChars: 3,
 		max: 100,
 		extraParams: {
-			"ID_GENRE" : $("#genre option:selected").val()
+			"g" : $("#genre option:selected").val(),
+            "genre_enfant" : 1
 		},
 		parse: function(data) {
 			return $.map(data["resultats"], function(row) {
@@ -1751,7 +1752,23 @@
 			});
 		},
 		formatItem: function(item) {
-			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + item.LIBELLE_COMMUNE + ")";
+            var LIBELLE_COMMUNE = "non localisé";
+            
+            switch(item.ID_GENRE)
+            {
+                case 1:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
+                    break;
+                    
+                case 3:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                    break;
+                    
+                default:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+            }
+            
+			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
 		}
 	}).result(function(e, item) {
 		$n = $("#prototype_etablissement_lies").clone().appendTo( $("#prototype_etablissement_lies").parent() ).removeClass('ui-helper-hidden').attr('id', '');
@@ -1764,7 +1781,8 @@
 		minChars: 3,
 		max: 100,
 		extraParams: {
-			"ID_GENRE" : $("#genre option:selected").val()
+			"g" : $("#genre option:selected").val(),
+			"genre_pere" : 1
 		},
 		parse: function(data) {
 			return $.map(data["resultats"], function(row) {
@@ -1776,7 +1794,23 @@
 			});
 		},
 		formatItem: function(item) {
-			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + item.LIBELLE_COMMUNE + ")";
+            var LIBELLE_COMMUNE = "non localisé";
+            
+            switch(item.ID_GENRE)
+            {
+                case 1:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
+                    break;
+                    
+                case 3:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                    break;
+                    
+                default:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+            }
+            
+			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
 		}
 	}).result(function(e, item) {
 
