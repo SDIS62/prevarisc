@@ -284,6 +284,19 @@
 				</div>
 			</dd>
 		</dl>
+        
+        <!-- Présence d'extinction automatique à eau ? -->
+		<dl id='extinction_eau' class='champs'>
+			<dt>Présence d'extinction automatique à eau</dt>
+			<dd>
+				<div class='edit'>
+					<input type='checkbox' id='extinction_eau_checkbox' name='EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+				</div>
+				<div class='read'>
+					<?php echo ($this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
+				</div>
+			</dd>
+		</dl>
 
 		<!-- Classe -->
 		<dl id='classe' class='champs'>

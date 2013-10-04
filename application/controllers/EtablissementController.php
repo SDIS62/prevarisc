@@ -536,6 +536,7 @@
                 $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->ICPE_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->R12320_ETABLISSEMENTINFORMATIONS = 0;
+                $informations->EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->ID_AVIS = null;
 
