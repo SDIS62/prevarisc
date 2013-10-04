@@ -299,6 +299,39 @@
                 $this->_helper->_redirector("descriptif", $this->_request->getControllerName(), null, array("id" => $this->_request->id));
             }
         }
+        
+        public function textesApplicablesAction()
+        {
+            $this->view->id_etablissement = $this->_request->id;
+            
+            $dbTextesAppl = new Model_DbTable_TextesAppl;
+            $etsTexteApplicable = new Model_DbTable_EtsTextesAppl;
+            
+            if($this->_getParam('toDo') == 'save') {
+                $this->_helper->viewRenderer->setNoRender();
+                $row = $etsTexteApplicable->createRow();
+                $row->ID_TEXTESAPPL = $this->_getParam('idTexte');
+                $row->ID_ETABLISSEMENT = $this->_getParam('id');
+                $row->save();
+            }else if ($this->_getParam('toDo') == 'delete') {
+                $this->_helper->viewRenderer->setNoRender();
+                $row = $etsTexteApplicable->find($this->_getParam('idTexte'),$this->_getParam('id'))->current();
+                $row->delete();
+            }
+            
+            //on commence par afficher tous les texte applicables qui sont visible regroupés par leurs type
+            $this->view->listeTextesAppl = $dbTextesAppl->recupTextesApplVisible();
+            
+            //on recupere tout les textes applicables qui ont été cochés dans le dossier
+            $liste = $etsTexteApplicable->recupTextes($this->_getParam("id"));
+            //Zend_Debug::dump($liste);
+            $listeId = array();
+            foreach($liste as $val => $ue){
+                array_push($listeId,$ue['ID_TEXTESAPPL']);
+            }
+            
+            $this->view->listeIdTexte = $listeId;
+        }
 
         public function piecesJointesAction()
         {
