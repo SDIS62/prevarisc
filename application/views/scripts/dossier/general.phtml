@@ -1379,7 +1379,7 @@ echo "
 					</div>
 				</li>
 				<li id='DATECOMM' ".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date de passage en &nbsp;commission</div>
+					<div class='left libelle'>Date de commission en salle</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".$this->dateCommValue.( ( $this->idDateCommissionAffect != '' )? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='sprite sprite-date_magnify' ></i></a>" : "" )."				
 					</div>
@@ -1392,7 +1392,7 @@ echo "
 					</div>
 				</li>
 				<li style='display:none;'>
-					<h1>Choisir une date de passage en commission</h1>
+					<h1>Choisir une date de commission en salle</h1>
 					<div id='calendar' class='grid_14 calendar' style='display:none;'></div>
 					<hr class='clear'/>				
 				</li>

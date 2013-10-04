@@ -249,4 +249,13 @@ class GestionPrescriptionsTypeController extends Zend_Controller_Action
         //$$infosPrescription = $dbPrescDossier->getPrescriptionType($prescription["PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER"]);
       */  
 	}
+
+	public function deleteAction()
+	{
+		$this->_helper->viewRenderer->setNoRender();
+		$dbpresctype = new Model_DbTable_PrescriptionType;
+		$toRemove = $dbpresctype->find($this->_getParam('id'))->current();
+		$toRemove->delete();
+	}
+	
 }

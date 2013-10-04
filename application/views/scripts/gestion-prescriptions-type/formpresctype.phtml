@@ -1,6 +1,49 @@
 <script type='text/javascript' >
 $(document).ready(function(){
-
+	$(".deletePresc").button({
+		icons: {
+			primary: 'ui-icon-trash'
+		},
+		text: true
+	}).click(function(){
+		$(this).hide();
+		$(".validDeletePresc").show();
+		$(".cancelDeletePresc").show();
+		return false;
+	});
+	
+	$(".validDeletePresc").button({
+		icons: {
+			primary: 'ui-icon-check'
+		},
+		text: true
+	}).click(function(){
+		//on supprime la prescription
+		var id = $("#idPrescType").val();
+		$.ajax({
+			type: "POST",
+			url: "/gestion-prescriptions-type/delete/id/"+id,
+			success: function(msg){
+				//alert(msg);
+				$("#"+id).remove();
+				dialogEditPrescType.dialog("close");
+				return false;
+			}
+		});
+		return false;
+	});
+	
+	$(".cancelDeletePresc").button({
+		icons: {
+			primary: 'ui-icon-close'
+		},
+		text: true
+	}).click(function(){
+		$(this).hide();
+		$(".validDeletePresc").hide();
+		$(".deletePresc").show();
+		return false;
+	});
 
 	$("#addTexteArticle").button({
 		icons: {
@@ -192,6 +235,11 @@ echo "
 						<textarea name='PRESCRIPTIONLIBELLE' id='PRESCRIPTIONLIBELLE' style='width:800px;height:150px;'>".$this->prescInfo['LIBELLE_PRESCRIPTIONLIBELLE']."</textarea>
 						<br/><br/>
 					</span>
+				</li>
+				<li>
+					<button class='deletePresc'>Supprmier la prescription</button>
+					<button class='cancelDeletePresc' style='display:none;'>Annuler</button>
+					<button class='validDeletePresc' style='display:none;float:right;'>Confirmer la suppression (irréversible)</button>					
 				</li>
 			</form>	
 		</div>
