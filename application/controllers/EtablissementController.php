@@ -194,7 +194,7 @@
                         
                         foreach($etablissement_enfants as $key => $ets)
                         {
-                            if($ets["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] > $etablissement_enfants[$i]["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"])
+                            if(($ets["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $ets["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]) > ($etablissement_enfants[$i]["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $etablissement_enfants[$i]["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]))
                             {
                                 $i = $key;
                             }

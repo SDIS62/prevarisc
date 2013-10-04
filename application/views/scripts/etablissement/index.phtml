@@ -127,7 +127,6 @@
 		<dl id='categorie' class='champs'>
 			<dt>Catégorie</dt>
 			<dd>
-				
 				<div class='edit'>
 					<select  id='categorie_select' name='ID_CATEGORIE'>
 						<?php foreach( $this->DB_categorie as $item ) : ?>
@@ -395,7 +394,7 @@
 		
 		<!-- Les effectifs -->
 		<div id='effectifs' class='champs'>
-			<div <?php if($this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] == 0 && $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"] == 0 && $this->DB_informations["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] == 0) echo "class='edit'"; ?>>
+			<div <?php if($this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] == 0 && $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"] == 0 && $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"] == 0) echo "class='edit'"; ?>>
 				<h4>Les effectifs</h4>
 				
 				<dl  id='effectif_public' class='champs'>
@@ -436,23 +435,33 @@
 						</div>
 					</dd>
 				</dl>
-				
-				<dl id='effectif_total' class='champs'>
+                
+                <dl id='effectif_total' class='champs'>
 					<dt>&nbsp;</dt>
 					<dd><hr style='margin:0' /></dd>
 					
 					<!-- Effectif total -->
-					<dt>Total</dt>
+					<dt class='read'>Total</dt>
 					<dd>
-						<div class='edit'>
-							<input type='text' id='effectif_total_text' name='EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] ?>' />
-						</div>
 						<div class='read'>
-							<?php echo $this->DB_informations["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"]." " ?>
+							<?php echo ($this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]) ." " ?>
 						</div>
 					</dd>
 				</dl>
-				
+                
+                <dl id='effectif_justifianttotal' class='champs'>
+					<!-- Effectif total -->
+					<dt>Justifiant le classement</dt>
+					<dd>
+						<div class='edit'>
+							<input type='text' id='effectif_justifianttotal_text' name='EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"] ?>' />
+						</div>
+						<div class='read'>
+							<?php echo $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"]." " ?>
+						</div>
+					</dd>
+				</dl>
+
 			</div>
 		</div>
 		
@@ -1023,6 +1032,16 @@
 	$(document).ready(function() {
 		$("#geo_container, .ppy-placeholder").css("height", "350px");
 		$(".ppy3 .ppy-stage").css("width", ($(".grid_7").innerWidth() * $(".container_16").innerWidth()) / 100);
+        
+        // gestion de l'eff justifiant
+        $("#categorie_select").change(function() {
+            if($(this).val() == 5) {
+                $("#effectif_justifianttotal").show();
+            }
+            else {
+                $("#effectif_justifianttotal").hide().find("input").val("");
+            }
+        }).change();
 	});
 	
 	jQuery.fn.exists = function(){return this.length>0;}
@@ -1030,6 +1049,8 @@
 		$("#zoom").remove();
 		$("#menu_carte").find("li.active:contains('Carte')").remove();
 	}
+    
+    
 	
 	// dangerosite_niv
 	$("select[name=ID_GENRE]").change(function() {
@@ -1690,7 +1711,7 @@
         return;
 		if( $("#effectif_public_text").val() == "" )			$("#effectif_public_text").val(0);
 		if( $("#effectif_personnel_text").val() == "" )			$("#effectif_personnel_text").val(0);
-		$("#effectif_total_text").val( parseInt($("#effectif_public_text").val()) + parseInt($("#effectif_personnel_text").val()));
+		$("#effectif_justifianttotal_text").val( parseInt($("#effectif_public_text").val()) + parseInt($("#effectif_personnel_text").val()));
 
 	}
 	
