@@ -946,7 +946,8 @@
             <dt <?php if(empty($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"]) || $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] == "00:00:00") echo "class='edit'" ?> >Durée d'une visite</dt>
             <dd <?php if(empty($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"]) || $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] == "00:00:00") echo "class='edit'" ?> >
                 <div class='edit'>
-                    <input type='time'  name='DUREEVISITE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] ?>' />
+                    <input type='time'  name='DUREEVISITE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] ?>' /><br/>
+                    <span style="color: gray;">(sur les anciens navigateurs, le champ de la durée à spécifier est libre. Il faut respecter le format HH:MM)</span>
                 </div>
                 <div class='read'>
                     <?php echo date("H", strtotime($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"])) . " heures et " . date("i", strtotime($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"])) ." minutes &nbsp;" ?>
