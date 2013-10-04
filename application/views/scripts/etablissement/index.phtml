@@ -176,7 +176,7 @@
 		</dl>
 		
 		<div id='type_principal' class='champs'>
-			<h4>Activités de l'établissement</h4>
+			<h4>Description de l'établissement</h4>
 			<!-- R123-20 ? -->
 			<div class='edit'>
 				<dl id='r123_20' >
@@ -294,6 +294,29 @@
 				</div>
 				<div class='read'>
 					<?php echo ($this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
+				</div>
+			</dd>
+		</dl>
+        
+        <!-- Périodicité -->
+		<dl id='surfaces_cell' class='champs'>
+			<dt <?php if(empty($this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >Surface totale</dt>
+			<dd <?php if(empty($this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >
+				<div class='edit'>
+					<input type='text' id='periodicite_text' name='SURFACETOTALE_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"] ?>' />
+				</div>
+				<div class='read'>
+					<?php echo $this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"] ?>
+				</div>
+			</dd>
+
+			<dt <?php if(empty($this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >Surface accessible au public</dt>
+			<dd <?php if(empty($this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >
+				<div class='edit'>
+					<input type='text' id='periodicite_text' name='SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"] ?>' />
+				</div>
+				<div class='read'>
+					<?php echo $this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"] ?>
 				</div>
 			</dd>
 		</dl>
