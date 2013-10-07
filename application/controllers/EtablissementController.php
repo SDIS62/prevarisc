@@ -349,10 +349,24 @@
         {
             // CrÃ©ation de l'objet recherche
             $search = new Model_DbTable_Search;
+            
+            // récupération des types de dossier autre
+            $dossier_types = new Model_DbTable_DossierType;
+            $dossier_types = $dossier_types->fetchAll()->toArray();
+            $i = 0; $types_autre= array();
+            foreach($dossier_types as $key => $type)
+            {
+                if($type["ID_DOSSIERTYPE"] != 1 && $type["ID_DOSSIERTYPE"] != 2 && $type["ID_DOSSIERTYPE"] != 3)
+                {
+                    $types_autre[$i] = (int) $type["ID_DOSSIERTYPE"];
+                    $i++;
+                }
+            }
 
             // On balance le rÃ©sultat sur la vue
-            $this->view->etudes = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("TYPE_DOSSIER", 1)->run();
-            $this->view->visites = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("TYPE_DOSSIER", array(2, 3))->run();
+            $this->view->etudes = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", 1)->order("DATEINSERT_DOSSIER ASC")->run();
+            $this->view->visites = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", array(2, 3))->order("DATEINSERT_DOSSIER ASC")->run();
+            $this->view->autres = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", $types_autre)->order("DATEINSERT_DOSSIER ASC")->run();
         }
 
         public function historiqueAction()
