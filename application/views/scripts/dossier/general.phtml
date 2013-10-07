@@ -254,6 +254,20 @@
 			}
 			return false;
 		});
+		
+			
+		$(".incomplet").click(function(){
+			if($(this).val() == 1){
+				//incomplet on cache l'avis et on le met sur null
+				$("#AVIS").hide();
+				$("#AVIS_DOSSIER option[value='0']").attr('selected', true);
+				$("#ANOMALIE").hide();
+			}else{
+				//complet on affiche l'avis
+				$("#AVIS").show();
+			}
+		});
+
 	
 	});
 	//FIN DOC READY FUNCTION
@@ -758,14 +772,20 @@
 			success: function(affichageResultat){
 				//On affiche tous les champs
 				//alert(affichageResultat);
+				var incomplet = $("input[name=INCOMPLET_DOSSIER]:checked").val();
+				
 				if(affichageResultat != ''){
-					var rez = eval("("+affichageResultat+")");					
+					var rez = eval("("+affichageResultat+")");
 					for(var i in rez){
 						if(rez[i] == 'AVIS'){
 							//Si l'avis est défavorable alors on affiche l'anomalie constatée (analyse de risque)
 							if($("#AVIS_DOSSIER").val() == 3){
 								$("#ANOMALIE").show();
 							}
+						}
+						if(incomplet == 1){
+							$("#AVIS").hide();
+							//alert('');
 						}
 						$("#InfosDossier > #"+rez[i]).show();
 						$("#type > .value").hide();
@@ -806,9 +826,7 @@
 		
 		//var listeNature = $("#listeNature").recupNatures();
 		//$("#selectNature").cacherNatureDuSelect(listeNature);
-		
-		
-			
+
 		$("#NUM_DOCURBA").show();
 		$("#addNumDoc").show();
 		
@@ -1134,8 +1152,7 @@
 		});
 		return false;		
 	});
-	
-	
+
 
 </script>
 <?php
@@ -1371,11 +1388,12 @@ echo "
 				<li id='INCOMPLET' ".( ($action != 'new' && in_array('INCOMPLET', $this->afficherChamps) && $this->infosDossier['INCOMPLET_DOSSIER'] != NULL )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Etat dossier</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == '0' )? "Complet" : "Incomplet" )."				
+						".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == '0' )? "Complet" : "Incomplet" )."
+						".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == '1' )?"   ".$this->DATEINCOMPLET." " : "" )."
 					</div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='radio' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || !$this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Complet
-						<input type='radio' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Incomplet					
+						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || !$this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Complet
+						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Incomplet					
 					</div>
 				</li>
 				<li id='DATECOMM' ".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' )? "": "style='display:none;'" ).">
@@ -1431,12 +1449,14 @@ echo "
 						<textarea name='MESURESCOMPLE_DOSSIER' id='MESURESCOMPLE_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['MESURESCOMPLE_DOSSIER'])?htmlspecialchars($this->infosDossier['MESURESCOMPLE_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
-				<li id='AVIS' ".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+				<li id='AVIS' ".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '')? "": "style='display:none;'" )." >
 					<div class='left libelle'>Avis</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>".$this->AVIS_VALUE['LIBELLE_AVIS']."</span></div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
 						<select name='AVIS_DOSSIER' id='AVIS_DOSSIER' >
+							<!--
 							<option value='0' >".( ($action == 'new')?"Selectionnez l'avis du dossier": "Cacher l'avis du dossier" )."</option>
+							-->
 						";
 						foreach($this->listeAvis as $avis){
 							echo "<option value='".$avis["ID_AVIS"]."' ".( ( $this->AVIS_VALUE['ID_AVIS'] == $avis["ID_AVIS"] )? "selected='selected'" :"" )." >".$avis['LIBELLE_AVIS']."</option>";
