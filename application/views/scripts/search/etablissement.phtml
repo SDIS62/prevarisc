@@ -69,8 +69,10 @@
             <!-- Numéro ID -->
             <input type='text' id='code' name='NUMEROID_ETABLISSEMENT' class='bigger ui-helper-hidden' size=10 />
             
-            <!-- Commune -->
-            <input type='text' id='commune' name='LIBELLE_COMMUNE' class='bigger' size=25 />
+            <!-- Commune et rue -->
+            <input type='text' id='commune' name='LIBELLE_COMMUNE' size=25 /><input type='text' id='rue' name='rue' size=25 disabled="disabled" />
+            <input type='hidden' id='insee' name='insee' />
+            <input type='hidden' id='id_rue' name='ID_RUE' />
             
             <!-- Avis -->
             <select id='avis' name='ID_AVIS[]' multiple='multiple'>
@@ -120,6 +122,7 @@
 	$("#code").toggleText("Numéro d'id");
 	$("#libelle").toggleText("Libellé de l'établissement");
 	$("#commune").toggleText("Commune");
+	$("#rue").toggleText("Rue");
 	
 	$("input[name='par']").click(function() {
 	
@@ -136,7 +139,7 @@
 			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("enable");
 		}
 	});
-	
+
 	$("input[name='par'][value='niveau']").click();
 	
 	$("#commune").autocomplete("/adresse/get?format=json", {
@@ -156,7 +159,42 @@
 		}
 	}).result(function(e, item) {
 		// window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
-	});
+        $("#insee").val(item.NUMINSEE_COMMUNE);
+        $("#rue").val("").attr("disabled", "");
+		$("#rue_id").val("");
+	}).click(function() {
+        $(this).val("");
+        $("#insee").val("");
+		$("#rue").val("").attr("disabled", "disabled").blur();
+		$("#rue_id").val("");
+    });
+    
+    // Auto complétion de la rue
+	$("#rue").autocomplete('/adresse/get-voies', {
+		minChars: 3,
+		max: 100,
+		extraParams: {
+			format: "json",
+			code_insee: function(){ return $("#insee").val() }
+		},
+		parse: function(data) {
+			return $.map(data["resultats"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_RUE,
+					result: row.LIBELLE_RUE
+				}
+			});
+		},
+		formatItem: function(item) {
+			return item.LIBELLE_RUE;
+		}
+	}).result(function(e, item) {
+        $("#id_rue").val(item.ID_RUE);
+	}).click(function() {
+        $(this).val("");
+        $("#id_rue").val("");
+    });
 	
 	$("#libelle").autocomplete("/etablissement/get?format=json", {
 		minChars: 3,

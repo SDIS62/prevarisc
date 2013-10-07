@@ -49,15 +49,24 @@
                         switch($genre)
                         {
                             case "1": 
-                                $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_SITE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                                $search->setCriteria("adressecommune.LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
+                                
+                                if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
+                                    $search->setCriteria("etablissementadressesite.ID_RUE", $criteres["ID_RUE"]);
                                 break;
                                 
                             case "3":
-                                $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_CELLULE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                                $search->setCriteria("adressecommunecell.LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
+                                
+                                if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
+                                    $search->setCriteria("etablissementadressecell.ID_RUE", $criteres["ID_RUE"]);
                                 break;
                                 
                             default:
-                                $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_DEFAULT", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                                $search->setCriteria("adressecommune.LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
+                                
+                                if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
+                                    $search->setCriteria("etablissementadresse.ID_RUE", $criteres["ID_RUE"]);
                         }
                     }
                 }
@@ -66,6 +75,13 @@
                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_SITE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_CELLULE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_DEFAULT", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                    
+                    if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
+                    {
+                        $search->setCriteria("ID_RUE_SITE", $criteres["ID_RUE"], true, "having");
+                        $search->setCriteria("ID_RUE_CELL", $criteres["ID_RUE"], true, "having");
+                        $search->setCriteria("etablissementadresse.ID_RUE", $criteres["ID_RUE"], true, "orWhere");
+                    }
                 }
             }
 
