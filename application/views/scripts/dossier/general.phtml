@@ -1274,13 +1274,6 @@ echo "
 						</div>
 					</div>
 				</li>
-				<li id='NUMCHRONO' ".( ($action != 'new' && in_array('NUMCHRONO', $this->afficherChamps) && $this->infosDossier['NUMCHRONO_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Numéro chrono</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['NUMCHRONO_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' name='NUMCHRONO_DOSSIER' id='NUMCHRONO_DOSSIER' value='".( ($this->infosDossier['NUMCHRONO_DOSSIER'])?$this->infosDossier['NUMCHRONO_DOSSIER']:"" )."' />						
-					</div>
-				</li>
 				<li id='DATEMAIRIE' ".( ($action != 'new' && in_array('DATEMAIRIE', $this->afficherChamps) && $this->infosDossier['DATEMAIRIE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Date réception mairie</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['DATEMAIRIE_DOSSIER']."</div>
