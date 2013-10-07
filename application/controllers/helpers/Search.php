@@ -65,15 +65,15 @@
                 {
                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_SITE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_CELLULE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
-                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_DEFAULT", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
+                    $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_DEFAULT", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
                 }
             }
 
             if( array_key_exists("LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", $criteres) )
                 $search->setCriteria("LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", (bool) $criteres["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]);
-
-            if( array_key_exists("ID_DOSSIERNATURE", $criteres) && count($criteres["ID_DOSSIERNATURE"]) > 0 )
-                $search->setCriteria("ID_DOSSIERNATURE", $criteres["ID_DOSSIERNATURE"], true, "having");
+                
+            if( array_key_exists("ID_STATUT", $criteres) && count($criteres["ID_STATUT"]) > 0 )
+                $search->setCriteria("ID_STATUT", $criteres["ID_STATUT"]);
 
             if ( array_key_exists("NOM_PRENOM", $criteres) && $criteres["NOM_PRENOM"] != "Nom de l'utilisateur" ) {
                 $search->setCriteria("NOM_UTILISATEURINFORMATIONS", $criteres["NOM_PRENOM"], false);
@@ -83,11 +83,11 @@
             if( array_key_exists("ID_FONCTION", $criteres) && count($criteres["ID_FONCTION"]) > 0 )
                 $search->setCriteria("fonction.ID_FONCTION", $criteres["ID_FONCTION"]);
 
+            if( array_key_exists("ID_DOSSIERNATURE", $criteres) && count($criteres["ID_DOSSIERNATURE"]) > 0 )
+                $search->setCriteria("ID_DOSSIERNATURE", $criteres["ID_DOSSIERNATURE"], true, "having");
+                
             if( array_key_exists("NUM_DOCURBA", $criteres) && $criteres["NUM_DOCURBA"] != "Numéro de document d'urbanisme" )
                 $search->setCriteria("NUM_DOCURBA", $criteres["NUM_DOCURBA"]);
-
-            if( array_key_exists("ID_STATUT", $criteres) && count($criteres["ID_STATUT"]) > 0 )
-                $search->setCriteria("ID_STATUT", $criteres["ID_STATUT"]);
 
             if ( array_key_exists("DATEVISITE_DOSSIER", $criteres) && $criteres["DATEVISITE_DOSSIER"] != "" ) {
                 $array_date = explode("/", $criteres["DATEVISITE_DOSSIER"]);

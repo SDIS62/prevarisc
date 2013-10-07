@@ -24,3 +24,15 @@
     </ul>
 <?php endif ?>
 </div>
+
+<div id="content_autres_ets">
+<?php if( count($this->autres) > 0 ) : ?>
+    <?php if( count($this->visites) > 0 || count($this->etudes) > 0) echo "<hr />"; ?>
+    <h3>Autres</h3>
+    <ul id="liste_doss">
+    <?php
+	echo $this->partialLoop('search/results/dossier.phtml', $this->autres); 
+    ?>
+    </ul>
+<?php endif ?>
+</div>
