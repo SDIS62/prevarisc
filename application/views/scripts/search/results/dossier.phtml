@@ -1,6 +1,12 @@
 <li>
     <!-- Icone du dossier-->
-    <i class='sprite sprite-folder' ></i>
+	<?php
+		if($this->INCOMPLET_DOSSIER == 1)
+			echo "<i class='sprite sprite-error' ></i>";
+		else
+			echo "<i class='sprite sprite-folder' ></i>";
+	?>
+    
     
     <!-- Nom du dossier -->
     <span class="doss-nom">
@@ -11,7 +17,16 @@
     
     <!-- Date du dossier -->
     <span class="doss-date">
-        <?php echo $this->DATEINSERT_DOSSIER . " - " . substr($this->NUMCHRONO_DOSSIER,0,26). ( strlen($this->NUMCHRONO_DOSSIER) > 26 ? ".." : "" )?>
+        <?php
+			$date = substr($this->DATEINSERT_DOSSIER,0,10);
+			if($date != '0000-00-00'){
+				$date = new DateTime(substr($this->DATEINSERT_DOSSIER,0,10));
+				$date = date_format($date, 'd/m/Y');
+			}else{
+				$date = "00/00/0000";
+			}
+			echo $date . " - " . substr($this->NUMCHRONO_DOSSIER,0,26). ( strlen($this->NUMCHRONO_DOSSIER) > 26 ? ".." : "" )
+		?>
     </span>
     
     <!-- Objet du dossier -->

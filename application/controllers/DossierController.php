@@ -324,6 +324,14 @@ class DossierController extends Zend_Controller_Action
                     $this->view->infosDossier['DATESIGN_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
                     $this->view->DATESIGN_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
                 }
+				
+				//Conversion date incomplet
+				if ($this->view->infosDossier['DATEINCOMPLET_DOSSIER'] != '') {
+					$date = new Zend_Date($this->view->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
+					$this->view->infosDossier['DATEINCOMPLET_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+					$this->view->DATEINCOMPLET = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				}
+				
                 //Conversion de la durée de l'intervention
                 if ($this->view->infosDossier['DUREEINTERV_DOSSIER'] != '') {
                     //echo $this->view->infosDossier['DATEINTERV_DOSSIER'];
@@ -667,7 +675,7 @@ class DossierController extends Zend_Controller_Action
             case "showChamps":
                 $this->_helper->viewRenderer->setNoRender();
                 $listeNature = $this->_getParam("listeNature");
-
+				
                 //Si une liste de nature est envoyée on peux traiter les différents champs à afficher
                 if ($listeNature != '') {
                     $tabListeIdNature = explode("_",$listeNature);
@@ -1134,6 +1142,12 @@ class DossierController extends Zend_Controller_Action
                         $value = NULL;
                     }
                 }
+				
+				if($libelle == "INCOMPLET_DOSSIER" && $value == 1){
+					//dossier incomplet on enregistre la date du jour dans le champs DATEINCOMPLET
+					$dateIncomplet = Zend_Date::now();
+					$nouveauDossier->DATEINCOMPLET_DOSSIER = $dateIncomplet->get(Zend_Date::YEAR."-".Zend_Date::MONTH_SHORT."-".Zend_Date::DAY_SHORT);
+				}
 
                 if ($libelle == 'AVIS_DOSSIER' && $value == 0) {
                     $value = NULL;
@@ -1161,7 +1175,6 @@ class DossierController extends Zend_Controller_Action
                 $saveEtabDossier->ID_DOSSIER = $idDossier;
                 $saveEtabDossier->save();
             }
-
             //Sauvegarde des natures du dossier
             /*
             foreach ($_POST['natureId'] as $libelle => $value) {
@@ -1237,9 +1250,6 @@ class DossierController extends Zend_Controller_Action
 		}
 		
 		
-
-
-
         //Sauvegarde des préventionnistes
         $DBdossierPrev = new Model_DbTable_DossierPreventionniste;
         $DBdossierPrev->delete("ID_DOSSIER = " .  $idDossier);
@@ -1302,6 +1312,7 @@ class DossierController extends Zend_Controller_Action
 	*/
         //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
         echo $idDossier;
+		
     }
 
     public function prescriptionAction()
