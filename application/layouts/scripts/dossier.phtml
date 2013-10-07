@@ -32,9 +32,13 @@
 							<li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'>
 								<a href='<?php echo $this->url(array("action"=>"index")) ?>'>Informations générales</a>
 							</li>
+                                                        
+                                                        <?php if ($this->libelleType == "Étude") : ?>
+                                                        
 							<li class='<?php echo( $this->action == "descriptif") ? "selection_onglets_hor" : "read" ?>'>
 								<a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a>
 							</li>
+                                                        <?php endif ?>
 							<?php
 							if( $this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ){
 								echo "
