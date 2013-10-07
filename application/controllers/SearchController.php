@@ -43,7 +43,6 @@
             // Modèles
             $DB_nature = new Model_DbTable_DossierNatureliste();
             $this->view->DB_nature = $DB_nature->fetchAll()->toArray();
-			//Zend_Debug::dump($this->view->DB_nature);
         }
 
         public function utilisateurAction()
@@ -76,7 +75,6 @@
         {
             // On execute la requete si il y a quelquechose a traiter
             if ( count($this->_request->getQuery()) > 0 ) {
-
                 $this->view->html = $this->_helper->Search($_GET, isset($this->_request->page) ? $this->_request->page : 1);
             }
         }
