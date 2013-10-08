@@ -52,5 +52,7 @@
 
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
         }
+		
+		
 
     }

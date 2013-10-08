@@ -1172,7 +1172,8 @@ echo "
 		<input type='hidden' id='dateToday' value='".$this->dateToday."' />
 		<form id='".$action."Dossier' name='".$action."Dossier' method='POST' >
 			<input type='hidden' name='idEtablissement' id='idEtablissement' value='".$this->idEtablissement."' />
-			<input type='hidden' name='do' id='do' value='".$action."' />	
+			<input type='hidden' name='do' id='do' value='".$action."' />
+			<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='".$this->idUser."' />	
 			".( ($action == 'edit')? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "" )."
 			<div id='boutons' style='float: right'>
 				<button id='modificationDossier' style='".( ($action == 'new')? "display:none;" : "" )."'>Modifier le dossier</button>
@@ -1183,7 +1184,6 @@ echo "
 			</div>
 			
 			<h3>Informations générales</h3>
-			
 			<!-- BEGIN UL Type/Nature -->
 			<h4>Type et natures du dossier</h4>
 			<ul class='list'>
@@ -1233,7 +1233,7 @@ echo "
 			<ul id='InfosDossier' class='list' >
 				<li id='DATEINSERT' ".( (in_array('DATEINSERT', $this->afficherChamps) && $this->infosDossier['DATEINSERT_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Date de création du dossier</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINSERT_DOSSIER']."</div >
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINSERT_DOSSIER']." ".(($this->user_info)? "par : ".$this->user_info['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_info['NOM_UTILISATEURINFORMATIONS'] :"")."</div >
 					<div class='right form' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
 						<input type='text' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".( ($this->DATEINSERT_INPUT)?$this->DATEINSERT_INPUT:"" )."' />
 						&nbsp;<button class='today'>Aujourd'hui</button>

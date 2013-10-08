@@ -50,30 +50,30 @@ class DossierController extends Zend_Controller_Action
         "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET"),
     //VISITE DE COMMISSION
         //Réception de travaux - OK
-        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
 		//Avant ouverture - OK
-        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Périodique - OK
-        "21" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE","DEMANDEUR"),
+        "21" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE"),
         //Chantier - OK
-        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
-        "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Inopinéee - OK
-        "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE","DEMANDEUR"),
+        "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE"),
     //GROUPE DE VISITE
         //Réception de travaux - OK
-        "25" => array("type","DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "25" => array("type","DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
 		//Avant ouverture - OK
-        "48" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "48" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Périodique - OK
-        "26" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DEMANDEUR"),
+        "26" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
         //Chantier - OK
-        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
-        "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DEMANDEUR"),
+        "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Inopinéee - OK
-        "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DEMANDEUR"),
+        "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
     //REUNION
         //Visite ou sur site - OK"DATEVISITE",
         "30" => array("DATEINSERT","OBJET","PREVENTIONNISTE","DEMANDEUR"),
@@ -92,24 +92,24 @@ class DossierController extends Zend_Controller_Action
         "36" => array("DATEINSERT","OBJET","DATEMAIRIE","DATESECRETARIAT","PREVENTIONNISTE","DEMANDEUR","DATEENVTRANSIT"),
     //INTERVENTION
         //Incendie - OK
-        "37" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE","DEMANDEUR"),
+        "37" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
         //SAP - OK
-        "38" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE","DEMANDEUR"),
+        "38" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
         //Intervention div - OK
-        "39" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE","DEMANDEUR"),
+        "39" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
     //ARRETE
         //Ouverture - OK
-        "40" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE","DEMANDEUR"),
+        "40" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Fermeture - OK
-        "41" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE","DEMANDEUR"),
+        "41" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Mise en demeure - OK
-        "42" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE","DEMANDEUR"),
+        "42" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Mise en demeure de l'exploitant - OK
-        "43" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE","DEMANDEUR"),
+        "43" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //GN6 - OK
-        "44" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE","DEMANDEUR"),
+        "44" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Courrier - OK
-        "45" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE","DEMANDEUR"),
+        "45" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
     );
 
     public function init()
@@ -147,9 +147,8 @@ class DossierController extends Zend_Controller_Action
             $this->view->objetDossier = $dossier->OBJET_DOSSIER;
 			$this->view->idTypeDossier = $dossier->TYPE_DOSSIER;
             $this->view->libelleType = $libelleType['LIBELLE_DOSSIERTYPE'];
-
-            $this->view->idDossier = ($this->_getParam("id"));
 			
+            $this->view->idDossier = ($this->_getParam("id"));
         } else {
 
             if ($this->_helper->Droits()->get()->DROITDOSSCREATION_GROUPE != 1) {
@@ -165,6 +164,7 @@ class DossierController extends Zend_Controller_Action
         if ($this->_getParam("id")) {
             $this->view->do = "edit";
             $this->view->idDossier = ($this->_getParam("id"));
+			
         }
 
         $this->view->idEtablissement = $this->_getParam("id_etablissement");
@@ -174,6 +174,8 @@ class DossierController extends Zend_Controller_Action
         }
         //echo $this->view->idEtablissement;
 
+		
+		
         $this->_forward('general');
     }
 
@@ -197,6 +199,10 @@ class DossierController extends Zend_Controller_Action
 
     public function generalAction()
     {
+
+		
+		//Zend_Debug::dump(Zend_Auth::getInstance()->getIdentity());
+		$this->view->idUser = Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR;
         //On récupère tous les types de dossier
         $DBdossierType = new Model_DbTable_DossierType;
         $this->view->dossierType = $DBdossierType ->fetchAll();
@@ -242,6 +248,13 @@ class DossierController extends Zend_Controller_Action
             $DBdossier = new Model_DbTable_Dossier;
             $this->view->infosDossier = $DBdossier->find($idDossier)->current();
             //Zend_Debug::dump($this->view->infosDossier->toArray());
+			
+			//récuperation des informations sur le créateur du dossier
+			$DB_user = new Model_DbTable_Utilisateur;
+			$DB_informations = new Model_DbTable_UtilisateurInformations;
+			$user = $DB_user->find( $this->view->infosDossier['CREATEUR_DOSSIER'] )->current();
+			$this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
+			//Zend_Debug::dump($this->view->user_info->toArray());
 
             //Conversion de la date d'insertion du dossier
             if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
@@ -1108,6 +1121,7 @@ class DossierController extends Zend_Controller_Action
 
         if ($this->_getParam('do') == 'new') {
             $nouveauDossier = $DBdossier->createRow();
+			$nouveauDossier->CREATEUR_DOSSIER = $this->_getParam('ID_CREATEUR');
         } elseif ($this->_getParam('do') == 'edit') {
             $nouveauDossier = $DBdossier->find($this->_getParam('idDossier'))->current();
 			$typeDossier = $nouveauDossier['TYPE_DOSSIER'];
@@ -1129,7 +1143,7 @@ class DossierController extends Zend_Controller_Action
             //  !  \\
             //Il  faudrait idéalement: Récuperer le tableau concernant les champs à faire afficher et si : le champ passé n'y apparait pas le mettre à null
             //
-            if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect") {
+            if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR") {
                 //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
                 if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER") {
                     if ($value) {
