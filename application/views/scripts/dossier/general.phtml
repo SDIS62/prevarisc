@@ -1483,6 +1483,15 @@ echo "
 						</select>
 					</div>
 				</li>
+                                <li id='HORSDELAI' ".( ($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL )? "": "style='display:none;'" ).">
+                                    <div class='left libelle'>Hors délai</div>
+                                    <div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+                                        <input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' disabled ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "").">
+                                    </div>
+                                    <div class='right form' ".( ($action != 'new')? "style='display:none;'":"").">
+                                        <input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "")."> 				
+                                    </div>
+				</li>
 				<li id='ANOMALIE' ".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Analyse de risque</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['ANOMALIE_DOSSIER'])."</div>
