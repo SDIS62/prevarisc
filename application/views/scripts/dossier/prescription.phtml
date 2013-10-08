@@ -264,11 +264,14 @@
 								if($("#editPrescriptionNumero").val() != "" && $("#editPrescription").val() != ""){
 									window.location.reload();
 								}else{
+									/*
 									$("#sortable").append(affichageResultat);
 									$("#sortable > li").css('cursor','move');
 									
 									$("#divFormPrescription").hide();
 									$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+									*/
+									window.location.reload();
 								}
 								return false;
 							},
@@ -589,12 +592,14 @@
 				$("#sortable").html("<img src='/images/load.gif' />");
 			},
 			success: function(affichageResultat){
+				/*
 				$("#sortable").append("<li id='presc_"+affichageResultat+"' num='"+numPrescription+"'>"+prescription+"</li>");					
 				$("#sortable > li").css('cursor','move');
 				$("#sortable > #presc_"+affichageResultat+" > .numPresc").html(numPrescription);					
 				$("#presc_"+affichageResultat+" > .button").show();					
 				$("li[id=presc_"+affichageResultat+"] > #addPrescType").remove();					
 				$("#divFormPrescriptionType").reinitialiseAddPresc("prescType");
+				*/
 				//ici on dégage le logo de chargement et les éventuellement 
 				//le message d'erreur affiché dans le before
 				window.location.reload();

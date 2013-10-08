@@ -1522,19 +1522,16 @@ class DossierController extends Zend_Controller_Action
         if ($prescription["TYPE_PRESCRIPTIONDOSSIER"] == 0) {
             //prescription ordinaire
             //On change dans precriptionassoc les textes et articles ainsi que le libelle (mais on supprime le précédent)
-            echo "il s'agit d'une prescription ordinaire";
+            //echo "il s'agit d'une prescription ordinaire";
             //On récupere la prescription associée (article texte libelle)
+			
             $dbPrescAssoc = new Model_DbTable_PrescriptionAssoc;
             $assocPresc = $dbPrescAssoc->find($prescription["PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER"])->current();
-            //On suprime le libelle associé
-            $dbPrescLibelle = new Model_DbTable_PrescriptionLibelle;
-            $libelleToDelete = $dbPrescLibelle->find($assocPresc['LIBELLE_PRESCRIPTIONASSOC'])->current();
-            $libelleToDelete->delete();
-            //Puis on supprime l'association pour la créer à nouveau
-            $assocPresc->delete();
+		
             $prescription = $dbPrescDossier->find($idPrescription)->current();
             $prescription->delete();
-
+            //Puis on supprime l'association pour la créer à nouveau
+			$assocPresc->delete();
         } elseif ($prescription["TYPE_PRESCRIPTIONDOSSIER"] == 1) {
             //prescription type
             //On change dans prescriptiondossier on supprime la ligne et on la recrée en gardant juste le numéro de la prescription
