@@ -56,7 +56,7 @@ class DossierController extends Zend_Controller_Action
         //Périodique - OK
         "21" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE"),
         //Chantier - OK
-        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
+        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
         "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Inopinéee - OK
@@ -69,7 +69,7 @@ class DossierController extends Zend_Controller_Action
         //Périodique - OK
         "26" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
         //Chantier - OK
-        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
+        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
         "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Inopinéee - OK
@@ -1259,7 +1259,7 @@ class DossierController extends Zend_Controller_Action
 				$saveDocUrba->ID_DOSSIER = $idDossier;
 				$saveDocUrba->NUM_DOCURBA = $value;
 				$saveDocUrba->save();
-				echo $value."<br/>";
+				//echo $value."<br/>";
 			}
 		}
 		

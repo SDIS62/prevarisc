@@ -792,6 +792,22 @@
 						$("#type > .form").show();
 					}
 				}
+				
+				if($("#selectNature").val() == 1 || $("#selectNature").val() == 2){
+					$("#docurbaVal").html('');
+					var docurbaVal;
+					switch($("#selectNature").val()){
+						case '1':
+							docurbaVal = "PC";
+						break;
+						case '2':
+							docurbaVal = "AT";
+						break;
+					}
+					$("#docurbaVal").prepend(docurbaVal);
+				}else{
+					$("#docurbaVal").html('');
+				}
 				$("#chargement").html('');
 
 			},
@@ -1025,8 +1041,12 @@
 		*/
 		
 		$("#creationDossier").button({ disabled: true });
-		var data = $("#newDossier").serialize();
 		
+		if($("#NUM_DOCURBA").val() != ''){
+			$("#addNumDoc").click();
+		}
+		
+		var data = $("#newDossier").serialize();
 		
 		if($("#TYPE_DOSSIER").val() == 2 && $("#selectNature").val() == 21){
 			var tabDateVisite = $("#DATEVISITE_INPUT").val().split(',');
@@ -1129,7 +1149,11 @@
 	$("#validModification").live('click',function(){
 		if(!verifDossier())
 			return false;
-			
+		
+		if($("#NUM_DOCURBA").val() != ''){
+			$("#addNumDoc").click();
+		}
+		
 		var data = $("#editDossier").serialize();
 		
 		//alert($("#editDossier").serialize());
@@ -1261,6 +1285,7 @@ echo "
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."></div>
 					<div class='right form'> 
 						<div id='listeDocUrba' >
+							<span id='docurbaVal'></span>
 							<input type='text' name='NUM_DOCURBA' id='NUM_DOCURBA' value='' ".( ($action != 'new')? "style='display:none;'" : "" )." />
 							&nbsp;<button id='addNumDoc' ".( ($action != 'new')? "style='display:none;'" : "" ).">Ajouter le numéro de document d'urbanisme</button>
 							";
@@ -1414,18 +1439,18 @@ echo "
 						<input type='text' id='DESCANAL_DOSSIER' name='DESCANAL_DOSSIER' value='".( ($this->infosDossier['DESCANAL_DOSSIER'])?$this->infosDossier['DESCANAL_DOSSIER']:"" )."' />
 					</div>
 				</li>
-				<li id='JUSTIFDEROG' ".( ($action != 'new' && in_array('JUSTIFDEROG', $this->afficherChamps) && $this->infosDossier['JUSTIFDEROG_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Justification de la dérogation</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['JUSTIFDEROG_DOSSIER'])."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<textarea name='JUSTIFDEROG_DOSSIER' id='JUSTIFDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['JUSTIFDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['JUSTIFDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
-					</div>
-				</li>
 				<li id='REGLEDEROG' ".( ($action != 'new' && in_array('REGLEDEROG', $this->afficherChamps) && $this->infosDossier['REGLEDEROG_DOSSIER'] != '' )? "": "style='display:none;'" ).">
 					<div class='left libelle'>Règles auxquelles il est demandé de déroger</div>
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['REGLEDEROG_DOSSIER'])."</div>
 					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
 						<textarea name='REGLEDEROG_DOSSIER' id='REGLEDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['REGLEDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['REGLEDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					</div>
+				</li>
+				<li id='JUSTIFDEROG' ".( ($action != 'new' && in_array('JUSTIFDEROG', $this->afficherChamps) && $this->infosDossier['JUSTIFDEROG_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<div class='left libelle'>Justification de la dérogation</div>
+					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['JUSTIFDEROG_DOSSIER'])."</div>
+					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<textarea name='JUSTIFDEROG_DOSSIER' id='JUSTIFDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['JUSTIFDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['JUSTIFDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
 				<li id='MESURESCOMPENS' ".( ($action != 'new' && in_array('MESURESCOMPENS', $this->afficherChamps) && $this->infosDossier['MESURESCOMPENS_DOSSIER'] != '' )? "": "style='display:none;'" ).">

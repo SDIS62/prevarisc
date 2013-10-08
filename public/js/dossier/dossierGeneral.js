@@ -266,7 +266,7 @@ $(document).ready(function(){
 */
 	$("#addNumDoc").live('click',function(){
 		if($("#NUM_DOCURBA").val() != ''){
-			$("#listeDocUrba").append("<div class='docurba' style=''><input type='hidden' name='docUrba[]' value='"+$("#NUM_DOCURBA").val()+"' id='urba_"+$("#NUM_DOCURBA").val()+"'/>"+$("#NUM_DOCURBA").val()+" <a href='' idDocurba='"+$("#selectNature").val()+"'class='suppDocUrba'>&times;</a></div>");
+			$("#listeDocUrba").append("<div class='docurba' style=''><input type='hidden' name='docUrba[]' value='"+$("#docurbaVal").html()+$("#NUM_DOCURBA").val()+"' id='urba_"+$("#docurbaVal").html()+$("#NUM_DOCURBA").val()+"'/>"+$("#docurbaVal").html()+$("#NUM_DOCURBA").val()+" <a href='' idDocurba='"+$("#docurbaVal").html()+$("#selectNature").val()+"'class='suppDocUrba'>&times;</a></div>");
 			$("#NUM_DOCURBA").val('');
 		}
 		return false;
