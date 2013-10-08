@@ -252,8 +252,12 @@ class DossierController extends Zend_Controller_Action
 			//récuperation des informations sur le créateur du dossier
 			$DB_user = new Model_DbTable_Utilisateur;
 			$DB_informations = new Model_DbTable_UtilisateurInformations;
-			$user = $DB_user->find( $this->view->infosDossier['CREATEUR_DOSSIER'] )->current();
-			$this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
+			if($this->view->infosDossier['CREATEUR_DOSSIER']){
+				$user = $DB_user->find( $this->view->infosDossier['CREATEUR_DOSSIER'] )->current();
+				$this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
+			}else{
+				$this->view->user_info = "";
+			}
 			//Zend_Debug::dump($this->view->user_info->toArray());
 
             //Conversion de la date d'insertion du dossier
