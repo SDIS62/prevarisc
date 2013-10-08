@@ -54,7 +54,7 @@ class DossierController extends Zend_Controller_Action
 		//Avant ouverture - OK
         "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Périodique - OK
-        "21" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE"),
+        "21" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE"),
         //Chantier - OK
         "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
@@ -67,7 +67,7 @@ class DossierController extends Zend_Controller_Action
 		//Avant ouverture - OK
         "48" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Périodique - OK
-        "26" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
+        "26" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE"),
         //Chantier - OK
         "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
