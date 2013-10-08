@@ -1,6 +1,5 @@
 <?php
 
-/*
 //Zend_Debug::dump($this->membresFiles->toArray());
 if(count($this->membresFiles) == 0){
 	echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun membre n'a été renseigné pour la commission</span><br/><br/><br/>";
@@ -11,7 +10,10 @@ foreach($this->membresFiles as $val => $membre){
 	if($membre->ID_GROUPEMENT == NULL && $membre->ID_UTILISATEURINFORMATIONS == NULL){
 		//génération du document par commune pour les maires par exemple		
 		//si le document concernant ce membre existe alors on rentre dans la boucle
-
+			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
+			echo DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier;
+			
+			$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			//$odf = new odf("./data/uploads/courriers/ordreDuJour.odt");
 			//Generation du segment membres
 			$membreLoop = $odf->setSegment('membresComm');
@@ -96,7 +98,10 @@ foreach($this->membresFiles as $val => $membre){
 			//Zend_Debug::dump($infosGroupement);
 
 			//On commence par selectionner le document approprié
-			//$odf = new odf("./data/uploads/courriers/ordreDuJour.odt");
+			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
+			$odf = new odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
+			
+			echo DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier;
 
 			//Generation du segment grpLoop
 
@@ -152,12 +157,17 @@ foreach($this->membresFiles as $val => $membre){
 }
 
 $odf->mergeSegment($grpLoop);
-*/
-require_once("odtphp/odf.php");
 
+
+//echo DATA_PATH.DIRECTORY_SEPARATOR;
+//Zend_Debug::dump($this->membresFiles->toArray());
+
+
+/*
 $consonne = array("a", "e", "i", "o", "u", "y", "A", "E", "I", "O", "U", "Y");
 
-$odf = new odf("./data/uploads/courriers/ordreDuJour.odt");
+
+$odf = new odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR."ordreDuJour.odt");
 
 addChamp($odf,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
 $dateDuJour = new Zend_Date();
@@ -215,4 +225,5 @@ function savePj($dateCommId){
 
 	return $nouvellePJ->ID_PIECEJOINTE;
 }
+*/
 ?>

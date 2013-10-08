@@ -2225,6 +2225,8 @@ class DossierController extends Zend_Controller_Action
 
     public function generationodjAction()
     {
+	
+		
         $dateCommId = $this->_getParam("dateCommId");
         $this->view->idComm = $dateCommId;
 
@@ -2234,6 +2236,7 @@ class DossierController extends Zend_Controller_Action
         $commSelect = $dbDateComm->find($dateCommId)->current();
         //echo $commSelect['GESTION_HEURES'];
         $dbDateCommPj = new Model_DbTable_DateCommissionPj;
+	
         if ($commSelect['GESTION_HEURES'] == 1) {
             //prise en compte heures
             $listeDossiers = $dbDateCommPj->getDossiersInfosByHour($dateCommId);
@@ -2242,7 +2245,7 @@ class DossierController extends Zend_Controller_Action
             $listeDossiers = $dbDateCommPj->getDossiersInfosByOrder($dateCommId);
         }
         //Zend_Debug::dump($listeDossiers);
-
+	
         //Récupération des membres de la commission
         $model_membres = new Model_DbTable_CommissionMembre;
 
