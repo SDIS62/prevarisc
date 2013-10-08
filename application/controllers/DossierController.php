@@ -2226,7 +2226,6 @@ class DossierController extends Zend_Controller_Action
     public function generationodjAction()
     {
 	
-		
         $dateCommId = $this->_getParam("dateCommId");
         $this->view->idComm = $dateCommId;
 

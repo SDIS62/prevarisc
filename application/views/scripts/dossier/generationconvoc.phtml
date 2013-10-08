@@ -1,5 +1,4 @@
 <?php
-require_once("odtphp/odf.php");
 
 $consonne = array("a", "e", "i", "o", "u", "y", "A", "E", "I", "O", "U", "Y");
 
@@ -11,8 +10,10 @@ foreach($this->membresFiles as $val => $membre){
 	if($membre->ID_GROUPEMENT == NULL && $membre->ID_UTILISATEURINFORMATIONS == NULL){
 		//génération du document par commune pour les maires par exemple		
 		//si le document concernant ce membre existe alors on rentre dans la boucle
-		if($membre->COURRIER_CONVOCATION != NULL){
-			$odf = new odf("./data/uploads/courriers/".$membre->ID_COMMISSIONMEMBRE."CONVOCATION_".$membre->COURRIER_CONVOCATION);
+		
+		if($membre->COURRIER_CONVOCATIONSALLE != NULL){
+			$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE;
+			$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			//Generation du segment ListePrescription 
 			$villeODF = $odf->setSegment('villeDoss');
 			
@@ -62,12 +63,12 @@ foreach($this->membresFiles as $val => $membre){
 						//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
 
 						$dateInsertDossier = new Zend_Date($dossierInfos["DATEINSERT_DOSSIER"]);
-						$villeODF->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+						//$villeODF->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 						
 						$villeODF->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
 						$villeODF->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
 						$villeODF->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
-						$villeODF->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
+						//$villeODF->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
 						$villeODF->infosDoss->merge(); 
 					}
 				}
@@ -78,7 +79,7 @@ foreach($this->membresFiles as $val => $membre){
 
 			$idPj = savePj($this->idComm ,$membre->LIBELLE_COMMISSIONMEMBRE);
 			
-			$odf->saveToDisk("./data/uploads/pieces-jointes/".$idPj.".odt");
+			$odf->saveToDisk(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 			
 			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>La convocation pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré</span><br/><br/><br/>";
 			
@@ -90,7 +91,7 @@ foreach($this->membresFiles as $val => $membre){
 		//génération du document par groupement de commune pour les gendarmerie/police par exemple
 		//echo "membre de groupement ".$membre->LIBELLE_COMMISSIONMEMBRE."<br/>";
 		
-		if($membre->COURRIER_CONVOCATION != NULL){
+		if($membre->COURRIER_CONVOCATIONSALLE != NULL){
 			//si le membre du groupement en question posède un document le concernant on génére la convocation
 
 			$model_groupement = new Model_DbTable_Groupement();
@@ -107,7 +108,8 @@ foreach($this->membresFiles as $val => $membre){
 			
 			
 			//On commence par selectionner le document approprié
-			$odf = new odf("./data/uploads/courriers/".$membre->ID_COMMISSIONMEMBRE."CONVOCATION_".$membre->COURRIER_CONVOCATION);
+			$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE;
+			$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			
 			//Generation du segment grpLoop
 			$grpLoop = $odf->setSegment('grpLoop');
@@ -151,12 +153,12 @@ foreach($this->membresFiles as $val => $membre){
 						//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
 						
 						$dateInsertDossier = new Zend_Date($dossierInfos["DATEINSERT_DOSSIER"]);
-						$grpLoop->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+						//$grpLoop->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 						
 						$grpLoop->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
 						$grpLoop->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
 						$grpLoop->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
-						$grpLoop->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
+						//$grpLoop->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
 											
 						$grpLoop->infosDoss->merge(); 
 					}
@@ -171,7 +173,7 @@ foreach($this->membresFiles as $val => $membre){
 			
 			$idPj = savePj($this->idComm ,$membre->LIBELLE_COMMISSIONMEMBRE);
 			
-			$odf->saveToDisk("./data/uploads/pieces-jointes/".$idPj.".odt");
+			$odf->saveToDisk(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 			
 			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>La convocation pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré</span><br/><br/><br/>";
 		}else{
