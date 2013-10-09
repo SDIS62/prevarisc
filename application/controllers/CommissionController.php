@@ -242,8 +242,9 @@
 
             // On supprime les courriers
             $row_membre = $model_membres->find($this->_request->id_membre)->current();
-            unlink("./data/uploads/courriers/" . $this->_request->id_membre . "BE_" . $row_membre->COURRIER_BE);
-            unlink("./data/uploads/courriers/" . $this->_request->id_membre . "CONVOCATION_" . $row_membre->COURRIER_CONVOCATION);
+            unlink("./data/uploads/courriers/" . $this->_request->id_membre . "ODJ" . $row_membre->COURRIER_ODJ);
+            unlink("./data/uploads/courriers/" . $this->_request->id_membre . "CONVOCATIONVISITE" . $row_membre->COURRIER_CONVOCATIONVISITE);
+            unlink("./data/uploads/courriers/" . $this->_request->id_membre . "CONVOCATIONSALLE" . $row_membre->COURRIER_CONVOCATIONSALLE);
 
             // On supprime la règle
             $model_membresTypes->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
