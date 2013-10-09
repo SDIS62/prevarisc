@@ -9,159 +9,54 @@
 
     <link href="http://sdis62.github.io/prevarisc/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
-      body {
-        padding-top: 20px;
-        padding-bottom: 40px;
-      }
-      .container-narrow {
-        margin: 0 auto;
-        max-width: 700px;
-      }
-      .container-narrow > hr {
-        margin: 30px 0;
-      }
-      .jumbotron {
-        margin: 60px 0;
-        text-align: center;
-      }
-      .jumbotron h1 {
-        font-size: 72px;
-        line-height: 1;
-      }
-      .jumbotron .btn {
-        font-size: 21px;
-        padding: 14px 24px;
-      }
-      .marketing {
-        margin: 60px 0;
-      }
-      .marketing p + h4 {
-        margin-top: 28px;
-      }
-      @media (min-width: 1200px) {
-        .jumbotron h1 {
-          font-size: 72px;
-          line-height: 1;
-        }
-        .jumbotron .btn {
-          font-size: 21px;
-          padding: 14px 24px;
-        }
-      }
-      @media (min-width: 768px) and (max-width: 1199px) {
+        @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+        
         body {
-            margin-top: 20px;
-        }
-        .jumbotron h1 {
-          font-size: 72px;
-          line-height: 1;
-        }
-        .jumbotron .btn {
-          font-size: 21px;
-          padding: 14px 24px;
-        }
-      }
-      @media (max-width: 767px) {
-      body {
-            margin-top: 20px;
-        }
-        h3 {
-            padding-top: 20px;
+            font-family: "Montserrat","Proxima N W02 Bold",Helvetica,Arial,sans-serif;
+            background-color: #2c3e50;
             text-align: center;
         }
-        .jumbotron h1 {
-          font-size: 40px;
-          line-height: 1;
+        
+        .presentation {
+            margin-top: 50px;
+            color: white;
         }
-        .jumbotron .btn {
-          font-size: 20px;
-          padding: 10px 20px;
-          display: block;
-          margin-bottom: 10px;
+        
+        .logo {
+            margin-top: 200px;
+            background: white url(img/logo_prevarisc_big.jpg) center center no-repeat;
+            height: 300px;
+            width: 100%;
         }
-        .jumbotron .btn + .btn {
-          margin-bottom: 10px;
-        }
-      }
-      @media (max-width: 480px) {
-        h3 {
-            padding-top: 20px;
-            text-align: center;
-        }
-        .jumbotron {
-          margin: 20px 0;
-        }
-        .jumbotron h1 {
-          font-size: 40px;
-          line-height: 1;
-        }
-        .jumbotron .btn {
-          font-size: 15px;
-          padding: 7px 12px;
-          display: block;
-          margin-bottom: 10px;
-        }
-        .jumbotron .btn + .btn {
-          margin-bottom: 10px;
-        }
-      }
     </style>
     <link href="http://sdis62.github.io/prevarisc/css/bootstrap-responsive.min.css" rel="stylesheet">
     
   </head>
 
   <body>
-    <div class="container-narrow">
-
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right hidden-phone">
-          <li class="active"><a href="#">Accueil</a></li>
-          <li><a href="https://github.com/SDIS62">À propos</a></li>
-          <li><a href="http://www.google.com/recaptcha/mailhide/d?k=01j6rZu6rU6BWonRhHd2LQLw==&c=DKhjgEaj941xmMzeFNaqJPyL36uxJsKNPySspEpO7tk=">Contact</a></li>
+  
+    <div class="logo">
+        
+    </div>
+  
+    <div class="presentation">
+        <h1>
+            10 octobre 2013
+        </h1>
+        
+        <br/>
+        
+        <ul class="unstyled">
+            <li><strong>Nouvelle version 1.2.0</strong></li>
+            <li>Nouveau site de présentation</li>
+            <li>Nouvelle documentation d'installation</li>
+            <li>Remise en place de la communauté</li>
         </ul>
-        <h3 class="muted"><img src="https://raw.github.com/SDIS62/prevarisc/master/public/css/images/layout-header-logo.png" alt="Prevarisc" /></h3>
-      </div>
-
-      <hr>
-
-      <div class="jumbotron">
-        <h1>Gérez plus simplement votre service prévention!</h1>
-        <p class="lead">Prevarisc est un logiciel national open-source gérant l'ensemble de l'activité du service prévention au sein d'un SDIS.</p>
-        <a class="btn btn-large btn-success" href="https://github.com/SDIS62/prevarisc/archive/v1.1.0.zip"><i class="icon-download-alt icon-white"></i>Téléchargez la version 1.1.0</a>
-        <a class="btn btn-large" href="https://github.com/SDIS62/prevarisc">En savoir plus &raquo;</a>
-      </div>
-
-      <div class="row-fluid marketing">
-        <div class="span6">
-          <h4>Géo-localisation</h4>
-          <p>Les établissements sont géolocalisés automatiquement à la saisie et sont visibles sur une carte GeoPortail.</p>
-
-          <h4>LDAP</h4>
-          <p>Prevarisc permet d'interagir avec votre annuaire d'entreprise. Plus besoin de créer de double compte, utilisez simplement l'existant !</p>
-
-          <h4>Génération automatique de documents</h4>
-          <p>En un clic, générez des documents d'études et/ou de visites.</p>
-        </div>
-
-        <div class="span6">
-          <h4>Gestion des commissions</h4>
-          <p>Consultez les calendriers des commissions, gérez le passage des dossiers en salle.</p>
-
-          <h4>Extractions et statistiques</h4>
-          <p>Exploitez la base de données de prevarisc pour sortir des statistiques aidant notamment à remplir infosdis.</p>
-
-          <h4>Propulsé par la communauté</h4>
-          <p>Prevarisc est en constante évolution ! Simple utilisateur ou contributeur, participez à son amélioration.</p>
-        </div>
-      </div>
-      
-      <hr>
-
-      <div class="footer">
-        <p>&copy; SDIS 62 - 2013</p>
-      </div>
-
-    </div> <!-- /container -->
+        
+        <br/>
+        
+        <a href="https://github.com/SDIS62/prevarisc" class="btn">Accéder à la page projet sur GitHub.com</a>
+    </div>
 
     <!-- Le javascript
     ================================================== -->
