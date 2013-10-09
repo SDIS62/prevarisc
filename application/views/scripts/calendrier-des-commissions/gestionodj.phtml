@@ -20,7 +20,8 @@ $(document).ready(function() {
 	});
 	
 	( function($) {
-		$.fn.afficheCalendar = function(jour,mois,annee,hDeb,hFin) {			
+		$.fn.afficheCalendar = function(jour,mois,annee,hDeb,hFin) {
+			//alert(jour+" "+mois+" "+annee+" "+hDeb+" "+hFin);
 			var calendar = $('#calendar').fullCalendar( {
 				date:jour,
 				month:mois,
@@ -58,8 +59,9 @@ $(document).ready(function() {
 				defaultEventMinutes: 5,
 				events: function(start, end, callback) {
 					mois++;
+					jour++;
 					var myDate = new Date(annee+"/"+mois+"/"+jour);	
-
+					//alert(myDate);
 					$.ajax({
 						url: '/calendrier-des-commissions/recupevenementodj?start='+myDate.getTime()+"&end="+myDate.getTime(),
 						data: {
@@ -69,6 +71,7 @@ $(document).ready(function() {
 						success: function( result ) {
 							var events = [];
 							for( var x in result["items"] ) {
+								//alert(result["items"][x]["start"]);
 								events.push({
 									id: result["items"][x]["id"],
 									title: result["items"][x]["title"],
@@ -178,6 +181,7 @@ $(document).ready(function() {
 	var myDate = new Date($("#dateOdj").val());
 
 	//alert($("#heureDeb").val());
+	//alert(myDate.getMonth());
 	
 	$("#calendar").afficheCalendar(myDate.getDate(),myDate.getMonth(),myDate.getFullYear(),$("#heureDeb").val(),$("#heureFin").val());
 

@@ -93,6 +93,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
     public function dropodjAction()
     {
         $this->_helper->viewRenderer->setNoRender();
+		
         $heureDeb = new Zend_Date($this->_getParam('heureDebut'),Zend_Date::ISO_8601,'en');
         $heureFin = new Zend_Date($this->_getParam('heureFin'),Zend_Date::ISO_8601,'en');
 
@@ -185,10 +186,11 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
     public function recupevenementodjAction()
     {
         $this->_helper->viewRenderer->setNoRender();
-
+		
         //Permet la récupération des différents éléments du calendrier pour la commission concernée
         $dateDebut = new Zend_Date(substr($this->_request->start, 0, -3), Zend_Date::TIMESTAMP);
         $dateDebut = $dateDebut->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
+		//echo $dateDebut;
 
         $dateFin = new Zend_Date(substr($this->_request->end, 0, -3), Zend_Date::TIMESTAMP);
         $dateFin = $dateFin->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);

@@ -60,6 +60,7 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 			->join(array('adrComm' => 'adressecommune'),'etabAdr.NUMINSEE_COMMUNE = adrComm.NUMINSEE_COMMUNE')
 			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
 			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
+			->join(array('docurba' => 'dossierdocurba'),'docurba.ID_DOSSIER = doss.ID_DOSSIER')
 			->where('dateComm.ID_DATECOMMISSION = ?',$dateCommId)
 			->group('doss.ID_DOSSIER')
 			->order('dossAffect.HEURE_DEB_AFFECT');
@@ -119,6 +120,7 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 			->join(array('adrComm' => 'adressecommune'),'etabAdr.NUMINSEE_COMMUNE = adrComm.NUMINSEE_COMMUNE')
 			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
 			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
+			->join(array('docurba' => 'dossierdocurba'),'docurba.ID_DOSSIER = doss.ID_DOSSIER')
 			->where('dateComm.ID_DATECOMMISSION = ?',$dateCommId)
 			->group('doss.ID_DOSSIER')
 			->order('dossAffect.NUM_DOSSIER');
