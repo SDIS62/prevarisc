@@ -13,7 +13,7 @@
 		$odf = new odf("./data/uploads/documents/modele_rapport_visite.odt");
 	}
 */
-//echo DATA_PATH.$this->fichierSelect;
+//echo REAL_DATA_PATH.$this->fichierSelect;
 
 function verifInfos($var){
 	if($var == ''){
@@ -23,7 +23,7 @@ function verifInfos($var){
 	}
 }
 
-$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR.$this->fichierSelect);
+$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR.$this->fichierSelect);
 
 try {
 	$odf->setVars('libelle_commission',verifInfos($this->commissionInfos['LIBELLE_COMMISSION']),true,'UTF8');
@@ -260,14 +260,14 @@ try{
 
 //echo $this->idPieceJointe;
 try{
-	$chemin = DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
+	$chemin = REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
 	$odf->saveToDisk($chemin);
 } catch (OdfException $e) {
 
 }
 
-$content_dir = DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
+$content_dir = REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
 
-//echo DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
-//echo DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
+//echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
+//echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
 ?>

@@ -12,9 +12,9 @@ foreach($this->membresFiles as $val => $membre){
 		//génération du document par commune pour les maires par exemple		
 		//si le document concernant ce membre existe alors on rentre dans la boucle
 			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
-			//echo DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier;
-			if (file_exists(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
-				$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
+			//echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier;
+			if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
+				$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 				//$odf = new odf("./data/uploads/courriers/ordreDuJour.odt");
 				//Generation du segment membres
 				$membreLoop = $odf->setSegment('membresComm');
@@ -79,7 +79,7 @@ foreach($this->membresFiles as $val => $membre){
 				}
 				$odf->mergeSegment($membreLoop);
 				$idPj = savePj($this->idComm);
-				$odf->saveToDisk(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
+				$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 				echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré </span><br/><br/><br/>";
 			}else{
 				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
@@ -92,8 +92,8 @@ foreach($this->membresFiles as $val => $membre){
 			//si le membre du groupement en question posède un document le concernant on génére la convocation
 			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
 			
-			if (file_exists(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
-				$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
+			if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
+				$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 				
 				$model_groupement = new Model_DbTable_Groupement();
 				$infosGroupement = $model_groupement->get($membre->ID_GROUPEMENT);
@@ -108,9 +108,9 @@ foreach($this->membresFiles as $val => $membre){
 
 				//On commence par selectionner le document approprié
 				$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
-				$odf = new odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
+				$odf = new odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 				
-				//echo DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier;
+				//echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier;
 
 				//Generation du segment grpLoop
 
@@ -162,7 +162,7 @@ foreach($this->membresFiles as $val => $membre){
 				$grpLoop->merge();
 				$odf->mergeSegment($grpLoop);
 				$idPj = savePj($this->idComm);
-				$odf->saveToDisk(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
+				$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 				echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré </span><br/><br/><br/>";
 			}else{
 				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
@@ -181,7 +181,7 @@ function addChamp($odfName, $nomOdf, $variable){
 
 	}
 }
-//echo DATA_PATH.DIRECTORY_SEPARATOR;
+//echo REAL_DATA_PATH.DIRECTORY_SEPARATOR;
 //Zend_Debug::dump($this->membresFiles->toArray());
 
 
@@ -189,7 +189,7 @@ function addChamp($odfName, $nomOdf, $variable){
 $consonne = array("a", "e", "i", "o", "u", "y", "A", "E", "I", "O", "U", "Y");
 
 
-//$odf = new odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR."ordreDuJour.odt");
+//$odf = new odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR."ordreDuJour.odt");
 
 addChamp($odf,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
 $dateDuJour = new Zend_Date();
@@ -215,8 +215,8 @@ $odf->mergeSegment($dossierLoop);
 
 */
 
-//$odf->saveToDisk(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
-//DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier
+//$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
+//REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier
 
 function savePj($dateCommId){
 	//ENREGISTEMENT DANS PIECE JOINTES

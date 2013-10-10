@@ -6,7 +6,7 @@
 
         public function init()
         {
-            $this->path = DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;
+            $this->path = REAL_DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;
             
             // Actions à effectuées en AJAX
             $ajaxContext = $this->_helper->getHelper('AjaxContext');
@@ -89,7 +89,7 @@
             // On envoi la liste des PJ dans la vue
             $this->view->listePj = $listePj;
 			//Zend_Debug::dump($this->view->listePj);
-            $this->view->path = $this->path;
+            $this->view->path = DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;;
         }
 
         public function formAction()
@@ -251,7 +251,7 @@
 
                 // Données de la pj
                 $this->view->html = $this->view->partial("piece-jointe/display.phtml", array (
-                    "path" => $this->path,
+                    "path" => DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR,
                     "listePj" => $DBused->fetchAll("ID_PIECEJOINTE = " . $this->_request->idpj)->toArray(),
                     "droit_ecriture" => true,
                     "type" => $this->_request->type,

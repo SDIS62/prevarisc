@@ -6,7 +6,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->path = DATA_PATH . "/uploads/documents";
+        $this->path = REAL_DATA_PATH . "/uploads/documents";
         
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');

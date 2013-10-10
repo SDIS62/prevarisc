@@ -138,13 +138,11 @@
                 if($this->_helper->Droits()->get()->DROITADMINSYS_GROUPE == 0 && Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR != $_POST["id"])
                     $this->_helper->Droits()->redirect();
 
-                require_once 'GD/GD_resize.php';
-
                 if ($_FILES["AVATAR"]["size"] < 1024 * 1024) {
 
-                    GD_resize($_FILES["AVATAR"]["tmp_name"], DATA_PATH . "/uploads/avatars/small/" . $_POST["id"] . ".jpg", 25, 25);
-                    GD_resize($_FILES["AVATAR"]["tmp_name"], DATA_PATH . "/uploads/avatars/medium/" . $_POST["id"] . ".jpg", 150);
-                    GD_resize($_FILES["AVATAR"]["tmp_name"], DATA_PATH . "/uploads/avatars/large/" . $_POST["id"] . ".jpg", 224);
+                    GD_resize::run($_FILES["AVATAR"]["tmp_name"], REAL_DATA_PATH . "/uploads/avatars/small/" . $_POST["id"] . ".jpg", 25, 25);
+                    GD_resize::run($_FILES["AVATAR"]["tmp_name"], REAL_DATA_PATH . "/uploads/avatars/medium/" . $_POST["id"] . ".jpg", 150);
+                    GD_resize::run($_FILES["AVATAR"]["tmp_name"], REAL_DATA_PATH . "/uploads/avatars/large/" . $_POST["id"] . ".jpg", 224);
 
                     // CALLBACK
                     echo "<script type='text/javascript'>window.top.window.callback();</script>";

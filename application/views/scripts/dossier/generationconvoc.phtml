@@ -13,7 +13,7 @@ foreach($this->membresFiles as $val => $membre){
 		
 		if($membre->COURRIER_CONVOCATIONSALLE != NULL){
 			$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE;
-			$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
+			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			//Generation du segment ListePrescription 
 			$villeODF = $odf->setSegment('villeDoss');
 			
@@ -79,7 +79,7 @@ foreach($this->membresFiles as $val => $membre){
 
 			$idPj = savePj($this->idComm ,$membre->LIBELLE_COMMISSIONMEMBRE);
 			
-			$odf->saveToDisk(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
+			$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 			
 			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>La convocation pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré</span><br/><br/><br/>";
 			
@@ -109,7 +109,7 @@ foreach($this->membresFiles as $val => $membre){
 			
 			//On commence par selectionner le document approprié
 			$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE;
-			$odf = new Odf(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
+			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			
 			//Generation du segment grpLoop
 			$grpLoop = $odf->setSegment('grpLoop');
@@ -173,7 +173,7 @@ foreach($this->membresFiles as $val => $membre){
 			
 			$idPj = savePj($this->idComm ,$membre->LIBELLE_COMMISSIONMEMBRE);
 			
-			$odf->saveToDisk(DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
+			$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 			
 			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>La convocation pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré</span><br/><br/><br/>";
 		}else{

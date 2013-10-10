@@ -10,7 +10,11 @@ defined('APPLICATION_ENV')
     
 // Define path to application directory
 defined('DATA_PATH')
-    || define('DATA_PATH', realpath(dirname(__FILE__) . '/../data'));
+    || define('DATA_PATH', '/data');
+    
+// Define path to application directory
+defined('REAL_DATA_PATH')
+    || define('REAL_DATA_PATH', realpath(dirname(__FILE__) . '/../public/data'));
 
 // Get include path
 set_include_path(implode(PATH_SEPARATOR, array(

@@ -16,7 +16,7 @@
 		<form name='etabRapport' id='etabRapport'>
 	";
 	echo "Selectionnez le rapport que vous souhaitez générer : &nbsp;";	
-	$dirname = DATA_PATH . "/uploads/documents";
+	$dirname = REAL_DATA_PATH . "/uploads/documents";
 	$dir = opendir($dirname); 
 
 	echo "<select name='fichierSelect' id='fichierSelect' >";
