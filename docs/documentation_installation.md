@@ -74,11 +74,13 @@ resources.db.params.dbname = #DBNAME (la table contenant les données de prevari
 
 #### Installer la base de données de Prevarisc
 
+Depuis un PC windows, installer le logiciel [MySQL WorkBench](http://www.mysql.fr/products/workbench/).
+Vous pouvez maintenant ouvrir le fichier "docs/MCD Prevarisc avec Mysql Workbench.mwb".
+
 > Pourquoi utiliser ce logiciel ?
 > Cela nous permettra de simplifier les mises à jour de la base via une simple synchonisation.
 
-Depuis un PC windows, installer le logiciel [MySQL WorkBench](http://www.mysql.fr/products/workbench/).
-Vous pouvez maintenant ouvrir le fichier "docs/MCD Prevarisc avec Mysql Workbench.mwb". Ce fichier représente le MCD complet de Prevarisc. Pour synchoniser votre serveur de base de données avec ce MCD, vous devez :
+Ce fichier représente le MCD complet de Prevarisc. Pour synchoniser votre serveur de base de données avec ce MCD, vous devez :
 * Menu Database > Synchronize model
 * Configurer la connexion vers votre base de données
 * Selectionner "prevarisc" et "next" jusqu'a l'intallation de la base de données
