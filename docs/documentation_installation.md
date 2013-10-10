@@ -1,14 +1,8 @@
 # [SDIS 62 : Prevarisc](http://sdis62.github.com/prevarisc/) - Application web de gestion du service prévention
 
-> Pour mettre à jour Prevarisc :
-> * Vous devez tout d'abord mettre à jour la structure de votre base de données via la [nouvelle structure référente](https://github.com/SDIS62/prevarisc/raw/master/extras/prevarisc.gz)
-> * Puis mettre à jour les fichiers sources
->
-> Ps : La compatibilité est assurée pour toutes les versions 1.*.*. Il est important de faire une sauvegarde de la base de données et des fichiers avant toute opération de mise à jour.
-
 ## Installation et configuration
 
-Pour télécharger Prevarisc : [Lien vers le téléchargement de la version 1.0.0 [STABLE]](https://github.com/SDIS62/prevarisc/tree/v1.0.0) ou [Lien vers le téléchargement de la version la plus récente [INSTABLE]](https://github.com/SDIS62/prevarisc/archive/master.zip).
+Pour télécharger Prevarisc : [Lien vers le téléchargement de la version 1.2.0 [STABLE]](https://github.com/SDIS62/prevarisc/tree/v1.2.0) ou [Lien vers le téléchargement de la version la plus récente [INSTABLE]](https://github.com/SDIS62/prevarisc/archive/master.zip).
 
 ### Le besoin d'un serveur web
 
@@ -21,13 +15,19 @@ Prevarisc est une application web, vous devez l'héberger sur un serveur web sup
 Les modules apache à activer : rewrite, deflate, expires ;
 Les extensions PHP à activer : ldap, gd2, exif
 
-#### Zend Framework
+#### Dépendances
 
-Sur votre serveur web vous devez configurer Zend framework, tout d'abord vous devez télécharger et extraire la version 1.X (1.12.3 à l'heure où j’écris ces lignes) sur http://framework.zend.com/downloads/latest. Et ensuite placer le dossier Zend dans le dossier library/ de Prevarisc (ou dans l'include_path de PHP).
+Dans le dossier de prevarisc, executer les commandes suivantes :
+```
+curl -sS https://getcomposer.org/installer | php
+php composer.phar install
+```
+
+Cette manipulation installe les dépendances automatiquement.
 
 #### Hôte virtuel
 
-Pour créer votre hôte virtuel, vous avez besoin de connaître l'emplacement de votre fichier httpd.conf, et peut-être où les fichiers de configuration se trouvent les autres. Certains emplacements communs:
+Pour créer votre hôte virtuel, vous avez besoin de connaître l'emplacement de votre fichier httpd.conf. Certains emplacements communs:
 
 * /etc/httpd/httpd.conf (Fedora, RHEL et autres)
 * /etc/apache2/httpd.conf (Debian, Ubuntu et autres)
@@ -72,8 +72,6 @@ resources.db.params.dbname = #DBNAME (la table contenant les données de prevari
 (...)
 ```
 
-Vous devez extraire la table de prevarisc dans votre serveur de base de données. Le fichier contenant les données de prevarisc se trouve ici : [Vers le fichier de la base de données](https://github.com/SDIS62/prevarisc/raw/master/extras/prevarisc.gz).
-
 Enfin, pour permettre à Prevarisc d'écrire dans les dossiers "documents", "pièces jointes" et autres, vous devez spécifier les droits des fichiers comme ceci :
 
 ```
@@ -83,5 +81,22 @@ $ chown –R www-data:www-data *
 $ chmod –R 555 *
 $ chmod –R 755 public/
 ```
+
+### Installer la base de données de Prevarisc
+
+> Pourquoi utiliser ce logiciel ?
+> Cela nous permettra de simplifier les mises à jour de la base via une simple synchonisation.
+
+Depuis un PC windows, installer le logiciel [MySQL WorkBench](http://www.mysql.fr/products/workbench/).
+Vous pouvez maintenant ouvrir le fichier "docs/MCD Prevarisc avec Mysql Workbench.mwb". Ce fichier représente le MCD complet de Prevarisc. Pour synchoniser votre serveur de base de données avec ce MCD, vous devez :
+* Menu Database > Synchronize model
+* Configurer la connexion vers votre base de données
+* Selectionner "prevarisc" et "next" jusqu'a l'intallation de la base de données
+
+Pour ajouter les valeurs par défauts :
+* Menu Database > Forward engineer
+* Configurer la connexion vers votre base de données
+* Cocher "Generate INSERT statements for tables"
+* "next" jusqu'a l'insertion des données
 
 A ce point vous devez être capable d'accéder à Prevarisc ! Le premier compte utilisateur est celui-ci : root / root (à désactiver le plus rapidement possible pour des raisons de sécurité).
