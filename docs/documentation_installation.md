@@ -1,5 +1,3 @@
-# [SDIS 62 : Prevarisc](http://sdis62.github.com/prevarisc/) - Application web de gestion du service prévention
-
 ## Installation et configuration
 
 Pour télécharger Prevarisc : [Lien vers le téléchargement de la version 1.2.0 [STABLE]](https://github.com/SDIS62/prevarisc/tree/v1.2.0) ou [Lien vers le téléchargement de la version la plus récente [INSTABLE]](https://github.com/SDIS62/prevarisc/archive/master.zip).
@@ -14,16 +12,6 @@ Prevarisc est une application web, vous devez l'héberger sur un serveur web sup
 
 Les modules apache à activer : rewrite, deflate, expires ;
 Les extensions PHP à activer : ldap, gd2, exif
-
-#### Dépendances
-
-Dans le dossier de prevarisc, executer les commandes suivantes :
-```
-curl -sS https://getcomposer.org/installer | php
-php composer.phar install
-```
-
-Cette manipulation installe les dépendances automatiquement.
 
 #### Hôte virtuel
 
@@ -58,7 +46,19 @@ Enfin, vous aurez besoin d'ajouter une entrée dans votre fichier hosts (ou votr
 127.0.0.1 prevarisc.sdisXX.fr
 ```
 
-### Configurer votre serveur pour donner l'accès à Prevarisc
+### Configuration de Prevarisc
+
+#### Dépendances
+
+Dans le dossier de prevarisc, executer les commandes suivantes :
+```
+curl -sS https://getcomposer.org/installer | php
+php composer.phar install
+```
+
+Cette manipulation installe les dépendances automatiquement.
+
+#### Accès à la base de données
 
 Vous devez configurer Prevarisc afin qu'il ait accès à la base de données (entre autres). La configuration par défaut est placé dans application/configs/application.ini, ce fichier contient quelques directives de base pour la configuration de votre environnement. Voici comment le configurer :
 ```
@@ -72,17 +72,7 @@ resources.db.params.dbname = #DBNAME (la table contenant les données de prevari
 (...)
 ```
 
-Enfin, pour permettre à Prevarisc d'écrire dans les dossiers "documents", "pièces jointes" et autres, vous devez spécifier les droits des fichiers comme ceci :
-
-```
-(en se plaçant dans le dossier "prevarisc/")
-
-$ chown –R www-data:www-data * 
-$ chmod –R 555 *
-$ chmod –R 755 public/
-```
-
-### Installer la base de données de Prevarisc
+#### Installer la base de données de Prevarisc
 
 > Pourquoi utiliser ce logiciel ?
 > Cela nous permettra de simplifier les mises à jour de la base via une simple synchonisation.
@@ -98,5 +88,17 @@ Pour ajouter les valeurs par défauts :
 * Configurer la connexion vers votre base de données
 * Cocher "Generate INSERT statements for tables"
 * "next" jusqu'a l'insertion des données
+
+#### Accès aux documents
+
+Enfin, pour permettre à Prevarisc d'écrire dans les dossiers "documents", "pièces jointes" et autres, vous devez spécifier les droits des fichiers comme ceci :
+
+```
+(en se plaçant dans le dossier "prevarisc/")
+
+$ chown –R www-data:www-data * 
+$ chmod –R 555 *
+$ chmod –R 755 public/
+```
 
 A ce point vous devez être capable d'accéder à Prevarisc ! Le premier compte utilisateur est celui-ci : root / root (à désactiver le plus rapidement possible pour des raisons de sécurité).
