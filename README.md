@@ -14,20 +14,15 @@ Prevarisc est un logiciel national open-source gérant l'ensemble de l'activité
 ## Suivi du projet
 
 * [Travail en cours / jalons](https://github.com/SDIS62/prevarisc/issues/milestones) ;
-* [Suivi des bugs et corrections](https://github.com/SDIS62/prevarisc/issues) ;
-* [Le forum - communauté d'utilisateur de prevarisc](http://prevarisc.sdis62.fr/forum) ;
-* [La démo en ligne](http://prevarisc.sdis62.fr/demo).
+* [Suivi des bugs et corrections](https://github.com/SDIS62/prevarisc/issues).
 
 ## Installation et configuration
 
 * [Voir la documentation d'installation](https://github.com/SDIS62/prevarisc/blob/master/docs/documentation_installation.md).
-* Voir la documentation d'utilisation - en cours. (Mais ne vous inquiétez pas, le logiciel est très ergonomique ! ;-))
 
 ## Participation au projet
 
 Si vous voulez participer au développement, n'hésitez pas à forker le projet !
-
-Ps : Nous sommes conscient que le projet contient du dirty-code, la prochaine grosse itération résoudra cela ;-)
 
 ## À propos
 
