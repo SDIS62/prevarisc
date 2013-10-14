@@ -679,49 +679,38 @@
                 // On spÃ©cifi le pÃ¨re
                 if ($this->_request->ID_PERE != "") {
 
-                    $pere = $DB_tab["ID_FILS_ETABLISSEMENT"]->fetchRow("ID_ETABLISSEMENT = " . $this->_request->ID_PERE . " AND ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-
-                    if (!$pere) {
+                    $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                    $pere_information = $this->DB_etablissement->getInformations($this->_request->ID_PERE);
                     
-                         $pere_information = $this->DB_etablissement->getInformations($this->_request->ID_PERE);
-                        
-                        // on test si le père peut être enregistré (genre)
-                        // si l'établissement = site alors pas de pere
-                        // si l'établissement = cellule alos père = etablissement
-                        switch($informations->ID_GENRE)
-                        {
-                            case 2:
-                                if($pere_information->ID_GENRE != 1)
-                                    throw new Exception('Le père n\'est pas compatible (Un établissement a comme père un site)', 500);
-                                break;
-                            case 3:
-                                if($pere_information->ID_GENRE != 2)
-                                    throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
-                                break;
-                            default:
-                                if($this->_request->ID_PERE !=null)
-                                    throw new Exception('Le père n\'est pas compatible (Les sites, habitation, IGH et EIC n\'ont pas de père)', 500);
-                                break;
-                        }
-                        
-                        $item = $DB_tab["ID_FILS_ETABLISSEMENT"]->createRow();
-                        $item->ID_ETABLISSEMENT = (int) $this->_request->ID_PERE;
-                        $item->ID_FILS_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
-                        $item->save();
+                    // on test si le père peut être enregistré (genre)
+                    // si l'établissement = site alors pas de pere
+                    // si l'établissement = cellule alos père = etablissement
+                    switch($informations->ID_GENRE)
+                    {
+                        case 2:
+                            if($pere_information->ID_GENRE != 1)
+                                throw new Exception('Le père n\'est pas compatible (Un établissement a comme père un site)', 500);
+                            break;
+                        case 3:
+                            if($pere_information->ID_GENRE != 2)
+                                throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
+                            break;
+                        default:
+                            if($this->_request->ID_PERE !=null)
+                                throw new Exception('Le père n\'est pas compatible (Les sites, habitation, IGH et EIC n\'ont pas de père)', 500);
+                            break;
                     }
+                    
+                    $item = $DB_tab["ID_FILS_ETABLISSEMENT"]->createRow();
+                    $item->ID_ETABLISSEMENT = (int) $this->_request->ID_PERE;
+                    $item->ID_FILS_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
+                    $item->save();
+                    
                 } else {
 
                     if($this->droits->DROITETABLISSEMENT_GROUPE != 2)
                         $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                 }
-                
-                // On créé son numéro d'id
-                /*
-                if($new)
-                {
-                    $etablissement->NUMEROID_ETABLISSEMENT = $this->DB_etablissement->getIDWinprev($etablissement->ID_ETABLISSEMENT);
-                }
-                */
 
                 $db->commit();
 
