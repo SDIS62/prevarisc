@@ -180,7 +180,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         }
         //Zend_Debug::dump($items);
         $this->view->items = $items;
-
     }
 
     public function recupevenementodjAction()

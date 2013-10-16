@@ -1,24 +1,10 @@
 <?php
-//require_once("./vendor/cybermonde/odtphp/library/odf.php");
-
-/*
-	echo $this->infosDossier['TYPE_DOSSIER'];
-	echo $this->infosDossier['TYPE_DOSSIER']." et ".$this->dossierType;
-
-	if($this->infosDossier['TYPE_DOSSIER'] == '1'){
-		//etude
-		$odf = new odf("./data/uploads/documents/modele_rapport_etude.odt");
-	}else{
-		//visite
-		$odf = new odf("./data/uploads/documents/modele_rapport_visite.odt");
-	}
-*/
-//echo REAL_DATA_PATH.$this->fichierSelect;
 
 function verifInfos($var){
 	if($var == ''){
 		return "néant";
 	}else{
+		
 		return $var;
 	}
 }
@@ -42,6 +28,30 @@ try {
 
 }
 
+try {
+	$odf->setVars('objetDossier',verifInfos($this->infosDossier['OBJET_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	$odf->setVars('analyseRisque',verifInfos($this->infosDossier['ANOMALIE_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	$odf->setVars('demandeurDossier',verifInfos($this->infosDossier['DEMANDEUR_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	$odf->setVars('servInstructeur',verifInfos($this->servInstructeur),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
 
 // PARTIE DOC CONSULTE
 	try{
@@ -60,6 +70,11 @@ try {
 			if($exist){
 				$docConsulte->exist('X');
 				$docConsulte->refdoc(utf8_decode($ref));
+				//Conversion de la date ang -> fr
+				if ($date) {
+					$date = new Zend_Date($date, Zend_Date::DATES);
+					$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				}
 				$docConsulte->datedoc(utf8_decode($date));
 				$docConsulte->merge();
 			}
@@ -84,7 +99,11 @@ try {
 			$docAjout->exist('X');
 			$docAjout->libelledoc(utf8_decode($documentAjout['LIBELLE_DOCAJOUT']));
 			$docAjout->refdoc(utf8_decode($documentAjout['REF_DOCAJOUT']));
-			$docAjout->datedoc(utf8_decode($documentAjout['DATE_DOCAJOUT']));
+			if ($documentAjout['DATE_DOCAJOUT']) {
+				$date = new Zend_Date($documentAjout['DATE_DOCAJOUT'], Zend_Date::DATES);
+				$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			$docAjout->datedoc(utf8_decode($date));
 			$docAjout->merge();
 		}
 		$odf->mergeSegment($docAjout);
@@ -134,7 +153,8 @@ try {
 	try{
 		$texteAppl = $odf->setSegment('texteAppl');
 		foreach($this->listeTextesAppl as $texteappl){
-			$texteAppl->libelleTexteAppl(utf8_decode($texteappl['LIBELLE_TEXTESAPPL']),true,'UTF8');
+			$texteappl = str_replace("’","'",$texteappl['LIBELLE_TEXTESAPPL']);
+			$texteAppl->libelleTexteAppl(utf8_decode($texteappl),true,'UTF8');
 			$texteAppl->merge();
 		}
 		$odf->mergeSegment($texteAppl);	
@@ -157,6 +177,12 @@ try {
 	
 	try{
 		$odf->setVars('dateSDIS',verifInfos($this->DATESDIS),true,'UTF8');
+	} catch (OdfException $e) {
+
+	}
+	
+	try{
+		$odf->setVars('dateCreationDossier',verifInfos($this->DATEINSERTDOSSIER),true,'UTF8');
 	} catch (OdfException $e) {
 
 	}
@@ -257,6 +283,112 @@ try{
 } catch (OdfException $e){
 
 }
+
+//Informations du DUS du dossier
+try{
+	$odf->setVars('nomDusDossier',verifInfos($this->dusDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+} catch (OdfException $e){
+
+}
+try{
+	$odf->setVars('prenomDusDossier',verifInfos($this->dusDossier['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+} catch (OdfException $e){
+
+}
+try{
+	$odf->setVars('mailDusDossier',verifInfos($this->dusDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
+} catch (OdfException $e){
+
+}
+
+
+//Surface totale entité
+try{
+	$odf->setVars('surfaceTotale',verifInfos($this->entite['SURFACETOTALE_ETABLISSEMENTINFORMATIONS']),true,'UTF8');
+} catch (OdfException $e){
+
+}
+//Surface accessible entité
+try{
+	$odf->setVars('surfaceAccessible',verifInfos($this->entite['SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS']),true,'UTF8');
+} catch (OdfException $e){
+
+}
+//Extinction automatique eau entité
+try{
+	$valExtinction = $this->entite['EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS'];
+	if($valExtinction == null || $valExtinction == 0)
+		$valExtinction = "non";
+	else
+		$valExtinction = "oui";
+	$odf->setVars('extinctionAuto',verifInfos($valExtinction),true,'UTF8');
+} catch (OdfException $e){
+
+}
+
+
+
+//INFORMATION CONCERNANT LE PERE DE L'ENTITE
+try{
+	$odf->setVars('etablissementLibelleP',verifInfos($this->infoPere['LIBELLE_ETABLISSEMENTINFORMATIONS']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try{
+	$odf->setVars('typeLettrePPere',verifInfos($this->typeLettrePPere),true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('activitePPere',verifInfos($this->libelleActivitePPere),true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('categorieEtabPere',verifInfos($this->categorieEtabPere),true,'UTF8');	
+} catch (OdfException $e) {
+
+}
+
+try{
+	$valExtinctionP = $this->infoPere['EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS'];
+	if($valExtinctionP == null || $valExtinctionP == 0)
+		$valExtinctionP = "non";
+	else
+		$valExtinctionP = "oui";
+	$odf->setVars('extinctionAutoP',verifInfos($valExtinctionP),true,'UTF8');
+} catch (OdfException $e){
+
+}
+
+//INFORMATION DU GN
+if($this->GN == 2){
+	try{
+		$odf->setVars('gn2',verifInfos('×'),true,'UTF8');
+	}catch (OdfException $e){
+
+	}
+	try{
+		$odf->setVars('gn3','',true,'UTF8');
+	}catch (OdfException $e){
+
+	}
+}else if($this->GN == 3){
+	try{
+		$odf->setVars('gn2','',true,'UTF8');
+	}catch (OdfException $e){
+
+	}
+	try{
+		$odf->setVars('gn3',verifInfos('×'),true,'UTF8');
+	}catch (OdfException $e){
+
+	}
+}
+
 
 //echo $this->idPieceJointe;
 try{

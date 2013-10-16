@@ -1889,30 +1889,35 @@ class DossierController extends Zend_Controller_Action
 
         //Informations de l'établissement (catégorie, effectifs, activité / type principal)
         $object_informations = $model_etablissement->getInformations($idEtab);
-
 		//Zend_Debug::dump($object_informations);
+		$this->view->entite = $object_informations;
 		
         $this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
         $this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
-        $this->view->categorieEtab = $object_informations["ID_CATEGORIE"];
+        $dbCategorie = new Model_DbTable_Categorie;
+		if($object_informations["ID_CATEGORIE"]){
+			$categorie = $dbCategorie->getCategories($object_informations["ID_CATEGORIE"]);
+			//Zend_Debug::dump($categorie);
+			$categorie = explode(" ",$categorie['LIBELLE_CATEGORIE']);
+			$this->view->categorieEtab = $categorie[0];
+		}
+	
 
         $this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+		
 		$dbType = new Model_DbTable_Type;
 		$lettreType = $dbType->find($object_informations['ID_TYPE'])->current();
         $this->view->typeLettreP = $lettreType['LIBELLE_TYPE'];
 
         $activitePrincipale = $model_typeactivite->find($object_informations["ID_TYPEACTIVITE"])->current();
         $this->view->libelleActiviteP = $activitePrincipale["LIBELLE_ACTIVITE"];
-
-		
-		
 		
         //echo "ID ETAB INFO ".$object_informations->ID_ETABLISSEMENTINFORMATIONS;
         // Types / activités secondaires
         $model_typesactivitessecondaire = new Model_DbTable_EtablissementInformationsTypesActivitesSecondaires;
         $array_types_activites_secondaires = $model_typesactivitessecondaire->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $object_informations->ID_ETABLISSEMENTINFORMATIONS)->toArray();
-
+		
 		//Zend_Debug::dump($array_types_activites_secondaires);
 		
         $typeS = "";
@@ -1927,14 +1932,49 @@ class DossierController extends Zend_Controller_Action
 
         $this->view->activiteSecondaire = substr($actS, 0, -2);
         $this->view->typeSecondaire = substr($typeS, 0, -2);
-
+		
+		
+		//En fonction du genre on récupère les informations de l'établissement ou du site
+		if($object_informations['ID_GENRE'] == 2){
+			//cas d'un établissement
+			$this->view->GN = 2;
+		}else if($object_informations['ID_GENRE'] == 3){
+			//cas d'une céllule
+			$this->view->GN = 3;
+		}
+		
+		$dbEtabLie = new Model_DbTable_EtablissementLie;
+		$etabLie = $dbEtabLie->recupEtabCellule($object_informations['ID_ETABLISSEMENT']);
+		//Zend_Debug::dump($etabLie);
+		if($etabLie != null){
+			$idPere = $etabLie[0]['ID_ETABLISSEMENT'];
+			$this->view->infoPere = $model_etablissement->getInformations($idPere);	
+			//Zend_Debug::dump($this->view->infoPere);
+			$lettreType = $dbType->find($this->view->infoPere['ID_TYPE'])->current();
+			$this->view->typeLettrePPere = $lettreType['LIBELLE_TYPE'];
+			$activitePrincipale = $model_typeactivite->find($this->view->infoPere["ID_TYPEACTIVITE"])->current();
+			$this->view->libelleActivitePPere = $activitePrincipale["LIBELLE_ACTIVITE"];
+			$this->view->categorieEtabPere = $this->view->infoPere['ID_CATEGORIE'];
+		}	
+		
+		
         // Adresses
         $model_adresse = new Model_DbTable_EtablissementAdresse;
         $array_adresses = $model_adresse->get($idEtab);
 
+		//Zend_Debug::dump($array_adresses);		
         if (count($array_adresses) > 0) {
             $this->view->communeEtab = $array_adresses[0]["LIBELLE_COMMUNE"];
-            $this->view->etablissementAdresse = $array_adresses[0]["LIBELLE_RUE"];
+			$adresse = "";
+			if($array_adresses[0]['NUMERO_ADRESSE'] != 0)
+				$adresse = $array_adresses[0]['NUMERO_ADRESSE']." ";
+			if($array_adresses[0]["LIBELLE_RUE"] != '')
+				$adresse .= $array_adresses[0]["LIBELLE_RUE"]." ";
+			if($array_adresses[0]["CODEPOSTAL_COMMUNE"] != '')
+				$adresse .= $array_adresses[0]["CODEPOSTAL_COMMUNE"]." ";
+			if($array_adresses[0]["LIBELLE_COMMUNE"] != '')
+				$adresse .= $array_adresses[0]["LIBELLE_COMMUNE"]." ";
+            $this->view->etablissementAdresse = $adresse;
         }
 
         //Zend_Debug::dump($etablissement->toArray());
@@ -1943,6 +1983,20 @@ class DossierController extends Zend_Controller_Action
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->infosDossier = $DBdossier->find($idDossier)->current();
 		//Zend_Debug::dump($this->view->infosDossier);
+		
+		//SERVICEINSTRUC_DOSSIER   servInstructeur
+		$dbGroupement = new Model_DbTable_Groupement;
+		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
+		//Zend_Debug::dump($groupement);
+		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
+		
+		//On recherche si un directeur unique de sécurité existe
+		$dbDossierContact = new Model_DbTable_DossierContact;
+		$dusInfos = $dbDossierContact->recupDUS($idDossier);
+		if(count($dusInfos) == 1)
+			$this->view->dusDossier = $dusInfos[0];
+		
+		//Zend_Debug::dump($dusInfos);
 
         //$avisDossier = $this->view->infosDossier["AVIS_DOSSIER"];
         $DBavisDossier = new Model_DbTable_Avis;
@@ -1999,15 +2053,7 @@ class DossierController extends Zend_Controller_Action
 
             //suivant le type on récup la liste des docs
             $dblistedoc = new Model_DbTable_DossierListeDoc;
-            /*
-            if ($dossierType['TYPE_DOSSIER'] == 1) {
-                //Cas d'une viste
-                $listeDocConsulte = $dblistedoc->getDocVisite();
-            } else {
-                //Cas d'une etude
-                $listeDocConsulte = $dblistedoc->getDocEtude();
-            }
-            */
+            
             if ($dossierType['TYPE_DOSSIER'] == 2 || $dossierType['TYPE_DOSSIER'] == 3) {
                 if ($dossierNature['ID_NATURE'] == 20) {
                     //cas d'une visite réception de travaux
@@ -2124,6 +2170,12 @@ class DossierController extends Zend_Controller_Action
                 $this->view->DATESECRETARIAT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
             }
             //Conversion de la date de réception SDIS
+            if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
+                $date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
+                $this->view->DATEINSERTDOSSIER = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+            }
+			
+			//Conversion de la date de création du dossier
             if ($this->view->infosDossier['DATESDIS_DOSSIER'] != '') {
                 $date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
                 $this->view->DATESDIS = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
