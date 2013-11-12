@@ -1,31 +1,27 @@
 <div id='layout-footer' class='container_16' >
 
     <div class='grid_16'>
-
         <p id='layout-footer-anchor'><a href='#'>Retour en haut</a></p>
-
         <hr />
-
         <p id='layout-footer-images'>
             <img src='/images/favicon.ico' alt='Prevarisc' height=16 width=16 /> ® <?php echo date("Y") ?>
             <a href='http://www.interieur.gouv.fr' >Ministère de l'intérieur</a> -
             <a href='http://www.sdis62.fr' >SDIS 62</a> - Service Recherche et Développement.
             Code et application distribués sous license MIT
         </p>
-
         <p id='layout-footer-copyright'>
             <a href='https://github.com/SDIS62/prevarisc/blob/master/README.md#-propos'>A propos</a>
         </p>
-
     </div>
+</div>
 
-    <script type="text/javascript">
+<script>
+
+    document.addEventListener("DOMContentLoaded", function() {
     
-        // Vérification pérdiodique de la validité de la session utilisateur
-        function checkActive()
-        {
+        // Vérification périodique de la validité de la session utilisateur
+        function checkActive() {
             $.ajax({
-
                 url: "/user/is-active?format=json",
                 type: "GET",
                 data: "uid=<?php echo Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR ?>",
@@ -40,9 +36,10 @@
         // checkActive();
         window.setInterval("checkActive()", 60000);
 
+        // Titres
         $('a[title]').tipsy({live: true});
         $('abbr[title]').tipsy({live: true});
+        
+    }, false);
 
-    </script>
-
-</div>
+</script>

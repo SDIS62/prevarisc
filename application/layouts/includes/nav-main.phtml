@@ -1,0 +1,23 @@
+<!-- Barre de menu -->
+<div id='layout-header'>
+    
+    <!-- Titre -->
+    <h1>Prevarisc</h1>
+    <?php echo strtoupper(APPLICATION_ENV) == "DEVELOPMENT" ? "<span id='version_flag'>Développeur</span>" : ""; ?>
+
+    <!-- Menu -->
+    <ul id='layout-header-menu'>
+        <li><a href='/'>Accueil</a></li>
+        <li><a href='#' title='Bientôt disponible ...' >Extractions - Statistiques</a></li>
+        <li><a href='/search'>Recherche</a></li>
+        <li>
+            <a href='/user/me'>
+                <?php echo Zend_Auth::getInstance()->getIdentity()->NOM_UTILISATEURINFORMATIONS . ' ' . Zend_Auth::getInstance()->getIdentity()->PRENOM_UTILISATEURINFORMATIONS ?>
+            </a>
+            <small style='border-bottom: 1px dotted black;'>
+                <a href='/user/logout' >Vous n'êtes pas <?php echo Zend_Auth::getInstance()->getIdentity()->NOM_UTILISATEURINFORMATIONS . ' ' . Zend_Auth::getInstance()->getIdentity()->PRENOM_UTILISATEURINFORMATIONS ?> ?</a>
+            </small>
+        </li>
+    </ul>
+    
+</div>

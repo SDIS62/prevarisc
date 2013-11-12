@@ -52,32 +52,7 @@
 			<p>
 				<input style='width: 100%' id='libelle_text' type='text' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' size='30' value='<?php if ( $this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"] ) echo htmlspecialchars($this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' />
 			</p>
-			
-			<dl id='avis' class='champs'>
-				<dt>Avis</dt>
-				<dd class='edit' >
-					<select name='ID_AVIS'>
-						<?php foreach( $this->DB_avis as $item ) : ?>
-						<option value='<?php echo $item["ID_AVIS"] ?>' <?php if( $item["ID_AVIS"] == $this->DB_informations["ID_AVIS"] ) echo "selected" ?> ><?php echo $item["LIBELLE_AVIS"] ?></option>
-						<?php endforeach ?>
-					</select>
-					<span id="dangerosite_niv" >
-						Facteur de dangerosité : 
-						<select name='DANGEROSITE_ETABLISSEMENTINFORMATIONS'>
-							<option value="0" <?php if( $this->DB_informations["DANGEROSITE_ETABLISSEMENTINFORMATIONS"] == 0 ) echo "selected" ?> >-</option>
-							<option value="1" <?php if( $this->DB_informations["DANGEROSITE_ETABLISSEMENTINFORMATIONS"] == 1 ) echo "selected" ?> >1</option>
-							<option value="2" <?php if( $this->DB_informations["DANGEROSITE_ETABLISSEMENTINFORMATIONS"] == 2 ) echo "selected" ?> >2</option>
-							<option value="3" <?php if( $this->DB_informations["DANGEROSITE_ETABLISSEMENTINFORMATIONS"] == 3 ) echo "selected" ?> >3</option>
-							<option value="4" <?php if( $this->DB_informations["DANGEROSITE_ETABLISSEMENTINFORMATIONS"] == 4 ) echo "selected" ?> >4</option>
-							<option value="5" <?php if( $this->DB_informations["DANGEROSITE_ETABLISSEMENTINFORMATIONS"] == 5 ) echo "selected" ?> >5</option>
-						</select>
-
-						Existence de schéma de mise en sécurité : 
-						<input id="mise_secu" name='SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS' type="checkbox" value="1" <?php if( $this->DB_informations["SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
-					</span>
-				</dd>
-			</dl>
-
+            
 			<dl>
 				<dt>Statut</dt>
 				<dd>
@@ -247,7 +222,10 @@
 				
 				<?php if( $this->DB_informations["ID_TYPEACTIVITE"] ) : ?>
 				<dt style='margin-left: 50px; float: left; width: 190px;'>Activité principale</dt>
-				<dd style='float: left; margin: 0; padding: 0;'><?php echo $this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"] ?></dd>
+				<dd style='float: left; margin: 0; padding: 0;'>
+                <p style='margin: 0;'><abbr title='<?php echo $this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"]?>' ><?php echo substr($this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"], 0, 50) . (strlen($this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr></p>
+                <br/>
+                </dd>
 				<?php endif ?>
                 
                 <div style='clear: both'></div>
@@ -268,7 +246,7 @@
 				<dt style='margin-left: 50px; float: left;  width: 190px;'>Activités secondaires</dt>
 				<dd style='float: left; margin: 0; padding: 0;'>
                     <?php foreach($this->types_activites_secondaires as $type) : ?>
-                    <p style='margin: 0;'><abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 75) . (strlen($type["LIBELLE_ACTIVITE"]) > 75 ? '(...)' : '') ?></abbr></p>
+                    <p style='margin: 0;'><abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 50) . (strlen($type["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr></p>
                     <br/>
                     <?php endforeach ?>
                 </dd>

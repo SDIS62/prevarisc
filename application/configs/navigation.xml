@@ -1104,26 +1104,22 @@
 			<resource></resource>
 			<privilege></privilege>
 			<pages>
-				<index>
-					<label>Recherche</label>
-					<controller>search</controller>
-					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
-				</index>
 				<etablissement>
+                    <label>Établissements</label>
 					<controller>search</controller>
 					<action>etablissement</action>
 					<resource></resource>
 					<privilege></privilege>
 				</etablissement>
 				<dossier>
+                    <label>Dossiers</label>
 					<controller>search</controller>
 					<action>dossier</action>
 					<resource></resource>
 					<privilege></privilege>
 				</dossier>
 				<utilisateur>
+                    <label>Utilisateurs</label>
 					<controller>search</controller>
 					<action>utilisateur</action>
 					<resource></resource>
@@ -1178,18 +1174,11 @@
 			</pages>
 		</statistiques>
 		<user>
-			<label>Utilisateurs</label>
+			<label>Utilisateur</label>
 			<controller>user</controller>
 			<resource></resource>
 			<privilege></privilege>
 			<pages>
-				<index>
-					<label>Utilisateur</label>
-					<controller>user</controller>
-					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
-				</index>
 				<add-group>
 					<label>Ajouter un groupe</label>
 					<controller>user</controller>
@@ -1276,6 +1265,7 @@
 					<privilege></privilege>
 				</is-active>
 				<profile>
+                    <label>Profil</label>
 					<controller>user</controller>
 					<action>profile</action>
 					<resource></resource>

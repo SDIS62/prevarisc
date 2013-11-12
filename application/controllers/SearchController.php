@@ -13,9 +13,6 @@
             // Définition du layout
             $this->_helper->layout->setLayout('search');
 
-            // Titre
-            $this->view->title = "Recherche";
-
             // Nom de l'action appellée
             $this->view->action = $this->_request->getActionName();
         }
@@ -23,7 +20,7 @@
         public function indexAction()
         {
             // On redirige vers la recherche par établissement
-            $this->_forward('etablissement');
+            $this->_helper->redirector('etablissement');
         }
 
         public function etablissementAction()

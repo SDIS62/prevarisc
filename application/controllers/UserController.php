@@ -21,8 +21,6 @@
 
         public function indexAction()
         {
-            $this->view->title = 'Gestion des utilisateurs';
-
             $DB_groupe = new Model_DbTable_Groupe;
             $this->view->groupes = $DB_groupe->fetchAll()->toArray();
         }
@@ -364,7 +362,7 @@
         public function meAction()
         {
             $user = Zend_Auth::getInstance()->getIdentity();
-            $this->_forward('profile', null, null, array( 'uid' => $user->ID_UTILISATEUR, 'me' => true ));
+            $this->_helper->redirector('profile', null, null, array( 'uid' => $user->ID_UTILISATEUR, 'me' => true ));
         }
 
         public function loginAction()
