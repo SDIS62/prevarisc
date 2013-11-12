@@ -259,7 +259,7 @@
 				<dt style='float: left; width: 190px;'>Types secondaires</dt>
 				<dd style='float: left; margin: 0; padding: 0; width: 25px;'>
                     <?php foreach($this->types_activites_secondaires as $type) : ?>
-                    <?php echo $type["LIBELLE_TYPE"] . " " ?>
+                    <p style='margin: 0;'><?php echo $type["LIBELLE_TYPE"] . " " ?></p><br/>
                     <?php endforeach ?>
                 </dd>
 				<?php endif ?>
@@ -268,7 +268,7 @@
 				<dt style='margin-left: 50px; float: left;  width: 190px;'>Activités secondaires</dt>
 				<dd style='float: left; margin: 0; padding: 0;'>
                     <?php foreach($this->types_activites_secondaires as $type) : ?>
-                    <span><abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 75) . (strlen($type["LIBELLE_ACTIVITE"]) > 75 ? '(...)' : '') ?></abbr></span>
+                    <p style='margin: 0;'><abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 75) . (strlen($type["LIBELLE_ACTIVITE"]) > 75 ? '(...)' : '') ?></abbr></p>
                     <br/>
                     <?php endforeach ?>
                 </dd>
