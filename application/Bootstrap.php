@@ -2,7 +2,7 @@
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
-    private $version = "1.2.0";
+    private $version = "1.2.1";
 
     protected function _initAutoload()
     {
