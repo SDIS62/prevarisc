@@ -34,19 +34,15 @@
 					<?php $periodicite = $this->tableau[$categorie["ID_CATEGORIE"]][$type["ID_TYPE"]]; ?>
 				
 					<td style='text-align: center' >
-						<?php // if( $type["ID_TYPE"] != "O" ) : ?>
+						<?php if( $type["ID_TYPE"] != 7 &&  $type["ID_TYPE"] != 11) : ?>
 							<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[0]) ) ? $periodicite[0] : 0 ?>' name='<?php echo $categorie["ID_CATEGORIE"]."_".$type["ID_TYPE"]."_0" ?>' />
-						<?php //else : ?>
-							<!-- <input type='text' size='3' style='visibility: hidden' />-->
-						<?php //endif ?>
+						<?php else : ?>
+							<input type='text' size='3' style='visibility: hidden' />
+						<?php endif ?>
 					</td>
 					
 					<td style='text-align: center' >
-						<?php // if( $categorie["ID_CATEGORIE"] == 5 || $type["ID_TYPE"] == "R" || $type["ID_TYPE"] == "J" || $type["ID_TYPE"] == "U" || $type["ID_TYPE"] == "O" ) : ?>
 							<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[1]) ) ? $periodicite[1] : 0 ?>' name='<?php echo $categorie["ID_CATEGORIE"]."_".$type["ID_TYPE"]."_1" ?>' />
-						<?php //else : ?>
-							<!-- <input type='text' size='3' style='visibility: hidden' />-->
-						<?php //endif ?>
 					</td>
 					
 				<?php endforeach ?>
