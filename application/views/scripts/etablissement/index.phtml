@@ -1039,6 +1039,14 @@
 
 <script type="text/javascript">
 
+    $('#type_principal_select').change(function() {
+        if($(this).val() == 7 || $(this).val() == 11)
+        {
+            $("#local_sommeil_checkbox").attr('checked', 'checked');
+            alert('La présence de locaux à sommeil est maintenant signalée dans la fiche établissement.');
+        }
+    });
+
 	$(document).ready(function() {
 		$("#geo_container, .ppy-placeholder").css("height", "350px");
 		$(".ppy3 .ppy-stage").css("width", ($(".grid_7").innerWidth() * $(".container_16").innerWidth()) / 100);
