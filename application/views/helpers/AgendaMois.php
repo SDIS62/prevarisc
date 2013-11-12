@@ -1,6 +1,6 @@
  <?php
 
-    class Zend_View_Helper_AgendaMois
+    class View_Helper_AgendaMois
     {
         public function agendaMois($donnees, $mois=null, $annee=null)
         {

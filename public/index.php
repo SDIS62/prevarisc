@@ -1,10 +1,10 @@
 <?php
 
-// Define path to application directory
+// Définition du chemin vers le dossier application/
 defined('APPLICATION_PATH')
     || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
 
-// Define application environment
+// Définition de l'environnement de l'applciation
 defined('APPLICATION_ENV')
     || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
     
@@ -16,37 +16,17 @@ defined('DATA_PATH')
 defined('REAL_DATA_PATH')
     || define('REAL_DATA_PATH', realpath(dirname(__FILE__) . '/../public/data'));
 
-// Get include path
-set_include_path(implode(PATH_SEPARATOR, array(
-    get_include_path(),
+// Création d'une constante plus courte qui est égale à DIRECTORY_SEPARATOR
+defined('DS')
+    || define('DS', DIRECTORY_SEPARATOR);
+    
+// Chargements des librairies
+require APPLICATION_PATH . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+
+// Création de l'application avec les fichiers config
+$application = new Zend_Application(APPLICATION_ENV, array('config' => array(
+    APPLICATION_PATH . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . 'application.ini'
 )));
 
-// Load libraries
-try
-{
-    $path_to_autoload = APPLICATION_PATH . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
-
-    if (!file_exists($path_to_autoload))
-    {
-        throw new Exception ('autoload.php does not exist. run \'php composer.phar install\'.');
-    }
-
-    $loader = require $path_to_autoload;
-}
-catch(Exception $e)
-{
-    echo "Message : " . $e->getMessage();
-    echo "Code : " . $e->getCode();
-    die();
-}
-
-/** Zend_Application */
-require_once 'Zend/Application.php';
-
-// Create application, bootstrap, and run
-$application = new Zend_Application(
-    APPLICATION_ENV,
-    APPLICATION_PATH . '/configs/application.ini'
-);
-$application->bootstrap()
-            ->run();
+// Bootstrap et gooooo !
+$application->bootstrap()->run();

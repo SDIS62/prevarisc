@@ -1,0 +1,3 @@
+# On ne sauvegarde pas les sessions
+*
+!.gitignore

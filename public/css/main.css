@@ -6,28 +6,36 @@
 
 /* Règles générales */
 
-html, body, #wrapper {height: 100%;}
+html, body, #wrapper { height: 100%; width: 100%;}
 #wrapper { height: auto; min-height: 100%; }
 abbr { cursor: help; border-bottom: 1px dotted black; }
+small { font-size: 0.5em; }
 
 /* En-tête */
 
-#layout-header {
+body {
+    padding-top: 86px;
+}
 
-	padding: 0 5%;
-	margin-top: 15px;
-	margin-bottom: 25px;
-	height: 35px;
+#layout-header {
+    padding-left: 5%;
+	height: 60px;
 	background-color: #EEE;
-	line-height: 35px;
+	line-height: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    border-bottom: 1px solid #d5d5d5;
 }
 
 #layout-header h1 {
-
+    
 	display: inline-block;
 	width: 220px;
 	height: 27px;
-	margin-top: 5px;
+	margin-top: 17px;
 	background-image: url('images/layout-header-logo.png');
 	text-indent: -5000px;
 }
@@ -44,7 +52,7 @@ abbr { cursor: help; border-bottom: 1px dotted black; }
 }
 
 ul#layout-header-menu {
-
+    padding-right: 10%;
 	float: right;
 	font-size: 14px;
 	text-transform: uppercase;

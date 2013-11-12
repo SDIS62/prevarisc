@@ -1,6 +1,6 @@
 <?php
 
-    class Zend_View_Helper_ListeGroupement extends Zend_View_Helper_HtmlElement
+    class View_Helper_ListeGroupement extends Zend_View_Helper_HtmlElement
     {
         public function listeGroupement($selected, $attribs = null)
         {

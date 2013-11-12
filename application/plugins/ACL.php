@@ -1,5 +1,5 @@
 <?php
-class Plugin_GlobalAction extends Zend_Controller_Plugin_Abstract
+class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 {
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
@@ -18,14 +18,4 @@ class Plugin_GlobalAction extends Zend_Controller_Plugin_Abstract
             $user->save();
         }
     }
-
-    public function postDispatch(Zend_Controller_Request_Abstract $request)
-    {
-        // Ajax : désactive le layout quand une requete ajax est envoyée
-        if( $request->isXmlHttpRequest() )
-        {
-            Zend_Layout::getMvcInstance()->disableLayout();
-        }
-    }
-
 }

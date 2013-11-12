@@ -21,7 +21,7 @@
 					<resource></resource> 
 					<privilege></privilege> 			
 				</save>		
-				<Backbup>
+				<backup>
 					<label>Back Up</label>
 					<controller>admin</controller>
 					<action>backup</action>
@@ -101,83 +101,83 @@
 					<label>Selection commissions</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>commissionselection</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</commissionselection>		
 				<index>	
 					<label>Calendrier des Commissions</label>
-					<controller>calendrier-des-commissions</label>
+					<controller>calendrier-des-commissions</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>			
 				<recupevenement>	
 					<controller>calenderier-des-commissions</controller>
 					<action>recupevenement</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</recupevenement>					
 				<recupevenementodj>
 					<controller>calendrier-des-commissions</controller>
 					<action>recupevenementodj</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</recupevenementodj>					
 				<affectedossodj>
 					<controller>calendrier-des-commissions</controller>
 					<action>affectedossodj</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</affectedossodj>
 				<dialogcomm>
 					<controller>calendrier-des-commissions</controller>
 					<action>dialogcomm</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</dialogcomm>				
 				<adddatecomm>
 					<label>Ajouter une date de commission</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>adddatecomm</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</adddatecomm>
 				<adddatedialogcomm>
 					<controller>calendrier-des-commissions</controller>
 					<action>adddatedialogcomm</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</adddatedialogcomm>
 				<adddates>
 					<controller>calendrier-des-commisions</controller>
 					<action>adddates</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</adddates>
 				<deplacecommissiondate>
 					<label>Deplacer la date de la commission</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>deplacecommissiondate</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</deplacecommissiondate>
 				<resizecommissiondate>
 					<controller>calendrier-des-commissions</controller>
 					<action>resizecommissiondate</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</resizecommissiondate>
 				<gestionheures>
 					<label>Gestion des heures</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>gestionheures</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</gestionheures>
 				<changementordre>
 					<controller>calendrier-des-commissions</controller>
 					<action>changementordre</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</changementordre>
 			</pages>
@@ -191,94 +191,94 @@
 				<delete>
 					<controller>commission</controller>
 					<action>delete</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete>
 				<competences>
 					<label>Gestion des compétences</label>
 					<controller>commission</controller>
 					<action>competences</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</competences>
 				<add-regle>
 					<controller>commission</controller>
 					<action>add-regle</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add-regle>
 				<delete-regle>
 					<controller>commission</controller>
 					<action>delete-regle</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete-regle>
 				<save-regles>
 					<controller>commission</controller>
 					<action>save-regles</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save-regles>
 				<apply-regles>
 					<controller>commission</controller>
 					<action>apply-regles</action>
-					<resssource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</apply-regles>
 				<membres>
 					<label>Membres de la commission</label>
 					<controller>commission</controller>
 					<action>membres</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</membres>
 				<add-membre>
 					<label>Ajouter un membre</label>
 					<controller>commission</controller>
 					<action>addMembre</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add-membre>
 				<delete-membre>
 					<label>Supprimer un membre</label>
 					<controller>commission</controller>
 					<action>delete-membre</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete-membre>
 				<save-membre>
 					<label>Sauvegarder un membre</label>
 					<controller>commission</controller>
 					<action>save-membres</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save-membre>
 				<contact>
 					<label>Contact</label>
 					<controller>commission</controller>
 					<action>contacts</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</contact>
 				<courriers>
 					<label>Courriers</label>
 					<controller>commission</controller>
 					<action>courriers</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</courriers>
 				<add-courrier>
 					<label>Ajouter Courrier</label>
 					<controller>commission</controller>
 					<action>add-courrier</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add-courrier>
 				<delete-courrier>
 					<label>Supprimer Courrier</label>
 					<controller>commission</controller>
 					<action>delete-courrier</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete-courrier>
 			</pages>
@@ -293,41 +293,41 @@
 					<label>Gestion des Contact</label>
 					<controller>contact</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>		
 				<form>
 					<label></label>
 					<controller>contact</controller>
 					<action>form</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</form>
 				<add-contact>
 					<label>Ajouter Contact</label>
 					<controller>contact</controller>
 					<action>add</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add-contact>
 				<edit-contact>
 					<label>Editer Contact</label>
 					<controller>contact></controller>
 					<action>edit</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</edit-contact>
 				<delete-contact>
 					<label>Supprimer Contact</label>
 					<controller>contact</controller>
 					<action>delete</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete-contact>
 				<get-contact>
 					<controller>contact</controller>
 					<action>get</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</get-contact>
 			</pages>
@@ -342,34 +342,34 @@
 					<label>Gestions des Couche Cartographique</label>
 					<controller>couche-cartographique</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<view>
 					<controller>couche-cartographique</controller>
 					<action>view</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</view>
 				<add-cc>
 					<label>Ajouter Couche Cartographique</label>
 					<controller>couche-cartographique</controller>
 					<action>add</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add-cc>
 				<edit-cc>
 					<label>Editer Couche Cartographique</label>
 					<controller>couche-cartographique</controller>
 					<action>edit</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</edit-cc>
 				<delete-cc>
 					<label>Suppimer Couche Cartographique</label>
-					<controller>couche-cartographique</controlelr>
+					<controller>couche-cartographique</controller>
 					<action>delete</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete-cc>
 			</pages>
@@ -383,216 +383,216 @@
 				<index>
 					<controller>Gestion des dossier</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<piece-jointe>
 					<label>Gestion des pieces jointes</label>
 					<controller>dossier</controller>
 					<action>piece-jointe</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</piece-jointe>
 				<add>
 					<label>Ajouter une piece jointe</label>
 					<controller>dossier</controller>
-					<action>add</add>
-					<ressource></ressource>
+					<action>add</action>
+					<resource></resource>
 					<privilege></privilege>
 				</add>
 				<general>
 					<controller>dossier</controller>
 					<action>general</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</general>
 				<fonction>
 					<label>Fonction</label>
 					<controller>dossier</controller>
 					<action>fonction</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</fonction>
 				<save-pj>
 					<controller>dossier</controller>
 					<action>save</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save-pj>
 				<prescription>
 					<controller>dossier</controller>
 					<action>prescription</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</prescription>
 				<prescriptionloadajax>
 					<controller>dossier</controller>
 					<action>prescriptionloadajax</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</prescriptionloadajax>
 				<showprescription>
 					<label>Voir prescription</label>
 					<controller>dossier</controller>
 					<action>showprescription</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</showprescription>
 				<editprescription>
 					<label>Editer Prescription</label>
 					<controller>dossier</controller>
 					<action>editprescription</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</editprescription>
 				<editprescriptiontexte>
 					<controller>dossier</controller>
 					<action>editprescriptiontexte</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</editprescriptiontexte>
 				<editprescriptionarticle>
 					<controller>dossier</controller>
 					<action>editprescriptionarticle</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</editprescriptionarticle>
 				<editprescriptionvalidation>
 					<controller>dossier</controller>
 					<action>editprescriptionvalidation</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</editprescriptionvalidation>
 				<selectiontexte>
-					<controler>dossier</controller>
+					<controller>dossier</controller>
 					<action>selectiontexte</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</selectiontexte>
 				<selectionarticle>
 					<controller>dossier</controller>
 					<action>selectiontexte</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</selectionarticle>
 				<selectionabreviation>
 					<controller>dossier</controller>
 					<action>selectionabreviation</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</selectionabreviation>
 				<selectionetab>
 					<controller>dossier</controller>
 					<action>selectionetab</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</selectionetab>
 				<liees>
 					<controller>dossier</controller>
 					<action>liees</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</liees>
 				<contact>
 					<controller>dossier</controller>
 					<action>contact</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</contact>
 				<docconsulte>
 					<label>Consulter Doc</label>
 					<controller>dossier</controller>
 					<action>docconsulte</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</docconsulte>
 				<ajoutdoc>
 					<label>Ajouter Doc</label>
 					<controller>dossier</controller>
 					<action>ajoutdoc</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</ajoutdoc>
 				<validdoc>
 					<controller>dossier</controller>
 					<action>validdoc</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</validdoc>
 				<addetablissement>
 					<label>Ajouter Etablissement</label>
 					<controller>dossier</controller>
 					<action>addetablissement</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</addetablissement>
 				<deleteetablissement>
 					<label>Supprimer Etablissement</label>
 					<controller>dossier</controller>
 					<action>deleteetablissement</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</deleteetablissement>
 				<deleteliendossier>
 					<controller>dossier</controller>
 					<action>deleteliendossier</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</deleteliendossier>
 				<dialogcommshow>
 					<controller>dossier</controller>
 					<action>dialogcommshow</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</dialogcommshow>
 				<affectationodj>
-					<label>Affectation ordre du jour</labal>
+					<label>Affectation ordre du jour</label>
 					<controller>dossier</controller>
 					<action>affectationodj</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</affectationodj>
 				<descriptifs>
 					<controller>dossier</controller>
 					<action>descriptifs</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</descriptifs>
 				<dialoggenrapport>
 					<controller>dossier</controller>
 					<action>dialoggenrapport</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</dialoggenrapport>
 				<generationrapport>
 					<controller>dossier</controller>
 					<action>generationrapport</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</generationrapport>
 				<creationdoc>
 					<controller>dossier</controller>
 					<action>creationdoc</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</creationdoc>
 				<generationconvoc>
 					<label>Generation Convocation</label>
 					<controller>dossier</controller>
 					<action>generationconvoc</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</generationconvoc>
 				<descriptif>
 					<controller>dossier</controller>
 					<action>descriptif</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</descriptif>
 				<textesapplicables>
 					<controller>dossier</controller>
 					<action>textesapplicables</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</textesapplicables>
 			</pages>
@@ -606,13 +606,13 @@
 				<not-allowed>
 					<controller>error</controller>
 					<action>not-allowed</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</not-allowed>
 				<error>
 					<controller>error</controller>
 					<action>error</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</error>
 			</pages>
@@ -627,90 +627,90 @@
 					<label>Gestions des Etablissements</label>
 					<controller>etablissement</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<carte>
 					<controller>etablissement</controller>
 					<action>carte</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</carte>
 				<descriptif>
 					<label>Carte</label>
 					<controller>etablissement</controller>
 					<action>descriptif</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</descriptif>
 				<textesapplicables>
 					<controller>etablissement</controller>
 					<action>textesapplicables</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</textesapplicables>
 				<piece-jointes>
 					<label>Piece Jointe</label>
 					<controller>etablissement</controller>
 					<action>piece-jointes</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</piece-jointes>
 				<contacts>
 					<label>Contacts</label>
 					<controller>etablissement</controller>
 					<action>contacts</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</contacts>
 				<dossiers>
 					<label>Dossiers</label>
 					<controller>etablissement</controller>
 					<action>dossier</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</dossiers>
 				<historique>
 					<label>Historique</label>
 					<controller>etablissement</controller>
 					<action>historique</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</historique>
 				<add>
 					<label>Ajouter</label>
 					<controller>etablissement</controller>
 					<action>add</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add>
 				<fiche-existe>
 					<controller>etablissement</controller>
 					<action>fiche-existe</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</fiche-existe>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>etablissement</controller>
 					<action>save</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save>		
 				<get>
 					<controller>etablissement</controller>
 					<action>get</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</get>
 				<get-default-values>
 					<controller>etablissement</controller>
 					<action>get-default-values</action>
-					<ressources></ressources>
+					<resources></resources>
 					<privilege></privilege>
 				</get-default-values>		
 			</pages>
-		</etblissement>
+		</etablissement>
 		<gestion-des-commissions>
 			<label>Gestions des Commissions</label>
 			<controller>gestion-des-commssions</controller>
@@ -720,33 +720,33 @@
 				<index>
 					<controller>gestiondescommissions</controller>
 					<action>gestion-des-commissions</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<form>
 					<controller>gestiondescommissions</controller>
 					<action>gestion-des-commissions</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</form>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>gestion-des-commissions</controller>
 					<action>save</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save>
 				<get-commissions>
 					<controller>gestion-des-commissions</controller>
 					<action>get-commissions</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</get-commissions>
 				<add-commissions>
 					<label>Ajouter Commissions</label>
 					<controller>gestion-des-commissions</controller>
 					<action>add-commissions</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add-commissions>
 			</pages>
@@ -761,20 +761,20 @@
 					<label>Gestion des communes</label>
 					<controller>gestion-des-communes</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<display>
 					<controller>gestion-des-communes</controller>
 					<action>display</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</display>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>gestion-des-communes</controller>
-					<action>save</save>
-					<ressource></ressource>
+					<action>save</action>
+					<resource></resource>
 					<privilege></privilege>
 				</save>		
 			</pages>
@@ -782,38 +782,38 @@
 		<gestion-des-documents>
 			<label>Gestion des Documents</label>
 			<controller>gestion-des-documents</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion des documents</label>
 					<controller>gestion-des-documents</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<form>
 					<controller>gestion-des-documents</controller>
 					<action>form</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</form>
 				<add>
 					<controller>gestion-des-documents</controller>
-					<action>add</add>
-					<ressource></ressource>
+					<action>add</action>
+					<resource></resource>
 					<privilege></privilege>
 				</add>
 				<check>
 					<controller>gestion-des-documents</controller>
 					<action>check</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</check>
 				<suppdoc>
 					<controller>gestion-des-documents</controller>
 					<action>suppdoc</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</suppdoc>		
 			</pages>
@@ -821,39 +821,39 @@
 		<gestion-prescriptions-type>
 			<label>Gestion des Prescriptions Type</label>
 			<controller>gestion-prescriptions-type</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion des Prescriptions Type</label>
 					<controller>gestion-prescriptions-type</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<showprescription>
 					<label>Voir prescription</label>
 					<controller>gestion-prescriptions-type</controller>
 					<action>showprescription</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</showprescription>
 				<formpresctype>
 					<controller>gestion-prescriptions-type</controller>
 					<action>formpresctype</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</formpresctype>
 				<save>
 					<controller>gestion-prescriptions-type</controller>
 					<action>save</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save>
 				<delete>
 					<controller>gestion-prescriptions-type</controller>
 					<action>delete</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete>		
 			</pages>
@@ -861,27 +861,27 @@
 		<gestion-textes-applicables>
 			<label>Gestion des Textes Applicables</label>
 			<controller>gestion-textes-applicables</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion des Textes Applicables</label>
-					<controller>gestion-textes-applicables</label>
+					<controller>gestion-textes-applicables</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<formtexteappl>
 					<controller>gestion-textes-applicables</controller>
 					<action>formtexteappl</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</formtexteappl>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>gestion-textes-applicables</controller>
 					<action>save</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save>
 			</pages>
@@ -889,78 +889,71 @@
 		<groupement>
 			<label>Groupements</label>
 			<controller>groupement</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion des groupements</label>
 					<controller>groupement</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<display>
 					<controller>groupement</controller>
 					<action>display</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</display>
 				<view>
 					<controller>groupement</controller>
 					<action>view</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</view>
 				<add>
 					<controller>groupement</controller>
 					<action>add</action>
-					<ressoruce></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add>
 				<delete>
 					<controller>groupement</controller>
 					<action>delete</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete>
 				<add-type>
 					<controller>groupement</controller>
 					<action>add-type</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add-type>
 				<delete-type>
 					<controller>groupement</controller>
 					<action>delete-type</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete-type>
 			</pages>
 		</groupement>
 		<index>
-			<label>Index</label>
+			<label>Page d'accueil</label>
 			<controller>index</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
-				<index>
-					<label>Gestion des Index</index>
-					<controller>index</controller>
-					<action>index</action>
-					<ressource></ressource>
-					<privilege></privilege>
-				</index>
 				<help>
 					<label>Aide</label>
 					<controller>index</controller>
 					<action>help</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</help>
 				<rappels>
 					<controller>index</controller>
 					<action>rappels</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</rappels>
 			</pages>
@@ -968,20 +961,20 @@
 		<matrice-des-droits>
 			<label>Matrice des droits</label>
 			<controller>matrice-des-droits</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion des droits</label>
 					<controller>matrice-des-droits</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<save>
 					<controller>matrice-des-droits</controller>
 					<action>save</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save>
 			</pages>
@@ -989,41 +982,41 @@
 		<news>
 			<label>News</label>
 			<controller>news</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion des News</label>
 					<controller>news</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<next>
 					<label>Suivante</label>
 					<controller>news</controller>
 					<action>next</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</next>
 				<get>
 					<controller>news</controller>
 					<action>get</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</get>
 				<add>
 					<label>Ajouter News</label>
 					<controller>news</controller>
 					<action>add</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add>
 				<delete>
 					<label>Supprimer News</label>
 					<controller>news</controller>
 					<action>delete</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete>
 			</pages>
@@ -1031,21 +1024,21 @@
 		<periodicite>
 			<label>Periodicite</label>
 			<controller>periodicite</controller>
-			<ressources></ressources>
+			<resources></resources>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion des Periodicité</label>
 					<controller>perioditicte</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>periodicite</controller>
 					<action>save</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save>
 			</pages>
@@ -1053,54 +1046,54 @@
 		<piece-jointe>
 			<label>Piece Jointe</label>
 			<controller>piece-jointe</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion des Piece Jointe</label>
 					<controller>piece-jointe</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<form>
 					<controller>piece-jointe</controller>
 					<action>form</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</form>
 				<add>
 					<controller>piece-jointe</controller>
 					<action>add</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add>
 				<delete>
 					<controller>piece-jointe</controller>
 					<action>delete</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete>
 				<check>
 					<label>Verifier</label>
 					<controller>piece-jointe</controller>
 					<action>check</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</check>
 			</pages>
-		</piecejointe>
+		</piece-jointe>
 		<proxy>
 			<label>Proxy</label>
 			<controller>proxy</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion du proxy</label>
 					<controller>proxy</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 			</pages>
@@ -1108,44 +1101,44 @@
 		<search>
 			<label>Recherche</label>
 			<controller>search</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Recherche</label>
 					<controller>search</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<etablissement>
 					<controller>search</controller>
 					<action>etablissement</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</etablissement>
 				<dossier>
 					<controller>search</controller>
 					<action>dossier</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</dossier>
 				<utilisateur>
 					<controller>search</controller>
 					<action>utilisateur</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
-				</utilisteur>
+				</utilisateur>
 				<searchChild>
 					<controller>search</controller>
 					<action>search-child</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</searchChild>
 				<run>
 					<controller>search</controller>
 					<action>run</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</run>
 			</pages>
@@ -1153,33 +1146,33 @@
 		<statistiques>
 			<label>Statistiques</label>
 			<controller>statistiques</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Statistiques</label>
 					<controller>statistiques</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
 					<controller>statistiques</controller>
 					<action>ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>	
 				<liste-des-erp-sous-avis-defavorable>
 					<controller>statistiques</controller>
 					<action>liste-des-erp-sous-avis-defavorable</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</liste-des-erp-sous-avis-defavorable>			
 				<prochaines-visites-de-controle-periodique-a-faire-sur-une-commune>
 					<label>Prochaine visite de controle periodique a faire sur une commmune</label>
 					<controller>statistiques</controller>
 					<action>prochaines-visites-de-controle-periodique-a-faire-sur-une-commune</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</prochaines-visites-de-controle-periodique-a-faire-sur-une-commune>
 			</pages>
@@ -1187,131 +1180,131 @@
 		<user>
 			<label>Utilisateurs</label>
 			<controller>user</controller>
-			<ressource></ressource>
+			<resource></resource>
 			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Utilisateur</label>
 					<controller>user</controller>
 					<action>index</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</index>
 				<add-group>
 					<label>Ajouter un groupe</label>
 					<controller>user</controller>
 					<action>add-group</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add-group>
 				<delete-group>
 					<label>Supprimer un groupe</label>
 					<controller>user</controller>
 					<action>delete-group</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</delete-group>
 				<save-group>
 					<label>Sauvegarder Groupe</label>
 					<controller>user</controller>
 					<action>save-group</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</save-group>
 				<get-group>
 					<controller>user</controller>
 					<action>get-group</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</get-group>
 				<edit>
 					<label>Editer un groupe</label>
 					<controller>user</controller>
 					<action>edit</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</edit>
 				<edit-me>
 					<controller>user</controller>
 					<action>edit-me</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</edit-me>
 				<edit-avatar>
 					<label>Modifier l'avatar</label>
 					<controller>user</controller>
 					<action>edit-avatar</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>		
 				</edit-avatar>
 				<add>
 					<label>Ajouter un utilisateur</label>
 					<controller>user</controller>
 					<action>add</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</add>
 				<maire-add>
 					<label>Ajouter un maire</label>
 					<controller>user</controller>
 					<action>maire-add</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</maire-add>
 				<process>
 					<controller>user</controller>
 					<action>process</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</process>
 				<actived-group>
 					<controller>user</controller>
 					<action>actived-group</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</actived-group>
 				<actived>
 					<controller>user</controller>
 					<action>actived</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</actived>
 				<is-active>
 					<controller>user</controller>
 					<action>is-active</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</is-active>
 				<profile>
 					<controller>user</controller>
 					<action>profile</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</profile>
 				<me>
 					<controller>user</controller>
 					<action>me</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</me>
 				<login>
 					<label>Se connecter</label>
 					<controller>user</controller>
 					<action>login</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</login>
 				<logout>
 					<label>Se déconnecter</label>
 					<controller>user</controller>
-					<action>logout</actin>
-					<ressource></ressource>
+					<action>logout</action>
+					<resource></resource>
 					<privilege></privilege>
 				</logout>
 				<getpreventionniste>
-					<controller>user</controlelr>
+					<controller>user</controller>
 					<action>getpreventionniste</action>
-					<ressource></ressource>
+					<resource></resource>
 					<privilege></privilege>
 				</getpreventionniste>
 			</pages>

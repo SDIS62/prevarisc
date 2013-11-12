@@ -1,5 +1,5 @@
 <?php
-    class Zend_View_Helper_DateJqueryToBd
+    class View_Helper_DateJqueryToBd
     {
         public function dateJqueryToBd($date1)
         {

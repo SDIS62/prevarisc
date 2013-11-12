@@ -1,6 +1,6 @@
 <?php
 
-    class Zend_View_Helper_AfficheDoc
+    class View_Helper_AfficheDoc
     {
         public function afficheDoc($natureId,$id,$libelle,$ref=null,$date=null,$type=null)
         {

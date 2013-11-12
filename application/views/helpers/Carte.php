@@ -1,5 +1,5 @@
 <?php
-    class Zend_View_Helper_Carte
+    class View_Helper_Carte
     {
         private $zoom;
         private $lat, $lon;
