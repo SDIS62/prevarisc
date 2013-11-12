@@ -87,14 +87,14 @@
 							<li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
 							
 							<?php if($this->droits->DROITETABLISSEMENT_GROUPE == 0) : ?>
+                                <?php if($this->genre != "\"EIC\"" ) : ?>
+									<li class='<?php echo ( $this->action == "textes-applicables" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li>
+								<?php endif ?>
 								<?php if($this->genre != "\"Site\"" ) : ?>
 									<li class='<?php echo ( $this->action == "descriptif" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li>
 								<?php endif ?>
 								<li class='<?php echo ( $this->action == "pieces-jointes" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
 								<li class='<?php echo ( $this->action == "contacts" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>
-                                <?php if($this->genre != "\"EIC\"" ) : ?>
-									<li class='<?php echo ( $this->action == "textes-applicables" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li>
-								<?php endif ?>
 							<?php endif ?>
 							
 							<li class='<?php echo ( $this->action == "dossiers" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'>Dossiers</a></li>
