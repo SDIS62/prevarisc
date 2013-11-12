@@ -230,20 +230,20 @@
             }
         }
 
-        // Pr�ventionnistes
+        // Préventionnistes
         public function getDefaultPrev($request)
         {
+            include_once 'Preventioniste.php';
+            $model_prev = new Model_DbTable_Preventionniste;
+                
             if(isset($request["NUMINSEE_COMMUNE"]))
             {
                 $index = isset($request["NUMINSEE_COMMUNE"][1]) && $request["NUMINSEE_COMMUNE"][1] != "" ? 1 : 0;
-                include_once 'Preventioniste.php';
-                $model_prev = new Model_DbTable_Preventionniste;
-
                 return $model_prev->getPrev($request["NUMINSEE_COMMUNE"][$index], isset($request["ID_PERE"]) ? $request["ID_PERE"] : '');
             }
             else
             {
-                return null;
+                return $model_prev->getPrev('', isset($request["ID_PERE"]) ? $request["ID_PERE"] : '');
             }
         }
 

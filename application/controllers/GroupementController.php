@@ -97,6 +97,9 @@
                 $info = $DB_informations->find( $new_groupement->ID_UTILISATEURINFORMATIONS )->current();
 
                 if ($info == null) {
+                     if($_POST["ID_UTILISATEURCIVILITE"] == "null")
+                        unset($_POST["ID_UTILISATEURCIVILITE"]);
+                    unset($_POST["ID_FONCTION"]);
                     $id = $DB_informations->insert(array_intersect_key($_POST, $DB_informations->info('metadata')));
                     $new_groupement->ID_UTILISATEURINFORMATIONS = $id;
                 } else {
