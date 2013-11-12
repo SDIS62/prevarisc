@@ -8,6 +8,7 @@
 
 html, body, #wrapper {height: 100%;}
 #wrapper { height: auto; min-height: 100%; }
+abbr { cursor: help; border-bottom: 1px dotted black; }
 
 /* En-tête */
 

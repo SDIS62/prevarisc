@@ -242,17 +242,22 @@
 			<?php unset($this->types_activites_secondaires[-1]); ?>
 			
 			<dl class='read'>
-				<dt>Type principal</dt>
-				<dd><?php echo $this->DB_type[$this->DB_informations["ID_TYPE"]-1]["LIBELLE_TYPE"] ?></dd>
+				<dt style='float: left; width: 190px;'>Type principal</dt>
+				<dd style='float: left; margin: 0; padding: 0; width: 25px;'><?php echo $this->DB_type[$this->DB_informations["ID_TYPE"]-1]["LIBELLE_TYPE"] ?></dd>
 				
 				<?php if( $this->DB_informations["ID_TYPEACTIVITE"] ) : ?>
-				<dt>Activité principale</dt>
-				<dd><?php echo $this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"] ?></dd>
+				<dt style='margin-left: 50px; float: left; width: 190px;'>Activité principale</dt>
+				<dd style='float: left; margin: 0; padding: 0;'><?php echo $this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"] ?></dd>
 				<?php endif ?>
                 
+                <div style='clear: both'></div>
+
                 <?php if($this->types_activites_secondaires) : ?>
-				<dt>Types secondaires</dt>
-				<dd>
+                
+                <br/>
+                
+				<dt style='float: left; width: 190px;'>Types secondaires</dt>
+				<dd style='float: left; margin: 0; padding: 0; width: 25px;'>
                     <?php foreach($this->types_activites_secondaires as $type) : ?>
                     <?php echo $type["LIBELLE_TYPE"] . " " ?>
                     <?php endforeach ?>
@@ -260,12 +265,16 @@
 				<?php endif ?>
 				
 				<?php if($this->types_activites_secondaires) : ?>
-				<dt>Activités secondaires</dt>
-				<dd>
+				<dt style='margin-left: 50px; float: left;  width: 190px;'>Activités secondaires</dt>
+				<dd style='float: left; margin: 0; padding: 0;'>
                     <?php foreach($this->types_activites_secondaires as $type) : ?>
-                    <?php echo $type["LIBELLE_ACTIVITE"] . "<br/>" ?>
+                    <span><abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 75) . (strlen($type["LIBELLE_ACTIVITE"]) > 75 ? '(...)' : '') ?></abbr></span>
+                    <br/>
                     <?php endforeach ?>
                 </dd>
+                
+                <div style='clear: both'></div>
+                
 				<?php endif ?>
 			</dl>
 			
