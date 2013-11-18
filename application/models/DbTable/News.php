@@ -30,12 +30,14 @@
 
             $result = $liste;
 
+            /*
             $droits = (array) Zend_Controller_Action_HelperBroker::getStaticHelper('Droits')->get();
 
             foreach ($result as &$row) {
 
                 $row = array_merge($row, $droits);
             }
+            */
 
             return $result;
         }

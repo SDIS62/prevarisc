@@ -2,13 +2,6 @@
 
     class CommissionController extends Zend_Controller_Action
     {
-        public function init()
-        {
-            // On check si l'utilisateur peut accéder à cette partie
-            if($this->_helper->Droits()->get()->DROITADMINCOMMISSION_GROUPE == 0)
-                $this->_helper->Droits()->redirect();
-        }
-
         public function deleteAction()
         {
             $this->_helper->viewRenderer->setNoRender();

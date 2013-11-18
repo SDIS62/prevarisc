@@ -12,12 +12,6 @@ class GestionDesDocumentsController extends Zend_Controller_Action
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('check', 'json')
             ->initContext();
-
-        // On check si l'utilisateur peut accéder à cette partie
-        /*
-        if($this->_helper->Droits()->get()->DROITADMINPREV_GROUPE == 0)
-            $this->_helper->Droits()->redirect();
-        */
     }
 
     public function indexAction()

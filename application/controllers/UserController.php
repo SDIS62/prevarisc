@@ -13,10 +13,6 @@
                         ->addActionContext('save-group', 'json')
                         ->addActionContext('login', 'json')
                         ->initContext();
-
-            // On check si l'utilisateur peut accéder à cette partie
-            if(!in_array($this->_request->getActionName(), array("me", "edit-me", "profile", "edit-avatar", "is-active", "logout", "login", "getpreventionniste", "process", "edit")) && $this->_helper->Droits()->get()->DROITADMINSYS_GROUPE == 0)
-                $this->_helper->Droits()->redirect();
         }
 
         public function indexAction()
@@ -86,8 +82,6 @@
 
         public function editAction()
         {
-            $this->view->droitsSYS = $this->_helper->Droits()->get()->DROITADMINSYS_GROUPE;
-
             // Récupération des paramètres
             $model_admin = new Model_DbTable_Admin;
             $this->view->params = $model_admin->getParams();
@@ -96,9 +90,6 @@
             $DB_informations = new Model_DbTable_UtilisateurInformations;
 
             $user = $DB_user->find( $this->getRequest()->getParam('uid') )->current();
-
-            if($this->_helper->Droits()->get()->DROITADMINSYS_GROUPE == 0 && Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR != $user->ID_UTILISATEUR)
-                $this->_helper->Droits()->redirect();
 
             $this->view->user = $user;
             $this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
@@ -132,9 +123,6 @@
             $this->_helper->layout->disableLayout();
 
             if ($_FILES) {
-
-                if($this->_helper->Droits()->get()->DROITADMINSYS_GROUPE == 0 && Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR != $_POST["id"])
-                    $this->_helper->Droits()->redirect();
 
                 if ($_FILES["AVATAR"]["size"] < 1024 * 1024) {
 
@@ -188,9 +176,6 @@
         {
             $DB_user = new Model_DbTable_Utilisateur;
             $DB_informations = new Model_DbTable_UtilisateurInformations;
-
-            if(($this->_helper->Droits()->get()->DROITADMINSYS_GROUPE == 0 && !$this->_request->uid) || ($this->_helper->Droits()->get()->DROITADMINSYS_GROUPE == 0 && isset($this->_request->uid) && $this->_request->uid != Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR))
-                $this->_helper->Droits()->redirect();
 
             $user = $info = $id = null;
 
@@ -341,8 +326,6 @@
             }
 
             // A t'on le droit de modifier ?
-            $this->view->edit_bool = $this->_helper->Droits()->get()->DROITADMINSYS_GROUPE == 0 && Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR != $user->ID_UTILISATEUR ? false : true;
-
             $this->view->user = $user;
             $this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
             $this->view->groupe = $DB_groupe->find( $user["ID_GROUPE"] )->current();

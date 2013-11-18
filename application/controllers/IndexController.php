@@ -17,9 +17,6 @@
         {
             // Titre
             $this->view->title = "Accueil";
-
-            // On check si l'utilisateur peut accéder à cette partie
-            $this->view->droits = $this->_helper->Droits()->get();
         }
         
         // Page d'accueil

@@ -6,10 +6,6 @@
         {
             //$this->_helper->layout->setLayout("admin");
             $this->view->action = $this->_request->getActionName();
-
-            // On check si l'utilisateur peut accéder à cette partie
-            if($this->_helper->Droits()->get()->DROITADMINSYS_GROUPE == 0)
-                $this->_helper->Droits()->redirect();
         }
 
         // Accueil forwardé vers groupement de communes

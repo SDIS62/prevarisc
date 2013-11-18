@@ -9,10 +9,6 @@
                         ->addActionContext('display', 'html')
                         ->addActionContext('add-type', 'json')
                         ->initContext();
-
-            // On check si l'utilisateur peut accéder à cette partie
-            if($this->_helper->Droits()->get()->DROITADMINPREV_GROUPE == 0  && $this->_request->getActionName() != "view")
-                $this->_helper->Droits()->redirect();
         }
 
         // Groupement de communes

@@ -2,13 +2,6 @@
 
     class GestionDesCommunesController extends Zend_Controller_Action
     {
-        public function init()
-        {
-            // On check si l'utilisateur peut accéder à cette partie
-            if($this->_helper->Droits()->get()->DROITADMINPREV_GROUPE == 0)
-                $this->_helper->Droits()->redirect();
-        }
-
         public function indexAction()
         {
             // Liste des villes pour le select

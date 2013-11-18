@@ -11,10 +11,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                     ->addActionContext('recupevenementodj', 'json')
                     ->addActionContext('recupdateliee', 'json')
                     ->initContext();
-
-        // On check si l'utilisateur peut accéder à cette partie
-        if($this->_helper->Droits()->get()->DROITADMINCOMMISSION_GROUPE == 0 && !in_array($this->getRequest()->getActionName(), array("commissionselection", "recupevenement", "recupevenementodj", "recupdateliee")))
-            $this->_helper->Droits()->redirect();
     }
 
 

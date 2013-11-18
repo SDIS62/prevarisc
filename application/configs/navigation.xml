@@ -8,7 +8,7 @@
 			<privilege></privilege>  
 			<pages>
 				<index>
-					<label>Gestion des Admins</label>
+					<label>Général</label>
 					<controller>admin</controller>
 					<action>index</action>
 					<resource></resource> 
@@ -333,13 +333,13 @@
 			</pages>
 		</contact>	
 		<couche-cartographique>
-			<label>Couche Cartographique</label>
+			<label>Couches cartographiques</label>
 			<controller>couche-cartographique</controller>
 			<resource></resource> 
 			<privilege></privilege>		
 			<pages>
 				<index>
-					<label>Gestions des Couche Cartographique</label>
+					<label>Gestions des Couches Cartographiques</label>
 					<controller>couche-cartographique</controller>
 					<action>index</action>
 					<resource></resource>
@@ -964,13 +964,6 @@
 			<resource></resource>
 			<privilege></privilege>
 			<pages>
-				<index>
-					<label>Gestion des droits</label>
-					<controller>matrice-des-droits</controller>
-					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
-				</index>
 				<save>
 					<controller>matrice-des-droits</controller>
 					<action>save</action>

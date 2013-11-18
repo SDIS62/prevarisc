@@ -134,8 +134,6 @@ class DossierController extends Zend_Controller_Action
         if ($id_dossier == null) { $id_dossier = $this->_getParam("idDossier"); }
 
         if ($id_dossier != null) {
-            if($this->_helper->Droits()->checkDossier($id_dossier))
-                $this->_helper->Droits()->redirect();
 
             //Si on à l'id d'un dossier, on récupére tous les établissements liés à ce dossier
             $DBdossier = new Model_DbTable_Dossier;
@@ -149,12 +147,6 @@ class DossierController extends Zend_Controller_Action
             $this->view->libelleType = $libelleType['LIBELLE_DOSSIERTYPE'];
 			
             $this->view->idDossier = ($this->_getParam("id"));
-        } else {
-
-            if ($this->_helper->Droits()->get()->DROITDOSSCREATION_GROUPE != 1) {
-
-                $this->_helper->Droits()->redirect();
-            }
         }
     }
 

@@ -2,7 +2,6 @@
 
     class ContactController extends Zend_Controller_Action
     {
-        private $droit;
 
         public function init()
         {
@@ -16,11 +15,8 @@
                         ->addActionContext('edit', 'html')
                         ->initContext();
 
-            // Droits
-            $droits = $this->_helper->Droits()->get();
-            $this->view->droit_ecriture = false;
-
             // Droits sur la page
+            /*
             if (isset($this->_request->item)) {
             
                 switch ($this->_request->item) {
@@ -64,6 +60,7 @@
                         break;
                 }
             }
+            */
         }
 
         public function indexAction()
@@ -115,8 +112,6 @@
             // Placement
             $this->view->item = $this->_request->item;
             $this->view->id = $this->_request->id;
-
-            $this->view->droitsSYS = $this->_helper->Droits()->get()->DROITADMINSYS_GROUPE;
         }
 
         public function addAction()

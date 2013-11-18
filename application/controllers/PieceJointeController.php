@@ -12,12 +12,9 @@
             $ajaxContext = $this->_helper->getHelper('AjaxContext');
             $ajaxContext->addActionContext('check', 'json')
                 ->initContext();
-
-            // Droits
-            $droits = $this->_helper->Droits()->get();
-            $this->view->droit_ecriture = false;
-
+                
             // Droits sur la page
+            /*
             switch ($this->_request->type) {
 
                 case "etablissement" :
@@ -54,7 +51,7 @@
                     $this->_helper->Droits()->redirect();
                     break;
             }
-
+            */
         }
 
         public function indexAction()

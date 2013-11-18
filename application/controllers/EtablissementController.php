@@ -3,8 +3,7 @@
     {
         private $informations;
         private $DB_etablissement;
-        private $droits;
-
+        
         // Initialisation de la classe reprÃ©sentant les genres des Ã©tablissements
         public function init()
         {
@@ -19,11 +18,7 @@
 
             $this->DB_etablissement = new Model_DbTable_Etablissement;
 
-            $this->droits = $this->_helper->Droits()->get();
-
             if ($this->_request->format != "json") {
-
-                $this->view->droits = $this->droits;
 
                 $this->view->genre = "null";
 
@@ -92,21 +87,6 @@
 
                 // Mode de lecture (read si il y'a un id spÃ©cifiÃ©, edit si on est en crÃ©ation)
                 $this->view->mode_de_lecture = Zend_Json::encode( ( $this->_request->id ) ? "read" : "edit" );
-            }
-
-            // Check des droits
-            if ($this->_request->getActionName() != "get-default-values") {
-                if ($this->_request->id) {
-
-                    if($this->_helper->Droits()->checkEtablissement($this->_request->id))
-                        $this->_helper->Droits()->redirect();
-                } else {
-
-                    if ($this->droits->DROITETSCREATION_GROUPE != 1) {
-
-                        $this->_helper->Droits()->redirect();
-                    }
-                }
             }
         }
 
@@ -524,28 +504,20 @@
                             $informations = $row;
 
                             // On vide les tables des plans / rubrique / secondaire
-                            if ($this->droits->DROITETABLISSEMENT_GROUPE != 2) {
-                                foreach ($DB_tab as $key => $tab) {
-                                    if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
+                            foreach ($DB_tab as $key => $tab) {
+                                if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
 
-                                        $tab->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
-                                    } else {
+                                    $tab->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
+                                } else {
 
-                                        $tab->delete( "ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                                    }
+                                    $tab->delete( "ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                                 }
-                            } else {
-
-                                // On vide que les champs prévision
-                                $DB_tab["ID_TYPEPLAN"]->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
                             }
-                            // throw new Exception('Vous ne pouvez pas créer deux fiches etablissement datant du même jour', 500);
                         }
 
-                        if ($this->droits->DROITETABLISSEMENT_GROUPE != 2) {
-                            $DB_tab["NUMERO_ADRESSE"]->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                            $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                        }
+
+                        $DB_tab["NUMERO_ADRESSE"]->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                        $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                     }
 
                     if (!isset($informations)) {
@@ -562,20 +534,14 @@
                     $informations = $this->DB_etablissement->getInformations( $this->_request->id );
 
                     // On vide les tables des plans / rubrique / secondaire
-                    if ($this->droits->DROITETABLISSEMENT_GROUPE != 2) {
-                        foreach ($DB_tab as $key => $tab) {
-                            if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
+                    foreach ($DB_tab as $key => $tab) {
+                        if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
 
-                                $tab->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
-                            } else {
+                            $tab->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
+                        } else {
 
-                                $tab->delete( "ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                            }
+                            $tab->delete( "ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                         }
-                    } else {
-
-                        // On vide que les champs prévision
-                        $DB_tab["ID_TYPEPLAN"]->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
                     }
                 }
 
@@ -707,9 +673,7 @@
                     $item->save();
                     
                 } else {
-
-                    if($this->droits->DROITETABLISSEMENT_GROUPE != 2)
-                        $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                    $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                 }
 
                 $db->commit();
