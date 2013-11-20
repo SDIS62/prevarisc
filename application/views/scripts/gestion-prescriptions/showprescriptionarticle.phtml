@@ -1,0 +1,126 @@
+<?php
+	echo "<br/>";	
+	echo "
+		<button class='addArticleTexte' >Ajouter un article</button>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<!--
+		<button class='addPrescriptionArticle' >Ajouter une prescription</button>
+		-->
+	";
+	echo "<br/><br/>";	
+
+	echo "<ul class='prescriptionarticle_".$this->idTexte."'>";
+	foreach($this->listePrescriptionArticle as $val => $ue){
+		echo "
+			<li id='article_".$ue['ID_PRESCRIPTIONARTICLE']."'>
+				<span style='font-style:italic;'>".$ue['LIBELLE_PRESCRIPTIONARTICLE']."</span>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<button class='showDetailArticle' id='showDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' >Afficher les détails</button>
+				<button class='hideDetailArticle' id='hideDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' style='display:none;'>Masquer les détails</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<button class='editArticle' id='".$ue['ID_PRESCRIPTIONARTICLE']."' >Modifier</button>
+				<br/>
+				<div style='margin-left:30px;' id='articleDetail_".$ue['ID_PRESCRIPTIONARTICLE']."'></div>
+				<br/>
+			</li>
+		";
+	}
+	echo "</ul>";
+	echo "
+		</ul>
+		<ul class='prescriptiontypeTexte_".$this->idTexte."'>
+	";
+	$nbPrescType = count($this->prescriptionType);
+	for($i=0; $i < $nbPrescType; $i++)
+	{
+		echo "
+			<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."'>
+				<table style='width:900px;'>
+		";
+
+		$nbAssoc = count($this->prescriptionType[$i]);
+		$cpt = true;
+		for($j=0; $j < $nbAssoc; $j++)
+		{
+			$article = $this->prescriptionType[$i][$j]['LIBELLE_ARTICLE'];
+			$texte = $this->prescriptionType[$i][$j]['LIBELLE_TEXTE'];
+			echo "
+				<tr>
+					<td style='width:15%;'>".$texte."</td>
+					<td style='width:15%;'>".$article."</td>					
+			";
+			if($cpt)
+			{
+				echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+				echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType' id='' >Editer</button></td>";
+				$cpt = false;
+			}
+			echo "
+				</tr>
+			";
+		}
+		echo "
+				</table>
+			</li>
+		";
+	}	
+	echo "
+		</ul>
+	";
+
+?>
+
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+	$(".showDetailArticle").button({
+		icons: {
+			primary: 'ui-icon-triangle-1-e'
+		},
+		text: false
+	});
+	
+	$(".hideDetailArticle").button({
+		icons: {
+			primary: 'ui-icon-triangle-1-s'
+		},
+		text: false
+	});
+	
+	$(".editPrescriptionType").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		}
+	});
+/*
+
+	
+	$(".hideDetailArticle").button({
+		icons: {
+			primary: 'ui-icon-triangle-1-s'
+		},
+		text: false
+	}).click(function(){
+		var tabId = $(this).attr('id').split('_');
+		var idTexte = tabId[1];
+		$("#textesec_"+idTexte).html('');
+		$("#hidetextesec_"+idTexte).hide();
+		$("#showtextesec_"+idTexte).show();
+	});
+	*/
+	$(".editArticle").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		}
+	});
+	
+	$(".addArticleTexte").button({
+		icons: {
+			primary: 'ui-icon-circle-plus'
+		}
+	});
+	
+	$(".prescriptionarticle").sortable();
+});
+</script>

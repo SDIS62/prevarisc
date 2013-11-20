@@ -1,0 +1,16 @@
+<?php
+echo "
+	<form name='formArticle' id='formArticle' action='' method='POST'>
+";
+if($this->idTexte)
+{
+	//Creation d'un nouveau article
+	echo "<input type='hidden' name='idTexte' id='idTexte' value='".$this->idTexte."' />";
+}else if ($this->articleInfo){
+	//edition d'un texte existant
+	echo "<input type='hidden' name='idArticle' id='idArticle' value='".$this->idArticle."' />";
+}
+echo "
+		Libelle de l'article : <input type='text' name='LIBELLE_PRESCRIPTIONARTICLE' value='".( ($this->articleInfo)?$this->articleInfo['LIBELLE_PRESCRIPTIONARTICLE']:"")."' />
+	</form>
+";

@@ -1,0 +1,47 @@
+<?php
+if($this->do == 'new')
+	echo "<li id='categorie_".$this->categorie['ID_PRESCRIPTION_CAT']."'>";
+	
+echo "	
+	<span style='font-size:17px;font-weight:bold;'>".$this->categorie['LIBELLE_PRESCRIPTION_CAT']."</span>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<button class='showDetailCat' id='showtexte_".$this->categorie['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
+	<button class='hideDetailCat' id='hidetexte_".$this->categorie['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<button class='editCategorie' id='".$this->categorie['ID_PRESCRIPTION_CAT']."' >Modifier</button>
+	<br/>
+	<div style='margin-left:30px;' id='texte_".$this->categorie['ID_PRESCRIPTION_CAT']."'></div>
+	<div style='margin-left:30px;' id='prescriptionCat_".$this->categorie['ID_PRESCRIPTION_CAT']."'></div>
+	<br/>
+";
+if($this->do == 'new')
+	echo "</li>";
+	
+?>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".showDetailCat").button({
+		icons: {
+			primary: 'ui-icon-triangle-1-e'
+		},
+		text: false
+	});
+	$(".hideDetailCat").button({
+		icons: {
+			primary: 'ui-icon-triangle-1-s'
+		},
+		text: false
+	});
+	$(".categorie").button({
+		icons: {
+			primary: 'ui-icon-circle-plus'
+		}
+	});
+	$(".editCategorie").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		}
+	});
+});
+</script>

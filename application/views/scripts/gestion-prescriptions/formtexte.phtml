@@ -1,0 +1,16 @@
+<?php
+echo "
+	<form name='formTexte' id='formTexte' action='' method='POST'>
+";
+if($this->idCategorie)
+{
+	//Creation d'un nouveau texte
+	echo "<input type='hidden' name='idCategorie' id='idCategorie' value='".$this->idCategorie."' />";
+}else if ($this->texteInfo){
+	//edition d'un texte existant
+	echo "<input type='hidden' name='idTexte' id='idTexte' value='".$this->idTexte."' />";
+}
+echo "
+		Libelle du texte : <input type='text' name='LIBELLE_PRESCRIPTIONTEXTE' value='".( ($this->texteInfo)?$this->texteInfo['LIBELLE_PRESCRIPTIONTEXTE']:"")."' />
+	</form>
+";

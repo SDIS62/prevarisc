@@ -1,0 +1,99 @@
+<?php
+
+echo "
+	<form name='formPrescription' id='formPrescription' action='' method='POST'>
+	<input type='hidden' name='ID_PRESCRIPTIONTYPE' id='ID_PRESCRIPTIONTYPE' value='".( ($this->do == 'edit')?$this->idPrescType:"")."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_CATEGORIE' id='PRESCRIPTIONTYPE_CATEGORIE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE']:"")."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_TEXTE' id='PRESCRIPTIONTYPE_TEXTE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_TEXTE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_TEXTE']:"")."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:"")."' />
+	<div id='selectEmplacement' ></div>
+	<br/><br/>
+	<span>Texte : </span><span><input type='texte' name='LIBELLE_TEXTE' id='LIBELLE_TEXTE' value='' /></span>
+	<span>Article : </span><span><input type='article' name='LIBELLE_ARTICLE' id='LIBELLE_ARTICLE' value='' /></span>
+	<button id='addAssoc' >Ajouter</button>
+	<br/><br/>
+	<div>
+		<table id='association' style='width:500px;'>
+			<tr>
+				<th>Texte</th>
+				<th>Article</th>
+				<th></th>
+			</tr>
+";
+if($this->do == 'edit')
+{
+	foreach($this->assoc as $val => $ue)
+	{
+		echo "
+			<tr>
+				<td><input type='hidden' name='texte[]' value='".$ue['LIBELLE_TEXTE']."' />".$ue['LIBELLE_TEXTE']."</td>
+				<td><input type='hidden' name='article[]' value='".$ue['LIBELLE_ARTICLE']."' />".$ue['LIBELLE_ARTICLE']."</td>
+				<td><a href='' class='suppAssoc'>&times;</a></td>
+			</tr>
+		";
+	}
+}
+echo "
+		</table>
+	</div>
+	<br/>
+	Contenu : 
+	<textarea name='PRESCRIPTIONTYPE_LIBELLE' id='LIBELLE_PRESCRIPTIONTYPE' cols='150' rows='10'>".( ($this->do == 'edit')?$this->assoc[0]['PRESCRIPTIONTYPE_LIBELLE']:"")."</textarea>
+	</div>
+	</form>	
+";
+
+?>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#addAssoc").button({
+		icons: {
+			primary: 'ui-icon-circle-plus'
+		}
+	});
+	
+	$("#LIBELLE_TEXTE").live('focus',function(){
+		$("#texteId").val('');
+	});
+	
+	$("#LIBELLE_TEXTE").autocomplete("/gestion-prescriptions/selectiontexte?format=json",{
+		minChars: 2,
+		max: 100,
+		parse: function(data) {
+			return $.map(data["selectTexte"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_TEXTE,
+					result: row.LIBELLE_TEXTE
+				}
+			});
+		},
+		formatItem: function(item) {
+			return item.LIBELLE_TEXTE;
+		}
+	}).result(function(e, item) {
+		$("#textTemp").val(item.ID_TEXTE);
+	});
+
+	$("#LIBELLE_ARTICLE").autocomplete("/gestion-prescriptions/selectionarticle?format=json",{
+		minChars: 2,
+		max: 100,
+		parse: function(data) {
+			return $.map(data["selectArticle"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_ARTICLE,
+					result: row.LIBELLE_ARTICLE
+				}
+			});
+		},
+		formatItem: function(item) {
+			//alert(item.LIBELLE_COMMISSION);
+			return item.LIBELLE_ARTICLE;
+		}
+	}).result(function(e, item) {
+		$("#articleTemp").val(item.ID_TEXTE);
+	});
+
+
+});

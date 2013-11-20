@@ -1,0 +1,46 @@
+<?php
+
+		echo "<li id='prescriptiontype_".$this->idPrescriptionType."'>";
+
+	echo "
+			<table style='width:900px;'>
+	";
+
+	$nbAssoc = count($this->textes);
+	$cpt = true;
+	for($j=0; $j < $nbAssoc; $j++)
+	{
+		$article = $this->articles[$j];
+		$texte = $this->textes[$j];
+		echo "
+			<tr>
+				<td style='width:15%;'>".$texte."</td>
+				<td style='width:15%;'>".$article."</td>
+		";
+		if($cpt)
+		{
+			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".$this->libelle."</td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType' id='' >Editer</button></td>";
+			$cpt = false;
+		}
+		echo "
+			</tr>
+		";
+	}
+	echo "
+			</table>
+	";
+
+		echo "</li>";
+
+?>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".editPrescriptionType").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		}
+	});
+});
+</script>

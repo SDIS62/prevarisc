@@ -1,0 +1,12 @@
+<?php
+echo "
+	<form name='formCategorie' id='formCategorie' action='' method='POST'>
+";
+if($this->idCategorie)
+{
+	echo "<input type='hidden' name='idCat' id='idCat' value='".$this->idCategorie."' />";
+}
+echo "
+		Libelle de la catégorie : <input type='text' name='LIBELLE_PRESCRIPTION_CAT' value='".( ($this->idCategorie)?$this->catInfo['LIBELLE_PRESCRIPTION_CAT']:"")."' />
+	</form>
+";
