@@ -1,0 +1,108 @@
+<?php
+
+echo "
+	<form name='formPrescription' id='formPrescription' action='' method='POST'>
+	<input type='hidden' name='ID_PRESCRIPTIONTYPE' id='ID_PRESCRIPTIONTYPE' value='".( ($this->do == 'edit')?$this->idPrescType:"")."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_CATEGORIE' id='PRESCRIPTIONTYPE_CATEGORIE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE']:"")."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_TEXTE' id='PRESCRIPTIONTYPE_TEXTE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_TEXTE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_TEXTE']:"")."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:"")."' />
+	<button id='emplacement' class='search' style='display:none;'>Rechercher les prescriptions  selon le classement</button>
+	<button id='word' class='search'>Rechercher les prescriptions par mots clés</button>
+	<br/><br/>
+	<div id='selectWord' style='display:none;'>
+		Saisissez le ou les mots clés (séparés d'un espace) <input type='texte' name='motscles' id='motscles' value='' style='width:500px;' />
+		<button class='search' id='wordSearch'>Rechercher</button>
+	</div>
+	<div id='selectEmplacement' ></div>
+	<div id='listePrescriptionTypeSearch' style='margin-top:20px;display:none;'></div>
+	<div id='listePrescriptionType' style='margin-top:20px;'>
+";
+
+$nbPrescType = count($this->prescriptionType);
+for($i=0; $i < $nbPrescType; $i++)
+{
+	echo "
+		<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' style='list-style-type:none;'>
+			<table style='width:900px;'>
+	";
+
+	$nbAssoc = count($this->prescriptionType[$i]);
+	$cpt = true;
+	for($j=0; $j < $nbAssoc; $j++)
+	{
+		$article = $this->prescriptionType[$i][$j]['LIBELLE_ARTICLE'];
+		$texte = $this->prescriptionType[$i][$j]['LIBELLE_TEXTE'];
+		echo "
+			<tr>
+				<td style='width:15%;'>".$texte."</td>
+				<td style='width:15%;'>".$article."</td>
+		";
+		if($cpt)
+		{
+			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+			echo "<td rowspan='".$nbAssoc."'></td>";
+			$cpt = false;
+		}
+		echo "
+			</tr>
+		";
+	}
+	echo "
+			</table>
+		</li>
+	";
+}
+echo "</div>";
+
+?>
+<script type="text/javascript">
+
+$(document).ready(function(){
+	$(".search").button({
+		icons: {
+			primary: 'ui-icon-search'
+		}
+	});
+	
+	$("#wordSearch").live('click',function(){
+		$.ajax({
+			type: "POST",
+			url: "/dossier/prescriptionwordsearch",
+			data: "&motsCles="+$("#motscles").val(),
+			success: function(msg){
+				$("#listePrescriptionTypeSearch").html(msg);
+			}
+		});
+		return false;
+	});
+	
+	$(".search").live('click',function(){
+		var type= $(this).attr('id');
+		if(type == 'emplacement'){
+			$("#emplacement").hide();
+			$("#word").show();
+			$("#selectWord").hide();
+			$("#selectEmplacement").show();
+			$("#listePrescriptionType").show();
+			$("#listePrescriptionTypeSearch").hide();
+			$.ajax({
+				type: "POST",
+				url: "/gestion-prescriptions/emplacement",
+				data: $("#formPrescription").serialize(),
+				success: function(msg){
+					$("#selectEmplacement").html(msg);
+				}
+			});
+		}else{
+			$("#word").hide();
+			$("#emplacement").show();
+			$("#selectEmplacement").hide();
+			$("#selectWord").show();
+			$("#listePrescriptionType").hide();
+			$("#listePrescriptionTypeSearch").show();
+		}
+		return false;
+	})
+});
+
+</script>

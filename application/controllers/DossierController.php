@@ -1341,10 +1341,8 @@ class DossierController extends Zend_Controller_Action
 		
     }
 
-    public function prescriptionAction()
-    {
-    }
-
+	
+/* ANCIENNE PRESCRIPTIONS
     public function prescriptionloadajaxAction()
     {
         $this->_helper->viewRenderer->setNoRender();
@@ -1555,8 +1553,10 @@ class DossierController extends Zend_Controller_Action
 
         }
     }
+*/
 
-    //Autocomplétion pour selection TEXTE
+
+//Autocomplétion pour selection TEXTE
     public function selectiontexteAction()
     {
         if (isset($_GET['q'])) {
@@ -1566,7 +1566,7 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
-    //Autocomplétion pour selection ARTICLE
+//Autocomplétion pour selection ARTICLE
     public function selectionarticleAction()
     {
         if (isset($_GET['q'])) {
@@ -1576,7 +1576,7 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
-    //Autocomplétion pour selection ABREVIATION
+//Autocomplétion pour selection ABREVIATION
     public function selectionabreviationAction()
     {
         if (isset($_GET['q'])) {
@@ -1586,7 +1586,7 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
-    //Autocomplétion pour selection ETABLISSEMENT
+//Autocomplétion pour selection ETABLISSEMENT
     public function selectionetabAction()
     {
         // Création de l'objet recherche
@@ -1606,7 +1606,7 @@ class DossierController extends Zend_Controller_Action
         $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
     }
 
-    //Action permettant de lister les établissements et les dossiers liés
+//Action permettant de lister les établissements et les dossiers liés
     public function lieesAction()
     {
         $DBdossier = new Model_DbTable_Dossier;
@@ -1626,6 +1626,7 @@ class DossierController extends Zend_Controller_Action
         $this->view->idDossier = (int) $this->_getParam("id");
     }
 
+//GESTION DOCUMENTS CONSULTES
     public function docconsulteAction()
     {
         //récupération du type de dossier (etude / visite)
@@ -1680,7 +1681,6 @@ class DossierController extends Zend_Controller_Action
         //$this->view->dossierDocConsutle = $dblistedoc->recupDocDossier((int) $this->_getParam("id"));
     }
 
-    //gestion des documents consultés
     public function ajoutdocAction($idDossier)
     {
         $dblistedocajout = new Model_DbTable_ListeDocAjout;
@@ -1765,6 +1765,7 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+//GESTION LIAISON ETABLISSMENTS
     public function addetablissementAction()
     {
         $DBetablissementDossier = new Model_DbTable_EtablissementDossier;
@@ -1830,6 +1831,7 @@ class DossierController extends Zend_Controller_Action
         //Zend_Debug::dump($this->view->infosDossier);
     }
 
+//GENERATION DOCUMENTS
     public function dialoggenrapportAction()
     {
         //Permet de charger la liste des établissements liés au dossier pour la selection des rapports à generer
@@ -2373,4 +2375,88 @@ class DossierController extends Zend_Controller_Action
 		$this->view->listeIdTexte = $listeId;
 		//Zend_Debug::dump($this->view->listeIdTexte);
 	}
+
+
+//GESTION DE LA PARTIE PRESCRIPTION
+	
+    public function prescriptionAction()
+    {
+	
+    }
+	
+	public function prescriptionwordsearchAction()
+	{
+		if($this->_getParam('motsCles')){
+			$tabMotCles = explode(" ", $this->_getParam('motsCles'));
+			$dbPrescType = new Model_DbTable_PrescriptionType;
+			$listePrescType = $dbPrescType->getPrescriptionTypeByWords($tabMotCles);
+			
+			$dbPrescAssoc = new Model_DbTable_PrescriptionTypeAssoc;	
+			$prescriptionArray = array();			
+			foreach($listePrescType as $val => $ue)
+			{
+				//echo $ue['ID_PRESCRIPTIONTYPE'];
+				$assoc = $dbPrescAssoc->getPrescriptionAssoc($ue['ID_PRESCRIPTIONTYPE']);
+				//Zend_Debug::dump($assoc);
+				//echo "<br/>";
+				array_push($prescriptionArray, $assoc);
+			}
+			//Zend_Debug::dump($prescriptionArray);
+			$this->view->prescriptionType = $prescriptionArray;
+		}
+	}
+	
+	public function prescriptiontypeformAction()
+	{
+		$this->showprescriptionTypeAction(0,0,0);
+	}
+	
+	public function prescriptionshowemplacementAction()
+	{
+		$this->view->categorie = $this->_getParam('PRESCRIPTIONTYPE_CATEGORIE');
+		$this->view->texte = $this->_getParam('PRESCRIPTIONTYPE_TEXTE');
+		$this->view->article = $this->_getParam('PRESCRIPTIONTYPE_ARTICLE');
+		if(!$this->view->categorie && !$this->view->texte && !$this->view->article){
+			$this->showprescriptionTypeAction(0,0,0);
+		}
+		else if(!$this->view->texte && !$this->view->article)
+		{
+			$this->showprescriptionTypeAction($this->view->categorie,0,0);
+		}
+		else if(!$this->view->article)
+		{
+			$this->showprescriptionTypeAction($this->view->categorie,$this->view->texte,0);
+		}
+		else
+		{
+			$this->showprescriptionTypeAction($this->view->categorie,$this->view->texte,$this->view->article);
+		}
+	}
+	
+	public function showprescriptionTypeAction($categorie,$texte,$article)
+	{
+		//echo $categorie." ".$texte." ".$article."<br/>";
+		$dbPrescType = new Model_DbTable_PrescriptionType;
+		$listePrescType = $dbPrescType->getPrescriptionType($categorie,$texte,$article);
+		//Zend_Debug::dump($listePrescType);
+		
+		$dbPrescAssoc = new Model_DbTable_PrescriptionTypeAssoc;		
+		$prescriptionArray = array();
+		
+		foreach($listePrescType as $val => $ue)
+		{
+			//echo $ue['ID_PRESCRIPTIONTYPE'];
+			$assoc = $dbPrescAssoc->getPrescriptionAssoc($ue['ID_PRESCRIPTIONTYPE']);
+			//Zend_Debug::dump($assoc);
+			//echo "<br/>";
+			array_push($prescriptionArray, $assoc);
+		}
+		
+		$this->view->prescriptionType = $prescriptionArray;
+		//Zend_Debug::dump($this->view->prescriptionType);
+	}
+	
+	
+
+	
 }

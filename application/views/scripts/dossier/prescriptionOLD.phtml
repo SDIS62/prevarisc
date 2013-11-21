@@ -1,0 +1,770 @@
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#addTexteArticle").button({
+			icons: {
+				primary: 'ui-icon-circle-plus'
+			},
+			text: false
+		});
+		
+		$(".validPresc").button({
+			icons: {
+				primary: 'ui-icon-circle-check'
+			},
+			text: true,
+			disabled: true
+		});
+		
+		$(".cancelPresc").button({
+			icons: {
+				primary: 'ui-icon-circle-close'
+			},
+			text: true
+		});
+		
+		$(".suppEditPresc").button({
+			icons: {
+				primary: 'ui-icon-trash'
+			},
+			text: true
+		});
+		
+		$(".annulationEdit").button({
+			icons: {
+				primary: 'ui-icon-circle-close'
+			},
+			text: true
+		});
+		
+		$(".validEditPresc").button({
+			icons: {
+				primary: 'ui-icon-circle-check'
+			},
+			text: true
+		});
+		
+		$("#savePreco").button({
+			icons: {
+				primary: 'ui-icon-disk'
+			},
+			text: true
+		});
+	
+		$("#addPrescription").click(function(){
+			$("#divFormPrescriptionType").hide();
+			$("#divFormPrescription").fadeIn();
+			$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+			$("#divFormPrescriptionType").reinitialiseAddPresc("prescType");
+			return false;
+		});
+		
+		$("#addPrescriptionType").click(function(){
+			$("#divFormPrescription").hide();
+			$("#divFormPrescriptionType").fadeIn();
+			$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+			return false;
+		});
+		
+		$("#prescType").click(function(){
+			if($(this).attr('checked')){
+				$("#prescAbreviation").fadeIn();
+			}else{
+				$("#prescAbreviation").hide();
+				$("#abreviation").val('');
+			}
+		});
+		
+	
+		//On charge la liste des prescriptions en ajax
+		function loadAjaxPresc(){
+			$.ajax({
+				url: "/dossier/prescriptionloadajax",
+				data: "idDossier="+$("#idDossier").val(),
+				type:"POST",
+				beforeSend: function(){
+					$("#sortable").html("<img src='/images/load.gif' />");
+				},
+				success: function(affichageResultat){
+					$("#sortable").html(affichageResultat);
+					//on change le type de curseur
+					$("#sortable > li").css('cursor','move');				
+					return false;
+				},
+				error: function()	{
+					return false;
+				}
+			});
+		};
+		
+		loadAjaxPresc();
+		
+		$("#annulationEdit").click(function(){
+			$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+			$(".ajout_presc").show();
+			$(".edit_presc").hide();
+			$("#divFormPrescription").hide();
+			$("#addPresc").show();
+			$("#cancelPrescription").show();
+			$("#createPrescType").show();
+			$("#divFormPrescriptionType").hide();
+
+			$("#editDiv").hide();
+		});
+		
+		$(".editPresc").live('click',function(){
+			//on récupère l'id du dossier
+			//$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+			var idDossier = $("#idDossier").val();
+			
+			//on récupère l'id de la prescription
+			var tabId = $(this).attr('id').split('_');
+			var idPrescription = tabId[1];
+			var numeroPrescription = $(this).parent().parent().attr('num');
+			$("#editPrescription").val(idPrescription);
+			$("#editPrescriptionNumero").val(numeroPrescription);
+			
+			//ici on va récupèrer l'ensembles des infos concernant cette precription
+			//savoir s'il sagit d'une presc type ou non
+			$.ajax({
+				type: "POST",
+				url: "/dossier/editprescription",
+				data: "idDossier="+idDossier+"&idPrescription="+idPrescription,
+				dataType: 'json',
+				beforeSend: function(){
+					$(".ajout_presc").hide();
+					$(".edit_presc").show();
+					$("#divFormPrescription").show();
+					$("#addPresc").hide();
+					$("#cancelPrescription").hide();
+					$("#createPrescType").hide();
+					$("#editDiv").show();
+					$("#divFormPrescriptionType").hide();
+				},
+				success: function(msg){
+					//msg représente toutes les infos de la prescription que l'on souhaite éditer
+					//alert(msg.ID_PRESCRIPTIONASSOC);
+					if(msg.ID_PRESCRIPTIONASSOC){
+						var TEXTE = msg.TEXTE_PRESCRIPTIONASSOC;
+						var ARTICLE = msg.ARTICLE_PRESCRIPTIONASSOC;
+						var LIBELLE = msg.LIBELLE_PRESCRIPTIONLIBELLE;
+					}else{
+						var TEXTE = msg.TEXTE_PRESCRIPTIONTYPE;
+						var ARTICLE = msg.ARTICLE_PRESCRIPTIONTYPE;
+						var LIBELLE = msg.LIBELLE_PRESCRIPTIONLIBELLE;
+
+					}
+
+					//On récupere la liste des textes associés à la prescription
+
+					$.ajax({
+						type: "POST",
+						url: "/dossier/editprescriptiontexte",
+						data: "idDossier="+idDossier+"&prescriptionTexte="+TEXTE,
+						dataType: 'json',
+						beforeSend: function(){
+							
+						},
+						success: function(msg){
+							//On met dans la variable textes les différents textes
+							var textes = msg;
+							
+							//On récupere la liste des articles associés à la prescription
+							$.ajax({
+								type: "POST",
+								url: "/dossier/editprescriptionarticle",
+								data: "idDossier="+idDossier+"&prescriptionArticle="+ARTICLE,
+								dataType: 'json',
+								beforeSend: function(){
+									
+								},
+								success: function(msg){
+								
+									for (var i in msg)
+									{
+									  var articleIdLib = msg[i].toString();
+									  var articleTab = articleIdLib.split(',');
+									  
+									  var texteIdLib = textes[i].toString();
+									  var texteTab = texteIdLib.split(',');
+
+									  $("#listeTexteArticle").append("<ul><span style='float:left;width:100px;margin-left:40px;'><input type='hidden' name='texte[]' value='"+texteTab[1]+"' />&nbsp;"+texteTab[1]+"</span><span style='padding-left:60px;' ><input type='hidden' name='article[]' value='"+articleTab[1]+"' />"+articleTab[1]+"</span>&nbsp;&nbsp;<a href='' class='suppTextArticle' >&times;</a><br/></ul>");
+									}
+								}
+							});
+							
+						}
+					});
+					
+					$("#PRESCRIPTIONLIBELLE").val(LIBELLE);
+					
+				}
+			});
+
+			return false;
+		});
+		
+		$("#validEditPresc").click(function(){
+			//alert($("#editPrescription").val());
+			//$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+			$.ajax({
+				type: "POST",
+				url: "/dossier/editprescriptionvalidation",
+				data: "prescriptionEdit="+$("#editPrescription").val()+"&numPrescription="+$("#editPrescriptionNumero").val(),
+				beforeSend: function(){
+					
+				},
+				success: function(msg){
+					$(".validPresc").click();
+				}
+			});
+			//$(".validPresc").click();
+			//window.location.reload();
+			return false;
+		});
+		
+		$(".validPresc").click(function(){
+			//Lorsque l'on clique le button ajouter prescription
+			//$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+			var action = $(this).attr('id');
+
+			var data = $("#formPrescription").serialize();
+			var numPrescription = $("#sortable > li").size()+1;
+			
+			//dans le cas d'une édition de prescription
+			if($("#editPrescriptionNumero").val() != "" && $("#editPrescription").val() != ""){
+				$("#sortable").html("<img src='/images/load.gif' />");
+				numPrescription = $("#editPrescriptionNumero").val();
+			}
+			
+			if($("#prescType").attr('checked') && $("#abreviation").val() == '' ){
+				$("#abreviation").focus();
+				return false;
+			}
+			
+			//verifier que l'abréviation n'est pas déja utilisée
+			var abreviation = $("#abreviation").val();
+			var abreviationExiste;
+			$.ajax({
+				url: "/dossier/fonction",
+				data: "do=verifAbreviation&abreviation="+abreviation,
+				type:"POST",
+				success: function(affichageResultat){
+					abreviationExiste = affichageResultat;
+					//alert(abreviationExiste);
+					if(affichageResultat == 0){
+						$.ajax({
+							url: "/dossier/fonction",
+							data: data+"&do=addPrescription&type="+action+"&numPresc="+numPrescription+"&idDossier="+$("#idDossier").val(),
+							type:"POST",
+							beforeSend: function(){
+												
+							},
+							success: function(affichageResultat){
+								//dans le cas d'une édition alors on recharge la page
+								if($("#editPrescriptionNumero").val() != "" && $("#editPrescription").val() != ""){
+									window.location.reload();
+								}else{
+									/*
+									$("#sortable").append(affichageResultat);
+									$("#sortable > li").css('cursor','move');
+									
+									$("#divFormPrescription").hide();
+									$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+									*/
+									window.location.reload();
+								}
+								return false;
+							},
+							error: function()	{
+								return false;
+							}
+						});
+					}else{
+						$("#abreviationExiste").show();
+						$("#abreviation").val('').focus();
+					}
+					return false;					
+				},
+				error: function()	{
+					return false;
+				}
+			});
+
+			return false;
+		});
+		
+		$("#suppEditPresc").click(function(){
+			$("#divFormPrescriptionType").reinitialiseAddPresc("prescAssoc");
+			$.ajax({
+				type: "POST",
+				url: "/dossier/editprescriptionvalidation",
+				data: "prescriptionEdit="+$("#editPrescription").val()+"&numPrescription="+$("#editPrescriptionNumero").val(),
+				beforeSend: function(){
+					
+				},
+				success: function(msg){
+					$("#presc_"+$("#editPrescription").val()).remove();
+					
+					var listePrescriptionUpdate = new Array();
+					var num = 1;
+					$("#sortable > li").each(function(){
+						//on parcour les li pour récolter les changements et mettre à jour dans la base
+						
+						//on change le num de li
+						$(this).attr('num',num);
+						//on change le num affiché
+						$(this).children(".numPresc").html(num);
+						
+						//on recupere id du li en cours "presc_x"
+						var liId = $(this).attr('id');
+						var liId = liId.split('_');
+						
+						listePrescriptionUpdate.push(liId[1]);
+						
+						num = num + 1;
+					});
+					
+					$.ajax({
+						url: "/dossier/fonction",
+						data: "do=changePrescOrder&tableUpdate="+listePrescriptionUpdate+"&idDossier="+$("#idDossier").val(),
+						type:"POST",
+						beforeSend: function(){
+
+						},
+						success: function(affichageResultat){
+							//alert('succes');
+							window.location.reload();
+							return false;
+						},
+						error: function()	{
+							return false;
+						}
+					});
+				}
+			});
+			
+			return false;
+		});
+			
+		
+		
+		$("#cancelPrescription").click(function(){
+			$("#formPrescription")[0].reset();
+			$("#divFormPrescription").hide();			
+			return false;
+		});
+
+		$("#sortable").sortable({
+			update: function(event, ui) {
+				var listePrescriptionUpdate = new Array();
+				var num = 1;
+				$("#sortable > li").each(function(){
+					//on parcour les li pour récolter les changements et mettre à jour dans la base
+					
+					//on change le num de li
+					$(this).attr('num',num);
+					//on change le num affiché
+					$(this).children(".numPresc").html(num);
+					
+					//on recupere id du li en cours "presc_x"
+					var liId = $(this).attr('id');
+					var liId = liId.split('_');
+					
+					listePrescriptionUpdate.push(liId[1]);
+					
+					num = num + 1;
+				});
+				
+				$.ajax({
+					url: "/dossier/fonction",
+					data: "do=changePrescOrder&tableUpdate="+listePrescriptionUpdate+"&idDossier="+$("#idDossier").val(),
+					type:"POST",
+					beforeSend: function(){
+
+					},
+					success: function(affichageResultat){
+						//alert('succes');
+						return false;
+					},
+					error: function()	{
+						return false;
+					}
+				});		
+			}
+		});
+
+		//$("#sortable").disableSelection();
+		$("#addTexteArticle").live('click',function(){
+			//récupération des éléments
+			var texte = $("#LIBELLE_TEXTE").val();
+			var article = $("#LIBELLE_ARTICLE").val();
+			var texteId = $("#texteId").val();
+			var articleId = $("#articleId").val();
+			
+			if(texte == '' && article == '')
+				return false;
+			
+			var textInput;
+			if(texteId == ''){
+				textInput = texte;
+			}else{
+				textInput = texteId;
+			}
+			
+			var articleInput;
+			if(articleId == ''){
+				articleInput = article;
+			}else{
+				articleInput = articleId;
+			}			
+			//On compte le nombre d'élément
+			var nbElement = $("#listeTexteArticle > ul").size();
+			var nbElementAjout = nbElement+1;
+			$("#listeTexteArticle").append("<ul><span style='float:left;width:100px;margin-left:40px;'><input type='hidden' name='texte[]' value='"+textInput+"' />&nbsp;"+texte+"</span><span style='padding-left:60px;' ><input type='hidden' name='article[]' value='"+articleInput+"' />"+article+"</span>&nbsp;&nbsp;<a href='' class='suppTextArticle' >&times;</a><br/></ul>");
+			
+			//On active le bouton d'ajout de selection
+			$( "#addPresc" ).button({ disabled: false });
+			
+			//on vide les champs
+			$("#LIBELLE_TEXTE").val('');
+			$("#LIBELLE_ARTICLE").val('');
+			$("#texteId").val('');
+			$("#articleId").val('');
+			
+			return false;
+		});
+
+		
+	});
+	
+	$(".suppTextArticle").live('click',function(){
+		$(this).parent('ul').remove();
+		return false;
+	});
+
+	$("#annulerAbreviation").live('click',function(){
+		$("#divFormPrescriptionType").reinitialiseAddPresc("prescType");	
+	});
+	
+	//Fonctions permettant de régler le problème d'auto selection avec autocompletion
+	$("#LIBELLE_TEXTE").live('focus',function(){
+		$("#texteId").val('');
+	});	
+	$("#LIBELLE_ARTICLE").live('focus',function(){
+		$("#articleId").val('');
+	});
+	
+	//Fonction jquery utilisées régulièrement dans cette partie
+	(function($) {
+		//permet de réinitialiser tous les champs. Suivant le type c'est soit les association soit les type
+		$.fn.reinitialiseAddPresc = function(type) {
+			if(type == 'prescType'){
+				$("#saisieAbreviation").val('');
+				$("#abreviationSelected").val('');
+				$("#affichagePrescType").html('');
+				$("#saisieAbreviation").attr('disabled','');
+				$("#divFormPrescriptionType").hide();
+			}else if (type == 'prescAssoc'){
+				$("#LIBELLE_TEXTE").val('');
+				$("#LIBELLE_ARTICLE").val('');
+				$("#PRESCRIPTIONLIBELLE").val('');
+				$("#prescType").attr('checked',false);
+				$("#abreviation").val('');
+				$("#prescAbreviation").hide();
+				$("#listeTexteArticle").html('');
+				$("#addPresc").button({ disabled: true });
+				$("#abreviationExiste").hide();
+				$("texteId").val('');
+				$("articleId").val('');
+			}
+		};
+	
+	})(jQuery);
+	
+	//FONCTION d'autocompletion
+	$(function(){
+		
+		//FONCTION d'autocompletion
+		//$("#LIBELLE_TEXTE").toggleText("Saisissez le libellé d'un texte ...");
+		$("#LIBELLE_TEXTE").autocomplete("/dossier/selectiontexte?format=json",{
+			minChars: 2,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["selectTexte"], function(row) {
+					return {
+						data: row,
+						value: row.LIBELLE_TEXTE,
+						result: row.LIBELLE_TEXTE
+					}
+				});
+			},
+			formatItem: function(item) {
+				//alert(item.LIBELLE_COMMISSION);
+				return item.LIBELLE_TEXTE;
+			}
+		}).result(function(e, item) {
+			$("#texteId").val(item.ID_TEXTE);
+
+		});
+		
+		//$("#LIBELLE_ARTICLE").toggleText("Saisissez le libellé d'un article ...");
+		$("#LIBELLE_ARTICLE").autocomplete("/dossier/selectionarticle?format=json",{
+			minChars: 2,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["selectArticle"], function(row) {
+					return {
+						data: row,
+						value: row.LIBELLE_ARTICLE,
+						result: row.LIBELLE_ARTICLE
+					}
+				});
+			},
+			formatItem: function(item) {
+				//alert(item.LIBELLE_COMMISSION);
+				return item.LIBELLE_ARTICLE;
+			}
+		}).result(function(e, item) {
+			$("#articleId").val(item.ID_ARTICLE);
+		});
+			
+		//$("#saisieAbreviation").toggleText("Saisissez une abréviation ...");
+		$("#saisieAbreviation").autocomplete("/dossier/selectionabreviation?format=json",{
+			minChars: 2,
+			max: 100,
+			parse: function(data) {
+				return $.map(data["selectAbreviation"], function(row) {
+					return {
+						data: row,
+						value: row.ABREVIATION_PRESCRIPTIONTYPE,
+						result: row.ABREVIATION_PRESCRIPTIONTYPE
+					}
+				});
+			},
+			formatItem: function(item) {
+				//alert(item.LIBELLE_COMMISSION);
+				return item.ABREVIATION_PRESCRIPTIONTYPE;
+			}
+		}).result(function(e, item) {
+			$("#abreviationSelected").val(item.ID_PRESCRIPTIONTYPE);
+			$("#saisieAbreviation").attr('disabled','disabled');
+			//on affiche la prescription qui correspond avant la validation
+			$.ajax({
+				url: "/dossier/fonction",
+				data: "do=affichePrescType&idPresc="+$("#abreviationSelected").val(),
+				type:"POST",
+				beforeSend: function(){
+					$("#affichagePrescType").html("<img src='/images/load.gif' />");
+				},
+				success: function(affichageResultat){
+					$("#affichagePrescType").html(affichageResultat);
+					$("#edit_").hide();
+					$(".validPrescType").button({
+						icons: {
+							primary: 'ui-icon-circle-check'
+						},
+						text: true,
+					});
+					
+					return false;
+				},
+				error: function()	{
+					return false;
+				}
+			});
+		});
+		//FIN AUTO COMPLETE
+
+	});
+
+	//permet l'ajout en bd de la prescription ainsi que l'affichage dans la liste puis le sortable appliqué sur la liste pour que le nouvel élément puissen en bénéficier
+	$("#addPrescType").live('click',function(){		
+		//alert('');
+		var prescription = $("#affichagePrescType").html();
+		var numPrescription = $("#sortable > li").size()+1;
+		
+		//req ajax qui insere dans prescDossier puis retourne id
+		$.ajax({
+			url: "/dossier/fonction",
+			data: "do=addPrescType&numPresc="+numPrescription+"&idDossier="+$("#idDossier").val()+"&presAssoc="+$("#abreviationSelected").val(),
+			type:"POST",
+			beforeSend: function(){
+				$("#sortable").html("<img src='/images/load.gif' />");
+			},
+			success: function(affichageResultat){
+				/*
+				$("#sortable").append("<li id='presc_"+affichageResultat+"' num='"+numPrescription+"'>"+prescription+"</li>");					
+				$("#sortable > li").css('cursor','move');
+				$("#sortable > #presc_"+affichageResultat+" > .numPresc").html(numPrescription);					
+				$("#presc_"+affichageResultat+" > .button").show();					
+				$("li[id=presc_"+affichageResultat+"] > #addPrescType").remove();					
+				$("#divFormPrescriptionType").reinitialiseAddPresc("prescType");
+				*/
+				//ici on dégage le logo de chargement et les éventuellement 
+				//le message d'erreur affiché dans le before
+				window.location.reload();
+				return false;
+			},
+			error: function()	{
+
+				return false;
+			}
+		});
+		return false;
+	});
+	
+	
+	$(".motiveAvisDef").live('click',function(){
+		//Sauvegarde en base que la prescription motive un avis defavorable
+		var idSelected = $(this).parent().parent().attr('id');
+		var tabId = idSelected.split('_');
+		var idPrescMAD = tabId[1];
+		//alert($(this).attr('checked'));
+		$.ajax({
+			url: "/dossier/fonction",
+			data: "do=motiveAvisDefPresc&idPrescMAD="+idPrescMAD+"&checked="+$(this).attr('checked')+"&idDossier="+$("#idDossier").val(),
+			type:"POST",
+			beforeSend: function(){
+				
+			},
+			success: function(affichageResultat){
+			
+			},
+			error: function()	{
+
+				return false;
+			}
+		});
+	});
+	
+	
+	
+</script>
+
+<?php
+/*
+
+TRUNCATE TABLE `prescriptionarticle`;
+TRUNCATE TABLE `prescriptionassoc`;
+TRUNCATE TABLE `prescriptiondossier`; 
+TRUNCATE TABLE `prescriptionlibelle`;	
+TRUNCATE TABLE `prescriptiontexte`;
+TRUNCATE TABLE `prescriptiontype`;
+
+TRUNCATE TABLE `dossierlisteprescription`;  POSSIBLE DE LA SUPPRIMER
+
+*/
+
+	echo "
+	<div id='dossierInfos' >
+		<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />
+		<div>
+			<h4>Liste des prescriptions</h4>
+				<div id='prescriptions'>
+					<div id='listePrescription' name='listePrescription'>
+						<ul>
+							<li>
+								<div class='grid_2 alpha'><h3>Texte</h3></div>
+								<div class='grid_2'><h3>Article</h3></div>
+								<div class='grid_1'><h3>N°</h3></div>
+								<div class='grid_7'><h3>Prescription</h3></div>
+								<div class='grid_2 omega'><h3>Motive avis défavorable</h3></div>	
+								<div class='grid_2'>&nbsp;</div>
+								<hr class='clear' />
+							</li>
+						</ul>						
+						<ul id='sortable'>						
+						</ul>
+					</div>
+					<ul class='ajout_presc'  style='margin-top:10px;'>
+						<li>
+							<a href='' name='addPrescription' id='addPrescription'>Ajouter une prescription</a>
+							&nbsp;&nbsp;
+							<a href='' name='addPrescriptionType' id='addPrescriptionType'>Ajouter une prescription type</a>
+						</li>
+					</ul>
+					<ul class='edit_presc'  style='margin-top:10px;display:none;'>
+						<li>
+							<h2>Edition de prescription</h2>
+						</li>
+					</ul>
+				</div>
+		</div>
+		<div id='divFormPrescription' name='divFormPrescription' style='display:none; margin-top:15px;'>
+			<div id='liste_informations'>
+				<form name='formPrescription' id='formPrescription' action='' method='POST'>
+				<ul>
+					<li>
+						<span class='libelle'>
+							Texte :
+						</span>
+						<span class='form'>
+							<input type='text' id='LIBELLE_TEXTE' name='LIBELLE_TEXTE' value='' style='width:100px;' />
+							<input type='hidden' name='texteId' id='texteId' value='' />
+						</span>
+						<span class='libelle'>
+							Article :
+						</span>
+						<span  class='form'>
+							<input type='text' id='LIBELLE_ARTICLE' name='LIBELLE_ARTICLE' value='' style='width:100px;' />
+							<input type='hidden' name='articleId' id='articleId' value='' />
+						</span>
+						<button id='addTexteArticle' >Ajouter à la prescription</button>
+					</li>
+					<li id='listeTexteArticle'>
+						<!-- ici se mettent les différents couples texte/articles ajoutés -->
+					<li>
+					<li>
+						<span class='libelle'>
+							Prescription :
+							<br/>
+							<textarea name='PRESCRIPTIONLIBELLE' id='PRESCRIPTIONLIBELLE' style='width:800px;height:150px;'></textarea>
+							<br/><br/>
+						</span>
+					</li>
+					<li>
+						<span class='libelle' id='createPrescType'>
+							Voulez vous en faire une prescription type :
+							<br/>
+							<input type='checkBox' name='prescType' id='prescType' />&nbsp;&nbsp;<span name='prescAbreviation' id='prescAbreviation' style='display:none;'>Saisissez abréviation&nbsp;:&nbsp;<input type='text' id='abreviation' name='abreviation' value='' style='width:150px;'/></span>
+							<br/><br/>
+						</span>
+					</li>
+					<li id='abreviationExiste' class='box' style='display:none;margin-bottom:10px;'>
+						L'abreviation que vous avez choisi existe déjà.
+					</li>
+					<button class='validPresc' id='addPresc' >Ajouter la prescription</button>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<button class='cancelPresc' id='cancelPrescription' >Annuler</button>
+				</form>	
+			</div>
+		</div>
+		<div id='divFormPrescriptionType' name='divFormPrescriptionType' style='display:none; margin-top:15px;'>
+			Saisissez abréviation&nbsp;:&nbsp;<input type='text' id='saisieAbreviation' value='' style='width:150px;' />&nbsp;&nbsp;<button class='cancelPresc' id='annulerAbreviation' >Annuler</button>
+			<input type='hidden' id='abreviationSelected' value='' />
+			<div id='affichagePrescType' name='affichagePrescType' style='margin-top:10px;'/>
+			</div>
+		</div>
+		<div id='editDiv' style='display:none; margin-top:15px;'>
+			<button class='validEditPresc' id='validEditPresc' >Modifier la prescription</button>
+			<button class='annulationEdit' id='annulationEdit' >Annuler la modification</button>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<button class='suppEditPresc' id='suppEditPresc' >Supprimer la prescription</button>
+			
+			<input type='hidden' id='editPrescription' value='' />
+			<input type='hidden' id='editPrescriptionNumero' value='' />
+		</div>
+		<br/>
+		<!--
+		<div class='grid_15 alpha box' style='margin-bottom:10px;'>
+			Note concernant les preconisations : <br/>
+			<textarea name='preco' id='preco' cols='143' rows='5'></textarea>	
+			<br/>
+			<button id='savePreco' >Enregistrer la préconisation</button>
+		</div>		
+		-->
+	</div>
+	";
+?>

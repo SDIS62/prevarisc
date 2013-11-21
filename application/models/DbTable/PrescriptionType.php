@@ -16,5 +16,21 @@ class Model_DbTable_PrescriptionType extends Zend_Db_Table_Abstract
 			 
 		return $this->getAdapter()->fetchAll($select);	
 	}
-
+	
+	public function getPrescriptionTypeByWords($tabMotCles)
+	{
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from(array("pt" => "prescriptiontype"));
+			//->join(array("pta" => "prescriptiontypeassoc") , "pt.ID_PRESCRIPTIONTYPE = pta.ID_PRESCRIPTIONTYPE")
+			//->join(array("pal" => "prescriptionarticleliste"), "pal.ID_ARTICLE = pta.ID_ARTICLE")
+			//->join(array("ptl" => "prescriptiontexteliste"), "ptl.ID_TEXTE = pta.ID_TEXTE");
+			
+		foreach($tabMotCles as $val => $ue)
+		{
+			$select->where("pt.PRESCRIPTIONTYPE_LIBELLE like '%".$ue."%'");
+		}
+		//echo $select->__toString();
+		return $this->getAdapter()->fetchAll($select);
+	}
 }

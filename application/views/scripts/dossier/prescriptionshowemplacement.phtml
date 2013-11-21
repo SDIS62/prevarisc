@@ -1,0 +1,42 @@
+<?php
+
+$nbPrescType = count($this->prescriptionType);
+if($nbPrescType == 0)
+{
+	echo "aucune prescription type à cet emplacement";
+}
+
+
+for($i=0; $i < $nbPrescType; $i++)
+{
+	echo "
+		<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' style='list-style-type:none;'>
+			<table style='width:900px;'>
+	";
+
+	$nbAssoc = count($this->prescriptionType[$i]);
+	$cpt = true;
+	for($j=0; $j < $nbAssoc; $j++)
+	{
+		$article = $this->prescriptionType[$i][$j]['LIBELLE_ARTICLE'];
+		$texte = $this->prescriptionType[$i][$j]['LIBELLE_TEXTE'];
+		echo "
+			<tr>
+				<td style='width:15%;'>".$texte."</td>
+				<td style='width:15%;'>".$article."</td>
+		";
+		if($cpt)
+		{
+			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+			echo "<td rowspan='".$nbAssoc."'></td>";
+			$cpt = false;
+		}
+		echo "
+			</tr>
+		";
+	}
+	echo "
+			</table>
+		</li>
+	";
+}
