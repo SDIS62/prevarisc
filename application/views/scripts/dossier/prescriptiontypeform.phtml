@@ -40,7 +40,7 @@ for($i=0; $i < $nbPrescType; $i++)
 		if($cpt)
 		{
 			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-			echo "<td rowspan='".$nbAssoc."'></td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='add' id='prescType_".$this->prescriptionType[$i][$j]['ID_PRESCRIPTIONTYPE']."'>Ajouter</button></td>";
 			$cpt = false;
 		}
 		echo "
@@ -61,6 +61,12 @@ $(document).ready(function(){
 	$(".search").button({
 		icons: {
 			primary: 'ui-icon-search'
+		}
+	});
+	
+	$(".add").button({
+		icons: {
+			primary: 'ui-icon-plus'
 		}
 	});
 	

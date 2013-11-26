@@ -13,23 +13,95 @@ TRUNCATE TABLE `prescriptiondossierassoc`;
 
 */
 echo "
-	<button id='addPrescriptionType' >Ajouter une prescription type</button>
+	<button class='addPresc' id='addPrescriptionType' >Ajouter une prescription type</button>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<button class='addPresc' id='addPrescription' >Ajouter une prescription</button>
+	<br/><br/>
+	<div>
+		<ul class='listePrescriptions'>
+";
+
+
+$nbPrescDossier = count($this->prescriptionDossier);
+echo $nbPrescDossier;
+for($i=0; $i < $nbPrescDossier; $i++)
+{
+
+	echo "
+		<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' style='list-style-type:none;'>
+			<table style='width:900px;'>
+	";
+	/*
+	$nbAssoc = count($this->prescriptionType[$i]);
+	$cpt = true;
+	for($j=0; $j < $nbAssoc; $j++)
+	{
+		$article = $this->prescriptionType[$i][$j]['LIBELLE_ARTICLE'];
+		$texte = $this->prescriptionType[$i][$j]['LIBELLE_TEXTE'];
+		echo "
+			<tr>
+				<td style='width:15%;'>".$texte."</td>
+				<td style='width:15%;'>".$article."</td>
+		";
+		if($cpt)
+		{
+			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='add' id='prescType_".$this->prescriptionType[$i][$j]['ID_PRESCRIPTIONTYPE']."'>Ajouter</button></td>";
+			$cpt = false;
+		}
+		echo "
+			</tr>
+		";
+	}
+	*/
+	echo "
+			</table>
+		</li>
+	";
+
+}
+	
+echo "
+		</ul>		
+	</div>
 ";
 
 ?>
 <script type="text/javascript">
 
 $(document).ready(function(){
-//Ajout prescription type
-	
-	var dialogPrescType = $('<div style="display:none;"></div>').appendTo('body');
-	
-	$("#addPrescriptionType").button({
+	$(".addPresc").button({
 		icons: {
 			primary: 'ui-icon-circle-plus'
 		}
 	});
-
+	
+//Ajout prescription type
+	var dialogPrescType = $('<div style="display:none;"></div>').appendTo('body');
+	
+	dialogPrescType.dialog({
+		title: "Ajout d'une prescription type",
+		modal: true,
+		autoOpen: false,
+		width: 1000,
+		height: 'auto',
+		buttons: {
+			/*
+			"Sauvegarder": function() {
+				
+				return false;
+			},
+			*/
+			"Fermer": function() {
+				dialogPrescType.html("");
+				dialogPrescType.dialog("close");
+			}
+		},
+		close: function(event, ui){
+			
+		}
+	});
+	
 	$("#addPrescriptionType").live('click',function(){
 		//On ouvre la boite de dialogue
 		$.ajax({
@@ -52,26 +124,6 @@ $(document).ready(function(){
 			}
 		});
 		return false;
-	});
-	
-	dialogPrescType.dialog({
-		title: "Ajout d'une prescription type",
-		modal: true,
-		autoOpen: false,
-		width: 1000,
-		height: 'auto',
-		buttons: {
-			"Sauvegarder": function() {
-				
-				return false;
-			},
-			"Annuler": function() {
-				dialogPrescType.dialog("close");
-			}
-		},
-		close: function(event, ui){
-			
-		}
 	});
 	
 	$(".selectCategorie").live('click',function(){
@@ -129,5 +181,88 @@ $(document).ready(function(){
 			}
 		});
 	}
+	
+	$(".add").live('click',function(){
+		var tabId = $(this).attr('id').split('_');
+		var id = tabId[1];
+		//alert(id);
+		//On enregistre la prescription associée au dossier puis on integre le tableau retourné dans le li class=listePrescriptions
+
+		$.ajax({
+			type: "POST",
+			url: "/dossier/prescriptionaddtype",
+			data: "&idPrescType="+id+"&idDossier="+$("#idDossier").val(),
+			success: function(msg){
+				$(".listePrescriptions").append(msg);
+			}
+		});
+		return false;	
+	});
+	
+//Ajout d'une prescription ordinaire
+	var dialogPresc = $('<div style="display:none;"></div>').appendTo('body');
+	
+	dialogPresc.dialog({
+		title: "Ajout d'une prescription type",
+		modal: true,
+		autoOpen: false,
+		width: 1000,
+		height: 'auto',
+		buttons: {
+			"Ajouter la prescription": function() {
+				$.ajax({
+					type: "POST",
+					url: "/dossier/prescriptionadd",
+					data: $("#formPrescription").serialize()+"&idDossier="+$("#idDossier").val(),
+					success: function(msg){
+						$(".listePrescriptions").append(msg);
+					}
+				});
+				dialogPresc.html("");
+				dialogPresc.dialog("close");
+				return false;
+			},
+			"Annuler": function() {
+				dialogPresc.html("");
+				dialogPresc.dialog("close");
+			}
+		},
+		close: function(event, ui){
+			
+		}
+	});
+	
+	$("#addPrescription").live('click',function(){
+		//On ouvre la boite de dialogue
+		$.ajax({
+			type: "POST",
+			url: "/gestion-prescriptions/formprescription",
+			//data: "&action=dossier",
+			success: function(msg){
+				//alert(msg);
+				dialogPresc.html(msg);
+				dialogPresc.dialog("open");
+			}
+		});
+		return false;
+	});
+
+	$("#addAssoc").live('click',function(){
+		var texte = $("#LIBELLE_TEXTE").val();
+		var article = $("#LIBELLE_ARTICLE").val();
+		var assoc = "";
+		assoc += "<tr><td><input type='hidden' name='texte[]' value='"+texte+"' />"+texte+"</td>";
+		assoc += "<td><input type='hidden' name='article[]' value='"+article+"' />"+article+"</td>";
+		assoc += "<td><a href='' class='suppAssoc'>&times;</a></td></tr>";
+		$("#association").append(assoc);
+		$("#LIBELLE_TEXTE").val('');
+		$("#LIBELLE_ARTICLE").val('');
+		return false;
+	});
+	
+	$(".suppAssoc").live('click',function(){
+		$(this).parent().parent().remove();
+		return false;
+	});
 });
 </script>

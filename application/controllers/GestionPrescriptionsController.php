@@ -168,7 +168,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 		$this->view->texte = $texte;
 	}
 	
-	
 	public function formarticleAction()
 	{
 		if($this->_getParam('idTexte')){
