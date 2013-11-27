@@ -1,6 +1,6 @@
 <?php
-
-	echo "<li id='prescriptiontype_".$this->idPrescriptionDossier."'>";
+if(!$this->edit)
+	echo "<li id='prescriptionDossier_".$this->idPrescriptionDossier."'>";
 
 	echo "
 			<table style='width:900px;'>
@@ -19,9 +19,9 @@
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' style='width:20%;'>".$this->numPresc."</td>";			
+			echo "<td rowspan='".$nbAssoc."' style='width:5%;'>".$this->numPresc."</td>";			
 			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".$this->libelle."</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='editPrescription' id='' >Editer</button></td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='edit' id='prescDossier_".$this->idPrescriptionDossier."'>Modifier</button></td>";
 			$cpt = false;
 		}
 		echo "
@@ -31,14 +31,14 @@
 	echo "
 			</table>
 	";
-
+if(!$this->edit)
 	echo "</li>";
 
 ?>
 <script type="text/javascript">
 
 $(document).ready(function(){
-	$(".editPrescription").button({
+	$(".edit").button({
 		icons: {
 			primary: 'ui-icon-pencil'
 		}

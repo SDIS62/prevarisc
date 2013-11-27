@@ -23,21 +23,19 @@ echo "
 
 
 $nbPrescDossier = count($this->prescriptionDossier);
-echo $nbPrescDossier;
+//echo $nbPrescDossier;
 for($i=0; $i < $nbPrescDossier; $i++)
 {
-
 	echo "
-		<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' style='list-style-type:none;'>
+		<li id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none;'>
 			<table style='width:900px;'>
 	";
-	/*
-	$nbAssoc = count($this->prescriptionType[$i]);
+	$nbAssoc = count($this->prescriptionDossier[$i]);
 	$cpt = true;
 	for($j=0; $j < $nbAssoc; $j++)
 	{
-		$article = $this->prescriptionType[$i][$j]['LIBELLE_ARTICLE'];
-		$texte = $this->prescriptionType[$i][$j]['LIBELLE_TEXTE'];
+		$article = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
+		$texte = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
 		echo "
 			<tr>
 				<td style='width:15%;'>".$texte."</td>
@@ -45,20 +43,26 @@ for($i=0; $i < $nbPrescDossier; $i++)
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='add' id='prescType_".$this->prescriptionType[$i][$j]['ID_PRESCRIPTIONTYPE']."'>Ajouter</button></td>";
+			echo "<td rowspan='".$nbAssoc."' style='width:5%;'>".$this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']."</td>";
+			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>";
+			if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
+			{
+				echo nl2br($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
+			}else{
+				echo nl2br($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
+			}
+			echo "</td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='edit' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."'>Modifier</button></td>";
 			$cpt = false;
 		}
 		echo "
 			</tr>
 		";
 	}
-	*/
 	echo "
 			</table>
 		</li>
 	";
-
 }
 	
 echo "
@@ -262,6 +266,63 @@ $(document).ready(function(){
 	
 	$(".suppAssoc").live('click',function(){
 		$(this).parent().parent().remove();
+		return false;
+	});
+	
+//Edition des prescriptions d'un dossier
+	var dialogPrescEdit = $('<div style="display:none;"></div>').appendTo('body');
+	
+	dialogPrescEdit.dialog({
+		title: "Ajout d'une prescription type",
+		modal: true,
+		autoOpen: false,
+		width: 1000,
+		height: 'auto',
+		buttons: {
+			"Modifier la prescription": function() {
+				$.ajax({
+					type: "POST",
+					url: "/dossier/prescriptioneditsave",
+					data: $("#formPrescriptionEdit").serialize(),
+					success: function(msg){
+						alert($("#idPrescDossier").val());
+						$("#prescriptionDossier_"+$("#idPrescDossier").val()).html(msg);
+						dialogPrescEdit.html("");
+						dialogPrescEdit.dialog("close");
+					}
+				});
+				return false;
+			},
+			"Annuler": function() {
+				dialogPrescEdit.html("");
+				dialogPrescEdit.dialog("close");
+			}
+		},
+		close: function(event, ui){
+			
+		}
+	});
+	
+	$(".edit").button({
+		icons: {
+			primary: 'ui-icon-pencil'
+		}
+	});
+	
+	$(".edit").live('click',function(){
+		var tabId = $(this).attr('id').split('_');
+		var idPrescDossier = tabId[1];
+		var numPrecs = $(this).parent().prev().prev().html();
+		$.ajax({
+			type: "POST",
+			url: "/dossier/prescriptionedit",
+			data: "&idPrescDossier="+idPrescDossier+"&idDossier="+$("#idDossier").val()+"&numPresc="+numPrecs,
+			success: function(msg){
+				//alert(msg);
+				dialogPrescEdit.html(msg);
+				dialogPrescEdit.dialog("open");
+			}
+		});
 		return false;
 	});
 });

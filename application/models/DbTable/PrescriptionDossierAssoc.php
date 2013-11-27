@@ -34,7 +34,7 @@ class Model_DbTable_PrescriptionDossierAssoc extends Zend_Db_Table_Abstract
 			//->group("pta.NUM_PRESCRIPTIONASSOC")
 			->order("pta.NUM_PRESCRIPTIONASSOC");
 		
-		echo $select->__toString();
+		//echo $select->__toString();
 		return $this->getAdapter()->fetchAll($select);	
 	}
 }

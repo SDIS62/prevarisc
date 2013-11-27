@@ -2395,17 +2395,18 @@ class DossierController extends Zend_Controller_Action
 				//echo "Prescription type : ".$ue['ID_PRESCRIPTION_TYPE'];
 				$assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
 				array_push($prescriptionArray, $assoc);
+				//Zend_Debug::dump($assoc);
 			}else{
 				//cas d'une prescription particulière
 				//echo "Prescription pas type : ".$ue['ID_PRESCRIPTION_DOSSIER'];
 				$assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
-				//Zend_Debug::dump($assoc);
 				array_push($prescriptionArray, $assoc);
+				//Zend_Debug::dump($assoc);				
 			}
 			echo "<br/>";
 		}
 		$this->view->prescriptionDossier = $prescriptionArray;
-		Zend_Debug::dump($prescriptionArray);
+		//Zend_Debug::dump($prescriptionArray);
     }
 	
 	public function prescriptionwordsearchAction()
@@ -2523,6 +2524,100 @@ class DossierController extends Zend_Controller_Action
 		
 	}
 	
+	public function prescriptioneditsaveAction()
+	{
+		$this->_helper->viewRenderer->setNoRender();
+		$this->view->edit = 'edit';
+		$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+		$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+		$dbTexte = new Model_DbTable_PrescriptionTexteListe;
+		$dbArticle = new Model_DbTable_PrescriptionArticleListe;
+		if( $this->_getParam('do') == 'prescType' )
+		{
+			//On edite une prescription type: edition de la prescriptionDossier existante et création des prescriptionDossierAssoc
+			$prescDossier = $dbPrescDossier->find($this->_getParam('idPrescDossier'))->current();
+			$prescDossier->ID_PRESCRIPTION_TYPE = NULL;
+			$prescDossier->LIBELLE_PRESCRIPTION_DOSSIER = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
+			$prescDossier->save();
+			
+			$idPrescDossier = $prescDossier->ID_PRESCRIPTION_DOSSIER;
+			
+			//on s'occupe de verifier les textes et articles pour les inserer ou récuperer l'id si besoin puis on insert dans assoc
+			$texteArray = array();
+			$articleArray = array();
+			
+			foreach($_POST['article'] as $libelle => $value) {
+				array_push($articleArray, $value);
+			}
+			
+			foreach($_POST['texte'] as $libelle => $value) {
+				array_push($texteArray, $value);
+			}
+			
+			$numAssoc = 1;
+			
+			for($i = 0; $i < count($articleArray); $i++)
+			{
+				//pour chacun des articles et des textes on verifie leurs existance ou non
+				if($articleArray[$i] != '')
+				{
+					$article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".$articleArray[$i]."'")->toArray();
+					//echo count($article);
+					//Zend_Debug::dump($article);
+					if(count($article) == 0){
+						//l'article n'existe pas donc on l'enregistre
+						$article = $dbArticle->createRow();
+						$article->LIBELLE_ARTICLE = $articleArray[$i];
+						$article->save();
+						$idArticle = $article->ID_ARTICLE;
+					}else if(count($article) == 1){
+						//l'article existe donc on récupere son ID
+						$idArticle = $article[0]['ID_ARTICLE'];
+					}
+				}else{
+					$idArticle = 1;
+				}
+				
+				if($texteArray[$i] != '')
+				{
+					$texte = $dbTexte->fetchAll("LIBELLE_TEXTE LIKE '".$texteArray[$i]."'")->toArray();
+					if(count($texte) == 0){
+						//le texte n'existe pas donc on l'enregistre
+						$texte = $dbTexte->createRow();
+						$texte->LIBELLE_TEXTE = $texteArray[$i];
+						$texte->save();
+						$idTexte = $texte->ID_TEXTE;
+					}else if(count($texte) == 1){
+						//le texte existe donc on récupere son ID
+						$idTexte = $texte[0]['ID_TEXTE'];
+					}
+				}else{
+					$idTexte = 1;
+				}
+				//echo $idTexte." ".$idArticle."<br/>";
+				$prescDossierAssoc = $dbPrescDossierAssoc->createRow();
+				$prescDossierAssoc->ID_PRESCRIPTION_DOSSIER = $idPrescDossier;
+				$prescDossierAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $numAssoc;
+				$prescDossierAssoc->ID_TEXTE = $idTexte;
+				$prescDossierAssoc->ID_ARTICLE = $idArticle;
+				$prescDossierAssoc->save();
+				$idArticle = NULL;
+				$idTexte = NULL;
+				$numAssoc++;
+			}
+			$this->view->textes = $texteArray;
+			$this->view->articles = $articleArray;
+			$this->view->libelle = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
+			$this->view->numPresc = $this->_getParam('numPresc');
+			$this->view->idPrescriptionDossier = $idPrescDossier;
+			
+			$this->render('prescriptionaddtype');
+		}else{
+			//On edite une prescriptionDossier suppression des associations et creation des nouvelles
+			echo "PRESCRIPTION DOSSIER";
+		}
+	}
+	
 	public function prescriptionaddAction()
 	{
 		$this->_helper->viewRenderer->setNoRender();
@@ -2627,4 +2722,30 @@ class DossierController extends Zend_Controller_Action
 		
 		$this->render('prescriptionaddtype');
 	}
+
+	public function prescriptioneditAction()
+	{
+		//$this->_helper->viewRenderer->setNoRender();
+		$idDossier = $this->_getParam('idDossier');
+		$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+		$prescDossierEdit = $dbPrescDossier->find($this->_getParam('idPrescDossier'));
+		//Zend_Debug::dump($prescDossierEdit->toArray());
+		$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+		if($prescDossierEdit[0]['ID_PRESCRIPTION_TYPE'] == NULL)
+		{
+			//echo "Il s'agit d'une prescription ordinaire de dossier on recup l'assoc et on remplit les champs";
+			$assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($prescDossierEdit[0]['ID_PRESCRIPTION_DOSSIER']);					
+			$this->view->do = 'prescDossier';
+		}else{
+			//echo "Il s'agit d'un prescription type donc on recup l'assoc et on remplit les champs";
+			$assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($prescDossierEdit[0]['ID_PRESCRIPTION_TYPE'],$prescDossierEdit[0]['ID_PRESCRIPTION_DOSSIER']);			
+			$this->view->do = 'prescType';
+		}
+		$this->view->assoc = $assoc;
+		$this->view->idDossier = $idDossier;
+		$this->view->numPresc = $this->_getParam('numPresc');
+		$this->view->idPrescDossier = $this->_getParam('idPrescDossier');
+		//Zend_Debug::dump($assoc);
+	}
+	
 }
