@@ -3,9 +3,7 @@
 	echo "
 		<button class='addArticleTexte' >Ajouter un article</button>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<!--
-		<button class='addPrescriptionArticle' >Ajouter une prescription</button>
-		-->
+		<button class='prescription' class='addPrescriptionArticle_'>Ajouter une prescription</button>
 	";
 	echo "<br/><br/>";	
 
@@ -93,22 +91,7 @@ $(document).ready(function(){
 			primary: 'ui-icon-pencil'
 		}
 	});
-/*
 
-	
-	$(".hideDetailArticle").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-s'
-		},
-		text: false
-	}).click(function(){
-		var tabId = $(this).attr('id').split('_');
-		var idTexte = tabId[1];
-		$("#textesec_"+idTexte).html('');
-		$("#hidetextesec_"+idTexte).hide();
-		$("#showtextesec_"+idTexte).show();
-	});
-	*/
 	$(".editArticle").button({
 		icons: {
 			primary: 'ui-icon-pencil'
@@ -122,5 +105,11 @@ $(document).ready(function(){
 	});
 	
 	$(".prescriptionarticle").sortable();
+	
+	$(".prescription").button({
+		icons: {
+			primary: 'ui-icon-circle-plus'
+		}
+	});
 });
 </script>

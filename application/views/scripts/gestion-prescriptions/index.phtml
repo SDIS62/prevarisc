@@ -210,14 +210,12 @@ $(document).ready(function(){
 						}
 						dialogCategorie.html("");
 						dialogCategorie.dialog("close");
-						//si edit on supprime la catégorie et on ajoute la nouvelle
-						
-						//si création on ajoute la catégorie dans la liste
 					}
 				});
 				return false;
 			},
 			"Annuler": function() {
+				dialogCategorie.html("");
 				dialogCategorie.dialog("close");
 			}
 		},
@@ -284,14 +282,12 @@ $(document).ready(function(){
 						}
 						dialogTexte.html("");
 						dialogTexte.dialog("close");
-						//si edit on supprime la catégorie et on ajoute la nouvelle
-						
-						//si création on ajoute la catégorie dans la liste
 					}
 				});
 				return false;
 			},
 			"Annuler": function() {
+				dialogTexte.html("");
 				dialogTexte.dialog("close");
 			}
 		},
@@ -354,6 +350,7 @@ $(document).ready(function(){
 				return false;
 			},
 			"Annuler": function() {
+				dialogArticle.html("");
 				dialogArticle.dialog("close");
 			}
 		},
@@ -483,60 +480,64 @@ $(document).ready(function(){
 					url: "/gestion-prescriptions/saveprescriptiontype",
 					data: $("#formPrescription").serialize(),
 					success: function(msg){
-						if($("#ID_PRESCRIPTIONTYPE").val() != '')
+						var compteurTA = 0;
+						$("input[name='texte[]']").each(function(){
+							compteurTA++;
+						});
+						//alert(compteurTA);
+						if(compteurTA > 0 && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
 						{
-							//$("#prescriptiontype
-							$("#prescriptiontype_"+$("#ID_PRESCRIPTIONTYPE").val()).remove();
+							if($("#ID_PRESCRIPTIONTYPE").val() != '')
+							{
+								$("#prescriptiontype_"+$("#ID_PRESCRIPTIONTYPE").val()).remove();
+							}
 							
-						}
-						
-						if($("#PRESCRIPTIONTYPE_CATEGORIE").val() == '')
-						{
-							//dans le cas ou la prescription n'appartient à aucune catégorie
-							$(".prescriptiontypeWithoutCat").append(msg);							
-						}
-						else if($("#PRESCRIPTIONTYPE_TEXTE").val() == '' && $("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
-						{
-							//dans le cas ou on ajouter une prescription dans une catégorie
-							if($("#texte_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val()).html())
+							if($("#PRESCRIPTIONTYPE_CATEGORIE").val() == '')
 							{
-								//alert("#prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val());
-								$("#prescriptiontypeCat_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val()).append(msg);
+								//dans le cas ou la prescription n'appartient à aucune catégorie
+								$(".prescriptiontypeWithoutCat").append(msg);							
 							}
-						}
-						else if($("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
-						{
-							//dans le cas ou on ajouter une prescription dans un texte
-							//alert("#article_"+$("#PRESCRIPTIONTYPE_TEXTE").val());
-							if($("#article_"+$("#PRESCRIPTIONTYPE_TEXTE").val()).html())
+							else if($("#PRESCRIPTIONTYPE_TEXTE").val() == '' && $("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
 							{
-								//alert("visible #prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_TEXTE").val());
-								$(".prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_TEXTE").val()).append(msg);
+								//dans le cas ou on ajouter une prescription dans une catégorie
+								if($("#texte_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val()).html())
+								{
+									//alert("#prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val());
+									$("#prescriptiontypeCat_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val()).append(msg);
+								}
 							}
-						}
-						else
-						{
-							//cas ou on ajoute une prescription directement dans un article
-							//alert("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val());
-							if($("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).html())
+							else if($("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
 							{
-								//alert('visible '+"#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val());
-								$("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).append(msg);
+								//dans le cas ou on ajouter une prescription dans un texte
+								//alert("#article_"+$("#PRESCRIPTIONTYPE_TEXTE").val());
+								if($("#article_"+$("#PRESCRIPTIONTYPE_TEXTE").val()).html())
+								{
+									//alert("visible #prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_TEXTE").val());
+									$(".prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_TEXTE").val()).append(msg);
+								}
 							}
+							else
+							{
+								//cas ou on ajoute une prescription directement dans un article
+								//alert("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val());
+								if($("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).html())
+								{
+									//alert('visible '+"#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val());
+									$("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).append(msg);
+								}
+							}
+							
+							
+							dialogPrescription.html("");
+							dialogPrescription.dialog("close");
 						}
-						
-						
-						dialogPrescription.html("");
-						dialogPrescription.dialog("close");
-						//si edit on supprime la catégorie et on ajoute la nouvelle
-						
-						
-						//si création on ajoute la catégorie dans la liste
+						return false;
 					}
 				});
 				return false;
 			},
 			"Annuler": function() {
+				dialogPrescription.html("");
 				dialogPrescription.dialog("close");
 			}
 		},
@@ -548,13 +549,16 @@ $(document).ready(function(){
 	$("#addAssoc").live('click',function(){
 		var texte = $("#LIBELLE_TEXTE").val();
 		var article = $("#LIBELLE_ARTICLE").val();
-		var assoc = "";
-		assoc += "<tr><td><input type='hidden' name='texte[]' value='"+texte+"' />"+texte+"</td>";
-		assoc += "<td><input type='hidden' name='article[]' value='"+article+"' />"+article+"</td>";
-		assoc += "<td><a href='' class='suppAssoc'>&times;</a></td></tr>";
-		$("#association").append(assoc);
-		$("#LIBELLE_TEXTE").val('');
-		$("#LIBELLE_ARTICLE").val('');
+		if(texte != '' || article != '')
+		{
+			var assoc = "";
+			assoc += "<tr><td><input type='hidden' name='texte[]' value='"+texte+"' />"+texte+"</td>";
+			assoc += "<td><input type='hidden' name='article[]' value='"+article+"' />"+article+"</td>";
+			assoc += "<td><a href='' class='suppAssoc'>&times;</a></td></tr>";
+			$("#association").append(assoc);
+			$("#LIBELLE_TEXTE").val('');
+			$("#LIBELLE_ARTICLE").val('');
+		}
 		return false;
 	});
 	

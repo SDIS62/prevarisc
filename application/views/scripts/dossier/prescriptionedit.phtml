@@ -36,16 +36,14 @@ echo "
 	</div>
 	<br/>
 	Contenu : 
-	<textarea name='PRESCRIPTIONTYPE_LIBELLE' id='LIBELLE_PRESCRIPTIONTYPE' cols='150' rows='10'>
-";
+	<textarea name='PRESCRIPTIONTYPE_LIBELLE' id='LIBELLE_PRESCRIPTIONTYPE' cols='150' rows='10'>";
 	if($this->do == 'prescDossier')
 	{
 		echo $this->assoc[0]['LIBELLE_PRESCRIPTION_DOSSIER'];
 	}else{
 		echo $this->assoc[0]['PRESCRIPTIONTYPE_LIBELLE'];
 	}
-echo "		
-	</textarea>
+echo "</textarea>
 	</div>
 	</form>
 	<br/>
@@ -115,4 +113,15 @@ $(document).ready(function(){
 		}
 	});
 	
+	$(".validDelete").button({
+		icons: {
+			primary: 'ui-icon-check'
+		}
+	});
+	
+	$(".cancelDelete").button({
+		icons: {
+			primary: 'ui-icon-cancel'
+		}
+	});
 });

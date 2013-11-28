@@ -19,8 +19,8 @@ if(!$this->edit)
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' style='width:5%;'>".$this->numPresc."</td>";			
-			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".$this->libelle."</td>";
+			echo "<td rowspan='".$nbAssoc."' class='numPresc' style='width:5%;'>".$this->numPresc."</td>";			
+			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->libelle)."</td>";
 			echo "<td rowspan='".$nbAssoc."'><button class='edit' id='prescDossier_".$this->idPrescriptionDossier."'>Modifier</button></td>";
 			$cpt = false;
 		}

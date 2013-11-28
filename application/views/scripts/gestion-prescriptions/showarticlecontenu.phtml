@@ -1,6 +1,8 @@
 <?php
 echo "
 	<br/>
+	<button class='prescription' class='addPrescriptionArticle_'>Ajouter une prescription</button>
+	<br/><br/>
 	<ul class='prescriptiontypeArticle_".$this->idArticle."'>
 ";
 $nbPrescType = count($this->prescriptionType);
@@ -47,6 +49,12 @@ $(document).ready(function(){
 	$(".editPrescriptionType").button({
 		icons: {
 			primary: 'ui-icon-pencil'
+		}
+	});
+	
+	$(".prescription").button({
+		icons: {
+			primary: 'ui-icon-circle-plus'
 		}
 	});
 });

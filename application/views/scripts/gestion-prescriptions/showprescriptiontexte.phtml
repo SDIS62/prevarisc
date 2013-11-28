@@ -3,9 +3,7 @@
 	echo "
 		<button class='addTexteCat' >Ajouter un texte à la catégorie</button>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<!--
-		<button class='addPrescriptionCat' >Ajouter une prescription à la catégorie</button>
-		-->
+		<button class='prescription' id='addPrescriptionCat_".$this->idCategorie."' >Ajouter une prescription à la catégorie</button>
 	";
 	echo "<br/><br/>";	
 
@@ -114,12 +112,12 @@ $(document).ready(function(){
 		}
 	});
 	
-	$(".addPrescriptionCat").button({
+	$(".prescription").button({
 		icons: {
 			primary: 'ui-icon-circle-plus'
 		}
 	});
 	
-	$(".prescriptiontexte").sortable();
+	//$(".prescriptiontexte").sortable();
 });
 </script>

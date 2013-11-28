@@ -43,7 +43,7 @@ for($i=0; $i < $nbPrescDossier; $i++)
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' style='width:5%;'>".$this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']."</td>";
+			echo "<td rowspan='".$nbAssoc."' class='numPresc' style='width:5%;'>".$this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']."</td>";
 			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>";
 			if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
 			{
@@ -74,6 +74,47 @@ echo "
 <script type="text/javascript">
 
 $(document).ready(function(){
+	$(".listePrescriptions").sortable({
+		update: function(event, ui) {
+				var listePrescriptionUpdate = new Array();
+				var num = 1;
+				$(".listePrescriptions > li").each(function(){
+					//on parcour les li pour récolter les changements et mettre à jour dans la base
+					//on change le num de li
+					$(this).attr('num',num);
+					//on change le num affiché
+					//alert($(this).children().children().children().html());
+					$(this).children().children().children().children(".numPresc").html(num);
+					
+					//on recupere id du li en cours "presc_x"
+					var liId = $(this).attr('id');
+					var liId = liId.split('_');
+					//alert(liId[1]);
+					listePrescriptionUpdate.push(liId[1]);
+					
+					num = num + 1;
+				});
+				
+				$.ajax({
+					url: "/dossier/prescriptionchangepos",
+					data: "do=changePrescOrder&tableUpdate="+listePrescriptionUpdate+"&idDossier="+$("#idDossier").val(),
+					type:"POST",
+					beforeSend: function(){
+
+					},
+					success: function(affichageResultat){
+						//alert('succes');
+						return false;
+					},
+					error: function()	{
+						return false;
+					}
+				});
+				
+			}
+	
+	});
+
 	$(".addPresc").button({
 		icons: {
 			primary: 'ui-icon-circle-plus'
@@ -190,7 +231,7 @@ $(document).ready(function(){
 		var tabId = $(this).attr('id').split('_');
 		var id = tabId[1];
 		//alert(id);
-		//On enregistre la prescription associ�e au dossier puis on integre le tableau retourn� dans le li class=listePrescriptions
+		//On enregistre la prescription associée au dossier puis on integre le tableau retourné dans le li class=listePrescriptions
 
 		$.ajax({
 			type: "POST",
@@ -214,16 +255,24 @@ $(document).ready(function(){
 		height: 'auto',
 		buttons: {
 			"Ajouter la prescription": function() {
-				$.ajax({
-					type: "POST",
-					url: "/dossier/prescriptionadd",
-					data: $("#formPrescription").serialize()+"&idDossier="+$("#idDossier").val(),
-					success: function(msg){
-						$(".listePrescriptions").append(msg);
-					}
+				var compteurTA = 0;
+				$("input[name='texte[]']").each(function(){
+					compteurTA++;
 				});
-				dialogPresc.html("");
-				dialogPresc.dialog("close");
+				//alert(compteurTA);
+				if(compteurTA > 0  && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
+				{
+					$.ajax({
+						type: "POST",
+						url: "/dossier/prescriptionadd",
+						data: $("#formPrescription").serialize()+"&idDossier="+$("#idDossier").val(),
+						success: function(msg){
+							$(".listePrescriptions").append(msg);
+						}
+					});
+					dialogPresc.html("");
+					dialogPresc.dialog("close");
+				}
 				return false;
 			},
 			"Annuler": function() {
@@ -254,13 +303,16 @@ $(document).ready(function(){
 	$("#addAssoc").live('click',function(){
 		var texte = $("#LIBELLE_TEXTE").val();
 		var article = $("#LIBELLE_ARTICLE").val();
-		var assoc = "";
-		assoc += "<tr><td><input type='hidden' name='texte[]' value='"+texte+"' />"+texte+"</td>";
-		assoc += "<td><input type='hidden' name='article[]' value='"+article+"' />"+article+"</td>";
-		assoc += "<td><a href='' class='suppAssoc'>&times;</a></td></tr>";
-		$("#association").append(assoc);
-		$("#LIBELLE_TEXTE").val('');
-		$("#LIBELLE_ARTICLE").val('');
+		if(texte != '' || article != '')
+		{
+			var assoc = "";
+			assoc += "<tr><td><input type='hidden' name='texte[]' value='"+texte+"' />"+texte+"</td>";
+			assoc += "<td><input type='hidden' name='article[]' value='"+article+"' />"+article+"</td>";
+			assoc += "<td><a href='' class='suppAssoc'>&times;</a></td></tr>";
+			$("#association").append(assoc);
+			$("#LIBELLE_TEXTE").val('');
+			$("#LIBELLE_ARTICLE").val('');
+		}
 		return false;
 	});
 	
@@ -285,7 +337,7 @@ $(document).ready(function(){
 					url: "/dossier/prescriptioneditsave",
 					data: $("#formPrescriptionEdit").serialize(),
 					success: function(msg){
-						alert($("#idPrescDossier").val());
+						//alert($("#idPrescDossier").val());
 						$("#prescriptionDossier_"+$("#idPrescDossier").val()).html(msg);
 						dialogPrescEdit.html("");
 						dialogPrescEdit.dialog("close");
@@ -323,6 +375,34 @@ $(document).ready(function(){
 				dialogPrescEdit.dialog("open");
 			}
 		});
+		return false;
+	});
+	
+//Suppression d'une prescription
+	$(".deletePrescDossier").live('click',function(){
+		$(this).hide();
+		$(".deleteOption").show();
+		return false;
+	});
+	
+	$(".cancelDelete").live('click',function(){
+		$(".deleteOption").hide();
+		$(".deletePrescDossier").show();
+		return false;
+	});
+
+	$(".validDelete").live('click',function(){
+		var tabId = $(this).attr('id').split('_');
+		var idPrescDossier = tabId[1];
+		$.ajax({
+			type: "POST",
+			url: "/dossier/prescriptiondelete",
+			data: "&idPrescDossier="+idPrescDossier+"&idDossier="+$("#idDossier").val(),
+			success: function(msg){
+				$("#prescriptionDossier_"+idPrescDossier).remove();
+				window.location.reload();
+			}
+		});		
 		return false;
 	});
 });
