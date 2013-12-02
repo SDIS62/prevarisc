@@ -6,7 +6,10 @@
 		</h2>
 		<button class='categorie' >Ajouter un type de prescriptions</button>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<button class='prescription' >Ajouter une prescription type</button><br/><br/>
+		<br/><br/>
+		<!--
+			<button class='prescription' >Ajouter une prescription type</button>
+		-->
 	";
 	
 	echo "
@@ -149,7 +152,7 @@ $(document).ready(function(){
 		$("#hideDetailArticle_"+idArticle).hide();
 	});
 //Gestion des catégories
-	$(".prescriptioncat").sortable().disableSelection();
+	//$(".prescriptioncat").sortable().disableSelection();
 	
 	var dialogCategorie = $('<div style="display:none;"></div>').appendTo('body');
 	
@@ -385,9 +388,14 @@ $(document).ready(function(){
 	});
 	
 	$(".prescription").live('click',function(){
+		//alert($(this).attr('id'));
+		var tabId = $(this).attr('id').split('_');
+		var typePresc = tabId[0];
+		var idEmpl = tabId[1];
 		$.ajax({
 			type: "POST",
 			url: "/gestion-prescriptions/formprescription",
+			data: "&typePresc="+typePresc+"&empl="+idEmpl,
 			success: function(msg){
 				//alert(msg);
 				dialogPrescription.html(msg);
@@ -475,18 +483,18 @@ $(document).ready(function(){
 		height: 'auto',
 		buttons: {
 			"Sauvegarder": function() {
-				$.ajax({
-					type: "POST",
-					url: "/gestion-prescriptions/saveprescriptiontype",
-					data: $("#formPrescription").serialize(),
-					success: function(msg){
-						var compteurTA = 0;
-						$("input[name='texte[]']").each(function(){
-							compteurTA++;
-						});
-						//alert(compteurTA);
-						if(compteurTA > 0 && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
-						{
+				var compteurTA = 0;
+				$("input[name='texte[]']").each(function(){
+					compteurTA++;
+				});
+				//alert(compteurTA);
+				if(compteurTA > 0 && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
+				{
+					$.ajax({
+						type: "POST",
+						url: "/gestion-prescriptions/saveprescriptiontype",
+						data: $("#formPrescription").serialize(),
+						success: function(msg){
 							if($("#ID_PRESCRIPTIONTYPE").val() != '')
 							{
 								$("#prescriptiontype_"+$("#ID_PRESCRIPTIONTYPE").val()).remove();
@@ -530,10 +538,11 @@ $(document).ready(function(){
 							
 							dialogPrescription.html("");
 							dialogPrescription.dialog("close");
+					
+							return false;
 						}
-						return false;
-					}
-				});
+					});
+				}
 				return false;
 			},
 			"Annuler": function() {

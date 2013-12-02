@@ -226,6 +226,36 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 			$this->view->do = 'new';
 			$dbCategorie = new Model_DbTable_PrescriptionCat;
 			$this->view->listeCategorie = $dbCategorie->recupPrescriptionCat();
+			switch($this->_getParam('typePresc'))
+			{
+				case "addPrescriptionCat":
+					//cas d'une prescription dans une catégorie
+					$this->view->categorie = $this->_getParam('empl');
+				break;
+				case "addPrescriptionTexte":
+					//cas d'une prescription dans un texte
+					$dbPrescTexte = new Model_DbTable_PrescriptionTexte;
+					$texteInfo = $dbPrescTexte->find($this->_getParam('empl'))->current();
+					$this->view->categorie = $texteInfo->ID_PRESCRIPTIONCAT;
+					$this->view->texte = $this->_getParam('empl');
+					
+				break;
+				case "addPrescriptionArticle":
+					//cas d'une prescription dans un article
+					$dbPrescArticle = new Model_DbTable_PrescriptionArticle;
+					$articleInfo = $dbPrescArticle->find($this->_getParam('empl'))->current();
+					$this->view->texte = $articleInfo->ID_PRESCRIPTIONTEXTE;
+					
+					$dbPrescTexte = new Model_DbTable_PrescriptionTexte;
+					$texteInfo = $dbPrescTexte->find($this->view->texte)->current();
+					$this->view->categorie = $texteInfo->ID_PRESCRIPTIONCAT;
+					
+					$this->view->article = $this->_getParam('empl');
+				break;
+				default:
+				
+				break;
+			}		
 		}
 	}
 	
@@ -234,6 +264,8 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 		$this->view->categorie = $this->_getParam('PRESCRIPTIONTYPE_CATEGORIE');
 		$this->view->texte = $this->_getParam('PRESCRIPTIONTYPE_TEXTE');
 		$this->view->article = $this->_getParam('PRESCRIPTIONTYPE_ARTICLE');
+		
+		
 		if(!$this->view->categorie && !$this->view->texte && !$this->view->article){
 			//on affiche les catégories
 			$dbPrescriptionCat = new Model_DbTable_PrescriptionCat;

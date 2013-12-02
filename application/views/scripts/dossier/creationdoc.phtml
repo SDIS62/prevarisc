@@ -55,7 +55,7 @@ try {
 
 // PARTIE DOC CONSULTE
 	try{
-		//Generation du segment ListePrescription
+		//Generation du segment listeDocs
 		$docConsulte = $odf->setSegment('listeDocs');
 		foreach($this->listeDocs as $document){
 			$exist = false;	
@@ -113,42 +113,53 @@ try {
 	
 // PARTIE PRESCRIPTION
 	try{
-	//Generation du segment ListePrescription
+		$nbPrescDossier = count($this->prescriptionDossier);
+
 		$prescription = $odf->setSegment('listePrescription');
-		for($i = 0; $i < $this->nbPrescription; $i++){
+		for($i=0; $i < $nbPrescDossier; $i++)
+		{
+			$nbAssoc = count($this->prescriptionDossier[$i]);
+			$cpt = true;
+			$article = '';
 			$texte = '';
-			for($t = 0; $t < count($this->listeTextes[$i]); $t++){
-				if($this->listeTextes[$i][$t] != NULL){
-					$texte .= $this->listeTextes[$i][$t]."\n";
-					//$prescription->texte(utf8_decode($this->listeTextes[$i][$t]."\n"));
-				}else if($this->listeTextes[$i][$t] == NULL && $this->listeArticles[$i][$t] != NULL){
-					$texte .=  "\n";
-					//$prescription->texte(utf8_decode("\n"));
+			for($j=0; $j < $nbAssoc; $j++)
+			{
+				$articleT = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
+				$texteT = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
+				
+				if($texteT != ''){
+					$texte .= $texteT."\n";
+				}else{
+					$texte .= "\n";
+				}
+				
+				if($articleT != ''){
+					$article .= $articleT."\n";
+				}else{
+					$article .= "\n";
+				}
+
+				if($cpt)
+				{
+					$prescription->num(utf8_decode($this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']));
+					if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
+					{
+						$prescription->libelle(utf8_decode($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']));
+					}else{
+						$prescription->libelle(utf8_decode($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']));
+					}
+					$cpt = false;
 				}
 			}
 			$prescription->texte(utf8_decode($texte));
-			$article = '';
-			for($a = 0; $a < count($this->listeArticles[$i]); $a++){
-				
-				if($this->listeArticles[$i][$a] != NULL){
-					$article .= $this->listeArticles[$i][$a]."\n"; 
-					//$prescription->article(utf8_decode($this->listeArticles[$i][$a]."\n"));
-				}else if($this->listeArticles[$i][$a] == NULL && $this->listeTextes[$i][$a] != NULL){
-					$article .= "\n"; 
-					//$prescription->article(utf8_decode("\n"));
-				}
-			}
 			$prescription->article(utf8_decode($article));
-			
-			$prescription->num(utf8_decode($this->listePrescription[$i]['NUM_PRESCRIPTIONDOSSIER']));
-			$prescription->libelle(utf8_decode($this->ListePrescriptionsLibelle[$i]));
 			$prescription->merge();
 		}
 		$odf->mergeSegment($prescription);	
 	} catch (OdfException $e) {
 
 	}
-
+	
 	//PARTIE TEXTE APPLICABLE
 	try{
 		$texteAppl = $odf->setSegment('texteAppl');

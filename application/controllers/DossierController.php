@@ -1146,221 +1146,6 @@ class DossierController extends Zend_Controller_Action
 		
     }
 
-	
-/* ANCIENNE PRESCRIPTIONS
-    public function prescriptionloadajaxAction()
-    {
-        $this->_helper->viewRenderer->setNoRender();
-
-        $dblistepresc = new Model_DbTable_PrescriptionDossier;
-        $dbtexte = new Model_DbTable_PrescriptionTexte;
-        $dbarticle = new Model_DbTable_PrescriptionArticle;
-
-        $this->view->listePrescription = $dblistepresc->getListePrescription($this->_getParam('idDossier'));
-
-        $compteur = 1;
-
-        //Arrays contenant toutes les infos sur les différentes prescriptions qui seront envoyées à la vue
-        $Textes = array();
-        $Articles = array();
-        $PrescriptionsLibelle = array();
-
-        //Array temporaire d'une prescription qui récolte les infos de chaque description 1 par 1 puis vient s'inclure aux arrays décrits au dessus
-        //On initialise pour le premier
-        $listeTextePresc = array();
-        $listeArticlePresc = array();
-
-        foreach ($this->view->listePrescription as $indPresc => $val) {
-            //On liste les prescriptions
-            $numPrescription = $val['NUM_PRESCRIPTIONDOSSIER'];
-
-            if ($val['TYPE_PRESCRIPTIONDOSSIER'] == 0) {
-                //la prescription se trouve dans prescription ASSOC
-                $infosPrescription = $dblistepresc->getPrescriptionAssoc($val['PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER']);
-            } elseif ($val['TYPE_PRESCRIPTIONDOSSIER'] == 1) {
-                //la prescription se trouve dans prescription TYPE
-                $infosPrescription = $dblistepresc->getPrescriptionType($val['PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER']);
-            }
-            //Zend_Debug::dump($infosPrescription);
-
-            if ($compteur != $numPrescription) {
-                //On réinitialise les tableau après les avoir ajoutés au tableau contenant toute les infos
-                array_push($Textes, $listeTextePresc);
-                array_push($Articles, $listeArticlePresc);
-                $compteur ++;
-                $listeTextePresc = array();
-                $listeArticlePresc = array();
-            }
-
-            if ($val['TYPE_PRESCRIPTIONDOSSIER'] == 0) {
-                $tabTexte = explode("_",$infosPrescription['TEXTE_PRESCRIPTIONASSOC']);
-            } else {
-                $tabTexte = explode("_",$infosPrescription['TEXTE_PRESCRIPTIONTYPE']);
-            }
-            foreach ($tabTexte as $indText => $valText) {
-                //echo $valText."<br/>";
-                $texte = $dbtexte->find($valText)->current();
-                //echo $texte['LIBELLE_TEXTE'];
-                array_push($listeTextePresc, $texte['LIBELLE_TEXTE'] );
-            }
-
-            if ($val['TYPE_PRESCRIPTIONDOSSIER'] == 0) {
-                $tabArticle = explode("_",$infosPrescription['ARTICLE_PRESCRIPTIONASSOC']);
-            } else {
-                $tabArticle = explode("_",$infosPrescription['ARTICLE_PRESCRIPTIONTYPE']);
-            }
-            foreach ($tabArticle as $indArticle => $valArticle) {
-                //echo $valArticle."<br/>";
-                $article = $dbarticle->find($valArticle)->current();
-                //echo $article['LIBELLE_ARTICLE'];
-                array_push($listeArticlePresc, $article['LIBELLE_ARTICLE'] );
-            }
-            array_push($PrescriptionsLibelle, $infosPrescription['LIBELLE_PRESCRIPTIONLIBELLE']);
-        }
-        array_push($Textes, $listeTextePresc);
-        array_push($Articles, $listeArticlePresc);
-
-        $this->view->nbPrescription = count($this->view->listePrescription);
-        $this->view->listeTextes = $Textes;
-        //Zend_Debug::dump($this->view->listeTextes);
-        $this->view->listeArticles = $Articles;
-        //Zend_Debug::dump($this->view->listeArticles);
-        $this->view->ListePrescriptionsLibelle = $PrescriptionsLibelle;
-        //Zend_Debug::dump($this->view->ListePrescriptionsLibelle);
-
-        $this->showprescriptionAction($Textes,$Articles,$PrescriptionsLibelle," ","loadPrescriptionAjax");
-    }
-
-    public function showprescriptionAction($tabTexte,$tabArticle,$tabLibelle,$idPrescDossier,$type)
-    {
-        $this->view->listeTextes = $tabTexte;
-        $this->view->listeArticles = $tabArticle;
-        $this->view->listeLibelles = $tabLibelle;
-        $this->view->idPrescDossier = $idPrescDossier;
-        $this->view->type = $type;
-
-        $this->render('showprescription');
-    }
-
-    public function editprescriptionAction()
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        //echo $this->_getParam('idDossier')." - ".$this->_getParam('idPrescription');
-        $idPrescription = (int) $this->_getParam('idPrescription');
-
-        $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-        //On récupere les infos de la prescriptions permettant de savoir s'il sagit d'une prescription type ou non
-        $prescription = $dbPrescDossier->find($idPrescription)->current()->toArray();
-
-        // Zend_Debug::dump($prescription);
-        //Récupération des infos concernant l'association texte/article/libelle
-        if ($prescription["TYPE_PRESCRIPTIONDOSSIER"] == 0) {
-            //prescription ordinaire
-            //echo "il s'agit d'une prescription ordinaire";
-            $infosPrescription = $dbPrescDossier->getPrescriptionAssoc($prescription["PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER"]);
-        } elseif ($prescription["TYPE_PRESCRIPTIONDOSSIER"] == 1) {
-            //prescription type
-            //echo "il s'agit d'une prescription type";
-            $infosPrescription = $dbPrescDossier->getPrescriptionType($prescription["PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER"]);
-        }
-        //Zend_Debug::dump($infosPrescription);
-
-        echo json_encode($infosPrescription);
-
-    }
-
-    public function editprescriptiontexteAction()
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        //echo $this->_getParam('prescriptionTexte')."<br/>";
-        //On récupere le srting contenant tous les id des textes
-        $texteIdListe = $this->_getParam('prescriptionTexte');
-        //On place chacun des id dans un tableau
-        $texteTab = explode("_", $texteIdListe);
-        //supprimer le dernier élément du tableau car il est inutile
-        array_pop($texteTab);
-        //Pour chacun des tableaux on récupère le texte concerné
-        //Zend_Debug::dump($texteTab);
-        $listeTextes = array();
-        $dbPrescTexte = new Model_DbTable_PrescriptionTexte;
-        $cpt = 0;
-        foreach ($texteTab as $index => $idTexte) {
-            if ($idTexte) {
-                $texte = $dbPrescTexte->find($idTexte)->current();
-                array_push($listeTextes,array($texte->ID_TEXTE,$texte->LIBELLE_TEXTE));
-            } else {
-                array_push($listeTextes,array("",""));
-            }
-            $cpt++;
-        }
-        echo json_encode($listeTextes);
-    }
-
-    public function editprescriptionarticleAction()
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        //echo $this->_getParam('prescriptionArticle')."<br/>";
-        $articleIdListe = $this->_getParam('prescriptionArticle');
-        //On place chacun des id dans un tableau
-        $articleTab = explode("_", $articleIdListe);
-        //supprimer le dernier élément du tableau car il est inutile
-        array_pop($articleTab);
-        //Pour chacun des tableaux on récupère le texte concerné
-        //Zend_Debug::dump($texteTab);
-        $listeArticles = array();
-        //On récupere le srting contenant tous les id des textes
-        $dbPrescArticle = new Model_DbTable_PrescriptionArticle;
-        $cpt = 0;
-        foreach ($articleTab as $index => $idArticle) {
-            if ($idArticle) {
-                $article = $dbPrescArticle->find($idArticle)->current();
-                array_push($listeArticles,array($article->ID_ARTICLE,$article->LIBELLE_ARTICLE));
-            } else {
-                array_push($listeArticles,array("",""));
-            }
-            $cpt++;
-        }
-        echo json_encode($listeArticles);
-
-    }
-
-    public function editprescriptionvalidationAction()
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        $idPrescription = (int) $this->_getParam('prescriptionEdit');
-
-        $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-        //On récupere les infos de la prescriptions permettant de savoir s'il sagit d'une prescription type ou non
-        $prescription = $dbPrescDossier->find($idPrescription)->current()->toArray();
-
-        //Récupération des infos concernant l'association texte/article/libelle
-        if ($prescription["TYPE_PRESCRIPTIONDOSSIER"] == 0) {
-            //prescription ordinaire
-            //On change dans precriptionassoc les textes et articles ainsi que le libelle (mais on supprime le précédent)
-            //echo "il s'agit d'une prescription ordinaire";
-            //On récupere la prescription associée (article texte libelle)
-			
-            $dbPrescAssoc = new Model_DbTable_PrescriptionAssoc;
-            $assocPresc = $dbPrescAssoc->find($prescription["PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER"])->current();
-		
-            $prescription = $dbPrescDossier->find($idPrescription)->current();
-            $prescription->delete();
-            //Puis on supprime l'association pour la créer à nouveau
-			$assocPresc->delete();
-        } elseif ($prescription["TYPE_PRESCRIPTIONDOSSIER"] == 1) {
-            //prescription type
-            //On change dans prescriptiondossier on supprime la ligne et on la recrée en gardant juste le numéro de la prescription
-            echo "il s'agit d'une prescription type";
-
-            $prescription = $dbPrescDossier->find($idPrescription)->current();
-            $prescription->delete();
-
-
-        }
-    }
-*/
-
-
 //Autocomplétion pour selection TEXTE
     public function selectiontexteAction()
     {
@@ -1880,83 +1665,35 @@ class DossierController extends Zend_Controller_Action
         /*
         PARTIE PRESCRIPTION
         */
-            $dblistepresc = new Model_DbTable_PrescriptionDossier;
-            $dbtexte = new Model_DbTable_PrescriptionTexte;
-            $dbarticle = new Model_DbTable_PrescriptionArticle;
-
-            $this->view->listePrescription = $dblistepresc->getListePrescription($this->_getParam('idDossier'));
-
-            //Zend_Debug::dump($this->view->listePrescription);
-
-            $compteur = 1;
-
-            //Arrays contenant toutes les infos sur les différentes prescriptions qui seront envoyées à la vue
-            $Textes = array();
-            $Articles = array();
-            $PrescriptionsLibelle = array();
-
-            //Array temporaire d'une prescription qui récolte les infos de chaque description 1 par 1 puis vient s'inclure aux arrays décrits au dessus
-            //On initialise pour le premier
-            $listeTextePresc = array();
-            $listeArticlePresc = array();
-
-            foreach ($this->view->listePrescription as $indPresc => $val) {
-                //On liste les prescriptions
-                $numPrescription = $val['NUM_PRESCRIPTIONDOSSIER'];
-
-                if ($val['TYPE_PRESCRIPTIONDOSSIER'] == 0) {
-                    //la prescription se trouve dans prescription ASSOC
-                    $infosPrescription = $dblistepresc->getPrescriptionAssoc($val['PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER']);
-                } elseif ($val['TYPE_PRESCRIPTIONDOSSIER'] == 1) {
-                    //la prescription se trouve dans prescription TYPE
-                    $infosPrescription = $dblistepresc->getPrescriptionType($val['PRESCRIPTIONASSOC_PRESCRIPTIONDOSSIER']);
-                }
-                //Zend_Debug::dump($infosPrescription);
-
-                if ($compteur != $numPrescription) {
-                    //On réinitialise les tableau après les avoir ajoutés au tableau contenant toute les infos
-                    array_push($Textes, $listeTextePresc);
-                    array_push($Articles, $listeArticlePresc);
-                    $compteur ++;
-                    $listeTextePresc = array();
-                    $listeArticlePresc = array();
-                }
-
-                if ($val['TYPE_PRESCRIPTIONDOSSIER'] == 0) {
-                    $tabTexte = explode("_",$infosPrescription['TEXTE_PRESCRIPTIONASSOC']);
-                } else {
-                    $tabTexte = explode("_",$infosPrescription['TEXTE_PRESCRIPTIONTYPE']);
-                }
-                foreach ($tabTexte as $indText => $valText) {
-                    //echo $valText."<br/>";
-                    $texte = $dbtexte->find($valText)->current();
-                    //echo $texte['LIBELLE_TEXTE'];
-                    array_push($listeTextePresc, $texte['LIBELLE_TEXTE'] );
-                }
-
-                if ($val['TYPE_PRESCRIPTIONDOSSIER'] == 0) {
-                    $tabArticle = explode("_",$infosPrescription['ARTICLE_PRESCRIPTIONASSOC']);
-                } else {
-                    $tabArticle = explode("_",$infosPrescription['ARTICLE_PRESCRIPTIONTYPE']);
-                }
-                foreach ($tabArticle as $indArticle => $valArticle) {
-                    //echo $valArticle."<br/>";
-                    $article = $dbarticle->find($valArticle)->current();
-                    //echo $article['LIBELLE_ARTICLE'];
-                    array_push($listeArticlePresc, $article['LIBELLE_ARTICLE'] );
-                }
-                array_push($PrescriptionsLibelle, $infosPrescription['LIBELLE_PRESCRIPTIONLIBELLE']);
-            }
-            array_push($Textes, $listeTextePresc);
-            array_push($Articles, $listeArticlePresc);
-
-            $this->view->nbPrescription = count($this->view->listePrescription);
-            $this->view->listeTextes = $Textes;
-            //Zend_Debug::dump($this->view->listeTextes);
-            $this->view->listeArticles = $Articles;
-            //Zend_Debug::dump($this->view->listeArticles);
-            $this->view->ListePrescriptionsLibelle = $PrescriptionsLibelle;
-
+		
+			//on affiche les prescriptions du dossier
+			$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+			$listePrescDossier = $dbPrescDossier->recupPrescDossier($this->_getParam('idDossier'));
+			//Zend_Debug::dump($listePrescDossier);
+			$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+			
+			$prescriptionArray = array();
+			foreach($listePrescDossier as $val => $ue)
+			{
+				if($ue['ID_PRESCRIPTION_TYPE'])
+				{
+					//cas d'une prescription type
+					//echo "Prescription type : ".$ue['ID_PRESCRIPTION_TYPE'];
+					$assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
+					array_push($prescriptionArray, $assoc);
+					//Zend_Debug::dump($assoc);
+				}else{
+					//cas d'une prescription particulière
+					//echo "Prescription pas type : ".$ue['ID_PRESCRIPTION_DOSSIER'];
+					$assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
+					array_push($prescriptionArray, $assoc);
+					//Zend_Debug::dump($assoc);				
+				}
+			}
+			$this->view->prescriptionDossier = $prescriptionArray;
+			//Zend_Debug::dump($this->view->prescriptionDossier);
+					
+			
         // GESTION DES DATES
             //Conversion de la date de dépot en mairie pour l'afficher
             if ($this->view->infosDossier['DATEMAIRIE_DOSSIER'] != '') {
@@ -2209,7 +1946,6 @@ class DossierController extends Zend_Controller_Action
 				array_push($prescriptionArray, $assoc);
 				//Zend_Debug::dump($assoc);				
 			}
-			echo "<br/>";
 		}
 		$this->view->prescriptionDossier = $prescriptionArray;
 		//Zend_Debug::dump($prescriptionArray);

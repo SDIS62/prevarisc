@@ -3,9 +3,9 @@
 echo "
 	<form name='formPrescription' id='formPrescription' action='' method='POST'>
 	<input type='hidden' name='ID_PRESCRIPTIONTYPE' id='ID_PRESCRIPTIONTYPE' value='".( ($this->do == 'edit')?$this->idPrescType:"")."' />
-	<input type='hidden' name='PRESCRIPTIONTYPE_CATEGORIE' id='PRESCRIPTIONTYPE_CATEGORIE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE']:"")."' />
-	<input type='hidden' name='PRESCRIPTIONTYPE_TEXTE' id='PRESCRIPTIONTYPE_TEXTE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_TEXTE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_TEXTE']:"")."' />
-	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:"")."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_CATEGORIE' id='PRESCRIPTIONTYPE_CATEGORIE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE']:$this->categorie )."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_TEXTE' id='PRESCRIPTIONTYPE_TEXTE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_TEXTE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_TEXTE']:$this->texte)."' />
+	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:$this->article)."' />
 	<div id='selectEmplacement' ></div>
 	<br/><br/>
 	<span>Texte : </span><span><input type='texte' name='LIBELLE_TEXTE' id='LIBELLE_TEXTE' value='' /></span>
