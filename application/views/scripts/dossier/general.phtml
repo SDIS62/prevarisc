@@ -1063,8 +1063,9 @@
 				//$("#"+nomTab[1]).html("<img src='/images/template/load/load.gif' />");
 			},
 			success: function(affichageResultat){
-				//alert(affichageResultat);
-				window.location='/dossier/index/id/'+affichageResultat;
+				//alert('/dossier/index/id/'+affichageResultat);
+				var idDossier = affichageResultat.replace(' ', '');
+				window.location='/dossier/index/id/'+idDossier;
 				//return false;
 			},
 			error: function(){

@@ -970,8 +970,6 @@ class DossierController extends Zend_Controller_Action
                 }
                 //echo $this->_getParam('HORSDELAI_DOSSIER');
                 
-                
-                
                 if($value == '')
                     $value = NULL;
                 //echo $libelle." - ".$value."<br/>";
@@ -988,16 +986,14 @@ class DossierController extends Zend_Controller_Action
                 else {
                     $value = 0;
                 }
-                $nouveauDossier->$libelle = $value;
-                
-            }
-            
+                $nouveauDossier->$libelle = $value;                
+            }            
         }
 
         $nouveauDossier->save();
 
         $idDossier = $nouveauDossier->ID_DOSSIER;
-
+		
         if ($this->_getParam('do') == 'new') {
             if ( isset( $_POST['idEtablissement'] ) &&  $_POST['idEtablissement'] != 0 ) {
                 $DBetablissementDossier = new Model_DbTable_EtablissementDossier;
@@ -1045,9 +1041,6 @@ class DossierController extends Zend_Controller_Action
                 }
             }
 
-			
-			
-
         } else {
             //gestion des natures en mode édition
             $DBdossierNature = new Model_DbTable_DossierNature;
@@ -1061,6 +1054,26 @@ class DossierController extends Zend_Controller_Action
             $nature->save();
 			
         }
+		
+		//GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
+		//lorsque je crée un dossier visite ou groupe de visite VP (21-26), VC (22-27), VI (24-29), 
+		//il faut que les textes applicables à l’ERP se retrouvent de fait dans le dossier créé
+		$idNature = $this->_getParam("selectNature");
+		
+		if( $idNature == 21 ||  $idNature == 22 || $idNature == 24 || $idNature == 26 || $idNature == 27 || $idNature == 29 )
+		{
+			$dbEtablissementTextAppl = new Model_DbTable_EtsTextesAppl;
+			$listeTexteApplEtab = $dbEtablissementTextAppl->recupTextes($_POST['idEtablissement']);
+			//Zend_Debug::dump($listeTexteApplEtab);
+			$dbDossierTexteAppl = new Model_DbTable_DossierTextesAppl;
+			foreach($listeTexteApplEtab as $val => $ue)
+			{
+				$saveTexteAppl = $dbDossierTexteAppl->createRow();
+				$saveTexteAppl->ID_DOSSIER = $idDossier;
+				$saveTexteAppl->ID_TEXTESAPPL = $ue['ID_TEXTESAPPL'];
+				$saveTexteAppl->save();
+			}
+		}
 		
 		
 		//Sauvegarde des numéro de document d'urbanisme du dossier
@@ -1131,19 +1144,18 @@ class DossierController extends Zend_Controller_Action
             }
         }
 
-	/*
-        if ($this->_getParam('ID_AFFECTATION_DOSSIER') && $this->_getParam('ID_AFFECTATION_DOSSIER') != '') {
-            $affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER');
-            $affectation->ID_DOSSIER_AFFECT = $idDossier;
-            $affectation->save();
-        } else {
-            $affectation->delete();
-        }
+		/*
+			if ($this->_getParam('ID_AFFECTATION_DOSSIER') && $this->_getParam('ID_AFFECTATION_DOSSIER') != '') {
+				$affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER');
+				$affectation->ID_DOSSIER_AFFECT = $idDossier;
+				$affectation->save();
+			} else {
+				$affectation->delete();
+			}
 
-	*/
+		*/
         //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
-        echo $idDossier;
-		
+        echo trim($idDossier);
     }
 
 //Autocomplétion pour selection TEXTE
