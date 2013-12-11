@@ -451,12 +451,12 @@
 					if($("#TYPE_DOSSIER").val() == 1){
 						//Si une seule date on la renseinge aussi dans l'input date de passage en commission
 						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');					
-						var date = new Date(event.end);					
+						var date = new Date(event.end);
 						dd = date.getUTCDate();
 						mm = date.getUTCMonth()+1;
 						aa = date.getUTCFullYear();
 						if(dd<10)
-							dd='0'+dd						
+							dd='0'+dd
 						if(mm<10)
 							mm='0'+mm
 						
@@ -1156,7 +1156,7 @@
 		}
 		
 		var data = $("#editDossier").serialize();
-		
+
 		//alert($("#editDossier").serialize());
 		
 		$.ajax({

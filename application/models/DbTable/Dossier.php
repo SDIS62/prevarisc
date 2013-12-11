@@ -154,7 +154,7 @@
 
             return $this->fetchAll($select)->toArray();
         }
-
+		
         public function getLastInfosEtab( $idEtablissement)
         {
             $select = "SELECT ID_ETABLISSEMENT, LIBELLE_ETABLISSEMENTINFORMATIONS, LIBELLE_GENRE
@@ -203,5 +203,21 @@
             //echo $select;
             return $this->getAdapter()->fetchAll($select);
         }
+		
+		public function findLastVp($idEtab)
+		{
+			$select = $this->select()
+				->setIntegrityCheck(false)
+				->from(array('d' => 'dossier'),"max(d.DATEVISITE_DOSSIER) as maxdate")
+				->join(array('ed' => 'etablissementdossier') , "ed.ID_DOSSIER = d.ID_DOSSIER")
+				->join(array("dn" => "dossiernature") , "d.ID_DOSSIER = dn.ID_DOSSIER")
+				->where("ed.ID_ETABLISSEMENT = ?",$idEtab)
+				->where("dn.ID_NATURE = 21 OR dn.ID_NATURE = 26")
+				->where("d.DATEVISITE_DOSSIER IS NOT NULL");
+				
+			//echo $select->__toString();
+			return $this->getAdapter()->fetchRow($select);	
+
+		}
 
     }

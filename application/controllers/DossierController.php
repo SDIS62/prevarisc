@@ -190,8 +190,6 @@ class DossierController extends Zend_Controller_Action
 
     public function generalAction()
     {
-
-		
 		//Zend_Debug::dump(Zend_Auth::getInstance()->getIdentity());
 		$this->view->idUser = Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR;
         //On récupère tous les types de dossier
@@ -203,7 +201,9 @@ class DossierController extends Zend_Controller_Action
         //Zend_Debug::dump($this->view->listeAvis);
         if ($this->_getParam("idEtablissement")) {
             $this->view->idEtablissement = $this->_getParam("idEtablissement");
-        }
+        }else{
+			
+		}
         $today = new Zend_Date();
         $this->view->dateToday = $today->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 		
@@ -991,11 +991,25 @@ class DossierController extends Zend_Controller_Action
         }
 
         $nouveauDossier->save();
+		
+		
+		//echo $this->_getParam("selectNature")." - ".$this->_getParam("TYPE_DOSSIER")."<br/>";
+		if ($this->_getParam("selectNature") == 21 && $this->_getParam("TYPE_DOSSIER") == 2) {
+			//VISITE PERIODIQUE
+			//Dans le cas d'une visite périodique on renseigne le champ DATEVISITE_DOSSIER pour pouvoir calculer la périodicité suviante
+			if ($this->_getParam('DATEVISITE_PERIODIQUE')) {
+				$datePeriodique = explode("/",$_POST['DATEVISITE_PERIODIQUE']);
+				$dateToSql = $datePeriodique[2]."-".$datePeriodique[1]."-".$datePeriodique[0];
+				$nouveauDossier->DATEVISITE_DOSSIER = $dateToSql;
+				$nouveauDossier->save();
+			}
+		}
 
         $idDossier = $nouveauDossier->ID_DOSSIER;
 		
-        if ($this->_getParam('do') == 'new') {
-            if ( isset( $_POST['idEtablissement'] ) &&  $_POST['idEtablissement'] != 0 ) {
+        if ($this->_getParam('do') == 'new')
+		{
+            if ( isset( $_POST['idEtablissement'] ) &&  $_POST['idEtablissement'] != "" ) {
                 $DBetablissementDossier = new Model_DbTable_EtablissementDossier;
                 $saveEtabDossier = $DBetablissementDossier->createRow();
                 $saveEtabDossier->ID_ETABLISSEMENT = $this->_getParam('idEtablissement');
@@ -1003,24 +1017,6 @@ class DossierController extends Zend_Controller_Action
                 $saveEtabDossier->save();
             }
             //Sauvegarde des natures du dossier
-            /*
-            foreach ($_POST['natureId'] as $libelle => $value) {
-                    $saveNature = $DBdossierNature->createRow();
-                    $saveNature->ID_DOSSIER = $idDossier;
-                    $saveNature->ID_NATURE = $value;
-                    $saveNature->save();
-                    if ($value == 21) {
-                        //VISITE PERIODIQUE
-                        //Dans le cas d'une visite périodique on renseigne le champ DATEVISITE_DOSSIER pour pouvoir calculer la périodicité suviante
-                        if ($_POST['DATEVISITE_PERIODIQUE']) {
-                            $datePeriodique = explode("/",$_POST['DATEVISITE_PERIODIQUE']);
-                            $dateToSql = $datePeriodique[2]."-".$datePeriodique[1]."-".$datePeriodique[0];
-                            $nouveauDossier->DATEVISITE_DOSSIER = $dateToSql;
-                            $nouveauDossier->save();
-                        }
-                    }
-            }
-            */
 			
             $DBdossierNature = new Model_DbTable_DossierNature;
 
@@ -1029,17 +1025,6 @@ class DossierController extends Zend_Controller_Action
             $saveNature->ID_NATURE = $_POST['selectNature'];
             $saveNature->save();
 
-
-            if ($this->_getParam("selectNature") == 21 && $this->_getParam("TYPE_DOSSIER") == 2) {
-                //VISITE PERIODIQUE
-                //Dans le cas d'une visite périodique on renseigne le champ DATEVISITE_DOSSIER pour pouvoir calculer la périodicité suviante
-                if ($_POST['DATEVISITE_PERIODIQUE']) {
-                    $datePeriodique = explode("/",$_POST['DATEVISITE_PERIODIQUE']);
-                    $dateToSql = $datePeriodique[2]."-".$datePeriodique[1]."-".$datePeriodique[0];
-                    $nouveauDossier->DATEVISITE_DOSSIER = $dateToSql;
-                    $nouveauDossier->save();
-                }
-            }
 
         } else {
             //gestion des natures en mode édition
@@ -1052,15 +1037,14 @@ class DossierController extends Zend_Controller_Action
             $nature->ID_NATURE = $this->_getParam("selectNature");
 			
             $nature->save();
-			
         }
-		
+	
 		//GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
 		//lorsque je crée un dossier visite ou groupe de visite VP (21-26), VC (22-27), VI (24-29), 
 		//il faut que les textes applicables à l’ERP se retrouvent de fait dans le dossier créé
 		$idNature = $this->_getParam("selectNature");
-		
-		if( $idNature == 21 ||  $idNature == 22 || $idNature == 24 || $idNature == 26 || $idNature == 27 || $idNature == 29 )
+		//echo $idNature;
+		if( ($idNature == 21 ||  $idNature == 22 || $idNature == 24 || $idNature == 26 || $idNature == 27 || $idNature == 29) &&  $_POST['idEtablissement'] != "")
 		{
 			$dbEtablissementTextAppl = new Model_DbTable_EtsTextesAppl;
 			$listeTexteApplEtab = $dbEtablissementTextAppl->recupTextes($_POST['idEtablissement']);
@@ -1075,15 +1059,67 @@ class DossierController extends Zend_Controller_Action
 			}
 		}
 		
+		//GESTION DE LA RECUPERATION DES DOCUMENTS CONSULTES DE LA PRECEDENTE VP SI IL EN EXISTE UNE (UNIQUEMENT EN CREATION DE DOSSIER)
+		if( ( $idNature == 21 || $idNature == 26 ) &&  $_POST['idEtablissement'] != "" )
+		{
+			//echo "ici on check les precedentes vp";
+			$lastVP = $DBdossier->findLastVp($this->_getParam("idEtablissement"));
+			//Zend_Debug::dump($lastVP);
+			$idDossierLastVP = $lastVP['ID_DOSSIER'];
+			//echo $lastVP['ID_DOSSIER'];
+			if($lastVP['ID_DOSSIER'] != '')
+			{
+				//echo $lastVP['ID_DOSSIER']." IL FAUT RECUP DES DOCUMENTS CONSULTES";
+				
+		        $dblistedoc = new Model_DbTable_DossierListeDoc;
+				$dblistedocAjout = new Model_DbTable_ListeDocAjout;
+
+				//ici on récupère tous les documents qui ont été renseigné dans la base par un utilisateur (avec id du dossier et de la nature)
+				$listeDocRenseigne = $dblistedoc->recupDocDossier($idDossierLastVP,$idNature);
+
+				//ici on récupère tous les documents qui ont été ajoutés par l'utilisateur (document non proposé par défaut)
+				$listeDocAjout = $dblistedocAjout->getDocAjout($idDossierLastVP,$idNature);
+				//Zend_Debug::dump($listeDocAjout);
+				
+				//on copie les docrenseigne pour la nouvelle visite
+				$dbDocConsulte = new Model_DbTable_DossierDocConsulte;
+				foreach($listeDocRenseigne as $val => $ue)
+				{
+					$cpDocConsulte = $dbDocConsulte->createRow();
+					$cpDocConsulte->ID_NATURE = $idNature;
+					$cpDocConsulte->REF_CONSULTE = $ue['REF_CONSULTE'];
+					$cpDocConsulte->DATE_CONSULTE = $ue['DATE_CONSULTE'];
+					$cpDocConsulte->DOC_CONSULTE = $ue['DOC_CONSULTE'];
+					$cpDocConsulte->ID_DOSSIER = $idDossier;
+					$cpDocConsulte->ID_DOC = $ue['ID_DOC'];
+					$cpDocConsulte->save();
+				}
+				
+				$dbListeDocAjout = new Model_DbTable_ListeDocAjout;
+				foreach($listeDocAjout as $val => $ue)
+				{
+					$cpDocAjout = $dbListeDocAjout->createRow();
+					$cpDocAjout->LIBELLE_DOCAJOUT = $ue['LIBELLE_DOCAJOUT'];
+					$cpDocAjout->REF_DOCAJOUT = $ue['REF_DOCAJOUT'];
+					$cpDocAjout->DATE_DOCAJOUT = $ue['DATE_DOCAJOUT'];
+					$cpDocAjout->ID_NATURE = $idNature;
+					$cpDocAjout->ID_DOSSIER = $idDossier;
+					$cpDocAjout->save();
+				}
+			}			
+		}
 		
+		
+		
+		//lorsque je crée un nouveau dossier de VP pour un ERP qui a déjà été visité, il faudrait que les « éléments consultés » de base soient les mêmes
 		//Sauvegarde des numéro de document d'urbanisme du dossier
 		$DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
 		$where = $DBdossierDocUrba->getAdapter()->quoteInto('ID_DOSSIER = ?',  $idDossier);
 		//echo $where);
 		$DBdossierDocUrba->delete($where);
 		
-		if (isset($_POST['docUrba'])) {
-			
+		if (isset($_POST['docUrba'])) 
+		{
 			foreach ($_POST['docUrba']  as $libelle => $value) {				
 				$saveDocUrba = $DBdossierDocUrba->createRow();
 				$saveDocUrba->ID_DOSSIER = $idDossier;
@@ -1093,11 +1129,11 @@ class DossierController extends Zend_Controller_Action
 			}
 		}
 		
-		
         //Sauvegarde des préventionnistes
         $DBdossierPrev = new Model_DbTable_DossierPreventionniste;
         $DBdossierPrev->delete("ID_DOSSIER = " .  $idDossier);
-        if (isset($_POST['preventionniste'])) {
+        if (isset($_POST['preventionniste'])) 
+		{
             foreach ($_POST['preventionniste'] as $prev => $infos) {
                 $savePrev = $DBdossierPrev->createRow();
                 $savePrev->ID_DOSSIER = $idDossier;
@@ -1105,16 +1141,6 @@ class DossierController extends Zend_Controller_Action
                 $savePrev->save();
             }
         }
-	/*
-		else if ($this->_getParam('do') == 'edit') {
-
-            $dbDossierAffectation = new Model_DbTable_DossierAffectation;
-            $affectation = $dbDossierAffectation->find(NULL,$nouveauDossier->ID_DOSSIER)->current();
-            $affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam("ID_AFFECTATION_DOSSIER");
-            $affectation->save();
-
-        }
-	*/
 	
         //echo $idDossier;
         //Sauvegarde des informations concernant l'affectation d'un dossier à une commission
@@ -1144,18 +1170,9 @@ class DossierController extends Zend_Controller_Action
             }
         }
 
-		/*
-			if ($this->_getParam('ID_AFFECTATION_DOSSIER') && $this->_getParam('ID_AFFECTATION_DOSSIER') != '') {
-				$affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER');
-				$affectation->ID_DOSSIER_AFFECT = $idDossier;
-				$affectation->save();
-			} else {
-				$affectation->delete();
-			}
-
-		*/
         //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
         echo trim($idDossier);
+
     }
 
 //Autocomplétion pour selection TEXTE
@@ -1279,7 +1296,7 @@ class DossierController extends Zend_Controller_Action
 
         //on recup les docs ajouté pr le dossiers
         $this->view->listeDocsAjout = $listeDocAjout;
-        //Zend_Debug::dump($this->view->listeDocsAjout);
+		//Zend_Debug::dump($this->view->listeDocsAjout);
         //$this->view->dossierDocConsutle = $dblistedoc->recupDocDossier((int) $this->_getParam("id"));
     }
 
