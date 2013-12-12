@@ -23,10 +23,3 @@ Prevarisc est un logiciel national open-source gérant l'ensemble de l'activité
 ## Participation au projet
 
 Si vous voulez participer au développement, n'hésitez pas à forker le projet !
-
-## À propos
-
-SDIS 62 - 2013
-Groupement GSIC
-Chef de projet : Stéphane CONTAL
-Développement : Rémi KINOWSKI & Kévin DUBUC
