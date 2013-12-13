@@ -32,6 +32,9 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->registerHelper(new View_Helper_Carte, 'carte');
             $view->registerHelper(new View_Helper_DateJqueryToBd, 'dateJqueryToBd');
             $view->registerHelper(new View_Helper_ListeGroupement, 'listeGroupement');
+            $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
+            $view->registerHelper(new SDIS62_View_Helper_Navigation_BootstrapBreadcrumbs, 'bootstrapBreadcrumbs');
+            $view->registerHelper(new ZFBootstrap\View\Helper\Navigation\Menu, 'menu');
 
             // On charge la vue correctement configurée dans le viewRenderer
             $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
