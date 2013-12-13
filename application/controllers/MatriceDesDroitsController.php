@@ -4,6 +4,8 @@
     {
         public function indexAction()
         {
+            $this->_helper->layout->setLayout("menu_left");
+            
             // Modèles
             $model_groupes = new Model_DbTable_Groupe;
             $model_genres = new Model_DbTable_Genre;

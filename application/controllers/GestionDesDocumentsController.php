@@ -16,6 +16,8 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
     public function indexAction()
     {
+        $this->_helper->layout->setLayout('menu_left');
+        
         //on liste les documents présents dans $path déclaré global pour le controller
         $path = $this->path; // dossier listé (pour lister le répertoir courant : $dir_nom = '.'  --> ('point')
         $dir = opendir($path) or die('Erreur de listage : le répertoire n\'existe pas'); // on ouvre le contenu du dossier courant
@@ -24,7 +26,8 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
         while ($element = readdir($dir)) {
             if ($element != '.' && $element != '..') {
-                if (!is_dir($path.'/'.$element)) {$fichier[] = $element;} else {$dossier[] = $element;}
+                if($element != '.gitignore')
+                    if (!is_dir($path.'/'.$element)) {$fichier[] = $element;} else {$dossier[] = $element;}
             }
         }
         closedir($dir);

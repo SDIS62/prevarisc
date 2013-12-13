@@ -2,6 +2,11 @@
 
     class CoucheCartographiqueController extends Zend_Controller_Action
     {
+        public function init()
+        {
+            $this->_helper->layout->setLayout("menu_left");
+        }
+        
         public function indexAction()
         {
             $model_couchecarto = new Model_DbTable_CoucheCarto;

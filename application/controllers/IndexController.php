@@ -1,91 +1,78 @@
 <?php
 
-    use \Michelf\Markdown;
-    
-    class IndexController extends Zend_Controller_Action
+class IndexController extends Zend_Controller_Action
+{
+    // Page d'accueil
+    public function indexAction()
     {
-        // Initialisation
-        public function init()
+        $this->_helper->layout->setLayout('menu_left');
+        
+        // Modèles
+        $DB_messages = new Model_DbTable_News;
+        $DB_groupe = new Model_DbTable_Groupe;
+        
+        // Récupération du fil d'actualité pour l'utilisateur
+        $this->view->flux = $DB_messages->getNews(Zend_Auth::getInstance()->getIdentity()->ID_GROUPE);
+        
+        // Récupération de l'ensemble des groupes
+        $this->view->groupes = $DB_groupe->fetchAll()->toArray();
+    }
+    
+    public function addMessageAction()
+    {
+        try
         {
-            // Gestionnaire de contexte
-            $this->_helper->AjaxContext->addActionContext('about', 'html')
-                                       ->initContext();
+            // Modèle
+            $model = new Model_DbTable_News;
+            
+            // On ajoute la news dans la db
+            $model->add($this->_request->getParam('type'), $this->_request->getParam('text'), $this->_request->getParam('conf') );
+            
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Ajout réussi !',
+                'message' => 'Le message a bien été ajouté.'
+            ));
         }
-
-        // Page d'accueil
-        public function indexAction()
+        catch(Exception $e)
         {
-            // Titre
-            $this->view->title = "Accueil";
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Aie',
+                'message' => $e->getMessage()
+            ));
         }
         
-        // Page d'accueil
-        public function helpAction()
-        {
-            // Titre
-            $this->view->title = "Aide";
-            
-            // Aide d'installation
-            $this->view->doc_install = Markdown::defaultTransform(file_get_contents('http://raw.github.com/SDIS62/prevarisc/master/docs/documentation_installation.md'));
-        }
-
-        // Rappels utilisateur
-        public function rappelsAction()
-        {
-            /*
-            // Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR
-
-            // Modèles
-            $model_etablissement = new Model_DbTable_Etablissement;
-
-            // Zend_Debug::Dump(Zend_Date::MONTH);
-
-            // Tableau des rappels
-            $array_rappels = null;
-
-            $user = Zend_Auth::getInstance()->getIdentity();
-
-            // On récupère les établissements surveillé par l'utilisateur
-            $array_etablissementsSurveilles = $model_etablissement->getByUser($user->ID_UTILISATEUR);
-
-            if ( count($array_etablissementsSurveilles) > 0 ) {
-
-                // Tableau des rappels
-                $array_rappels = array(
-                    "visites_a_venir" => array()
-                );
-
-                foreach ($array_etablissementsSurveilles as $row) {
-
-                    // On récupère la prochaine date
-                    $next_visite =  $model_etablissement->getVisiteNextPeriodique( $row["ID_ETABLISSEMENT"] ) != null ? $model_etablissement->getVisiteNextPeriodique( $row["ID_ETABLISSEMENT"] ) : null;
-
-                    if ($next_visite != null) {
-
-                        // On substract
-                        $diff = $next_visite->sub(new Zend_Date)->toValue();
-                        $diff_month = floor(((($diff/60)/60)/24)/30);
-
-                        // On check les visites a venir (-1 mois)
-                        if ($diff_month == 0) {
-
-                            $array_rappels["visites_a_venir"][] = "L'établissement <a href='/etablissement/index/id/" . $row["ID_ETABLISSEMENT"] . "'>" . $row["LIBELLE_ETABLISSEMENTINFORMATIONS"] ."</a> est bientôt sujet à une visite périodique.";
-                        }
-
-                        // On check les visites depassées
-                        if ($diff_month < 0) {
-
-                            $array_rappels["visites_a_venir"][] = "L'établissement <a href='/etablissement/index/id/" . $row["ID_ETABLISSEMENT"] . "'>" . $row["LIBELLE_ETABLISSEMENTINFORMATIONS"] ."</a> n'a pas été visité dans les temps.";
-                        }
-                    } elseif ($row["PERIODICITE_ETABLISSEMENTINFORMATIONS"] != 0) {
-
-                        $array_rappels["visites_a_venir"][] = "L'établissement <a href='/etablissement/index/id/" . $row["ID_ETABLISSEMENT"] . "'>" . $row["LIBELLE_ETABLISSEMENTINFORMATIONS"] ."</a> n'a pas encore reçu de visite.";
-                    }
-                }
-            }
-
-            $this->view->array_rappels = $array_rappels;
-            */
-        }
-
+        // Redirection
+        $this->_helper->redirector('index');
     }
+
+    public function deleteMessageAction()
+    {
+        try
+        {
+            // Modèle
+            $model = new Model_DbTable_News;
+
+            // On supprime la news dans la db
+            $news = $model->deleteNews($this->_request->getParam('id'));
+            
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Suppression réussie !',
+                'message' => 'Le message a bien été supprimé.'
+            ));
+        }
+        catch(Exception $e)
+        {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Aie',
+                'message' => $e->getMessage()
+            ));
+        }
+        
+        // Redirection
+        $this->_helper->redirector('index');
+    }
+}

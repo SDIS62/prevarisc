@@ -552,6 +552,15 @@
                 $informations->EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->ID_AVIS = null;
+                $informations->ID_GENRE = 1;
+                $informations->ID_CLASSE = null;
+                $informations->ID_STATUT = 1;
+                
+                $_GET['NBPREV_ETABLISSEMENT'] = (int) $_GET['NBPREV_ETABLISSEMENT'];
+                $_GET['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] = (int) $_GET['NBPREV_ETABLISSEMENT'];
+                $_GET['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] = (int) $_GET['NBPREV_ETABLISSEMENT'];
+                $_GET['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] = (int) $_GET['NBPREV_ETABLISSEMENT'];
+                $_GET['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] = (int) $_GET['NBPREV_ETABLISSEMENT'];
 
                 // Sauvegarde de la base pour rÃ©cupÃ©rer les id
                 $etablissement->save();
@@ -703,8 +712,10 @@
 
                 throw new Exception('Erreur dans la date', 500);
             }
-
-            return $array_date[2]."-".$array_date[1]."-".$array_date[0]." 00:00:00";
+            if($array_date[2] != '0000')
+                return $array_date[2]."-".$array_date[1]."-".$array_date[0]." 00:00:01";
+            else
+                return "1970-01-02 00:00:02";
         }
 
         public function getAction()

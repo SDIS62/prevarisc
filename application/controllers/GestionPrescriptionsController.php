@@ -14,6 +14,8 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 
     public function indexAction()
     {
+        $this->_helper->layout->setLayout('menu_left');
+        
 		$dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
 		$listePrescriptionCat = $dbPrescriptionCat->recupPrescriptionCat();
 

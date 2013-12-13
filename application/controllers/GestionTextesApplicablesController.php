@@ -10,6 +10,8 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
 
     public function indexAction()
     {
+        $this->_helper->layout->setLayout('menu_left');
+        
 		//on commence par afficher tous les texte applicables regroupés par leurs type
 		$dbTextesAppl = new Model_DbTable_TextesAppl;
 		$this->view->listeTextesAppl = $dbTextesAppl->recupTextesAppl();

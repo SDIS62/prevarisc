@@ -12,6 +12,8 @@
         {
             // Titre
             $this->view->title = "Tableau des périodicités";
+            
+            $this->_helper->layout->setLayout('menu_left');
 
             // Liste des types d'activité
             $activite_model = new Model_DbTable_Type();
@@ -45,29 +47,46 @@
 
         public function saveAction()
         {
-            // On desactive la vue
-            $this->_helper->viewRenderer->setNoRender();
+            try
+            {
+                // Model des p�riodicit�s
+                $perio_model = new Model_DbTable_Periodicite();
 
-            // Model des p�riodicit�s
-            $perio_model = new Model_DbTable_Periodicite();
+                // Requests
+                $request = $this->getRequest();
 
-            // Requests
-            $request = $this->getRequest();
+                foreach ( $request->getPost() as $key => $value ) {
+                    $result = explode("_", $key);
 
-            foreach ( $request->getPost() as $key => $value ) {
-                $result = explode("_", $key);
+                    if(  $item = $perio_model->find($result[0], $result[1], $result[2])->current() == null )
+                        $item = $perio_model->createRow();
+                    else
+                        $item = $perio_model->find($result[0], $result[1], $result[2])->current();
 
-                if(  $item = $perio_model->find($result[0], $result[1], $result[2])->current() == null )
-                    $item = $perio_model->createRow();
-                else
-                    $item = $perio_model->find($result[0], $result[1], $result[2])->current();
-
-                $item->ID_CATEGORIE = $result[0];
-                $item->ID_TYPE = $result[1];
-                $item->LOCALSOMMEIL_PERIODICITE = $result[2];
-                $item->PERIODICITE_PERIODICITE = $value;
-                $item->save();
+                    $item->ID_CATEGORIE = $result[0];
+                    $item->ID_TYPE = $result[1];
+                    $item->LOCALSOMMEIL_PERIODICITE = $result[2];
+                    $item->PERIODICITE_PERIODICITE = $value;
+                    $item->save();
+                    
+                    $this->_helper->flashMessenger(array(
+                        'context' => 'success',
+                        'title' => 'Mise à jour réussie !',
+                        'message' => 'Le tableau des périodicités a bien été mis à jour.'
+                    ));
+                }
             }
+            catch(Exception $e)
+            {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie',
+                    'message' => $e->getMessage()
+                ));
+            }
+            
+            // Redirection
+            $this->_helper->redirector('index');
         }
 
     }

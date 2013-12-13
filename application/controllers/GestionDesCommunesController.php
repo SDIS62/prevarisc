@@ -7,6 +7,7 @@
             // Liste des villes pour le select
             $commune = new Model_DbTable_AdresseCommune;
             $this->view->rowset_communes = $commune->fetchAll(null, "LIBELLE_COMMUNE");
+            $this->_helper->layout->setLayout('menu_left');
         }
 
         public function displayAction()

@@ -9,7 +9,6 @@
                         ->addActionContext('process', 'json')
                         ->addActionContext('edit-avatar', 'html')
                         ->addActionContext('is-active', 'json')
-                        ->addActionContext('get-group', 'html')
                         ->addActionContext('save-group', 'json')
                         ->addActionContext('login', 'json')
                         ->initContext();
@@ -17,12 +16,27 @@
 
         public function indexAction()
         {
+            $this->_helper->layout->setLayout("menu_left");
+            
+            // Récupération de l'ensemble des groupes
             $DB_groupe = new Model_DbTable_Groupe;
             $this->view->groupes = $DB_groupe->fetchAll()->toArray();
+            
+            // Modèles
+            $DB_user = new Model_DbTable_Utilisateur;
+            $DB_groupe = new Model_DbTable_Groupe;
+
+            // Utilisateurs du groupe
+            $this->view->users = $DB_user->getUsersWithInformations( $this->_request->gid );
+
+            // Information du groupe
+            $this->view->groupe = $DB_groupe->find( $this->_request->gid )->current();
         }
 
         public function addGroupAction()
         {
+            $this->_helper->layout->setLayout("menu_left");
+            
             if ($this->_request->gid) {
                 $DB_groupe = new Model_DbTable_Groupe;
                 $this->view->groupe = $DB_groupe->find( $this->_request->gid )->current();
@@ -59,29 +73,21 @@
         public function saveGroupAction()
         {
             $DB_groupe = new Model_DbTable_Groupe;
+            
             if ( !empty($this->_request->gid) ) {
                 $groupe = $DB_groupe->find( $this->_request->gid )->current();
                 $groupe->setFromArray(array_intersect_key($_POST, $DB_groupe->info('metadata')))->save();
             } else {
                 $DB_groupe->insert(array_intersect_key($_POST, $DB_groupe->info('metadata')));
             }
-        }
-
-        public function getGroupAction()
-        {
-            // Modèles
-            $DB_user = new Model_DbTable_Utilisateur;
-            $DB_groupe = new Model_DbTable_Groupe;
-
-            // Utilisateurs du groupe
-            $this->view->users = $DB_user->getUsersWithInformations( $this->_request->gid );
-
-            // Information du groupe
-            $this->view->groupe = $DB_groupe->find( $this->_request->gid )->current();
+            
+            $this->_helper->redirector->gotoUrl("/user");
         }
 
         public function editAction()
         {
+            $this->_helper->layout->setLayout("menu_left");
+            
             // Récupération des paramètres
             $model_admin = new Model_DbTable_Admin;
             $this->view->params = $model_admin->getParams();
@@ -138,6 +144,7 @@
 
         public function addAction()
         {
+            $this->_helper->layout->setLayout("menu_left");
             $this->view->title = 'Ajouter un utilisateur';
 
             // Récupération des paramètres
@@ -153,6 +160,7 @@
 
         public function maireAddAction()
         {
+            $this->_helper->layout->setLayout("menu_left");
             $this->view->title = 'Ajouter un maire';
             $this->view->maire = true;
 
@@ -298,6 +306,7 @@
             $DB_user = new Model_DbTable_Utilisateur;
             $user = $DB_user->find( $this->_request->uid )->current();
             $user->ACTIF_UTILISATEUR = !(bool) $user->ACTIF_UTILISATEUR;
+            $user->ACTIF_UTILISATEUR = (int) $user->ACTIF_UTILISATEUR;
             $user->save();
             $this->_redirect("/user");
         }
@@ -350,168 +359,105 @@
 
         public function loginAction()
         {
-            try {
+            // Formulaire de connexion
+            $form = new Form_Login;
+            $this->view->form = $form;
+            
+            // Instance de Zend_Auth
+            $auth = Zend_Auth::getInstance();
 
+            // Définition du layout
+            $this->_helper->layout->setLayout('login');
+            
+            if(!$this->_request->isPost())
+            {
+                return;
+            }
+            
+            try
+            {
+                if(!$form->isValid($this->_request->getPost()))
+                {
+                    throw new Zend_Auth_Exception('Données invalides.');
+                }
+                
                 // Modèles de données
                 $model_utilisateurInformations = new Model_DbTable_UtilisateurInformations;
                 $model_utilisateur = new Model_DbTable_Utilisateur;
-
-                $bool_ldap = false;
-
-                // Instance de Zend_Auth
-                $auth = Zend_Auth::getInstance();
-
-                // Définition du layout
-                $this->_helper->layout->setLayout('layout.min');
-
-                // On gère le message informant la deco automatique
-                if ($this->_request->deactivated) {
-
-                    $this->view->error = "Votre compte utilisateur a été désactivé par un administrateur ou a expiré. Dans ce cas, veuillez recharger la page afin de vous identifier à nouveau.<br/><button id='reload'>Recharger la page</button>";
+                
+                // Identifiants
+                $username = $this->_request->username;
+                $password = $this->_request->passwd;
+                
+                // Récupération de l'utilisateur
+                $user = $model_utilisateur->fetchRow($model_utilisateur->select()->where('USERNAME_UTILISATEUR = ?', $username));
+                
+                // Si l'utilisateur n'est pas actif, on renvoie false
+                if($user === null || !$user->ACTIF_UTILISATEUR)
+                {
+                    throw new Zend_Auth_Exception('L\'utilisateur n\'existe pas ou n\'est pas actif.');
                 }
 
-                // On vérifie donc si des données ont été postées
-                if ($this->_request->isPost()) {
+                // Création de l'adapter d'authentification via LDAP
+                $adapter = new Zend_Auth_Adapter_Ldap();
+                
+                // On associe notre ldap à l'adapter
+                $ldap = new Zend_Ldap(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap'));
+                $adapter->setLdap($ldap);
+                
+                try
+                {
+                    // On envoie les identifiants de connexion à l'adapter
+                    $adapter->setUsername($ldap->getCanonicalAccountName($username, Zend_Ldap::ACCTNAME_FORM_DN));
+                    $adapter->setPassword($password);
 
-                    // Si il y a deux champs
-                    if (!$this->_request->username || !$this->_request->passwd) {
-
-                        $this->view->error = "Veuillez remplir tout les champs.";
-                    } else {
-
-                        // Récupère l'adpatateur d'authentification avec des paramètres de constructeur
-                        $authAdapter = new Zend_Auth_Adapter_DbTable(
-                            Zend_Db_Table::getDefaultAdapter(),	// Adaptateur de la base de données
-                            'utilisateur',						// Table des utilisateurs
-                            'USERNAME_UTILISATEUR',				// Login de l'utilisateur
-                            'PASSWD_UTILISATEUR'				// Mot de passe de l'utilisateur
-                        );
-
-                        // On règle les valeurs d'entrées de l'identification
-                        $authAdapter->setIdentity($this->_request->username)
-                                    ->setCredential(md5($this->_request->username."7aec3ab8e8d025c19e8fc8b6e0d75227".$this->_request->passwd));
-
-                        // Réalise la requête d'authentification, et sauvegarde le résultat
-                        $result = $authAdapter->authenticate();
-
-                        // On check la validité de l'identification
-                        if ( !$result->isValid() ) {
-
-                            // On regarde si l'user à un mdp
-                            $mdp = false;
-                            $userTemp =  $model_utilisateur->find($model_utilisateur->getId($this->_request->username))->current();
-                            if($userTemp != null)
-                                $mdp =$userTemp->PASSWD_UTILISATEUR != null ? true : false;
-                            else {
-                                $this->view->error = "Utilisateur inconnu.";
-                            }
-
-                            // Récupération des paramètres
-                            $model_admin = new Model_DbTable_Admin;
-                            $params = $model_admin->getParams();
-
-                            if ($params["LDAP_ACTIF"] && !$mdp) {
-
-                                // Li'dentification a échouée, on va essayer de se connecter au LDAP
-                                $ldap = new Zend_Ldap(array(
-                                    'host'                   => $params["LDAP_HOST"],
-                                    'username'               => $params["LDAP_USERNAME"],
-                                    'password'               => $params["LDAP_PASSWORD"],
-                                    'baseDn'                 => $params["LDAP_BASEDN"], //CN=Users,
-                                ));
-
-                                // Est ce que l'user est dans la DB ?
-                                $bool_isRegistered = $model_utilisateur->isRegistered($this->_request->username);
-
-                                try {
-
-                                    if ($bool_isRegistered || $params["LDAP_LOGIN"]) {
-
-                                        $acctname = $ldap->getCanonicalAccountName($this->_request->username, Zend_Ldap::ACCTNAME_FORM_DN);	// Récupération du compte
-                                        $ldap->bind($acctname, $this->_request->passwd);	// On essaye de se connecter au compte avec les ID
-                                        $array_dn = Zend_Ldap_Dn::explodeDn($acctname);	// On récupère les infos
-
-                                        if ($params["LDAP_LOGIN"] && !$bool_isRegistered) {
-
-                                            // On créé le compte
-                                            $id_user = $model_utilisateur->insert( array(
-                                                "ID_UTILISATEURINFORMATIONS" => $model_utilisateurInformations->insert(array("NOM_UTILISATEURINFORMATIONS" => $array_dn[0]["CN"])),
-                                                //"PASSWD_UTILISATEUR" => md5($this->_request->username."7aec3ab8e8d025c19e8fc8b6e0d75227".$this->_request->passwd),
-                                                "PASSWD_UTILISATEUR" => "",
-                                                "USERNAME_UTILISATEUR" => $this->_request->username,
-                                                "ID_GROUPE" => 1
-                                            ));
-
-                                            // On récupère le row
-                                            $row_utilisateur = $model_utilisateur->find($id_user)->current();
-
-                                            $bool_ldap = true;
-                                            $this->view->ldap = $bool_ldap;
-                                            $this->view->error = null;
-                                        } else {
-
-                                            $row_utilisateur = $model_utilisateur->find($model_utilisateur->getId($this->_request->username))->current();
-                                        }
-                                    } else {
-
-                                        $this->view->error = "Indentifiants invalides.";
-                                    }
-
-                                } catch (Zend_Ldap_Exception $zle) {
-
-                                    $this->view->error = "Indentifiants LDAP invalides.";
-                                }
-                            } else {
-
-                                $this->view->error = "Indentifiants invalides.";
-                            }
-                        } else {
-
-                            // On récupère la ligne d'utilisateur
-                            $row_utilisateur = $authAdapter->getResultRowObject();
-                        }
-
-                        if ( isset($row_utilisateur) ) {
-
-                            // On check si l'utilisateur est déclaré comme actif
-                            if (!$row_utilisateur->ACTIF_UTILISATEUR) {
-
-                                $this->view->error = "<strong>Erreur:</strong> Votre compte utilisateur a été désactivé par un administrateur.";
-                            } else {
-                                // On récupère les informations complémentaires
-                                $row_utilisateurInformations = $model_utilisateurInformations->find( $row_utilisateur->ID_UTILISATEURINFORMATIONS )->current();
-
-                                // Stocke l'identité
-                                $storage = $auth->getStorage()->write((object) array(
-                                    "ID_UTILISATEUR" => $row_utilisateur->ID_UTILISATEUR,
-                                    "NOM_UTILISATEURINFORMATIONS" => $row_utilisateurInformations->NOM_UTILISATEURINFORMATIONS,
-                                    "PRENOM_UTILISATEURINFORMATIONS" => $row_utilisateurInformations->PRENOM_UTILISATEURINFORMATIONS,
-                                    "ID_GROUPE" => $row_utilisateur->ID_GROUPE
-                                ));
-
-                                // On écrit dans la base de données le cookie de session
-                                $model_utilisateur->update(
-                                    array("LASTACTION_UTILISATEUR" => session_id()),
-                                    "ID_UTILISATEUR = " . $row_utilisateur->ID_UTILISATEUR
-                                );
-                            }
-                        }
+                    // Si l'identification s'est bien passée, on envoie l'objet Model_user correspondant à l'utilisateur courant
+                    if(!$adapter->authenticate()->isValid())
+                    {
+                        throw new Zend_Auth_Exception('Les identifiants LDAP ne correspondent pas.');
                     }
                 }
-
-                // Si on est connecté, on retourne à la page index
-                if ($auth->hasIdentity() && !$this->_request->format) {
-
-                    if( $bool_ldap )
-                        $this->_redirect(array("controller" => "user","action" => "editMe", "ldap" => 1));
-                    else
-                        $this->_redirect(array("controller" => "index","action" => "index"));
+                catch(Exception $ee)
+                {
+                    // Si l'utilisateur est stocké en base, on analyse la correspondance du mot de passe entre celui en base et celui fourni
+                    $config_security = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('security');
+                    
+                    // Si l'identification s'est bien passée, on envoie l'objet Model_user correspondant à l'utilisateur courant
+                    if(md5($username . $config_security['salt'] . $password) != $user->PASSWD_UTILISATEUR)
+                    {
+                        throw new Zend_Auth_Exception('Les identifiants ne correspondent pas.');
+                    }
                 }
-            } catch (Zend_Exception $e) {
-
-                $this->view->error = "<strong>Erreur:</strong> Un problème est survenu lors de la connexion à la base de données. (" . $e->getMessage() . ")";
+                
+                // Message de bienvenue
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Bonjour !',
+                    'message' => 'Vous êtes bien connecté sur votre compte. Bienvenue sur Prevarisc !'
+                ));
+                
+                // Stockage de l'utilisateur dans la session
+                $row_utilisateurInformations = $model_utilisateurInformations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
+                $storage = $auth->getStorage()->write((object) array(
+                    "ID_UTILISATEUR" => $user->ID_UTILISATEUR,
+                    "NOM_UTILISATEURINFORMATIONS" => $row_utilisateurInformations->NOM_UTILISATEURINFORMATIONS,
+                    "PRENOM_UTILISATEURINFORMATIONS" => $row_utilisateurInformations->PRENOM_UTILISATEURINFORMATIONS,
+                    "ID_GROUPE" => $row_utilisateur->ID_GROUPE
+                ));
+                
+                // Redirection 
+                $this->_redirect(array("controller" => "index","action" => "index"));
+            }
+            catch(Exception $e)
+            {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie',
+                    'message' => $e->getMessage()
+                ));
             }
 
+            $this->view->form = $form;
         }
 
         // Logout
