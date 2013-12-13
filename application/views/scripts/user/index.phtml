@@ -1,106 +1,74 @@
-<div class='grid_16'>
-	
-	<!-- Titre -->
-	<div>
-	
-		<div style='float: right'>
-			<p id='notification_sauvegarde' class='ui-state-highlight <?php if( !isset($_GET["confirm"]) ) echo "ui-helper-hidden"; ?>' style='padding: .5em; margin-bottom: 1em; float: left; '>
-				L'utilisateur est bien enregistré.
-			</p>
-			&nbsp;
-			<button id='add-maire' >Ajouter un maire</button>
-			<button id='add-user' >Ajouter un utilisateur</button>
-		</div>
+<!-- Titre -->
+<h2 class='page-header'>Administration système</h2>
 
-		<h2>
-			<i class='sprite sprite-user' ></i>
-			Administration système &rsaquo; Gestion des utilisateurs
-		</h2>
-	
-	</div>
-	
+<?php echo $this->partial('menu_admin.phtml') ?>
+
+<?php echo $this->partial('menu_admin_user.phtml') ?>
+
+<div class='row-fluid'>
+
+    <div class="tabbable tabs-left span2">
+        <ul class='nav nav-tabs' style='width: 100%'>
+            <li <?php if(!isset($_GET['gid'])) echo "class='active'" ?>><a href='/user' >Tous les utilisateurs</a></li>
+            <?php foreach($this->groupes as $groupe) : ?>
+            <li <?php if(isset($_GET['gid']) && $_GET['gid'] == $groupe['ID_GROUPE']) echo "class='active'" ?> >
+                <a href='/user?gid=<?php echo $groupe["ID_GROUPE"] ?>' ><?php echo $groupe["LIBELLE_GROUPE"] ?></a>
+            </li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+
+    <div id='content_group' class='span10'>
+    
+        <a href='/user/add-group?gid=<?php echo $_GET['gid'] ?>' class='btn pull-right' >Modifier le groupe</a>
+
+        <!-- Liste des utilisateurs -->
+        <?php if($this->users != null) : ?>
+        <table class='table table-condensed table-striped'>
+
+            <thead>
+                <tr>
+                    <th>Identifiant</th>
+                    <th>Nom et prénom</th>
+                    <th>Fonction</th>
+                    <th style='width: 150px' >Etat</th>
+                    <th style='width: 150px' >Actions</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <?php foreach( $this->users as $user ) : ?>
+                <tr <?php if(!$user["ACTIF_UTILISATEUR"]) echo "style='color:silver'" ?> >
+                    <td style='font-style: italic' ><?php echo $user["USERNAME_UTILISATEUR"] ?></td>
+                    <td><a href='/user/profile?uid=<?php echo $user["ID_UTILISATEUR"] ?>' ><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></a></td>
+                    <td><?php echo $user["LIBELLE_FONCTION"] ?></td>
+                    <td>
+                        <?php
+                        echo ( time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime') ) ? "<span style='color: #008C00; font-weight: bold'>Connecté</span>" : "<span style='color: silver'>Déconnecté</span>"
+                        ?>
+                    </td>
+                    <td>
+                        <a href='/user/edit/uid/<?php echo $user["ID_UTILISATEUR"] ?>' class="edit">Modifier</a> ou 
+                        <a class='act_deact' href='/user/actived?uid=<?php echo $user["ID_UTILISATEUR"] ?>' ><?php echo ($user["ACTIF_UTILISATEUR"]) ? "Désactiver" : "Activer" ?></a>
+                    </td>
+                </tr>
+                <?php endforeach ?>
+            </tbody>
+            
+        </table>
+
+        <?php else : ?>
+        <p class='lead' ><strong>Aucun résultat.</strong></p>
+        <?php endif ?>
+    </div>
+
+    <div id='dialog-add-groupe'></div>
+    
 </div>
-
-<hr class='clear' />
-
-<div id='index-left' class='grid_3'>
-	
-	<ul>
-		<li class='active'><span float='left'><a href='/user/get-group' class='a_group'>Tous les utilisateurs</a></span></li>
-	</ul>
-	
-	<fieldset>
-		<ul>
-			<?php foreach($this->groupes as $groupe) : ?>
-			<li>
-				<span float='left' ><a href='/user/get-group?gid=<?php echo $groupe["ID_GROUPE"] ?>' class='a_group'><?php echo $groupe["LIBELLE_GROUPE"] ?></a></span>
-				<span float='right'><a href='<?php echo $groupe["ID_GROUPE"] ?>' class='a_edit' ><img src="/images/pen.png" height="9" width="10" alt="Éditer" /></a></span>
-			</li>
-			<?php endforeach ?>
-		</ul>
-	</fieldset>
-	
-	<hr class='clear' />
-	
-	<p><button id='add-group' >Créer un groupe</button></p>
-    <p><button id='matrice' >Gérer les droits des groupes</button></p>
-
-</div>
-
-<div id='content_group' class='grid_13'>
-	<?php echo $this->action("get-group", "user"); ?>
-</div>
-
-<div id='dialog-add-groupe'></div>
 
 
 <script type="text/javascript">
 
-	setTimeout( function() { $("#notification_sauvegarde").fadeOut(); }, 2500);
-	
-	$("a.edit").fancybox();
-	
-	$("#index-left ul a.a_group").click(function() {
-	
-		$("#content_group").load( $(this).attr("href") );
-		$("#index-left ul li").removeClass("active");
-		$(this).parent().parent().addClass("active");
-		
-		return false;
-	});
-	
-	$("#index-left ul a.a_edit").click(function() {
-	
-		dialog_groupe($(this).attr("href"));
-		return false;
-	});
-
-	$("#add-user").button({
-		icons: { primary: "ui-icon-plus" }
-	}).click(function() {
-		window.location = "/user/add";
-	});
-	
-	$("#add-maire").button({
-		icons: { primary: "ui-icon-plus" }
-	}).click(function() {
-		window.location = "/user/maire-add";
-	});
-	
-	$("#matrice").button({
-		icons: { primary: "ui-icon-unlocked" }
-	}).click(function() {
-		window.location = "/matrice-des-droits";
-	});
-	
-	// Ajout d'un groupe
-	$("#add-group").button({
-		icons: { primary: "ui-icon-plus" }
-	}).click(function() {
-
-		dialog_groupe();
-		return false;
-	});
 	
 	function dialog_groupe( gid ) {
 

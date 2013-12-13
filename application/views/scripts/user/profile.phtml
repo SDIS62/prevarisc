@@ -1,5 +1,7 @@
+<div class='row-fluid'>
+
 <!-- Coté gauche -->
-<div id='user-profile-left' class="grid_3" >
+<div class="span2" >
 	
 	<!-- Avatar -->
 	<p id="avatar_img"><?php $this->avatar($this->user["ID_UTILISATEUR"], "large") ?></p>
@@ -23,15 +25,6 @@
 		<?php echo $this->partialLoop('user/user.phtml', $this->users ); ?>
 	</p>
 
-	
-	<!-- Autre -->
-	<!--
-	<h4>Autres informations</h4>
-	<p>
-		<i class='sprite sprite-vcard' /></i> <a href='/group/' >Récupérer la VCARD</a>
-	</p>
-	-->
-	
 	<!-- Date des préventionnistes -->
 	<h4>Dates</h4>
 	<p>
@@ -43,17 +36,14 @@
 </div>
 
 <!-- Contenu de l'utilisateur -->
-<div class="grid_13" >
+<div class="span10" >
 
-	<!-- En-tête-->
 	<!-- Boutons-->
-	<div float='right' >
-		<?php if(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR != $this->user["ID_UTILISATEUR"]) : ?>
-		<?php if($this->user_info["MAIL_UTILISATEURINFORMATIONS"]) : ?><button id='mail-user' >Envoyer un message</button><?php endif ?>
-		<?php endif ?>
-		
-		<?php if($this->edit_bool) : ?>
-		<button id='edit-user' >Modifier</button>
+	<div class='pull-right' >
+        <br>
+        <?php if($this->user_info["MAIL_UTILISATEURINFORMATIONS"]) : ?><a href='mailto:<?php echo $this->user_info["MAIL_UTILISATEURINFORMATIONS"] ?>' class='btn'><i class='icon-envelope'></i> Envoyer un message</a><?php endif ?>
+		<?php if(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR == $this->user["ID_UTILISATEUR"]) : ?>
+		<a id='edit-user' href='#' class='btn' >Modifier</a>
 		<?php endif ?>
 	</div>
 
@@ -69,7 +59,7 @@
 	<!-- établissements surveillés -->
 	<h4>Etablissements surveillés</h4>
 	<div style=''>
-    <ul class='recherche_liste'>
+    <ul class='recherche_liste unstyled'>
 	<?php
 	echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissements); 
 	?>
@@ -94,31 +84,14 @@
 	-->
 </div>
 
-<hr class='clear' />
+</div>
 
 <script type="text/javascript">
 	
-	/*
-	$(window).bind("resize", function() {
-		// var width = $(".container_16").innerWidth() - $("#user-profile-left").outerWidth(true) - ( $("#user-profile-right").outerWidth(true) - $("#user-profile-right").outerWidth(false) );
-		var width =  $(".container_16").width() - $("#user-profile-left").outerWidth(true) - ( $("#user-profile-right").outerWidth(true) - $("#user-profile-right").outerWidth(false) ) - 15;
-		$("#user-profile-right").css("width", Math.floor(width) );
-	}).resize();
-	*/
-	$("#edit-user").button({
-		icons: { primary: "ui-icon-pencil" }
-	}).click(function() {
-		//window.location = "/user/edit/uid/<?php echo $this->user["ID_UTILISATEUR"] ?>?ref=<?php echo $this->user["ID_UTILISATEUR"] ?>";
-	});
+
 	
 	$("#edit-user").fancybox({
 		'href': '/user/edit/uid/<?php echo $this->user["ID_UTILISATEUR"] ?>?ref=<?php echo $this->user["ID_UTILISATEUR"] ?>&ajax=1',
-	});
-	
-	$("#mail-user").button({
-		icons: { primary: "ui-icon-mail-open" }
-	}).click(function() {
-		window.location = "mailto:<?php echo $this->user_info["MAIL_UTILISATEURINFORMATIONS"] ?>";
 	});
 
 </script>

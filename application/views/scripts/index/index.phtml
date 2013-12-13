@@ -1,50 +1,34 @@
-<!-- Menu vertical de gauche d'actions -->
-<div id='index-left' class='grid_3'>
-	
-	<!-- Général -->
-	<fieldset>
-		<legend>Général</legend>
-		<ul>
-			<li><a href='/admin'><i class='sprite sprite-cog' ></i>Administration système</a></li>
-			<li><a href='/calendrier-des-commissions' ><i class='sprite sprite-calendar' ></i>Calendrier des commissions</a></li>
-			<li><a href='/index/help' ><i class='sprite sprite-help' ></i>Aide</a></li>
-		</ul>
-	</fieldset>
-	
-	<!-- Paramétrage du logiciel -->
-	<fieldset>
-		<legend>Paramétrage du logiciel</legend>
-		<ul>
-			<li><a href='/periodicite' ><i class='sprite sprite-table' ></i>Tableau des périodicités</a></li>
-			<li><a href='/gestion-des-communes' ><i class='sprite sprite-table' ></i>Gestion des communes</a></li>
-			<li><a href='/groupement' ><i class='sprite sprite-table' ></i>Groupements de communes</a></li>
-			<li><a href='/gestion-des-commissions' ><i class='sprite sprite-table' ></i>Gestion des commissions</a></li>
-			<li><a href='/gestion-des-documents' ><i class='sprite sprite-table' ></i>Gestion des documents</a></li>
-			<li><a href='/gestion-prescriptions' ><i class='sprite sprite-table' ></i>Gestion des prescriptions</a></li>
-			<li><a href='/gestion-textes-applicables' id='gestionTextesAppl' ><i class='sprite sprite-table' ></i>Gestion des textes applicables</a></li>
-			<li><a href='/gestion-des-commissions' ><i class='sprite sprite-table' ></i>Gestion des commissions</a></li>
-		</ul>
-	</fieldset>
-	
-	<!-- Les options du fil d'actualité -->
-	<fieldset>
-		<legend>Fil d'actualité</legend>
-		<ul>
-			<li id="news_li" class='active' ><a href='/news'><i class='sprite sprite-comment' ></i>Tous les messages<span class="count ui-helper-hidden">0</span></a></li>
-		</ul>
-	</fieldset>
-	
-	<!-- Actions d'ajout -->
-	<fieldset>
-		<legend>Actions</legend>
-		<ul>
-			<li><a href='/etablissement/add' ><i class='sprite sprite-add' ></i>Ajouter un établissement</a></li>
-		</ul>
-	</fieldset>
-	
-</div>
+<!-- Titre -->
+<h2 class='page-header'>Fil d'actualité</h2>
 
-<!-- Fil d'actualité -->
-<div class='grid_13' id='index-content' >
-    <?php echo $this->action("index", "news"); ?>
-</div>
+<!-- Formulaire d'ajout de messages -->
+<form id='ajouter_news' class='well' action='/index/add-message' method='post' >
+
+	<textarea id='textarea' class='bigger' name='text' cols='' rows='' placeholder="Entrez ici votre message d'information."></textarea>
+    
+    <br/>
+    
+    <input type='submit' class='btn btn-primary save' value="Envoyer" />
+    
+    <div class="btn-group pull-left ui-helper-hidden">
+        <a href='#' id='conf' class='btn'><i class="icon-lock"></i> Confidentialité</a>
+    </div>
+
+	<select name="type" style="float: right">
+		<option>Message de service</option>
+		<option>Informations</option>
+		<option>Message personnel</option>
+		<option>Autre</option>
+	</select>
+    
+    <div id="dialog-conf" title="Confidentialité" class='ui-helper-hidden'>
+        <?php foreach($this->groupes as $groupe) : ?>
+        <input type="checkbox" name="conf[]" value="<?php echo $groupe["ID_GROUPE"] ?>" checked="checked" /><?php echo $groupe["LIBELLE_GROUPE"] ?><br/>
+        <?php endforeach; ?>
+    </div>
+</form>
+
+<!-- Liste des messages-->
+<ul id='index-newsfeed' class='liste_informations unstyled'>
+	<?php echo $this->partialLoop('news/display.phtml', $this->flux); ?>
+</ul>

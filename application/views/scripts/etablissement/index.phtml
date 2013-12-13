@@ -1,954 +1,911 @@
 <form id='formulaire_etablissement_footer' action='' onsubmit='return false;' >
 
-	<?php if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1) || ($this->DB_informations == null && $this->droits->DROITETSCREATION_GROUPE == 1)) : ?>
-		<div class='grid_16' >
-		
-			<input type='submit' class='ui-helper-hidden' />
-			
-			<h3 float='left'>Fiche de présentation générale</h3>
+    <input type='submit' class='ui-helper-hidden' />
+    
+    <h3 class='pull-left'>Fiche de présentation générale</h3>
 
-			
-			<!-- Boutons -->
-			<div float='right' >
-				
-				<span float='right' style='margin-left: 1em' >
-					<button id='modifier_button'>Modifier</button>
-					<button id='back_button'>Revenir au mode lecture</button>
-					<button id='cancel_button'>Annuler</button>
-					<button style='margin: 0;' id='save_button' class="save">Sauvegarder</button>
-					<button class="save" style='margin: 0; <?php if($this->action != "add" ) echo "border-right: none" ?>' id='save_historique_button'><?php echo ($this->action == "add" ? "Ajouter l'établissement" : "Sauvegarder & historiser" )?></button><?php if($this->action != "add") : ?><div id='save_historique_date' class="edit ui-button ui-widget ui-state-default2 ui-corner-all ui-button-text-icon-primary" style="margin: 0pt; border-left: medium none; display: inline-block" role="button" aria-disabled="false"><span class="ui-button-text"><input type='text' class='date edit ' name='date' value='<?php echo date("d/m/Y", time()) ?>' size=7 style='text-align: center; z-index: 2000' /></span></div><?php endif ?>
-				</span>
-				
-				<p id='notification_wait' class='ui-helper-hidden' style='margin-top: 0.7em; float: right; '>
-					<img src='/images/load.gif' alt='Chargement' />
-				</p>
-				
-				<p id='notification_sauvegarde' class='ui-state-highlight <?php if( !array_key_exists('confirm', $_GET) ) echo "ui-helper-hidden"; ?>' style='padding: .5em; margin-bottom: 1em; float: right; '>
-					La fiche établissement à bien été sauvegardé.
-				</p>
-				
-				<p id='notification_erreur' class='ui-state-error ui-helper-hidden' style='padding: .5em; margin-bottom: 1em; float: right; '>
-					L'enregistrement ne s'est pas effectué correctement.
-				</p>
-				
-				<p id='notification_default'class='ui-state-error ui-helper-hidden' style='padding: .5em; margin-bottom: 1em; float: right; '  >
-					Le logiciel n'est pas en mesure de résoudre certaines valeurs par défauts.
-				</p>
-			</div>
-			
-			
-		</div>
-	<?php endif ?>
-
-	<br class='clear' />
-
-	<!-- Informations générales de l'établissement en fonction de son genre -->
-	<div class='grid_9 change_historique'>
-	
-		<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
-	
-		<div class='edit'>
-			<h4>Général</h4>
-			<p>
-				<input style='width: 100%' id='libelle_text' type='text' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' size='30' value='<?php if ( $this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"] ) echo htmlspecialchars($this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' />
-			</p>
+    <!-- Boutons -->
+    <div class='pull-right' >
+        
+        <span class='pull-right' style='margin-left: 1em' >
+            <button class='btn' id='modifier_button'>Modifier</button>
+            <button class='btn' id='back_button'>Revenir au mode lecture</button>
+            <button class='btn' id='cancel_button'>Annuler</button>
+            <button style='margin: 0;' id='save_button' class="save btn">Sauvegarder</button>
             
-			<dl>
-				<dt>Statut</dt>
-				<dd>
-					<select name='ID_STATUT'>
-						<?php foreach( $this->DB_statut as $item ) : ?>
-						<option value='<?php echo $item["ID_STATUT"] ?>' <?php if( $item["ID_STATUT"] == $this->DB_informations["ID_STATUT"] ) echo "selected" ?> ><?php echo $item["LIBELLE_STATUT"] ?></option>
-						<?php endforeach ?>
-					</select>
-				</dd>
-			</dl>
-		</div>
-
-		<h4>Classement</h4>
-		<!-- Genre -->
-		<dl>
-			<dt>Genre</dt>
-			<dd>
-				<div class='edit'>
-					<select  name='ID_GENRE' id='genre'>
-						<?php foreach( $this->DB_genre as $item ) : ?>
-						<option value='<?php echo $item["ID_GENRE"] ?>' <?php if( $item["ID_GENRE"] == $this->DB_informations["ID_GENRE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_GENRE"] ?></option>
-						<?php endforeach ?>
-					</select>
-				</div>
-				<div class='read'>
-					<strong><?php if(isset($this->DB_genre[$this->DB_informations["ID_GENRE"]-1])) echo $this->DB_genre[$this->DB_informations["ID_GENRE"]-1]["LIBELLE_GENRE"]." " ?></strong>
-				</div>
-			</dd>
-		</dl>
-			
-		<!-- ICPE ? -->
-		<dl id='icpe' class='champs'>
-			<dt>Est-il classé ICPE ?</dt>
-			<dd>
-				<div class='edit'>
-					<input type='checkbox' id='icpe_checkbox' name='ICPE_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["ICPE_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
-				</div>
-				<div class='read'>
-					<?php echo ($this->DB_informations["ICPE_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
-				</div>
-			</dd>
-		</dl>
-
-		<hr />
-			
-		<!-- Catégorie -->
-		<dl id='categorie' class='champs'>
-			<dt>Catégorie</dt>
-			<dd>
-				<div class='edit'>
-					<select  id='categorie_select' name='ID_CATEGORIE'>
-						<?php foreach( $this->DB_categorie as $item ) : ?>
-						<option value='<?php echo $item["ID_CATEGORIE"] ?>' <?php if( $item["ID_CATEGORIE"] == $this->DB_informations["ID_CATEGORIE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_CATEGORIE"] ?></option>
-						<?php endforeach ?>
-					</select>
-				</div>
-				<div class='read'>
-					<?php if($this->DB_informations["ID_CATEGORIE"]) : ?>
-					<?php echo $this->DB_categorie[$this->DB_informations["ID_CATEGORIE"]]["LIBELLE_CATEGORIE"]." " ?>
-					<?php else : ?>
-					<em>Pas de catégorie selectionnée</em>
-					<?php endif ?>
-				</div>
-			</dd>
-		</dl>
-		
-		<!-- Famille -->
-		<dl id='famille' class='champs'>
-			<dt>Famille</dt>
-			<dd>
-				<div class='edit'>
-					<select name='ID_FAMILLE'>
-						<?php foreach( $this->DB_famille as $item ) : ?>
-						<option value='<?php echo $item["ID_FAMILLE"] ?>' <?php if( $item["ID_FAMILLE"] == $this->DB_informations["ID_FAMILLE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_FAMILLE"] ?></option>
-						<?php endforeach ?>
-					</select>
-				</div>
-				<div class='read'>
-					<?php echo $this->DB_famille[$this->DB_informations["ID_FAMILLE"]]["LIBELLE_FAMILLE"]." " ?>
-				</div>
-			</dd>
-		</dl>
-			
-		<!-- Périodicité -->
-		<dl id='periodicite' class='champs'>
-			<dt>Périodicité</dt>
-			<dd>
-				<div class='edit'>
-					<input type='text' id='periodicite_text' name='PERIODICITE_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"] ?>' size='2' /> mois
-				</div>
-				<div class='read'>
-					<?php echo $this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"]." mois" ?>
-				</div>
-			</dd>
-		</dl>
-		
-		<div id='type_principal' class='champs'>
-			<h4>Description de l'établissement</h4>
-			<!-- R123-20 ? -->
-			<div class='edit'>
-				<dl id='r123_20' >
-					<dt>R123-20 ?</dt>
-					<dd>
-						<input type='checkbox' name='R12320_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["R12320_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
-					</dd>
-				</dl>
-			</div>
-			
-			<?php if($this->DB_informations["R12320_ETABLISSEMENTINFORMATIONS"]) : ?>
-			<dl id='r123_20' class='read'>
-				<dt>R123-20 ?</dt>
-				<dd>
-					<?php echo ($this->DB_informations["R12320_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
-				</dd>
-			</dl>
-			<?php endif ?>
-				
-			<!-- Type et activités -->
-			<dl class='edit' >
-				<dt>Types et activités</dt>
-				<dd>
-					<ul id='activite_ul'>
-						<!-- Type et activité principal -->
-						<li>
-							<select id='type_principal_select' class='type_select' name='ID_TYPE' style='width: 20%'>
-								<?php foreach( $this->DB_type as $item ) : ?>
-								<option value='<?php echo $item["ID_TYPE"] ?>' <?php if( $item["ID_TYPE"] == $this->DB_informations["ID_TYPE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_TYPE"] ?></option>
-								<?php endforeach ?>
-							</select>
-							<select id='activite_principal_select' class='activite_select' name='ID_TYPEACTIVITE' style='width: 75%'>
-								<?php foreach( $this->DB_activite as $item ) : ?>
-								<?php if( $item["ID_TYPE"] == $this->DB_informations["ID_TYPE"] ) : ?>
-								<option value='<?php echo $item["ID_TYPEACTIVITE"] ?>' <?php if( $item["ID_TYPEACTIVITE"] == $this->DB_informations["ID_TYPEACTIVITE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_ACTIVITE"] ?></option>
-								<?php endif; endforeach ?>
-							</select>
-						</li>
-						
-						<!-- Types et activités secondaires -->
-						<?php foreach($this->types_activites_secondaires as $key => $type_activite_secondaire) : ?>
-						<li <?php if( $key == -1 ) echo "id='prototype_types_activites_secondaires' class='ui-helper-hidden'" ?> >
-							<select name='ID_TYPE_SECONDAIRE[]' class='type_select' style='width: 20%' >
-								<?php foreach( $this->DB_type as $item ) : ?>
-								<option value='<?php echo $item["ID_TYPE"] ?>' <?php if( $item["ID_TYPE"] == $type_activite_secondaire["ID_TYPE_SECONDAIRE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_TYPE"] ?></option>
-								<?php endforeach ?>
-							</select>
-							<select id='activite_secondaire_select' class='activite_select' name='ID_TYPEACTIVITE_SECONDAIRE[]' style='width: 75%'>
-								<?php foreach( $this->DB_activite as $item ) : ?>
-								<?php if( $item["ID_TYPE"] == $type_activite_secondaire["ID_TYPE_SECONDAIRE"] ) : ?>
-								<option value='<?php echo $item["ID_TYPEACTIVITE"] ?>' <?php if( $item["ID_TYPEACTIVITE"] == $type_activite_secondaire["ID_TYPEACTIVITE_SECONDAIRE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_ACTIVITE"] ?></option>
-								<?php endif; endforeach ?>
-							</select>
-							<a href='' style='text-decoration: none;' onclick='$(this).parent().remove(); return false;'>&times;</a>
-						</li>
-						<?php endforeach ?>
-					</ul>
-					
-					<a href='' class='edit' onclick="$('#prototype_types_activites_secondaires').clone().appendTo( $(this).prev() ).removeClass('ui-helper-hidden').attr('id', ''); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a>
-				</dd>
-			</dl>
-			
-			<?php // Zend_Debug::Dump($this->DB_activite) ?>
-			<?php unset($this->types_activites_secondaires[-1]); ?>
-			
-			<dl class='read'>
-				<dt style='float: left; width: 190px;'>Type principal</dt>
-				<dd style='float: left; margin: 0; padding: 0; width: 25px;'><?php echo $this->DB_type[$this->DB_informations["ID_TYPE"]-1]["LIBELLE_TYPE"] ?></dd>
-				
-				<?php if( $this->DB_informations["ID_TYPEACTIVITE"] ) : ?>
-				<dt style='margin-left: 50px; float: left; width: 190px;'>Activité principale</dt>
-				<dd style='float: left; margin: 0; padding: 0;'>
-                <p style='margin: 0;'><abbr title='<?php echo $this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"]?>' ><?php echo substr($this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"], 0, 50) . (strlen($this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr></p>
-                <br/>
-                </dd>
-				<?php endif ?>
-                
-                <div style='clear: both'></div>
-
-                <?php if($this->types_activites_secondaires) : ?>
-                
-                <br/>
-                
-				<dt style='float: left; width: 190px;'>Types secondaires</dt>
-				<dd style='float: left; margin: 0; padding: 0; width: 25px;'>
-                    <?php foreach($this->types_activites_secondaires as $type) : ?>
-                    <p style='margin: 0;'><?php echo $type["LIBELLE_TYPE"] . " " ?></p><br/>
-                    <?php endforeach ?>
-                </dd>
-				<?php endif ?>
-				
-				<?php if($this->types_activites_secondaires) : ?>
-				<dt style='margin-left: 50px; float: left;  width: 190px;'>Activités secondaires</dt>
-				<dd style='float: left; margin: 0; padding: 0;'>
-                    <?php foreach($this->types_activites_secondaires as $type) : ?>
-                    <p style='margin: 0;'><abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 50) . (strlen($type["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr></p>
-                    <br/>
-                    <?php endforeach ?>
-                </dd>
-                
-                <div style='clear: both'></div>
-                
-				<?php endif ?>
-			</dl>
-			
-		</div>
+            <button class="save btn" style='margin: 0; <?php if($this->action != "add" ) echo "border-right: none" ?>' id='save_historique_button'>
+                    <?php echo ($this->action == "add" ? "Ajouter l'établissement" : "Sauvegarder & historiser" )?>
+            </button>
+            
+            <?php if($this->action != "add") : ?>
+                <div id='save_historique_date' class="edit ui-button ui-widget ui-state-default2 ui-corner-all ui-button-text-icon-primary" style="margin: 0pt; border-left: medium none; display: inline-block" role="button" aria-disabled="false">
+                    <span class="ui-button-text">
+                        <input type='text' class='date edit ' name='date' value='<?php echo date("d/m/Y", time()) ?>' size=7 style='text-align: center; z-index: 2000' />
+                    </span>
+                </div>
+            <?php endif ?>
+        </span>
         
-        <!-- Local Sommeil ? -->
-		<dl id='local_sommeil' class='champs'>
-			<dt>Présence de local à sommeil</dt>
-			<dd>
-				<div class='edit'>
-					<input type='checkbox' id='local_sommeil_checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
-				</div>
-				<div class='read'>
-					<?php echo ($this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
-				</div>
-			</dd>
-		</dl>
+        <p id='notification_wait' class='ui-helper-hidden' style='margin-top: 0.7em; float: right; '>
+            <img src='/images/load.gif' alt='Chargement' />
+        </p>
         
-        <!-- Présence d'extinction automatique à eau ? -->
-		<dl id='extinction_eau' class='champs'>
-			<dt>Présence d'extinction automatique à eau</dt>
-			<dd>
-				<div class='edit'>
-					<input type='checkbox' id='extinction_eau_checkbox' name='EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
-				</div>
-				<div class='read'>
-					<?php echo ($this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
-				</div>
-			</dd>
-		</dl>
+        <p id='notification_sauvegarde' class='ui-state-highlight <?php if( !array_key_exists('confirm', $_GET) ) echo "ui-helper-hidden"; ?>' style='padding: .5em; margin-bottom: 1em; float: right; '>
+            La fiche établissement à bien été sauvegardé.
+        </p>
         
-        <!-- Périodicité -->
-		<dl id='surfaces_cell' class='champs'>
-			<dt <?php if(empty($this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >Surface totale</dt>
-			<dd <?php if(empty($this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >
-				<div class='edit'>
-					<input type='text' id='periodicite_text' name='SURFACETOTALE_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"] ?>' />
-				</div>
-				<div class='read'>
-					<?php echo $this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"] ?>
-				</div>
-			</dd>
+        <p id='notification_erreur' class='ui-state-error ui-helper-hidden' style='padding: .5em; margin-bottom: 1em; float: right; '>
+            L'enregistrement ne s'est pas effectué correctement.
+        </p>
+        
+        <p id='notification_default'class='ui-state-error ui-helper-hidden' style='padding: .5em; margin-bottom: 1em; float: right; '  >
+            Le logiciel n'est pas en mesure de résoudre certaines valeurs par défauts.
+        </p>
+    </div>
 
-			<dt <?php if(empty($this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >Surface accessible au public</dt>
-			<dd <?php if(empty($this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >
-				<div class='edit'>
-					<input type='text' id='periodicite_text' name='SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"] ?>' />
-				</div>
-				<div class='read'>
-					<?php echo $this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"] ?>
-				</div>
-			</dd>
-		</dl>
 
-		<!-- Classe -->
-		<dl id='classe' class='champs'>
-			<dt>Classe</dt>
-			<dd>
-				<div class='edit'>
-					<select id='classe_select' name='ID_CLASSE'>
-						<?php foreach( $this->DB_classe as $item ) : ?>
-						<option value='<?php echo $item["ID_CLASSE"] ?>' <?php if( $item["ID_CLASSE"] == $this->DB_informations["ID_CLASSE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_CLASSE"] ?></option>
-						<?php endforeach ?>
-					</select>
-				</div>
-				<div class='read'>
-					<?php echo $this->DB_classe[$this->DB_informations["ID_CLASSE"]]["LIBELLE_CLASSE"]." " ?>
-				</div>
-			</dd>
-		</dl>
-		
-		<!-- Rubriques -->
-		<div id='rubrique' class='champs'>
-			<h4>Rubriques ICPE <a href='' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="$('#prototype_rubriques').clone().appendTo( $(this).parent().parent().children('table') ).removeClass('ui-helper-hidden').attr('id', ''); return false;">Ajouter une rubrique</a></h4>
-			<table>
-				<thead style='text-align: left;'>
-					<tr>
-						<th>Rubrique</th>
-						<th>Numéro</th>
-						<th>Nom</th>
-						<th>Valeur</th>
-						<th>Classement</th>
-						<th>&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
-					<!-- Rubriques -->
-					<?php foreach($this->rubriques as $key => $rubrique) : ?>
-					<tr <?php if( $key == -1 ) echo "id='prototype_rubriques' class='ui-helper-hidden'" ?> >
-					
-						<!-- EDIT -->
-						<td class='edit'>
-							<select name='ID_RUBRIQUE[]'>
-								<option value='1' >Substance</option>
-								<option value='2' <?php if( isset($rubrique["ID_RUBRIQUE"]) && $rubrique["ID_RUBRIQUE"] == 2 ) echo "selected" ?> >Activité</option>
-							</select>
-						</td>
-						<td class='edit'><input type='text' size='10' name='NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE[]' value='<?php echo $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?>' /></td>
-						<td class='edit'><input type='text' size='45' name='NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE[]' value='<?php echo htmlspecialchars($rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"], ENT_QUOTES) ?>' /></td>
-						<td class='edit'><input type='text' size='7' name='VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE[]' value='<?php echo $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?>' /></td>
-						<td class='edit'>
-							<select name='CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE[]'>
-								<option value='D' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "D" ) echo "selected" ?> >D</option>
-								<option value='DC' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "DC" ) echo "selected" ?> >DC</option>
-								<option value='EN' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "EN" ) echo "selected" ?> >EN</option>
-								<option value='A' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "A" ) echo "selected" ?> >A</option>
-								<option value='SB' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "SB" ) echo "selected" ?> >SB</option>
-								<option value='AS' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "AS" ) echo "selected" ?> >AS</option>
-							</select>
-						</td>
-						<td class='edit'><a href='' style='text-decoration: none;' onclick='$(this).parent().parent().remove(); return false;'>&times;</a></td>
+	<div style='clear: both' />
+    
+    <div class='row-fluid'>
 
-						<!-- READ -->
-						<td class='read'><?php echo ( $rubrique["ID_RUBRIQUE"] == 1 ) ? "Substance" : "Activité" ?></td>
-						<td class='read'><?php echo $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
-						<td class='read'><?php echo $rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
-						<td class='read'><?php echo $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
-						<td class='read'><?php echo $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
-						<td class='read'></td>
-						
-					</tr>
-					<?php endforeach ?>
-				</tbody>
-			</table>
-		</div>
-		
-		<!-- Les effectifs -->
-		<div id='effectifs' class='champs'>
-			<div <?php if($this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] == 0 && $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"] == 0 && $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"] == 0) echo "class='edit'"; ?>>
-				<h4>Les effectifs</h4>
-				
-				<dl  id='effectif_public' class='champs'>
-					<!-- Effectif public -->
-					<dt class='effectif_public_bloc' >Public</dt>
-					<dd class='effectif_public_bloc' >
-						<div class='edit'>
-							<input type='text' id='effectif_public_text' name='EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] ?>' onblur='update_total()' />
-						</div>
-						<div class='read'>
-							<?php echo $this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"]." " ?>
-						</div>
-					</dd>
-				</dl>
-				
-				<dl id='effectif_personnel' class='champs'>
-					<!-- Effectif personnel -->
-					<dt class='effectif_personnel_bloc'>Personnel</dt>
-					<dd class='effectif_personnel_bloc'>
-						<div class='edit'>
-							<input type='text' id='effectif_personnel_text' name='EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"] ?>' onblur='update_total()' />
-						</div>
-						<div class='read'>
-							<?php echo $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]." " ?>
-						</div>
-					</dd>
-				</dl>
-				
-				<dl id='effectif_heberge' class='champs'>
-					<!-- Effectif hebergé -->
-					<dt class='effectif_local_sommeil_bloc' >Dont hebergé</dt>
-					<dd class='effectif_local_sommeil_bloc' >
-						<div class='edit'>
-							<input type='text' id='effectif_heberge_text' name='EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS"] ?>' onblur='update_total()' />
-						</div>
-						<div class='read'>
-							<?php echo $this->DB_informations["EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS"]." " ?>
-						</div>
-					</dd>
-				</dl>
+        <!-- Informations générales de l'établissement en fonction de son genre -->
+        <div class='span6 change_historique'>
+        
+            <div class='edit'>
+                <h4>Général</h4>
+                <p>
+                    <input style='width: 100%; box-sizing: border-box; height: 2.5em;' id='libelle_text' type='text' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' size='30' value='<?php if ( $this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"] ) echo htmlspecialchars($this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' />
+                </p>
                 
-                <dl id='effectif_total' class='champs'>
-					<dt>&nbsp;</dt>
-					<dd><hr style='margin:0' /></dd>
-					
-					<!-- Effectif total -->
-					<dt class='read'>Total</dt>
-					<dd>
-						<div class='read'>
-							<?php echo ($this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]) ." " ?>
-						</div>
-					</dd>
-				</dl>
-                
-                <dl id='effectif_justifianttotal' class='champs'>
-					<!-- Effectif total -->
-					<dt>Justifiant le classement</dt>
-					<dd>
-						<div class='edit'>
-							<input type='text' id='effectif_justifianttotal_text' name='EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"] ?>' />
-						</div>
-						<div class='read'>
-							<?php echo $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"]." " ?>
-						</div>
-					</dd>
-				</dl>
+                <dl class='dl-horizontal'>
+                    <dt>Statut</dt>
+                    <dd>
+                        <select name='ID_STATUT'>
+                            <?php foreach( $this->DB_statut as $item ) : ?>
+                            <option value='<?php echo $item["ID_STATUT"] ?>' <?php if( $item["ID_STATUT"] == $this->DB_informations["ID_STATUT"] ) echo "selected" ?> ><?php echo $item["LIBELLE_STATUT"] ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </dd>
+                </dl>
+            </div>
 
-			</div>
-		</div>
-		
-		<?php endif ?>
-		
-		<!-- Plan -->
-		<h4>Plans <a href='' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="$('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('ui-helper-hidden').attr('id', ''); return false;">Ajouter un plan</a></h4>
-		<div></div>
-		<?php if( count($this->plans) == 1 ) echo "<p class='read' style='text-align: center;'><em>Pas de plans disponible</em></p>"; ?>
-		<?php foreach($this->plans as $key => $plan) : ?>
-		<dl <?php if( $key == -1 ) echo "id='prototype_plan' class='ui-helper-hidden plans'" ?> >
-			<dd style='float: right; margin: 0; padding: 0;'>
-				<div class='edit'>
-					<a href='' onclick='$(this).parent().parent().parent().remove(); return false;' >&times</a>
-				</div>
-			</dd>
-			
-			<!-- Type de plan -->
-			<dt>Type de plan</dt>
-			<dd>
-				<div class='edit'>
-					<select name='ID_TYPEPLAN[]'>
-						<?php foreach( $this->DB_typesplan as $item ) : ?>
-						<option value='<?php echo $item["ID_TYPEPLAN"] ?>' <?php if( $plan["ID_TYPEPLAN"] == $item["ID_TYPEPLAN"] ) echo "selected" ?> ><?php echo $item["LIBELLE_TYPEPLAN"] ?></option>
-						<?php endforeach ?>
-					</select>
-				</div>
-				<div class='read'>
-					<?php echo $this->DB_typesplan[$plan["ID_TYPEPLAN"]]["LIBELLE_TYPEPLAN"]." " ?>
-				</div>
-			</dd>
-			
-			<!-- Numéro -->
-			<dt>Numéro du plan</dt>
-			<dd>
-				<div class='edit'>
-					<input type='text'  name='NUMERO_ETABLISSEMENTPLAN[]' value='<?php echo $plan["NUMERO_ETABLISSEMENTPLAN"] ?>' />
-				</div>
-				<div class='read'>
-					<?php echo $plan["NUMERO_ETABLISSEMENTPLAN"]."&nbsp;" ?>
-				</div>
-			</dd>
-			
-			<!-- Date -->
-			<dt>Date</dt>
-			<dd>
-				<div class='edit'>
-					<input type='text' class='date edit' name='DATE_ETABLISSEMENTPLAN[]' value='<?php echo $plan["DATE_ETABLISSEMENTPLAN"] == null ? date("d/m/Y", time()) : date("d/m/Y", strtotime($plan["DATE_ETABLISSEMENTPLAN"])) ?>' size=7 style='text-align: center' readonly />
-					<input type="checkbox" name="disable_date" <?php if($plan["DATE_ETABLISSEMENTPLAN"] == "0000-00-00 00:00:00") echo "checked='checked'"; ?> /> Pas de date
-				</div>
-				<div class='read'>
-					<?php
-						if(!empty($plan["DATE_ETABLISSEMENTPLAN"]) && $plan["DATE_ETABLISSEMENTPLAN"] != "0000-00-00 00:00:00") {
-							$date = new Zend_Date($plan["DATE_ETABLISSEMENTPLAN"], Zend_Date::DATES);
-							echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;";
-						}
-                        else {
-                            echo "<em>Pas de date.</em>";
-                        }
-					?>
-				</div>
-			</dd>
-		
-			
-			<!--Date du plan et statut-->
-            <!--
-			<dt>Statut du plan</dt>
-			<dd>
-				<div class='edit'>
-					<select  name='ID_STATUTPLAN[]'>
-						<option value='1' <?php if( $plan["ID_STATUTPLAN"] == 1 ) echo "selected" ?> >N'existe pas</option>
-						<option value='2' <?php if( $plan["ID_STATUTPLAN"] == 2 ) echo "selected" ?> >Projet</option>
-						<option value='3' <?php if( $plan["ID_STATUTPLAN"] == 3 ) echo "selected" ?> >En cours</option>
-						<option value='4' <?php if( $plan["ID_STATUTPLAN"] == 4 ) echo "selected" ?> >Existant</option>
-						<option value='5' <?php if( $plan["ID_STATUTPLAN"] == 5 ) echo "selected" ?> >A modifier</option>
-					</select>
-				</div>
-				<div class='read'>
-					<?php
-						switch( $plan["ID_STATUTPLAN"] ) {
-							case "1" : echo "N'existe pas"; 	break;
-							case "2" : echo "Projet"; 			break;
-							case "3" : echo "En cours"; 		break;
-							case "4" : echo "Existant";		    break;
-							case "5" : echo "A modifier"; 		break;
-						}
-					?>
-				</div>
-			</dd>
-            -->
-			
-			<dd><hr /></dd>
-		</dl>
-		<?php endforeach ?>
-		
-		<!-- Etablissement lié -->
-		<div id='etablissement_lies' class='champs'>
-			<h4 <?php if($this->DB_informations["ID_GENRE"] == 3) echo "class='edit'" ?>>Établissements liés  <?php echo count($this->etablissement_lies) > 1 ? "(" . (count($this->etablissement_lies) - 1) . " établissements)" : "" ?> <?php if($this->DB_etablissement) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->DB_etablissement->ID_ETABLISSEMENT ?>&libelle=<?php echo htmlspecialchars($this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
-			
-			<?php if( count($this->etablissement_lies) == 1 && $this->DB_informations["ID_GENRE"] != 3) echo "<p class='read' style='text-align: center;'><em>Pas d'établissement liés</em></p>"; ?>
-			
-			<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
-			<dl class='edit' >
-
-				<dt class="pere_de_letablissement" >Père de l'établissement</dt>
-				<dd class="pere_de_letablissement">	
-					<input type='text' size='50' id='pere-autocomplete' <?php if(isset($this->pere) || isset($_GET["libelle"])) : ?> class="ui-state-highlight" <?php endif ?> value='<?php if(isset($this->pere)) echo htmlspecialchars($this->pere["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES); elseif( isset($_GET["libelle"]) ) echo htmlspecialchars($_GET["libelle"], ENT_QUOTES)  ?>' style='width: 100%' />
-					<input type='hidden' id='ID_PERE' name='ID_PERE' value='<?php if(isset($this->pere)) echo $this->pere["ID_ETABLISSEMENT"]; elseif( isset($_GET["pere"]) ) echo $_GET["pere"] ?>' />
-				</dd>
-
-				<dt class="enfants_de_letablissement">Enfants de l'établissement</dt>
-				<dd class="enfants_de_letablissement">
-					<ul>
-						<?php foreach( $this->etablissement_lies as $key => $item ) : ?>
-						<li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_etablissement_lies' class='ui-helper-hidden'" ?> >
-							<span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
-								<input type='hidden' value='<?php echo $item["ID_FILS_ETABLISSEMENT"] ?>' name='ID_FILS_ETABLISSEMENT[]' />
-								<span><?php echo $item["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?></span>
-								<a href='' style='text-decoration: none;' onclick='$(this).parent().remove(); return false;'>&times;</a>
-							</span>
-						</li>
-						<?php endforeach ?>
-					</ul>
-					<input type='text' size='50' id='etablissement-autocomplete' value='' style='width: 100%' />
-				</dd>
-
-			</dl>
-			<?php endif ?>
-			
-			<div class='read' style='max-height: 400px; overflow: auto; ' >
-                <ul class='recherche_liste'>
-				<?php
-					unset($this->etablissement_lies[-1]);
-					if( count($this->etablissement_lies) > 0 ) {
-
-						echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissement_lies); 
-					}
-				?>
-                </ul>
-				<br/>
-			</div>
-		</div>
-	</div>
-
-	<!-- Carte de l'emplacement de l'établissement / informations  -->
-	<div class='grid_7'>
-
-		<div id='informations_generales'>
-			
-			<!-- Cartes -->
-			<ul id='menu_carte'>
-				<?php if( count($this->adresses) != 1 || count($this->etablissement_lies) != 0 ) : ?> <li class='active'>Carte</li> <?php endif ?>
-				<?php if( count($this->diapo) != 0 ) : ?> <li>Diaporama</li> <?php endif ?>
-				<?php if( count($this->diapo_plans) != 0 ) : ?> <li>Plans</li> <?php endif ?>
-			</ul>
-
-			<?php if( count($this->adresses) != 1 || count($this->etablissement_lies) != 0 || (isset($_GET["pere"]) && count($this->adresses_pere) != 0)) : ?>
-			<div id="geoportail" >
-				<?php
-					echo $this->partial('etablissement/partials/carte.phtml', array(
-						'etablissement_lies' => $this->etablissement_lies,
-						'adresses' => $this->adresses,
-						'libelle' => $this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"],
-						'drag' => true
-					));
-					
-				?>
-				<p style='text-align: right; font-size: 0.8em; margin-bottom: 0' class='read' ><a id='zoom' href='<?php echo $this->url(array("action" => "carte")) ?>' >[Zoom sur la carte]</a></p>	
-			</div>
-			<?php endif ?>
-			
-			<?php $array_diapos = array("diapo", "diapo_plans"); ?>
-			<?php foreach($array_diapos as $value) : ?>
-			<div id='<?php echo $value ?>' class='ui-helper-hidden'>
-				<div class="ppy3">
-					<ul class="ppy-imglist">
-						<?php foreach($this->$value as $item) : ?>
-							<li>
-								<a href="/data/uploads/pieces-jointes/<?php echo $item["ID_PIECEJOINTE"].$item["EXTENSION_PIECEJOINTE"] ?>">
-									<img src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
-								</a>
-							</li>
-						<?php endforeach ?>
-					</ul>
-					<div class="ppy-outer">
-						<div class="ppy-stage">
-							<div class="ppy-nav">
-								<div class="nav-wrap">
-									<a class="ppy-prev" title="Previous image">Previous image</a>
-									<a class="ppy-switch-enlarge" title="Enlarge" >Enlarge</a>
-									<a class="ppy-switch-compact" title="Close">Close</a>
-									<a class="ppy-next" title="Next image">Next image</a>
-								</div>
-							</div>
-							<div class="ppy-counter">
-								<strong class="ppy-current"></strong> / <strong class="ppy-total"></strong> 
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<?php endforeach ?>
-			
-			<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
-			
-			<!-- Informations générales -->
-			<h4>Informations générales</h4>
-			<dl>
-				
-				<!-- Numéro d'identification -->
-                <dt class='read' >Numéro d'identification</dt>
-                <dd class='read' >
+            <h4>Classement</h4>
+            <!-- Genre -->
+            <dl  class='dl-horizontal'>
+                <dt>Genre</dt>
+                <dd>
+                    <div class='edit'>
+                        <select  name='ID_GENRE' id='genre'>
+                            <?php foreach( $this->DB_genre as $item ) : ?>
+                            <option value='<?php echo $item["ID_GENRE"] ?>' <?php if( $item["ID_GENRE"] == $this->DB_informations["ID_GENRE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_GENRE"] ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
                     <div class='read'>
-                        <?php echo $this->idwinprev."&nbsp;" ?>
+                        <strong><?php if(isset($this->DB_genre[$this->DB_informations["ID_GENRE"]-1])) echo $this->DB_genre[$this->DB_informations["ID_GENRE"]-1]["LIBELLE_GENRE"]." " ?></strong>
                     </div>
                 </dd>
-				
-			</dl>
+            </dl>
+                
+            <!-- ICPE ? -->
+            <dl id='icpe' class='champs dl-horizontal'>
+                <dt>Est-il classé ICPE ?</dt>
+                <dd>
+                    <div class='edit'>
+                        <input type='checkbox' id='icpe_checkbox' name='ICPE_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["ICPE_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+                    </div>
+                    <div class='read'>
+                        <?php echo ($this->DB_informations["ICPE_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
+                    </div>
+                </dd>
+            </dl>
 
-			<!-- Liste des adresses -->
-			<dl id='adresse' class='champs'>
-				<dt>Adresse</dt>
-				<dd>
-					<?php if( count($this->adresses) == 1 ) echo "<span class='read'><em>Etablissement non localisé</em></span>"; ?>
-					<ul>
-						<?php foreach( $this->adresses as $key => $item ) : ?>
-						<li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_adresses' class='ui-helper-hidden'" ?> >
-							<span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
-								<input class='LON_ETABLISSEMENTADRESSE' type='hidden' value='<?php echo $item["LON_ETABLISSEMENTADRESSE"] ?>' name='LON_ETABLISSEMENTADRESSE[]' />
-								<input class='LAT_ETABLISSEMENTADRESSE'  type='hidden' value='<?php echo $item["LAT_ETABLISSEMENTADRESSE"] ?>' name='LAT_ETABLISSEMENTADRESSE[]' />
-								<input type='hidden' value='<?php echo $item["NUMERO_ADRESSE"] ?>' name='NUMERO_ADRESSE[]' />
-								<input type='hidden' value='<?php echo $item["ID_RUE"] ?>' name='ID_RUE[]' />
-								<input type='hidden' value='<?php echo $item["NUMINSEE_COMMUNE"] ?>' name='NUMINSEE_COMMUNE[]' />
-								<input type='hidden' value='<?php echo $item["COMPLEMENT_ADRESSE"] ?>' name='COMPLEMENT_ADRESSE[]' />
-								<span><?php echo strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"] ?></span>
-								<a href='' style='text-decoration: none;' onclick='$(this).parent().remove(); return false;'>&times;</a>
-							</span>
-						</li>
-						<?php endforeach ?>
-					</ul>
-					<div class='edit'>
-						<br class='clear' />
-						<a href='' class='edit' onclick="$('#dialog-adresse').dialog('open'); return false;">Ajouter une adresse</a>
-					</div>
-					<div class='read'>
-						<?php unset($this->adresses[-1]); ?>
-						<?php foreach( $this->adresses as $key => $item ) : ?>
-						<?php echo "<p style='margin-bottom: 3px'><a href='' onclick='VISU.getMap().setCenterAtLonLat(" .$item["LON_ETABLISSEMENTADRESSE"]. "," .$item["LAT_ETABLISSEMENTADRESSE"]. ", 17); return false' >" . strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"]. (( $key == 0 ) ? " <span style='font-size: 0.8em'>(Longitude: <span class='LON_ETABLISSEMENTADRESSE'>".$item["LON_ETABLISSEMENTADRESSE"]."</span> ; Latitude: <span class='LAT_ETABLISSEMENTADRESSE'>".$item["LAT_ETABLISSEMENTADRESSE"]."</span>)</span></a></p>" : "</a></p>" ) ?>
-						<?php endforeach ?>
-					</div>
-				</dd>
-			</dl>
-			
-			<!-- Adresses héritées du père -->
-			<?php if(count($this->adresses_pere) != 0) : ?>
-			<dl id='adresse_cellule' class='champs'>
-				<dt class='read edit' >Adresse</dt>
-				<dd>
-					<div class='read'>
-					<?php if( count($this->adresses_pere) == 0 ) echo "<span class='read'><em>Etablissement non localisé</em></span>"; ?>
-					<?php foreach( $this->adresses_pere as $item ) : ?>
-					<?php echo "<p style='margin-bottom: 3px'><a href='' onclick='VISU.getMap().setCenterAtLonLat(" .$item["LON_ETABLISSEMENTADRESSE"]. "," .$item["LAT_ETABLISSEMENTADRESSE"]. ", 17); return false' >" . strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"]. " <span style='font-size: 0.8em'>(Longitude: ".$item["LON_ETABLISSEMENTADRESSE"]." ; Latitude: ".$item["LAT_ETABLISSEMENTADRESSE"].")</span></a></p>" ?>
-					<?php endforeach ?>
-					</div>
-					
-					<div class='edit' >
-					<?php foreach( $this->adresses_pere as $key => $item ) : ?>
-					<li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_adresses' class='ui-helper-hidden'" ?> >
-						<span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
-							<input <?php if($key == 0) : ?> class='LON_ETABLISSEMENTADRESSE' <?php endif ?> type='hidden' value='<?php echo $item["LON_ETABLISSEMENTADRESSE"] ?>' name='LON_ETABLISSEMENTADRESSE[]' />
-							<input <?php if($key == 0) : ?> class='LAT_ETABLISSEMENTADRESSE' <?php endif ?> type='hidden' value='<?php echo $item["LAT_ETABLISSEMENTADRESSE"] ?>' name='LAT_ETABLISSEMENTADRESSE[]' />
-							<input type='hidden' value='<?php echo $item["NUMERO_ADRESSE"] ?>' name='NUMERO_ADRESSE[]' />
-							<input type='hidden' value='<?php echo $item["ID_RUE"] ?>' name='ID_RUE[]' />
-							<input type='hidden' value='<?php echo $item["NUMINSEE_COMMUNE"] ?>' name='NUMINSEE_COMMUNE[]' />
-							<input type='hidden' value='<?php echo $item["COMPLEMENT_ADRESSE"] ?>' name='COMPLEMENT_ADRESSE[]' />
-							<span><?php echo strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"] ?></span>
-						</span>
-					</li>
-					<?php endforeach ?>
-					</div>
-				</dd>
-				
-				<dt <?php if(empty($this->DB_informations["COMPLEMENT_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >Complément adresse</dt>
-				<dd <?php if(empty($this->DB_informations["COMPLEMENT_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >
-					<div class='edit'>
-						<input type='text'  name='COMPLEMENT_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["COMPLEMENT_ETABLISSEMENTINFORMATIONS"] ?>' maxlength="10" />
-					</div>
-					<div class='read'>
-						<?php echo $this->DB_informations["COMPLEMENT_ETABLISSEMENTINFORMATIONS"]."&nbsp;" ?>
-					</div>
-				</dd>
-			</dl>
-			<?php endif ?>
+            <hr />
+                
+            <!-- Catégorie -->
+            <dl id='categorie' class='champs dl-horizontal'>
+                <dt>Catégorie</dt>
+                <dd>
+                    <div class='edit'>
+                        <select  id='categorie_select' name='ID_CATEGORIE'>
+                            <?php foreach( $this->DB_categorie as $item ) : ?>
+                            <option value='<?php echo $item["ID_CATEGORIE"] ?>' <?php if( $item["ID_CATEGORIE"] == $this->DB_informations["ID_CATEGORIE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_CATEGORIE"] ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                    <div class='read'>
+                        <?php if($this->DB_informations["ID_CATEGORIE"]) : ?>
+                        <?php echo $this->DB_categorie[$this->DB_informations["ID_CATEGORIE"]]["LIBELLE_CATEGORIE"]." " ?>
+                        <?php else : ?>
+                        <em>Pas de catégorie selectionnée</em>
+                        <?php endif ?>
+                    </div>
+                </dd>
+            </dl>
             
-            <!-- Adresses héritées des enfants (pour le site) -->
-			<?php if(isset($this->adresse_site) && $this->adresse_site != null) : ?>
-			<dl>
-				<dt class='read edit' >Adresse héritées des établissements enfants</dt>
-				<dd>
-					<div class='read'>
-					<p style='margin-bottom: 3px'><?php echo $this->adresse_site ?></p>
-					</div>
-				</dd>
-			</dl>
-			<?php endif ?>
-			
-			<?php if(count($this->array_groupements) > 0) : ?>
-			<dl class="read">
-				<dt>Groupements de l'établissement</dt>
-				<dd>
-					<ul>
-						<?php foreach($this->array_groupements as $groupement) : ?>
-						<li><a class="view-groupement" href="/groupement/view?id=<?php echo $groupement["ID_GROUPEMENT"] ?>"><?php echo $groupement["LIBELLE_GROUPEMENT"] ?> (<?php echo $groupement["LIBELLE_GROUPEMENTTYPE"] ?>)</a></li>
-						<?php endforeach ?>
-					</ul>
-				</dd>
-			</dl>
-			<?php endif; ?>
+            <!-- Famille -->
+            <dl id='famille' class='champs dl-horizontal'>
+                <dt>Famille</dt>
+                <dd>
+                    <div class='edit'>
+                        <select name='ID_FAMILLE'>
+                            <?php foreach( $this->DB_famille as $item ) : ?>
+                            <option value='<?php echo $item["ID_FAMILLE"] ?>' <?php if( $item["ID_FAMILLE"] == $this->DB_informations["ID_FAMILLE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_FAMILLE"] ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                    <div class='read'>
+                        <?php if($this->DB_informations["ID_FAMILLE"]) echo $this->DB_famille[$this->DB_informations["ID_FAMILLE"]]["LIBELLE_FAMILLE"]." " ?>
+                    </div>
+                </dd>
+            </dl>
+                
+            <!-- Périodicité -->
+            <dl id='periodicite' class='champs dl-horizontal'>
+                <dt>Périodicité</dt>
+                <dd>
+                    <div class='edit'>
+                        <input type='text' id='periodicite_text' name='PERIODICITE_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"] ?>' size='2' /> mois
+                    </div>
+                    <div class='read'>
+                        <?php echo $this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"]." mois" ?>
+                    </div>
+                </dd>
+            </dl>
+            
+            <div id='type_principal' class='champs dl-horizontal'>
+                <h4>Description de l'établissement</h4>
+                <!-- R123-20 ? -->
+                <div class='edit'>
+                    <dl id='r123_20' >
+                        <dt>R123-20 ?</dt>
+                        <dd>
+                            <input type='checkbox' name='R12320_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["R12320_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+                        </dd>
+                    </dl>
+                </div>
+                
+                <?php if($this->DB_informations["R12320_ETABLISSEMENTINFORMATIONS"]) : ?>
+                <dl id='r123_20' class='read'>
+                    <dt>R123-20 ?</dt>
+                    <dd>
+                        <?php echo ($this->DB_informations["R12320_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
+                    </dd>
+                </dl>
+                <?php endif ?>
+                    
+                <!-- Type et activités -->
+                <dl class='edit' >
+                    <dt>Types et activités</dt>
+                    <dd>
+                        <ul id='activite_ul' class='unstyled'>
+                            <!-- Type et activité principal -->
+                            <li>
+                                <select id='type_principal_select' class='type_select' name='ID_TYPE' style='width: 20%'>
+                                    <?php foreach( $this->DB_type as $item ) : ?>
+                                    <option value='<?php echo $item["ID_TYPE"] ?>' <?php if( $item["ID_TYPE"] == $this->DB_informations["ID_TYPE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_TYPE"] ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                                <select id='activite_principal_select' class='activite_select' name='ID_TYPEACTIVITE' style='width: 75%'>
+                                    <?php foreach( $this->DB_activite as $item ) : ?>
+                                    <?php if( $item["ID_TYPE"] == $this->DB_informations["ID_TYPE"] ) : ?>
+                                    <option value='<?php echo $item["ID_TYPEACTIVITE"] ?>' <?php if( $item["ID_TYPEACTIVITE"] == $this->DB_informations["ID_TYPEACTIVITE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_ACTIVITE"] ?></option>
+                                    <?php endif; endforeach ?>
+                                </select>
+                            </li>
+                            
+                            <!-- Types et activités secondaires -->
+                            <?php foreach($this->types_activites_secondaires as $key => $type_activite_secondaire) : ?>
+                            <li <?php if( $key == -1 ) echo "id='prototype_types_activites_secondaires' class='ui-helper-hidden'" ?> >
+                                <select name='ID_TYPE_SECONDAIRE[]' class='type_select' style='width: 20%' >
+                                    <?php foreach( $this->DB_type as $item ) : ?>
+                                    <option value='<?php echo $item["ID_TYPE"] ?>' <?php if( $item["ID_TYPE"] == $type_activite_secondaire["ID_TYPE_SECONDAIRE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_TYPE"] ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                                <select id='activite_secondaire_select' class='activite_select' name='ID_TYPEACTIVITE_SECONDAIRE[]' style='width: 70%'>
+                                    <?php foreach( $this->DB_activite as $item ) : ?>
+                                    <?php if( $item["ID_TYPE"] == $type_activite_secondaire["ID_TYPE_SECONDAIRE"] ) : ?>
+                                    <option value='<?php echo $item["ID_TYPEACTIVITE"] ?>' <?php if( $item["ID_TYPEACTIVITE"] == $type_activite_secondaire["ID_TYPEACTIVITE_SECONDAIRE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_ACTIVITE"] ?></option>
+                                    <?php endif; endforeach ?>
+                                </select>
+                                <a href='' class='close' style='text-decoration: none; float: none' onclick='$(this).parent().remove(); return false;'>&times;</a>
+                            </li>
+                            <?php endforeach ?>
+                        </ul>
+                        
+                        <a href='' class='edit' onclick="$('#prototype_types_activites_secondaires').clone().appendTo( $(this).prev() ).removeClass('ui-helper-hidden').attr('id', ''); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a>
+                    </dd>
+                </dl>
+                
+                <?php // Zend_Debug::Dump($this->DB_activite) ?>
+                <?php unset($this->types_activites_secondaires[-1]); ?>
+                
+                <dl class='read dl-horizontal'>
+                    <dt>Type / Activité principal</dt>
+                    <dd>
+                        <?php if($this->DB_informations["ID_TYPE"]) echo $this->DB_type[$this->DB_informations["ID_TYPE"]-1]["LIBELLE_TYPE"] ?>
+                        <?php if( $this->DB_informations["ID_TYPEACTIVITE"] ) : ?>
+                        - 
+                        <abbr title='<?php echo $this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"]?>' ><?php echo substr($this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"], 0, 50) . (strlen($this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr>
+                        <?php endif ?>
+                    </dd>
 
-			<!-- Contact -->
-			<dl>
-				<!-- Téléphone -->
-				<dt <?php if(empty($this->DB_etablissement["TELEPHONE_ETABLISSEMENT"])) echo "class='edit'" ?> >Téléphone</dt>
-				<dd <?php if(empty($this->DB_etablissement["TELEPHONE_ETABLISSEMENT"])) echo "class='edit'" ?> >
-					<div class='edit'>
-						<input type='text'  name='TELEPHONE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["TELEPHONE_ETABLISSEMENT"] ?>' />
-					</div>
-					<div class='read'>
-						<?php echo $this->DB_etablissement["TELEPHONE_ETABLISSEMENT"]."&nbsp;" ?>
-					</div>
-				</dd>
-				
-				<!-- Fax -->
-				<dt <?php if(empty($this->DB_etablissement["FAX_ETABLISSEMENT"])) echo "class='edit'" ?> >Fax</dt>
-				<dd <?php if(empty($this->DB_etablissement["FAX_ETABLISSEMENT"])) echo "class='edit'" ?> >
-					<div class='edit'>
-						<input type='text'  name='FAX_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["FAX_ETABLISSEMENT"] ?>' />
-					</div>
-					<div class='read'>
-						<?php echo $this->DB_etablissement["FAX_ETABLISSEMENT"]."&nbsp;" ?>
-					</div>
-				</dd>
-				
-				<!-- Courriel -->
-				<dt <?php if(empty($this->DB_etablissement["COURRIEL_ETABLISSEMENT"])) echo "class='edit'" ?> >Courriel</dt>
-				<dd <?php if(empty($this->DB_etablissement["COURRIEL_ETABLISSEMENT"])) echo "class='edit'" ?> >
-					<div class='edit'>
-						<input type='text'  name='COURRIEL_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["COURRIEL_ETABLISSEMENT"] ?>' />
-					</div>
-					<div class='read'>
-						<a href='mailto:<?php echo $this->DB_etablissement["COURRIEL_ETABLISSEMENT"] ?>'><?php echo $this->DB_etablissement["COURRIEL_ETABLISSEMENT"] ?></a>
-					</div>
-				</dd>
-			</dl>
-			
-			<!-- Date du PC -->
-			<dl id='datepc' class='champs'>
-				<dt>Date du permis de construire initial</dt>
-				<dd>
-					<div class='edit'>
-						<input type='text' class='date edit' name='DATEPCINITIAL_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"] == "0000-00-00 00:00:00" ? "00/00/0000" : date("d/m/Y", strtotime($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"])) ?>' size=7 style='text-align: center'  />
-						<input type="checkbox" name="disable_date" <?php if($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"] == "0000-00-00 00:00:00") echo "checked='checked'"; ?> /> Pas de date
-					</div>
-					<div class='read'>
-						<?php
-						if($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"] != "0000-00-00 00:00:00") {
-							$date = new Zend_Date($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"], Zend_Date::DATES);
-							echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;";
-						}
-						else
-							echo "<em>Aucun PC initial.</em>"
-						?>
-					</div>
-				</dd>
-				
-				<dt>Date du permis de construire modificatif</dt>
-				<dd>
-					<div class='edit'>
-						<input type='text' class='date edit' name='DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"] == "0000-00-00 00:00:00" ? "00/00/0000" : date("d/m/Y", strtotime($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"])) ?>' size=7 style='text-align: center'  />
-						<input type="checkbox" name="disable_date" <?php if($this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"] == "0000-00-00 00:00:00") echo "checked='checked'"; ?> /> Pas de date
-					</div>
-					<div class='read'>
-						<?php
-						if($this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"] != "0000-00-00 00:00:00") {
-							$date = new Zend_Date($this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"], Zend_Date::DATES);
-							echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;";
-						}
-						else
-							echo "<em>Aucun PC Modificatif.</em>"
-						?>
-					</div>
-				</dd>
-			</dl>
-			
-			<?php endif ?>
-			
-		</div>
-		
-		<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
-		
-		<hr class="clear" ./>
-		
-		<!-- Service prévention -->
-		<div id='preventionnistes' class='champs change_historique' >
-		
-			<h4>Service prévention</h4>
-			
-			<!-- Commission compétente -->
-			<dl id='commission' class='champs'>
-				<dt>Commission compétente</dt>
-				<dd>
-					<div class='edit'>
-						<select id='commission_select' name='ID_COMMISSION' style='width: 100%'>
-							<option value='0'>Par défaut</option>
-							<?php foreach( $this->DB_commission as $item ) : ?>
-							<option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->DB_informations["ID_COMMISSION"] ) echo "selected" ?> ><?php echo $item["LIBELLE_COMMISSION"] ?></option>
-							<?php endforeach ?>
-						</select>
-					</div>
-					<div class='read'>
-						<?php if($this->DB_informations["ID_COMMISSION"] == 0) : ?>
-							<span class='read'><em>Pas de commission renseignée.</em></span>
-						<?php else : ?>
-						<?php echo $this->DB_commission[$this->DB_informations["ID_COMMISSION"]]["LIBELLE_COMMISSION"]." " ?>
-						<?php endif ?>
-					</div>
-				</dd>
-			</dl>
-			
-			<!-- Préventionnistes -->
-			<dl>
-				<dt>Préventionnistes</dt>
-				<dd>
-					<?php if( count($this->preventionnistes) == 1 ) echo "<span class='read'><em>Pas de préventionnistes liés.</em></span>"; ?>
-					<ul id="list_prev">
-						<?php foreach( $this->preventionnistes as $key => $item ) : ?>
-						<li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_preventionniste_lies' class='ui-helper-hidden'" ?> >
-							<span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
-								<input type='hidden' value='<?php echo $item["ID_UTILISATEUR"] ?>' name='ID_UTILISATEUR[]' />
-								<span><?php echo $item["NOM_UTILISATEURINFORMATIONS"]." ".$item["PRENOM_UTILISATEURINFORMATIONS"] ?></span>
-								<a href='' style='text-decoration: none;' onclick='$(this).parent().parent().remove(); return false;'>&times;</a>
-							</span>
-						</li>
-						<?php endforeach ?>
-					</ul>
-					<div class='edit'>
-						<input type='text' id='preventionnistes-autocomplete' value=''  style='width: 100%' />
-					</div>
-					<div class='read'>
-						<?php unset($this->preventionnistes[-1]); ?>
-						<?php echo $this->partialLoop('user/user.phtml', $this->preventionnistes ) ?>
-					</div>
-				</dd>
-			</dl>
+                    <?php if($this->types_activites_secondaires) : ?>
+                    
+                    <dt>Types / Activités secondaires</dt>
+                    <dd>
+                        <?php foreach($this->types_activites_secondaires as $type) : ?>
+                        <?php echo $type["LIBELLE_TYPE"] . " " ?>
+                        <?php if( $type["LIBELLE_ACTIVITE"] ) : ?>
+                        - 
+                        <abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 50) . (strlen($type["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr>
+                        <?php endif ?>
+                        <?php endforeach ?>
+                        
+                         / 
+                        
+                    </dd>
+                    <?php endif ?>
+                   
+                </dl>
+                
+            </div>
+            
+            <!-- Local Sommeil ? -->
+            <dl id='local_sommeil' class='champs dl-horizontal'>
+                <dt>Présence de local à sommeil</dt>
+                <dd>
+                    <div class='edit'>
+                        <input type='checkbox' id='local_sommeil_checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+                    </div>
+                    <div class='read'>
+                        <?php echo ($this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
+                    </div>
+                </dd>
+            </dl>
+            
+            <!-- Présence d'extinction automatique à eau ? -->
+            <dl id='extinction_eau' class='champs dl-horizontal'>
+                <dt>Présence d'extinction automatique à eau</dt>
+                <dd>
+                    <div class='edit'>
+                        <input type='checkbox' id='extinction_eau_checkbox' name='EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+                    </div>
+                    <div class='read'>
+                        <?php echo ($this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
+                    </div>
+                </dd>
+            </dl>
+            
+            <!-- Périodicité -->
+            <dl id='surfaces_cell' class='champs dl-horizontal'>
+                <dt <?php if(empty($this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >Surface totale</dt>
+                <dd <?php if(empty($this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >
+                    <div class='edit'>
+                        <input type='text' id='periodicite_text' name='SURFACETOTALE_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"] ?>' />
+                    </div>
+                    <div class='read'>
+                        <?php echo $this->DB_informations["SURFACETOTALE_ETABLISSEMENTINFORMATIONS"] ?>
+                    </div>
+                </dd>
 
-			<?php if( $this->last_visite ) : ?>
-			<dl class='read'>
-				<dt>Dernière visite périodique</dt>
-				<dd><?php echo $this->last_visite ?></dd>
-				
-				<?php if($this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"] != 0) : ?>
-				<dt>Prochaine visite périodique</dt>
-				<dd><?php echo $this->next_visite ?></dd>
-				<?php endif ?>
-			</dl>
-			<?php endif ?>
-			
-		</div>
+                <dt <?php if(empty($this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >Surface accessible au public</dt>
+                <dd <?php if(empty($this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >
+                    <div class='edit'>
+                        <input type='text' id='periodicite_text' name='SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"] ?>' />
+                    </div>
+                    <div class='read'>
+                        <?php echo $this->DB_informations["SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS"] ?>
+                    </div>
+                </dd>
+            </dl>
+
+            <!-- Classe -->
+            <dl id='classe' class='champs dl-horizontal'>
+                <dt>Classe</dt>
+                <dd>
+                    <div class='edit'>
+                        <select id='classe_select' name='ID_CLASSE'>
+                            <?php foreach( $this->DB_classe as $item ) : ?>
+                            <option value='<?php echo $item["ID_CLASSE"] ?>' <?php if( $item["ID_CLASSE"] == $this->DB_informations["ID_CLASSE"] ) echo "selected" ?> ><?php echo $item["LIBELLE_CLASSE"] ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                    <div class='read'>
+                        <?php if($this->DB_informations["ID_CLASSE"]) echo $this->DB_classe[$this->DB_informations["ID_CLASSE"]]["LIBELLE_CLASSE"]." " ?>
+                    </div>
+                </dd>
+            </dl>
+            
+            <!-- Rubriques -->
+            <div id='rubrique' class='champs'>
+                <h4>Rubriques ICPE <a href='' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="$('#prototype_rubriques').clone().appendTo( $(this).parent().parent().children('table') ).removeClass('ui-helper-hidden').attr('id', ''); return false;">Ajouter une rubrique</a></h4>
+                <table>
+                    <thead style='text-align: left;'>
+                        <tr>
+                            <th>Rubrique</th>
+                            <th>Numéro</th>
+                            <th>Nom</th>
+                            <th>Valeur</th>
+                            <th>Classement</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rubriques -->
+                        <?php foreach($this->rubriques as $key => $rubrique) : ?>
+                        <tr <?php if( $key == -1 ) echo "id='prototype_rubriques' class='ui-helper-hidden'" ?> >
+                        
+                            <!-- EDIT -->
+                            <td class='edit'>
+                                <select name='ID_RUBRIQUE[]'>
+                                    <option value='1' >Substance</option>
+                                    <option value='2' <?php if( isset($rubrique["ID_RUBRIQUE"]) && $rubrique["ID_RUBRIQUE"] == 2 ) echo "selected" ?> >Activité</option>
+                                </select>
+                            </td>
+                            <td class='edit'><input type='text' size='10' name='NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE[]' value='<?php echo $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?>' /></td>
+                            <td class='edit'><input type='text' size='45' name='NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE[]' value='<?php echo htmlspecialchars($rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"], ENT_QUOTES) ?>' /></td>
+                            <td class='edit'><input type='text' size='7' name='VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE[]' value='<?php echo $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?>' /></td>
+                            <td class='edit'>
+                                <select name='CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE[]'>
+                                    <option value='D' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "D" ) echo "selected" ?> >D</option>
+                                    <option value='DC' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "DC" ) echo "selected" ?> >DC</option>
+                                    <option value='EN' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "EN" ) echo "selected" ?> >EN</option>
+                                    <option value='A' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "A" ) echo "selected" ?> >A</option>
+                                    <option value='SB' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "SB" ) echo "selected" ?> >SB</option>
+                                    <option value='AS' <?php if( $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "AS" ) echo "selected" ?> >AS</option>
+                                </select>
+                            </td>
+                            <td class='edit'><a href='' class="close" style='text-decoration: none;' onclick='$(this).parent().parent().remove(); return false;'>&times;</a></td>
+
+                            <!-- READ -->
+                            <td class='read'><?php echo ( isset($rubrique["ID_RUBRIQUE"]) && $rubrique["ID_RUBRIQUE"] == 1 ) ? "Substance" : "Activité" ?></td>
+                            <td class='read'><?php echo $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
+                            <td class='read'><?php echo $rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
+                            <td class='read'><?php echo $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
+                            <td class='read'><?php echo $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
+                            <td class='read'></td>
+                            
+                        </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Les effectifs -->
+            <div id='effectifs' class='champs'>
+                <div <?php if($this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] == 0 && $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"] == 0 && $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"] == 0) echo "class='edit'"; ?>>
+                    <h4>Les effectifs</h4>
+                    
+                    <dl  id='effectif_public' class='champs dl-horizontal'>
+                        <!-- Effectif public -->
+                        <dt class='effectif_public_bloc' >Public</dt>
+                        <dd class='effectif_public_bloc' >
+                            <div class='edit'>
+                                <input type='text' id='effectif_public_text' name='EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] ?>' onblur='update_total()' />
+                            </div>
+                            <div class='read'>
+                                <?php echo $this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"]." " ?>
+                            </div>
+                        </dd>
+                    </dl>
+                    
+                    <dl id='effectif_personnel' class='champs dl-horizontal'>
+                        <!-- Effectif personnel -->
+                        <dt class='effectif_personnel_bloc'>Personnel</dt>
+                        <dd class='effectif_personnel_bloc'>
+                            <div class='edit'>
+                                <input type='text' id='effectif_personnel_text' name='EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"] ?>' onblur='update_total()' />
+                            </div>
+                            <div class='read'>
+                                <?php echo $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]." " ?>
+                            </div>
+                        </dd>
+                    </dl>
+                    
+                    <dl id='effectif_heberge' class='champs dl-horizontal'>
+                        <!-- Effectif hebergé -->
+                        <dt class='effectif_local_sommeil_bloc' >Dont hebergé</dt>
+                        <dd class='effectif_local_sommeil_bloc' >
+                            <div class='edit'>
+                                <input type='text' id='effectif_heberge_text' name='EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS"] ?>' onblur='update_total()' />
+                            </div>
+                            <div class='read'>
+                                <?php echo $this->DB_informations["EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS"]." " ?>
+                            </div>
+                        </dd>
+                    </dl>
+                    
+                    <dl id='effectif_total' class='champs dl-horizontal'>
+                        <dt>&nbsp;</dt>
+                        <dd><hr style='margin:0' /></dd>
+                        
+                        <!-- Effectif total -->
+                        <dt class='read'>Total</dt>
+                        <dd>
+                            <div class='read'>
+                                <?php echo ($this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]) ." " ?>
+                            </div>
+                        </dd>
+                    </dl>
+                    
+                    <dl id='effectif_justifianttotal' class='champs dl-horizontal'>
+                        <!-- Effectif total -->
+                        <dt>Justifiant le classement</dt>
+                        <dd>
+                            <div class='edit'>
+                                <input type='text' id='effectif_justifianttotal_text' name='EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS' size='10' value='<?php echo $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"] ?>' />
+                            </div>
+                            <div class='read'>
+                                <?php echo $this->DB_informations["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"]." " ?>
+                            </div>
+                        </dd>
+                    </dl>
+
+                </div>
+            </div>
+            
+            <!-- Plan -->
+            <h4>Plans <a href='' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="$('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('ui-helper-hidden').attr('id', ''); return false;">Ajouter un plan</a></h4>
+            <div></div>
+            <?php if( count($this->plans) == 1 ) echo "<p class='read' style='text-align: center;'><em>Pas de plans disponible</em></p>"; ?>
+            <?php foreach($this->plans as $key => $plan) : ?>
+            <dl <?php if( $key == -1 ) echo "id='prototype_plan' class='ui-helper-hidden plans dl-horizontal'" ?> >
+                <dd style='float: right; margin: 0; padding: 0;'>
+                    <div class='edit'>
+                        <a href='' class="close" onclick='$(this).parent().parent().parent().remove(); return false;' >&times;</a>
+                    </div>
+                </dd>
+                
+                <!-- Type de plan -->
+                <dt>Type de plan</dt>
+                <dd>
+                    <div class='edit'>
+                        <select name='ID_TYPEPLAN[]'>
+                            <?php foreach( $this->DB_typesplan as $item ) : ?>
+                            <option value='<?php echo $item["ID_TYPEPLAN"] ?>' <?php if( $plan["ID_TYPEPLAN"] == $item["ID_TYPEPLAN"] ) echo "selected" ?> ><?php echo $item["LIBELLE_TYPEPLAN"] ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                    <div class='read'>
+                        <?php if($plan["ID_TYPEPLAN"]) echo $this->DB_typesplan[$plan["ID_TYPEPLAN"]]["LIBELLE_TYPEPLAN"]." " ?>
+                    </div>
+                </dd>
+                
+                <!-- Numéro -->
+                <dt>Numéro du plan</dt>
+                <dd>
+                    <div class='edit'>
+                        <input type='text'  name='NUMERO_ETABLISSEMENTPLAN[]' value='<?php echo $plan["NUMERO_ETABLISSEMENTPLAN"] ?>' />
+                    </div>
+                    <div class='read'>
+                        <?php echo $plan["NUMERO_ETABLISSEMENTPLAN"]."&nbsp;" ?>
+                    </div>
+                </dd>
+                
+                <!-- Date -->
+                <dt>Date</dt>
+                <dd>
+                    <div class='edit'>
+                        <input type='text' class='date edit' name='DATE_ETABLISSEMENTPLAN[]' value='<?php echo $plan["DATE_ETABLISSEMENTPLAN"] == null ? date("d/m/Y", time()) : date("d/m/Y", strtotime($plan["DATE_ETABLISSEMENTPLAN"])) ?>' size=7 style='text-align: center' readonly />
+                        <input type="checkbox" name="disable_date" <?php if($plan["DATE_ETABLISSEMENTPLAN"] == "0000-00-00 00:00:00") echo "checked='checked'"; ?> /> Pas de date
+                    </div>
+                    <div class='read'>
+                        <?php
+                            if(!empty($plan["DATE_ETABLISSEMENTPLAN"]) && $plan["DATE_ETABLISSEMENTPLAN"] != "0000-00-00 00:00:00") {
+                                $date = new Zend_Date($plan["DATE_ETABLISSEMENTPLAN"], Zend_Date::DATES);
+                                echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;";
+                            }
+                            else {
+                                echo "<em>Pas de date.</em>";
+                            }
+                        ?>
+                    </div>
+                </dd>
+                
+                <dd><hr /></dd>
+            </dl>
+            <?php endforeach ?>
+            
+            <!-- Etablissement lié -->
+            <div id='etablissement_lies' class='champs'>
+                <h4 <?php if($this->DB_informations["ID_GENRE"] == 3) echo "class='edit'" ?>>Établissements liés  <?php echo count($this->etablissement_lies) > 1 ? "(" . (count($this->etablissement_lies) - 1) . " établissements)" : "" ?> <?php if($this->DB_etablissement) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->DB_etablissement->ID_ETABLISSEMENT ?>&libelle=<?php echo htmlspecialchars($this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
+                
+                <?php if( count($this->etablissement_lies) == 1 && $this->DB_informations["ID_GENRE"] != 3) echo "<p class='read' style='text-align: center;'><em>Pas d'établissement liés</em></p>"; ?>
+                
+                <dl class='edit dl-horizontal' >
+
+                    <dt class="pere_de_letablissement" >Père de l'établissement</dt>
+                    <dd class="pere_de_letablissement">	
+                        <input type='text' id='pere-autocomplete' <?php if(isset($this->pere) || isset($_GET["libelle"])) : ?> class="ui-state-highlight" <?php endif ?> value='<?php if(isset($this->pere)) echo htmlspecialchars($this->pere["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES); elseif( isset($_GET["libelle"]) ) echo htmlspecialchars($_GET["libelle"], ENT_QUOTES)  ?>' style='width: 100%; box-sizing: border-box; height: 2.5em' />
+                        <input type='hidden' id='ID_PERE' name='ID_PERE' value='<?php if(isset($this->pere)) echo $this->pere["ID_ETABLISSEMENT"]; elseif( isset($_GET["pere"]) ) echo $_GET["pere"] ?>' />
+                    </dd>
+
+                    <dt class="enfants_de_letablissement">Enfants de l'établissement</dt>
+                    <dd class="enfants_de_letablissement">
+                        <ul>
+                            <?php foreach( $this->etablissement_lies as $key => $item ) : ?>
+                            <li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_etablissement_lies' class='ui-helper-hidden'" ?> >
+                                <span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
+                                    <input type='hidden' value='<?php echo $item["ID_FILS_ETABLISSEMENT"] ?>' name='ID_FILS_ETABLISSEMENT[]' />
+                                    <span><?php echo $item["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?></span>
+                                    <a href='' style='text-decoration: none;' class="close" onclick='$(this).parent().remove(); return false;'>&times;</a>
+                                </span>
+                            </li>
+                            <?php endforeach ?>
+                        </ul>
+                        <input type='text'  id='etablissement-autocomplete' value='' style='width: 100%; box-sizing: border-box; height: 2.5em' />
+                    </dd>
+
+                </dl>
+
+                <div class='read' style='max-height: 400px; overflow: auto; ' >
+                    <ul class='recherche_liste'>
+                    <?php
+                        unset($this->etablissement_lies[-1]);
+                        if( count($this->etablissement_lies) > 0 ) {
+
+                            echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissement_lies); 
+                        }
+                    ?>
+                    </ul>
+                    <br/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte de l'emplacement de l'établissement / informations  -->
+        <div class='span6'>
+
+            <div id='informations_generales'>
+                
+                <!-- Cartes -->
+                <ul id='menu_carte'>
+                    <?php if( count($this->adresses) != 1 || count($this->etablissement_lies) != 0 ) : ?> <li class='active'>Carte</li> <?php endif ?>
+                    <?php if( count($this->diapo) != 0 ) : ?> <li>Diaporama</li> <?php endif ?>
+                    <?php if( count($this->diapo_plans) != 0 ) : ?> <li>Plans</li> <?php endif ?>
+                </ul>
+
+                <?php if( count($this->adresses) != 1 || count($this->etablissement_lies) != 0 || (isset($_GET["pere"]) && count($this->adresses_pere) != 0)) : ?>
+                <div id="geoportail" >
+                    <?php
+                        echo $this->partial('etablissement/partials/carte.phtml', array(
+                            'etablissement_lies' => $this->etablissement_lies,
+                            'adresses' => $this->adresses,
+                            'libelle' => $this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"],
+                            'drag' => true
+                        ));
+                        
+                    ?>
+                    <p style='text-align: right; font-size: 0.8em; margin-bottom: 0' class='read' ><a id='zoom' href='<?php echo $this->url(array("action" => "carte")) ?>' >[Zoom sur la carte]</a></p>	
+                </div>
+                <?php endif ?>
+                
+                <?php $array_diapos = array("diapo", "diapo_plans"); ?>
+                <?php foreach($array_diapos as $value) : ?>
+                <div id='<?php echo $value ?>' class='ui-helper-hidden'>
+                    <div class="ppy3">
+                        <ul class="ppy-imglist">
+                            <?php if(!empty($this->$value)) : ?>
+                                <?php foreach($this->$value as $item) : ?>
+                                    <li>
+                                        <a href="/data/uploads/pieces-jointes/<?php echo $item["ID_PIECEJOINTE"].$item["EXTENSION_PIECEJOINTE"] ?>">
+                                            <img src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                                        </a>
+                                    </li>
+                                <?php endforeach ?>
+                            <?php endif ?>
+                        </ul>
+                        <div class="ppy-outer">
+                            <div class="ppy-stage">
+                                <div class="ppy-nav">
+                                    <div class="nav-wrap">
+                                        <a class="ppy-prev" title="Previous image">Previous image</a>
+                                        <a class="ppy-switch-enlarge" title="Enlarge" >Enlarge</a>
+                                        <a class="ppy-switch-compact" title="Close">Close</a>
+                                        <a class="ppy-next" title="Next image">Next image</a>
+                                    </div>
+                                </div>
+                                <div class="ppy-counter">
+                                    <strong class="ppy-current"></strong> / <strong class="ppy-total"></strong> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach ?>
+                
+                
+                <!-- Informations générales -->
+                <h4>Informations générales</h4>
+                <dl class='dl-horizontal'>
+                    
+                    <!-- Numéro d'identification -->
+                    <dt class='read' >Numéro d'identification</dt>
+                    <dd class='read' >
+                        <div>
+                            <?php echo $this->idwinprev."&nbsp;" ?>
+                        </div>
+                    </dd>
+                    
+                </dl>
+
+                <!-- Liste des adresses -->
+                <dl id='adresse' class='champs dl-horizontal'>
+                    <dt>Adresse</dt>
+                    <dd>
+                        <?php if( count($this->adresses) == 1 ) echo "<span class='read'><em>Etablissement non localisé</em></span>"; ?>
+                        <ul>
+                            <?php foreach( $this->adresses as $key => $item ) : ?>
+                            <li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_adresses' class='ui-helper-hidden'" ?> >
+                                <span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
+                                    <input class='LON_ETABLISSEMENTADRESSE' type='hidden' value='<?php echo $item["LON_ETABLISSEMENTADRESSE"] ?>' name='LON_ETABLISSEMENTADRESSE[]' />
+                                    <input class='LAT_ETABLISSEMENTADRESSE'  type='hidden' value='<?php echo $item["LAT_ETABLISSEMENTADRESSE"] ?>' name='LAT_ETABLISSEMENTADRESSE[]' />
+                                    <input type='hidden' value='<?php echo $item["NUMERO_ADRESSE"] ?>' name='NUMERO_ADRESSE[]' />
+                                    <input type='hidden' value='<?php echo $item["ID_RUE"] ?>' name='ID_RUE[]' />
+                                    <input type='hidden' value='<?php echo $item["NUMINSEE_COMMUNE"] ?>' name='NUMINSEE_COMMUNE[]' />
+                                    <input type='hidden' value='<?php echo $item["COMPLEMENT_ADRESSE"] ?>' name='COMPLEMENT_ADRESSE[]' />
+                                    <span><?php echo strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"] ?></span>
+                                    <a href='' style='text-decoration: none;' class="close" onclick='$(this).parent().remove(); return false;'>&times;</a>
+                                </span>
+                            </li>
+                            <?php endforeach ?>
+                        </ul>
+                        <div class='edit'>
+                            <br class='clear' />
+                            <a href='' class='edit' onclick="$('#dialog-adresse').dialog('open'); return false;">Ajouter une adresse</a>
+                        </div>
+                        <div class='read'>
+                            <?php unset($this->adresses[-1]); ?>
+                            <?php foreach( $this->adresses as $key => $item ) : ?>
+                            <?php echo "<p style='margin-bottom: 3px'><a href='' onclick='VISU.getMap().setCenterAtLonLat(" .$item["LON_ETABLISSEMENTADRESSE"]. "," .$item["LAT_ETABLISSEMENTADRESSE"]. ", 17); return false' >" . strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"]. (( $key == 0 ) ? " <span style='font-size: 0.8em'>(Longitude: <span class='LON_ETABLISSEMENTADRESSE'>".$item["LON_ETABLISSEMENTADRESSE"]."</span> ; Latitude: <span class='LAT_ETABLISSEMENTADRESSE'>".$item["LAT_ETABLISSEMENTADRESSE"]."</span>)</span></a></p>" : "</a></p>" ) ?>
+                            <?php endforeach ?>
+                        </div>
+                    </dd>
+                </dl>
+                
+                <!-- Adresses héritées du père -->
+                <?php if(count($this->adresses_pere) != 0) : ?>
+                <dl id='adresse_cellule' class='champs dl-horizontal'>
+                    <dt class='read edit' >Adresse</dt>
+                    <dd>
+                        <div class='read'>
+                        <?php if( count($this->adresses_pere) == 0 ) echo "<span class='read'><em>Etablissement non localisé</em></span>"; ?>
+                        <?php foreach( $this->adresses_pere as $item ) : ?>
+                        <?php echo "<p style='margin-bottom: 3px'><a href='' onclick='VISU.getMap().setCenterAtLonLat(" .$item["LON_ETABLISSEMENTADRESSE"]. "," .$item["LAT_ETABLISSEMENTADRESSE"]. ", 17); return false' >" . strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"]. " <span style='font-size: 0.8em'>(Longitude: ".$item["LON_ETABLISSEMENTADRESSE"]." ; Latitude: ".$item["LAT_ETABLISSEMENTADRESSE"].")</span></a></p>" ?>
+                        <?php endforeach ?>
+                        </div>
+                        
+                        <div class='edit' >
+                        <?php foreach( $this->adresses_pere as $key => $item ) : ?>
+                        <li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_adresses' class='ui-helper-hidden'" ?> >
+                            <span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
+                                <input <?php if($key == 0) : ?> class='LON_ETABLISSEMENTADRESSE' <?php endif ?> type='hidden' value='<?php echo $item["LON_ETABLISSEMENTADRESSE"] ?>' name='LON_ETABLISSEMENTADRESSE[]' />
+                                <input <?php if($key == 0) : ?> class='LAT_ETABLISSEMENTADRESSE' <?php endif ?> type='hidden' value='<?php echo $item["LAT_ETABLISSEMENTADRESSE"] ?>' name='LAT_ETABLISSEMENTADRESSE[]' />
+                                <input type='hidden' value='<?php echo $item["NUMERO_ADRESSE"] ?>' name='NUMERO_ADRESSE[]' />
+                                <input type='hidden' value='<?php echo $item["ID_RUE"] ?>' name='ID_RUE[]' />
+                                <input type='hidden' value='<?php echo $item["NUMINSEE_COMMUNE"] ?>' name='NUMINSEE_COMMUNE[]' />
+                                <input type='hidden' value='<?php echo $item["COMPLEMENT_ADRESSE"] ?>' name='COMPLEMENT_ADRESSE[]' />
+                                <span><?php echo strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"] ?></span>
+                            </span>
+                        </li>
+                        <?php endforeach ?>
+                        </div>
+                    </dd>
+
+                    <dt <?php if(empty($this->DB_informations["COMPLEMENT_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >Complément adresse</dt>
+                    <dd <?php if(empty($this->DB_informations["COMPLEMENT_ETABLISSEMENTINFORMATIONS"])) echo "class='edit'" ?> >
+                        <div class='edit'>
+                            <input type='text'  name='COMPLEMENT_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["COMPLEMENT_ETABLISSEMENTINFORMATIONS"] ?>' maxlength="10" />
+                        </div>
+                        <div class='read'>
+                            <?php echo $this->DB_informations["COMPLEMENT_ETABLISSEMENTINFORMATIONS"]."&nbsp;" ?>
+                        </div>
+                    </dd>
+                </dl>
+                <?php endif ?>
+                
+                <!-- Adresses héritées des enfants (pour le site) -->
+                <?php if(isset($this->adresse_site) && $this->adresse_site != null) : ?>
+                <dl class='dl-horizontal'>
+                    <dt class='read edit' >Adresse héritées des établissements enfants</dt>
+                    <dd>
+                        <div class='read'>
+                        <p style='margin-bottom: 3px'><?php echo $this->adresse_site ?></p>
+                        </div>
+                    </dd>
+                </dl>
+                <?php endif ?>
+                
+                <?php if(count($this->array_groupements) > 0) : ?>
+                <dl class="read dl-horizontal">
+                    <dt>Groupements de l'établissement</dt>
+                    <dd>
+                        <ul>
+                            <?php foreach($this->array_groupements as $groupement) : ?>
+                            <li><a class="view-groupement" href="/groupement/view?id=<?php echo $groupement["ID_GROUPEMENT"] ?>"><?php echo $groupement["LIBELLE_GROUPEMENT"] ?> (<?php echo $groupement["LIBELLE_GROUPEMENTTYPE"] ?>)</a></li>
+                            <?php endforeach ?>
+                        </ul>
+                    </dd>
+                </dl>
+                <?php endif ?>
+
+                <!-- Contact -->
+                <dl class='dl-horizontal'>
+                    <!-- Téléphone -->
+                    <dt <?php if(empty($this->DB_etablissement["TELEPHONE_ETABLISSEMENT"])) echo "class='edit'" ?> >Téléphone</dt>
+                    <dd <?php if(empty($this->DB_etablissement["TELEPHONE_ETABLISSEMENT"])) echo "class='edit'" ?> >
+                        <div class='edit'>
+                            <input type='text'  name='TELEPHONE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["TELEPHONE_ETABLISSEMENT"] ?>' />
+                        </div>
+                        <div class='read'>
+                            <?php echo $this->DB_etablissement["TELEPHONE_ETABLISSEMENT"]."&nbsp;" ?>
+                        </div>
+                    </dd>
+                    
+                    <!-- Fax -->
+                    <dt <?php if(empty($this->DB_etablissement["FAX_ETABLISSEMENT"])) echo "class='edit'" ?> >Fax</dt>
+                    <dd <?php if(empty($this->DB_etablissement["FAX_ETABLISSEMENT"])) echo "class='edit'" ?> >
+                        <div class='edit'>
+                            <input type='text'  name='FAX_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["FAX_ETABLISSEMENT"] ?>' />
+                        </div>
+                        <div class='read'>
+                            <?php echo $this->DB_etablissement["FAX_ETABLISSEMENT"]."&nbsp;" ?>
+                        </div>
+                    </dd>
+                    
+                    <!-- Courriel -->
+                    <dt <?php if(empty($this->DB_etablissement["COURRIEL_ETABLISSEMENT"])) echo "class='edit'" ?> >Courriel</dt>
+                    <dd <?php if(empty($this->DB_etablissement["COURRIEL_ETABLISSEMENT"])) echo "class='edit'" ?> >
+                        <div class='edit'>
+                            <input type='text'  name='COURRIEL_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["COURRIEL_ETABLISSEMENT"] ?>' />
+                        </div>
+                        <div class='read'>
+                            <a href='mailto:<?php echo $this->DB_etablissement["COURRIEL_ETABLISSEMENT"] ?>'><?php echo $this->DB_etablissement["COURRIEL_ETABLISSEMENT"] ?></a>
+                        </div>
+                    </dd>
+                </dl>
+                
+                <!-- Date du PC -->
+                <dl id='datepc' class='champs dl-horizontal'>
+                    <dt>Date du permis de construire initial</dt>
+                    <dd>
+                        <div class='edit'>
+                            <input type='text' class='date edit' name='DATEPCINITIAL_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"] == "1970-01-02 00:00:02" ? "00/00/0000" : date("d/m/Y", strtotime($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"])) ?>' size=7 style='text-align: center'  />
+                            <input type="checkbox" name="disable_date" <?php if($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"] == "1970-01-02 00:00:02") echo "checked='checked'"; ?> /> Pas de date
+                        </div>
+                        <div class='read'>
+                            <?php
+                            if($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"] != "1970-01-02 00:00:02") {
+                                $date = new Zend_Date($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"], Zend_Date::DATES);
+                                echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;";
+                            }
+                            else
+                                echo "<em>Aucun PC initial.</em>"
+                            ?>
+                        </div>
+                    </dd>
+                    
+                    <dt>Date du permis de construire modificatif</dt>
+                    <dd>
+                        <div class='edit'>
+                            <input type='text' class='date edit' name='DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"] == "1970-01-02 00:00:02" ? "00/00/0000" : date("d/m/Y", strtotime($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"])) ?>' size=7 style='text-align: center'  />
+                            <input type="checkbox" name="disable_date" <?php if($this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"] == "1970-01-02 00:00:02") echo "checked='checked'"; ?> /> Pas de date
+                        </div>
+                        <div class='read'>
+                            <?php
+                            if($this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"] != "1970-01-02 00:00:02") {
+                                $date = new Zend_Date($this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"], Zend_Date::DATES);
+                                echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR )."&nbsp;";
+                            }
+                            else
+                                echo "<em>Aucun PC Modificatif.</em>"
+                            ?>
+                        </div>
+                    </dd>
+                </dl>
+                
+            </div>
+
+            <hr class="clear" ./>
+            
+            <!-- Service prévention -->
+            <div id='preventionnistes' class='champs change_historique' >
+            
+                <h4>Service prévention</h4>
+                
+                <!-- Commission compétente -->
+                <dl id='commission' class='champs dl-horizontal'>
+                    <dt>Commission compétente</dt>
+                    <dd>
+                        <div class='edit'>
+                            <select id='commission_select' name='ID_COMMISSION' style='width: 100%'>
+                                <option value='0'>Par défaut</option>
+                                <?php foreach( $this->DB_commission as $item ) : ?>
+                                <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->DB_informations["ID_COMMISSION"] ) echo "selected" ?> ><?php echo $item["LIBELLE_COMMISSION"] ?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                        <div class='read'>
+                            <?php if($this->DB_informations["ID_COMMISSION"] == 0) : ?>
+                                <span class='read'><em>Pas de commission renseignée.</em></span>
+                            <?php else : ?>
+                            <?php echo $this->DB_commission[$this->DB_informations["ID_COMMISSION"]]["LIBELLE_COMMISSION"]." " ?>
+                            <?php endif ?>
+                        </div>
+                    </dd>
+                </dl>
+                
+                <!-- Préventionnistes -->
+                <dl class='dl-horizontal'>
+                    <dt>Préventionnistes</dt>
+                    <dd>
+                        <?php if( count($this->preventionnistes) == 1 ) echo "<span class='read'><em>Pas de préventionnistes liés.</em></span>"; ?>
+                        <ul id="list_prev">
+                            <?php foreach( $this->preventionnistes as $key => $item ) : ?>
+                            <li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_preventionniste_lies' class='ui-helper-hidden'" ?> >
+                                <span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
+                                    <input type='hidden' value='<?php echo $item["ID_UTILISATEUR"] ?>' name='ID_UTILISATEUR[]' />
+                                    <span><?php echo $item["NOM_UTILISATEURINFORMATIONS"]." ".$item["PRENOM_UTILISATEURINFORMATIONS"] ?></span>
+                                    <a href='' style='text-decoration: none;' class="close" onclick='$(this).parent().parent().remove(); return false;'>&times;</a>
+                                </span>
+                            </li>
+                            <?php endforeach ?>
+                        </ul>
+                        <div class='edit'>
+                            <input type='text' id='preventionnistes-autocomplete' value=''  style='width: 100%' />
+                        </div>
+                        <div class='read'>
+                            <?php unset($this->preventionnistes[-1]); ?>
+                            <?php echo $this->partialLoop('user/user.phtml', $this->preventionnistes ) ?>
+                        </div>
+                    </dd>
+                </dl>
+
+                <?php if( $this->last_visite ) : ?>
+                <dl class='read dl-horizontal'>
+                    <dt>Dernière visite périodique</dt>
+                    <dd><?php echo $this->last_visite ?></dd>
+                    
+                    <?php if($this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"] != 0) : ?>
+                    <dt>Prochaine visite périodique</dt>
+                    <dd><?php echo $this->next_visite ?></dd>
+                    <?php endif ?>
+                </dl>
+                <?php endif ?>
+                
+            </div>
+            
+            <!-- Durée et nombre de prev -->
+            <dl id='stat_prev' class='champs dl-horizontal'>
+                <dt <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >Nombre de préventionnistes / visite</dt>
+                <dd <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >
+                    <div class='edit'>
+                        <input type='number'  name='NBPREV_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["NBPREV_ETABLISSEMENT"] ?>' />
+                    </div>
+                    <div class='read'>
+                        <?php echo $this->DB_etablissement["NBPREV_ETABLISSEMENT"]."&nbsp;" ?>
+                    </div>
+                </dd>
+
+                <dt <?php if(empty($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"]) || $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] == "00:00:00") echo "class='edit'" ?> >Durée d'une visite</dt>
+                <dd <?php if(empty($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"]) || $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] == "00:00:00") echo "class='edit'" ?> >
+                    <div class='edit'>
+                        <input type='time'  name='DUREEVISITE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] ?>' /><br/>
+                        <span style="color: gray;">(sur les anciens navigateurs, le champ de la durée à spécifier est libre. Il faut respecter le format HH:MM)</span>
+                    </div>
+                    <div class='read'>
+                        <?php echo date("H", strtotime($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"])) . " heures et " . date("i", strtotime($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"])) ." minutes &nbsp;" ?>
+                    </div>
+                </dd>
+            </dl>
+            
+        </div>
         
-        <!-- Durée et nombre de prev -->
-        <dl id='stat_prev' class='champs'>
-            <dt <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >Nombre de préventionnistes / visite</dt>
-            <dd <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >
-                <div class='edit'>
-                    <input type='number'  name='NBPREV_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["NBPREV_ETABLISSEMENT"] ?>' />
-                </div>
-                <div class='read'>
-                    <?php echo $this->DB_etablissement["NBPREV_ETABLISSEMENT"]."&nbsp;" ?>
-                </div>
-            </dd>
-
-            <dt <?php if(empty($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"]) || $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] == "00:00:00") echo "class='edit'" ?> >Durée d'une visite</dt>
-            <dd <?php if(empty($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"]) || $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] == "00:00:00") echo "class='edit'" ?> >
-                <div class='edit'>
-                    <input type='time'  name='DUREEVISITE_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"] ?>' /><br/>
-                    <span style="color: gray;">(sur les anciens navigateurs, le champ de la durée à spécifier est libre. Il faut respecter le format HH:MM)</span>
-                </div>
-                <div class='read'>
-                    <?php echo date("H", strtotime($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"])) . " heures et " . date("i", strtotime($this->DB_etablissement["DUREEVISITE_ETABLISSEMENT"])) ." minutes &nbsp;" ?>
-                </div>
-            </dd>
-        </dl>
-		
-		<?php endif ?>
-		
-	</div>
+    </div>
 
 </form>
 
-<?php if(($this->DB_informations != null && $this->droits->ID_GENRE[$this->DB_informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"] == 1) || ($this->DB_informations == null && $this->droits->DROITETSCREATION_GROUPE == 1)) : ?>
 <!-- Boite de dialogue des valeurs par défauts -->
 <div id='dialog-default' class='ui-helper-hidden' >
 	<br/>
@@ -1013,7 +970,6 @@
 <div id='dialog-comeback' class='ui-helper-hidden'>
 	<p>L'établissement a bien été créé. Voulez vous restez sur cette page, ou revenir sur la fiche établissement de "<?php echo htmlspecialchars($_GET["libelle"], ENT_QUOTES) ?>" ?</p>
 </div>
-<?php endif ?>
 
 <script type="text/javascript">
 
@@ -1449,12 +1405,10 @@
 					
 					// Si il y a une réponse
 					if(typeof result != "object" || result.length == 0) {
-
 						$("#notification_default").show();
 						setTimeout( function() { $("#notification_default").fadeOut(); }, 7000);
 					}
 					else {
-						
 						if( !$("#periodicite_text").is(':hidden' ) && $("#periodicite_text").val() == "")
 							if(result["periodicite"])
 								$("#dialog-perio-value").text(result["periodicite"]).parent().parent().show();
@@ -1502,7 +1456,6 @@
 						$("#dialog-default").dialog("open");
 						//if($("#dialog-pb").is(':hidden'))
                         $("#dialog-ask").show();
-                        
                         // est ce que lon doit vraiment afficher ce message ?
                         if( $("#dialog-default > #def-values p").filter(":hidden").size() == 5 )
                         {
@@ -1523,9 +1476,9 @@
 				url: "<?php echo $this->url( array("action" => "save", "format" => "json") ) ?>",
 				data: $("#formulaire_etablissement_header").serialize() + "&" + $("#formulaire_etablissement_footer").serialize() + (( hist ) ? "&historique=1" : ""),
 				beforeSend: function() {
-					$("#save_button").button("disable");
-					$("#save_historique_button").button("disable");
-					$("#cancel_button").button("disable");
+					$("#save_button").attr("disabled");
+					$("#save_historique_button").attr("disabled");
+					$("#cancel_button").attr("disabled");
 					$("#notification_wait").show();
 				},
 				success: function(result) {
@@ -1557,18 +1510,18 @@
 					}
 					else {
 						$("#notification_wait").hide();
-						$("#save_button").button("enable");
-						$("#save_historique_button").button("enable");
-						$("#cancel_button").button("enable");
+						$("#save_button").removeAttr("disabled");
+						$("#save_historique_button").removeAttr("disabled");
+						$("#cancel_button").removeAttr("disabled");
 						$("#notification_erreur").show().html(result["error"]);
 						setTimeout( function() { $("#notification_erreur").fadeOut(); }, 5000);
 					}
 				},
 				error: function(result) {
 					$("#notification_wait").hide();
-					$("#save_button").button("enable");
-					$("#save_historique_button").button("enable");
-					$("#cancel_button").button("enable");
+					$("#save_button").removeAttr("disabled");
+					$("#save_historique_button").removeAttr("disabled");
+					$("#cancel_button").removeAttr("disabled");
 					$("#notification_erreur").show().html(result["error"]);
 					setTimeout( function() { $("#notification_erreur").fadeOut(); }, 5000);
 				}
@@ -1577,17 +1530,12 @@
 	}
 
 	// Gestion des boutons de sauvegarde
-	$("#save_button").button({
-		icons: { primary: "ui-icon-disk" },
-	}).click( function() {
+	$("#save_button").click( function() {
 		sauvegarder(false);
 		return false;
 	}).hide();
 	
-	$("#save_historique_button").button({
-		icons: { primary: "ui-icon-disk" },
-	}).click( function() {
-	
+	$("#save_historique_button").click( function() {
 		$.ajax({
 			url: "/etablissement/fiche-existe?id=<?php echo $this->id_etablissement ?>&date=" + $("input[name=date]").val() + "&format=json",
 			success: function(msg) {
@@ -1604,26 +1552,20 @@
 	}).hide();
 	
 	// Bouton de modification
-	$("#modifier_button").button({
-		icons: { primary: "ui-icon-pencil" }
-	}).click( function() {
+	$("#modifier_button").click( function() {
 		change_mode_de_lecture( "edit" );
 		$("#title_action").hide().slideDown();
 		return false;
 	});
 	
 	// Annulation
-	$("#cancel_button").button({
-		icons: { primary: "ui-icon-close" },
-	}).click( function() {
+	$("#cancel_button").click( function() {
 		window.location.href= "<?php echo $this->url() ?>";
 		return false;
 	}).hide();
 	
 	// Revenir au mode de lecture
-	$("#back_button").button({
-		icons: { primary: "ui-icon-triangle-1-w" },
-	}).click(function() {
+	$("#back_button").click(function() {
 		change_mode_de_lecture( "read" );
 		$("#title_action").show().slideUp();
 		return false;
@@ -1647,7 +1589,6 @@
 		$("#formulaire_etablissement_footer button").hide();
 		$( ( mode == "read" ) ? "#modifier_button, #donnees_operationelles_button" : "#back_button, #save_historique_button, #save_button" ).show();
 
-		<?php if($this->droits->DROITETABLISSEMENT_GROUPE != 2) : ?>
 		if( typeof(drag) != "undefined" ) {
 
 			if( mode == "read" ) {
@@ -1657,7 +1598,6 @@
 				drag.activate();
 			}
 		}
-		<?php endif ?>
 	}
 	
 	function callback_geo(i, d) {

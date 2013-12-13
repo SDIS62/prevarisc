@@ -6,6 +6,7 @@
 		'`((?:https?|ftp)://\S+[[:alnum:]]/?)`si', 
 		'`((?<!//)(www\.\S+[[:alnum:]]/?))`si'
 	); 
+    
 	$out=array( 
 		'<a href="$1">$1</a>', 
 		'<a href="http://$1">$1</a>'
@@ -14,20 +15,20 @@
 	$this->TEXTE_NEWS = preg_replace($in, $out, $this->TEXTE_NEWS);
 ?>
 
-<li id='<?php echo $this->ID_NEWS ?>' class='highlight' style='color: inherit' >
+<li id='<?php echo $this->ID_NEWS ?>' >
 
-	<p class='valeur' >
-		<?php echo $this->TEXTE_NEWS ?>
-	</p>
+	<p class='valeur' ><?php echo $this->TEXTE_NEWS ?></p>
 	
 	<p class='date' >
-		<?php if($this->ID_UTILISATEUR == Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR || $this->DROITADMINSYS_GROUPE == 1) : ?>
-		<span class='action' >
-			<a href='' onclick="$( '#dialog-confirm' ).data('id', '<?php echo $this->ID_NEWS ?>' ).dialog( 'open' ); return false; " >Supprimer ce message</a>
-		</span>
-		<?php endif ?>
+        <small>
+            <span class='action' >
+                <a href='/index/delete-message?id=<?php echo $this->ID_NEWS ?>' >
+                    Supprimer ce message
+                </a>
+            </span>
 		
-		<?php echo (( $d->get(Zend_Date::DATES) != $actual->get(Zend_Date::DATES) ) ?  $d->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT)." ".$d->get(Zend_Date::TIME_SHORT) : $d->get(Zend_Date::TIME_SHORT)) . " - " . $this->NOM_UTILISATEURINFORMATIONS . " " . $this->PRENOM_UTILISATEURINFORMATIONS . " dans <em>" . $this->TYPE_NEWS . "</em>" ?>
+            <?php echo (( $d->get(Zend_Date::DATES) != $actual->get(Zend_Date::DATES) ) ?  $d->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT)." ".$d->get(Zend_Date::TIME_SHORT) : $d->get(Zend_Date::TIME_SHORT)) . " - Posté par " . $this->NOM_UTILISATEURINFORMATIONS . " " . $this->PRENOM_UTILISATEURINFORMATIONS . " dans la catégorie <em>" . $this->TYPE_NEWS . "</em>" ?>
+        </small>
 	</p>
 	
 </li>

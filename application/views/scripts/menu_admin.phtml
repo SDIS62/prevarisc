@@ -1,0 +1,12 @@
+<!-- Sous menu -->
+<ul class="nav nav-tabs">
+    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'admin' && Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'index') echo "class='active'" ?>>
+        <a href="/admin">Général</a>
+    </li>
+    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'user' || Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'matrice-des-droits') echo "class='active'" ?>>
+        <a href="/user">Gestion des utilisateurs</a>
+    </li>
+    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'couche-cartographique') echo "class='active'" ?>>
+        <a href="/couche-cartographique">Gestion des couches cartographiques</a>
+    </li>
+</ul>

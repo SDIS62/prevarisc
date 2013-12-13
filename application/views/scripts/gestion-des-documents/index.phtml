@@ -1,3 +1,41 @@
+<!-- Titre -->
+<span style="float: right">
+	<a id='button-aud' class='btn' >Ajouter un document</a>
+</span>
+
+<h2>Gestion des documents</h2>
+<div id='infosGdd'></div>
+
+<?php if(empty($this->listeFichiers)) : ?>
+<p><strong>Aucun document disponible.</strong></p>
+<?php else : ?>
+<table id='documentType' class='table'>
+    <thead>
+        <tr style='height:20px;'>
+            <th>
+                Nom du fichier
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->listeFichiers as $lien) : ?>
+    <tr style='height:20px;'>
+        <td>
+            <a href='<?php echo $this->path . "/" . $lien ?>'><?php echo $lien ?></a>
+        </td>
+        <td>
+            <a href='/' class='supp' id='<?php echo $lien ?>'>Suppression du document</a>
+        </td>
+    </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>
+<?php endif ?>
+
+
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -5,9 +43,7 @@ $(document).ready(function() {
 	$("body").append("<iframe name='hiddeniframe' id='hiddeniframe' src='about:blank' style='width:0px; height:0px' >");
 
 	// Ajout d'un type
-	$("#button-aud").button({
-		icons: { primary: "ui-icon-plus" }
-	}).click(function() {
+	$("#button-aud").click(function() {
 		dialog_aud();
 	});
 	
@@ -131,54 +167,5 @@ function callback(nomFich) {
 		}
 	});
 }
+
 </script>
-<!-- Titre -->
-<span style="float: right">
-	<button id='button-aud' >Ajouter un document</button>
-</span>
-
-<h2 class='grid_xx'>
-	<i class='sprite sprite-application_view_columns' ></i>
-	Gestion des documents
-</h2>
-<div id='infosGdd'></div>
-
-
-<?php
-	if(!empty($this->listeFichiers)){
-		echo "
-			<table id='documentType' class='table-custom'>
-                <thead>
-				<tr style='height:20px;'>
-					<th>
-						Nom du fichier
-					</th>
-					<th>
-						Actions
-					</th>
-				</tr>
-                </thead>
-                <tbody>
-		";
-		sort($this->listeFichiers); // pour le tri croissant, rsort() pour le tri décroissant
-		foreach($this->listeFichiers as $lien) {
-			echo "
-				<tr style='height:20px;'>
-					<td>
-						<a href='".$this->path."/".$lien."'>".$lien."</a>
-					</td>
-					<td>
-						<a href='/' class='supp' id='".$lien."'>Suppression du document</a>
-					</td>
-				</tr>
-			";
-		}
-		echo "
-            </tbody>
-			</table>
-		";
-	 }else{
-		echo "<p><strong>Actuellement aucun document disponible.</strong></p>";
-	 }
-	 
-?>

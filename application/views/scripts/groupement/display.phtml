@@ -10,7 +10,8 @@
 	<!-- Partie générale -->
 	<div id="tabs-1">
 	
-		<dl>
+		<dl class='dl-horizontal'>
+        
 			<!-- Libellé du groupement -->
 			<dt>Libellé du groupement</dt>
 			<dd><input type='text' id='nom_groupement' name='nom_groupement' value='<?php echo htmlspecialchars($this->libelle, ENT_QUOTES) ?>' size=30 /></dd>
@@ -29,21 +30,21 @@
 			<!-- Liste des villes -->
 			<dt>Villes du groupement</dt>
 			<dd>
-				<select id='liste_villes' class='grid_5 alpha' multiple size=20 style='height: 300px; width: 45%;'>
+				<select id='liste_villes' multiple size=20 class='pull-left' style='height: 300px; width: 30%;'>
 					<?php
-                            foreach($this->villes as $value) {
-						
-                                echo "<option id='".$value["NUMINSEE_COMMUNE"]."' value='".$value["NUMINSEE_COMMUNE"]."'>".$value["NUMINSEE_COMMUNE"]." ".$value["LIBELLE_COMMUNE"]."</option>";
-                            }
+                    foreach($this->villes as $value) {
+                
+                        echo "<option id='".$value["NUMINSEE_COMMUNE"]."' value='".$value["NUMINSEE_COMMUNE"]."'>".$value["NUMINSEE_COMMUNE"]." ".$value["LIBELLE_COMMUNE"]."</option>";
+                    }
 					?>
 				</select>
+                
+                <div class="pull-left btn-group btn-group-vertical" style='padding: 20px;'>
+                    <button id='add_ville' type="button" class="btn"><i class="icon-chevron-right"></i></button>
+                    <button id='remove_ville' type="button" class="btn"><i class="icon-chevron-left"></i></button>
+                </div>
 
-				<div class='grid_1' style='text-align: center;'>
-					<button id='add_ville'>Ajouter</button><br/><br/>
-					<button id='remove_ville'>Supprimer</button>
-				</div>
-
-				<select id='villes_groupement' name='villes[]' class='grid_5 omega' multiple size=20 style='height: 300px; width: 45%;'>
+				<select id='villes_groupement' name='villes[]' class='pull-left' multiple size=20 style='height: 300px; width: 30%;'>
 					<?php
                         if(is_array($this->ville_du_groupement))
                         {
@@ -55,6 +56,7 @@
 					?>
 				</select>
 			</dd>
+            
 		</dl>
 		
 	</div>
@@ -65,7 +67,7 @@
 		<br />
 	
 		<!-- Ajouter un préventionniste -->
-		<input type='text' size='60' id='preventionnistes-autocomplete' value=''  />
+		<input type='text' size='60' id='preventionnistes-autocomplete' value='' class='input-xlarge'  />
 		
 		<hr class='clear' />
 		
@@ -88,15 +90,11 @@
 	
 	<!-- Coordonnées -->
 	<div id='tabs-3'>
-
 		<?php echo $this->action('form', 'contact', null, array("item" => "groupement_coord")) ?>
-	
 	</div>
 
 	<!-- Partie contact -->
 	<div id="tabs-4"></div>
-	
-	<hr class='clear' />
 
 </div>
 
@@ -104,67 +102,22 @@
 
 	// Onglets
 	$( "#tabs" ).tabs();
-		
-	// Sauvegarde de l'adresse
-	/*
-	$("#dialog-adresse").dialog({
-		title: "Ajout d'adresse",
-		autoOpen: false,
-		autoResize: true,
-		width: 600,
-		position: 'center',
-		draggable: false,
-		resizable: false,
-		buttons: {
-			"Ajouter cette adresse": function() {
 
-				var geocoder = new GClientGeocoder();
-				geocoder.getLatLng (
-					$("#adresse-numero").val() + " " + $("#adresse-voie option:selected").text() + " " + $("#adresse-code_postal").val() + " " + $("#adresse-ville option:selected").text(),
-					function(point) {
-						if (point) {
-						
-							$n = $("#prototype_adresses").clone().appendTo( $("#prototype_adresses").parent() ).removeClass('ui-helper-hidden').attr('id', '');
-							$n.find("input[name='LAT_ETABLISSEMENTADRESSE[]']").val( point.lat() );
-							$n.find("input[name='LON_ETABLISSEMENTADRESSE[]']").val( point.lng() );
-							$n.find("input[name='NUMERO_ADRESSE[]']").val( $("#adresse-numero").val() );
-							$n.find("input[name='ID_RUE[]']").val( $("#adresse-voie option:selected").val() );
-							$n.find("input[name='NUMINSEE_COMMUNE[]']").val( $("#adresse-ville option:selected").val() );
-							$n = $n.find("input[name='COMPLEMENT_ADRESSE[]']").val( $("#adresse-complement_adresse").val() );
-							$n.next().append( $("#adresse-numero").val() + " " + $("#adresse-voie option:selected").text() + " " + $("#adresse-code_postal").val() + " " + $("#adresse-ville option:selected").text() + " " + $("#adresse-complement_adresse").val() );
-						}
-					}
-				);
-				
-				$( this ).dialog( "close" );
-			},
-			"Annuler": function() {
-				$("#adresse-voie-ac, #adresse-code_postal, #adresse-voie-ac, #adresse-numero, #adresse-complement_adresse").val("").blur();
-				$("#adresse-ville, #adresse-voie").find("option").remove();
-				$( this ).dialog( "close" );
-			}
-		}
-	});
-	*/
 	// Ajouter une ville
-	$("#add_ville").button({
-		icons: { primary: "ui-icon-arrowthick-1-e" }, text: false, disabled: true
-	}).click(function() {
+	$("#add_ville").click(function() {
 		$('#liste_villes option:selected').each( function() {
 			$("#villes_groupement").append( $("<option></option>").val( $(this).val() ).html( $(this).text() ) );
-			$(this).attr("disabled","disabled").attr("selected", "");
+			$(this).attr("disabled","disabled").removeAttr("selected");
 		});
 		$('#liste_villes').change();
 		return false;
 	});
 	
 	// Enlever une ville
-	$("#remove_ville").button({
-		icons: { primary: "ui-icon-arrowthick-1-w" }, text: false, disabled: true
-	}).click(function() {
+	$("#remove_ville").click(function() {
 		$('#villes_groupement option:selected').each( function() {
 			$(this).remove();
-			$("#liste_villes option[value=" + $(this).val() + "]").attr("disabled","").attr("selected", "selected");
+			$("#liste_villes option[value=" + $(this).val() + "]").removeAttr("disabled");
 		});
 		$('#liste_villes').change();
 		$('#villes_groupement').change();

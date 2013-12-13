@@ -1,76 +1,61 @@
 <?php if(is_array($this->villes_tests) && count($this->villes_tests) > 0) : ?>
 
-<div class='grid_16'>
-	
-	<!-- Titre -->
-	<span style="float: right">
-		<button id='new' style='float: right;' >Créer un nouveau groupement</button>
-	</span>
-	
-	<h2>
-		<i class='sprite sprite-application_view_columns' ></i>
-		Groupements de communes
-	</h2>
 
-	<div id='save_div'>
-		<!-- Selection du groupement -->
-		<?php
-			echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], array(
-				"id" => "gpt",
-				"class" => "bigger",
-				"style" => "width: 400px"
-			));
-		?>
+<p class='pull-right'><br/><a href='#' id='new' class='btn' >Créer un nouveau groupement</a></p>
+<h2>Groupements de communes</h2>
 
-		<!-- Icones -->
-		<div id='toolbar' style='display: inline; margin-left: 10px' >
-			<button id='save' class='save' >Sauvegarder le groupement</button>
-			<button id='delete' >Supprimer le groupement</button>
-		</div>
+<div id='save_div'>
+    <!-- Selection du groupement -->
+    <?php
+        echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], array(
+            "id" => "gpt",
+            "class" => "bigger",
+            "style" => "width: 400px"
+        ));
+    ?>
 
-		<!-- Notifications -->
-		<div style='margin-top: .6em; float: right'>
-			<span id='notif' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'></<span>
-		</div>
-
-	</div>
-	
-	<br />
-
-	<!-- affichage des onglets et de leur contenu -->
-	<form id='form' action='post' >
-		<input type='hidden' id='id_gpt' name='id_gpt' value='0' />
-		<div id='content'><p>Pas de groupement disponible ...</p></div>
-	</form>
-	
-	<div id='confirm' class='ui-helper-hidden' >
-		<p>Confirmez vous la suppression du groupement ? (cette action est irreversible)</p>
-	</div>
-	
-	<div id='add' class='ui-helper-hidden' >
-		<form id='add-groupement'>
-			<dl>
-				<!-- Libellé du groupement -->
-				<dt>Libellé du groupement</dt>
-				<dd><input type='text' id='nom_groupement' name='nom_groupement' size=30 /></dd>
-
-				<!-- Type du groupement-->
-				<dt>Type</st>
-				<dd>
-					<select id='type_groupement' name='type_groupement'>
-					<?php
-						foreach($this->array_groupementstypes as $value)
-							echo "<option id='".$value["ID_GROUPEMENTTYPE"]."' value='".$value["ID_GROUPEMENTTYPE"]."' >".$value["LIBELLE_GROUPEMENTTYPE"]."</option>";
-					?>
-					</select>
-				</dd>
-				<input type='hidden' name='id_gpt' value='0' />
-			</dl>
-		</form>
-	</div>
+    <!-- Icones -->
+    <div class="btn-group" style='margin-bottom: 10px;'>
+        <a id='save' href='#' class='btn btn-success' class='save' >Sauvegarder le groupement</a>
+        <a id='delete' href='#' class='btn' >Supprimer le groupement</a>
+    </div>
 
 </div>
-	
+
+<br />
+
+<!-- affichage des onglets et de leur contenu -->
+<form id='form' action='post' >
+    <input type='hidden' id='id_gpt' name='id_gpt' value='0' />
+    <div id='content'><p><strong>Pas de groupement disponible ...</strong></p></div>
+</form>
+
+<div id='confirm' class='ui-helper-hidden' >
+    <p>Confirmez vous la suppression du groupement ? (cette action est irreversible)</p>
+</div>
+
+<div id='add' class='ui-helper-hidden' >
+    <form id='add-groupement'>
+        <dl>
+            <!-- Libellé du groupement -->
+            <dt>Libellé du groupement</dt>
+            <dd><input type='text' id='nom_groupement' name='nom_groupement' size=30 /></dd>
+
+            <!-- Type du groupement-->
+            <dt>Type</st>
+            <dd>
+                <select id='type_groupement' name='type_groupement'>
+                <?php
+                    foreach($this->array_groupementstypes as $value)
+                        echo "<option id='".$value["ID_GROUPEMENTTYPE"]."' value='".$value["ID_GROUPEMENTTYPE"]."' >".$value["LIBELLE_GROUPEMENTTYPE"]."</option>";
+                ?>
+                </select>
+            </dd>
+            <input type='hidden' name='id_gpt' value='0' />
+        </dl>
+    </form>
+</div>
+
 <script type="text/javascript">
 
 	$("#confirm").dialog({
@@ -145,9 +130,7 @@
 	// Sauvegarder
 	});
 	
-	$( "#toolbar button:first" ).button({
-		icons: { primary: "ui-icon-disk" }
-	}).click( function() {
+	$( "#save" ).click( function() {
 		// Selection de toutes les villes pour les passer dans le formulaire
 		$("#villes_groupement option").each(function(){ $(this).attr("selected", true);	});
 		
@@ -172,9 +155,9 @@
 		// On deselectionne les villes
 		$("#villes_groupement option").each(function(){ $(this).attr("selected", false); });
 	// Suppression d'un groupement
-	}).next().button({
-		icons: { primary: "ui-icon-trash" }, disabled: true
-	}).click( function() {
+	});
+    
+    $( "#delete" ).click( function() {
 		$("#confirm").dialog("open");
 	});
 	

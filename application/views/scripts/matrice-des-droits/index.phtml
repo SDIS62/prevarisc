@@ -1,49 +1,42 @@
-<div class='grid_16'>
-	
-	<!-- Titre -->
-	<div>
+<!-- Titre -->
+<h2 class='page-header'>Administration système</h2>
 
-		<h2>
-			<i class='sprite sprite-user' ></i>
-			Administration système &rsaquo; <a href="/user">Gestion des utilisateurs</a> &rsaquo; Matrice des droits
-		</h2>
-	
-	</div>
+<?php echo $this->partial('menu_admin.phtml') ?>
+
+<?php echo $this->partial('menu_admin_user.phtml') ?>
+
+<?php foreach($this->rowset_groupes as $groupe) : ?>
+
+<h3><?php echo $groupe->LIBELLE_GROUPE ?></h3>
+
+<table class="table" >
+    <thead>
+        <tr>
+            <th>Ressources</th>
+            <th>Privilèges / Droits</th>
+        </tr>
+    </thead>
     
-    <?php foreach($this->rowset_groupes as $groupe) : ?>
-    
-    <h3><?php echo $groupe->LIBELLE_GROUPE ?></h3>
-    
-    <table class="commission table-custom ui-widget-content" >
-        <thead>
-            <tr>
-                <th>Ressources</th>
-                <th>Privilèges / Droits</th>
-            </tr>
-        </thead>
+    <tbody>
+
+        <!-- Ressources correspondants aux établissements -->
+        <?php foreach($this->rowset_genres as $genre) : ?>
+        <tr>
+            <td><?php echo $genre->LIBELLE_GENRE ?></td>
+            <td>
+                
+            </td>
+        <tr>
+        <?php endforeach ?>
         
-        <tbody>
+        <!-- Droit d'admnistration -->
+        <tr>
+            <td>Droits supplémentaires</td>
+            <td>
+                <input type="checkbox" value="1" name="" /> Droit de création ?
+            </td>
+        <tr>
+    </tbody>
+</table>
 
-            <!-- Ressources correspondants aux établissements -->
-            <?php foreach($this->rowset_genres as $genre) : ?>
-            <tr>
-                <td><?php echo $genre->LIBELLE_GENRE ?></td>
-                <td>
-                    
-                </td>
-            <tr>
-            <?php endforeach ?>
-            
-            <!-- Droit d'admnistration -->
-            <tr>
-                <td>Droits supplémentaires</td>
-                <td>
-                    <input type="checkbox" value="1" name="" /> Droit de création ?
-                </td>
-            <tr>
-        </tbody>
-    </table>
-    
-    <?php endforeach ?>
-
-</div>
+<?php endforeach ?>

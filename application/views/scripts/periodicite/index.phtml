@@ -1,15 +1,14 @@
 <!-- Titre -->
 <h2>
-	<i class='sprite sprite-application_view_columns' ></i>
 	Tableau des périodicités
 </h2>
 
-<form id='form_periodicite' >
+<form id='form_periodicite' action='/periodicite/save' method='post' >
 
 	<h3>ERP</h3>
 	<!-- Tableaux -->
 	<?php foreach( array_chunk($this->array_types, 7) as $array_types ) : ?>
-	<table class='table-custom' >
+	<table class='table table-bordered table-condensed periodicite' >
 		<thead>
 			<tr>
 				<th rowspan="2"></th>
@@ -53,7 +52,7 @@
 	<?php endforeach ?>
 	
 	<h3>IGH</h3>
-	<table class='table-custom' >
+	<table class='table table-bordered table-condensed periodicite' >
 		<thead>
 			<tr>
 				<?php foreach($this->array_classes as $classe) : ?>
@@ -63,7 +62,6 @@
 		</thead>
 		<tbody>
 			<tr>
-				
 				<?php foreach( $this->array_classes as $classe) : ?>
 				
 					<?php $periodicite = $this->tableau[0][$classe["ID_CLASSE"]]; ?>
@@ -78,37 +76,12 @@
 	</table>
 	
 	
-	<div id="save_div" style="text-align: center">
-		<button id='save' class="save">Sauvegarder le tableau des périodicités</button>
-		<span id='notif' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>Le tableau des périodicités a bien été sauvegardé.</span>
-	</div>
+    <p class='text-center'><input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' /></p>
 	
 </form>
 
 <script type="text/javascript">
 
-	// Boutons
-	$( "#save" ).button({
-		icons: { primary: "ui-icon-disk" }
-	}).click( function() {
-	
-		$.ajax({
-			url: "/periodicite/save",
-			data: $("#form_periodicite").serialize(),
-			type: "post",
-			beforeSend: function() {
-				$("#save").button("disable");
-			},
-			success: function() {
-				$("#save").button("enable");
-				$("#notif").show();
-				setTimeout( function() { $("#notif").fadeOut(); }, 2500);
-			}
-		});
-	
-		return false;
-	} );
-	
 	$("input[type=text]").change(function() {
 		if($(this).val() == "0") {
 			$(this).css("opacity", .5);

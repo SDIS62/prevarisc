@@ -1,6 +1,6 @@
 <?php if($this->ext != true) : ?>
 <h3>Informations sur la commune</h3>
-<dl>
+<dl class='dl-horizontal'>
 	<dt>Code INSEE</dt>
 	<dd><?php echo $this->commune->NUMINSEE_COMMUNE ?></dd>
 	
@@ -8,33 +8,24 @@
 	<dd><?php echo $this->commune->CODEPOSTAL_COMMUNE ?></dd>
 </dl>
 
-<hr class="clear" />
-
 <h3>Coordonnées</h3>
 <?php endif ?>
 <?php echo $this->action('form', 'contact', null, array("item" => "commune")) ?>
+
 <?php if($this->ext != true) : ?>
-<div id="save_div" style="text-align: center">
-	<button id='save' class="save">Sauvegarder</button>
-	<span id='notif' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>Les coordonnées ont bien été sauvegardées.</span>
-</div>
+<dl class='dl-horizontal'>
+    <dt></dt>
+    <dd><input type='submit' id='save' value='Sauvegarder' class='btn btn-success' /></dd>
+</dl>
 
 <script>
-	$( "#save" ).button({
-		icons: { primary: "ui-icon-disk" }
-	}).live('click', function() {
-	
+	$( "#save" ).live('click', function() {
 		$.ajax({
 			url: "/gestion-des-communes/save?numinsee=" + $("select#choix_commune").val(),
 			data: $("#formulaire_contact").serialize(),
 			type: "post",
 			beforeSend: function() {
 				$("#save").button("disable");
-			},
-			success: function() {
-				$("#save").button("enable");
-				$("#notif").show();
-				setTimeout( function() { $("#notif").fadeOut(); }, 2500);
 			}
 		});
 	

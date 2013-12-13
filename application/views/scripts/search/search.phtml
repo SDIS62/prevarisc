@@ -5,11 +5,11 @@
     <div style="clear: both"></div>
     <?php echo $this->paginator ?><br/>
     <?php if($this->item == "etablissement") : ?>
-        <ul class='recherche_liste'>
+        <ul class='recherche_liste unstyled'>
             <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->paginator ) ?>
         </ul>
     <?php elseif($this->item == "dossier") : ?>
-        <ul id="liste_doss">
+        <ul id="liste_doss" class='unstyled'>
             <?php echo $this->partialLoop('search/results/dossier.phtml', $this->paginator ) ?>
         </ul>
     <?php else : ?>
@@ -18,6 +18,5 @@
     <br/>
     <?php echo $this->paginator ?>
 <?php else : ?>
-    <hr class='clear' />
     <h2 class='grid_16 alpha' style='color: silver; text-align: center;' >Aucun résultat disponible.</h2>
 <?php endif ?>

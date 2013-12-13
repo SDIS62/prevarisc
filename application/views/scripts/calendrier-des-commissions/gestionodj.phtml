@@ -349,7 +349,7 @@ $(document).ready(function() {
 <?php
 
 	echo "
-		<div class='grid_16' >
+		<div>
 			<input type='hidden' name='dateOdj' id='dateOdj' value='".$this->infosDateComm['DATE_COMMISSION']."' />
 			<input type='hidden' name='heureDeb' id='heureDeb' value='".$this->infosDateComm['HEUREDEB_COMMISSION']."' />
 			<input type='hidden' name='heureFin' id='heureFin' value='".$this->infosDateComm['HEUREFIN_COMMISSION']."' />
@@ -433,7 +433,7 @@ $(document).ready(function() {
 		//dans le cas ou on ne prend pas en compte les heures (cas par défaut)
 		echo "
 			<h3>Liste des dossiers prévus</h3>
-			<ul id='listeDossierNoHours' class='sortable'>
+			<ul class='unstyled' id='listeDossierNoHours' class='sortable'>
 		";
 		//Zend_Debug::dump($this->listeDossierNonAffect);
 		if( count($this->listeDossierNonAffect) != 0 ){

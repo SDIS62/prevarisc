@@ -1,7 +1,6 @@
-<?php if( !$this->ajax && $this->droit_ecriture == true) : ?>
+<?php if( !$this->ajax) : ?>
 	<p style='float: right;' >+ <a id='add-contact' href="/contact/form?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>">Ajouter un nouveau contact</a></p>
 	<p style='float: right; margin-right: 1em' >+ <a id='add-contact-existant' href="/contact/form?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>">Ajouter un contact existant</a></p>
-	<hr class='clear' />
 <?php endif ?>
 
 <div id='contact-content-ajax'>
@@ -24,13 +23,13 @@
 	
 	<?php
 		if( count($this->contacts) != 0 )
-			echo $this->partialLoop($this->droit_ecriture ? "contact/partial_fiche.phtml" : "contact/partial_fiche_read.phtml", $this->contacts);
+			echo $this->partialLoop("contact/partial_fiche.phtml", $this->contacts);
 		else
-			echo "<hr class='clear'><p><strong>Aucun contact.</strong></p>";
+			echo "<p><strong>Aucun contact.</strong></p>";
 	?>
 </div>
 
-<?php if( !$this->ajax && $this->droit_ecriture == true) : ?>
+<?php if( !$this->ajax) : ?>
 	<div id='dialog-delete-contact' class='ui-helper-hidden' >
 		<p>
 			<span class="ui-icon ui-icon-alert" style="float:left; margin: 0 7px 20px 0;"></span>
@@ -81,7 +80,7 @@
 		});
 		
 		// Ajout d'un contact
-		$("a#add-contact").click(function() {
+		$("a#add-contact").live("click", function() {
 			var a = this;
 			$.ajax({
 				url: a.href + "&format=html",

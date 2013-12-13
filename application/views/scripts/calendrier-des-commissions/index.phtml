@@ -28,19 +28,7 @@
 ?>
 
 <!-- Titre -->
-<h2>
-	<i class='sprite sprite-calendar' ></i>
-	Calendrier des commissions
-</h2>
-
-<!-- Selection de la commission -->
-<!--
-	<div id='selectComm'>
-		<form id="commSelect" name="commSelect" method="" action="">
-			<input id="commissionSelect" class='bigger' style='width: 400px; color:gray;' value='Tapez le nom de la commission'/>
-		</form>
-	</div>
--->
+<h2>Calendrier des commissions</h2>
 
 <select id='commissionSelect' class='bigger' >
 	<option value='0'>Choix d'une commission ...</option>
@@ -52,14 +40,15 @@
 	</optgroup>
 	<?php endforeach ?>
 </select>
-<span style='margin-left:50px;'>
-	<font style='background-color:blue;color:white;padding:3px;'>En salle</font>
-	<font style='background-color:green;color:white;margin-left:20px;padding:3px;'>Visite</font>
-	<font style='background-color:orange;color:white;margin-left:20px;padding:3px;'>Groupe de visite</font>
-</span>
-<div id='infosCom' style='display:none;'></div>
 
-<hr class='clear'/>
+&nbsp;
+
+<span class="label label-info">En salle</span>
+<span class="label  label-success">Visite</span>
+<span class="label label-warning">Groupe de visite</span>
+
+
+<div id='infosCom' style='display:none;'></div>
 
 <!-- Calendrier -->
 <div id="calendar"></div>
@@ -71,8 +60,6 @@
 	if(isset($_GET["idComm"])){
 ?>
 		<script type="text/javascript">
-			//$("#commissionSelect").select('<?php echo $_GET["idComm"]; ?>');
-			//alert($("#commissionSelect>option").length);
 			$("#commissionSelect").change();
 		</script>
 <?php
