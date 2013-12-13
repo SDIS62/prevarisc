@@ -1,101 +1,79 @@
-<!doctype html>
-<html lang="fr" >
+<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
 
-    <?php echo $this->render("includes/header.phtml"); ?>
+<!-- Titre -->
+<h2 >
+    Recherche
+</h2>
 
-    <body>
+<!-- Onglets permettant de selectionner les entités à rechercher -->
+<ul id='onglets_horizontaux' >
+    <li class='<?php echo ( $this->action == "etablissement" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"etablissement")) ?>'>Établissement</a></li>
+    <li class='<?php echo ( $this->action == "dossier" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossier")) ?>'>Dossier</a></li>
+    <li class='<?php echo ( $this->action == "utilisateur" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"utilisateur")) ?>'>Utilisateur</a></li>
+</ul>
     
-        <?php echo $this->render("includes/nav-main.phtml"); ?>
-    
-        <div id='wrapper'>
-			<div id='layout-content' >
+<!-- Formulaire de recherche -->
+<div>
 
-				<div class='container_16' >
-                
-                    <?php echo $this->render("includes/notifications.phtml"); ?>
-				
-                    <!-- Titre -->
-					<h2 class='grid_16' >
-						<i class='sprite sprite-zoom' ></i>
-						Recherche
-					</h2>
+<?php $this->placeholder('before_content')->captureEnd() ?>
 
-                    <!-- Onglets permettant de selectionner les entités à rechercher -->
-					<ul id='onglets_horizontaux' class='grid_16' >
-						<li class='<?php echo ( $this->action == "etablissement" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"etablissement")) ?>'>Établissement</a></li>
-						<li class='<?php echo ( $this->action == "dossier" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossier")) ?>'>Dossier</a></li>
-						<li class='<?php echo ( $this->action == "utilisateur" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"utilisateur")) ?>'>Utilisateur</a></li>
-					</ul>
-						
-                    <!-- Formulaire de recherche -->
-                    <div class="grid_16">
-                        <?php echo $this->layout()->content; ?>
-                    </div>
+
+<?php $this->placeholder('after_content')->captureStart() // Capture du 'after_content' ?>
+
+</div>
                     
-                    <!-- Bouton lançant la recherche -->
-					<p style="text-align: center">
-						<button id='search' href="/search/run" >Rechercher</button>
-						<span id='loader' class='ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement' /></span>
-					</p>
+<!-- Bouton lançant la recherche -->
+<p style="text-align: center">
+    <a id='search' href="/search/run" class='btn btn-primary btn-large' >Rechercher</a>
+    <span id='loader' class='ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement' /></span>
+</p>
 
-                    <!-- Résultats -->
-					<div id='content_resultats' class='grid_16' ></div>
+<!-- Résultats -->
+<div id='content_resultats' ></div>
 
-					<script type="text/javascript">
-
-						$("#search").button({
-							icons: {
-								primary: "ui-icon-search"
-							}
-						});
-                        
-                        $("#search, div.paginationControl a").live("click", function() {
-							$.ajax({
-								url: $(this).attr("href"),
-								data: $("#recherche").serialize(),
-								beforeSend: function() {
-                                    $('html, body').animate({ scrollTop: 0 }, 'slow');
-									$("#loader").show();
-									$("#search").hide();
-									$("#content_resultats").css("opacity", 0.5);
-								},
-								success: function( result ) {
-									$("#loader").hide();
-									$("#search").show();
-									$("#content_resultats").css("opacity", 1);
-									$("#content_resultats").html( result["html"] );
-                                    
-                                    if($("form input[name='item']").val() == "etablissement") {
-                                        if($("form input[name='par']:checked").val() == "criteres") {
-                                            $("#content_resultats").find('li').removeClass("slide");
-                                            $("#content_resultats").find('li').find("span.icone_enfants").remove();
-                                        }
-                                    }
-                                    
-                                    
-								},
-								error: function(r) {
-									alert(r.responseText);
-								}
-							});
-							
-							return false;
-						});
-                        
-                        $("#clear").live("click", function() {
-							$("#content_resultats").empty();
-							return false;
-						});
-						
-					</script>
-
-				</div>
-				
-			</div>
-		</div>
-        
-        <?php echo $this->render("includes/footer.phtml"); ?>
-
-    </body>
+<script type="text/javascript">
     
-</html>
+    $("#search, div.paginationControl a").live("click", function() {
+        $.ajax({
+            url: $(this).attr("href"),
+            data: $("#recherche").serialize(),
+            beforeSend: function() {
+                $('html, body').animate({ scrollTop: 0 }, 'slow');
+                $("#loader").show();
+                $("#search").hide();
+                $("#content_resultats").css("opacity", 0.5);
+            },
+            success: function( result ) {
+                $("#loader").hide();
+                $("#search").show();
+                $("#content_resultats").css("opacity", 1);
+                $("#content_resultats").html( result["html"] );
+                
+                if($("form input[name='item']").val() == "etablissement") {
+                    if($("form input[name='par']:checked").val() == "criteres") {
+                        $("#content_resultats").find('li').removeClass("slide");
+                        $("#content_resultats").find('li').find("span.icone_enfants").remove();
+                    }
+                }
+                
+                
+            },
+            error: function(r) {
+                alert(r.responseText);
+            }
+        });
+        
+        return false;
+    });
+    
+    $("#clear").live("click", function() {
+        $("#content_resultats").empty();
+        return false;
+    });
+    
+</script>
+
+<?php $this->placeholder('after_content')->captureEnd() ?>
+
+
+<?php echo $this->render('layout.phtml') // Rendu du layout par défaut avec les placeholders ?>
