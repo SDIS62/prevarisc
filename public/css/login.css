@@ -1,0 +1,68 @@
+/* ===========================================================
+ * Filename: login.css
+ * Description: Page de connexion
+ * =========================================================== */
+
+ 
+ /* Style du pied de page
+-------------------------------------------------- */
+body.login footer {
+    text-align: center;
+    font-size: .8em;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: auto;
+}
+
+body.login footer a {
+	color: #999999;
+}
+
+body.login footer a:hover {
+    color: #404040;
+}
+
+body.login footer:hover a {
+    color: #404040;
+}
+
+ /* Style de la structure
+-------------------------------------------------- */
+
+body.login {
+    padding: 0;
+}
+
+body.login .wrapper {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+body.login .block {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+body.login .well {
+    padding: 20px;
+    margin: 60px auto 50px auto;
+    max-width: 350px;
+}
+
+body.login .well {
+    text-align: center;
+}
+
+body.login form {
+    margin: 0;
+}
+
+body.login input {
+    margin-bottom: 10px;
+}
+
+body.login input[type=submit] {
+    margin-bottom: 0;
+}

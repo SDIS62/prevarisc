@@ -1,14 +1,12 @@
 /* RESET CSS
 -------------------------------------------------- */
-<!--#include file="./reset.css" -->
-<!--#include file="./text.css" -->
-<!--#include file="./form.css" -->
-<!--#include file="./grid_fluid.css" -->
-<!--#include file="./sprite.css" -->
+<!--#include file="./bootstrap.min.css" -->
+<!--#include file="./bootstrap-responsive.min.css" -->
 
 /* CSS de l'application
 -------------------------------------------------- */
 <!--#include file="./main.css" -->
+<!--#include file="./login.css" -->
 
 /* CSS jQuery
 -------------------------------------------------- */
