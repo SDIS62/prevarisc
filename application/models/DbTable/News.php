@@ -13,31 +13,13 @@
                 ->join("newsgroupe", "news.ID_NEWS = newsgroupe.ID_NEWS", null)
                 ->join("utilisateur", "news.ID_UTILISATEUR = utilisateur.ID_UTILISATEUR")
                 ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = utilisateur.ID_UTILISATEURINFORMATIONS")
-                ->where("newsgroupe.ID_GROUPE IN ( ".$id_groupe." )")
+                // ->where("newsgroupe.ID_GROUPE IN ( ".$id_groupe." )")
                 ->order("ID_NEWS DESC");
 
             if( $timestamp )
                 $select->where("news.ID_NEWS >= $timestamp");
 
-            if ($page == null) {
-                $liste = $this->fetchAll($select)->toArray();
-            } else {
-                $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($this->fetchAll($select)->toArray()));
-                $paginator->setItemCountPerPage(25);
-                $paginator->setCurrentPageNumber($page);
-                $liste = $paginator;
-            }
-
-            $result = $liste;
-
-            /*
-            $droits = (array) Zend_Controller_Action_HelperBroker::getStaticHelper('Droits')->get();
-
-            foreach ($result as &$row) {
-
-                $row = array_merge($row, $droits);
-            }
-            */
+            $result = $this->fetchAll($select)->toArray();
 
             return $result;
         }
@@ -60,6 +42,5 @@
         {
             $this->getAdapter()->query( "DELETE FROM newsgroupe WHERE ID_NEWS = " . $id_news );
             $this->delete( "ID_NEWS = " . $id_news );
-
         }
     }
