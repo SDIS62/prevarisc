@@ -1,3 +1,5 @@
+# Documentation d'installation
+
 ## Installation et configuration
 
 Pour télécharger Prevarisc : [Lien vers le téléchargement de la version 1.2.0 [STABLE]](https://github.com/SDIS62/prevarisc/tree/v1.2.0) ou [Lien vers le téléchargement de la version la plus récente [INSTABLE]](https://github.com/SDIS62/prevarisc/archive/master.zip).
