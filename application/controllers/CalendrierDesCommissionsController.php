@@ -4,7 +4,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 {
     public function init()
     {
-        // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('commissionselection', 'json')
                     ->addActionContext('recupevenement', 'json')

@@ -12,46 +12,6 @@
             $ajaxContext = $this->_helper->getHelper('AjaxContext');
             $ajaxContext->addActionContext('check', 'json')
                 ->initContext();
-                
-            // Droits sur la page
-            /*
-            switch ($this->_request->type) {
-
-                case "etablissement" :
-                    if($this->_helper->Droits()->checkEtablissement($this->_request->id))
-                        $this->_helper->Droits()->redirect();
-                    else {
-
-                        $model_etablissement = new Model_DbTable_Etablissement;
-                        $informations = $model_etablissement->getInformations( $this->_request->id );
-
-                        $droit_ecriture = $droits->ID_GENRE[$informations["ID_GENRE"]]["DROITECRITURE_GROUPEGENRE"];
-                        $this->view->droit_ecriture = $droit_ecriture;
-
-                        if($droit_ecriture == 0 && !in_array($this->getRequest()->getActionName(), array("index", "check")))
-                            $this->_helper->Droits()->redirect();
-                    }
-                    break;
-
-                case "dossier":
-                    if($this->_helper->Droits()->checkDossier($this->_request->id))
-                        $this->_helper->Droits()->redirect();
-                    else
-                        $this->view->droit_ecriture = true;
-                    break;
-
-                case "dateCommission":
-                    if($droits->DROITADMINPREV_GROUPE == 0)
-                        $this->_helper->Droits()->redirect();
-                    else
-                        $this->view->droit_ecriture = true;
-                    break;
-
-                default:
-                    $this->_helper->Droits()->redirect();
-                    break;
-            }
-            */
         }
 
         public function indexAction()
