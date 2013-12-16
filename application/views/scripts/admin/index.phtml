@@ -13,22 +13,6 @@
     
     <dt>Serveur</dt>
     <dd>
-        <span id="APPLICATION_ENV" title="Récupération de la valeur APPLICATION_ENV" class="label label_<?php echo strtoupper(APPLICATION_ENV) ?>"><?php echo strtoupper(APPLICATION_ENV) ?></span>
+        <span id="APPLICATION_ENV" class="label label_<?php echo strtoupper(APPLICATION_ENV) ?>"><?php echo strtoupper(APPLICATION_ENV) ?></span>
     </dd>
 </dl>
-
-<br />
-	
-<form id='form' action='/admin/save' method='post' >
-    <?php if(function_exists("ldap_connect")) : ?>
-	<h4>Connexion avec l'Active Directory &nbsp;<input type='checkbox' value='1' name='LDAP_ACTIF' <?php if($this->info["LDAP_ACTIF"]) echo "checked" ?> /></h4>
-	<dl id='ldap' class='dl-horizontal' >
-		<dt>Hôte (adresse IP)</dt><dd><input type='text' name='LDAP_HOST' value='<?php echo $this->info["LDAP_HOST"] ?>' /></dd>
-		<dt>Nom d'utilisateur</dt><dd><input type='text' name='LDAP_USERNAME' value='<?php echo $this->info["LDAP_USERNAME"] ?>' /></dd>
-		<dt>Mot de passe</dt><dd><input type='password' name='LDAP_PASSWORD' value='<?php echo $this->info["LDAP_PASSWORD"] ?>' /></dd>
-		<dt>Base DN</dt><dd><input type='text' name='LDAP_BASEDN' value='<?php echo $this->info["LDAP_BASEDN"] ?>' /></dd>
-        <dt></dt><dd><input type='submit' value='Sauvegarder' class='btn btn-success' /></dd>
-	</dl>
-	<br />
-    <?php endif ?>
-</form>

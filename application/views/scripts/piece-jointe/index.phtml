@@ -1,4 +1,32 @@
-<?php if($this->droit_ecriture) : ?>
+<input type='hidden' name='typePJ' id='typePJ' value='<?php echo $this->type ?>' />
+<input type='hidden' name='idLinkPJ' id='idLinkPJ' value='<?php echo $this->identifiant ?>' />
+
+<h3>Liste de pièces jointes</h3>
+
+<button id='addPJ' class='btn' style='float: right; margin-left: 1em;' >Ajouter une piece jointe</button>
+<div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>		
+
+<?php if(count($this->listePj) == 0) : ?>
+<p id='listePieceJointe-no' ><strong>Aucune pièce jointe ajoutée.</strong></p>
+<?php else : ?>
+<div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
+	<table id='tabPieceJointe' class='table'> 
+		<thead> 
+			<tr>
+				<th>Nom</th> 
+				<th>Description</th>
+				<th>Date d'ajout</th>
+                <?php if($this->type == 'dossier') echo "<th>Rapport final</th>"?>
+				<th></th>
+			</tr> 
+		</thead> 
+		<tbody>
+			<?php echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant)) ?>
+		</tbody>
+	</table>
+</div>
+<?php endif ?>
+
 <script type="text/javascript">
 
 	$(document).ready(function() {
@@ -66,6 +94,63 @@
 			return false;
 		});
 		
+        $('a[href$=png], a[href$=jpg], a[href$=jpeg]').fancybox({
+            'transitionIn'	:	'elastic',
+            'transitionOut'	:	'elastic',
+            'speedIn'		:	600, 
+            'speedOut'		:	200, 
+        });
+        
+        $(".select").live('click',function(){
+            var idAvantSplit = $(this).attr('id');
+            var tabId = idAvantSplit.split('_');
+            var id = tabId[1];
+            var checked = $(this).attr('checked');
+            $.ajax({
+                url: "/dossier/fonction",
+                data: "do=pjPassageCommission&idPjCommission="+id+"&idDossier="+$("#idDossier").val()+"&checked="+checked,
+                type:"POST",
+                beforeSend: function(){
+                    
+                },
+                success: function(affichageResultat){
+                    //alert(checked);
+                    if(checked == true){
+                        $(".select").each(function(){
+                            $(this).attr('disabled','disabled');
+                        });
+                        $("#"+idAvantSplit).attr('disabled','');
+                    }else{
+                        $(".select").each(function(){
+                            $(this).attr('disabled','');
+                        });
+                    }
+                },
+                error: function()	{
+
+                    return false;
+                }
+            });
+        });
+        
+        function disabledTest(){
+            var test = 0;
+            $(".select").each(function(){
+                if($(this).attr('checked')){
+                    test = 1;
+                }
+                
+            });
+            if(test == 1){
+                $(".select").each(function(){
+                    if(!$(this).attr('checked')){
+                        $(this).attr('disabled','disabled');
+                    }			
+                });
+            }
+        
+        }
+        disabledTest();
 		
 	});
 	
@@ -113,81 +198,3 @@
 	}
 
 </script>
-<?php endif ?>
-
-<input type='hidden' name='typePJ' id='typePJ' value='<?php echo $this->type ?>' />
-<input type='hidden' name='idLinkPJ' id='idLinkPJ' value='<?php echo $this->identifiant ?>' />
-
-<h3 float='left'>Liste de pièces jointes</h3>
-
-<?php if($this->droit_ecriture) : ?>
-<!-- Boutons -->
-<div float='right' >
-	
-	<button id='addPJ' style='float: right; margin-left: 1em;' >Ajouter une piece jointe</button>
-
-	<span style='padding: .5em; margin-bottom: 1em; float: right;' id='uploadSucces' class='message ui-state-highlight ui-helper-hidden'>
-		Le document à bien été envoyé.
-	</span>
-	
-	<span style='padding: .5em; margin-bottom: 1em; float: right;' id='uploadError' class='message ui-state-error ui-helper-hidden'>
-		Échec pendant le chargement du fichier.
-	</span>
-	
-	<div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>		
-	
-</div>
-<?php endif ?>
-
-<br class='clear' />
-
-<?php if(count($this->listePj) == 0) : ?>
-	<p id='listePieceJointe-no' ><strong>Aucune pièce jointe ajoutée.</strong></p>
-<?php endif ?>
-
-<div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
-    <!--
-	<div id='pager' >
-		<form>
-			<div id='img_button' float='left'>
-				<i class='sprite sprite-resultset_first first' ></i>
-				<i class='sprite sprite-resultset_previous prev' ></i>
-				<input type='text' class='pagedisplay' size='6' disabled style='text-align: center' />
-				<i class='sprite sprite-resultset_next next' ></i>
-				<i class='sprite sprite-resultset_last last' ></i>
-			</div>
-			
-			<div float='right'>
-				<select class='pagesize'>
-					<option value='10'>10 par page</option>
-					<option value='20' selected='selected'>20 par page</option>
-					<option value='50'>50 par page</option>
-					<option value='100'>100 par page</option>
-				</select>
-			</div>
-		</form>
-	</div>
-	
-	<hr class='clear' />
-    -->
-	
-	<table id='tabPieceJointe' class='tablesorter'> 
-		<thead> 
-			<tr>
-				<th style='width: 50px;'>Type</th>
-				<th>Nom</th> 
-				<th>Description</th>
-				<th>Date d'ajout</th>
-<?php
-	if($this->type == 'dossier'){
-		echo "<th>Rapport final</th>";
-	}
-?>
-				<th>&nbsp;</th>
-			</tr> 
-		</thead> 
-		<tbody>
-			<?php echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "droit_ecriture" => $this->droit_ecriture, "type" => $this->type, "id" => $this->identifiant)) ?>
-		</tbody>
-	</table>
-</div>
