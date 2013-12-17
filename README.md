@@ -1,4 +1,4 @@
-![Prevarisc](https://raw.github.com/SDIS62/prevarisc/master/extras/logo_prevarisc_readme.jpg)
+# Prevarisc
 
 ## Présentation
 
