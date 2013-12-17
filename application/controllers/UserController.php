@@ -401,12 +401,22 @@
                 // Création de l'adapter d'authentification via LDAP
                 $adapter = new Zend_Auth_Adapter_Ldap();
                 
-                // On associe notre ldap à l'adapter
-                $ldap = new Zend_Ldap(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap'));
-                $adapter->setLdap($ldap);
-                
                 try
                 {
+                    // Récupération des paramètres LDAP
+                    $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
+                    
+                    if($ldap_options['enabled'] != 1)
+                    {
+                        throw new Zend_Auth_Exception('Authentification LDAP non activée');
+                    }
+                    
+                    unset($ldap_options['enabled']);
+                    
+                    // On associe notre ldap à l'adapter
+                    $ldap = new Zend_Ldap($ldap_options);
+                    $adapter->setLdap($ldap);
+                
                     // On envoie les identifiants de connexion à l'adapter
                     $adapter->setUsername($ldap->getCanonicalAccountName($username, Zend_Ldap::ACCTNAME_FORM_DN));
                     $adapter->setPassword($password);
