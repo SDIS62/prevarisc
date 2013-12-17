@@ -1,9 +1,11 @@
 <script type='text/javascript' >
 
 	$(document).ready(function(){
+		/*
 		$("#annulModification").button({
 			text: false
 		});
+		*/
 
 		// Texte de l'auto complete utilisateurs
 		$("#preventionnistes-autocomplete").toggleText("Saisissez le nom d'un préventionniste ...");
@@ -107,7 +109,8 @@
 			$("#calendarVisite").html('');
 			
 			//$("#COMMISSION_DOSSIER").val('');
-			$("#commissionSelect").attr('disabled','');
+			//$("#commissionSelect").attr('disabled','');
+			$("#commissionSelect").removeAttr('disabled');
 			
 			$(this).hide();
 			//$("#commissionSelect").attr('disabled','').val('').focus();
@@ -254,7 +257,6 @@
 			}
 			return false;
 		});
-		
 			
 		$(".incomplet").click(function(){
 			if($(this).val() == 1){
@@ -268,7 +270,6 @@
 			}
 		});
 
-	
 	});
 	//FIN DOC READY FUNCTION
 	
@@ -680,7 +681,7 @@
 			url: url,
 			type:"POST",
 			success: function( result ) {
-			
+				//alert('');
 				$("#dialogComm").html( result );
 				
 				// On créé la boite de dialogue
@@ -688,6 +689,7 @@
 					resizable: false,
 					height: 500,
 					width: 700,
+					draggable: false,
 					modal: true,
 					buttons: {
 						'Fermer la fenêtre d\'édition': function() {
@@ -838,7 +840,8 @@
 		
 		//on fait apparaitre la liste des natures puis on cache les natures déja affichées
 		//$("#selectNature").show();
-		$("#selectNature").attr('disabled','');
+		//$("#selectNature").attr('disabled','');
+		$("#selectNature").removeAttr('disabled');
 		
 		//var listeNature = $("#listeNature").recupNatures();
 		//$("#selectNature").cacherNatureDuSelect(listeNature);
@@ -934,7 +937,6 @@
 			}
 		}
 	});
-
 	
 /*	
 	//Gestion de la suppression de nature affichage des champs correspondant aux natures restantes
@@ -1184,6 +1186,8 @@
 echo $this->headScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
 //echo $this->headScript()->appendFile('/js/dossier/calendrier.js','text/javascript');
 
+//echo $this->do;
+
 $action = $this->do;
 
 if($action == 'edit'){
@@ -1201,21 +1205,24 @@ echo "
 			<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='".$this->idUser."' />	
 			".( ($action == 'edit')? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "" )."
 			<div id='boutons' style='float: right'>
-				<button id='modificationDossier' style='".( ($action == 'new')? "display:none;" : "" )."'>Modifier le dossier</button>
-				<button id='annulModification' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Annuler</button>
-				<button id='validModification' class='save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Sauvegarder le dossier</button>
+				<button id='modificationDossier' class='btn' style='".( ($action == 'new')? "display:none;" : "" )."'><i class='icon-pencil'></i>&nbsp;Modifier le dossier</button>
+				<button id='annulModification' class='btn' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Annuler</button>
+				<button id='validModification' class='btn btn-success save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'><i class='icon-ok icon-white'></i>&nbsp;Sauvegarder le dossier</button>
+				<!--
 				<button id='creationDossier' class='save' style='display:none; z-index:150;'>Créer le dossier</button>
+				-->
+				<button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>
 				<div id='chargement'></div>
 			</div>
 			
 			<h3>Informations générales</h3>
 			<!-- BEGIN UL Type/Nature -->
 			<h4>Type et natures du dossier</h4>
-			<ul class='list'>
-				<li id='type'>
-					<div class='left libelle'>Type</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'":"" ).">".$this->libelleType."</div>
-					<div class='right form' ". ( ($action != 'new')? "style='display:none'":"").">
+			<ul class='list unstyled'>
+				<li class='row-fluid' style='margin-bottom:20px;' id='type'>
+					<div class='left libelle span3' style='float:left;'>Type</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'":"" ).">".$this->libelleType."</div>
+					<div class='right form span9' ". ( ($action != 'new')? "style='display:none'":"").">
 						<select name='TYPE_DOSSIER' id='TYPE_DOSSIER' >
 							<option value='0' >Selectionnez un type</option>
 					";
@@ -1226,10 +1233,12 @@ echo "
 						</select>
 					</div>
 				</li>
-				<li id='nature' ".( ($action == 'new')?"style='display:none;'":"").">
-					<div class='left libelle'>Nature</div>
+				<li class='row-fluid' id='nature' style='".( ($action == 'new')?"display:none;":"")."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Nature</div>
+					<!--
 					<div class='right value'></div>
-					<div class='right form' ".( ($action != 'new' && $action != 'edit' )?"style='display:none;'":"").">
+					-->
+					<div class='right form span9' ".( ($action != 'new' && $action != 'edit' )?"style='display:none;'":"").">
 						<div id='listeNature' >
 						";
 						echo "
@@ -1254,92 +1263,96 @@ echo "
 			
 			<h4>Informations sur le dossier</h4>
 			<!-- BEGIN UL InfosDossier -->
-			
-			<ul id='InfosDossier' class='list' >
-				<li id='DATEINSERT' ".( (in_array('DATEINSERT', $this->afficherChamps) && $this->infosDossier['DATEINSERT_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date de création du dossier</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINSERT_DOSSIER']." ".(($this->user_info)? "par : ".$this->user_info['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_info['NOM_UTILISATEURINFORMATIONS'] :"")."</div >
-					<div class='right form' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
+			<ul id='InfosDossier' class='list unstyled' >
+				<li class='row-fluid' id='DATEINSERT' style='".( (in_array('DATEINSERT', $this->afficherChamps) && $this->infosDossier['DATEINSERT_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date de création du dossier</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINSERT_DOSSIER']." ".(($this->user_info)? "par : ".$this->user_info['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_info['NOM_UTILISATEURINFORMATIONS'] :"")."</div >
+					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
 						<input type='text' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".( ($this->DATEINSERT_INPUT)?$this->DATEINSERT_INPUT:"" )."' />
-						&nbsp;<button class='today'>Aujourd'hui</button>
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li id='OBJET' ".( (in_array('OBJET', $this->afficherChamps) && $this->infosDossier['OBJET_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Objet</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['OBJET_DOSSIER'])."</div >
-					<div class='right form' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
+				<li class='row-fluid' id='OBJET' style='".( (in_array('OBJET', $this->afficherChamps) && $this->infosDossier['OBJET_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Objet</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['OBJET_DOSSIER'])."</div >
+					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
 						<!--
 							<input type='text' name='OBJET_DOSSIER' id='OBJET_DOSSIER' value='".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."' style='width:400px;' />
 						-->
 						<textarea name='OBJET_DOSSIER' id='OBJET_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
-				<li id='DEMANDEUR' ".( ($action != 'new' && in_array('DEMANDEUR', $this->afficherChamps) && $this->infosDossier['DEMANDEUR_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Demandeur</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DEMANDEUR_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DEMANDEUR' style='".( ($action != 'new' && in_array('DEMANDEUR', $this->afficherChamps) && $this->infosDossier['DEMANDEUR_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Demandeur</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DEMANDEUR_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' id='DEMANDEUR_DOSSIER' name='DEMANDEUR_DOSSIER' value='".( ($this->infosDossier['DEMANDEUR_DOSSIER'])?$this->infosDossier['DEMANDEUR_DOSSIER']:"" )."' style='width:650px' /><br/>
 					</div>
 				</li>
-				<li id='NUMDOCURBA' ".( (in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0 )? "": "style='display:none;margin-bottom:10px;'" ).">
-					<div class='left libelle'>Numéro document d'urbanisme</div>
+				<li class='row-fluid' id='NUMDOCURBA' style='".( (in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0 )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Numéro document d'urbanisme</div>
+					<!--
 					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."></div>
-					<div class='right form'> 
+					-->
+					<div class='right form span9'>
 						<div id='listeDocUrba' >
 							<span id='docurbaVal'></span>
 							<input type='text' name='NUM_DOCURBA' id='NUM_DOCURBA' value='' ".( ($action != 'new')? "style='display:none;'" : "" )." />
-							&nbsp;<button id='addNumDoc' ".( ($action != 'new')? "style='display:none;'" : "" ).">Ajouter le numéro de document d'urbanisme</button>
+							&nbsp;<button id='addNumDoc' class='btn' ".( ($action != 'new')? "style='display:none;'" : "" )."><i class='icon-plus'></i>&nbsp;Ajouter le numéro de document d'urbanisme</button>
 							";
 							if($action != 'new'){
 								foreach($this->dossierDocUrba as $docUrba){
-									echo "<div class='docurba' style=''>
-										<input type='hidden' name='docUrba[]' value='".$docUrba['NUM_DOCURBA']."' id='urba_".$docUrba['ID_DOCURBA']."'/>".$docUrba['NUM_DOCURBA']."<a href='' idDocUrba='".$docUrba['ID_DOCURBA']."' class='suppDocUrba'  ".( ($action == 'edit' )?"style='display:none;'":"").">&times;</a></div>";
+									echo "
+										<div class='docurba' style=''>
+											<input type='hidden' name='docUrba[]' value='".$docUrba['NUM_DOCURBA']."' id='urba_".$docUrba['ID_DOCURBA']."'/>".$docUrba['NUM_DOCURBA']."<a href='' idDocUrba='".$docUrba['ID_DOCURBA']."' class='suppDocUrba'  ".( ($action == 'edit' )?"style='display:none;'":"").">&times;</a>
+										</div>
+									";
 								}
 							}
 							echo "
 						</div>
 					</div>
 				</li>
-				<li id='DATEMAIRIE' ".( ($action != 'new' && in_array('DATEMAIRIE', $this->afficherChamps) && $this->infosDossier['DATEMAIRIE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date réception mairie</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['DATEMAIRIE_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DATEMAIRIE' style='".( ($action != 'new' && in_array('DATEMAIRIE', $this->afficherChamps) && $this->infosDossier['DATEMAIRIE_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date réception mairie</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['DATEMAIRIE_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<div>
 							<input type='text' class='date' name='DATEMAIRIE_DOSSIER' id='DATEMAIRIE_INPUT' value='".( ($this->DATEMAIRIE_INPUT)?$this->DATEMAIRIE_INPUT:"" )."' />
-							&nbsp;<button class='today'>Aujourd'hui</button>
+							&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 						</div>
 					</div>
 				</li>
-				<li id='DATESECRETARIAT' ".( ($action != 'new' && in_array('DATESECRETARIAT', $this->afficherChamps) && $this->infosDossier['DATESECRETARIAT_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date réception secrétariat commission</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESECRETARIAT_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"")."> 
+				<li class='row-fluid' id='DATESECRETARIAT' style='".( ($action != 'new' && in_array('DATESECRETARIAT', $this->afficherChamps) && $this->infosDossier['DATESECRETARIAT_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date réception secrétariat commission</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESECRETARIAT_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 						<input type='text' class='date' name='DATESECRETARIAT_DOSSIER' id='DATESECRETARIAT_INPUT' value='".( ($this->DATESECRETARIAT_INPUT)?$this->DATESECRETARIAT_INPUT:"" )."' />
-						&nbsp;<button class='today'>Aujourd'hui</button>
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
 				
-				<li id='DATEENVTRANSIT' ".( ($action != 'new' && in_array('DATEENVTRANSIT', $this->afficherChamps) && $this->infosDossier['DATEENVTRANSIT_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date d'envoi/transit</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEENVTRANSIT_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"")."> 
+				<li class='row-fluid' id='DATEENVTRANSIT' style='".( ($action != 'new' && in_array('DATEENVTRANSIT', $this->afficherChamps) && $this->infosDossier['DATEENVTRANSIT_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date d'envoi/transit</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEENVTRANSIT_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 						<input type='text' class='date' name='DATEENVTRANSIT_DOSSIER' id='DATEENVTRANSIT_INPUT' value='".( ($this->DATEENVTRANSIT_INPUT)?$this->DATEENVTRANSIT_INPUT:"" )."' />
-						&nbsp;<button class='today'>Aujourd'hui</button>
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
 				
-				<li id='DATESDIS' ".( ($action != 'new' && in_array('DATESDIS', $this->afficherChamps) && $this->infosDossier['DATESDIS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date de réception SDIS</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESDIS_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DATESDIS' style='".( ($action != 'new' && in_array('DATESDIS', $this->afficherChamps) && $this->infosDossier['DATESDIS_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date de réception SDIS</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESDIS_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' class='date' id='DATESDIS_INPUT' name='DATESDIS_DOSSIER' value='".( ($this->DATESDIS_INPUT)?$this->DATESDIS_INPUT:"" )."' />
-						&nbsp;<button class='today'>Aujourd'hui</button>
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>	
-				<li id='SERVICEINSTRUC' ".( ($action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Service instructeur</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"")."> 
+				<li class='row-fluid' id='SERVICEINSTRUC' style='".( ($action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Service instructeur</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 						<!--
 							<input type='text' name='SERVICEINSTRUC_DOSSIER' id='SERVICEINSTRUC_DOSSIER' value='".( ($this->infosDossier['SERVICEINSTRUC_DOSSIER'])?htmlspecialchars($this->infosDossier['SERVICEINSTRUC_DOSSIER'], ENT_QUOTES):"" )."' />
 							<div id='servInstrInfos' style='displaye:none;'>
@@ -1357,10 +1370,10 @@ echo "
 				echo "						
 					</div>
 				</li>
-				<li id='COMMISSION' ".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' && $this->infosDossier['COMMISSION_DOSSIER'] != 'null')? "": "style='display:none;'" ).">
-					<div class='left libelle'>Commission concernée</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='COMMISSION' style='".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' && $this->infosDossier['COMMISSION_DOSSIER'] != 'null')? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Commission concernée</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".$this->infosDossier['COMMISSION_DOSSIER']."' />
 						<select name='commissionSelect' id='commissionSelect' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "")." >
 							<option value=''>Aucune commission</option>
@@ -1374,104 +1387,104 @@ echo "
 				}
 				echo "
 						</select>
-						<button class='changeCommission' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Choisir une autre commission</button>
+						<button class='changeCommission btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-remove'></i>&nbsp;Choisir une autre commission</button>
 					</div>
 					<!--
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input id='commissionSelect' style='width: 400px; color:gray;' value='".( ($action != 'new')? ( ($this->commissionInfos['LIBELLE_COMMISSION'] != '')? htmlspecialchars($this->commissionInfos['LIBELLE_COMMISSION'], ENT_QUOTES): "Tapez le nom de la commission"):"Tapez le nom de la commission")."' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "" )."/>
 						<div id='commissionInfos' style='display:none;' >
 							<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".$this->commissionInfos['ID_COMMISSION']."' />
 						</div>
-						<button class='changeCommission' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Choisir une autre commission</button>
+						<button class='changeCommission btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-remove'></i>&nbsp;Choisir une autre commission</button>
 					</div>
 					-->
 				</li>
-				<li id='DATEVISITE' ".( ($action != 'new' && in_array('DATEVISITE', $this->afficherChamps) && $this->dateVisiteValue != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date de visite</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+				<li class='row-fluid' id='DATEVISITE' style='".( ($action != 'new' && in_array('DATEVISITE', $this->afficherChamps) && $this->dateVisiteValue != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date de visite</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".$this->dateVisiteValue.( ( $this->dateVisiteValue != '' )?"":"")."
 					</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".( ($this->dateVisiteInput)?$this->dateVisiteInput:"" )."'  disabled='disabled'/>
 						<input type='hidden' name='ID_AFFECTATION_DOSSIER_VISITE' id='ID_AFFECTATION_DOSSIER_VISITE' value='".( ($this->idDateVisiteAffect)?$this->idDateVisiteAffect:"" )."' />
 						<button id='showVisite' class='showCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Afficher le calendrier</button>
 						<button id='hideVisite' class='hideCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Cacher le calendrier</button>
 					</div>
 				</li>
-				<li style='display:none;'>
+				<li class='row-fluid' style='display:none;'>
 					<h1>Choisir une date de visite</h1>
 					<div id='calendarVisite' class='grid_14 calendar' style='display:none;'></div>
 					<hr class='clear'/>				
 				</li>
-				<li id='INCOMPLET' ".( ($action != 'new' && in_array('INCOMPLET', $this->afficherChamps) && $this->infosDossier['INCOMPLET_DOSSIER'] != NULL )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Etat dossier</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+				<li class='row-fluid' id='INCOMPLET' style='".( ($action != 'new' && in_array('INCOMPLET', $this->afficherChamps) && $this->infosDossier['INCOMPLET_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Etat dossier</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == '0' )? "Complet" : "Incomplet" )."
 						".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == '1' )?"   ".$this->DATEINCOMPLET." " : "" )."
 					</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || !$this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Complet
 						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Incomplet					
 					</div>
 				</li>
-				<li id='DATECOMM' ".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date de commission en salle</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+				<li class='row-fluid' id='DATECOMM' style='".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date de commission en salle</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".$this->dateCommValue.( ( $this->idDateCommissionAffect != '' )? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='sprite sprite-date_magnify' ></i></a>" : "" )."				
 					</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".( ($this->dateCommInput)?$this->dateCommInput:"" )."' disabled='disabled'/>
 						<input type='hidden' name='ID_AFFECTATION_DOSSIER_COMMISSION' id='ID_AFFECTATION_DOSSIER_COMMISSION' value='".( ($this->idDateCommissionAffect)?$this->idDateCommissionAffect: "" )."' />
 						<input type='hidden' name='DATEVISITE_PERIODIQUE' id='DATEVISITE_PERIODIQUE' value='".( ($this->dateCommInput)?$this->dateCommInput:"" )."'/>
-						<button id='showCommission' class='showCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Afficher le calendrier</button>
-						<button id='hideCommission' class='hideCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Cacher le calendrier</button>
+						<button id='showCommission' class='showCalendar btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
+						<button id='hideCommission' class='hideCalendar btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
 					</div>
 				</li>
-				<li style='display:none;'>
+				<li class='row-fluid' style='display:none;'>
 					<h1>Choisir une date de commission en salle</h1>
 					<div id='calendar' class='grid_14 calendar' style='display:none;'></div>
 					<hr class='clear'/>				
 				</li>
-				<li id='DESCANAL' ".( ($action != 'new' && in_array('DESCANAL', $this->afficherChamps) && $this->infosDossier['DESCANAL_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Descriptif analyse de risque</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCANAL_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DESCANAL' style='".( ($action != 'new' && in_array('DESCANAL', $this->afficherChamps) && $this->infosDossier['DESCANAL_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Descriptif analyse de risque</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCANAL_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' id='DESCANAL_DOSSIER' name='DESCANAL_DOSSIER' value='".( ($this->infosDossier['DESCANAL_DOSSIER'])?$this->infosDossier['DESCANAL_DOSSIER']:"" )."' />
 					</div>
 				</li>
-				<li id='REGLEDEROG' ".( ($action != 'new' && in_array('REGLEDEROG', $this->afficherChamps) && $this->infosDossier['REGLEDEROG_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Règles auxquelles il est demandé de déroger</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['REGLEDEROG_DOSSIER'])."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='REGLEDEROG' style='".( ($action != 'new' && in_array('REGLEDEROG', $this->afficherChamps) && $this->infosDossier['REGLEDEROG_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Règles auxquelles il est demandé de déroger</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['REGLEDEROG_DOSSIER'])."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<textarea name='REGLEDEROG_DOSSIER' id='REGLEDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['REGLEDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['REGLEDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
-				<li id='JUSTIFDEROG' ".( ($action != 'new' && in_array('JUSTIFDEROG', $this->afficherChamps) && $this->infosDossier['JUSTIFDEROG_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Justification de la dérogation</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['JUSTIFDEROG_DOSSIER'])."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='JUSTIFDEROG' style='".( ($action != 'new' && in_array('JUSTIFDEROG', $this->afficherChamps) && $this->infosDossier['JUSTIFDEROG_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Justification de la dérogation</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['JUSTIFDEROG_DOSSIER'])."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<textarea name='JUSTIFDEROG_DOSSIER' id='JUSTIFDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['JUSTIFDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['JUSTIFDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
-				<li id='MESURESCOMPENS' ".( ($action != 'new' && in_array('MESURESCOMPENS', $this->afficherChamps) && $this->infosDossier['MESURESCOMPENS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Mesures compensatoires proposées</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['MESURESCOMPENS_DOSSIER'])."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='MESURESCOMPENS' style='".( ($action != 'new' && in_array('MESURESCOMPENS', $this->afficherChamps) && $this->infosDossier['MESURESCOMPENS_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Mesures compensatoires proposées</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['MESURESCOMPENS_DOSSIER'])."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<textarea name='MESURESCOMPENS_DOSSIER' id='MESURESCOMPENS_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['MESURESCOMPENS_DOSSIER'])?htmlspecialchars($this->infosDossier['MESURESCOMPENS_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
-				<li id='MESURESCOMPLE' ".( ($action != 'new' && in_array('MESURESCOMPLE', $this->afficherChamps) && $this->infosDossier['MESURESCOMPLE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Mesures complémentaires à respecter</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['MESURESCOMPLE_DOSSIER'])."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='MESURESCOMPLE' style='".( ($action != 'new' && in_array('MESURESCOMPLE', $this->afficherChamps) && $this->infosDossier['MESURESCOMPLE_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Mesures complémentaires à respecter</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['MESURESCOMPLE_DOSSIER'])."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<textarea name='MESURESCOMPLE_DOSSIER' id='MESURESCOMPLE_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['MESURESCOMPLE_DOSSIER'])?htmlspecialchars($this->infosDossier['MESURESCOMPLE_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
-				<li id='AVIS' ".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '')? "": "style='display:none;'" )." >
-					<div class='left libelle'>Avis</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>".$this->AVIS_VALUE['LIBELLE_AVIS']."</span></div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '')? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Avis</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>".$this->AVIS_VALUE['LIBELLE_AVIS']."</span></div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<select name='AVIS_DOSSIER' id='AVIS_DOSSIER' >
 							<!--
 							<option value='0' >".( ($action == 'new')?"Selectionnez l'avis du dossier": "Cacher l'avis du dossier" )."</option>
@@ -1484,58 +1497,58 @@ echo "
 						</select>
 					</div>
 				</li>
-                                <li id='HORSDELAI' ".( ($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL )? "": "style='display:none;'" ).">
-                                    <div class='left libelle'>Hors délai</div>
-                                    <div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-                                        <input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' disabled ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "").">
-                                    </div>
-                                    <div class='right form' ".( ($action != 'new')? "style='display:none;'":"").">
-                                        <input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "")."> 				
-                                    </div>
+				<li class='row-fluid' id='HORSDELAI' style='".( ($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Hors délai</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+						<input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' disabled ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "").">
+					</div>
+					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
+						<input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "")."> 				
+					</div>
 				</li>
-				<li id='ANOMALIE' ".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Analyse de risque</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['ANOMALIE_DOSSIER'])."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='ANOMALIE' style='".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Analyse de risque</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['ANOMALIE_DOSSIER'])."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<textarea name='ANOMALIE_DOSSIER' id='ANOMALIE_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['ANOMALIE_DOSSIER'])?htmlspecialchars($this->infosDossier['ANOMALIE_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>	
 				<!--
 					<li id='COORDSSI' ".( ($action != 'new' && in_array('COORDSSI', $this->afficherChamps) && $this->infosDossier['COORDSSI_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-						<div class='left libelle'>Coordinateur Système de Sécurité Incendie</div>
-						<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['COORDSSI_DOSSIER']."</div>
-						<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+						<div class='left libelle span3' style='float:left;'>Coordinateur Système de Sécurité Incendie</div>
+						<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['COORDSSI_DOSSIER']."</div>
+						<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 							<input type='text' id='COORDSSI_DOSSIER' name='COORDSSI_DOSSIER' value='".( ($this->infosDossier['COORDSSI_DOSSIER'])?$this->infosDossier['COORDSSI_DOSSIER']:"" )."' />
 						</div>
 					</li>
 				-->
-				<li id='DATEPREF' ".( ($action != 'new' && in_array('DATEPREF', $this->afficherChamps) && $this->infosDossier['DATEPREF_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date réception préfecture</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEPREF_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DATEPREF' style='".( ($action != 'new' && in_array('DATEPREF', $this->afficherChamps) && $this->infosDossier['DATEPREF_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date réception préfecture</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEPREF_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' class='date' id='DATEPREF_DOSSIER' name='DATEPREF_DOSSIER' value='".( ($this->DATEPREF_INPUT)?$this->DATEPREF_INPUT:"" )."' />
-						&nbsp;<button class='today'>Aujourd'hui</button>
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li id='DATEREP' ".( ($action != 'new' && in_array('DATEREP', $this->afficherChamps) && $this->infosDossier['DATEREP_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date de réponse</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREP_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DATEREP' style='".( ($action != 'new' && in_array('DATEREP', $this->afficherChamps) && $this->infosDossier['DATEREP_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date de réponse</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREP_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' class='date' id='DATEREP_DOSSIER' name='DATEREP_DOSSIER' value='".( ($this->DATEREP_INPUT)?$this->DATEREP_INPUT:"" )."' />
-						&nbsp;<button class='today'>Aujourd'hui</button>
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>				
-				<li id='DATEREUN' ".( ($action != 'new' && in_array('DATEREUN', $this->afficherChamps) && $this->infosDossier['DATEREUN_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date réunion</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREUN_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DATEREUN' style='".( ($action != 'new' && in_array('DATEREUN', $this->afficherChamps) && $this->infosDossier['DATEREUN_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date réunion</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREUN_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' class='date' id='DATEREUN_DOSSIER' name='DATEREUN_DOSSIER' value='".( ($this->DATEREUN_INPUT)?$this->DATEREUN_INPUT:"" )."' />
-						&nbsp;<button class='today'>Aujourd'hui</button>
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li id='OPERSDIS' ".( ($action != 'new' && in_array('OPERSDIS', $this->afficherChamps) && $this->infosDossier['OPERSDIS_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Opération (intervention) SDIS</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+				<li class='row-fluid' id='OPERSDIS' style='".( ($action != 'new' && in_array('OPERSDIS', $this->afficherChamps) && $this->infosDossier['OPERSDIS_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Opération (intervention) SDIS</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 				";
 				if($this->infosDossier['OPERSDIS_DOSSIER'] == 1){
 					echo "oui";
@@ -1544,16 +1557,16 @@ echo "
 				}					
 				echo "
 					</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<div id='operationsdis_infos'>
 							<input type='radio' name='OPERSDIS_DOSSIER' value='1' ".( ($this->infosDossier['OPERSDIS_DOSSIER'] == 1)?"checked":"" ).">Oui<br/>
 							<input type='radio' name='OPERSDIS_DOSSIER' value='0' ".( ($this->infosDossier['OPERSDIS_DOSSIER'] == 0)?"checked":"" ).">Non<br/>
 						</div>
 					</div>
 				</li>
-				<li id='RCCI' ".( ($action != 'new' && in_array('RCCI', $this->afficherChamps) && $this->infosDossier['RCCI_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>RCCI (oui/non) lien rapport</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+				<li class='row-fluid' id='RCCI' style='".( ($action != 'new' && in_array('RCCI', $this->afficherChamps) && $this->infosDossier['RCCI_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>RCCI (oui/non) lien rapport</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 				";
 				if($this->infosDossier['RCCI_DOSSIER'] == 1){
 					echo "oui";
@@ -1562,78 +1575,78 @@ echo "
 				}					
 				echo "
 					</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<div id='rrci_infos'>
 							<input type='radio' name='RCCI_DOSSIER' value='1' ".( ($this->infosDossier['RCCI_DOSSIER'] == 1)?"checked":"" ).">Oui<br/>
 							<input type='radio' name='RCCI_DOSSIER' value='0' ".( ($this->infosDossier['RCCI_DOSSIER'] == 0)?"checked":"" ).">Non<br/>
 						</div>
 					</div>
 				</li>
-				<li id='REX' ".( ($action != 'new' && in_array('REX', $this->afficherChamps) && $this->infosDossier['REX_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>REX</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['REX_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='REX' style='".( ($action != 'new' && in_array('REX', $this->afficherChamps) && $this->infosDossier['REX_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>REX</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['REX_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' id='REX_DOSSIER' name='REX_DOSSIER' value='".( ($this->infosDossier['REX_DOSSIER'])?$this->infosDossier['REX_DOSSIER']:"" )."' />
 					</div>
 				</li>
-				<li id='CHARGESEC' ".( ($action != 'new' && in_array('CHARGESEC', $this->afficherChamps) && $this->infosDossier['CHARGESEC_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Chargé de sécurité (T)</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['CHARGESEC_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='CHARGESEC' style='".( ($action != 'new' && in_array('CHARGESEC', $this->afficherChamps) && $this->infosDossier['CHARGESEC_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Chargé de sécurité (T)</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['CHARGESEC_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' id='CHARGESEC_DOSSIER' name='CHARGESEC_DOSSIER' value='".( ($this->CHARGESEC_DOSSIER)?$this->CHARGESEC_DOSSIER:"" )."' />
 					</div>
 				</li>
-				<li id='DUREEDEPL' ".( ($action != 'new' && in_array('DUREEDEPL', $this->afficherChamps) && $this->infosDossier['DUREEDEPL_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Durée de déplacement</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DUREEDEPL_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DUREEDEPL' style='".( ($action != 'new' && in_array('DUREEDEPL', $this->afficherChamps) && $this->infosDossier['DUREEDEPL_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Durée de déplacement</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DUREEDEPL_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' id='DUREEDEPL_DOSSIER' name='DUREEDEPL_DOSSIER' value='".( ($this->DUREEDEPL_DOSSIER)?$this->DUREEDEPL_DOSSIER:"" )."' />
 					</div>
 				</li>
-				<li id='GRAVPRESC' ".( ($action != 'new' && in_array('GRAVPRESC', $this->afficherChamps) && $this->infosDossier['GRAVPRESC_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Gravité prescription</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['GRAVPRESC_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='GRAVPRESC' style='".( ($action != 'new' && in_array('GRAVPRESC', $this->afficherChamps) && $this->infosDossier['GRAVPRESC_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Gravité prescription</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['GRAVPRESC_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' id='GRAVPRESC_DOSSIER' name='GRAVPRESC_DOSSIER' value='".( ($this->GRAVPRESC_DOSSIER)?$this->GRAVPRESC_DOSSIER:"" )."' />
 					</div>
 				</li>
-				<li id='NUMINTERV' ".( ($action != 'new' && in_array('NUMINTERV', $this->afficherChamps) && $this->infosDossier['NUMINTERV_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Numéro d'intervention</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['NUMINTERV_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='NUMINTERV' style='".( ($action != 'new' && in_array('NUMINTERV', $this->afficherChamps) && $this->infosDossier['NUMINTERV_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Numéro d'intervention</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['NUMINTERV_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' id='NUMINTERV_DOSSIER' name='NUMINTERV_DOSSIER' value='".( ($this->infosDossier['NUMINTERV_DOSSIER'])?$this->infosDossier['NUMINTERV_DOSSIER']:"" )."' />
 					</div>
 				</li>
-				<li id='DATEINTERV' ".( ($action != 'new' && in_array('DATEINTERV', $this->afficherChamps) && $this->infosDossier['DATEINTERV_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date et heure d'intervention</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINTERV_DOSSIER']." - ".$this->HEUREINTERV_INPUT."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DATEINTERV' style='".( ($action != 'new' && in_array('DATEINTERV', $this->afficherChamps) && $this->infosDossier['DATEINTERV_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date et heure d'intervention</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINTERV_DOSSIER']." - ".$this->HEUREINTERV_INPUT."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' class='date' id='DATEINTERV_DOSSIER' name='DATEINTERV_DOSSIER' value='".( ($this->DATEINTERV_INPUT)?$this->DATEINTERV_INPUT:"" )."' />
 						<input type='text' style='width:40px;' class='time' id='HEUREINTERV_DOSSIER' name='HEUREINTERV_DOSSIER' value='".( ($this->HEUREINTERV_INPUT)?$this->HEUREINTERV_INPUT:"" )."' />					
 					</div>
 				</li>
-				<li id='DUREEINTERV' ".( ($action != 'new' && in_array('DUREEINTERV', $this->afficherChamps) && $this->infosDossier['DUREEINTERV_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Durée intervention</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DUREEINTERV_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DUREEINTERV' style='".( ($action != 'new' && in_array('DUREEINTERV', $this->afficherChamps) && $this->infosDossier['DUREEINTERV_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Durée intervention</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DUREEINTERV_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' class='time' id='DUREEINTERV_DOSSIER' name='DUREEINTERV_DOSSIER' value='".( ($this->infosDossier['DUREEINTERV_DOSSIER'])?$this->infosDossier['DUREEINTERV_DOSSIER']:"" )."' />
 					</div>
 				</li>
-				<li id='DATESIGN' ".( ($action != 'new' && in_array('DATESIGN', $this->afficherChamps) && $this->infosDossier['DATESIGN_DOSSIER'] != '' )? "": "style='display:none;'" ).">
-					<div class='left libelle'>Date de signature</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESIGN_DOSSIER']."</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
+				<li class='row-fluid' id='DATESIGN' style='".( ($action != 'new' && in_array('DATESIGN', $this->afficherChamps) && $this->infosDossier['DATESIGN_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date de signature</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESIGN_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' class='date' id='DATESIGN_INPUT' name='DATESIGN_DOSSIER' value='".( ($this->DATESIGN_INPUT)?$this->DATESIGN_INPUT:"" )."' />
-						&nbsp;<button class='today'>Aujourd'hui</button>
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li id='PREVENTIONNISTE' ".( (in_array('PREVENTIONNISTE', $this->afficherChamps) && count($this->preventionnistes) != 0 )? "": "style='display:none;margin-bottom:10px;'" ).">
-					<div class='left libelle'>Préventionniste(s)</div>
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+				<li class='row-fluid' id='PREVENTIONNISTE' style='".( (in_array('PREVENTIONNISTE', $this->afficherChamps) && count($this->preventionnistes) != 0 )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Préventionniste(s)</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".$this->partialLoop('user/user.phtml', $this->preventionnistes )."
 					</div>
-					<div class='right form' ".( ($action != 'new')?"style='display:none;'":"").">
-						<ul>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+						<ul class='unstyled'>
 							<li style='liste-style-type:none' id='liste_prev'>
 					";
 					if(count($this->preventionnistes) > 0){
@@ -1660,7 +1673,7 @@ echo "
 			</ul>
 			<div id='save_div' style='text-align: center; ".( ($action == 'new')? "display:none;" : "" )."' >
 				<div ".( ($action == 'new')? "style='display:none;'" : "" ).">
-					<button class='generation' id='rapport' >Générer le(s) rapport(s)</button>
+					<button class='generation btn' id='rapport' ><i class='icon-refresh'></i>&nbsp;Générer le(s) rapport(s)</button>
 					<!--
 					<button class='generation' id='rapport' style='".( ($this->infosDossier['TYPE_DOSSIER'] == '1' || $this->infosDossier['TYPE_DOSSIER'] == '2')? "" : "display:none;" )."'>Générer le(s) rapport(s)</button>
 					&nbsp;

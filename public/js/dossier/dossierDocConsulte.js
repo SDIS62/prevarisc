@@ -16,7 +16,7 @@ $(document).ready(function(){
 			case "new":
 				$("#div_input_"+nom).fadeOut();
 				$("#div_edit_"+nom).fadeIn();
-				$("#check_"+nom).attr('checked','');
+				$("#check_"+nom).removeAttr('checked');
 				$("#ref_"+nom).attr('readonly','true').attr('value','');
 				$("#date_"+nom).attr('readonly','true').attr('value','');
 			break;
@@ -45,8 +45,8 @@ $(document).ready(function(){
 	//déclaration de la boite de dialog pour l'ajout d'un document ne faisant pas parti de la liste de base
 	$("#dialogDocConsulte").dialog({
 		resizable: false,
-		height:230,
-		width:600,
+		height:300,
+		width:900,
 		autoOpen: false,
 		modal: true,
 		title: 'Ajouter un document consulté',
@@ -78,8 +78,8 @@ $(document).ready(function(){
 	//déclaration de la boite de dialog permettant la confirmation de la suppression d'un document ajouté de faisant parti de la liste de base
 	$("#dialogConfirmSuppDoc").dialog({
 		resizable: false,
-		height:150,
-		width:500,
+		height:500,
+		width:900,
 		autoOpen: false,
 		modal: true,
 		title: 'Voulez vous vraiment supprimer ce document ?',
@@ -102,7 +102,8 @@ $(document).ready(function(){
 							$("#date_"+$("#docInfos").val()).val('');
 
 							$("#div_input_"+$("#docInfos").val()).hide();
-							$("#check_"+$("#docInfos").val()).attr('checked','');
+							$("#check_"+$("#docInfos").val()).removeAttr('checked');
+							$("#check_"+$("#docInfos").val()).removeAttr('disabled');
 							$("#dossier_Pdroite").activeCheck('');
 							$("#dossier_Pdroite").showModif('');
 							
@@ -250,8 +251,8 @@ $(document).ready(function(){
 		$("#tmpDate").attr('value',$("#date_"+nom).val());
 		$("#tmp").attr('value','edit');
 		
-		$("#ref_"+nom).attr('readonly','');
-		$("#date_"+nom).attr('readonly','').attr('disabled','');
+		$("#ref_"+nom).removeAttr('readonly');
+		$("#date_"+nom).removeAttr('readonly').removeAttr('disabled');
 		 
 		$("#modif_"+nom).hide();
 		$("#valid_"+nom).fadeIn();

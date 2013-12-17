@@ -12,11 +12,13 @@ foreach($this->listeTextesAppl as $val => $ue){
 		$idTypeMarq = $idType;
 	}
 	echo "
-		<div class='grid_1'>
-			<input type='checkbox' name='texte' id='".$ue['ID_TEXTESAPPL']."' ".( (in_array($ue['ID_TEXTESAPPL'],$this->listeIdTexte))? "checked" : "" )."/>
+		<div class='row-fluid'>
+			<div class='span1'>
+				<input type='checkbox' name='texte' id='".$ue['ID_TEXTESAPPL']."' ".( (in_array($ue['ID_TEXTESAPPL'],$this->listeIdTexte))? "checked" : "" )."/>
+			</div>
+			<div class='span11'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
+			<hr class='clear'>
 		</div>
-		<div class='grid_12 alpha'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
-		<hr class='clear'>
 	";
 
 }
@@ -44,25 +46,5 @@ $(document).ready(function() {
 		});
 		
 	});
-	
-	/*
-	$.ajax({
-					type: "POST",
-					url: "/gestion-textes-applicables/save",
-					data: $("#formTexteAppl").serialize(),
-					success: function(msg){
-						//alert(msg);
-						dialogEditTexteAppl.html("");
-						dialogEditTexteAppl.dialog("close");
-						if($("#gestionTextesAppl").length){
-							$("#gestionTextesAppl").click();
-						}else{
-							window.location='/gestion-textes-applicables';
-						}
-						
-					}
-				});
-				*/
-	
 });
 </script>

@@ -26,28 +26,28 @@
             }
 
             return "
-                <li class='divDoc' name='divDoc' id='".$natureId."_".$id.$type."' style='display: block; height: 25px;margin: 15px;'>
-                    <div style='float:left;'>
+                <li class='divDoc row-fluid span15' name='divDoc' id='".$natureId."_".$id.$type."' style='display: block; height: 25px;margin: 15px;'>
+                    <div style='float:left;' class='span1'>
                         <input type='checkbox' ".$styleChecked." ".$etatCheck." name='check_".$natureId."_".$id.$type."' id='check_".$natureId."_".$id.$type."' />
                     </div>
-                    <div class='grid_8 alpha libelle'  style='padding-left:10px;' >
+                    <div class='span4 libelle' >
                         <strong>".nl2br($libelle)."</strong>
                     </div>
-                    <div id='div_input_".$natureId."_".$id.$type."' style='".$styleInput."'>
-                        <div class='grid_3'>
+                    <div id='div_input_".$natureId."_".$id.$type."' class='span7' style='".$styleInput."'>
+                        <div class='span4'>
                             <input type='text' readonly='true' name='ref_".$natureId."_".$id.$type."' id='ref_".$natureId."_".$id.$type."' value=\"".$ref."\" style='width: 100%;' />
                         </div>
-                        <div class='grid_2'>
+                        <div class='span2'>
                             <input type='text' readonly='true' ".$styleDate."  class='date' name='date_".$natureId."_".$id.$type."' id='date_".$natureId."_".$id.$type."' value='".$date."' />
                         </div>
-                        <div class='grid_2 omega'>
+                        <div class='span3'>
                             <span class='modif' id='modif_".$natureId."_".$id.$type."' style='' >
-                                    <button class='editDoc'>Edition</button>
+                                    <button class='editDoc btn'><i class='icon-pencil'></i>&nbsp;</button>
                             </span>
                             <span id='valid_".$natureId."_".$id.$type."' style='".$styleValid."'>
-                                    <button class='validDoc'>Valider</button>
-                                    <button class='cancelDoc'>Annuler</button>
-                                    <button class='deleteDoc' name='".$natureId."_".$id.$type."'>Supprimer</button>
+                                    <button class='validDoc btn'><i class='icon-ok'></i>&nbsp;</button>
+                                    <button class='cancelDoc btn'><i class='icon-remove'></i>&nbsp;</button>
+                                    <button class='deleteDoc btn' name='".$natureId."_".$id.$type."'><i class='icon-trash'></i>&nbsp;</button>
                                 </a>
                             </span>
                         </div>

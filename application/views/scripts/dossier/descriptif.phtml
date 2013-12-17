@@ -15,9 +15,9 @@ echo $this->headScript()->appendFile('/js/dossier/dossierGeneral.js','text/javas
     $action = $this->do;
     echo "  
         <div id='boutons' style='float: right'>
-            <button id='modificationDossier' style='".( ($action == 'new')? "display:none;" : "" )."'>Modifier</button>
-            <button id='annulModification' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Annuler</button>
-            <button id='validModification' class='save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Sauvegarder</button>
+            <button id='modificationDossier' class='btn' style='".( ($action == 'new')? "display:none;" : "" )."'><i class='icon-pencil'></i>&nbsp;Modifier</button>
+            <button id='annulModification' class='btn' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Annuler</button>
+            <button id='validModification' class='save btn btn-success' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'><i class='icon-ok icon-white'></i>&nbsp;Sauvegarder</button>
             <div id='chargement'></div>
     </div>"
  ?>

@@ -1,5 +1,7 @@
 <script type="text/javascript">
+/*
 $(document).ready(function(){
+
 	$(".valid").button({
 		icons: {
 			primary: 'ui-icon-circle-check'
@@ -41,8 +43,9 @@ $(document).ready(function(){
 		},
 		text: false
 	});
-});
 
+});
+*/
 
 $.fn.hideModif = function(idPasCacher) {
 	//alert('pad cacher : '+idPasCacher);
@@ -81,7 +84,7 @@ $.fn.blockCheck = function(idPasCacher) {
 $.fn.activeCheck = function(idPasCacher) {
 	$(".divDocConsulte input:checkbox").each(function(){
 		if($(this).attr('id') != 'check_'+idPasCacher && $(this).attr('checked') == false){
-			$(this).attr('disabled','');
+			$(this).removeAttr('disabled');
 		}
 	});
 }
@@ -103,7 +106,7 @@ $.fn.ajoutDocDialog = function(idNatureDoc) {
 
 			$("#libelleNewDoc").attr('value','');
 			$("#dossier_Pdroite").activeCheck('qsd');
-
+/*
 			$(".validDoc").button({
 				icons: {
 					primary: 'ui-icon-check'
@@ -131,7 +134,7 @@ $.fn.ajoutDocDialog = function(idNatureDoc) {
 				},
 				text: false
 			});
-			
+*/			
 			return false;
 		},
 		error: function(){
@@ -155,8 +158,8 @@ $('.divDocConsulte input:checkbox').live('click',function(){
 	//alert(nom);
 	if($(this).attr('checked'))
 	{
-		$("#ref_"+nom).attr('readonly','');
-		$("#date_"+nom).attr('readonly','');
+		$("#ref_"+nom).removeAttr('readonly');
+		$("#date_"+nom).removeAttr('readonly');
 		$("#modif_"+nom).hide();
 		$("#div_input_"+nom).fadeIn();				
 		$("#tmp").attr('value','new');
@@ -247,11 +250,11 @@ echo "
 foreach($this->listeNatures as $index => $nature){
 
 	echo "
-		<div id='".$nature["ID_NATURE"]."' class='nature'>	
+		<div id='".$nature["ID_NATURE"]."' class='nature row-fluid'>	
 			<h4 class='hideDocConsulte' >Liste des documents consultés concernant la nature '".$nature["LIBELLE_DOSSIERNATURE"]."'</h4>
-			<p class='grid_8 alpha' style='padding-left:20px;'><strong>Libelle</strong></p>
-			<p class='grid_3'><strong>Reférence</strong></p>
-			<p class='grid_2 omega'><strong>Date</strong></p>
+			<p class='span5' style='padding-left:20px;'><strong>Libelle</strong></p>
+			<p class='span2'><strong>Reférence</strong></p>
+			<p class='span2'><strong>Date</strong></p>
 			<br class='clear' />
 			<ul id='listeDocs_".$nature["ID_NATURE"]."'>
 	";
