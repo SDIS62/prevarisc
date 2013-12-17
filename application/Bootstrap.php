@@ -8,9 +8,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     public function run()
     {
         // Chargement et activation des plugins
+        Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_View);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_ACL);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_XmlHttpRequest);
-        Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_View);
         
         // Ajout des aides d'action
         Zend_Controller_Action_HelperBroker::addPath(
@@ -24,7 +24,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     /**
      * Initialisation du cache APC
      */
-	 /*
+     /*
     protected function _initCache()
     {
         // Import des paramètres de connexion à la base de données
@@ -36,6 +36,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         )); 
     }
     */
+    
     /**
      * Initialisation de l'auto-loader
      */

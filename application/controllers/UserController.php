@@ -384,6 +384,7 @@
                 // Modèles de données
                 $model_utilisateurInformations = new Model_DbTable_UtilisateurInformations;
                 $model_utilisateur = new Model_DbTable_Utilisateur;
+                $model_groupe = new Model_DbTable_Groupe;
                 
                 // Identifiants
                 $username = $this->_request->username;
@@ -448,11 +449,13 @@
                 
                 // Stockage de l'utilisateur dans la session
                 $row_utilisateurInformations = $model_utilisateurInformations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
+                $row_groupe = $model_groupe->find( $user->ID_GROUPE )->current();
                 $storage = $auth->getStorage()->write((object) array(
                     "ID_UTILISATEUR" => $user->ID_UTILISATEUR,
                     "NOM_UTILISATEURINFORMATIONS" => $row_utilisateurInformations->NOM_UTILISATEURINFORMATIONS,
                     "PRENOM_UTILISATEURINFORMATIONS" => $row_utilisateurInformations->PRENOM_UTILISATEURINFORMATIONS,
-                    "ID_GROUPE" => $row_utilisateur->ID_GROUPE
+                    "LIBELLE_GROUPE" => $row_groupe->LIBELLE_GROUPE,
+                    "ID_GROUPE" => $row_groupe->ID_GROUPE
                 ));
                 
                 // Redirection 

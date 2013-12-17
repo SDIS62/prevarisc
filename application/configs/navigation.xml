@@ -3,31 +3,122 @@
 	<nav>
 		<admin>
 			<label>Panel d'administration</label>
-			<controller>Admin</controller>
-			<resource></resource> 
-			<privilege></privilege>  
+			<controller>admin</controller>
+			<resource>admin</resource> 
+			<privilege>write</privilege>
 			<pages>
 				<index>
 					<label>Général</label>
 					<controller>admin</controller>
 					<action>index</action>
-					<resource></resource> 
-					<privilege></privilege> 
+                    <privilege>write</privilege>
 				</index>
-				<save>
-					<label>Sauvegarde</label>
-					<controller>admin</controller>
-					<action>save</action>	
-					<resource></resource> 
-					<privilege></privilege> 			
-				</save>		
-				<backup>
-					<label>Back Up</label>
-					<controller>admin</controller>
-					<action>backup</action>
-					<resource></resource> 
-					<privilege></privilege> 
-				</backup>	
+                <users>
+                    <label>Gestion des utilisateurs</label>
+                    <controller>user</controller>
+                    <privilege>write</privilege>
+                    <pages>
+                        <add-group>
+                            <label>Ajouter un groupe</label>
+                            <controller>user</controller>
+                            <action>add-group</action>
+                            <privilege>write</privilege>
+                        </add-group>
+                        <delete-group>
+                            <label>Supprimer un groupe</label>
+                            <controller>user</controller>
+                            <action>delete-group</action>
+                            <privilege>write</privilege>
+                        </delete-group>
+                        <save-group>
+                            <label>Sauvegarder Groupe</label>
+                            <controller>user</controller>
+                            <action>save-group</action>
+                            <privilege>write</privilege>
+                        </save-group>
+                        <get-group>
+                            <controller>user</controller>
+                            <action>get-group</action>
+                            <privilege>write</privilege>
+                        </get-group>
+                        <edit>
+                            <label>Editer un groupe</label>
+                            <controller>user</controller>
+                            <action>edit</action>
+                            <privilege>write</privilege>
+                        </edit>
+                        <add>
+                            <label>Ajouter un utilisateur</label>
+                            <controller>user</controller>
+                            <action>add</action>
+                            <privilege>write</privilege>
+                        </add>
+                        <maire-add>
+                            <label>Ajouter un maire</label>
+                            <controller>user</controller>
+                            <action>maire-add</action>
+                            <privilege>write</privilege>
+                        </maire-add>
+                        <actived-group>
+                            <controller>user</controller>
+                            <action>actived-group</action>
+                            <privilege>write</privilege>
+                        </actived-group>
+                        <actived>
+                            <controller>user</controller>
+                            <action>actived</action>
+                            <privilege>write</privilege>
+                        </actived>
+                        <matrice-des-droits>
+                            <label>Gestion des droits</label>
+                            <controller>matrice-des-droits</controller>
+                            <privilege>write</privilege>
+                            <pages>
+                                <save>
+                                    <controller>matrice-des-droits</controller>
+                                    <action>save</action>
+                                    <privilege>write</privilege>
+                                </save>
+                            </pages>
+                        </matrice-des-droits>
+                    </pages>
+                </users>
+                <couche-cartographique>
+                    <label>Gestion des couches cartographiques</label>
+                    <controller>couche-cartographique</controller>
+                    <privilege>write</privilege>
+                    <pages>
+                        <index>
+                            <label>Couches Cartographiques</label>
+                            <controller>couche-cartographique</controller>
+                            <action>index</action>
+                            <privilege>write</privilege>
+                        </index>
+                        <view>
+                            <controller>couche-cartographique</controller>
+                            <action>view</action>
+                            <privilege>write</privilege>
+                        </view>
+                        <add-cc>
+                            <label>Ajouter Couche Cartographique</label>
+                            <controller>couche-cartographique</controller>
+                            <action>add</action>
+                            <privilege>write</privilege>
+                        </add-cc>
+                        <edit-cc>
+                            <label>Editer Couche Cartographique</label>
+                            <controller>couche-cartographique</controller>
+                            <action>edit</action>
+                            <privilege>write</privilege>
+                        </edit-cc>
+                        <delete-cc>
+                            <label>Suppimer Couche Cartographique</label>
+                            <controller>couche-cartographique</controller>
+                            <action>delete</action>
+                            <privilege>write</privilege>
+                        </delete-cc>
+                    </pages>
+                </couche-cartographique>
 			</pages>	
 		</admin> 
 		<adresse>
@@ -332,48 +423,6 @@
 				</get-contact>
 			</pages>
 		</contact>	
-		<couche-cartographique>
-			<label>Couches cartographiques</label>
-			<controller>couche-cartographique</controller>
-			<resource></resource> 
-			<privilege></privilege>		
-			<pages>
-				<index>
-					<label>Gestions des Couches Cartographiques</label>
-					<controller>couche-cartographique</controller>
-					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
-				</index>
-				<view>
-					<controller>couche-cartographique</controller>
-					<action>view</action>
-					<resource></resource>
-					<privilege></privilege>
-				</view>
-				<add-cc>
-					<label>Ajouter Couche Cartographique</label>
-					<controller>couche-cartographique</controller>
-					<action>add</action>
-					<resource></resource>
-					<privilege></privilege>
-				</add-cc>
-				<edit-cc>
-					<label>Editer Couche Cartographique</label>
-					<controller>couche-cartographique</controller>
-					<action>edit</action>
-					<resource></resource>
-					<privilege></privilege>
-				</edit-cc>
-				<delete-cc>
-					<label>Suppimer Couche Cartographique</label>
-					<controller>couche-cartographique</controller>
-					<action>delete</action>
-					<resource></resource>
-					<privilege></privilege>
-				</delete-cc>
-			</pages>
-		</couche-cartographique>
 		<dossier>
 			<label>Dossiers</label>
 			<controller>dossier</controller>
@@ -714,183 +763,142 @@
 		<gestion-des-commissions>
 			<label>Gestions des Commissions</label>
 			<controller>gestion-des-commssions</controller>
-			<resource></resource> 
-			<privilege></privilege>		
+			<resource>admin</resource> 
+			<privilege>write</privilege>
 			<pages>
 				<index>
 					<controller>gestiondescommissions</controller>
 					<action>gestion-des-commissions</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 				<form>
 					<controller>gestiondescommissions</controller>
 					<action>gestion-des-commissions</action>
-					<resource></resource>
-					<privilege></privilege>
 				</form>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>gestion-des-commissions</controller>
 					<action>save</action>
-					<resource></resource>
-					<privilege></privilege>
+
 				</save>
 				<get-commissions>
 					<controller>gestion-des-commissions</controller>
 					<action>get-commissions</action>
-					<resource></resource>
-					<privilege></privilege>
 				</get-commissions>
 				<add-commissions>
 					<label>Ajouter Commissions</label>
 					<controller>gestion-des-commissions</controller>
 					<action>add-commissions</action>
-					<resource></resource>
-					<privilege></privilege>
 				</add-commissions>
 			</pages>
 		</gestion-des-commissions>
 		<gestion-des-communes>
 			<label>Gestions des Communes</label>
 			<controller>gestion-des-communes</controller>
-			<resource></resource> 
-			<privilege></privilege>		
+			<resource>admin</resource> 
+			<privilege>write</privilege>
 			<pages>
 				<index>
 					<label>Gestion des communes</label>
 					<controller>gestion-des-communes</controller>
 					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 				<display>
 					<controller>gestion-des-communes</controller>
 					<action>display</action>
-					<resource></resource>
-					<privilege></privilege>
 				</display>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>gestion-des-communes</controller>
 					<action>save</action>
-					<resource></resource>
-					<privilege></privilege>
 				</save>		
 			</pages>
 		</gestion-des-communes>	
 		<gestion-des-documents>
 			<label>Gestion des Documents</label>
 			<controller>gestion-des-documents</controller>
-			<resource></resource>
-			<privilege></privilege>
+			<resource>admin</resource> 
+			<privilege>write</privilege>
 			<pages>
 				<index>
 					<label>Gestion des documents</label>
 					<controller>gestion-des-documents</controller>
 					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 				<form>
 					<controller>gestion-des-documents</controller>
 					<action>form</action>
-					<resource></resource>
-					<privilege></privilege>
 				</form>
 				<add>
 					<controller>gestion-des-documents</controller>
 					<action>add</action>
-					<resource></resource>
-					<privilege></privilege>
 				</add>
 				<check>
 					<controller>gestion-des-documents</controller>
 					<action>check</action>
-					<resource></resource>
-					<privilege></privilege>
 				</check>
 				<suppdoc>
 					<controller>gestion-des-documents</controller>
 					<action>suppdoc</action>
-					<resource></resource>
-					<privilege></privilege>
 				</suppdoc>		
 			</pages>
 		</gestion-des-documents>
 		<gestion-prescriptions-type>
 			<label>Gestion des Prescriptions Type</label>
 			<controller>gestion-prescriptions-type</controller>
-			<resource></resource>
-			<privilege></privilege>
+			<resource>admin</resource> 
+			<privilege>write</privilege>
 			<pages>
 				<index>
 					<label>Gestion des Prescriptions Type</label>
 					<controller>gestion-prescriptions-type</controller>
 					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 				<showprescription>
 					<label>Voir prescription</label>
 					<controller>gestion-prescriptions-type</controller>
 					<action>showprescription</action>
-					<resource></resource>
-					<privilege></privilege>
 				</showprescription>
 				<formpresctype>
 					<controller>gestion-prescriptions-type</controller>
 					<action>formpresctype</action>
-					<resource></resource>
-					<privilege></privilege>
 				</formpresctype>
 				<save>
 					<controller>gestion-prescriptions-type</controller>
 					<action>save</action>
-					<resource></resource>
-					<privilege></privilege>
 				</save>
 				<delete>
 					<controller>gestion-prescriptions-type</controller>
 					<action>delete</action>
-					<resource></resource>
-					<privilege></privilege>
 				</delete>		
 			</pages>
 		</gestion-prescriptions-type>
 		<gestion-textes-applicables>
 			<label>Gestion des Textes Applicables</label>
 			<controller>gestion-textes-applicables</controller>
-			<resource></resource>
-			<privilege></privilege>
+			<resource>admin</resource> 
+			<privilege>write</privilege>
 			<pages>
 				<index>
 					<label>Gestion des Textes Applicables</label>
 					<controller>gestion-textes-applicables</controller>
 					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 				<formtexteappl>
 					<controller>gestion-textes-applicables</controller>
 					<action>formtexteappl</action>
-					<resource></resource>
-					<privilege></privilege>
 				</formtexteappl>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>gestion-textes-applicables</controller>
 					<action>save</action>
-					<resource></resource>
-					<privilege></privilege>
 				</save>
 			</pages>
 		</gestion-textes-applicables>
 		<groupement>
 			<label>Groupements</label>
 			<controller>groupement</controller>
-			<resource></resource>
-			<privilege></privilege>
+			<resource>admin</resource> 
+			<privilege>write</privilege>
 			<pages>
 				<index>
 					<label>Gestion des groupements</label>
@@ -940,85 +948,12 @@
 		<index>
 			<label>Page d'accueil</label>
 			<controller>index</controller>
-			<resource></resource>
-			<privilege></privilege>
-			<pages>
-				<help>
-					<label>Aide</label>
-					<controller>index</controller>
-					<action>help</action>
-					<resource></resource>
-					<privilege></privilege>
-				</help>
-				<rappels>
-					<controller>index</controller>
-					<action>rappels</action>
-					<resource></resource>
-					<privilege></privilege>
-				</rappels>
-			</pages>
-		</index>
-		<matrice-des-droits>
-			<label>Matrice des droits</label>
-			<controller>matrice-des-droits</controller>
-			<resource></resource>
-			<privilege></privilege>
-			<pages>
-				<save>
-					<controller>matrice-des-droits</controller>
-					<action>save</action>
-					<resource></resource>
-					<privilege></privilege>
-				</save>
-			</pages>
-		</matrice-des-droits>		
-		<news>
-			<label>News</label>
-			<controller>news</controller>
-			<resource></resource>
-			<privilege></privilege>
-			<pages>
-				<index>
-					<label>Gestion des News</label>
-					<controller>news</controller>
-					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
-				</index>
-				<next>
-					<label>Suivante</label>
-					<controller>news</controller>
-					<action>next</action>
-					<resource></resource>
-					<privilege></privilege>
-				</next>
-				<get>
-					<controller>news</controller>
-					<action>get</action>
-					<resource></resource>
-					<privilege></privilege>
-				</get>
-				<add>
-					<label>Ajouter News</label>
-					<controller>news</controller>
-					<action>add</action>
-					<resource></resource>
-					<privilege></privilege>
-				</add>
-				<delete>
-					<label>Supprimer News</label>
-					<controller>news</controller>
-					<action>delete</action>
-					<resource></resource>
-					<privilege></privilege>
-				</delete>
-			</pages>
-		</news>
+		</index>	
 		<periodicite>
 			<label>Periodicite</label>
 			<controller>periodicite</controller>
-			<resources></resources>
-			<privilege></privilege>
+			<resource>admin</resource> 
+			<privilege>write</privilege>
 			<pages>
 				<index>
 					<label>Gestion des Periodicité</label>
@@ -1079,56 +1014,40 @@
 		<proxy>
 			<label>Proxy</label>
 			<controller>proxy</controller>
-			<resource></resource>
-			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Gestion du proxy</label>
 					<controller>proxy</controller>
 					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 			</pages>
 		</proxy>
 		<search>
 			<label>Recherche</label>
 			<controller>search</controller>
-			<resource></resource>
-			<privilege></privilege>
 			<pages>
 				<etablissement>
                     <label>Établissements</label>
 					<controller>search</controller>
 					<action>etablissement</action>
-					<resource></resource>
-					<privilege></privilege>
 				</etablissement>
 				<dossier>
                     <label>Dossiers</label>
 					<controller>search</controller>
 					<action>dossier</action>
-					<resource></resource>
-					<privilege></privilege>
 				</dossier>
 				<utilisateur>
                     <label>Utilisateurs</label>
 					<controller>search</controller>
 					<action>utilisateur</action>
-					<resource></resource>
-					<privilege></privilege>
 				</utilisateur>
 				<searchChild>
 					<controller>search</controller>
 					<action>search-child</action>
-					<resource></resource>
-					<privilege></privilege>
 				</searchChild>
 				<run>
 					<controller>search</controller>
 					<action>run</action>
-					<resource></resource>
-					<privilege></privilege>
 				</run>
 			</pages>
 		</search>
@@ -1167,45 +1086,11 @@
 			</pages>
 		</statistiques>
 		<user>
-			<label>Utilisateur</label>
-			<controller>user</controller>
-			<resource></resource>
-			<privilege></privilege>
-			<pages>
-				<add-group>
-					<label>Ajouter un groupe</label>
-					<controller>user</controller>
-					<action>add-group</action>
-					<resource></resource>
-					<privilege></privilege>
-				</add-group>
-				<delete-group>
-					<label>Supprimer un groupe</label>
-					<controller>user</controller>
-					<action>delete-group</action>
-					<resource></resource>
-					<privilege></privilege>
-				</delete-group>
-				<save-group>
-					<label>Sauvegarder Groupe</label>
-					<controller>user</controller>
-					<action>save-group</action>
-					<resource></resource>
-					<privilege></privilege>
-				</save-group>
-				<get-group>
-					<controller>user</controller>
-					<action>get-group</action>
-					<resource></resource>
-					<privilege></privilege>
-				</get-group>
-				<edit>
-					<label>Editer un groupe</label>
-					<controller>user</controller>
-					<action>edit</action>
-					<resource></resource>
-					<privilege></privilege>
-				</edit>
+            <label>Utilisateur</label>
+            <controller>user</controller>
+            <resource></resource>
+            <privilege></privilege>
+            <pages>
 				<edit-me>
 					<controller>user</controller>
 					<action>edit-me</action>
@@ -1219,44 +1104,12 @@
 					<resource></resource>
 					<privilege></privilege>		
 				</edit-avatar>
-				<add>
-					<label>Ajouter un utilisateur</label>
-					<controller>user</controller>
-					<action>add</action>
-					<resource></resource>
-					<privilege></privilege>
-				</add>
-				<maire-add>
-					<label>Ajouter un maire</label>
-					<controller>user</controller>
-					<action>maire-add</action>
-					<resource></resource>
-					<privilege></privilege>
-				</maire-add>
 				<process>
 					<controller>user</controller>
 					<action>process</action>
 					<resource></resource>
 					<privilege></privilege>
 				</process>
-				<actived-group>
-					<controller>user</controller>
-					<action>actived-group</action>
-					<resource></resource>
-					<privilege></privilege>
-				</actived-group>
-				<actived>
-					<controller>user</controller>
-					<action>actived</action>
-					<resource></resource>
-					<privilege></privilege>
-				</actived>
-				<is-active>
-					<controller>user</controller>
-					<action>is-active</action>
-					<resource></resource>
-					<privilege></privilege>
-				</is-active>
 				<profile>
                     <label>Profil</label>
 					<controller>user</controller>

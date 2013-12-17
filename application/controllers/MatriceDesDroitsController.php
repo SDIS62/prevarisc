@@ -6,81 +6,60 @@
         {
             $this->_helper->layout->setLayout("menu_left");
             
-            // Modèles
+            // ModÃ¨les
             $model_groupes = new Model_DbTable_Groupe;
-            $model_genres = new Model_DbTable_Genre;
-            $model_types = new Model_DbTable_Type;
-            $model_natures = new Model_DbTable_DossierNatureliste;
+            $model_resource = new Model_DbTable_Resource;
+            $model_groupes_privilege = new Model_DbTable_GroupePrivilege;
 
-            // On envoit les données sur la vue
-            $this->view->rowset_groupes = $model_groupes->myFetchAll();
-            $this->view->rowset_genres = $model_genres->fetchAll();
-            $this->view->rowset_types = $model_types->fetchAll();
-            $this->view->rowset_natures = $model_natures->fetchAll();
+            // On envoit les donnÃ©es sur la vue
+            $this->view->rowset_groupes = $model_groupes->fetchAll();
+            $this->view->rowset_resources = $model_resource->fetchAll();
+            $this->view->rowset_groupes_privilege = $model_groupes_privilege->fetchAll()->toArray();
         }
 
         public function saveAction()
         {
-            $this->getHelper('viewRenderer')->setNoRender();
-
-            // Modèles
-            $model_groupegenres = new Model_DbTable_GroupeGenre;
-            $model_groupenatures = new Model_DbTable_GroupeNature;
-            $model_groupetypes = new Model_DbTable_GroupeType;
-            $model_groupes = new Model_DbTable_Groupe;
-
-            // Correspondances des porteuses
-            $correspondances = array(
-                "ID_GENRE" => array("model" => $model_groupegenres),
-                "ID_TYPE" => array("model" => $model_groupetypes),
-                "ID_DOSSIERNATURE" => array("model" => $model_groupenatures)
-            );
-
-            foreach ($this->_request->droits as $id_groupe => $droits) {
-
-                // On cherche le groupe correspondant
-                $row_groupe = $model_groupes->find($id_groupe)->current();
-
-                // On supprime les checkbox
-                $row_groupe->DROITADMINSYS_GROUPE = 0;
-                $row_groupe->DROITADMINPREV_GROUPE = 0;
-                $row_groupe->DROITADMINCOMMISSION_GROUPE = 0;
-                $row_groupe->DROITFILACTU_GROUPE = 0;
-                $row_groupe->DROITDOSSCREATION_GROUPE= 0;
-                $row_groupe->DROITETSCREATION_GROUPE = 0;
-
-                // Données dans la table groupe
-                $row_groupe->setFromArray(array_intersect_key($droits, $model_groupes->info('metadata')))->save();
-
-                // On supprime ce qu'il se trouve dans les porteuses
-                $model_groupegenres->delete("ID_GROUPE = " .  $id_groupe);
-                $model_groupenatures->delete("ID_GROUPE = " .  $id_groupe);
-                $model_groupetypes->delete("ID_GROUPE = " .  $id_groupe);
-
-                // Tables dépendantes
-                foreach ($correspondances as $key => $porteuse) {
-
-                    if (isset($droits[$key])) {
-
-                        foreach ($droits[$key] as $primary => $data) {
-
-                            if ($data != null) {
-
-                                $row = $porteuse["model"]->createRow();
-                                $row->ID_GROUPE = $id_groupe;
-                                $row->$key = $primary;
-                                
-                                if (is_array($data)) {
-                                    // Zend_Debug::Dump(array_intersect_key($data, $porteuse["model"]->info('metadata')));
-                                    $row->setFromArray(array_intersect_key($data, $porteuse["model"]->info('metadata')))->save();
-                                }
-
-                                
-                                $row->save();
-                            }
+            try
+            {
+                $model_groupes_privilege = new Model_DbTable_GroupePrivilege;
+                
+                foreach($this->_request->getParam('groupe') as $id_groupe => $privileges)
+                { 
+                    foreach($privileges as $id_privilege => $value_privilege)
+                    {
+                        $groupe_privilege_exists = $model_groupes_privilege->find($id_groupe, $id_privilege)->current() !== null;
+                        
+                        if($value_privilege == 1 && !$groupe_privilege_exists)
+                        {
+                            $row_groupe_priv = $model_groupes_privilege->createRow();
+                            $row_groupe_priv->ID_GROUPE = $id_groupe;
+                            $row_groupe_priv->id_privilege = $id_privilege;
+                            $row_groupe_priv->save();
+                        }
+                        
+                        if($value_privilege == 0 && $groupe_privilege_exists)
+                        {
+                            $model_groupes_privilege->delete('ID_GROUPE = ' . $id_groupe . ' AND id_privilege = ' . $id_privilege);
                         }
                     }
                 }
+                
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Mise Ã  jour rÃ©ussie !',
+                    'message' => 'La matrice des droits a bien Ã©tÃ© mise Ã  jour.'
+                ));
             }
+            catch(Exception $e)
+            {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie',
+                    'message' => $e->getMessage()
+                ));
+            }
+            
+            // Redirection
+            $this->_helper->redirector('index');
         }
     }

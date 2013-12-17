@@ -5,38 +5,38 @@
 
 <?php echo $this->partial('menu_admin_user.phtml') ?>
 
-<?php foreach($this->rowset_groupes as $groupe) : ?>
+<form method='post' action='/matrice-des-droits/save'>
 
-<h3><?php echo $groupe->LIBELLE_GROUPE ?></h3>
+    <?php foreach($this->rowset_groupes as $groupe) : ?>
 
-<table class="table" >
-    <thead>
-        <tr>
-            <th>Ressources</th>
-            <th>Privilèges / Droits</th>
-        </tr>
-    </thead>
-    
-    <tbody>
+    <h3><?php echo $groupe->LIBELLE_GROUPE ?></h3>
 
-        <!-- Ressources correspondants aux établissements -->
-        <?php foreach($this->rowset_genres as $genre) : ?>
-        <tr>
-            <td><?php echo $genre->LIBELLE_GENRE ?></td>
-            <td>
-                
-            </td>
-        <tr>
-        <?php endforeach ?>
+    <table class="table table-condensed" >
+        <thead>
+            <tr>
+                <th>Ressources</th>
+                <th>Privilèges</th>
+            </tr>
+        </thead>
         
-        <!-- Droit d'admnistration -->
-        <tr>
-            <td>Droits supplémentaires</td>
-            <td>
-                <input type="checkbox" value="1" name="" /> Droit de création ?
-            </td>
-        <tr>
-    </tbody>
-</table>
+        <tbody>
 
-<?php endforeach ?>
+            <?php foreach($this->rowset_resources as $resource) : ?>
+            <tr>
+                <td><?php echo $resource->name ?></td>
+                <td>
+                <?php foreach($resource->findModel_DbTable_Privilege()->toArray() as $privilege) : ?>
+                <?php echo $this->partial('matrice-des-droits/partial_droit.phtml', array('text' => $privilege['name'], 'name' => 'groupe[' . $groupe->ID_GROUPE . '][' . $privilege['id_privilege'] . ']', 'value' => (int) in_array(array('ID_GROUPE' => (string) $groupe->ID_GROUPE, 'id_privilege' => (string) $privilege['id_privilege']), $this->rowset_groupes_privilege))) ?>
+                <?php endforeach ?>
+                </td>
+            <tr>
+            <?php endforeach ?>
+            
+        </tbody>
+    </table>
+
+    <?php endforeach ?>
+    
+    <input type='submit' value='Sauvegarder' class='btn btn-success' />
+    
+</form>
