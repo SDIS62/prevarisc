@@ -1,17 +1,18 @@
 <?php if(count($this->rowset_commissions) == 0) : ?>
 
-<p class='grid_16 alpha' style="text-align: center" ><strong>Aucun résultat.</strong></p>
+<p style="text-align: center" ><strong>Aucun résultat.</strong></p>
 
 <?php else : ?>
 
 <div id="accordion">
 
 	<?php foreach($this->rowset_commissions as $row_commission) : ?>
+    
 	<h3>
 		<a href="#"><?php echo $row_commission["LIBELLE_COMMISSION"] ?></a>
 	</h3>
 	
-	<div id="<?php echo $row_commission["ID_COMMISSION"] ?>_tabs">
+	<div id="<?php echo $row_commission["ID_COMMISSION"] ?>_tabs" style='height: 500px;'>
 		<ul>
 			<li><a href="/commission/competences?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Champ de compétence de la commission</span></a></li>
 			<li><a href="/commission/membres?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Membres de la commission</span></a></li>
@@ -21,7 +22,7 @@
 	</div>
 	
 	<script type="text/javascript">
-		$("#<?php echo $row_commission["ID_COMMISSION"] ?>_tabs").tabs("destroy").tabs({load: function(event, ui) { init_checkboxes(<?php echo $row_commission["ID_COMMISSION"] ?>); }});
+		$("#<?php echo $row_commission["ID_COMMISSION"] ?>_tabs").tabs({history: true, load: function(event, ui) { init_checkboxes(<?php echo $row_commission["ID_COMMISSION"] ?>); }});
 	</script>
 	
 	<?php endforeach ?>
