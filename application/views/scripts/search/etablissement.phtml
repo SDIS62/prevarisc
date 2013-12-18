@@ -123,25 +123,7 @@
 	$("#libelle").toggleText("Libellé de l'établissement");
 	$("#commune").toggleText("Commune");
 	$("#rue").toggleText("Rue");
-	
-	$("input[name='par']").click(function() {
-	
-		if($(this).val() == "niveau") {
-		
-			$("#par-genre").hide();
-			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("disable");
-			$("#commune").val("Commune");
-			$("#extra").hide();
-		}
-		else {
-		
-			$("#par-genre").show();
-			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("enable");
-		}
-	});
 
-	$("input[name='par'][value='niveau']").click();
-	
 	$("#commune").autocomplete("/adresse/get?format=json", {
 		minChars: 3,
 		max: 100,
@@ -160,7 +142,7 @@
 	}).result(function(e, item) {
 		// window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
         $("#insee").val(item.NUMINSEE_COMMUNE);
-        $("#rue").val("").attr("disabled", "");
+        $("#rue").val("").removeAttr("disabled");
 		$("#rue_id").val("");
 	}).click(function() {
         $(this).val("");
@@ -331,5 +313,23 @@
 	});
 	
 	// $("#type").multiselect("disable");
+    
+    $("input[name='par']").click(function() {
+	
+		if($(this).val() == "niveau") {
+		
+			$("#par-genre").hide();
+			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("disable");
+			$("#commune").val("Commune");
+			$("#extra").hide();
+		}
+		else {
+		
+			$("#par-genre").show();
+			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("enable");
+		}
+	});
+
+	$("input[name='par'][value='niveau']").click();
 	
 </script>
