@@ -229,6 +229,41 @@
 					<action>changementordre</action>
 					<privilege>modification_odj</privilege>
 				</changementordre>
+                <piece-jointe>
+                    <label>Piece Jointe</label>
+                    <controller>piece-jointe</controller>
+                    <params><type>dateCommission</type></params>
+                    <privilege>modification_odj</privilege>
+                    <pages>
+                        <index>
+                            <label>Gestion des Piece Jointe</label>
+                            <controller>piece-jointe</controller>
+                            <action>index</action>
+                            <privilege>modification_odj</privilege>
+                        </index>
+                        <form>
+                            <controller>piece-jointe</controller>
+                            <action>form</action>
+                            <privilege>modification_odj</privilege>
+                        </form>
+                        <add>
+                            <controller>piece-jointe</controller>
+                            <action>add</action>
+                            <privilege>modification_odj</privilege>
+                        </add>
+                        <delete>
+                            <controller>piece-jointe</controller>
+                            <action>delete</action>
+                            <privilege>modification_odj</privilege>
+                        </delete>
+                        <check>
+                            <label>Verifier</label>
+                            <controller>piece-jointe</controller>
+                            <action>check</action>
+                            <privilege>modification_odj</privilege>
+                        </check>
+                    </pages>
+                </piece-jointe>
 			</pages>
 		</calendrier-des-commissions>
 		<commission>
@@ -368,224 +403,154 @@
 		</commission>
 		<dossier>
 			<label>Dossiers</label>
-			<controller>dossier</controller>
-			<resource></resource> 
-			<privilege></privilege>		
+			<controller>dossier</controller>	
 			<pages>
 				<index>
 					<controller>Gestion des dossier</controller>
 					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 				<piece-jointe>
 					<label>Gestion des pieces jointes</label>
 					<controller>dossier</controller>
 					<action>piece-jointe</action>
-					<resource></resource>
-					<privilege></privilege>
 				</piece-jointe>
 				<add>
 					<label>Ajouter une piece jointe</label>
 					<controller>dossier</controller>
 					<action>add</action>
-					<resource></resource>
-					<privilege></privilege>
 				</add>
 				<general>
 					<controller>dossier</controller>
 					<action>general</action>
-					<resource></resource>
-					<privilege></privilege>
 				</general>
 				<fonction>
 					<label>Fonction</label>
 					<controller>dossier</controller>
 					<action>fonction</action>
-					<resource></resource>
-					<privilege></privilege>
 				</fonction>
 				<save-pj>
 					<controller>dossier</controller>
 					<action>save</action>
-					<resource></resource>
-					<privilege></privilege>
 				</save-pj>
 				<prescription>
 					<controller>dossier</controller>
 					<action>prescription</action>
-					<resource></resource>
-					<privilege></privilege>
 				</prescription>
 				<prescriptionloadajax>
 					<controller>dossier</controller>
 					<action>prescriptionloadajax</action>
-					<resource></resource>
-					<privilege></privilege>
 				</prescriptionloadajax>
 				<showprescription>
 					<label>Voir prescription</label>
 					<controller>dossier</controller>
 					<action>showprescription</action>
-					<resource></resource>
-					<privilege></privilege>
 				</showprescription>
 				<editprescription>
 					<label>Editer Prescription</label>
 					<controller>dossier</controller>
 					<action>editprescription</action>
-					<resource></resource>
-					<privilege></privilege>
 				</editprescription>
 				<editprescriptiontexte>
 					<controller>dossier</controller>
 					<action>editprescriptiontexte</action>
-					<resource></resource>
-					<privilege></privilege>
 				</editprescriptiontexte>
 				<editprescriptionarticle>
 					<controller>dossier</controller>
 					<action>editprescriptionarticle</action>
-					<resource></resource>
-					<privilege></privilege>
 				</editprescriptionarticle>
 				<editprescriptionvalidation>
 					<controller>dossier</controller>
 					<action>editprescriptionvalidation</action>
-					<resource></resource>
-					<privilege></privilege>
 				</editprescriptionvalidation>
 				<selectiontexte>
 					<controller>dossier</controller>
 					<action>selectiontexte</action>
-					<resource></resource>
-					<privilege></privilege>
 				</selectiontexte>
 				<selectionarticle>
 					<controller>dossier</controller>
 					<action>selectiontexte</action>
-					<resource></resource>
-					<privilege></privilege>
 				</selectionarticle>
 				<selectionabreviation>
 					<controller>dossier</controller>
 					<action>selectionabreviation</action>
-					<resource></resource>
-					<privilege></privilege>
 				</selectionabreviation>
 				<selectionetab>
 					<controller>dossier</controller>
 					<action>selectionetab</action>
-					<resource></resource>
-					<privilege></privilege>
 				</selectionetab>
 				<liees>
 					<controller>dossier</controller>
 					<action>liees</action>
-					<resource></resource>
-					<privilege></privilege>
 				</liees>
 				<contact>
 					<controller>dossier</controller>
 					<action>contact</action>
-					<resource></resource>
-					<privilege></privilege>
 				</contact>
 				<docconsulte>
 					<label>Consulter Doc</label>
 					<controller>dossier</controller>
 					<action>docconsulte</action>
-					<resource></resource>
-					<privilege></privilege>
 				</docconsulte>
 				<ajoutdoc>
 					<label>Ajouter Doc</label>
 					<controller>dossier</controller>
 					<action>ajoutdoc</action>
-					<resource></resource>
-					<privilege></privilege>
 				</ajoutdoc>
 				<validdoc>
 					<controller>dossier</controller>
 					<action>validdoc</action>
-					<resource></resource>
-					<privilege></privilege>
 				</validdoc>
 				<addetablissement>
 					<label>Ajouter Etablissement</label>
 					<controller>dossier</controller>
 					<action>addetablissement</action>
-					<resource></resource>
-					<privilege></privilege>
 				</addetablissement>
 				<deleteetablissement>
 					<label>Supprimer Etablissement</label>
 					<controller>dossier</controller>
 					<action>deleteetablissement</action>
-					<resource></resource>
-					<privilege></privilege>
 				</deleteetablissement>
 				<deleteliendossier>
 					<controller>dossier</controller>
 					<action>deleteliendossier</action>
-					<resource></resource>
-					<privilege></privilege>
 				</deleteliendossier>
 				<dialogcommshow>
 					<controller>dossier</controller>
 					<action>dialogcommshow</action>
-					<resource></resource>
-					<privilege></privilege>
 				</dialogcommshow>
 				<affectationodj>
 					<label>Affectation ordre du jour</label>
 					<controller>dossier</controller>
 					<action>affectationodj</action>
-					<resource></resource>
-					<privilege></privilege>
 				</affectationodj>
 				<descriptifs>
 					<controller>dossier</controller>
 					<action>descriptifs</action>
-					<resource></resource>
-					<privilege></privilege>
 				</descriptifs>
 				<dialoggenrapport>
 					<controller>dossier</controller>
 					<action>dialoggenrapport</action>
-					<resource></resource>
-					<privilege></privilege>
 				</dialoggenrapport>
 				<generationrapport>
 					<controller>dossier</controller>
 					<action>generationrapport</action>
-					<resource></resource>
-					<privilege></privilege>
 				</generationrapport>
 				<creationdoc>
 					<controller>dossier</controller>
 					<action>creationdoc</action>
-					<resource></resource>
-					<privilege></privilege>
 				</creationdoc>
 				<generationconvoc>
 					<label>Generation Convocation</label>
 					<controller>dossier</controller>
 					<action>generationconvoc</action>
-					<resource></resource>
-					<privilege></privilege>
 				</generationconvoc>
 				<descriptif>
 					<controller>dossier</controller>
 					<action>descriptif</action>
-					<resource></resource>
-					<privilege></privilege>
 				</descriptif>
 				<textesapplicables>
 					<controller>dossier</controller>
 					<action>textesapplicables</action>
-					<resource></resource>
-					<privilege></privilege>
 				</textesapplicables>
 			</pages>
 		</dossier>
@@ -605,95 +570,67 @@
 		</error>
 		<etablissement>
 			<label>Etablissements</label>
-			<controller>etablissement</controller>
-			<resource></resource> 
-			<privilege></privilege>		
+			<controller>etablissement</controller>	
 			<pages>
 				<index>
 					<label>Gestions des Etablissements</label>
 					<controller>etablissement</controller>
 					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 				<carte>
 					<controller>etablissement</controller>
 					<action>carte</action>
-					<resource></resource>
-					<privilege></privilege>
 				</carte>
 				<descriptif>
 					<label>Carte</label>
 					<controller>etablissement</controller>
 					<action>descriptif</action>
-					<resource></resource>
-					<privilege></privilege>
 				</descriptif>
 				<textesapplicables>
 					<controller>etablissement</controller>
 					<action>textesapplicables</action>
-					<resource></resource>
-					<privilege></privilege>
 				</textesapplicables>
 				<piece-jointes>
 					<label>Piece Jointe</label>
 					<controller>etablissement</controller>
 					<action>piece-jointes</action>
-					<resource></resource>
-					<privilege></privilege>
 				</piece-jointes>
 				<contacts>
 					<label>Contacts</label>
 					<controller>etablissement</controller>
 					<action>contacts</action>
-					<resource></resource>
-					<privilege></privilege>
 				</contacts>
 				<dossiers>
 					<label>Dossiers</label>
 					<controller>etablissement</controller>
 					<action>dossier</action>
-					<resource></resource>
-					<privilege></privilege>
 				</dossiers>
 				<historique>
 					<label>Historique</label>
 					<controller>etablissement</controller>
 					<action>historique</action>
-					<resource></resource>
-					<privilege></privilege>
 				</historique>
 				<add>
 					<label>Ajouter</label>
 					<controller>etablissement</controller>
 					<action>add</action>
-					<resource></resource>
-					<privilege></privilege>
 				</add>
 				<fiche-existe>
 					<controller>etablissement</controller>
 					<action>fiche-existe</action>
-					<resource></resource>
-					<privilege></privilege>
 				</fiche-existe>
 				<save>
 					<label>Sauvegarde</label>
 					<controller>etablissement</controller>
 					<action>save</action>
-					<resource></resource>
-					<privilege></privilege>
 				</save>		
 				<get>
 					<controller>etablissement</controller>
 					<action>get</action>
-					<resource></resource>
-					<privilege></privilege>
 				</get>
 				<get-default-values>
 					<controller>etablissement</controller>
 					<action>get-default-values</action>
-					<resources></resources>
-					<privilege></privilege>
 				</get-default-values>		
 			</pages>
 		</etablissement>
@@ -984,46 +921,6 @@
 				</save>
 			</pages>
 		</periodicite>
-		<piece-jointe>
-			<label>Piece Jointe</label>
-			<controller>piece-jointe</controller>
-			<resource></resource>
-			<privilege></privilege>
-			<pages>
-				<index>
-					<label>Gestion des Piece Jointe</label>
-					<controller>piece-jointe</controller>
-					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
-				</index>
-				<form>
-					<controller>piece-jointe</controller>
-					<action>form</action>
-					<resource></resource>
-					<privilege></privilege>
-				</form>
-				<add>
-					<controller>piece-jointe</controller>
-					<action>add</action>
-					<resource></resource>
-					<privilege></privilege>
-				</add>
-				<delete>
-					<controller>piece-jointe</controller>
-					<action>delete</action>
-					<resource></resource>
-					<privilege></privilege>
-				</delete>
-				<check>
-					<label>Verifier</label>
-					<controller>piece-jointe</controller>
-					<action>check</action>
-					<resource></resource>
-					<privilege></privilege>
-				</check>
-			</pages>
-		</piece-jointe>
 		<proxy>
 			<label>Proxy</label>
 			<controller>proxy</controller>
@@ -1102,6 +999,10 @@
             <label>Utilisateur</label>
             <controller>user</controller>
             <pages>
+                <edit>
+					<controller>user</controller>
+					<action>edit</action>
+				</edit>
 				<edit-me>
 					<controller>user</controller>
 					<action>edit-me</action>

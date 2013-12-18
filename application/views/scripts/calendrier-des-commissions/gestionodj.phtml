@@ -213,12 +213,7 @@ $(document).ready(function() {
 	});	
 	
 
-	$("#commissionPj").button({
-		icons: {
-			primary: 'ui-icon-folder-open'
-		},
-		text: true
-	}).click(function(){
+	$("#commissionPj").click(function(){
 		$.ajax({
 			type: "POST",
 			url: "/piece-jointe?type=dateCommission&id="+$("#dateCommId").val(),
@@ -230,12 +225,7 @@ $(document).ready(function() {
 	
 	});
 	
-	$("#createConvoc").button({
-		icons: {
-			primary: 'ui-icon-clipboard'
-		},
-		text: true
-	}).click(function(){
+	$("#createConvoc").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
 				url: "/dossier/generationconvoc",
@@ -257,12 +247,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("#createOdj").button({
-		icons: {
-			primary: 'ui-icon-clipboard'
-		},
-		text: true
-	}).click(function(){
+	$("#createOdj").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
 				url: "/dossier/generationodj",
@@ -284,12 +269,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	$(".heures").button({
-		icons: {
-			primary: 'ui-icon-clock'
-		},
-		text: true
-	}).click(function(){
+	$(".heures").click(function(){
 		var gestionHeures = $(this).attr('id');
 		$.ajax({
 			url: "/calendrier-des-commissions/gestionheures",
@@ -357,9 +337,9 @@ $(document).ready(function() {
 			<h3>".$this->infosDateComm['LIBELLE_DATECOMMISSION']."</h3>";
 				
 			if($this->infosDateComm['GESTION_HEURES'] == 1){
-				echo "<button class='heures' id='non' >Ne pas prendre en compte les heures</button>";
+				echo "<button class='heures btn' id='non'  >Ne pas prendre en compte les heures</button>";
 			}else{
-				echo "<button class='heures' id='oui' >Prendre en compte les heures</button>";
+				echo "<button class='heures btn' id='oui'  >Prendre en compte les heures</button>";
 			}
 	echo "	
 			<br/>
@@ -394,11 +374,11 @@ $(document).ready(function() {
 	}
 	
 	echo "
-			<button id='commissionPj' >Pièces jointes</button>
+			<button id='commissionPj' class='btn' >Pièces jointes</button>
 			&nbsp;
-			<button id='createConvoc' >Générer Convocations</button>
+			<button id='createConvoc' class='btn' >Générer Convocations</button>
 			&nbsp;
-			<button id='createOdj' >Génerer l'ordre du jour</button>
+			<button id='createOdj' class='btn' >Génerer l'ordre du jour</button>
 			<br/><br/><br/>
 			<div id='infoGeneration'></div>
 			<br/>
