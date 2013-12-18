@@ -5,10 +5,10 @@
 		<input type='hidden' name='ID_COMMISSIONMEMBRE[]' value='<?php echo $this->id_membre ?>' />
 		
 		<!-- Libellé du membre-->
-		<input type='text' name='<?php echo $this->id_membre ?>_LIBELLE_COMMISSIONMEMBRE' value='<?php echo $this->libelle ?>' style="width: 100%" />
+		<input type='text' name='<?php echo $this->id_membre ?>_LIBELLE_COMMISSIONMEMBRE' value='<?php echo $this->libelle ?>' />
 		
 		<!-- Obligatoire / facultatif / pour information -->
-		<select name='<?php echo $this->id_membre ?>_PRESENCE_COMMISSIONMEMBRE' style="width: 100%" >
+		<select name='<?php echo $this->id_membre ?>_PRESENCE_COMMISSIONMEMBRE' >
 			<option value='0' >Membre Obligatoire</option>
 			<option value='1' <?php if($this->presence == 1) echo "selected" ?>>Membre Facultatif</option>
 			<option value='2' <?php if($this->presence == 2) echo "selected" ?>>Membre Pour information</option>
@@ -18,19 +18,15 @@
 		
 		<!-- Type de membre -->
 		<p>
-			<select name='<?php echo $this->id_membre ?>_typemembre' style="margin-bottom: 5px">
+			<select name='<?php echo $this->id_membre ?>_typemembre'>
 				<option value='1' >Groupement de commune</option>
 				<option value='2' <?php if($this->contact != null) echo "selected" ?> >Contact de la commission</option>
 				<option value='3' <?php if($this->groupement == null && $this->contact == null) echo "selected" ?> >Commune</option>
 			</select>
-			
+
 			<!-- Groupement de commune -->
-			<span class='<?php echo $this->id_membre ?>_type-membre <?php echo $this->id_membre ?>_type-membre-groupement <?php if($this->groupement["ID_GROUPEMENT"] == null) echo "ui-helper-hidden" ?>' >
-				<?php
-					echo $this->listeGroupement($this->groupement, array(
-						"name" => $this->id_membre . "_ID_GROUPEMENT"
-					));
-				?>
+			<span class='<?php echo $this->id_membre ?>_type-membre <?php echo $this->id_membre ?>_type-membre-groupement <?php if(array_key_exists('ID_GROUPEMENT', $this->groupement) && $this->groupement["ID_GROUPEMENT"] == null) echo "ui-helper-hidden" ?>' >
+				<?php echo $this->listeGroupement($this->groupement, array("name" => $this->id_membre . "_ID_GROUPEMENT")); ?>
 			</span>
 
 			<!-- Liste des contacts -->
@@ -133,7 +129,7 @@
 	<!-- Action -->
 	<td style='text-align: center;' >
 		<a class='delete-membre' href='/commission/delete-membre?id_membre=<?php echo $this->id_membre ?>' title='Supprimer' >
-			<i class='sprite sprite-bin' ></i>
+			Supprimer
 		</a>
 	</td>
 </tr>

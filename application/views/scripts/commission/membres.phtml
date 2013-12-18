@@ -5,7 +5,7 @@
 
 <?php else : ?>
 
-	<p style='text-align: right' ><a class='add-membre' href='/commission/add-membre?id_commission=<?php echo $_GET["id_commission"] ?>'>+ Ajouter un membre</a></p>
+	<p style='text-align: right' ><a class='add-membre btn' href='/commission/add-membre?id_commission=<?php echo $_GET["id_commission"] ?>'>Ajouter un membre</a></p>
 
 	<form method='post' action='/commission/saveMembres?id_commission=<?php echo $_GET["id_commission"] ?>' >
 		
@@ -30,7 +30,7 @@
 		</script>
 
 		<!-- Tableau contenant les membres -->
-		<table class='table-custom commission'>
+		<table class='table table-condensed'>
 			<thead>
 				<tr>
 					<th rowspan="2" >Libellé du membre</th>
@@ -56,7 +56,7 @@
 	
 	<div id="save_div" style="text-align: center" >
 		
-			<button class='save-membres save' >Sauvegarder les membres</button>
+			<button class='save-membres save btn btn-success' >Sauvegarder les membres</button>
 			
 			<span id='<?php echo $_GET["id_commission"] ?>_membres_notification' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>
 				Les membres de la commission ont bien été sauvegardés.
@@ -90,13 +90,12 @@
 	
 	// Lien pour ajouter un membre
 	$("#<?php echo $_GET["id_commission"] ?>_tabs .add-membre").click(function() {
-		var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
-		string = string.replace("ui-tabs-", "");
 		var a = this;
 		$.ajax({
 			url: a.href,
 			success: function() {
-				$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+				var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
+                $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
 			}
 		});
 		return false;
@@ -104,14 +103,13 @@
 	
 	// Lien pour supprimer un membre
 	$("#<?php echo $_GET["id_commission"] ?>_tabs .delete-membre").click(function() {
-		var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
-		string = string.replace("ui-tabs-", "");
 		var a = this;
 		$.ajax({
 			url: a.href,
 			success: function() {
-				//$(".delete-regle").parent().parent().remove();
-				$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+				var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
+                alert(current_index);
+                $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
 			}
 		});
 		return false;

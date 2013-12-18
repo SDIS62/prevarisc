@@ -1,15 +1,13 @@
 <!-- Titre -->
 <span style="float: right">
-	<button id='button-gdc' >Gestion des commissions</button>
+    <br/>
+	<button id='button-gdc' class='btn' >Gestion des commissions</button>
 </span>
 
-<h2 class='grid_xx'>
-	<i class='sprite sprite-application_view_columns' ></i>
-	Gestion des commissions
-</h2>
+<h2>Gestion des commissions</h2>
 
 <!-- Liste des types de commissions -->
-<ul id="gestionCommissionMenu" class='grid_16'>
+<ul id="gestionCommissionMenu">
 	<?php foreach($this->rowset_typesDesCommissions as $row_typeDesCommissions) : ?>
 	<li <?php if( $row_typeDesCommissions["ID_COMMISSIONTYPE"] == 1 ) echo "class='active'" ?> >
 		<a href='/gestion-des-commissions/get-commissions?id_type_des_commissions=<?php echo $row_typeDesCommissions["ID_COMMISSIONTYPE"] ?>' class='display' ><?php echo $row_typeDesCommissions["LIBELLE_COMMISSIONTYPE"] ?></a>
@@ -18,7 +16,7 @@
 </ul>
 
 <!-- Liste des commissions -->
-<div id='content_commissions' class='grid_16'>
+<div id='content_commissions'>
 	<?php echo $this->action("get-commissions", "gestion-des-commissions", null, array("id_type_des_commissions" => 1)); ?>
 </div>
 

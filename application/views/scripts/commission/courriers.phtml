@@ -10,7 +10,7 @@
 	<h3><?php echo $row_membre->LIBELLE_COMMISSIONMEMBRE ?></h3>
 
 	<!-- Tableau contenant les documents -->
-	<table class='table-custom commission'>
+	<table class='table table-condensed'>
 		<thead>
 			<tr>
 				<th>Convocation en visite</th>
@@ -68,8 +68,8 @@
 		else {
 			
 			// On recharge l'onglet
-			var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
-			$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+			var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
+                $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
 		}
 	}
 	
@@ -88,8 +88,8 @@
 			url: a.href,
 			success: function(result) {
 			
-				var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
-				$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+				var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
+                $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
 			}
 		});
 

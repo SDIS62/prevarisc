@@ -218,6 +218,8 @@
             // On ajoute une règle
             $row_membre = $model_membres->createRow();
             $row_membre->ID_COMMISSION = $this->_request->id_commission;
+            $row_membre->LIBELLE_COMMISSIONMEMBRE = '';
+            $row_membre->PRESENCE_COMMISSIONMEMBRE = 0;
             $row_membre->save();
         }
 

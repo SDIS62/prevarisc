@@ -5,12 +5,12 @@
 
 <?php else : ?>
 
-	<p style='text-align: right' ><a class='add-regle' href='/commission/add-regle?id_commission=<?php echo $_GET["id_commission"] ?>'>+ Ajouter une règle</a></p>
+	<p style='text-align: right' ><a class='add-regle btn' href='/commission/add-regle?id_commission=<?php echo $_GET["id_commission"] ?>'>Ajouter une règle</a></p>
 
 	<form method='post' action='/commission/saveRegles?id_commission=<?php echo $_GET["id_commission"] ?>' >
 
 		<!-- Tableau contenant les règles -->
-		<table class='table-custom commission'>
+		<table class='table table-condensed'>
 			<thead>
 				<tr>
 					<th rowspan="2" >Zone géographique</th>
@@ -35,8 +35,8 @@
 	</form>
 	
 	<div id="save_div" style="text-align: center" >
-			<button class='save-competences save' >Sauvegarder les règles</button>
-			<button class='apply-competences save' >Appliquer les règles</button>
+			<button class='save-competences save btn btn-success' >Sauvegarder les règles</button>
+			<button class='apply-competences save btn btn-success' >Appliquer les règles</button>
 			
 			<span id='<?php echo $_GET["id_commission"] ?>_notification' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>
 				Les compétences de la commission ont bien été sauvegardées.
@@ -79,9 +79,7 @@
 	});
 	
 	// Bouton de sauvegarde
-	$("#<?php echo $_GET["id_commission"] ?>_tabs .save-competences").button({
-		icons: { primary: "ui-icon-disk" }
-	}).click(function() {
+	$("#<?php echo $_GET["id_commission"] ?>_tabs .save-competences").click(function() {
 		$.ajax({
 			url: "/commission/save-regles",
 			data: $(this).parent().prev().serialize(),
@@ -110,13 +108,12 @@
 	
 	// Lien pour ajouter une règle
 	$("#<?php echo $_GET["id_commission"] ?>_tabs .add-regle").click(function() {
-		var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
-		string = string.replace("ui-tabs-", "");
 		var a = this;
 		$.ajax({
 			url: a.href,
 			success: function() {
-				$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+				var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
+                $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
 			}
 		});
 		return false;
@@ -124,14 +121,12 @@
 	
 	// Lien pour supprimer une règle
 	$("#<?php echo $_GET["id_commission"] ?>_tabs .delete-regle").click(function() {
-		var string = $("#<?php echo $_GET["id_commission"] ?>_tabs .ui-tabs-panel:visible").attr("id");
-		string = string.replace("ui-tabs-", "");
 		var a = this;
 		$.ajax({
 			url: a.href,
 			success: function() {
-				//$(".delete-regle").parent().parent().remove();
-				$("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("load", string);
+                var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
+                $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
 			}
 		});
 		return false;

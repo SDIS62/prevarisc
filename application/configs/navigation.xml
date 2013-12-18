@@ -315,57 +315,57 @@
 					<action>delete-courrier</action>
 					<privilege>gestion_commissions</privilege>
 				</delete-courrier>
+                <contacts>
+                    <label>Contact</label>
+                    <controller>contact</controller>
+                    <params><item>commission</item></params>
+                    <privilege>gestion_commissions</privilege>
+                    <pages>
+                        <index>
+                            <label>Gestion des Contacts de la commission</label>
+                            <controller>contact</controller>
+                            <params><item>commission</item></params>
+                            <action>index</action>
+                            <privilege>gestion_commissions</privilege>
+                        </index>		
+                        <form>
+                            <label>Ajouter un contact</label>
+                            <controller>contact</controller>
+                            <params><item>commission</item></params>
+                            <action>form</action>
+                            <privilege>gestion_commissions</privilege>
+                        </form>
+                        <add-contact>
+                            <label>Ajouter un Contact</label>
+                            <controller>contact</controller>
+                            <params><item>commission</item></params>
+                            <action>add</action>
+                            <privilege>gestion_commissions</privilege>
+                        </add-contact>
+                        <edit-contact>
+                            <label>Editer Contact</label>
+                            <controller>contact></controller>
+                            <params><item>commission</item></params>
+                            <action>edit</action>
+                            <privilege>gestion_commissions</privilege>
+                        </edit-contact>
+                        <delete-contact>
+                            <label>Supprimer Contact</label>
+                            <controller>contact</controller>
+                            <params><item>commission</item></params>
+                            <action>delete</action>
+                            <privilege>gestion_commissions</privilege>
+                        </delete-contact>
+                        <get-contact>
+                            <controller>contact</controller>
+                            <params><item>commission</item></params>
+                            <action>get</action>
+                            <privilege>gestion_commissions</privilege>
+                        </get-contact>
+                    </pages>
+                </contacts>
 			</pages>
 		</commission>
-		<contact>
-			<label>Contact</label>
-			<controller>contact</controller>
-			<resource></resource> 
-			<privilege></privilege>		
-			<pages>
-				<index>
-					<label>Gestion des Contact</label>
-					<controller>contact</controller>
-					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
-				</index>		
-				<form>
-					<label></label>
-					<controller>contact</controller>
-					<action>form</action>
-					<resource></resource>
-					<privilege></privilege>
-				</form>
-				<add-contact>
-					<label>Ajouter Contact</label>
-					<controller>contact</controller>
-					<action>add</action>
-					<resource></resource>
-					<privilege></privilege>
-				</add-contact>
-				<edit-contact>
-					<label>Editer Contact</label>
-					<controller>contact></controller>
-					<action>edit</action>
-					<resource></resource>
-					<privilege></privilege>
-				</edit-contact>
-				<delete-contact>
-					<label>Supprimer Contact</label>
-					<controller>contact</controller>
-					<action>delete</action>
-					<resource></resource>
-					<privilege></privilege>
-				</delete-contact>
-				<get-contact>
-					<controller>contact</controller>
-					<action>get</action>
-					<resource></resource>
-					<privilege></privilege>
-				</get-contact>
-			</pages>
-		</contact>	
 		<dossier>
 			<label>Dossiers</label>
 			<controller>dossier</controller>

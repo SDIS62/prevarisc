@@ -12,7 +12,7 @@
 		<a href="#"><?php echo $row_commission["LIBELLE_COMMISSION"] ?></a>
 	</h3>
 	
-	<div id="<?php echo $row_commission["ID_COMMISSION"] ?>_tabs" style='height: 500px;'>
+	<div id="<?php echo $row_commission["ID_COMMISSION"] ?>_tabs">
 		<ul>
 			<li><a href="/commission/competences?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Champ de compétence de la commission</span></a></li>
 			<li><a href="/commission/membres?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Membres de la commission</span></a></li>
@@ -22,7 +22,7 @@
 	</div>
 	
 	<script type="text/javascript">
-		$("#<?php echo $row_commission["ID_COMMISSION"] ?>_tabs").tabs({history: true, load: function(event, ui) { init_checkboxes(<?php echo $row_commission["ID_COMMISSION"] ?>); }});
+		$("#<?php echo $row_commission["ID_COMMISSION"] ?>_tabs").tabs({heightStyle: "content", history: false, load: function(event, ui) { init_checkboxes(<?php echo $row_commission["ID_COMMISSION"] ?>); }});
 	</script>
 	
 	<?php endforeach ?>
@@ -34,8 +34,9 @@
 <script type="text/javascript">
 
 	$("#accordion").accordion({
-		autoHeight: false,
-		navigation: false
+		autoHeight: true,
+		navigation: false,
+        heightStyle: "content"
 	});
 
 	// On met en place la structure pour les checkbox area
