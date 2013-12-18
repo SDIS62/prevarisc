@@ -4,7 +4,7 @@ echo "
         <i class='sprite sprite-application_view_columns' ></i>
         Gestion des textes applicables
     </h2>
-	<button id='createTexteAppl'>Ajouter un texte applicable</button><br/><br/>
+	<button id='createTexteAppl' class='btn'><i class='icon-plus'></i>&nbsp;Ajouter un texte applicable</button><br/><br/>
 ";
 
 $idTypeMarq = "";
@@ -13,16 +13,20 @@ foreach($this->listeTextesAppl as $val => $ue){
 	if($idTypeMarq != $idType){
 		//Pour l'affichage par catégorie
 		echo "
-			<div class='grid_14 alpa' style='font-weight:bold;font-size:25px;'>".$ue['LIBELLE_TYPETEXTEAPPL']."</div>
+			<div class='row-fluid'>
+			<div class='span12' style='font-weight:bold;font-size:25px;'>".$ue['LIBELLE_TYPETEXTEAPPL']."</div>
 			<hr class='clear'>
+			</div>
 		";
 		$idTypeMarq = $idType;
 	}
 	echo "
-		<div class='grid_12 alpha'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
-		<div class='grid_1'><button class='editTexteAppl' id='".$ue['ID_TEXTESAPPL']."'>Editer</button></div>
-		<div class='grid_1'>".( ($ue['VISIBLE_TEXTESAPPL'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."</div>
+		<div class='row-fluid' style='margin-top:10px;margin-bottom:10px;'>
+		<div class='span10'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
+		<div class='span1'><button class='editTexteAppl btn' id='".$ue['ID_TEXTESAPPL']."'><i class='icon-pencil'></i>&nbsp;Editer</button></div>
+		<div class='span1'>".( ($ue['VISIBLE_TEXTESAPPL'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."</div>
 		<hr class='clear'>
+		</div>
 	";
 
 }
@@ -32,12 +36,7 @@ foreach($this->listeTextesAppl as $val => $ue){
 $(document).ready(function() {
 	var dialogEditTexteAppl = $('<div style="display:none"></div>').appendTo('body');
 	
-	$(".editTexteAppl").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		},
-		text: false
-	}).click(function(){
+	$(".editTexteAppl").click(function(){
 		//On ouvre la boite de dialogue
 		var id = $(this).attr('id');
 		$.ajax({
@@ -52,12 +51,7 @@ $(document).ready(function() {
 		});
 	});
 	
-	$("#createTexteAppl").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		},
-		text: true
-	}).click(function(){
+	$("#createTexteAppl").click(function(){
 		$.ajax({
 			type: "POST",
 			url: "/gestion-textes-applicables/formtexteappl",
