@@ -210,8 +210,8 @@ document.addEventListener("DOMContentLoaded", function() {
 				// On créé la boite de dialogue
 				$("#dialogComm").dialog({
 					resizable: false,
-					height: 500,
-					width: 700,
+					height: 800,
+					width: 1200,
 					modal: true,
 					buttons: {
 						'Afficher l\'ordre du jour': function() {
@@ -434,8 +434,8 @@ document.addEventListener("DOMContentLoaded", function() {
 						$("body").css('overflow','hidden');
 						$("#dialogComm").dialog({
 							resizable: false,
-							height:500,
-							width:550,
+							height: 800,
+							width: 1200,
 							buttons: {
 								'Fermer la fenêtre d\'édition': function() {
 									$(this).dialog('close');

@@ -331,7 +331,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 case "addDateN":
                     //affiche une ligne suplémentaire dans le tableau de résumé des dates
                     $dateAjoutee = new Zend_Date($this->_getParam('date'),Zend_Date::DATES,'fr');
+					//Zend_Debug::dump($dateAjoutee);
                     $this->view->dateAjoutee = $dateAjoutee->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR,'fr');
+					//echo $this->view->dateAjoutee;
                     $this->view->dateAjouteeInput = $dateAjoutee->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
                 break;
                 /**
