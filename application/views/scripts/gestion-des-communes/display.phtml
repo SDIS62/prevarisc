@@ -25,8 +25,11 @@
 			data: $("#formulaire_contact").serialize(),
 			type: "post",
 			beforeSend: function() {
-				$("#save").button("disable");
-			}
+				$("#save").attr("disabled", "disabled");
+			},
+            success: function() {
+                $("#save").removeAttr("disabled");
+            }
 		});
 	
 		return false;
