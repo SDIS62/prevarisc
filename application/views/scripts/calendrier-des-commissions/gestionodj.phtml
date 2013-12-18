@@ -387,9 +387,11 @@ $(document).ready(function() {
 	if($this->infosDateComm['GESTION_HEURES'] == 1){
 		//dans le cas ou on prend en compte les heures (cas par défaut)
 		echo "
-				<div id='calendar' name='calendar' class='grid_11 omega'>
+			<div class='container-fluid'>
+			<div class='row-fluid'>
+				<div id='calendar' name='calendar' class='span9'>
 				</div>
-				<div id='external-events' class='grid_5 alpha' style='width:300px;margin-left:20px;position:fixed;color:black;border:1px solid black;text-align:center;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
+				<div id='external-events' class='span3' style='color:black;border:1px solid black;text-align:center;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
 					<div style='' >
 		";			
 				echo "<h3>Liste des dossiers prévus</h3>";
@@ -406,7 +408,8 @@ $(document).ready(function() {
 				}
 				echo "
 					</div>
-				</div>			
+				</div>
+			</div>
 			</div>
 		";
 	}else if($this->infosDateComm['GESTION_HEURES'] == 0){

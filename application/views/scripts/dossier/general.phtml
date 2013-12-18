@@ -1431,7 +1431,7 @@ echo "
 				<li class='row-fluid' id='DATECOMM' style='".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de commission en salle</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						".$this->dateCommValue.( ( $this->idDateCommissionAffect != '' )? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='sprite sprite-date_magnify' ></i></a>" : "" )."				
+						".$this->dateCommValue.( ( $this->idDateCommissionAffect != '' )? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='icon-calendar' ></i></a>" : "" )."				
 					</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".( ($this->dateCommInput)?$this->dateCommInput:"" )."' disabled='disabled'/>
