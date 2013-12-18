@@ -872,7 +872,7 @@
 					<controller>gestion-prescriptions</controller>
 					<action>saveprescriptiontype</action>
                     <privilege>gestion_prescriptions</privilege>
-				</formpresctype>		
+				</saveprescriptiontype>		
 			</pages>
 		</gestion-prescriptions-type>
 		<gestion-textes-applicables>
