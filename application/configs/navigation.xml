@@ -916,13 +916,13 @@
             </pages>
 		</index>	
 		<periodicite>
-			<label>Periodicite</label>
+			<label>Tableau des Periodicités</label>
 			<controller>periodicite</controller>
 			<resource>gestion_parametrages</resource> 
 			<privilege>periodicites</privilege>
 			<pages>
 				<index>
-					<label>Gestion des Periodicité</label>
+					<label>Affichage</label>
 					<controller>perioditicte</controller>
 					<action>index</action>
 					<privilege>periodicites</privilege>
