@@ -793,37 +793,86 @@
 		</gestion-des-documents>
 		<gestion-prescriptions-type>
 			<label>Gestion des Prescriptions Type</label>
-			<controller>gestion-prescriptions-type</controller>
+			<controller>gestion-prescriptions</controller>
 			<resource>gestion_parametrages</resource> 
 			<privilege>gestion_prescriptions</privilege>
 			<pages>
 				<index>
 					<label>Gestion des Prescriptions Type</label>
-					<controller>gestion-prescriptions-type</controller>
+					<controller>gestion-prescriptions</controller>
 					<action>index</action>
                     <privilege>gestion_prescriptions</privilege>
 				</index>
-				<showprescription>
-					<label>Voir prescription</label>
-					<controller>gestion-prescriptions-type</controller>
-					<action>showprescription</action>
+                <showprescriptiontexte>
+					<controller>gestion-prescriptions</controller>
+					<action>showprescriptiontexte</action>
                     <privilege>gestion_prescriptions</privilege>
-				</showprescription>
-				<formpresctype>
-					<controller>gestion-prescriptions-type</controller>
-					<action>formpresctype</action>
+				</showprescriptiontexte>
+                <showprescriptionarticle>
+					<controller>gestion-prescriptions</controller>
+					<action>showprescriptionarticle</action>
                     <privilege>gestion_prescriptions</privilege>
-				</formpresctype>
-				<save>
-					<controller>gestion-prescriptions-type</controller>
-					<action>save</action>
+				</showprescriptionarticle>
+                <showarticlecontenu>
+					<controller>gestion-prescriptions</controller>
+					<action>showarticlecontenu</action>
                     <privilege>gestion_prescriptions</privilege>
-				</save>
-				<delete>
-					<controller>gestion-prescriptions-type</controller>
-					<action>delete</action>
+				</showarticlecontenu>
+                <formcategorie>
+					<controller>gestion-prescriptions</controller>
+					<action>formcategorie</action>
                     <privilege>gestion_prescriptions</privilege>
-				</delete>		
+				</formcategorie>
+                <savecategorie>
+					<controller>gestion-prescriptions</controller>
+					<action>savecategorie</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</savecategorie>
+                <formtexte>
+					<controller>gestion-prescriptions</controller>
+					<action>formtexte</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</formtexte>
+                <savetexte>
+					<controller>gestion-prescriptions</controller>
+					<action>savetexte</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</savetexte>
+                <formarticle>
+					<controller>gestion-prescriptions</controller>
+					<action>formarticle</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</formarticle>
+                <savearticle>
+					<controller>gestion-prescriptions</controller>
+					<action>savearticle</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</savearticle>
+                <formprescription>
+					<controller>gestion-prescriptions</controller>
+					<action>formprescription</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</formprescription>
+                <emplacement>
+					<controller>gestion-prescriptions</controller>
+					<action>emplacement</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</emplacement>
+                <selectiontexte>
+					<controller>gestion-prescriptions</controller>
+					<action>selectiontexte</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</selectiontexte>
+                <selectionarticle>
+					<controller>gestion-prescriptions</controller>
+					<action>selectionarticle</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</selectionarticle>
+				<saveprescriptiontype>
+					<controller>gestion-prescriptions</controller>
+					<action>saveprescriptiontype</action>
+                    <privilege>gestion_prescriptions</privilege>
+				</formpresctype>		
 			</pages>
 		</gestion-prescriptions-type>
 		<gestion-textes-applicables>
