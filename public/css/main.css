@@ -97,6 +97,8 @@ footer a:hover {
     text-decoration: underline;
 }
 
+.ui-dialog { z-index: 1000 !important ;}
+
 /* Formulaire
 -------------------------------------------------- */
 
