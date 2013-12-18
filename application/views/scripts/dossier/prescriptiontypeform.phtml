@@ -6,12 +6,12 @@ echo "
 	<input type='hidden' name='PRESCRIPTIONTYPE_CATEGORIE' id='PRESCRIPTIONTYPE_CATEGORIE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_CATEGORIE']:"")."' />
 	<input type='hidden' name='PRESCRIPTIONTYPE_TEXTE' id='PRESCRIPTIONTYPE_TEXTE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_TEXTE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_TEXTE']:"")."' />
 	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:"")."' />
-	<button id='emplacement' class='search' style='display:none;'>Rechercher les prescriptions  selon le classement</button>
-	<button id='word' class='search'>Rechercher les prescriptions par mots clés</button>
+	<button id='emplacement' class='search btn' style='display:none;'>Rechercher les prescriptions  selon le classement</button>
+	<button id='word' class='search btn'>Rechercher les prescriptions par mots clés</button>
 	<br/><br/>
 	<div id='selectWord' style='display:none;'>
 		Saisissez le ou les mots clés (séparés d'un espace) <input type='texte' name='motscles' id='motscles' value='' style='width:500px;' />
-		<button class='search' id='wordSearch'>Rechercher</button>
+		<button class='search btn' id='wordSearch'>Rechercher</button>
 	</div>
 	<div id='selectEmplacement' ></div>
 	<div id='listePrescriptionTypeSearch' style='margin-top:20px;display:none;'></div>
@@ -40,7 +40,7 @@ for($i=0; $i < $nbPrescType; $i++)
 		if($cpt)
 		{
 			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='add' id='prescType_".$this->prescriptionType[$i][$j]['ID_PRESCRIPTIONTYPE']."'>Ajouter</button></td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='add btn' id='prescType_".$this->prescriptionType[$i][$j]['ID_PRESCRIPTIONTYPE']."'>Ajouter</button></td>";
 			$cpt = false;
 		}
 		echo "
@@ -58,17 +58,6 @@ echo "</div>";
 <script type="text/javascript">
 
 $(document).ready(function(){
-	$(".search").button({
-		icons: {
-			primary: 'ui-icon-search'
-		}
-	});
-	
-	$(".add").button({
-		icons: {
-			primary: 'ui-icon-plus'
-		}
-	});
 	
 	$("#wordSearch").live('click',function(){
 		$.ajax({

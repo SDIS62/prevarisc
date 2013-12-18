@@ -19,8 +19,8 @@
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".$this->libelle."</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType' id='' >Editer</button></td>";
+			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->libelle)."</td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 			$cpt = false;
 		}
 		echo "
@@ -37,10 +37,6 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".editPrescriptionType").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
-	});
+	
 });
 </script>

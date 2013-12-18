@@ -1,9 +1,9 @@
 <?php
 	echo "<br/>";	
 	echo "
-		<button class='addArticleTexte' >Ajouter un article</button>
+		<button class='addArticleTexte btn' >Ajouter un article</button>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<button class='prescription' id='addPrescriptionTexte_".$this->idTexte."'>Ajouter une prescription</button>
+		<button class='prescription btn' id='addPrescriptionTexte_".$this->idTexte."'>Ajouter une prescription</button>
 	";
 	echo "<br/><br/>";	
 
@@ -13,10 +13,10 @@
 			<li id='article_".$ue['ID_PRESCRIPTIONARTICLE']."'>
 				<span style='font-style:italic;'>".$ue['LIBELLE_PRESCRIPTIONARTICLE']."</span>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<button class='showDetailArticle' id='showDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' >Afficher les détails</button>
-				<button class='hideDetailArticle' id='hideDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' style='display:none;'>Masquer les détails</button>
+				<button class='showDetailArticle btn' id='showDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' >Afficher les détails</button>
+				<button class='hideDetailArticle btn' id='hideDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' style='display:none;'>Masquer les détails</button>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<button class='editArticle' id='".$ue['ID_PRESCRIPTIONARTICLE']."' >Modifier</button>
+				<button class='editArticle btn' id='".$ue['ID_PRESCRIPTIONARTICLE']."' >Modifier</button>
 				<br/>
 				<div style='margin-left:30px;' id='articleDetail_".$ue['ID_PRESCRIPTIONARTICLE']."'></div>
 				<br/>
@@ -50,7 +50,7 @@
 			if($cpt)
 			{
 				echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-				echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType' id='' >Editer</button></td>";
+				echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 				$cpt = false;
 			}
 			echo "
@@ -72,44 +72,7 @@
 
 
 $(document).ready(function(){
-	$(".showDetailArticle").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-e'
-		},
-		text: false
-	});
+	//$(".prescriptionarticle").sortable();
 	
-	$(".hideDetailArticle").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-s'
-		},
-		text: false
-	});
-	
-	$(".editPrescriptionType").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
-	});
-
-	$(".editArticle").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
-	});
-	
-	$(".addArticleTexte").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		}
-	});
-	
-	$(".prescriptionarticle").sortable();
-	
-	$(".prescription").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		}
-	});
 });
 </script>

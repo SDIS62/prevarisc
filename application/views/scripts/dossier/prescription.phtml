@@ -13,12 +13,12 @@ TRUNCATE TABLE `prescriptiondossierassoc`;
 
 */
 echo "
-	<button class='addPresc' id='addPrescriptionType' >Ajouter une prescription type</button>
+	<button class='addPresc btn' id='addPrescriptionType' >Ajouter une prescription type</button>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<button class='addPresc' id='addPrescription' >Ajouter une prescription</button>
+	<button class='addPresc btn' id='addPrescription' >Ajouter une prescription</button>
 	<br/><br/>
 	<div>
-		<ul class='listePrescriptions'>
+		<ul class='listePrescriptions unstyled'>
 ";
 
 
@@ -27,7 +27,7 @@ $nbPrescDossier = count($this->prescriptionDossier);
 for($i=0; $i < $nbPrescDossier; $i++)
 {
 	echo "
-		<li id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none;'>
+		<li class='row-fluid' id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none; margin-bottom:15px;'>
 			<table style='width:900px;'>
 	";
 	$nbAssoc = count($this->prescriptionDossier[$i]);
@@ -52,7 +52,7 @@ for($i=0; $i < $nbPrescDossier; $i++)
 				echo nl2br($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
 			}
 			echo "</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='edit' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."'>Modifier</button></td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."'>Modifier</button></td>";
 			$cpt = false;
 		}
 		echo "
@@ -115,12 +115,6 @@ $(document).ready(function(){
 	
 	});
 
-	$(".addPresc").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		}
-	});
-	
 //Ajout prescription type
 	var dialogPrescType = $('<div style="display:none;"></div>').appendTo('body');
 	
@@ -352,12 +346,6 @@ $(document).ready(function(){
 		},
 		close: function(event, ui){
 			
-		}
-	});
-	
-	$(".edit").button({
-		icons: {
-			primary: 'ui-icon-pencil'
 		}
 	});
 	

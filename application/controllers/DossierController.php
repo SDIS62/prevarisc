@@ -799,7 +799,8 @@ class DossierController extends Zend_Controller_Action
             case 'showListeDossierEtab':
                 //echo $this->_getParam('idListeEtab');
                 //On place dans un tableau chacun des idEtablissement liés au dossier
-                $listeEtab = split("-", $this->_getParam('idListeEtab'));
+                //$listeEtab = split("-", $this->_getParam('idListeEtab'));
+                $listeEtab = explode("-", $this->_getParam('idListeEtab'));
 
                 //Pour chacun des établissement on va récuperer les dossiers concernés
                 $dbDossier = new Model_DbTable_Dossier;

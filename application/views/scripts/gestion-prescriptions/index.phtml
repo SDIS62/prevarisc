@@ -4,11 +4,11 @@
 			<i class='sprite sprite-application_view_columns' ></i>
 			Gestion des prescriptions types
 		</h2>
-		<button class='categorie' >Ajouter un type de prescriptions</button>
+		<button class='categorie btn' >Ajouter un type de prescriptions</button>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<br/><br/>
 		<!--
-			<button class='prescription' >Ajouter une prescription type</button>
+			<button class='prescription btn' >Ajouter une prescription type</button>
 		-->
 	";
 	
@@ -21,10 +21,10 @@
 			<li id='categorie_".$ue['ID_PRESCRIPTION_CAT']."'>
 				<span style='font-size:17px;font-weight:bold;'>".$ue['LIBELLE_PRESCRIPTION_CAT']."</span>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<button class='showDetailCat' id='showtexte_".$ue['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
-				<button class='hideDetailCat' id='hidetexte_".$ue['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
+				<button class='showDetailCat btn' id='showtexte_".$ue['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
+				<button class='hideDetailCat btn' id='hidetexte_".$ue['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<button class='editCategorie' id='".$ue['ID_PRESCRIPTION_CAT']."' >Modifier</button>
+				<button class='editCategorie btn' id='".$ue['ID_PRESCRIPTION_CAT']."' >Modifier</button>
 				<br/>
 				<div style='margin-left:30px;' id='texte_".$ue['ID_PRESCRIPTION_CAT']."'></div>
 				<div style='margin-left:30px;' id='prescriptionCat_".$ue['ID_PRESCRIPTION_CAT']."'></div>
@@ -58,7 +58,7 @@
 			if($cpt)
 			{
 				echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-				echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType' id='' >Editer</button></td>";
+				echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 				$cpt = false;
 			}
 			echo "
@@ -79,12 +79,7 @@
 $(document).ready(function(){
 	
 //Affiche les textes appartenant à la catégorie
-	$(".showDetailCat").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-e'
-		},
-		text: false
-	}).live('click',function(){
+	$(".showDetailCat").live('click',function(){
 		//requete ajax pour trouver les prescriptions faisant partie de cette catégorie
 		var tabId = $(this).attr('id').split('_');
 		var idCat = tabId[1];
@@ -100,12 +95,7 @@ $(document).ready(function(){
 	});
 	
 	//Masque les textes appartenant à la catégorie
-	$(".hideDetailCat").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-s'
-		},
-		text: false
-	}).live('click',function(){
+	$(".hideDetailCat").live('click',function(){
 		var tabId = $(this).attr('id').split('_');
 		var idCat = tabId[1];
 		$("#texte_"+idCat).html('');
@@ -156,11 +146,7 @@ $(document).ready(function(){
 	
 	var dialogCategorie = $('<div style="display:none;"></div>').appendTo('body');
 	
-	$(".categorie").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		}
-	}).live('click',function(){
+	$(".categorie").live('click',function(){
 		//On ouvre la boite de dialogue
 		$.ajax({
 			type: "POST",
@@ -174,11 +160,7 @@ $(document).ready(function(){
 		});
 	});
 	
-	$(".editCategorie").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
-	}).live('click',function(){
+	$(".editCategorie").live('click',function(){
 		//On ouvre la boite de dialogue
 		var id = $(this).attr('id');
 		$.ajax({
@@ -380,12 +362,6 @@ $(document).ready(function(){
 	});
 //Gestion des prescriptions type
 	var dialogPrescription = $('<div style="display:none;"></div>').appendTo('body');
-
-	$(".prescription").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		}
-	});
 	
 	$(".prescription").live('click',function(){
 		//alert($(this).attr('id'));
@@ -574,12 +550,6 @@ $(document).ready(function(){
 	$(".suppAssoc").live('click',function(){
 		$(this).parent().parent().remove();
 		return false;
-	});
-
-	$(".editPrescriptionType").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
 	});
 	
 	$(".editPrescriptionType").live('click',function(){

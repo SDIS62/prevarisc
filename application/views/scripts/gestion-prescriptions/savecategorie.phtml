@@ -5,10 +5,10 @@ if($this->do == 'new')
 echo "	
 	<span style='font-size:17px;font-weight:bold;'>".$this->categorie['LIBELLE_PRESCRIPTION_CAT']."</span>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<button class='showDetailCat' id='showtexte_".$this->categorie['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
-	<button class='hideDetailCat' id='hidetexte_".$this->categorie['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
+	<button class='showDetailCat btn' id='showtexte_".$this->categorie['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
+	<button class='hideDetailCat btn' id='hidetexte_".$this->categorie['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<button class='editCategorie' id='".$this->categorie['ID_PRESCRIPTION_CAT']."' >Modifier</button>
+	<button class='editCategorie btn' id='".$this->categorie['ID_PRESCRIPTION_CAT']."' >Modifier</button>
 	<br/>
 	<div style='margin-left:30px;' id='texte_".$this->categorie['ID_PRESCRIPTION_CAT']."'></div>
 	<div style='margin-left:30px;' id='prescriptionCat_".$this->categorie['ID_PRESCRIPTION_CAT']."'></div>
@@ -21,27 +21,6 @@ if($this->do == 'new')
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".showDetailCat").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-e'
-		},
-		text: false
-	});
-	$(".hideDetailCat").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-s'
-		},
-		text: false
-	});
-	$(".categorie").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		}
-	});
-	$(".editCategorie").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
-	});
+
 });
 </script>

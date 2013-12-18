@@ -1,7 +1,7 @@
 <?php
 echo "
 	<br/>
-	<button class='prescription' id='addPrescriptionArticle_".$this->idArticle."'>Ajouter une prescription</button>
+	<button class='prescription btn' id='addPrescriptionArticle_".$this->idArticle."'>Ajouter une prescription</button>
 	<br/><br/>
 	<ul class='prescriptiontypeArticle_".$this->idArticle."'>
 ";
@@ -27,7 +27,7 @@ for($i=0; $i < $nbPrescType; $i++)
 		if($cpt)
 		{
 			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType' id='' >Editer</button></td>";
+			echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 			$cpt = false;
 		}
 		echo "
@@ -46,16 +46,6 @@ echo "
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".editPrescriptionType").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
-	});
 	
-	$(".prescription").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		}
-	});
 });
 </script>

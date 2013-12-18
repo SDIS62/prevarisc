@@ -78,8 +78,8 @@ $(document).ready(function(){
 	//déclaration de la boite de dialog permettant la confirmation de la suppression d'un document ajouté de faisant parti de la liste de base
 	$("#dialogConfirmSuppDoc").dialog({
 		resizable: false,
-		height:500,
-		width:900,
+		height:200,
+		width:450,
 		autoOpen: false,
 		modal: true,
 		title: 'Voulez vous vraiment supprimer ce document ?',

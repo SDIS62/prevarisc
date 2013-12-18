@@ -5,10 +5,10 @@ if($this->do == 'new')
 echo "	
 	<span style='font-style:italic;'>".$this->article['LIBELLE_PRESCRIPTIONARTICLE']."</span>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<button class='showDetailArticle' id='showDetailArticle_".$this->article['ID_PRESCRIPTIONARTICLE']."' >Afficher les détails</button>
-	<button class='hideDetailArticle' id='hideDetailArticle_".$this->article['ID_PRESCRIPTIONARTICLE']."' style='display:none;'>Masquer les détails</button>
+	<button class='showDetailArticle btn' id='showDetailArticle_".$this->article['ID_PRESCRIPTIONARTICLE']."' >Afficher les détails</button>
+	<button class='hideDetailArticle btn' id='hideDetailArticle_".$this->article['ID_PRESCRIPTIONARTICLE']."' style='display:none;'>Masquer les détails</button>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<button class='editArticle' id='".$this->article['ID_PRESCRIPTIONARTICLE']."' >Modifier</button>
+	<button class='editArticle btn' id='".$this->article['ID_PRESCRIPTIONARTICLE']."' >Modifier</button>
 	<br/>
 	<div style='margin-left:30px;' id='articleDetail_".$this->article['ID_PRESCRIPTIONARTICLE']."'></div>
 	<br/>
@@ -20,24 +20,6 @@ if($this->do == 'new')
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".showDetailArticle").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-e'
-		},
-		text: false
-	});
 	
-	$(".hideDetailArticle").button({
-		icons: {
-			primary: 'ui-icon-triangle-1-s'
-		},
-		text: false
-	});
-	
-	$(".editArticle").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
-	});
 });
 </script>

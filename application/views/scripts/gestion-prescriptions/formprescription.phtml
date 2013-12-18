@@ -10,7 +10,7 @@ echo "
 	<br/><br/>
 	<span>Texte : </span><span><input type='texte' name='LIBELLE_TEXTE' id='LIBELLE_TEXTE' value='' /></span>
 	<span>Article : </span><span><input type='article' name='LIBELLE_ARTICLE' id='LIBELLE_ARTICLE' value='' /></span>
-	<button id='addAssoc' >Ajouter</button>
+	<button id='addAssoc' class='btn' >Ajouter</button>
 	<br/><br/>
 	<div>
 		<table id='association' style='width:500px;'>
@@ -46,11 +46,6 @@ echo "
 ?>
 <script type="text/javascript">
 $(document).ready(function(){
-	$("#addAssoc").button({
-		icons: {
-			primary: 'ui-icon-circle-plus'
-		}
-	});
 	
 	$("#LIBELLE_TEXTE").live('focus',function(){
 		$("#texteId").val('');
