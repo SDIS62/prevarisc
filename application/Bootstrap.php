@@ -24,7 +24,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     /**
      * Initialisation du cache APC
      */
-     /*
     protected function _initCache()
     {
         // Import des paramètres de connexion à la base de données
@@ -35,7 +34,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             'cache_id_prefix' => 'prevarisc'
         )); 
     }
-    */
     
     /**
      * Initialisation de l'auto-loader

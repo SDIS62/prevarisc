@@ -18,49 +18,58 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             $user->save();
 
             // Chargement des ACL
-
-            // Liste des ressources
-            $resources_dbtable = new Model_DbTable_Resource;
-            $resources = $resources_dbtable->fetchAll();
-
-            // Liste des groupes
-            $groupes_dbtable = new Model_DbTable_Groupe;
-            $groups = $groupes_dbtable->fetchAll();
             
-            // Configuration des ACL
-            $acl = new Zend_Acl();
-            
-            // ajouts des ressources
-            foreach($resources as $resource)
-            {
-                $acl->add(new Zend_Acl_Resource($resource->name));
-            }
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
-            // ajouts des roles (les groupes d'utilisateurs) et on fixe leurs règles
-            foreach($groups as $role)
+            // Chargement des ACL
+            if(($acl = unserialize($cache->load('acl'))) === false)
             {
-                $acl->addRole(new Zend_Acl_Role($role->LIBELLE_GROUPE));
+                // Liste des ressources
+                $resources_dbtable = new Model_DbTable_Resource;
+                $resources = $resources_dbtable->fetchAll();
+
+                // Liste des groupes
+                $groupes_dbtable = new Model_DbTable_Groupe;
+                $groups = $groupes_dbtable->fetchAll();
                 
-                $privileges = $role->findModel_DbTable_PrivilegeViaModel_DbTable_GroupePrivilege();
-                $resources = array();
-
-                foreach($privileges as $privilege)
+                // Configuration des ACL
+                $acl = new Zend_Acl();
+                
+                // ajouts des ressources
+                foreach($resources as $resource)
                 {
-                    $resource_privilege = $privilege->findParentModel_DbTable_Resource()->toArray();
+                    $acl->add(new Zend_Acl_Resource($resource->name));
+                }
+
+                // ajouts des roles (les groupes d'utilisateurs) et on fixe leurs règles
+                foreach($groups as $role)
+                {
+                    $acl->addRole(new Zend_Acl_Role($role->LIBELLE_GROUPE));
                     
-                    if(!array_key_exists($resource_privilege['id_resource'], $resources))
+                    $privileges = $role->findModel_DbTable_PrivilegeViaModel_DbTable_GroupePrivilege();
+                    $resources = array();
+
+                    foreach($privileges as $privilege)
                     {
-                        $resources[$resource_privilege['id_resource']] = $resource_privilege;
-                        $resources[$resource_privilege['id_resource']]["privileges"] = array();
+                        $resource_privilege = $privilege->findParentModel_DbTable_Resource()->toArray();
+                        
+                        if(!array_key_exists($resource_privilege['id_resource'], $resources))
+                        {
+                            $resources[$resource_privilege['id_resource']] = $resource_privilege;
+                            $resources[$resource_privilege['id_resource']]["privileges"] = array();
+                        }
+                        
+                        $resources[$resource_privilege['id_resource']]["privileges"][$privilege->id_privilege] = $privilege->name;
                     }
-                    
-                    $resources[$resource_privilege['id_resource']]["privileges"][$privilege->id_privilege] = $privilege->name;
-                }
 
-                foreach($resources as $group_resource)
-                {
-                    $acl->allow($role->LIBELLE_GROUPE, $group_resource["name"], $group_resource["privileges"]);
+                    foreach($resources as $group_resource)
+                    {
+                        $acl->allow($role->LIBELLE_GROUPE, $group_resource["name"], $group_resource["privileges"]);
+                    }
                 }
+                
+                // Sauvegarde en cache
+                $cache->save(serialize($acl));
             }
             
             $identity = Zend_Auth::getInstance()->getIdentity();
