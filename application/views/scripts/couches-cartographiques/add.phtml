@@ -5,7 +5,7 @@
 
 <h3><?php echo $this->row ? "Modification d'une couche" : "Ajout d'une couche" ?></h3>
 
-<form action="/couche-cartographique/<?php echo $this->row ? "edit" : "add" ?>" method="post">
+<form action="/couches-cartographiques/<?php echo $this->row ? "edit" : "add" ?>" method="post">
 	
 	<fieldset>
 		<legend>Paramètres de base</legend>
@@ -126,7 +126,5 @@
 			$("#param_cle input").val("");
 		}
 	}).change();
-	
-	$("#save").click(function() {$("form").submit()});
 	
 </script>

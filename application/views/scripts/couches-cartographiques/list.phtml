@@ -3,7 +3,7 @@
 
 <?php echo $this->partial('menu_admin.phtml') ?>
 
-<p class='text-right'><a class='btn' href='/couche-cartographique/add' id='add'>Ajouter une couche</a></p>
+<p class='text-right'><a class='btn' href='/couches-cartographiques/add' id='add'>Ajouter une couche</a></p>
 
 <div id='geoportail'>
 <?php $this->carte("50.4727273438818", "2.71490430425517", array(), array('height' => '350px'), $zoom  = 8); ?>
@@ -12,7 +12,7 @@
 <div style='clear: both'></div>
 
 <?php if(count($this->rowset_couches) == 0) : ?>
-<p style="text-align: center"><strong>Il n'y a pas de couche ajoutée. <a href="/couche-cartographique/add">Ajoutez en une</a>.</strong></p>
+<p style="text-align: center"><strong>Il n'y a pas de couche ajoutée. <a href="/couches-cartographiques/add">Ajoutez en une</a>.</strong></p>
 <?php else : ?>
 <table class="table-custom">
     <thead>
@@ -29,8 +29,8 @@
             <td><?php echo $row->NOM_COUCHECARTOTYPE ?></td>
             <td><?php echo $row->NOM_COUCHECARTO.(($row->ISBASELAYER_COUCHECARTO) ? " (couche de base)" : "") ?></td>
             <td>
-                <a href="/couche-cartographique/edit?id=<?php echo $row->ID_COUCHECARTO ?>">Editer la couche</a><br/>
-                <a href="/couche-cartographique/delete?id=<?php echo $row->ID_COUCHECARTO ?>">Supprimer</a>
+                <a href="/couches-cartographiques/edit?id=<?php echo $row->ID_COUCHECARTO ?>">Editer la couche</a><br/>
+                <a href="/couches-cartographiques/delete?id=<?php echo $row->ID_COUCHECARTO ?>">Supprimer</a>
             </td>
         </tr>
         <?php endforeach ?>

@@ -5,7 +5,7 @@
 
 <?php echo $this->partial('menu_admin_user.phtml') ?>
 
-<form method='post' action='/matrice-des-droits/save'>
+<form method='post' action='/users/matrice-des-droits'>
 
     <?php foreach($this->rowset_groupes as $groupe) : ?>
 
@@ -23,10 +23,10 @@
 
             <?php foreach($this->rowset_resources as $resource) : ?>
             <tr>
-                <td><?php echo $resource->name ?></td>
+                <td><?php echo $resource->text ?> <small>(<?php echo $resource->name ?>)</small></td>
                 <td>
                 <?php foreach($resource->findModel_DbTable_Privilege()->toArray() as $privilege) : ?>
-                <?php echo $this->partial('matrice-des-droits/partial_droit.phtml', array('text' => $privilege['name'], 'name' => 'groupe[' . $groupe->ID_GROUPE . '][' . $privilege['id_privilege'] . ']', 'value' => (int) in_array(array('ID_GROUPE' => (string) $groupe->ID_GROUPE, 'id_privilege' => (string) $privilege['id_privilege']), $this->rowset_groupes_privilege))) ?>
+                <?php echo $this->partial('users/partial_droit.phtml', array('text' => $privilege['text'], 'name' => $privilege['name'], 'name_input' => 'groupe[' . $groupe->ID_GROUPE . '][' . $privilege['id_privilege'] . ']', 'value' => (int) in_array(array('ID_GROUPE' => (string) $groupe->ID_GROUPE, 'id_privilege' => (string) $privilege['id_privilege']), $this->rowset_groupes_privilege))) ?>
                 <?php endforeach ?>
                 </td>
             <tr>

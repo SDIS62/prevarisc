@@ -2,9 +2,13 @@
 
 class IndexController extends Zend_Controller_Action
 {
-    // Page d'accueil
+    /**
+     * Page d'accueil
+     *
+     */
     public function indexAction()
     {
+        // Définition du layout
         $this->_helper->layout->setLayout('menu_left');
         
         // Modèles
@@ -18,6 +22,10 @@ class IndexController extends Zend_Controller_Action
         $this->view->groupes = $DB_groupe->fetchAll()->toArray();
     }
     
+    /**
+     * Ajouter un message dans le feed
+     *
+     */
     public function addMessageAction()
     {
         try
@@ -47,6 +55,10 @@ class IndexController extends Zend_Controller_Action
         $this->_helper->redirector('index');
     }
 
+    /**
+     * Supprimer un message du feed
+     *
+     */
     public function deleteMessageAction()
     {
         try

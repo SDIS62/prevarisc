@@ -8,29 +8,29 @@
                         ->addActionContext('getpreventionniste', 'json')
                         ->addActionContext('process', 'json')
                         ->addActionContext('edit-avatar', 'html')
-                        ->addActionContext('is-active', 'json')
-                        ->addActionContext('save-group', 'json')
-                        ->addActionContext('login', 'json')
                         ->initContext();
         }
-
-        public function indexAction()
+        
+        /**
+         * Gestion des utilisateurs
+         *
+         */
+        public function listAction()
         {
-            $this->_helper->layout->setLayout("menu_left");
-            
-            // Récupération de l'ensemble des groupes
+            // Modèles 
             $DB_groupe = new Model_DbTable_Groupe;
-            $this->view->groupes = $DB_groupe->fetchAll()->toArray();
-            
-            // Modèles
             $DB_user = new Model_DbTable_Utilisateur;
             $DB_groupe = new Model_DbTable_Groupe;
-
-            // Utilisateurs du groupe
-            $this->view->users = $DB_user->getUsersWithInformations( $this->_request->gid );
-
-            // Information du groupe
-            $this->view->groupe = $DB_groupe->find( $this->_request->gid )->current();
+            
+            // Récupération de l'ensemble des informations et on envoie sur la vue
+            $this->view->groupes = $DB_groupe->fetchAll()->toArray();
+            
+            // Si on affiche un groupe en particulier, on envoie ses informations
+            if($this->_request->hasParam('gid'))
+            {
+                $this->view->users = $DB_user->getUsersWithInformations($this->_request->getParam('gid'));
+                $this->view->groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
+            }
         }
 
         public function addGroupAction()

@@ -9,10 +9,10 @@
 
     <div class="tabbable tabs-left span2">
         <ul class='nav nav-tabs' style='width: 100%'>
-            <li <?php if(!isset($_GET['gid'])) echo "class='active'" ?>><a href='/user' >Tous les utilisateurs</a></li>
+            <li <?php if(!isset($_GET['gid'])) echo "class='active'" ?>><a href='/users/list' >Tous les utilisateurs</a></li>
             <?php foreach($this->groupes as $groupe) : ?>
             <li <?php if(isset($_GET['gid']) && $_GET['gid'] == $groupe['ID_GROUPE']) echo "class='active'" ?> >
-                <a href='/user?gid=<?php echo $groupe["ID_GROUPE"] ?>' ><?php echo $groupe["LIBELLE_GROUPE"] ?></a>
+                <a href='/users/list?gid=<?php echo $groupe["ID_GROUPE"] ?>' ><?php echo $groupe["LIBELLE_GROUPE"] ?></a>
             </li>
             <?php endforeach ?>
         </ul>
@@ -20,8 +20,10 @@
 
     <div id='content_group' class='span10'>
     
-        <a href='/user/add-group?gid=<?php echo $_GET['gid'] ?>' class='btn pull-right' >Modifier le groupe</a>
-
+        <?php if(array_key_exists('gid', $_GET)) : ?>
+        <a href='/users/add-group?gid=<?php echo $_GET['gid'] ?>' class='btn pull-right' >Modifier le groupe</a>
+        <?php endif ?>
+        
         <!-- Liste des utilisateurs -->
         <?php if($this->users != null) : ?>
         <table class='table table-condensed table-striped'>
@@ -48,8 +50,8 @@
                         ?>
                     </td>
                     <td>
-                        <a href='/user/edit/uid/<?php echo $user["ID_UTILISATEUR"] ?>' class="edit">Modifier</a> ou 
-                        <a class='act_deact' href='/user/actived?uid=<?php echo $user["ID_UTILISATEUR"] ?>' ><?php echo ($user["ACTIF_UTILISATEUR"]) ? "Désactiver" : "Activer" ?></a>
+                        <a href='/users/edit/uid/<?php echo $user["ID_UTILISATEUR"] ?>' class="edit">Modifier</a> ou 
+                        <a class='act_deact' href='/users/actived?uid=<?php echo $user["ID_UTILISATEUR"] ?>' ><?php echo ($user["ACTIF_UTILISATEUR"]) ? "Désactiver" : "Activer" ?></a>
                     </td>
                 </tr>
                 <?php endforeach ?>
@@ -81,13 +83,13 @@
 			draggable: false,
 			resizable: false,
 			create: function() {
-				$('#dialog-add-groupe').load( "/user/add-group" + ( gid ? "?gid=" + gid : "" ) );
+				$('#dialog-add-groupe').load( "/users/add-group" + ( gid ? "?gid=" + gid : "" ) );
 				$("#dialog-add-groupe input").val("");
 			},
 			buttons: {
 				"Sauvegarder" : function() {
 					$.ajax({
-						url: "/user/save-group?format=json",
+						url: "/users/save-group?format=json",
 						data: $("#formulaire_groupe").serialize(),
 						type: "POST",
 						success: function () {
