@@ -45,9 +45,7 @@
                     <td><a href='/user/profile?uid=<?php echo $user["ID_UTILISATEUR"] ?>' ><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></a></td>
                     <td><?php echo $user["LIBELLE_FONCTION"] ?></td>
                     <td>
-                        <?php
-                        echo ( time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime') ) ? "<span style='color: #008C00; font-weight: bold'>Connecté</span>" : "<span style='color: silver'>Déconnecté</span>"
-                        ?>
+                        <?php echo ( time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime') ) ? "<span class='label label-success'>En ligne</span>" : "<span class='label'>Hors ligne</span>" ?>
                     </td>
                     <td>
                         <a href='/users/edit/uid/<?php echo $user["ID_UTILISATEUR"] ?>' class="edit">Modifier</a> ou 

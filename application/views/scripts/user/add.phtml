@@ -300,7 +300,7 @@
 					<?php elseif(isset($_GET["ref"]) ) : ?>
 						window.location = "/user/profile?uid=<?php echo $_GET["ref"] ?>";
 					<?php else : ?>
-						window.location = "/user?confirm=1";
+						window.location = "/users/list";
 					<?php endif ?>
 				}
 			});

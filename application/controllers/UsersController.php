@@ -9,6 +9,11 @@ class UsersController extends Zend_Controller_Action
     {
         // Définition du layout menu_left
         $this->_helper->layout->setLayout('menu_left');
+        
+        $ajaxContext = $this->_helper->getHelper('AjaxContext');
+        $ajaxContext->addActionContext('add', 'json')
+                    ->addActionContext('process', 'json')
+                    ->initContext();
     }
     
     /**

@@ -4,84 +4,10 @@
         public function init()
         {
             $ajaxContext = $this->_helper->getHelper('AjaxContext');
-            $ajaxContext->addActionContext('add', 'json')
+            $ajaxContext->addActionContext('process', 'json')
                         ->addActionContext('getpreventionniste', 'json')
-                        ->addActionContext('process', 'json')
                         ->addActionContext('edit-avatar', 'html')
                         ->initContext();
-        }
-        
-        /**
-         * Gestion des utilisateurs
-         *
-         */
-        public function listAction()
-        {
-            // Modèles 
-            $DB_groupe = new Model_DbTable_Groupe;
-            $DB_user = new Model_DbTable_Utilisateur;
-            $DB_groupe = new Model_DbTable_Groupe;
-            
-            // Récupération de l'ensemble des informations et on envoie sur la vue
-            $this->view->groupes = $DB_groupe->fetchAll()->toArray();
-            
-            // Si on affiche un groupe en particulier, on envoie ses informations
-            if($this->_request->hasParam('gid'))
-            {
-                $this->view->users = $DB_user->getUsersWithInformations($this->_request->getParam('gid'));
-                $this->view->groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
-            }
-        }
-
-        public function addGroupAction()
-        {
-            $this->_helper->layout->setLayout("menu_left");
-            
-            if ($this->_request->gid) {
-                $DB_groupe = new Model_DbTable_Groupe;
-                $this->view->groupe = $DB_groupe->find( $this->_request->gid )->current();
-            }
-        }
-        
-        public function deleteGroupAction()
-        {
-            $DB_user = new Model_DbTable_Utilisateur;
-            $DB_groupe = new Model_DbTable_Groupe;
-            
-            if ($this->_request->gid && $this->_request->gid != 1) {
-
-                $all = $DB_user->fetchAll("ID_GROUPE = " . $this->_request->gid);
-
-                // On bouge les users dans le groupe par défaut
-                if ($all != null) {
-
-                    foreach ( $all->toArray() as $item ) {
-
-                        $user = $DB_user->find( $item["ID_UTILISATEUR"] )->current();
-                        $user->ID_GROUPE = 1;
-                        $user->save();
-                    }
-                }
-                
-                // On supprime le groupe
-                $DB_groupe->delete( $this->_request->gid );
-            }
-            
-            $this->_helper->redirector->gotoUrl("/user");
-        }
-
-        public function saveGroupAction()
-        {
-            $DB_groupe = new Model_DbTable_Groupe;
-            
-            if ( !empty($this->_request->gid) ) {
-                $groupe = $DB_groupe->find( $this->_request->gid )->current();
-                $groupe->setFromArray(array_intersect_key($_POST, $DB_groupe->info('metadata')))->save();
-            } else {
-                $DB_groupe->insert(array_intersect_key($_POST, $DB_groupe->info('metadata')));
-            }
-            
-            $this->_helper->redirector->gotoUrl("/user");
         }
 
         public function editAction()
@@ -140,37 +66,6 @@
                     echo "<script type='text/javascript'>window.top.window.callback();</script>";
                 }
             }
-        }
-
-        public function addAction()
-        {
-            $this->_helper->layout->setLayout("menu_left");
-            $this->view->title = 'Ajouter un utilisateur';
-
-            // Récupération des paramètres
-            $model_admin = new Model_DbTable_Admin;
-            $this->view->params = $model_admin->getParams();
-
-            // Récupération des commissions et des groupements
-            $model_commissions = new Model_DbTable_Commission;
-            $this->view->rowset_commissions = $model_commissions->fetchAll();
-            $model_groupements = new Model_DbTable_Groupement;
-            $this->view->rowset_groupements = $model_groupements->fetchAll();
-        }
-
-        public function maireAddAction()
-        {
-            $this->_helper->layout->setLayout("menu_left");
-            $this->view->title = 'Ajouter un maire';
-            $this->view->maire = true;
-
-            // Récupération des commissions et des groupements
-            $model_commissions = new Model_DbTable_Commission;
-            $this->view->rowset_commissions = $model_commissions->fetchAll();
-            $model_groupements = new Model_DbTable_Groupement;
-            $this->view->rowset_groupements = $model_groupements->fetchAll();
-
-            $this->render('add');
         }
 
         private function getDate($input)
@@ -281,41 +176,6 @@
                     $row->save();
                 }
             }
-        }
-
-        public function activedGroupAction()
-        {
-            $DB_user = new Model_DbTable_Utilisateur;
-            $all = $DB_user->fetchAll("ID_GROUPE = " . $this->_request->gid);
-
-            if ($all != null) {
-
-                foreach ( $all->toArray() as $item ) {
-
-                    $user = $DB_user->find( $item["ID_UTILISATEUR"] )->current();
-                    $user->ACTIF_UTILISATEUR = $this->_request->act;
-                    $user->save();
-                }
-            }
-
-            $this->_redirect("/user");
-        }
-
-        public function activedAction()
-        {
-            $DB_user = new Model_DbTable_Utilisateur;
-            $user = $DB_user->find( $this->_request->uid )->current();
-            $user->ACTIF_UTILISATEUR = !(bool) $user->ACTIF_UTILISATEUR;
-            $user->ACTIF_UTILISATEUR = (int) $user->ACTIF_UTILISATEUR;
-            $user->save();
-            $this->_redirect("/user");
-        }
-
-        public function isActiveAction()
-        {
-            $DB_user = new Model_DbTable_Utilisateur;
-            $user = $DB_user->find( $this->_request->uid )->current();
-            $this->view->active = $user ? $user->ACTIF_UTILISATEUR : false;
         }
 
         public function profileAction()
