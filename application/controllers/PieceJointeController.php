@@ -18,9 +18,7 @@
         {
             // Modèles
             $DBused = new Model_DbTable_PieceJointe;
-			
-			
-			
+
             // Cas dossier
             if ($this->_request->type == "dossier") {				
                 $this->view->type = "dossier";

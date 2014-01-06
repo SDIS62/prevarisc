@@ -5,7 +5,7 @@
 <div id="content_visites_ets">
 <?php if( count($this->visites) > 0 ) : ?>
     <h3>Visites</h3>
-    <ul id="liste_doss">
+    <ul id="liste_doss" class='unstyled'>
     <?php
 	echo $this->partialLoop('search/results/dossier.phtml', $this->visites); 
     ?>
@@ -17,7 +17,7 @@
 <?php if( count($this->etudes) > 0 ) : ?>
     <?php if( count($this->visites) > 0 ) echo "<hr />"; ?>
     <h3>Études</h3>
-    <ul id="liste_doss">
+    <ul id="liste_doss" class='unstyled'>
     <?php
 	echo $this->partialLoop('search/results/dossier.phtml', $this->etudes); 
     ?>
@@ -29,7 +29,7 @@
 <?php if( count($this->autres) > 0 ) : ?>
     <?php if( count($this->visites) > 0 || count($this->etudes) > 0) echo "<hr />"; ?>
     <h3>Autres</h3>
-    <ul id="liste_doss">
+    <ul id="liste_doss" class='unstyled'>
     <?php
 	echo $this->partialLoop('search/results/dossier.phtml', $this->autres); 
     ?>

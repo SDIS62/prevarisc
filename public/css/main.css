@@ -375,12 +375,12 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 .avis{
 	background-color: gray;
 	color: #fff;
-	-moz-border-radius: 2px;
+	border-radius: 2px;
 	height: 14px;
 	line-height: 14px;
 	font-size: 10px;
 	font-variant: small-caps;
-	right: -18px;
+	right: 7px;
 	text-align: center;
 	width: 14px;
 	top: 7px;
@@ -441,7 +441,7 @@ a.thumbnail + a.thumbnail {
 }
 .ville{
 	position: absolute;
-	right: 8px;
+	right: 45px;
 	font-style: italic;
 	bottom: 7px;
 	line-height: 9px;
@@ -503,13 +503,12 @@ a.thumbnail + a.thumbnail {
 	font-size: 11px;
 	margin: 0 0 0 0;
 }
-#liste_doss li{
-	background-color: #f6f6f6;
-	margin: 0 18px 2px 0;
-	padding: 0 0 0 3px;
+#liste_doss li {
+    background-color: #ebebeb ;
+	line-height: 20px;
+    padding: 3px;
 	position: relative;
-	height: 18px;
-	line-height: 18px;
+    vertical-align: middle;
 }
 #liste_doss li .doss-icon{
 	display: block;
