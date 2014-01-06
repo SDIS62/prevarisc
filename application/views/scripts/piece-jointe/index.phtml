@@ -6,9 +6,7 @@
 <button id='addPJ' class='btn' style='float: right; margin-left: 1em;' >Ajouter une piece jointe</button>
 <div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>		
 
-<?php if(count($this->listePj) == 0) : ?>
-<p id='listePieceJointe-no' ><strong>Aucune pièce jointe ajoutée.</strong></p>
-<?php else : ?>
+
 <div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
 	<table id='tabPieceJointe' class='table'> 
 		<thead> 
@@ -25,7 +23,6 @@
 		</tbody>
 	</table>
 </div>
-<?php endif ?>
 
 <script type="text/javascript">
 

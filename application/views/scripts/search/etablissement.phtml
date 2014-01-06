@@ -57,15 +57,9 @@
                 </select>
             </span>
             
-            <span><a href='' onclick="$('#extra').show(); $(this).hide(); return false" >[+ Plus de critères]</a></span>
+            <br />
+            <br />
             
-            <br />
-            <br />
-
-        </div>
-
-        <div id='extra' class='ui-helper-hidden' >
-
             <!-- Numéro ID -->
             <input type='text' id='code' name='NUMEROID_ETABLISSEMENT' class='bigger ui-helper-hidden' size=10 />
             
@@ -97,9 +91,11 @@
             <input type='text' class='date ' name='DATEVISITE_DOSSIER'  size=7 />
             
             <hr class="clear" />
-        
+
+            
+
         </div>
-        
+
     </div>
 
     <p style="text-align: center">
@@ -196,11 +192,11 @@
             
             switch(item.ID_GENRE)
             {
-                case 1:
+                case "1":
                     LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
                     break;
                     
-                case 3:
+                case "3":
                     LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
                     break;
                     

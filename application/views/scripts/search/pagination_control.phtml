@@ -1,4 +1,4 @@
-<?php if ($this->pageCount): ?>
+<?php if($this->pageCount) : ?>
 
     <div class="pagination pagination-centered" >
     
@@ -12,7 +12,7 @@
 
             <?php foreach ($this->pagesInRange as $page): ?>
             <?php if ($page != $this->current): ?>
-            <li class="active"><a href="<?php echo $this->url(array('page' => $page)); ?>"><?php echo $page; ?></a></li>
+            <li ><a href="<?php echo $this->url(array('page' => $page)); ?>"><?php echo $page; ?></a></li>
             <?php else: ?>
             <li class="disabled"><a href='#'><?php echo $page; ?></a></li>
             <?php endif; ?>
@@ -27,5 +27,9 @@
         </ul>
         
     </div>
+    
+    <script>
+        
+    </script>
 
-<?php endif; ?>
+<?php endif ?>

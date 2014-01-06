@@ -60,7 +60,7 @@
             $search->setItem("etablissement");
 
             // On gère l'affichage
-            $html = "<ul class='recherche_liste'>";
+            $html = "<ul class='recherche_liste unstyled'>";
             $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/etablissement.phtml', $search->run($this->_request->id) );
             $html .= "</ul>";
 

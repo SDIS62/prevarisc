@@ -222,10 +222,14 @@
                 <dl class='read dl-horizontal'>
                     <dt>Type / Activité principal</dt>
                     <dd>
+                        <?php
+                            $map_activite = array_flip(array_map(function($row) { return $row['ID_TYPEACTIVITE']; }, $this->DB_activite));
+                        ?>
+
                         <?php if($this->DB_informations["ID_TYPE"]) echo $this->DB_type[$this->DB_informations["ID_TYPE"]-1]["LIBELLE_TYPE"] ?>
                         <?php if( $this->DB_informations["ID_TYPEACTIVITE"] ) : ?>
                         - 
-                        <abbr title='<?php echo $this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"]?>' ><?php echo substr($this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"], 0, 50) . (strlen($this->DB_activite[$this->DB_informations["ID_TYPEACTIVITE"]-1]["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr>
+                        <abbr title='<?php echo $this->DB_activite[$map_activite[$this->DB_informations["ID_TYPEACTIVITE"]]]["LIBELLE_ACTIVITE"]?>' ><?php echo substr($this->DB_activite[$map_activite[$this->DB_informations["ID_TYPEACTIVITE"]]]["LIBELLE_ACTIVITE"], 0, 50) . (strlen($this->DB_activite[$map_activite[$this->DB_informations["ID_TYPEACTIVITE"]]]["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr>
                         <?php endif ?>
                     </dd>
 
@@ -239,9 +243,11 @@
                         - 
                         <abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 50) . (strlen($type["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr>
                         <?php endif ?>
+                        / 
+                        
                         <?php endforeach ?>
                         
-                         / 
+                         
                         
                     </dd>
                     <?php endif ?>

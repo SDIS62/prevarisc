@@ -33,7 +33,7 @@
 
 <script type="text/javascript">
     
-    $("#search, div.paginationControl a").live("click", function() {
+    $("#search, div.pagination a").live("click", function() {
         $.ajax({
             url: $(this).attr("href"),
             data: $("#recherche").serialize(),
