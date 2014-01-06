@@ -40,7 +40,8 @@ class CouchesCartographiquesController extends Zend_Controller_Action
         // On process les données
         if($this->_request->isPost())
         {
-            $model_couchecarto->insert($this->getRequest()->getPost());
+            $data = $this->getRequest()->getPost();
+            $model_couchecarto->insert($data);
             
             // Redirection
             $this->_helper->redirector('list');

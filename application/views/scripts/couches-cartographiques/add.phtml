@@ -50,6 +50,7 @@
 				Couche de base ?
 			</dt>
 			<dd>
+                <input type="hidden" name="ISBASELAYER_COUCHECARTO" value="0" />
 				<input type="checkbox" name="ISBASELAYER_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->ISBASELAYER_COUCHECARTO) echo "checked" ?> />
 			</dd>
 			
@@ -58,6 +59,7 @@
 				Nom de la couche dans le flux
 			</dt>
 			<dd>
+                <input type="hidden" name="LAYERS_COUCHECARTO" value="0" />
 				<input type="text" name="LAYERS_COUCHECARTO" value="<?php echo isset($this->row) ? $this->row->LAYERS_COUCHECARTO : "" ?>" />
 			</dd>
 
@@ -77,6 +79,7 @@
 				Couche transparente ?
 			</dt>
 			<dd>
+                <input type="hidden" name="TRANSPARENT_COUCHECARTO" value="0" />
 				<input type="checkbox" name="TRANSPARENT_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->TRANSPARENT_COUCHECARTO) echo "checked" ?> />
 			</dd>
 			
@@ -85,6 +88,7 @@
 				Interactive ?
 			</dt>
 			<dd>
+                <input type="hidden" name="INTERACT_COUCHECARTO" value="0" />
 				<input type="checkbox" name="INTERACT_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->INTERACT_COUCHECARTO) echo "checked" ?> />
 			</dd>
 		
@@ -112,7 +116,7 @@
 	$("select[name=ID_COUCHECARTOTYPE]").change(function() {
 		if($(this).find("option:selected").val() == 2 || $(this).find("option:selected").val() == 3) { // IGN / OSM
 			$("#param_avances").hide();
-			$("#param_avances input").val("");
+			$("#param_avances input").val("0");
 			$("#param_avances input[name=TRANSPARENT_COUCHECARTO]").attr("checked", false);
 		}
 		else
