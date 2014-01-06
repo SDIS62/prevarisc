@@ -170,4 +170,14 @@
 	
 
 	break;
+	case "showDocManquant":
+		echo "<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$this->numDocManquant."' rows='5' cols='100'>";
+		foreach($this->listeDoc as $val => $ue)
+		{
+			echo $ue['LIBELLE_DOCMANQUANT']."\n";
+		}
+		echo "</textarea>";
+		echo "<input class='date' type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$this->numDocManquant."' />&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>";
+		echo "&nbsp;&nbsp;&nbsp;<button class='btn validDocManquant'><i class='icon-lock'></i>&nbsp;Valider la reception de document</button>";
+	break;
 }
