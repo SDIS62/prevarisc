@@ -364,6 +364,8 @@
             $this->_helper->viewRenderer->setNoRender();
 
             $error = "null";
+            
+            echo "ok";
 
             // Extension du fichier uploadé
             $string_extension = strrchr($_FILES['COURRIER']['name'], ".");
@@ -371,7 +373,7 @@
             // On check si on veut uploader un document odt
             if ($string_extension == ".odt") {
 
-                if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $_FILES['COURRIER']['name']) ) {
+                if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], REAL_DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $_FILES['COURRIER']['name']) ) {
 
                     // Les modèles
                     $model_membres = new Model_DbTable_CommissionMembre;
@@ -383,7 +385,7 @@
                     // Si il y a déjà un courrier, on le supprime
                     if ($row_membre->$row != null) {
 
-                        unlink(DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
+                        unlink(REAL_DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
                     }
 
                     // On met à jour le libellé du courrier modifié

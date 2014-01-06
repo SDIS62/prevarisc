@@ -48,6 +48,7 @@ $(document).ready(function() {
 	});
 	
 	function dialog_aud() {
+		$('#dialog-aud').html("");
 		$('#dialog-aud').dialog("destroy");
 		$("#dialog-aud").remove();
 		
@@ -107,10 +108,10 @@ $(document).ready(function() {
 
 		var dialog_supp = $("<div id='dialog-supp'></div>").appendTo("body");
 		
-		dialog_supp.html("Vous êtes sur le point de supprimer le fichier "+nomFichier+".<br/> Une fois ce fichier supprimer il ne pourra plus être utilisé lors de la génération des rapports");
+		dialog_supp.html("Vous êtes sur le point de supprimer le fichier "+nomFichier+".<br/> Une fois ce fichier supprimé il ne pourra plus être utilisé lors de la génération des rapports.");
 
 		dialog_supp.dialog({
-			title: "Suprresion document",
+			title: "Suppresion document",
 			width: 650,
 			draggable: false,
 			resizable: false,
@@ -132,10 +133,12 @@ $(document).ready(function() {
 
 					
 					dialog_supp.dialog("destroy");
+                    $("#dialog-supp").html('');
 					return false;
 				},
 				"Annuler": function() {
 					dialog_supp.dialog("destroy");
+                    $("#dialog-supp").html('');
 					return false;
 				}
 			}
@@ -159,8 +162,7 @@ function callback(nomFich) {
 			$("#load").remove();
 			
 			if( result.exists ) {
-				$("#infosGdd").html("<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>Le document a bien été envoyé</span><br/><br/><br/>");
-				$("a[href='/gestion-des-documents']").click();
+				window.location.reload();
 			} else {
 				alert('fail');				
 			}

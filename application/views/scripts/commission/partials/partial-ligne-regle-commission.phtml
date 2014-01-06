@@ -12,9 +12,9 @@
 			</p>
 		<?php else : ?>
 			<?php
-				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], array(
-					"name" => $this->id_regle . "_ID_GROUPEMENT"
-				));
+                echo $this->listeGroupement($this->groupement, array(
+                    "name" => $this->id_regle . "_ID_GROUPEMENT"
+                ));
 			?>
 		<?php endif ?>
 	</td>

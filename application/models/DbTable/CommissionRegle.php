@@ -54,7 +54,6 @@
 
             // Pour chaques r�gles, on va chercher les crit�res
             foreach ($rowset_reglesDeLaCommission as $row_regleDeLaCommission) {
-
                 $array_regles[] = array(
                     "id_regle" => $row_regleDeLaCommission["ID_REGLE"],
                     "commune" => ($row_regleDeLaCommission["NUMINSEE_COMMUNE"]) ? $model_commune->fetchRow("NUMINSEE_COMMUNE = " . $row_regleDeLaCommission["NUMINSEE_COMMUNE"]) : null,

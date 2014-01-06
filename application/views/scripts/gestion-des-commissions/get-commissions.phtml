@@ -8,23 +8,23 @@
 
 	<?php foreach($this->rowset_commissions as $row_commission) : ?>
     
-	<h3>
-		<a href="#"><?php echo $row_commission["LIBELLE_COMMISSION"] ?></a>
-	</h3>
-	
-	<div id="<?php echo $row_commission["ID_COMMISSION"] ?>_tabs">
-		<ul>
-			<li><a href="/commission/competences?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Champ de compétence de la commission</span></a></li>
-			<li><a href="/commission/membres?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Membres de la commission</span></a></li>
-			<li><a href="/commission/contacts?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Contacts de la commission</span></a></li>
-			<li><a href="/commission/courriers?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Courriers types envoyés aux membres</span></a></li>
-		</ul>
+	<h3><a style='margin-left: 1em'><?php echo $row_commission["LIBELLE_COMMISSION"] ?></a></h3>
+	<div>
+    
+        <div id="<?php echo $row_commission["ID_COMMISSION"] ?>_tabs">
+            <ul>
+                <li><a href="/commission/competences?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Champ de compétence de la commission</span></a></li>
+                <li><a href="/commission/membres?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Membres de la commission</span></a></li>
+                <li><a href="/commission/contacts?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Contacts de la commission</span></a></li>
+                <li><a href="/commission/courriers?id_commission=<?php echo $row_commission["ID_COMMISSION"] ?>"><span>Courriers types envoyés aux membres</span></a></li>
+            </ul>
+        </div>
+        
+        <script type="text/javascript">
+            $("#<?php echo $row_commission["ID_COMMISSION"] ?>_tabs").tabs({heightStyle: "content", history: false, load: function(event, ui) { init_checkboxes(<?php echo $row_commission["ID_COMMISSION"] ?>); }});
+        </script>
+    
 	</div>
-	
-	<script type="text/javascript">
-		$("#<?php echo $row_commission["ID_COMMISSION"] ?>_tabs").tabs({heightStyle: "content", history: false, load: function(event, ui) { init_checkboxes(<?php echo $row_commission["ID_COMMISSION"] ?>); }});
-	</script>
-	
 	<?php endforeach ?>
 	
 </div>
@@ -56,20 +56,15 @@
 	}
 	
 	function check_checkboxes(conteneur, change) {
-	
 		// Si toutes les cases sont cochées
-		// :not(.ignore_check)
 		if( conteneur.find("input[type=checkbox]:checked:not(.ignore_check)").length == conteneur.find("input[type=checkbox]:not(.ignore_check)").length) {
-		
 			// Si on est en mode changement
-			if(change === true) {
-				
+			if(change == true) {
 				// Si on veut tout cocher
 				conteneur.find(".checkbox_area_content").hide();
 				conteneur.find("input[type=checkbox]:not(.ignore_check)").attr("checked", "checked");
 				conteneur.find(".checkbox_area_lambda").show();
-			} else if(change === false) {
-			
+			} else if(change == false) {
 				// Si on veut modifier
 				conteneur.find(".checkbox_area_content").show();
 				conteneur.find("input[type=checkbox]:not(.ignore_check)").attr("checked", "");
@@ -77,13 +72,11 @@
 			}
 		}
 		else if(!change) {
-		
 			// Si on veut tout cocher
 			conteneur.find(".checkbox_area_content").hide();
 			conteneur.find("input[type=checkbox]:not(.ignore_check)").attr("checked", "checked");
 			conteneur.find(".checkbox_area_lambda").show();
 		}
-		
 		return false;
 	}
 
