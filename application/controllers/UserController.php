@@ -190,7 +190,6 @@
             $user = $DB_user->find( $this->_request->uid )->current();
 
             if (Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR == $user->ID_UTILISATEUR && $this->_request->me != true) {
-
                 $this->_helper->_redirector("me");
             }
 

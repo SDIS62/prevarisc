@@ -319,7 +319,6 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 	margin: 34px 0 0 0;
 }
 .recherche_liste .slide:hover {
-
 	cursor: pointer;
 }
 .recherche_liste .ui-icon {
@@ -329,8 +328,11 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 	background-position: -64px -16px;
 }
 
-.recherche_liste .recherche_liste {
+.recherche_liste li {
+    margin-bottom: 2px;
+}
 
+.recherche_liste .recherche_liste {
 	margin-left: 50px;
 }
 
@@ -378,11 +380,17 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 	line-height: 14px;
 	font-size: 10px;
 	font-variant: small-caps;
-	
 	right: -18px;
 	text-align: center;
 	width: 14px;
-	top: 2px;
+	top: 7px;
+}
+a.thumbnail {
+    float: left;
+    margin-bottom: 5px;
+}
+a.thumbnail + a.thumbnail {
+    margin-left: 5px;
 }
 #liste_doss .avis, .etablissement .avis{
 	position: absolute;
@@ -435,7 +443,7 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 	position: absolute;
 	right: 8px;
 	font-style: italic;
-	bottom: 5px;
+	bottom: 7px;
 	line-height: 9px;
 	font-size: 9px
 }

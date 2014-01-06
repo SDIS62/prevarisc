@@ -29,6 +29,8 @@
 		else
 			echo "<p><strong>Aucun contact.</strong></p>";
 	?>
+    
+    <div style='clear: both'></div>
 </div>
 
 <?php if( !$this->ajax) : ?>
@@ -88,7 +90,7 @@
 				url: a.href + "&format=html",
 				success: function(result) {
 				
-					$("#dialog-add-contact").html(result).dialog({
+					$("#dialog-add-contact").html('').append(result).dialog({
 						title: "Ajout d'un contact",
 						height: 350,
 						width: 650,
@@ -108,7 +110,8 @@
 								});
 							},
 							"Annuler": function() {
-								$('#dialog-add-contact').dialog("destroy");
+                                $("#dialog-add-contact").dialog( "destroy" );
+								$('#dialog-add-contact').html('');
 							}
 						}
 					});
@@ -123,8 +126,7 @@
 			$.ajax({
 				url: a.href + "&format=html",
 				success: function(result) {
-				
-					$("#dialog-add-contact").html(result).dialog({
+					$("#dialog-add-contact").html('').append(result).dialog({
 						title: "Modification d'un contact",
 						height: 350,
 						width: 650,
@@ -134,16 +136,19 @@
 							"Modifier": function() {
 								$.ajax({
 									url: "/contact/edit",
-									data: $("#formulaire_contact").serialize(),
+									data: $("#dialog-add-contact #formulaire_contact").serialize(),
 									type: "POST",
 									success: function () {
 										$('#dialog-add-contact').dialog("destroy");
 										$("#contact-content-ajax").load("/contact?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>&ajax=1");
 									}
 								});
+                                
+                                $("#dialog-add-contact").html('');
 							},
 							"Annuler": function() {
-								$('#dialog-add-contact').dialog("destroy");
+                                $("#dialog-add-contact").dialog( "destroy" );
+                                $("#dialog-add-contact").html('');
 							}
 						}
 					});
@@ -167,7 +172,6 @@
 		});
 		
 		$("a#add-contact-existant").click(function() {
-			
 			$('#dialog-add-contact-existant').dialog("open");
 			$('#dialog-add-contact-existant input').val("");
 			return false;

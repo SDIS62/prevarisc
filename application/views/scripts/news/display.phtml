@@ -27,7 +27,7 @@
                 </a>
             </span>
 		
-            <?php echo (( $d->get(Zend_Date::DATES) != $actual->get(Zend_Date::DATES) ) ?  $d->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT)." ".$d->get(Zend_Date::TIME_SHORT) : $d->get(Zend_Date::TIME_SHORT)) . " - Posté par " . $this->NOM_UTILISATEURINFORMATIONS . " " . $this->PRENOM_UTILISATEURINFORMATIONS . " dans la catégorie <em>" . $this->TYPE_NEWS . "</em>" ?>
+            <?php echo (( $d->get(Zend_Date::DATES) != $actual->get(Zend_Date::DATES) ) ?  $d->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT)." ".$d->get(Zend_Date::TIME_SHORT) : $d->get(Zend_Date::TIME_SHORT)) . " - Posté par <a href='user/profile/uid/" . $this->ID_UTILISATEUR . "'>" . $this->NOM_UTILISATEURINFORMATIONS . " " . $this->PRENOM_UTILISATEURINFORMATIONS . "</a> dans la catégorie <em>" . $this->TYPE_NEWS . "</em>" ?>
         </small>
 	</p>
 	

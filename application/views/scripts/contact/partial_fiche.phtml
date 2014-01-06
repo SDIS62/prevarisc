@@ -1,13 +1,14 @@
 <div class="fiche_contact pull-left" style="width: 500px; margin: 5px;">
 
-    <p class="fiche_contact_nom"><?php echo $this->NOM_UTILISATEURINFORMATIONS ." ".$this->PRENOM_UTILISATEURINFORMATIONS  ?>
+    <p class="fiche_contact_nom">
+        <?php echo $this->NOM_UTILISATEURINFORMATIONS ." ".$this->PRENOM_UTILISATEURINFORMATIONS  ?>
         <span class="fiche_delete" title="Supprimer"><a class='contact-delete' href="/contact/delete?item=<?php echo $this->partialLoop()->view->item ?>&id=<?php echo $this->ID_UTILISATEURINFORMATIONS  ?>&id_item=<?php echo $this->partialLoop()->view->id ?>">&times;</a></span>
         <span class="fiche_edit" title="Éditer"><a href="/contact/edit?id=<?php echo $this->ID_UTILISATEURINFORMATIONS  ?>"><img src="/images/pen.png" height="9" width="10" alt="Éditer" /></a></span>
     </p>
     
     <p class="fiche_contact_fonction"><?php echo $this->LIBELLE_FONCTION  ?> - <?php echo $this->SOCIETE_UTILISATEURINFORMATIONS  ?></p>
     
-    <ul>
+    <ul class='unstyled'>
         <li>
             <span>Téléphone</span>
             <span class="valeur">

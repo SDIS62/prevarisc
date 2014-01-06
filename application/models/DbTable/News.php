@@ -14,7 +14,9 @@
                 ->join("utilisateur", "news.ID_UTILISATEUR = utilisateur.ID_UTILISATEUR")
                 ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = utilisateur.ID_UTILISATEURINFORMATIONS")
                 // ->where("newsgroupe.ID_GROUPE IN ( ".$id_groupe." )")
-                ->order("ID_NEWS DESC");
+                ->group('ID_NEWS')
+                ->order("ID_NEWS DESC")
+                ->limit(30);
 
             if( $timestamp )
                 $select->where("news.ID_NEWS >= $timestamp");

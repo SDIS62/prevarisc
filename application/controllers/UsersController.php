@@ -101,9 +101,9 @@ class UsersController extends Zend_Controller_Action
     {
         // Modèles
         $DB_groupe = new Model_DbTable_Groupe;
-        
+
         // On analyse si on ajoute ou on édite
-        if($this->hasParam('gid'))
+        if($this->_request->getParam('gid') != '')
         {
             $groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
             $groupe->setFromArray(array_intersect_key($_POST, $DB_groupe->info('metadata')))->save();

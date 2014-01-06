@@ -93,7 +93,6 @@
 
             if ( array_key_exists("NOM_PRENOM", $criteres) && $criteres["NOM_PRENOM"] != "Nom de l'utilisateur" ) {
                 $search->setCriteria("NOM_UTILISATEURINFORMATIONS", $criteres["NOM_PRENOM"], false);
-                $search->setCriteria("PRENOM_UTILISATEURINFORMATIONS", $criteres["NOM_PRENOM"], false);
             }
 
             if( array_key_exists("ID_FONCTION", $criteres) && count($criteres["ID_FONCTION"]) > 0 )
