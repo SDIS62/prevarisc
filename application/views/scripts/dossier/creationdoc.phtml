@@ -2,7 +2,7 @@
 
 function verifInfos($var){
 	if($var == ''){
-		return "néant";
+		return "";
 	}else{
 		
 		return $var;
@@ -36,6 +36,33 @@ try {
 
 try {
 	$odf->setVars('analyseRisque',verifInfos($this->infosDossier['ANOMALIE_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	if($this->infosDossier['HORSDELAI_DOSSIER'] == 0){
+		$horsdelai = "Non";
+	}else{
+		$horsdelai = "Oui";
+	}
+	$odf->setVars('horsDelai',verifInfos($horsdelai),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	$odf->setVars('docManquant',verifInfos($this->listeDocManquant['DOCMANQUANT']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	if($this->infosDossier['DATEINCOMPLET_DOSSIER']){
+		$date = new Zend_Date($this->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
+		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+	}
+	$odf->setVars('dateIncomplet',verifInfos($date),true,'UTF8');
 }catch (OdfException $e){
 
 }

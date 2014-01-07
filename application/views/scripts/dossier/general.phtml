@@ -852,25 +852,29 @@
 			success: function(affichageResultat){
 				//On affiche tous les champs
 				//alert(affichageResultat);
-				var incomplet = $("input[name=INCOMPLET_DOSSIER]:checked").val();
-				
+
 				if(affichageResultat != ''){
 					var rez = eval("("+affichageResultat+")");
 					for(var i in rez){
+						/*
 						if(rez[i] == 'AVIS'){
 							//Si l'avis est défavorable alors on affiche l'anomalie constatée (analyse de risque)
 							if($("#AVIS_DOSSIER").val() == 3){
 								$("#ANOMALIE").show();
 							}
 						}
-						if(incomplet == 1){
-							$("#AVIS").hide();
-							//alert('');
-						}
+						*/
 						$("#InfosDossier > #"+rez[i]).show();
 						$("#type > .value").hide();
 						$("#type > .form").show();
 					}
+				}
+				
+				var incomplet = $("input[name=INCOMPLET_DOSSIER]:checked").val();
+				var horsdelai = $(".horsdelai").is(':checked');
+
+				if(incomplet == 1 || horsdelai){
+					$("#AVIS").hide();
 				}
 				
 				if($("#selectNature").val() == 1 || $("#selectNature").val() == 2){
@@ -1230,11 +1234,12 @@
 			//si la date n'est pas renseignée
 			$(this).prev().prev().click();
 		}else{
-			$(this).prev().hidden();
-			$(this).prev().prev().prev().attr('disabled','disabled');
+			//$(this).prev().hidden();
+			$(this).prev().prev().prev().attr('readonly','readonly');
 			$(".incomplet").val(['0']);
-		}
-		
+			$("#AVIS").show();
+			//alert('');
+		}		
 		return false;
 	});
 </script>
@@ -1535,9 +1540,11 @@ echo "
 					";						
 					foreach($this->listeDocManquant as $val => $ue)
 					{
+						$date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
+						$dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 						echo nl2br($ue['DOCMANQUANT']);
 						if($ue['DATE_DOCSMANQUANT'] != '')
-							echo "<font style='color:green;' >Reception document(s) le ".$ue['DATE_DOCSMANQUANT']."</font><br/>";
+							echo "<font style='color:green;' >Reception document(s) le ".$dateDocManquant."</font><br/>";
 						echo "<br/>";
 					}
 					echo "
@@ -1551,12 +1558,16 @@ echo "
 						{
 							if($ue['DATE_DOCSMANQUANT'] != '')
 							{
-								$disabledTextArea = "disabled='disabled'";
+								$disabledTextArea = "readonly='readonly'";
+								$date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
+								$dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 							}else{
 								$disabledTextArea = "";
+								$dateDocManquant = "";
 							}
+							
 							echo "<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$ue['NUM_DOCSMANQUANT']."' ".$disabledTextArea." rows='5' cols='100'>".$ue['DOCMANQUANT']."</textarea>";
-							echo "<input class='date' type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$ue['DATE_DOCSMANQUANT']."' ".$disabledTextArea."/>&nbsp;";
+							echo "<input class='date' type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$dateDocManquant."' ".$disabledTextArea."/>&nbsp;";
 							if($ue['DATE_DOCSMANQUANT'] == '')
 							{								
 								echo "<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>&nbsp;&nbsp;&nbsp;<button class='btn validDocManquant'><i class='icon-lock'></i>&nbsp;Valider la reception de document</button><br/><br/>";
@@ -1622,7 +1633,7 @@ echo "
 						<input type='checkbox' class='cne' name='CNE_DOSSIER' ".( ($this->infosDossier['CNE_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>				
-				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '')? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>".$this->AVIS_VALUE['LIBELLE_AVIS']."</span></div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">

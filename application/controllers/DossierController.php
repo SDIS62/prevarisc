@@ -652,6 +652,7 @@ class DossierController extends Zend_Controller_Action
 			*/
 			
 			//Recuperation des documents manquants dans le cas d'un dossier incomplet
+			
 			$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
 			$this->view->listeDocManquant = $dbDossDocManquant->getDocManquantDoss($this->_getParam("id"));
 			//Zend_Debug::dump($this->view->listeDocManquant);
@@ -668,6 +669,7 @@ class DossierController extends Zend_Controller_Action
             unset($preventionnistes[-1]);
             $this->view->preventionnistes = $preventionnistes;
             //Zend_Debug::dump($this->view->preventionnistes);
+			$this->view->listeDocManquant = Array();
         }
 
         //23/10/12 Ajout du service instructeur remplacé par le select des groupements de communes
@@ -1032,6 +1034,11 @@ class DossierController extends Zend_Controller_Action
                 $nouveauDossier->$libelle = $value;                
             }            
         }
+		
+		if(!$this->_getParam('HORSDELAI_DOSSIER'))
+		{
+			 $nouveauDossier->HORSDELAI_DOSSIER = 0;
+		}
 
         $nouveauDossier->save();
 		
@@ -1155,69 +1162,66 @@ class DossierController extends Zend_Controller_Action
 		
 		if ( isset($_POST['docManquant']) ) 
 		{
-			$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
-			
 			$docManquantArray = Array();
 			$dateDocManquantArray = Array();
 			//array_push($prescriptionArray, $assoc);
 			if ( isset($_POST['docManquant']) ) 
 			{
 				foreach ($_POST['docManquant']  as $libelle => $value) {
-					array_push($docManquantArray, $value);
+					if($value != "")
+						array_push($docManquantArray, $value);
 				}
 			}
 			
 			if ( isset($_POST['dateReceptionDocManquant']) ) 
 			{
 				foreach ($_POST['dateReceptionDocManquant']  as $libelle => $value) {
-					array_push($dateDocManquantArray, $value);
+					if($value != "")
+						array_push($dateDocManquantArray, $value);
 				}
 			}
 			//Zend_Debug::dump($docManquantArray);
 			//Zend_Debug::dump($dateDocManquantArray);
-			$cpt=1;
 			
-			//on recupere les documents manquant du dossier
-			$dossDocManquantListe = $dbDossDocManquant->getDocManquantDoss($idDossier);
+			$nbDocParam = count($docManquantArray);
+			$nbDateParam = count($dateDocManquantArray);
+
+			$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
 			
-			Zend_Debug::dump($dossDocManquantListe);
-			
-			
-			foreach ($docManquantArray  as $libelle => $value) {
-				if($dossDocManquantListe[$cpt-1]['NUM_DOCSMANQUANT'] == $cpt)
+			$cpt = 0;
+			foreach ($docManquantArray  as $libelle => $value)
+			{
+				$docEnC = $dbDossDocManquant->getDocManquantDossNum($idDossier,$cpt);
+				//Zend_Debug::dump($docEnC);
+				if($docEnC && $docEnC['DATE_DOCSMANQUANT'] == NULL)
 				{
-					//echo "existe";
-					if(!$dossDocManquantListe[$cpt-1]['DATE_DOCSMANQUANT'])
+					//echo "On find et on met à jour ".$docEnC['ID_DOCMANQUANT']."<br/>";
+					$dossDocManquant = $dbDossDocManquant->find($docEnC['ID_DOCMANQUANT'])->current();
+					if($nbDateParam > 0 && $cpt < $nbDateParam)
 					{
-						//echo "pas de date";
-						$dossDocManquant = $dbDossDocManquant->find($dossDocManquantListe[$cpt-1]['ID_DOCMANQUANT'])->current();
-						$dossDocManquant->ID_DOSSIER = $idDossier;
-						$dossDocManquant->NUM_DOCSMANQUANT = $cpt;
-						$dossDocManquant->DOCMANQUANT = $value;
-						if($dateDocManquantArray[$cpt-1] != '')
-						{
-							$dateTab = explode("/",$dateDocManquantArray[$cpt-1]);
-							$value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
-							$dossDocManquant->DATE_DOCSMANQUANT = $value;
-						}
-						$dossDocManquant->save();
+						$dateTab = explode("/",$dateDocManquantArray[$cpt]);
+						$value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
+						$dossDocManquant->DATE_DOCSMANQUANT = $value;
 					}
-				}else{
-					//echo "existe pas";
+					$dossDocManquant->save();
+				}else if(!$docEnC){
+					//echo "existe pas<br/>";
 					$dossDocManquant = $dbDossDocManquant->createRow();
 					$dossDocManquant->ID_DOSSIER = $idDossier;
 					$dossDocManquant->NUM_DOCSMANQUANT = $cpt;
 					$dossDocManquant->DOCMANQUANT = $value;
-					if($dateDocManquantArray[$cpt-1] != '')
+					if($nbDateParam > 0 && $cpt < $nbDateParam)
 					{
-						$dateTab = explode("/",$dateDocManquantArray[$cpt-1]);
+						$dateTab = explode("/",$dateDocManquantArray[$cpt]);
 						$value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
 						$dossDocManquant->DATE_DOCSMANQUANT = $value;
 					}
 					$dossDocManquant->save();
 				}
-				$cpt++;				
+				
+				$cpt++;
 			}
+
 		}
 		//lorsque je crée un nouveau dossier de VP pour un ERP qui a déjà été visité, il faudrait que les « éléments consultés » de base soient les mêmes
 		//Sauvegarde des numéro de document d'urbanisme du dossier
@@ -1718,7 +1722,13 @@ class DossierController extends Zend_Controller_Action
 			$this->view->dusDossier = $dusInfos[0];
 		
 		//Zend_Debug::dump($dusInfos);
-
+		
+		//Affichage dossier incomplet pour generation dossier incomplet
+		//Recuperation des documents manquants dans le cas d'un dossier incomplet
+		$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
+		$this->view->listeDocManquant = $dbDossDocManquant->getDocManquantDossLast($idDossier);
+		//Zend_Debug::dump($this->view->listeDocManquant);
+		
         //$avisDossier = $this->view->infosDossier["AVIS_DOSSIER"];
         $DBavisDossier = new Model_DbTable_Avis;
         $libelleAvis = $DBavisDossier->find($this->view->infosDossier["AVIS_DOSSIER"])->current();
