@@ -295,6 +295,16 @@
 				afficherCacherAvis(0);
 			}
 		});
+		
+		$(".hideavis").click(function(){
+			if($(this).is(":checked")){
+				//Si il est coché on cache l'avis
+				afficherCacherAvis(1);
+			}else{
+				//Sinon on affiche l'avis
+				afficherCacherAvis(0);
+			}		
+		});
 
 		majAvisSelect();
 	});
@@ -316,40 +326,52 @@
 	function majAvisSelect()
 	{
 		var genre = $('#genreInfo').val();
-		if( genre == '2' )
+
+		//etablissement
+		var typeDossier = $("#TYPE_DOSSIER").val();
+		var natureDossier = $("#selectNature").val();
+		if(typeDossier == 1)
 		{
-			//etablissement
-			var typeDossier = $("#TYPE_DOSSIER").val();
-			var natureDossier = $("#selectNature").val();
-			if(typeDossier == 1)
+			//etude
+			//alert(natureDossier);
+			if(natureDossier == 19)
 			{
-				//etude
-				//alert(natureDossier);
-				if(natureDossier == 19)
+				//levée reserve
+				var addText = " à l'exploitation";
+			}else{
+				var addText = " à l'étude";
+			}
+		}else if(typeDossier == 2 || typeDossier == 3){
+			//alert(natureDossier);
+			if(natureDossier == 20 || natureDossier == 25)
+			{
+				var addText = " à la réception des travaux";
+			}else if(natureDossier == 21 || natureDossier == 23 || natureDossier == 24 || natureDossier == 26 || natureDossier == 28 || natureDossier == 29 ){
+				if( genre == '2' )
 				{
-					//levée reserve
 					var addText = " à l'exploitation";
-				}else{
-					var addText = " à l'étude";
+				}else if( genre == '3' ){
+					var addText = "";
 				}
-			}else if(typeDossier == 2 || typeDossier == 3){
+			}else{
 				var addText = " à l'exploitation";
 			}
-			
-			$("#AVIS_DOSSIER option").each(function(){
-				//var text = $(this).text();
-				if($(this).val() != 0)
-				{
-					if($(this).val() == 1)
-					{
-						var text = "Favorable";
-					}else{
-						var text = "Défavorable";
-					}
-					$(this).text(text+addText);
-				}
-			});
 		}
+		
+		$("#AVIS_DOSSIER option").each(function(){
+			//var text = $(this).text();
+			if($(this).val() != 0)
+			{
+				if($(this).val() == 1)
+				{
+					var text = "Favorable";
+				}else{
+					var text = "Défavorable";
+				}
+				$(this).text(text+addText);
+			}
+		});
+		
 	}
 	
 	$.fn.afficheCalendar = function(idComm,emplacement,type,divInfo,infoCalendar) {
@@ -902,7 +924,7 @@
 	};
 	
 	$("#annulModification").button().click(function() {
-		//window.location.reload();
+		window.location.reload();
 	});
 
 	//Action lorsque l'on appuie sur le bouton modifier MODE EDITION
@@ -1115,7 +1137,7 @@
 			success: function(affichageResultat){
 				//alert('/dossier/index/id/'+affichageResultat);
 				var idDossier = affichageResultat.replace(' ', '');
-				//window.location='/dossier/index/id/'+idDossier;
+				window.location='/dossier/index/id/'+idDossier;
 				//return false;
 			},
 			error: function(){
@@ -1219,7 +1241,7 @@
 			},
 			success: function(affichageResultat){
 				//alert(affichageResultat);
-				//window.location= affichageResultat;
+				window.location= affichageResultat;
 			},
 			error: function(){
 				return false;
@@ -1579,7 +1601,7 @@ echo "
 						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Incomplet					
 					</div>
 				</li>
-				<li class='row-fluid' id='HORSDELAI' style='".( ($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='HORSDELAI' style='".( ($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL && $this->infosDossier['HORSDELAI_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Hors délai</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						<input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' disabled ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "").">
@@ -1588,54 +1610,74 @@ echo "
 						<input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>
-				<li class='row-fluid' id='DIFFEREAVIS' style='".( ($action != 'new' && in_array('DIFFEREAVIS', $this->afficherChamps) && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DIFFEREAVIS' style='".( ($action != 'new' && in_array('DIFFEREAVIS', $this->afficherChamps) && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != NULL && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Differe l'avis</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						<input type='checkbox' class='differeavis' name='DIFFEREAVIS_DOSSIER' disabled ".( ($this->infosDossier['DIFFEREAVIS_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='differeavis' name='DIFFEREAVIS_DOSSIER' ".( ($this->infosDossier['DIFFEREAVIS_DOSSIER'])? "checked" : "")."> 				
+						<input type='checkbox' class='differeavis hideavis' name='DIFFEREAVIS_DOSSIER' ".( ($this->infosDossier['DIFFEREAVIS_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>
-				<li class='row-fluid' id='NPSP' style='".( ($action != 'new' && in_array('NPSP', $this->afficherChamps) && $this->infosDossier['NPSP_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'>Hors délai</div>
+				<li class='row-fluid' id='NPSP' style='".( ($action != 'new' && in_array('NPSP', $this->afficherChamps) && $this->infosDossier['NPSP_DOSSIER'] != NULL && $this->infosDossier['NPSP_DOSSIER'] != 0 )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Ne peut se prononcer</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						<input type='checkbox' class='npsp' name='NPSP_DOSSIER' disabled ".( ($this->infosDossier['NPSP_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='npsp' name='NPSP_DOSSIER' ".( ($this->infosDossier['NPSP_DOSSIER'])? "checked" : "")."> 				
+						<input type='checkbox' class='npsp hideavis' name='NPSP_DOSSIER' ".( ($this->infosDossier['NPSP_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>
-				<li class='row-fluid' id='NPEA' style='".( ($action != 'new' && in_array('NPEA', $this->afficherChamps) && $this->infosDossier['NPEA_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='NPEA' style='".( ($action != 'new' && in_array('NPEA', $this->afficherChamps) && $this->infosDossier['NPEA_DOSSIER'] != NULL && $this->infosDossier['NPEA_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Ne peut émettre d'avis</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						<input type='checkbox' class='npea' name='NPEA_DOSSIER' disabled ".( ($this->infosDossier['NPEA_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='npea' name='NPEA_DOSSIER' ".( ($this->infosDossier['NPEA_DOSSIER'])? "checked" : "")."> 				
+						<input type='checkbox' class='npea hideavis' name='NPEA_DOSSIER' ".( ($this->infosDossier['NPEA_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>
-				<li class='row-fluid' id='APPALV' style='".( ($action != 'new' && in_array('APPALV', $this->afficherChamps) && $this->infosDossier['APPALV_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='APPALV' style='".( ($action != 'new' && in_array('APPALV', $this->afficherChamps) && $this->infosDossier['APPALV_DOSSIER'] != NULL && $this->infosDossier['APPALV_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>N'a pas procédé à la visite</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						<input type='checkbox' class='appalv' name='APPALV_DOSSIER' disabled ".( ($this->infosDossier['APPALV_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='appalv' name='APPALV_DOSSIER' ".( ($this->infosDossier['APPALV_DOSSIER'])? "checked" : "")."> 				
+						<input type='checkbox' class='appalv hideavis' name='APPALV_DOSSIER' ".( ($this->infosDossier['APPALV_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>
-				<li class='row-fluid' id='CNE' style='".( ($action != 'new' && in_array('CNE', $this->afficherChamps) && $this->infosDossier['CNE_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='CNE' style='".( ($action != 'new' && in_array('CNE', $this->afficherChamps) && $this->infosDossier['CNE_DOSSIER'] != NULL && $this->infosDossier['CNE_DOSSIER'] != 0 )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Cellule non exploitée</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						<input type='checkbox' class='cne' name='CNE_DOSSIER' disabled ".( ($this->infosDossier['CNE_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='cne' name='CNE_DOSSIER' ".( ($this->infosDossier['CNE_DOSSIER'])? "checked" : "")."> 				
+						<input type='checkbox hideavis' class='cne' name='CNE_DOSSIER' ".( ($this->infosDossier['CNE_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>				
 				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>".$this->AVIS_VALUE['LIBELLE_AVIS']."</span></div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>";
+					echo $this->AVIS_VALUE['LIBELLE_AVIS'];
+					if($this->infosDossier['TYPE_DOSSIER'] == 1){
+						//etude
+						if($this->natureConcerne[0]['ID_NATURE'] == 19){
+							echo " à l'exploitation";
+						}else{
+							echo " à l'étude";
+						}
+					}else if($this->infosDossier['TYPE_DOSSIER'] == 2 || $this->infosDossier['TYPE_DOSSIER'] == 3){
+						//visite et groupe de visite
+						if($this->natureConcerne[0]['ID_NATURE'] == 20  || $this->natureConcerne[0]['ID_NATURE'] == 25){
+							//Reception de travaux
+							echo " à la reception des travaux";
+						}else{
+							//Reste des visites
+							echo " à l'exploitation";
+						}
+					}
+				echo 
+					"</span></div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<select name='AVIS_DOSSIER' id='AVIS_DOSSIER' >
 							<option value='0' ></option>
@@ -1647,11 +1689,12 @@ echo "
 						</select>
 					</div>
 				</li>
-				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;display:none;'>
+				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL )? "" : "display:none;")."'>
 					<div class='left libelle span3' style='float:left;'>Facteur de dangerosité</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>".$this->AVIS_VALUE['LIBELLE_AVIS']."</span></div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='factDange ".$this->infosDossier['FACTDANGE_DOSSIER']."'>".$this->infosDossier['FACTDANGE_DOSSIER']."</span></div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<select name='FACTDANGE_DOSSIER' id='FACTDANGE_DOSSIER' >
+							<option value='NULL'>Choisissez un facteur de dangerosité</option>
 							<option value='1'>1</option>
 							<option value='2'>2</option>
 							<option value='3'>3</option>

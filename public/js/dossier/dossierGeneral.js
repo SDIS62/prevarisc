@@ -60,7 +60,25 @@ $(document).ready(function(){
 
 	
 	$("#AVIS_DOSSIER").live('change',function(){
-		//alert($(this).val());
+		
+		var genre = $('#genreInfo').val();
+		var typeDossier = $("#TYPE_DOSSIER").val();
+		var natureDossier = $("#selectNature").val();
+		
+		//alert($(this).val()+" / "+genre+" / "+typeDossier+" / "+natureDossier);
+		
+		if($(this).val() == 2){
+			if(genre == 2 && (typeDossier == 2 || typeDossier == 3))
+			{
+				if(natureDossier == 21 || natureDossier == 23 || natureDossier == 24 || natureDossier == 26 || natureDossier == 28 || natureDossier == 29 )
+				{
+					$("#FACTDANGE").show();
+				}		
+			}
+		}else{
+			$("#FACTDANGE").hide();
+		}
+		/*
 		if($(this).val() == 3){
 			$("#ANOMALIE").show();
 			$("#ANOMALIE_DOSSIER").val('');
@@ -68,6 +86,7 @@ $(document).ready(function(){
 			$("#ANOMALIE").hide();
 			$("#ANOMALIE_DOSSIER").val('');
 		}
+		*/
 	});
 	
 	

@@ -988,7 +988,6 @@ class DossierController extends Zend_Controller_Action
             //On exclu la lecture de selectNature => select avec les natures;
             //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
             //  !  \\
-            //Il  faudrait idéalement: Récuperer le tableau concernant les champs à faire afficher et si : le champ passé n'y apparait pas le mettre à null
             //
             if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant") {
                 //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
@@ -1020,24 +1019,44 @@ class DossierController extends Zend_Controller_Action
                 //echo $libelle." - ".$value."<br/>";
 
                 $nouveauDossier->$libelle = $value;
-
             }
-            
-            if ($libelle == 'HORSDELAI_DOSSIER') {
-                
-                if ($value == 'on') {
-                    $value = 1;
-                }
-                else {
-                    $value = 0;
-                }
-                $nouveauDossier->$libelle = $value;                
-            }            
         }
 		
 		if(!$this->_getParam('HORSDELAI_DOSSIER'))
 		{
 			 $nouveauDossier->HORSDELAI_DOSSIER = 0;
+		}else{
+			$nouveauDossier->HORSDELAI_DOSSIER = 1;
+		}
+		
+		if (!$this->_getParam('NPSP_DOSSIER')) {
+			$nouveauDossier->NPSP_DOSSIER = 0;                
+		}else{
+			$nouveauDossier->NPSP_DOSSIER = 1;
+		}
+		
+		if (!$this->_getParam('NPEA_DOSSIER')) {
+			$nouveauDossier->NPEA_DOSSIER = 0;                
+		}else{
+			$nouveauDossier->NPEA_DOSSIER = 1;
+		}
+		
+		if (!$this->_getParam('DIFFEREAVIS_DOSSIER')) {
+			$nouveauDossier->DIFFEREAVIS_DOSSIER = 0;                
+		}else{
+			$nouveauDossier->DIFFEREAVIS_DOSSIER = 1;
+		}
+		
+		if (!$this->_getParam('APPALV_DOSSIER')) {
+			$nouveauDossier->APPALV_DOSSIER = 0;                
+		}else{
+			$nouveauDossier->APPALV_DOSSIER = 1;
+		}
+		
+		if (!$this->_getParam('CNE_DOSSIER')) {
+			$nouveauDossier->CNE_DOSSIER = 0;                
+		}else{
+			$nouveauDossier->CNE_DOSSIER = 1;
 		}
 
         $nouveauDossier->save();
