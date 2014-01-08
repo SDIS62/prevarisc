@@ -108,7 +108,6 @@
 			url: a.href,
 			success: function() {
 				var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
-                alert(current_index);
                 $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
 			}
 		});
