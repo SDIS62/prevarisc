@@ -29,7 +29,7 @@
 	
 	function dialog_gdc() {
 
-		$('#dialog-gdc').dialog("destroy");
+		// $('#dialog-gdc').dialog("destroy");
 		$("#dialog-gdc").remove();
 		
 		var dialog_gdc = $("<div id='dialog-gdc'></div>").appendTo("body");
@@ -50,12 +50,14 @@
 						data: $("#form-gdc").serialize(),
 						type: "POST",
 						success: function () {
+                            $("#dialog-gdc").html('');
 							dialog_gdc.dialog("destroy");
 							$("#index-left ul li.active a").click();
 						}
 					});
 				},
 				Cancel: function() {
+                    $("#dialog-gdc").html('');
 					dialog_gdc.dialog("destroy");
 				}
 			}
