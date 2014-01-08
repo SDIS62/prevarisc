@@ -718,7 +718,7 @@
                 <dl class="read dl-horizontal">
                     <dt>Groupements de l'établissement</dt>
                     <dd>
-                        <ul>
+                        <ul class='unstyled'>
                             <?php foreach($this->array_groupements as $groupement) : ?>
                             <li><a class="view-groupement" href="/groupement/view?id=<?php echo $groupement["ID_GROUPEMENT"] ?>"><?php echo $groupement["LIBELLE_GROUPEMENT"] ?> (<?php echo $groupement["LIBELLE_GROUPEMENTTYPE"] ?>)</a></li>
                             <?php endforeach ?>
