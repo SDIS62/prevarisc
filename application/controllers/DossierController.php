@@ -959,11 +959,22 @@ class DossierController extends Zend_Controller_Action
 				}
 			break;
 			case "showDocManquant":
-				//On recupere la liste des documents manquant type
-				$dbDocManquant = new Model_DbTable_DocManquant;
-				$this->view->listeDoc = $dbDocManquant->getDocManquant();
-				//Zend_Debug::dump($listeDocManquant);
-				$this->view->numDocManquant = $this->_getParam('numDoc');
+				//Si on passe un id dossier en param alors on cherche le dernier champ doc manquant si il existe
+				if($this->_getParam('idDossier') && $this->_getParam('idDossier') != '')
+				{
+					$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
+					$lastDocManquantInDb = $dbDossDocManquant->getDocManquantDossLast($this->_getParam('idDossier'));
+					//Zend_Debug::dump($lastDocManquantInDb);
+					$this->view->oldDocManquant = $lastDocManquantInDb;
+					//echo $this->view->oldDocManquant;
+				}else{
+					//On recupere la liste des documents manquant type
+					$dbDocManquant = new Model_DbTable_DocManquant;
+					$this->view->listeDoc = $dbDocManquant->getDocManquant();
+
+					//Zend_Debug::dump($listeDocManquant);
+					$this->view->numDocManquant = $this->_getParam('numDoc');
+				}
 			break;
         }
     }
@@ -1951,7 +1962,7 @@ class DossierController extends Zend_Controller_Action
 
         //$this->view->membresComm = $model_membres->get($listeDossiers[0]["COMMISSION_DOSSIER"]);
         $this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $listeDossiers[0]["COMMISSION_DOSSIER"]);
-        Zend_Debug::dump($this->view->membresFiles );
+        //Zend_Debug::dump($this->view->membresFiles );
 
         //On récupère le nom de la commission
         $model_commission = new Model_DbTable_Commission;

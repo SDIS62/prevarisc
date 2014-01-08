@@ -269,7 +269,7 @@
 				//On affiche la liste des documents manquants
 				$.ajax({
 					url: "/dossier/fonction",
-					data: "do=showDocManquant&numDoc="+numDivDocManquant,
+					data: "do=showDocManquant&numDoc="+numDivDocManquant+"&idDossier="+$("#idDossier").val(),
 					type:"POST",
 					//async: false,
 					beforeSend: function(){

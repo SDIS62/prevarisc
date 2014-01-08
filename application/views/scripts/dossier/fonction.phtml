@@ -172,9 +172,14 @@
 	break;
 	case "showDocManquant":
 		echo "<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$this->numDocManquant."' rows='5' cols='100'>";
-		foreach($this->listeDoc as $val => $ue)
+		if($this->oldDocManquant && $this->oldDocManquant != "")
 		{
-			echo $ue['LIBELLE_DOCMANQUANT']."\n";
+			echo $this->oldDocManquant['DOCMANQUANT'];
+		}else{
+			foreach($this->listeDoc as $val => $ue)
+			{
+				echo $ue['LIBELLE_DOCMANQUANT']."\n";
+			}
 		}
 		echo "</textarea>";
 		echo "<input class='date' type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$this->numDocManquant."' />&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>";
