@@ -36,18 +36,25 @@
     
     <!-- Dossier affecté à quels établissements ? -->
     <span class="doss-donneur-avis">
-        <?php echo $this->NOMS_ETABLISSEMENTS ?>
+        <?php
+			if($this->INCOMPLET_DOSSIER == 1)
+			{
+				echo "<font style='font-weight:bold;'>INCOMPLET</font>";
+			}
+			echo $this->NOMS_ETABLISSEMENTS 
+		?>
     </span>
         
     <!-- Avis du dossier -->
     <?php if( isset($this->ID_AVIS) ) : ?>
     <span class="avis <?php echo $this->LIBELLE_AVIS[0] ?>" title='<?php echo htmlspecialchars($this->LIBELLE_AVIS , ENT_QUOTES)?>'>
     <?php
+
         switch( $this->ID_AVIS ) {
-            case 1: echo "?"; break;
-            case 2: echo "F"; break;
-            case 3: echo "D"; break;
-            case 4: echo "›";break;
+            case 1: echo "F"; break;
+            case 2: echo "D"; break;
+            //case 3: echo "D"; break;
+            //case 4: echo "›";break;
         }
     ?>
     </span>
