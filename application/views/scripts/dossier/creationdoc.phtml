@@ -61,8 +61,8 @@ try {
 	if($this->infosDossier['DATEINCOMPLET_DOSSIER']){
 		$date = new Zend_Date($this->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
 		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-	}
-	$odf->setVars('dateIncomplet',verifInfos($date),true,'UTF8');
+		$odf->setVars('dateIncomplet',verifInfos($date),true,'UTF8');
+	}	
 }catch (OdfException $e){
 
 }
