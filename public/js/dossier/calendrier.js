@@ -48,13 +48,13 @@ document.addEventListener("DOMContentLoaded", function() {
 								var colorCal;
 								switch(result["items"][x]["className"]){
 									case "display-1":
-										colorCal = "blue";
+										colorCal = "#3A87AD";
 									break;
 									case "display-2":
-										colorCal = "green";
+										colorCal = "#468847";
 									break;
 									case "display-3":
-										colorCal = "orange";
+										colorCal = "#F89406";
 									break;
 								}
 								events.push({
