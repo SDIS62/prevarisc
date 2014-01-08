@@ -12,8 +12,8 @@
         <!-- Par genre-->
         <div id='par-genre' >
         
-            <br />
-        
+            <br/>
+
             <!-- Genre -->
             <select id='genre' name='ID_GENRE[]' multiple='multiple' disabled >
                 <?php foreach( $this->DB_genre as $genre ) : ?>
@@ -57,9 +57,8 @@
                 </select>
             </span>
             
-            <br />
-            <br />
-            
+            <br/><br/>
+
             <!-- Numéro ID -->
             <input type='text' id='code' name='NUMEROID_ETABLISSEMENT' class='bigger ui-helper-hidden' size=10 />
             
@@ -67,6 +66,8 @@
             <input type='text' id='commune' name='LIBELLE_COMMUNE' size=25 /><input type='text' id='rue' name='rue' size=25 disabled="disabled" />
             <input type='hidden' id='insee' name='insee' />
             <input type='hidden' id='id_rue' name='ID_RUE' />
+            
+            <br/><br/>
             
             <!-- Avis -->
             <select id='avis' name='ID_AVIS[]' multiple='multiple'>
@@ -90,9 +91,7 @@
             Date de la dernière visite
             <input type='text' class='date ' name='DATEVISITE_DOSSIER'  size=7 />
             
-            <hr class="clear" />
-
-            
+            <hr class='clear' />
 
         </div>
 
