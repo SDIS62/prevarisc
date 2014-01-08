@@ -95,10 +95,6 @@
         {
             $this->view->id_etablissement = $this->_request->id;
 
-            // Diaporama
-            $this->view->inlineScript()->appendFile("/js/jquery.popeye-2.0.4.min.js");
-            $this->view->headLink()->appendStylesheet('/css/jquery/jquery.popeye.css');
-
             // On rÃ©cupÃ¨re l'ensemble des donnÃ©es dont on a besoin
             $DB_categorie = new Model_DbTable_Categorie;					$this->view->DB_categorie = $DB_categorie->fetchAllPK();
             $DB_type = new Model_DbTable_Type;								$this->view->DB_type = $DB_type->fetchAll()->toArray();
