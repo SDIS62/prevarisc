@@ -32,7 +32,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
         }
         closedir($dir);
 
-        $this->view->path = $path;
+        $this->view->path = DATA_PATH . "/uploads/documents";;
         $this->view->listeFichiers = $fichier;
     }
 
