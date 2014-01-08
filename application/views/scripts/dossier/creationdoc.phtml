@@ -62,7 +62,9 @@ try {
 		$date = new Zend_Date($this->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
 		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 		$odf->setVars('dateIncomplet',verifInfos($date),true,'UTF8');
-	}	
+	}else{
+		$odf->setVars('dateIncomplet',verifInfos(""),true,'UTF8');
+	}
 }catch (OdfException $e){
 
 }
@@ -436,7 +438,7 @@ try{
 
 }
 
-$content_dir = REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
+//$content_dir = REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
 
 //echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
 //echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
