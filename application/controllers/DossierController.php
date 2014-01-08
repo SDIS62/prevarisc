@@ -444,11 +444,10 @@ class DossierController extends Zend_Controller_Action
             $listeDateAffectDossier = $dbAffectDossier->recupDateDossierAffect($this->_getParam("id"));
 
             //Zend_Debug::dump($listeDateAffectDossier);
-
             $dbDateComm = new Model_DbTable_DateCommission;
             $dateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
 			
-			//Zend_Debug::dump($listeDateAffectDossier);
+			//Zend_Debug::dump($dateComm);
 			
             //En fonction du type de dossier on traite les dates d'affectation existantes differement
             if ($this->view->infosDossier['TYPE_DOSSIER'] == 1) {
@@ -474,9 +473,19 @@ class DossierController extends Zend_Controller_Action
 						$this->view->idDateCommissionAffect = $ue['ID_DATECOMMISSION'];
 					}else{
 						//VISITE OU GROUPE DE VISITE
-						$nbDateExist = count($listeDateAffectDossier);						
-						
-						 if ($nbDateExist == 1) {
+						$nbDateExist = count($listeDateAffectDossier);		
+/*						
+						if($nbDateExist == 1){
+							//On verifie qu'il ne s'agit pas d'une principale avant de continuer
+							$infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
+							if (!$infosDateComm['DATECOMMISSION_LIEES']) {
+								echo "NULL";
+							} else {
+								echo "PAS NULL";
+							}
+						}
+*/						
+						if ($nbDateExist == 1) {
 							//Si 1 seule date alors la date de viste et de commission est la même
 							$date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
 							$this->view->dateVisiteValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
@@ -1924,7 +1933,14 @@ class DossierController extends Zend_Controller_Action
         //$this->_helper->viewRenderer->setNoRender();
         $dateCommId = $this->_getParam("dateCommId");
         $this->view->idComm = $dateCommId;
-
+		
+		//on recupere le type de commission (salle / visite / groupe de visite)
+		$dbDateComm = new Model_DbTable_DateCommission;
+		$commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();
+		//1 = salle . 2 = visite . 3 = groupe de visite
+		$this->view->typeCommission = $commissionInfo['ID_COMMISSIONTYPEEVENEMENT'];
+		//Zend_Debug::dump($commissionInfo);
+		
         //On récupère la liste des dossiers
         $dbDateCommPj = new Model_DbTable_DateCommissionPj;
         $listeDossiers = $dbDateCommPj->getDossiersInfos($dateCommId);
@@ -1935,7 +1951,7 @@ class DossierController extends Zend_Controller_Action
 
         //$this->view->membresComm = $model_membres->get($listeDossiers[0]["COMMISSION_DOSSIER"]);
         $this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $listeDossiers[0]["COMMISSION_DOSSIER"]);
-        //Zend_Debug::dump($this->view->membresFiles );
+        Zend_Debug::dump($this->view->membresFiles );
 
         //On récupère le nom de la commission
         $model_commission = new Model_DbTable_Commission;
@@ -1979,7 +1995,6 @@ class DossierController extends Zend_Controller_Action
 
     public function generationodjAction()
     {
-	
         $dateCommId = $this->_getParam("dateCommId");
         $this->view->idComm = $dateCommId;
 
@@ -1989,7 +2004,7 @@ class DossierController extends Zend_Controller_Action
         $commSelect = $dbDateComm->find($dateCommId)->current();
         //echo $commSelect['GESTION_HEURES'];
         $dbDateCommPj = new Model_DbTable_DateCommissionPj;
-	
+
         if ($commSelect['GESTION_HEURES'] == 1) {
             //prise en compte heures
             $listeDossiers = $dbDateCommPj->getDossiersInfosByHour($dateCommId);
@@ -1997,10 +2012,13 @@ class DossierController extends Zend_Controller_Action
             //prise en compte ordre
             $listeDossiers = $dbDateCommPj->getDossiersInfosByOrder($dateCommId);
         }
+		
         //Zend_Debug::dump($listeDossiers);
 	
         //Récupération des membres de la commission
         $model_membres = new Model_DbTable_CommissionMembre;
+		
+		//echo "<br/> ! ! ! ".$listeDossiers[0]["COMMISSION_DOSSIER"];
 
         //$this->view->membresComm = $model_membres->get($listeDossiers[0]["COMMISSION_DOSSIER"]);
         $this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $listeDossiers[0]["COMMISSION_DOSSIER"]);

@@ -12,7 +12,15 @@ foreach($this->membresFiles as $val => $membre){
 		//si le document concernant ce membre existe alors on rentre dans la boucle
 		
 		if($membre->COURRIER_CONVOCATIONSALLE != NULL){
-			$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE;
+			//echo "<br/>".$membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE."<br/>";
+			if($this->typeCommission == 1)
+			{
+				//Salle
+				$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE;
+			}else if($this->typeCommission == 2 || $this->typeCommission == 3){
+				//Visite et Groupe de visite
+				$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONVISITE_".$membre->COURRIER_CONVOCATIONSALLE;
+			}
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			//Generation du segment ListePrescription 
 			$villeODF = $odf->setSegment('villeDoss');
@@ -63,7 +71,7 @@ foreach($this->membresFiles as $val => $membre){
 						//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
 
 						$dateInsertDossier = new Zend_Date($dossierInfos["DATEINSERT_DOSSIER"]);
-						//$villeODF->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+						$villeODF->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 						
 						$villeODF->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
 						$villeODF->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
@@ -153,7 +161,7 @@ foreach($this->membresFiles as $val => $membre){
 						//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
 						
 						$dateInsertDossier = new Zend_Date($dossierInfos["DATEINSERT_DOSSIER"]);
-						//$grpLoop->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+						$grpLoop->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 						
 						$grpLoop->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
 						$grpLoop->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));

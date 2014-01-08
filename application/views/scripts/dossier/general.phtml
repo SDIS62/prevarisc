@@ -1689,7 +1689,7 @@ echo "
 						</select>
 					</div>
 				</li>
-				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL )? "" : "display:none;")."'>
+				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL && $this->infosDossier['FACTDANGE_DOSSIER'] != 0)? "" : "display:none;")."'>
 					<div class='left libelle span3' style='float:left;'>Facteur de dangerosité</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='factDange ".$this->infosDossier['FACTDANGE_DOSSIER']."'>".$this->infosDossier['FACTDANGE_DOSSIER']."</span></div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
