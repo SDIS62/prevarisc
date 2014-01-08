@@ -183,7 +183,6 @@
             // Modèles
             $DB_user = new Model_DbTable_Utilisateur;
             $DB_informations = new Model_DbTable_UtilisateurInformations;
-            $search = new Model_DbTable_Search;
             $DB_groupe = new Model_DbTable_Groupe;
 
             // Récupération des données
@@ -202,8 +201,10 @@
             $this->view->users = $DB_user->getUsersWithInformations( $user->ID_GROUPE );
 
             // Etablissements liés
+            $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("utilisateur.ID_UTILISATEUR", $this->_request->uid);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", array(1,2,3,4,5));
             $this->view->etablissements = $search->run();
 
             // Définition du titre de la page.

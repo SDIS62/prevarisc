@@ -8,12 +8,17 @@
         private $nb_items = 100;
 
         // On demare la recherche
-        public function run( $id_etablissement_parent = false, $numero_de_page = null )
+        public function run( $id_etablissement_parent = false, $numero_de_page = null, $paginator = true )
         {
             // Recherche par niveaux
             if ($id_etablissement_parent !== false)
             {
                 $this->select->where($id_etablissement_parent === true || $id_etablissement_parent == 0 ? "etablissementlie.ID_ETABLISSEMENT IS NULL" : "etablissementlie.ID_ETABLISSEMENT = " . $id_etablissement_parent);
+            }
+            
+            if(!$paginator)
+            {
+                return $this->fetchAll($this->select);
             }
 
             // On construit l'objet de pagination
