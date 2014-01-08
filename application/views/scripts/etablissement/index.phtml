@@ -585,42 +585,34 @@
                     <p style='text-align: right; font-size: 0.8em; margin-bottom: 0' class='read' ><a id='zoom' href='<?php echo $this->url(array("action" => "carte")) ?>' >[Zoom sur la carte]</a></p>	
                 </div>
                 <?php endif ?>
-                
+
                 <?php $array_diapos = array("diapo", "diapo_plans"); ?>
+                
                 <?php foreach($array_diapos as $value) : ?>
                 <div id='<?php echo $value ?>' class='ui-helper-hidden'>
-                    <div class="ppy3">
-                        <ul class="ppy-imglist">
+                    <div class="carousel slide ">
+                        <ol class="carousel-indicators">
                             <?php if(!empty($this->$value)) : ?>
-                                <?php foreach($this->$value as $item) : ?>
-                                    <li>
-                                        <a href="/data/uploads/pieces-jointes/<?php echo $item["ID_PIECEJOINTE"].$item["EXTENSION_PIECEJOINTE"] ?>">
-                                            <img src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
-                                        </a>
-                                    </li>
+                                <?php foreach($this->$value as $key => $item) : ?>
+                                <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
                                 <?php endforeach ?>
                             <?php endif ?>
-                        </ul>
-                        <div class="ppy-outer">
-                            <div class="ppy-stage">
-                                <div class="ppy-nav">
-                                    <div class="nav-wrap">
-                                        <a class="ppy-prev" title="Previous image">Previous image</a>
-                                        <a class="ppy-switch-enlarge" title="Enlarge" >Enlarge</a>
-                                        <a class="ppy-switch-compact" title="Close">Close</a>
-                                        <a class="ppy-next" title="Next image">Next image</a>
-                                    </div>
-                                </div>
-                                <div class="ppy-counter">
-                                    <strong class="ppy-current"></strong> / <strong class="ppy-total"></strong> 
-                                </div>
-                            </div>
+                        </ol>
+                        <!-- Carousel items -->
+                        <div class="carousel-inner">
+                            <?php if(!empty($this->$value)) : ?>
+                                <?php foreach($this->$value as $key => $item) : ?>
+                                <div class="item <?php if($key == 0 ) echo 'active' ?>" style='width: 100%; height: 350px; background-color: #333;' ><img src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" style='margin: 10px auto;' alt=""  /></div>
+                                <?php endforeach ?>
+                            <?php endif ?>
                         </div>
+                        <!-- Carousel nav -->
+                        <a class="carousel-control left" href="#<?php echo $value ?>" data-slide="prev">&lsaquo;</a>
+                        <a class="carousel-control right" href="#<?php echo $value ?>" data-slide="next">&rsaquo;</a>
                     </div>
                 </div>
                 <?php endforeach ?>
-                
-                
+
                 <!-- Informations générales -->
                 <h4>Informations générales</h4>
                 <dl class='dl-horizontal'>
@@ -1073,43 +1065,24 @@
 		if( $(this).text() == "Carte" ) {
 		
 			$("#geoportail").show();
-			$(".ppy-placeholder").hide();
 		}
 		else if( $(this).text() == "Diaporama" ) {
 
-			
 			$("#diapo").show();
-			$(".ppy-placeholder").show();
-			<?php if($this->diapo_plans) : ?> $("#diapo_plans").parent().hide(); <?php endif ?>
 		}
 		else {
-		
 			$("#diapo_plans").show();
-			$(".ppy-placeholder").show();
-			<?php if($this->diapo) : ?> $("#diapo").parent().hide(); <?php endif ?>
 		}
 	});
-	
-	$(".ppy-placeholder").hide();
-	
+
 	$('.ppy-imglist a').fancybox({
 		'transitionIn'	:	'elastic',
 		'transitionOut'	:	'elastic',
 		'speedIn'		:	200, 
 		'speedOut'		:	200
 	});
-	
-	$(".ppy-switch-enlarge").unbind();
-	$(".ppy-switch-enlarge").click(function() {
-	
-		var string = $(this).parent().parent().parent().css("background-image");
-		string = string.replace("url(\"http://<?php echo $_SERVER['SERVER_NAME'] ?>","");
-		string = string.replace("/miniatures/", "/");
-		string = string.replace("\")","");
-		//alert(string);
-		$(this).parent().parent().parent().parent().parent().prev().find("a[href='"+string+"']").click();
-		return false;
-	});
+    
+    $("ul#menu_carte li:first-child").click();
 	
 	// Apercu du groupement
 	$("a.view-groupement").fancybox({
