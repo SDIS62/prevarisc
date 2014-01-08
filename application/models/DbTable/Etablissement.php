@@ -384,7 +384,7 @@
                 AND dossiernature.ID_DOSSIER = dossier.ID_DOSSIER
                 AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                 AND etablissement.ID_ETABLISSEMENT = '".$id_etablissement."'
-                AND dossiernature.ID_NATURE = '21'
+                AND dossiernature.ID_NATURE = '26'
                 AND dossier.TYPE_DOSSIER = '3'
                 AND UNIX_TIMESTAMP(dossier.DATEVISITE_DOSSIER) >= UNIX_TIMESTAMP(NOW())
                 GROUP BY etablissement.ID_ETABLISSEMENT";
