@@ -307,6 +307,9 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 }
 
 /* Liste des cellules + Résumé des cellules */
+ul.user_ets span.icone_enfants {
+    display: none;
+}
 #liste_cell_conteneur,
 #results_container {
 	position: relative;

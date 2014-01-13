@@ -201,12 +201,43 @@
             $this->view->users = $DB_user->getUsersWithInformations( $user->ID_GROUPE );
 
             // Etablissements liés
+            $etablissements = array();
+            
+            // Ets 1 - 4ème catégorie
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("utilisateur.ID_UTILISATEUR", $this->_request->uid);
-            $search->setCriteria("etablissementinformations.ID_CATEGORIE", array(1,2,3,4,5));
-            $this->view->etablissements = $search->run();
-
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", array("1","2","3","4"));
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+            
+            // 5ème catégorie defavorable
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $this->_request->uid);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
+            $search->setCriteria("avis.ID_AVIS", 2);
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+            
+            // 5ème catégorie avec local à sommeil
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $this->_request->uid);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
+            $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+            
+            // EIC - IGH - HAB
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $this->_request->uid);
+            $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4"));
+            $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+            
+            $this->view->etablissements = $etablissements;
+            
             // Définition du titre de la page.
             $this->view->title = $this->view->user_info->NOM_UTILISATEURINFORMATIONS . " " . $this->view->user_info->PRENOM_UTILISATEURINFORMATIONS;
         }
