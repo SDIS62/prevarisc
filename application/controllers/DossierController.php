@@ -145,6 +145,9 @@ class DossierController extends Zend_Controller_Action
 			$this->view->idTypeDossier = $dossier->TYPE_DOSSIER;
             $this->view->libelleType = $libelleType['LIBELLE_DOSSIERTYPE'];
 			
+			$natureDossier = $DBdossier->getDossierTypeNature($id_dossier);
+			$this->view->natureDossier = $natureDossier[0]['ID_NATURE'];
+			
             $this->view->idDossier = ($this->_getParam("id"));
         }
 		

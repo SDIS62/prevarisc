@@ -16,11 +16,18 @@
             <a href='<?php echo $this->url(array("action"=>"index")) ?>'>Informations générales</a>
         </li>
         
-        <?php if ($this->libelleType == "Étude") : ?>
-        <li class='<?php echo( $this->action == "descriptif") ? "selection_onglets_hor" : "read" ?>'>
-            <a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a>
-        </li>
-        <?php endif ?>
+		<?php
+		
+		if($this->libelleType == "Étude")
+		{
+			echo "
+				<li class='".(( $this->action == "descriptif") ? "selection_onglets_hor" : "read" )."'>
+					<a href='".$this->url(array("action"=>"descriptif"))."'>Descriptif ".(( $this->natureDossier == 1 || $this->natureDossier == 2 ) ? " des travaux" : "")."</a>
+				</li>
+			";
+		}
+		//$natureDossier
+		?>
         
         <?php
         if( $this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ){
