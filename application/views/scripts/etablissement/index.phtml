@@ -422,8 +422,6 @@
                     </dl>
                     
                     <dl id='effectif_total' class='champs dl-horizontal'>
-                        <dt>&nbsp;</dt>
-                        <dd><hr style='margin:0' /></dd>
                         
                         <!-- Effectif total -->
                         <dt class='read'>Total</dt>
@@ -432,6 +430,7 @@
                                 <?php echo ($this->DB_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $this->DB_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]) ." " ?>
                             </div>
                         </dd>
+                        
                     </dl>
                     
                     <dl id='effectif_justifianttotal' class='champs dl-horizontal'>
@@ -977,6 +976,14 @@
             alert('La présence de locaux à sommeil est maintenant signalée dans la fiche établissement.');
         }
     });
+    
+    $('#type_principal_select').change(function() {
+        if($(this).val() == '16')
+        {
+            $("dt.effectif_public_bloc").html('Places de stationnement');
+        }
+    }).change();
+
 
 	$(document).ready(function() {
 		$("#geo_container, .ppy-placeholder").css("height", "350px");
