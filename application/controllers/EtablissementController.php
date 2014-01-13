@@ -352,6 +352,7 @@
             // ModÃ¨les additionnels
             $DB_categorie = new Model_DbTable_Categorie;					$categories = $DB_categorie->fetchAll()->toArray();
             $DB_famille = new Model_DbTable_Famille;						$familles = $DB_famille->fetchAll()->toArray();
+            $DB_type = new Model_DbTable_Type;						        $types = $DB_type->fetchAll()->toArray();
             $DB_classe = new Model_DbTable_Classe;							$classes = $DB_classe->fetchAll()->toArray();
             $DB_utilisateurs = new Model_DbTable_Utilisateur;
             $DB_utilisateursInfo = new Model_DbTable_UtilisateurInformations;
@@ -394,7 +395,9 @@
                             break;
 
                         case "ID_TYPE":
-                            $value = $item;
+                            if (isset($types[$item - 1])) {
+                                $value = $types[$item - 1]["LIBELLE_TYPE"];
+                            }
                             break;
                     }
 
