@@ -1455,14 +1455,14 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Commission concernée</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".$this->infosDossier['COMMISSION_DOSSIER']."' />
+						<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".( ($action == 'new' && $this->commissionEtab != '')?$this->commissionEtab: $this->infosDossier['COMMISSION_DOSSIER'])."' />
 						<select name='commissionSelect' id='commissionSelect' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "")." >
 							<option value=''>Aucune commission</option>
 				";
 				foreach($this->array_commissions as $array_commission){
 					echo "<optgroup label='".htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES)."' >";
 					foreach($array_commission["ARRAY"] as $item){
-						echo "<option value='".$item["ID_COMMISSION"]."' ".( ($this->infosDossier['COMMISSION_DOSSIER'] == $item["ID_COMMISSION"])?"selected":"")." >".htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES)."</option>";
+						echo "<option value='".$item["ID_COMMISSION"]."' ".( (( $action != 'new' && $this->infosDossier['COMMISSION_DOSSIER'] == $item["ID_COMMISSION"]) || ( $action == 'new' && $this->commissionEtab != '' && $this->commissionEtab == $item["ID_COMMISSION"]) )?"selected":"")." >".htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES)."</option>";
 					}
 					echo "</optgroup>";
 				}

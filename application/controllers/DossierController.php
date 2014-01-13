@@ -145,6 +145,9 @@ class DossierController extends Zend_Controller_Action
 			$this->view->idTypeDossier = $dossier->TYPE_DOSSIER;
             $this->view->libelleType = $libelleType['LIBELLE_DOSSIERTYPE'];
 			
+			$natureDossier = $DBdossier->getDossierTypeNature($id_dossier);
+			$this->view->natureDossier = $natureDossier[0]['ID_NATURE'];
+			
             $this->view->idDossier = ($this->_getParam("id"));
         }
 		
@@ -218,7 +221,8 @@ class DossierController extends Zend_Controller_Action
 			$etabTab = $DBetab->getInformations($this->_getParam("id_etablissement"));
 			$etablissement = $etabTab->toArray();
 			//Zend_Debug::dump($etablissement);
-			$this->view->genre = $etablissement['ID_GENRE'];			
+			$this->view->genre = $etablissement['ID_GENRE'];
+			$commissionEtab = $etablissement['ID_COMMISSION'];
 		} elseif ((int) $this->_getParam("id")) {
 			//echo "ICI ON EST DANS UN DOSS EXISTANT (consultation/edit dossier)";
 			$DBdossier = new Model_DbTable_Dossier;
@@ -228,7 +232,9 @@ class DossierController extends Zend_Controller_Action
 			$etablissement = $DBetab->getInformations($tabEtablissement[0]['ID_ETABLISSEMENT'])->toArray();
 			//Zend_Debug::dump($etablissement);
 			$this->view->genre = $etablissement['ID_GENRE'];
+			$commissionEtab = $etablissement['ID_COMMISSION'];
 		}
+		$this->view->commissionEtab = $commissionEtab;
 		$genreInfo = $this->view->genre;
 		
         $today = new Zend_Date();
