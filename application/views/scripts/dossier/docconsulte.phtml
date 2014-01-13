@@ -1,51 +1,4 @@
 <script type="text/javascript">
-/*
-$(document).ready(function(){
-
-	$(".valid").button({
-		icons: {
-			primary: 'ui-icon-circle-check'
-		},
-		text: true
-	});
-	
-	$(".cancel").button({
-		icons: {
-			primary: 'ui-icon-circle-close'
-		},
-		text: true
-	});
-	
-	$(".validDoc").button({
-		icons: {
-			primary: 'ui-icon-check'
-		},
-		text: false
-	});
-	
-	$(".cancelDoc").button({
-		icons: {
-			primary: 'ui-icon-close'
-		},
-		text: false
-	});
-	
-	$(".deleteDoc").button({
-		icons: {
-			primary: 'ui-icon-trash'
-		},
-		text: false
-	});
-	
-	$(".editDoc").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		},
-		text: false
-	});
-
-});
-*/
 
 $.fn.hideModif = function(idPasCacher) {
 	//alert('pad cacher : '+idPasCacher);
@@ -106,35 +59,7 @@ $.fn.ajoutDocDialog = function(idNatureDoc) {
 
 			$("#libelleNewDoc").attr('value','');
 			$("#dossier_Pdroite").activeCheck('qsd');
-/*
-			$(".validDoc").button({
-				icons: {
-					primary: 'ui-icon-check'
-				},
-				text: false
-			});
-			
-			$(".cancelDoc").button({
-				icons: {
-					primary: 'ui-icon-close'
-				},
-				text: false
-			});
-			
-			$(".editDoc").button({
-				icons: {
-					primary: 'ui-icon-pencil'
-				},
-				text: false
-			});
-
-			$(".deleteDoc").button({
-				icons: {
-					primary: 'ui-icon-trash'
-				},
-				text: false
-			});
-*/			
+	
 			return false;
 		},
 		error: function(){
@@ -176,7 +101,6 @@ $('.divDocConsulte input:checkbox').live('click',function(){
 		$("#dossier_Pdroite").activeCheck(nom);
 	}
 });
-
 
 $(".validDoc").live('click',function(){
 		
@@ -229,6 +153,37 @@ $(".validDoc").live('click',function(){
 	return false;
 
 });
+
+$(document).ready(function(){
+	//$("#listeDocs_1 > li").each(function(){
+	$($(".divDoc").get().reverse()).each(function(){
+		var valeurDiv;
+		var idLi;
+		var idLiTab;
+		if($(this).find("input:checkbox").prop('checked'))
+		{
+			idLi = "";
+			idLiTab = "";
+			
+			valeurDiv = $(this).html();
+			idLiTab = $(this).find("input:checkbox").attr('id').split("_");
+			
+			if(idLiTab.length == 3)
+			{
+				idLi = idLiTab[1]+"_"+idLiTab[2];			
+			}else if(idLiTab.length == 4){
+				idLi = idLiTab[1]+"_"+idLiTab[2]+"_"+idLiTab[3];
+			}else{
+				return false;
+			}
+			
+			$(this).next().remove();
+			$(this).remove();
+			$("#listeDocs_1").prepend('<li id="1_1" class="divDoc row-fluid span12" style="display: block; height: 25px;margin: 15px;" name="divDoc">'+valeurDiv+'</li><br class="clear">');
+		}
+	});
+});
+
 </script>
 <?php
 
