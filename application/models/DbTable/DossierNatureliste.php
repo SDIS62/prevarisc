@@ -7,11 +7,13 @@ class Model_DbTable_DossierNatureliste extends Zend_Db_Table_Abstract
 
     public function getDossierNature($type)
     {
-        $select = "SELECT *
-            FROM dossiernatureliste
-            WHERE ID_DOSSIERTYPE = '".$type."'
-        ;";
-        //echo $select;
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from(array('dnl' => 'dossiernatureliste'))
+			->where("ID_DOSSIERTYPE = ?", $type)
+			->where("ORDRE IS NOT NULL")
+			->order("dnl.ORDRE");
+
         return $this->getAdapter()->fetchAll($select);
     }
 
