@@ -1050,6 +1050,7 @@ class DossierController extends Zend_Controller_Action
 
                 $nouveauDossier->$libelle = $value;
             }
+
         }
 		
 		if(!$this->_getParam('HORSDELAI_DOSSIER'))
@@ -1090,8 +1091,7 @@ class DossierController extends Zend_Controller_Action
 		}
 
         $nouveauDossier->save();
-		
-		
+	
 		//echo $this->_getParam("selectNature")." - ".$this->_getParam("TYPE_DOSSIER")."<br/>";
 		if ($this->_getParam("selectNature") == 21 && $this->_getParam("TYPE_DOSSIER") == 2) {
 			//VISITE PERIODIQUE
@@ -1106,10 +1106,11 @@ class DossierController extends Zend_Controller_Action
 
         $idDossier = $nouveauDossier->ID_DOSSIER;
 		
+		
+		 $DBetablissementDossier = new Model_DbTable_EtablissementDossier;
         if ($this->_getParam('do') == 'new')
 		{
             if ( isset( $_POST['idEtablissement'] ) &&  $_POST['idEtablissement'] != "" ) {
-                $DBetablissementDossier = new Model_DbTable_EtablissementDossier;
                 $saveEtabDossier = $DBetablissementDossier->createRow();
                 $saveEtabDossier->ID_ETABLISSEMENT = $this->_getParam('idEtablissement');
                 $saveEtabDossier->ID_DOSSIER = $idDossier;
@@ -1137,6 +1138,54 @@ class DossierController extends Zend_Controller_Action
 			
             $nature->save();
         }
+		
+		//On met le champ ID_DOSSIER_DONNANT_AVIS de établissement avec l'ID du dossier que l'on vient d'enregistrer dans les cas suivant 
+		if($this->_getParam("AVIS_DOSSIER_COMMISSION") && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2))
+		{
+			$MAJEtab = 0;
+			if ($this->_getParam("TYPE_DOSSIER") == 1 && $this->_getParam("selectNature") == 19) 
+			{
+				//Cas d'une étude uniquement dans le cas d'une levée de reserve
+				$MAJEtab = 1;
+			}
+			else if($this->_getParam("TYPE_DOSSIER") == 2 && ($this->_getParam("selectNature") == 21 || $this->_getParam("selectNature") == 24 || $this->_getParam("selectNature") == 47))
+			{
+				//Cas d'une viste uniquement dans le cas d'une VP, inopinée ou avant ouverture
+				$MAJEtab = 1;
+			}
+			else if($this->_getParam("TYPE_DOSSIER") == 3 && ($this->_getParam("selectNature") == 26 || $this->_getParam("selectNature") == 29 || $this->_getParam("selectNature") == 48))
+			{
+				//Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée ou avant ouverture
+				$MAJEtab = 1;
+			}
+			//echo "VAL = ".$MAJEtab."<br/>";
+			
+			$dbEtab = new Model_DbTable_Etablissement;
+			$dbEtabInfo = new Model_DbTable_EtablissementInformations;
+			if ($MAJEtab == 1 && $this->_getParam('do') == 'new')
+			{
+				$idEtablissement = $this->_getParam('idEtablissement');
+				$infoEtab = $dbEtab->getInformations($idEtablissement);
+
+				$etabToEdit = $dbEtabInfo->find($infoEtab['ID_ETABLISSEMENTINFORMATIONS'])->current();
+				$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+				$etabToEdit->save();
+				
+			}else if($MAJEtab == 1){
+				$listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
+
+				foreach($listeEtab as $val => $ue)
+				{
+					$infoEtab = $dbEtab->getInformations($ue['ID_ETABLISSEMENT'])->toArray();
+
+					$etabToEdit = $dbEtabInfo->find($infoEtab['ID_ETABLISSEMENTINFORMATIONS'])->current();
+					$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+					$etabToEdit->save();
+				}
+			}
+			
+			
+		}
 	
 		//GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
 		//lorsque je crée un dossier visite ou groupe de visite VP (21-26), VC (22-27), VI (24-29), 
