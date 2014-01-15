@@ -41,6 +41,12 @@ try {
 }
 
 try {
+	$odf->setVars('descriptifDossier',verifInfos($this->infosDossier['DESCRIPTIF_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
 	if($this->infosDossier['HORSDELAI_DOSSIER'] == 0){
 		$horsdelai = "Non";
 	}else{
