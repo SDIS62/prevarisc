@@ -1467,7 +1467,7 @@ echo "
 				echo "						
 					</div>
 				</li>
-				<li class='row-fluid' id='COMMISSION' style='".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' && $this->infosDossier['COMMISSION_DOSSIER'] != 'null')? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='COMMISSION' style='".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' && $this->infosDossier['COMMISSION_DOSSIER'] != 'null' && $this->infosDossier['COMMISSION_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Commission concernée</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
