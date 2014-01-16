@@ -54,21 +54,14 @@
                     $this->select
                          ->from(array("e" => "etablissement"), "NUMEROID_ETABLISSEMENT")
                          ->columns(array(
-                            "DATEVISITE_DOSSIER" => "( SELECT MAX( dossier.DATEVISITE_DOSSIER ) FROM etablissementdossier, dossier, dossiernature, etablissement
-                                WHERE dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
-                                AND dossiernature.ID_DOSSIER = dossier.ID_DOSSIER
-                                AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
-                                AND etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT
-                                AND dossiernature.ID_NATURE = '21'
-                                AND ( dossier.TYPE_DOSSIER = '2' || dossier.TYPE_DOSSIER = '3')
-                                GROUP BY etablissement.ID_ETABLISSEMENT)",
                             "NB_ENFANTS" => "( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
                                 FROM etablissement
                                 INNER JOIN etablissementlie ON etablissement.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT
                                 WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"
                          ))
                          ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
-                         // ->joinLeft("avis", "etablissementinformations.ID_AVIS = avis.ID_AVIS", "LIBELLE_AVIS")
+                         ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER"))
+                         ->joinLeft("avis", "dossier.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS", "LIBELLE_AVIS")
                          ->joinLeft("type", "etablissementinformations.ID_TYPE = type.ID_TYPE", "LIBELLE_TYPE")
                          ->join("genre", "etablissementinformations.ID_GENRE = genre.ID_GENRE", "LIBELLE_GENRE")
                          ->joinLeft("etablissementlie", "e.ID_ETABLISSEMENT = etablissementlie.ID_FILS_ETABLISSEMENT", array("pere" => "ID_ETABLISSEMENT", "ID_FILS_ETABLISSEMENT"))
