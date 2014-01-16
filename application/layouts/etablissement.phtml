@@ -41,13 +41,13 @@
         </div>
         
         <!-- Avis -->
-        <?php if(false && $this->DB_informations["ID_AVIS"]) : ?>
+        <?php if($this->avis != null) : ?>
         <div class='read'>
-            <p class='avis <?php echo $this->DB_avis[$this->DB_informations["ID_AVIS"]-1]["LIBELLE_AVIS"][0] ?>'>
-                <?php echo $this->DB_avis[$this->DB_informations["ID_AVIS"]-1]["LIBELLE_AVIS"]." " ?>
-                <?php if($this->DB_informations["ID_AVIS"] == 3 && $this->DB_informations["ID_GENRE"] == 2 ) : ?>
+            <p class='avis <?php echo $this->DB_avis[$this->avis-1]["LIBELLE_AVIS"][0] ?>'>
+                <?php echo $this->DB_avis[$this->avis-1]["LIBELLE_AVIS"]." " ?>
+                <?php if($this->avis == 3 && $this->DB_informations["ID_GENRE"] == 2 ) : ?>
                     <span id="dangerosite" class="read champs">
-                        ; Facteur de dangerosité : <?php echo $this->DB_informations["DANGEROSITE_ETABLISSEMENTINFORMATIONS"] == 0 ? "-" : $this->DB_informations["DANGEROSITE_ETABLISSEMENTINFORMATIONS"] ?>
+                        ; Facteur de dangerosité : <?php echo $this->fact_dange == 0 ? "-" : $this->fact_dange ?>
                         ; <?php echo $this->DB_informations["SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS"] == 0 ? "" : "Présence d'un schéma de mise en sécurité" ?>
                     </span>
                 <?php endif ?>

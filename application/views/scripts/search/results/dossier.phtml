@@ -18,16 +18,27 @@
     <!-- Date du dossier -->
     <span class="doss-date">
         <?php
-            if($this->DATECOMM_DOSSIER != null)
+            if($this->DATEVISITE_DOSSIER != null)
             {
-                $date = substr($this->DATECOMM_DOSSIER, 0, 10);
+                $date = substr($this->DATEVISITE_DOSSIER, 0, 10);
                 if($date != '0000-00-00'){
-                    $date = new DateTime(substr($this->DATECOMM_DOSSIER,0,10));
+                    $date = new DateTime(substr($this->DATEVISITE_DOSSIER,0,10));
                     $date = date_format($date, 'd/m/Y');
                 }else{
                     $date = "00/00/0000";
                 }
-                echo $date . "<small>(date du passage en commission)</small>";
+                echo $date . "<small>(date de visite)</small>";
+            }
+            elseif($this->DATECOMM_DOSSIER != null)
+            {
+                $date = substr($this->DATEINSERT_DOSSIER, 0, 10);
+                if($date != '0000-00-00'){
+                    $date = new DateTime(substr($this->DATEINSERT_DOSSIER,0,10));
+                    $date = date_format($date, 'd/m/Y');
+                }else{
+                    $date = "00/00/0000";
+                }
+                echo $date . "<small>(date de passage en commission)</small>";
             }
             else
             {

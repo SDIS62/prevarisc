@@ -72,6 +72,28 @@
                         $result = array_reverse($result);
 
                     $this->view->etablissement_parents = $result;
+                    
+                    // Avis + infos de l'établissement
+                    $this->view->avis = null;
+                    $this->view->fact_dange = null;
+                    $this->view->last_visite = null;
+                    $this->view->next_visite = null;
+                    
+                    if($this->view->DB_etablissement->ID_DOSSIER_DONNANT_AVIS != null)
+                    {
+                        $dbtable_dossier = new Model_DbTable_Dossier;
+                        $dossier_donnant_avis = $dbtable_dossier->find($this->view->DB_etablissement->ID_DOSSIER_DONNANT_AVIS)->current();
+                        
+                        $this->view->avis = $dossier_donnant_avis->AVIS_DOSSIER_COMMISSION;
+                        $this->view->fact_dange = $dossier_donnant_avis->FACTDANGE_DOSSIER;
+                        
+                        $tmp_date = new Zend_Date($dossier_donnant_avis->DATEVISITE_DOSSIER, Zend_Date::DATES);
+                        $this->view->last_visite =  $tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
+                        
+                        $tmp_date = new Zend_Date($this->view->last_visite, Zend_Date::DATES);
+                        $tmp_date->add($this->informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
+                        $this->view->next_visite =  $tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
+                    }
                 }
 
                 // Envoi des champs des genres
@@ -197,15 +219,9 @@
                         }
                     }
                 }
-
-                // Les dernières et prochaines visites
-                $this->view->last_visite =  $this->DB_etablissement->getVisiteLastPeriodique( $this->_request->id ) != null ? $this->DB_etablissement->getVisiteLastPeriodique( $this->_request->id )->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ) : null;
-                $this->view->next_visite =  $this->DB_etablissement->getVisiteNextPeriodique( $this->_request->id ) != null ? $this->DB_etablissement->getVisiteNextPeriodique( $this->_request->id )->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ) : null;
                 
                 // récupération de l'id de l'établissement
                 $this->view->idwinprev = $this->view->DB_etablissement->NUMEROID_ETABLISSEMENT == "" ? $this->_request->id : $this->view->DB_etablissement->NUMEROID_ETABLISSEMENT;
-
-                //Zend_Debug::dump($this->view->last_visite);
             }
             // Pour un nouveel Ã©tablissement
             elseif (isset($_GET["pere"])) {
@@ -341,7 +357,7 @@
 
             // On balance le rÃ©sultat sur la vue
             $this->view->etudes = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", 1)->order("COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
-            $this->view->visites = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", array(2, 3))->order("COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
+            $this->view->visites = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", array(2, 3))->order("DATEVISITE_DOSSIER,COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
             $this->view->autres = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", $types_autre)->order("DATEINSERT_DOSSIER DESC")->run();
         }
 
