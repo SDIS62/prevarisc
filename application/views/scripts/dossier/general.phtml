@@ -1,11 +1,6 @@
 <script type='text/javascript' >
 
 	$(document).ready(function(){
-		/*
-		$("#annulModification").button({
-			text: false
-		});
-		*/
 
 		// Texte de l'auto complete utilisateurs
 		$("#preventionnistes-autocomplete").toggleText("Saisissez le nom d'un préventionniste ...");
@@ -306,9 +301,18 @@
 			}		
 		});
 
+		showCalendar();		
 		majAvisSelect();
 	});
 	//FIN DOC READY FUNCTION
+	
+	function showCalendar()
+	{
+		if($('#COMMISSION_DOSSIER').val() != '')
+		{
+			$('.showCalendar').show();
+		}
+	}
 	
 	function afficherCacherAvis(act)
 	{
@@ -359,7 +363,19 @@
 		}
 		
 		$("#AVIS_DOSSIER option").each(function(){
-			//var text = $(this).text();
+			if($(this).val() != 0)
+			{
+				if($(this).val() == 1)
+				{
+					var text = "Favorable";
+				}else{
+					var text = "Défavorable";
+				}
+				$(this).text(text+addText);
+			}
+		});
+		
+		$("#AVIS_DOSSIER_COMMISSION option").each(function(){
 			if($(this).val() != 0)
 			{
 				if($(this).val() == 1)
@@ -980,8 +996,6 @@
 		if(idNature != 0)
 		{
 		
-
-		
 			if($("#do").val() == 'edit'){
 				
 				var listeNature = $("#listeNature").recupNatures();
@@ -1108,9 +1122,7 @@
 			}
 		}
 		*/
-		
-		$("#creationDossier").button({ disabled: true });
-		
+
 		if($("#NUM_DOCURBA").val() != ''){
 			$("#addNumDoc").click();
 		}
@@ -1129,7 +1141,9 @@
 			type:"POST",
 			//async: false,
 			beforeSend: function(){
-				//$("#"+nomTab[1]).html("<img src='/images/template/load/load.gif' />");
+				$("#annulModification").attr("disabled", "disabled");
+				$("#creationDossier").attr("disabled", "disabled");
+				$("#chargement").html("<img src='/images/load.gif' />");
 			},
 			success: function(affichageResultat){
 				//alert('/dossier/index/id/'+affichageResultat);
@@ -1234,7 +1248,9 @@
 			type:"POST",
 			//async: false,
 			beforeSend: function(){
-				//$("#"+nomTab[1]).html("<img src='/images/template/load/load.gif' />");
+				$("#annulModification").attr("disabled", "disabled");
+				$("#validModification").attr("disabled", "disabled");
+				$("#chargement").html("<img src='/images/load.gif' />");
 			},
 			success: function(affichageResultat){
 				//alert(affichageResultat);
@@ -1489,8 +1505,8 @@ echo "
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".( ($this->dateVisiteInput)?$this->dateVisiteInput:"" )."'  disabled='disabled'/>
 						<input type='hidden' name='ID_AFFECTATION_DOSSIER_VISITE' id='ID_AFFECTATION_DOSSIER_VISITE' value='".( ($this->idDateVisiteAffect)?$this->idDateVisiteAffect:"" )."' />
-						<button id='showVisite' class='showCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Afficher le calendrier</button>
-						<button id='hideVisite' class='hideCalendar' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" ).">Cacher le calendrier</button>
+						<button id='showVisite' class='showCalendar btn'".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
+						<button id='hideVisite' class='hideCalendar btn'".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
 					</div>
 				</li>
 				<li class='row-fluid' style='display:none;'>
@@ -1653,7 +1669,7 @@ echo "
 					</div>
 				</li>				
 				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'>Avis</div>
+					<div class='left libelle span3' style='float:left;'>Avis du rapporteur</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>";
 					echo $this->AVIS_VALUE['LIBELLE_AVIS'];
 					if($this->infosDossier['TYPE_DOSSIER'] == 1){
@@ -1686,6 +1702,42 @@ echo "
 						</select>
 					</div>
 				</li>
+				
+				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
+					echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
+					if($this->infosDossier['TYPE_DOSSIER'] == 1){
+						//etude
+						if($this->natureConcerne[0]['ID_NATURE'] == 19){
+							echo " à l'exploitation";
+						}else{
+							echo " à l'étude";
+						}
+					}else if($this->infosDossier['TYPE_DOSSIER'] == 2 || $this->infosDossier['TYPE_DOSSIER'] == 3){
+						//visite et groupe de visite
+						if($this->natureConcerne[0]['ID_NATURE'] == 20  || $this->natureConcerne[0]['ID_NATURE'] == 25){
+							//Reception de travaux
+							echo " à la reception des travaux";
+						}else{
+							//Reste des visites
+							echo " à l'exploitation";
+						}
+					}
+				echo 
+					"</span></div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+						<select name='AVIS_DOSSIER_COMMISSION' id='AVIS_DOSSIER_COMMISSION' >
+							<option value='0' ></option>
+						";
+						foreach($this->listeAvis as $avis){
+							echo "<option value='".$avis["ID_AVIS"]."' ".( ( $this->AVIS_COMMISSION_VALUE['ID_AVIS'] == $avis["ID_AVIS"] )? "selected='selected'" :"" )." >".$avis['LIBELLE_AVIS']."</option>";
+						}
+						echo "
+						</select>
+					</div>
+				</li>
+				
 				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL && $this->infosDossier['FACTDANGE_DOSSIER'] != 0)? "" : "display:none;")."'>
 					<div class='left libelle span3' style='float:left;'>Facteur de dangerosité</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='factDange ".$this->infosDossier['FACTDANGE_DOSSIER']."'>".$this->infosDossier['FACTDANGE_DOSSIER']."</span></div>
