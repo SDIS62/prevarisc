@@ -550,7 +550,6 @@
                 $informations->R12320_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS = 0;
-                $informations->ID_AVIS = null;
                 $informations->ID_STATUT = null;
                 $informations->ID_GENRE = 1;
                 $informations->ID_CLASSE = null;

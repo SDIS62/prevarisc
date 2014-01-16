@@ -1161,26 +1161,23 @@ class DossierController extends Zend_Controller_Action
 			//echo "VAL = ".$MAJEtab."<br/>";
 			
 			$dbEtab = new Model_DbTable_Etablissement;
-			$dbEtabInfo = new Model_DbTable_EtablissementInformations;
+            
 			if ($MAJEtab == 1 && $this->_getParam('do') == 'new')
 			{
-				$idEtablissement = $this->_getParam('idEtablissement');
-				$infoEtab = $dbEtab->getInformations($idEtablissement);
-
-				$etabToEdit = $dbEtabInfo->find($infoEtab['ID_ETABLISSEMENTINFORMATIONS'])->current();
+				$etabToEdit = $dbEtab->find($this->_getParam('idEtablissement'))->current();
 				$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
 				$etabToEdit->save();
 				
-			}else if($MAJEtab == 1){
+			}
+            else if($MAJEtab == 1)
+            {
 				$listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
 
 				foreach($listeEtab as $val => $ue)
 				{
-					$infoEtab = $dbEtab->getInformations($ue['ID_ETABLISSEMENT'])->toArray();
-
-					$etabToEdit = $dbEtabInfo->find($infoEtab['ID_ETABLISSEMENTINFORMATIONS'])->current();
-					$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-					$etabToEdit->save();
+                    $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
+                    $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+                    $etabToEdit->save();
 				}
 			}
 			
