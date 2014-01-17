@@ -1,5 +1,7 @@
 <?php
-
+echo "
+	<input type='hidden' name='idEtablissement' id='idEtablissement' value='".$this->idEtablissement."' />
+";
 $idTypeMarq = "";
 //echo $this->liste[0];
 foreach($this->listeTextesAppl as $val => $ue){
@@ -20,7 +22,6 @@ foreach($this->listeTextesAppl as $val => $ue){
 			<hr class='clear'>
 		</div>
 	";
-
 }
 
 ?>
@@ -39,7 +40,7 @@ $(document).ready(function() {
 		$.ajax({
 			type: "POST",
 			url: "/dossier/fonction",
-			data: "&do=texteApplicable&toDo="+toDo+"&idTexte="+idTexte+"&idDossier="+idDossier,
+			data: "&do=texteApplicable&toDo="+toDo+"&idTexte="+idTexte+"&idDossier="+idDossier+"&idEtablissement="+$("#idEtablissement").val(),
 			success: function(msg){
 				//alert(msg);				
 			}

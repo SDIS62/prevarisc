@@ -223,6 +223,7 @@ class DossierController extends Zend_Controller_Action
 			//Zend_Debug::dump($etablissement);
 			$this->view->genre = $etablissement['ID_GENRE'];
 			$commissionEtab = $etablissement['ID_COMMISSION'];
+			$idEtablissement = $this->_getParam("id_etablissement");
 		} elseif ((int) $this->_getParam("id")) {
 			//echo "ICI ON EST DANS UN DOSS EXISTANT (consultation/edit dossier)";
 			$DBdossier = new Model_DbTable_Dossier;
@@ -233,9 +234,11 @@ class DossierController extends Zend_Controller_Action
 			//Zend_Debug::dump($etablissement);
 			$this->view->genre = $etablissement['ID_GENRE'];
 			$commissionEtab = $etablissement['ID_COMMISSION'];
+			$idEtablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
 		}
 		$this->view->commissionEtab = $commissionEtab;
 		$genreInfo = $this->view->genre;
+		$this->view->idEtablissement = $idEtablissement;
 		
         $today = new Zend_Date();
         $this->view->dateToday = $today->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
@@ -957,12 +960,37 @@ class DossierController extends Zend_Controller_Action
 				$this->_helper->viewRenderer->setNoRender();
 				//echo $this->_getParam('toDo');
 				$dbDossierTexteApplicable = new Model_DbTable_DossierTextesAppl;
+				
+				//Si on est dans une visite on change automatiquement les textes applicables de l'établissement
+				//On cherche le type de dossier
+				$dbDossier = new Model_DbTable_Dossier;
+				$type = $dbDossier->getTypeDossier($this->_getParam('idDossier'));
+				
+				//Lorsque l'on est dans une visite ou un groupe de visite, on modifie les textes applicables dans l'établissement au fur et à mesure
+				if($type['TYPE_DOSSIER'] == 2 || $type['TYPE_DOSSIER'] == 3)
+				{
+					$dbEtablissementTextAppl = new Model_DbTable_EtsTextesAppl;
+					if($this->_getParam('toDo') == 'save')
+					{
+						$row = $dbEtablissementTextAppl->createRow();
+						$row->ID_TEXTESAPPL = $this->_getParam('idTexte');
+						$row->ID_ETABLISSEMENT = $this->_getParam('idEtablissement');
+						$row->save();
+					}else if ($this->_getParam('toDo') == 'delete'){
+						$row = $dbEtablissementTextAppl->find($this->_getParam('idTexte'),$this->_getParam('idEtablissement'))->current();
+						$row->delete();
+					}
+				}
+				
+				
+				
 				if($this->_getParam('toDo') == 'save'){
 					//$row = $dbDossierTexteApplicable->
 					$row = $dbDossierTexteApplicable->createRow();
 					$row->ID_TEXTESAPPL = $this->_getParam('idTexte');
 					$row->ID_DOSSIER = $this->_getParam('idDossier');
 					$row->save();
+					
 				}else if ($this->_getParam('toDo') == 'delete'){
 					$row = $dbDossierTexteApplicable->find($this->_getParam('idTexte'),$this->_getParam('idDossier'))->current();
 					$row->delete();
@@ -1180,8 +1208,6 @@ class DossierController extends Zend_Controller_Action
                     $etabToEdit->save();
 				}
 			}
-			
-			
 		}
 	
 		//GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
@@ -2171,6 +2197,19 @@ class DossierController extends Zend_Controller_Action
 		
 		$this->view->listeIdTexte = $listeId;
 		//Zend_Debug::dump($this->view->listeIdTexte);
+		/***************
+			RECUPERATIONS INFOS ETABLISSEMENT (cellule ou etab pour generation des avis)
+		******************/
+		if ($this->_getParam("id_etablissement")) {
+			$idEtablissement = $this->_getParam("id_etablissement");
+		} elseif ((int) $this->_getParam("id")) {
+			//echo "ICI ON EST DANS UN DOSS EXISTANT (consultation/edit dossier)";
+			$DBdossier = new Model_DbTable_Dossier;
+			$tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
+			$this->view->listeEtablissement = $tabEtablissement;
+			$idEtablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
+		}
+		$this->view->idEtablissement = $idEtablissement;
 	}
 
 //GESTION DE LA PARTIE PRESCRIPTION
