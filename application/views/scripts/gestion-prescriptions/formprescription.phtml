@@ -8,8 +8,8 @@ echo "
 	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:$this->article)."' />
 	<div id='selectEmplacement' ></div>
 	<br/><br/>
-	<span>Texte : </span><span><input type='texte' name='LIBELLE_TEXTE' id='LIBELLE_TEXTE' value='' /></span>
-	<span>Article : </span><span><input type='article' name='LIBELLE_ARTICLE' id='LIBELLE_ARTICLE' value='' /></span>
+	<span>Texte : </span><span><input type='texte' name='LIBELLE_TEXTE' id='LIBELLE_TEXTE' value='' style='width:400px;'/></span>
+	<span>Article : </span><span><input type='article' name='LIBELLE_ARTICLE' id='LIBELLE_ARTICLE' value='' style='width:400px;'/></span>
 	<button id='addAssoc' class='btn' >Ajouter</button>
 	<br/><br/>
 	<div>
