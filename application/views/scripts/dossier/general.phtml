@@ -1080,8 +1080,11 @@
 	
 	function verifDossier()
 	{
-		//Dans le cas d'une visite périodique on ne vérifie pas l'objet (id 21 et 26)
-		if($("#selectNature").val() != 21 && $("#selectNature").val() != 26){
+		//On ne vérifie pas l'objet dans les cas suivant :
+		//visite périodique (21 et 26)
+		//arrêté > ouverture (40)
+		var nature = $("#selectNature").val();
+		if(nature != 21 && nature != 26 && nature != 40 ){
 			if($("#OBJET_DOSSIER").val() == ''){
 				$("#OBJET_DOSSIER").focus();
 				$("#OBJET_DOSSIER").css("border-color","red");

@@ -98,7 +98,7 @@ class DossierController extends Zend_Controller_Action
         "39" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
     //ARRETE
         //Ouverture - OK
-        "40" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
+        "40" => array("DATEINSERT","DATESIGN","PREVENTIONNISTE"),
         //Fermeture - OK
         "41" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Mise en demeure - OK
@@ -1510,10 +1510,12 @@ class DossierController extends Zend_Controller_Action
                     //cas général d'une visite
                     $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisite();
                 }
-            } else {
+            } else if ($dossierType['TYPE_DOSSIER'] == 1 ){
                 //cas d'une etude
                 $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocEtude();
-            }
+            } else {
+				$listeDocConsulte = 0;
+			}
 
             //ici on récupère tous les documents qui ont été renseigné dans la base par un utilisateur (avec id du dossier et de la nature)
             $listeDocRenseigne[$nature["ID_NATURE"]] = $dblistedoc->recupDocDossier($this->_getParam("id"),$nature["ID_NATURE"]);
