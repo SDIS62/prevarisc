@@ -1,9 +1,9 @@
 <?php
 
-	echo "<li id='prescriptiontype_".$this->idPrescriptionType."'>";
+	echo "<li id='prescriptiontype_".$this->idPrescriptionType."'  style='border-bottom:1px solid grey;'>";
 
 	echo "
-			<table style='width:900px;'>
+			<table class='row-fluid' >
 	";
 
 	$nbAssoc = count($this->textes);
@@ -13,14 +13,14 @@
 		$article = $this->articles[$j];
 		$texte = $this->textes[$j];
 		echo "
-			<tr>
-				<td style='width:15%;'>".$texte."</td>
-				<td style='width:15%;'>".$article."</td>
+			<tr >
+				<td class='span3' style='vertical-align:top;'>".$texte."</td>
+				<td class='span3' style='vertical-align:top;'>".$article."</td>
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->libelle)."</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
+			echo "<td rowspan='".$nbAssoc."' class='span5'>".nl2br($this->libelle)."</td>";
+			echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 			$cpt = false;
 		}
 		echo "
