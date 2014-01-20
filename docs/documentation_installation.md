@@ -12,7 +12,7 @@ Prevarisc est une application web, vous devez l'héberger sur un serveur web sup
 * Héberger Prevarisc chez un tiers (OVH, Gandi etc ...) ;
 * Heberger Prevarisc soi-même (voici des bon tutoriels pour installer et configurer votre serveur : [Installer un serveur](http://www.siteduzero.com/informatique/tutoriels/apprenez-a-installer-un-serveur-web-sous-debian) et [le sécuriser](http://www.siteduzero.com/informatique/tutoriels/securiser-son-serveur-linux)).
 
-Les modules apache à activer : rewrite, deflate, expires ;
+Les modules apache à activer : rewrite, deflate, expires, include ;
 Les extensions PHP à activer : ldap, gd2, exif
 
 #### Hôte virtuel
@@ -62,11 +62,13 @@ Cette manipulation installe les dépendances automatiquement.
 
 #### Accès à la base de données
 
-Vous devez configurer Prevarisc afin qu'il ait accès à la base de données (entre autres). La configuration par défaut est placé dans application/configs/application.ini, ce fichier contient quelques directives de base pour la configuration de votre environnement. Voici comment le configurer :
+Vous devez configurer Prevarisc afin qu'il ait accès à la base de données (entre autres). La configuration par défaut de la base de données est placé dans application/configs/secret.ini que vous devez créer lors de la première installation. Ce fichier contient quelques directives de base pour la configuration de votre environnement. Voici comment le configurer :
 ```
-; application/configs/application.ini
+; application/configs/secret.ini
 
 (...)
+
+[production]
 resources.db.params.host = #HOST (ex : localhost)#
 resources.db.params.username = #USERNAME (ex: root)#
 resources.db.params.password = #PASSWORD (le mot de passe d'accès à la base de données)#

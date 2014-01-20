@@ -398,12 +398,6 @@
                             $value = $this->view->DB_statut[$item - 1]["LIBELLE_STATUT"];
                             break;
 
-                        case "ID_AVIS":
-                            if (isset($this->view->DB_avis[$item - 1])) {
-                                $value = "<span class='avis " . $this->view->DB_avis[$item - 1]["LIBELLE_AVIS"][0] . "' >".$this->view->DB_avis[$item - 1]["LIBELLE_AVIS"]."</span>";
-                            }
-                            break;
-
                         case "ID_CATEGORIE":
                             if (isset($categories[$item - 1])) {
                                 $value = $categories[$item - 1]["LIBELLE_CATEGORIE"];
