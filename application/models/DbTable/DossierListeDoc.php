@@ -11,8 +11,7 @@ class Model_DbTable_DossierListeDoc extends Zend_Db_Table_Abstract
     {
         $select = "SELECT *
             FROM listedocconsulte
-            WHERE VISITE_DOC = '1'
-            AND ETUDE_DOC = '0';";
+            WHERE VISITE_DOC = '1';";
 
         return $this->getAdapter()->fetchAll($select);
     }
@@ -22,8 +21,7 @@ class Model_DbTable_DossierListeDoc extends Zend_Db_Table_Abstract
     {
         $select = "SELECT *
             FROM listedocconsulte
-            WHERE VISITE_DOC = '0'
-            AND ETUDE_DOC = '1';";
+            WHERE ETUDE_DOC = '1';";
 
         return $this->getAdapter()->fetchAll($select);
     }
@@ -32,9 +30,16 @@ class Model_DbTable_DossierListeDoc extends Zend_Db_Table_Abstract
     {
         $select = "SELECT *
             FROM listedocconsulte
-            WHERE VISITE_DOC = '0'
-            AND VISITERT_DOC = '1'
-            AND ETUDE_DOC = '0';";
+            WHERE VISITERT_DOC = '1';";
+
+        return $this->getAdapter()->fetchAll($select);
+    }
+	
+	public function getDocVisiteVAO()
+    {
+        $select = "SELECT *
+            FROM listedocconsulte
+            WHERE VISITEVAO_DOC = '1';";
 
         return $this->getAdapter()->fetchAll($select);
     }

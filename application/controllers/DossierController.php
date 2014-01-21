@@ -68,20 +68,20 @@ class DossierController extends Zend_Controller_Action
         //Périodique - OK
         "26" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Chantier - OK
-        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","COORDSSI","PREVENTIONNISTE","AVIS_COMMISSION"),
+        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","AVIS_COMMISSION"),
         //Controle - OK
         "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Inopinéee - OK
         "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
     //REUNION
         //Visite ou sur site - OK"DATEVISITE",
-        "30" => array("DATEINSERT","OBJET","PREVENTIONNISTE","DEMANDEUR"),
+        //"30" => array("DATEINSERT","OBJET","PREVENTIONNISTE","DEMANDEUR"),
         //Locaux SDIS - OK
         "31" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
         //Exterieur SDIS - OK
-        "32" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
+        "32" => array("DATEINSERT","OBJET","LIEUREUNION","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
         //Téléphonique - OK
-        "33" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
+        //"33" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
     //COURRIER/COURRIEL
         //Arrivée - OK
         "34" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","DATEREP","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
@@ -93,9 +93,9 @@ class DossierController extends Zend_Controller_Action
         //Incendie - OK
         "37" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
         //SAP - OK
-        "38" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
+        "38" => array("DATEINSERT","OBJET","OPERSDIS","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
         //Intervention div - OK
-        "39" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
+        "39" => array("DATEINSERT","OBJET","OPERSDIS","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
     //ARRETE
         //Ouverture - OK
         "40" => array("DATEINSERT","DATESIGN","PREVENTIONNISTE"),
@@ -105,7 +105,7 @@ class DossierController extends Zend_Controller_Action
         "42" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Mise en demeure de l'exploitant - OK
         "43" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
-        //GN6 - OK
+        //Utilisation exceptionnelle de locaux - OK
         "44" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Courrier - OK
         "45" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
@@ -706,7 +706,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->serviceInstructeurId = $groupement["ID_GROUPEMENT"];
         }
 
-
+	
         //$this->view->groupement = $groupement->toArray();
 
     }
@@ -997,21 +997,28 @@ class DossierController extends Zend_Controller_Action
 				}
 			break;
 			case "showDocManquant":
+				$dbDocManquant = new Model_DbTable_DocManquant;
 				//Si on passe un id dossier en param alors on cherche le dernier champ doc manquant si il existe
 				if($this->_getParam('idDossier') && $this->_getParam('idDossier') != '')
 				{
+
 					$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
 					$lastDocManquantInDb = $dbDossDocManquant->getDocManquantDossLast($this->_getParam('idDossier'));
 					//Zend_Debug::dump($lastDocManquantInDb);
+
 					$this->view->oldDocManquant = $lastDocManquantInDb;
-					//echo $this->view->oldDocManquant;
+					
+					$this->view->listeDoc = $dbDocManquant->getDocManquant();
+					//Zend_Debug::dump($listeDocManquant);
+					$this->view->numDocManquant = $this->_getParam('numDoc');
 				}else{
+
 					//On recupere la liste des documents manquant type
-					$dbDocManquant = new Model_DbTable_DocManquant;
 					$this->view->listeDoc = $dbDocManquant->getDocManquant();
 
 					//Zend_Debug::dump($listeDocManquant);
 					$this->view->numDocManquant = $this->_getParam('numDoc');
+
 				}
 			break;
         }
@@ -1502,14 +1509,16 @@ class DossierController extends Zend_Controller_Action
 
         foreach ($this->view->listeNatures as $index => $nature) {
             if ($dossierType['TYPE_DOSSIER'] == 2 || $dossierType['TYPE_DOSSIER'] == 3) {
-                if ($nature["ID_NATURE"] == 20) {
-                    //cas d'une visite réception de travaux
-                    $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisiteRT();
-                    //$listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisite();
-                } else {
-                    //cas général d'une visite
+				if ($nature["ID_NATURE"] == 20 || $nature["ID_NATURE"] == 25) {
+                    //cas d'un groupe de visite d'une récption de travaux
+					$listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisiteRT();
+                } else if ($nature["ID_NATURE"] == 47 || $nature["ID_NATURE"] == 48){
+					//cas d'une VAO
+					$listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisiteVAO();
+				}else{
+					//cas général d'une visite
                     $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisite();
-                }
+				}
             } else if ($dossierType['TYPE_DOSSIER'] == 1 ){
                 //cas d'une etude
                 $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocEtude();
