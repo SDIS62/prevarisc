@@ -1844,20 +1844,45 @@ class DossierController extends Zend_Controller_Action
         $this->view->infosDossier = $DBdossier->find($idDossier)->current();
 		//Zend_Debug::dump($this->view->infosDossier);
 		
+		//Récupération du type et de la nature du dossier
+		$dbType = new Model_DbTable_DossierType;
+		$typeDossier = $dbType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
+		$this->view->typeDossier = $typeDossier['LIBELLE_DOSSIERTYPE'];
+		
+		$dbNature = new Model_DbTable_DossierNature;
+		$natureDossier = $dbNature->getDossierNatureLibelle($idDossier);
+		$this->view->natureDossier = $natureDossier['LIBELLE_DOSSIERNATURE'];
+		
+		
+		//On récupère les informations du préventionniste
+		$DBdossierPrev = new Model_DbTable_DossierPreventionniste;
+		$this->view->preventionnistes = $DBdossierPrev->getPrevDossier($idDossier);
+		//Zend_Debug::dump($this->view->preventionnistes);
+		
 		//SERVICEINSTRUC_DOSSIER   servInstructeur
 		$dbGroupement = new Model_DbTable_Groupement;
 		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
 		//Zend_Debug::dump($groupement);
 		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
 		
-		//On recherche si un directeur unique de sécurité existe
+		
 		$dbDossierContact = new Model_DbTable_DossierContact;
-		$dusInfos = $dbDossierContact->recupDUS($idDossier);
-		if(count($dusInfos) == 1)
-			$this->view->dusDossier = $dusInfos[0];
+		//On recherche si un directeur unique de sécurité existe
+		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,8);
+		if(count($contactInfos) == 1)
+			$this->view->dusDossier = $contactInfos[0];
 		
-		//Zend_Debug::dump($dusInfos);
-		
+		//un exploitant existe
+		$exploitantInfos = $dbDossierContact->recupInfoContact($idDossier,7);
+		if(count($exploitantInfos) == 1)
+			$this->view->exploitantDossier = $exploitantInfos[0];
+		//Zend_Debug::dump($this->view->exploitantDossier);
+			
+		//un responsable de sécurité existe
+		$respsecuInfos = $dbDossierContact->recupInfoContact($idDossier,9);
+		if(count($respsecuInfos) == 1)
+			$this->view->respsecuDossier = $respsecuInfos[0];
+			
 		//Affichage dossier incomplet pour generation dossier incomplet
 		//Recuperation des documents manquants dans le cas d'un dossier incomplet
 		$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
