@@ -55,7 +55,7 @@ class DossierController extends Zend_Controller_Action
         //Périodique - OK
         "21" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Chantier - OK
-        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","AVIS_COMMISSION"),
+        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
         "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Inopinéee - OK
@@ -68,7 +68,7 @@ class DossierController extends Zend_Controller_Action
         //Périodique - OK
         "26" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Chantier - OK
-        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","AVIS_COMMISSION"),
+        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
         "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Inopinéee - OK
@@ -1183,14 +1183,14 @@ class DossierController extends Zend_Controller_Action
 				//Cas d'une étude uniquement dans le cas d'une levée de reserve
 				$MAJEtab = 1;
 			}
-			else if($this->_getParam("TYPE_DOSSIER") == 2 && ($this->_getParam("selectNature") == 21 || $this->_getParam("selectNature") == 24 || $this->_getParam("selectNature") == 47))
+			else if($this->_getParam("TYPE_DOSSIER") == 2 && ($this->_getParam("selectNature") == 21 || $this->_getParam("selectNature") == 23 || $this->_getParam("selectNature") == 24 || $this->_getParam("selectNature") == 47))
 			{
-				//Cas d'une viste uniquement dans le cas d'une VP, inopinée ou avant ouverture
+				//Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
 				$MAJEtab = 1;
 			}
-			else if($this->_getParam("TYPE_DOSSIER") == 3 && ($this->_getParam("selectNature") == 26 || $this->_getParam("selectNature") == 29 || $this->_getParam("selectNature") == 48))
+			else if($this->_getParam("TYPE_DOSSIER") == 3 && ($this->_getParam("selectNature") == 26 || $this->_getParam("selectNature") == 28 || $this->_getParam("selectNature") == 29 || $this->_getParam("selectNature") == 48))
 			{
-				//Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée ou avant ouverture
+				//Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
 				$MAJEtab = 1;
 			}
 			//echo "VAL = ".$MAJEtab."<br/>";
@@ -1202,7 +1202,6 @@ class DossierController extends Zend_Controller_Action
 				$etabToEdit = $dbEtab->find($this->_getParam('idEtablissement'))->current();
 				$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
 				$etabToEdit->save();
-				
 			}
             else if($MAJEtab == 1)
             {
@@ -1922,16 +1921,22 @@ class DossierController extends Zend_Controller_Action
             $dblistedoc = new Model_DbTable_DossierListeDoc;
             
             if ($dossierType['TYPE_DOSSIER'] == 2 || $dossierType['TYPE_DOSSIER'] == 3) {
-                if ($dossierNature['ID_NATURE'] == 20) {
-                    //cas d'une visite réception de travaux
+				
+                if ($dossierNature["ID_NATURE"] == 20 || $dossierNature["ID_NATURE"] == 25) {
+                    //cas d'un groupe de visite d'une récption de travaux
                     $listeDocConsulte = $dblistedoc->getDocVisiteRT();
-                } else {
+                } else if ($dossierNature["ID_NATURE"] == 47 || $dossierNature["ID_NATURE"] == 48){
+					//cas d'une VAO
+					$listeDocConsulte = $dblistedoc->getDocVisiteVAO();
+				} else {
                     $listeDocConsulte = $dblistedoc->getDocVisite();
                 }
 
-            } else {
+            } else if($dossierType['TYPE_DOSSIER'] == 1){
                 $listeDocConsulte = $dblistedoc->getDocEtude();
-            }
+            } else {
+				$listeDocConsulte = 0;
+			}
 
             //on envoi la liste de base à la vue
             $this->view->listeDocs = $listeDocConsulte;
