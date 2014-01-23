@@ -772,6 +772,20 @@ ul#gestionCommissionMenu li {
 	margin: 0;
 }
 
+#content_commissions table > tbody > tr {
+    height: 300px;
+    overflow-y:none;
+}
+
+#content_commissions td {
+    min-width: 150px;
+}
+
+#content_commissions td div.inner_scroll {
+    height: 250px;
+    overflow-y: auto;
+}
+
 ul#gestionCommissionMenu li.active {
 	
 	background-color: #EEEEEE;

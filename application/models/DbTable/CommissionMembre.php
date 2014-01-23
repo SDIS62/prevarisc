@@ -65,7 +65,7 @@
                     "libelle" => $row_membreDeLaCommission["LIBELLE_COMMISSIONMEMBRE"],
                     "categories" => $this->fullJoinRegle("categorie", "commissionmembrecategorie", "ID_CATEGORIE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
                     "classes" => $this->fullJoinRegle("classe", "commissionmembreclasse", "ID_CLASSE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
-                    "types" => $this->fullJoinRegle("type", "commissionmembretype", "ID_TYPE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
+                    "types" => $this->fullJoinRegle("typeactivite", "commissionmembretypeactivite", "ID_TYPEACTIVITE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
                     "dossiertypes" => $this->fullJoinRegle("dossiertype", "commissionmembredossiertype", "ID_DOSSIERTYPE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
                     "dossiernatures" => $this->fullJoinRegle("dossiernatureliste", "commissionmembredossiernature", "ID_DOSSIERNATURE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
                     "infos" => $model_commission->fetchRow("ID_COMMISSION = " . $id_commission)

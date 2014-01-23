@@ -175,7 +175,7 @@
 
                 // Adresses
                 $rowset_adresse = $model_etablissementAdressse->get($row["ID_ETABLISSEMENT"]);
-
+                
                 // Si il y a une adresse
                 if (count($rowset_adresse) > 0) {
 
@@ -187,7 +187,7 @@
 
                     // On récupère la commission
                     $commission = $model_etablissement->getDefaultCommission($info);
-
+                        
                     // Si elle n'est pas nulle on l'applique
                     if ($commission != null) {
                         $row_ets = $model_etablissementInformation->find($info["ID_ETABLISSEMENTINFORMATIONS"])->current();
@@ -202,10 +202,39 @@
         public function membresAction()
         {
             // Les modèles
+            $model_types = new Model_DbTable_Type;
             $model_membres = new Model_DbTable_CommissionMembre;
 
             // On récupère les règles de la commission
             $this->view->array_membres = $model_membres->get($this->_request->id_commission);
+            
+            // On met le libellé du type dans le tableau des activités
+            $types = $model_types->fetchAll()->toArray();
+            $types_sort = array();
+            
+            foreach($types as $_type)
+            {
+                $types_sort[$_type['ID_TYPE']] = $_type;
+            }
+            
+            foreach($this->view->array_membres as &$membre)
+            {
+                $type_sort = array();
+                
+                foreach($membre['types'] as $type)
+                {
+                    if(!array_key_exists($types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE'], $type_sort))
+                    {
+                        $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']] = array();
+                    }
+                    
+                    $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']][] = $type;
+                }
+                
+                $membre['types'] = $type_sort;
+            }
+            
+            // Zend_Debug::DUmp($this->view->array_membres);
         }
 
         public function addMembreAction()
@@ -229,7 +258,7 @@
 
             // Les modèles
             $model_membres = new Model_DbTable_CommissionMembre;
-            $model_membresTypes = new Model_DbTable_CommissionMembreType;
+            $model_membresTypes = new Model_DbTable_CommissionMembreTypeActivite;
             $model_membresClasses = new Model_DbTable_CommissionMembreClasse;
             $model_membresCategories = new Model_DbTable_CommissionMembreCategorie;
             $model_membresDossierNatures = new Model_DbTable_CommissionMembreDossierNature;
@@ -256,7 +285,7 @@
 
             // Les modèles
             $model_membres = new Model_DbTable_CommissionMembre;
-            $model_membresTypes = new Model_DbTable_CommissionMembreType;
+            $model_membresTypes = new Model_DbTable_CommissionMembreTypeActivite;
             $model_membresClasses = new Model_DbTable_CommissionMembreClasse;
             $model_membresCategories = new Model_DbTable_CommissionMembreCategorie;
             $model_membresDossierNatures = new Model_DbTable_CommissionMembreDossierNature;
@@ -309,10 +338,10 @@
                 }
 
                 // On sauvegarde les types d'activités
-                foreach ($_POST[$id_membre."_ID_TYPE"] as $type) {
+                foreach ($_POST[$id_membre."_ID_TYPEACTIVITE"] as $type) {
                     $model_membresTypes->insert(array(
                         "ID_COMMISSIONMEMBRE" => $id_membre,
-                        "ID_TYPE" => $type
+                        "ID_TYPEACTIVITE" => $type
                     ));
                 }
 
