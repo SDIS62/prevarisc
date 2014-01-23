@@ -49,7 +49,7 @@
                         switch($genre)
                         {
                             case "1": 
-                                $search->setCriteria("adressecommune.LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
+                                $search->setCriteria("adressecommunesite.LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
                                 
                                 if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
                                     $search->setCriteria("etablissementadressesite.ID_RUE", $criteres["ID_RUE"]);

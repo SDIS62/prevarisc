@@ -41,7 +41,7 @@
                 }else{
                     $date = "00/00/0000";
                 }
-                echo "Dernière visite périodique modifiant l'avis : " . $date;
+                echo "Dernière visite périodique modifiant l'avis : " . $date . ' - ';
             }
             elseif($this->DATECOMM_DOSSIER != null)
             {
@@ -52,9 +52,9 @@
                 }else{
                     $date = "00/00/0000";
                 }
-                echo "Dernier passage en commission modifiant l'avis : " . $date;
+                echo "Dernier passage en commission modifiant l'avis : " . $date . ' - ';
             }
-            
+
             switch($this->ID_GENRE)
             {
                 case 1:
