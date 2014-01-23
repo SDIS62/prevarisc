@@ -166,7 +166,10 @@
 					//Action qui se réalise lorsque l'on clique sur un évenement existant du calendrier
 					//-> Dans le cadre du calendrier cela ouvre une boite de dialogue
 					//-> Dans le cas d'un dossier cela permet de renseigner la date de passage en commission
-					if($("#idCommission").val() != ''){
+					//alert($("#idCommission").val());
+					if($("#idCommission").val() == ''){
+						var emplacement = 'calendrierComm';
+					}else if($("#idCommission").val() != ''){
 						var emplacement = 'calendrierComm';
 					}
 					
