@@ -1899,6 +1899,10 @@ class DossierController extends Zend_Controller_Action
         $libelleAvis = $DBavisDossier->find($this->view->infosDossier["AVIS_DOSSIER"])->current();
         $this->view->avisDossier = $libelleAvis["LIBELLE_AVIS"];
 
+		//Avis commission
+        $libelleAvisCommission = $DBavisDossier->find($this->view->infosDossier["AVIS_DOSSIER_COMMISSION"])->current();
+        $this->view->avisDossierCommission = $libelleAvisCommission["LIBELLE_AVIS"];
+		
         $DBdossierCommission = new Model_DbTable_Commission;
         if ($this->view->infosDossier['COMMISSION_DOSSIER']) {
             $this->view->commissionInfos = $DBdossierCommission->find($this->view->infosDossier['COMMISSION_DOSSIER'])->current();

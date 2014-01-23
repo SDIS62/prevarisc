@@ -358,6 +358,12 @@ try{
 
 }
 
+try{	
+	$odf->setVars('avisDossierCommission',verifInfos($this->avisDossierCommission),true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
 try{
 	$odf->setVars('etatDossier',verifInfos($this->etatDossier),true,'UTF8');
 } catch (OdfException $e){
