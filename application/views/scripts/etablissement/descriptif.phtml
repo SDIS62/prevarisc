@@ -23,7 +23,33 @@
 </div>
 
 <form class="edit" id="descriptif" action="" method="POST" >
-	<textarea name='DESCRIPTIF_ETABLISSEMENT' id='descriptif_general' cols='' rows='' style='width: 100%; height: 500px;' ><?php echo $this->DB_etablissement->DESCRIPTIF_ETABLISSEMENT ?></textarea>
+	<textarea name='DESCRIPTIF_ETABLISSEMENT' id='descriptif_general' cols='' rows='' style='width: 100%; height: 250px;' ><?php echo $this->DB_etablissement->DESCRIPTIF_ETABLISSEMENT ?></textarea>
+</form>
+
+<h4>Descriptif technique</h4>
+    <?php
+        foreach($this->champs_descriptif_technique as $title => $champ_destech)
+        {
+            echo "<h5>".$title."</h5>";
+            echo "<dl>";
+            foreach($champ_destech as $key => $value)
+            {
+                echo "<dt>".$key."</dt>";
+                if($value['value'] == null)
+                {
+                    echo "<dd class='muted'>Aucune donnée</dd>";
+                }
+                else
+                {
+                    echo "<dd>" . $value['type'] == 'tinyint' ? ( $value['value'] == 1 ? 'Oui' : 'Non') : $value['value'] . "</dd>";
+                }
+            }
+            echo "</dl>";
+        }
+    ?>
+<form class="edit" id="descriptif_technique" action="" method="POST" >
+    
+    <h5></h5>
 </form>
 
 <script type="text/javascript">

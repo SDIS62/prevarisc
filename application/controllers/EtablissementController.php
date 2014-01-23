@@ -290,6 +290,87 @@
 
                 $this->_helper->_redirector("descriptif", $this->_request->getControllerName(), null, array("id" => $this->_request->id));
             }
+            
+            $dbtable_etablissement = new Model_DbTable_Etablissement;
+            $dbtable_info_etablissement = $dbtable_etablissement->info();
+            
+            $champs_descriptif_technique = array();
+            
+            $translation_champs_des_tech = array(
+                "DESCTECH_DESSERTE_VOIE_ENGIN_ETABLISSEMENT" => "Voie engin",
+                "DESCTECH_DESSERTE_VOIE ECHELLE_ETABLISSEMENT" => "Voie echelle",
+                "DESCTECH_DESSERTE_ESPACE_LIBRE_ETABLISSEMENT" => "Espace libre",
+                "DESCTECH_DESSERTE_NOMBRE_FACADE_LIBRE_ETABLISSEMENT" => "Nombre de façades accessibles",
+                "DESCTECH_DESSERTE_EMPRISE_AU_SOL_ETABLISSEMENT" => "Emprise au sol",
+                "DESCTECH_DESSERTE_HAUTEUR_PBDN_ETABLISSEMENT" => "Hauteur PBDN",
+                "DESCTECH_DESSERTE_NB_NIVEAUX_ETABLISSEMENT" => "Nombre de niveaux",
+                "DESCTECH_ISOLEMENT_LATERAL_CF_ETABLISSEMENT" => "Latéral CF",
+                "DESCTECH_ISOLEMENT_SUPERPOSE_CF_ETABLISSEMENT" => "Superposé CF",
+                "DESCTECH_ISOLEMENT_VIS_A_VIS_INF_8M_ETABLISSEMENT" => "Vis-à-vis < 8m",
+                "DESCTECH_ISOLEMENT_VIS_A_VIS_SUP_8M_ETABLISSEMENT" => "Vis-à-vis > 8m",
+                "DESCTECH_STABILITE_STRUCTURE_SF_ETABLISSEMENT" => "Structure SF",
+                "DESCTECH_STABILITE_PLANCHER_SF_ETABLISSEMENT" => "Planchers CF",
+                "DESCTECH_DISTRIBUTION_CLOISONNEMENT_TRAD_ETABLISSEMENT" => "Cloisonnement traditionnel",
+                "DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT" => "Secteurs",
+                "DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT" => "Compartiments",
+                "DESCTECH_ESPACES_NOMBRE_ETABLISSEMENT" => "Nombre",
+                "DESCTECH_ESPACES_NIVEAU_CONCERNE_ETABLISSEMENT" => "Niveau concerné",
+                "DESCTECH_ESPACES_POSITION_DANS_ETS_ETABLISSEMENT" => "Position dans l'établissement",
+                "DESCTECH_SSI_PRESENCE_ETABLISSEMENT" => "Présence du SSI",
+                "DESCTECH_SSI_CATEGORIE_ETABLISSEMENT" => "Catégorie SSI",
+                "DESCTECH_SSI_ALARME_TYPE_ETABLISSEMENT" => "Alarme type",
+                "DESCTECH_ECLAIRAGE_AMBIANCE_ETABLISSEMENT" => "Ambiance",
+                "DESCTECH_ECLAIRAGE_EVACUATION_ETABLISSEMENT" => "Évacuation",
+                "DESCTECH_DESENFUMAGE_NATUREL_ETABLISSEMENT" => "Naturel",
+                "DESCTECH_DESENFUMAGE_MECANIQUE_ETABLISSEMENT" => "Mécanique",
+                "DESCTECH_SECOURS_RIA_ETABLISSEMENT" => "RIA",
+                "DESCTECH_SECOURS_COLONNE_SECHE_ETABLISSEMENT" => "Colonne sèche",
+                "DESCTECH_SECOURS_EXTINCTION_AUTO_ETABLISSEMENT" => "Extinction automatique",
+                "DESCTECH_SECOURS_AUTRE_ETABLISSEMENT" => "Autre",
+                "DESCTECH_PCSECU_PRESENCE_ETABLISSEMENT" => "Présence PC Sécurité",
+                "DESCTECH_PCSECU_LOCALISATION_ETABLISSEMENT" => "Localisation",
+                "DESCTECH_SERVICESECU_CHEF_DE_SERVICE_ETABLISSEMENT" => "Chef de service",
+                "DESCTECH_SERVICESECU_CHEF_EQUIPE_ETABLISSEMENT" => "Chef d'équipe",
+                "DESCTECH_SERVICESECU_AGENT_DE_SERVICE_ETABLISSEMENT" => "Agent de service",
+                "DESCTECH_SERVICESECU_AGENTS_DESIGNES_ETABLISSEMENT" => "Agents désignés",
+                "DESCTECH_DEFENSE_PI_ETABLISSEMENT" => "PI",
+                "DESCTECH_DEFENSE_BI_ETABLISSEMENT" => "BI",
+                "DESCTECH_DEFENSE_PT_EAU_ETABLISSEMENT" => "Point d'eau naturel volume"
+            );
+
+            foreach($this->view->DB_etablissement->toArray() as $key => $value)
+            {
+                if(preg_match('/DESCTECH/', $key))
+                {
+                    $key_to_str = str_replace('DESCTECH_', '', $key);
+                    $key_to_str = explode('_', $key_to_str);
+                    $key_to_str = $key_to_str[0];
+                    $title = null;
+                    
+                    switch($key_to_str)
+                    {
+                        case "DESSERTE": $title = "Desserte"; break;
+                        case "ISOLEMENT": $title = "Isolement par rapport aux tiers"; break;
+                        case "STABILITE": $title = "Stabilité au feu"; break;
+                        case "DISTRIBUTION": $title = "Distribution au feu"; break;
+                        case "ESPACES": $title = "Espaces d'attentes sécurisés"; break;
+                        case "SSI": $title = "SSI"; break;
+                        case "ECLAIRAGE": $title = "Éclairage de sécurité"; break;
+                        case "DESENFUMAGE": $title = "Désenfumage"; break;
+                        case "SECOURS": $title = "Moyens de secours"; break;
+                        case "PCSECU": $title = "PC Sécurité"; break;
+                        case "SERVICESECU": $title = "Service de sécurité"; break;
+                        case "DEFENSE": $title = "Défense incendie"; break;
+                    }
+                    
+                    $champs_descriptif_technique[$title][$translation_champs_des_tech[$key]] = array(
+                        'value' => $value,
+                        'type' => $dbtable_info_etablissement['metadata'][$key]['DATA_TYPE']
+                    );
+                }
+            }
+
+            $this->view->champs_descriptif_technique = $champs_descriptif_technique;
         }
         
         public function textesApplicablesAction()
