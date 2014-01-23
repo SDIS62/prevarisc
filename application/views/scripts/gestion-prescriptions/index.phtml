@@ -4,16 +4,11 @@
 			<i class='sprite sprite-application_view_columns' ></i>
 			Gestion des prescriptions types
 		</h2>
-		<button class='categorie btn' >Ajouter un type de prescriptions</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<br/><br/>
-		<!--
-			<button class='prescription btn' >Ajouter une prescription type</button>
-		-->
+		<br/>
 	";
 	
 	echo "
-		<ul class='prescriptioncat'>
+		<ul class='prescriptioncat unstyled'>
 	";
 	foreach($this->listePrescriptionCat as $val => $ue)
 	{
@@ -24,24 +19,24 @@
 				<button class='showDetailCat btn' id='showtexte_".$ue['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
 				<button class='hideDetailCat btn' id='hidetexte_".$ue['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<button class='editCategorie btn' id='".$ue['ID_PRESCRIPTION_CAT']."' >Modifier</button>
+				<button class='editCategorie btn' id='".$ue['ID_PRESCRIPTION_CAT']."' ><i class='icon-pencil'></i>&nbsp;Modifier</button>
 				<br/>
-				<div style='margin-left:30px;' id='texte_".$ue['ID_PRESCRIPTION_CAT']."'></div>
-				<div style='margin-left:30px;' id='prescriptionCat_".$ue['ID_PRESCRIPTION_CAT']."'></div>
+				<div style='margin-left:30px;padding-left:10px;border-left:1px solid black;' id='texte_".$ue['ID_PRESCRIPTION_CAT']."'></div>
+				<div style='margin-left:30px;padding-left:10px;border-left:1px solid black;' id='prescriptionCat_".$ue['ID_PRESCRIPTION_CAT']."'></div>
 				<br/>
 			</li>
 		";
 	}
 	echo "
 		</ul>
-		<ul class='prescriptiontypeWithoutCat'>
+		<ul class='prescriptiontypeWithoutCat' class='unstyled'>
 	";
 	$nbPrescType = count($this->prescriptionType);
 	for($i=0; $i < $nbPrescType; $i++)
 	{
 		echo "
-			<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."'>
-				<table style='width:900px;'>
+			<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' style='border-bottom:1px solid grey;'>
+				<table class='row-fluid'>
 		";
 
 		$nbAssoc = count($this->prescriptionType[$i]);
@@ -51,14 +46,14 @@
 			$article = $this->prescriptionType[$i][$j]['LIBELLE_ARTICLE'];
 			$texte = $this->prescriptionType[$i][$j]['LIBELLE_TEXTE'];
 			echo "
-				<tr>
-					<td style='width:15%;'>".$texte."</td>
-					<td style='width:15%;'>".$article."</td>
+				<tr >
+					<td class='span3' style='vertical-align:top;'>".$texte."</td>
+					<td class='span3' style='vertical-align:top;'>".$article."</td>
 			";
 			if($cpt)
 			{
-				echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-				echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
+				echo "<td rowspan='".$nbAssoc."' class='span5'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+				echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 				$cpt = false;
 			}
 			echo "
@@ -72,6 +67,9 @@
 	}	
 	echo "
 		</ul>
+		<button class='categorie btn' >Ajouter un type de prescriptions</button>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<br/>
 	";
 ?>
 <script type="text/javascript">
@@ -459,6 +457,7 @@ $(document).ready(function(){
 		height: 'auto',
 		buttons: {
 			"Sauvegarder": function() {
+				//alert('');
 				var compteurTA = 0;
 				$("input[name='texte[]']").each(function(){
 					compteurTA++;

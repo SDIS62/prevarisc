@@ -40,7 +40,7 @@
                 WHERE COMMISSION_CONCERNE = '".$idCommission."'
                 AND DATE_COMMISSION BETWEEN '".$debut."'	AND '".$fin."'
             ";
-            echo $select;
+            //echo $select;
 
             return $this->getAdapter()->fetchAll($select);
         }
@@ -64,7 +64,7 @@
                 OR DATECOMMISSION_LIEES = '".$idComm."' )
                 ORDER BY DATE_COMMISSION
             ";
-            echo $select;
+            //echo $select;
 
             return $this->getAdapter()->fetchAll($select);
         }

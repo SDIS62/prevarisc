@@ -1,13 +1,7 @@
 <?php
-	echo "<br/>";	
-	echo "
-		<button class='addArticleTexte btn' >Ajouter un article</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<button class='prescription btn' id='addPrescriptionTexte_".$this->idTexte."'>Ajouter une prescription</button>
-	";
 	echo "<br/><br/>";	
 
-	echo "<ul class='prescriptionarticle_".$this->idTexte."'>";
+	echo "<ul class='prescriptionarticle_".$this->idTexte." unstyled'>";
 	foreach($this->listePrescriptionArticle as $val => $ue){
 		echo "
 			<li id='article_".$ue['ID_PRESCRIPTIONARTICLE']."'>
@@ -16,9 +10,9 @@
 				<button class='showDetailArticle btn' id='showDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' >Afficher les détails</button>
 				<button class='hideDetailArticle btn' id='hideDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' style='display:none;'>Masquer les détails</button>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<button class='editArticle btn' id='".$ue['ID_PRESCRIPTIONARTICLE']."' >Modifier</button>
+				<button class='editArticle btn' id='".$ue['ID_PRESCRIPTIONARTICLE']."' ><i class='icon-pencil'></i>&nbsp;Modifier</button>
 				<br/>
-				<div style='margin-left:30px;' id='articleDetail_".$ue['ID_PRESCRIPTIONARTICLE']."'></div>
+				<div style='margin-left:30px;padding-left:10px;border-left:1px solid black;' id='articleDetail_".$ue['ID_PRESCRIPTIONARTICLE']."'></div>
 				<br/>
 			</li>
 		";
@@ -26,14 +20,14 @@
 	echo "</ul>";
 	echo "
 		</ul>
-		<ul class='prescriptiontypeTexte_".$this->idTexte."'>
+		<ul class='prescriptiontypeTexte_".$this->idTexte." unstyled'>
 	";
 	$nbPrescType = count($this->prescriptionType);
 	for($i=0; $i < $nbPrescType; $i++)
 	{
 		echo "
-			<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."'>
-				<table style='width:900px;'>
+			<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' style='border-bottom:1px solid grey;'>
+				<table class='row-fluid' >
 		";
 
 		$nbAssoc = count($this->prescriptionType[$i]);
@@ -44,13 +38,13 @@
 			$texte = $this->prescriptionType[$i][$j]['LIBELLE_TEXTE'];
 			echo "
 				<tr>
-					<td style='width:15%;'>".$texte."</td>
-					<td style='width:15%;'>".$article."</td>					
+					<td class='span3' style='vertical-align:top;'>".$texte."</td>
+					<td class='span3' style='vertical-align:top;'>".$article."</td>					
 			";
 			if($cpt)
 			{
-				echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-				echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
+				echo "<td rowspan='".$nbAssoc."' class='span5'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+				echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 				$cpt = false;
 			}
 			echo "
@@ -64,6 +58,12 @@
 	}	
 	echo "
 		</ul>
+	";
+	echo "<br/>";	
+	echo "
+		<button class='addArticleTexte btn' >Ajouter un article</button>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<button class='prescription btn' id='addPrescriptionTexte_".$this->idTexte."'>Ajouter une prescription</button>
 	";
 
 ?>

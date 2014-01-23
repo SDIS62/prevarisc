@@ -1,16 +1,14 @@
 <?php
 echo "
-	<br/>
-	<button class='prescription btn' id='addPrescriptionArticle_".$this->idArticle."'>Ajouter une prescription</button>
 	<br/><br/>
-	<ul class='prescriptiontypeArticle_".$this->idArticle."'>
+	<ul class='prescriptiontypeArticle_".$this->idArticle." unstyled'>
 ";
 $nbPrescType = count($this->prescriptionType);
 for($i=0; $i < $nbPrescType; $i++)
 {
 	echo "
-		<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."'>
-			<table style='width:900px;'>
+		<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."'  style='border-bottom:1px solid grey;'>
+			<table  class='row-fluid'>
 	";
 
 	$nbAssoc = count($this->prescriptionType[$i]);
@@ -21,13 +19,13 @@ for($i=0; $i < $nbPrescType; $i++)
 		$texte = $this->prescriptionType[$i][$j]['LIBELLE_TEXTE'];
 		echo "
 			<tr>
-				<td style='width:15%;'>".$texte."</td>
-				<td style='width:15%;'>".$article."</td>
+				<td class='span3' style='vertical-align:top;'>".$texte."</td>
+				<td class='span3' style='vertical-align:top;'>".$article."</td>
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
+			echo "<td rowspan='".$nbAssoc."' class='span5'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+			echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 			$cpt = false;
 		}
 		echo "
@@ -41,6 +39,8 @@ for($i=0; $i < $nbPrescType; $i++)
 }	
 echo "
 	</ul>
+	<br/>
+	<button class='prescription btn' id='addPrescriptionArticle_".$this->idArticle."'>Ajouter une prescription</button>
 ";
 ?>
 

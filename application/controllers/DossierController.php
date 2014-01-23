@@ -55,7 +55,7 @@ class DossierController extends Zend_Controller_Action
         //Périodique - OK
         "21" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Chantier - OK
-        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","AVIS_COMMISSION"),
+        "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
         "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Inopinéee - OK
@@ -68,20 +68,20 @@ class DossierController extends Zend_Controller_Action
         //Périodique - OK
         "26" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Chantier - OK
-        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","COORDSSI","PREVENTIONNISTE","AVIS_COMMISSION"),
+        "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
         "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
         //Inopinéee - OK
         "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
     //REUNION
         //Visite ou sur site - OK"DATEVISITE",
-        "30" => array("DATEINSERT","OBJET","PREVENTIONNISTE","DEMANDEUR"),
+        //"30" => array("DATEINSERT","OBJET","PREVENTIONNISTE","DEMANDEUR"),
         //Locaux SDIS - OK
         "31" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
         //Exterieur SDIS - OK
-        "32" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
+        "32" => array("DATEINSERT","OBJET","LIEUREUNION","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
         //Téléphonique - OK
-        "33" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
+        //"33" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
     //COURRIER/COURRIEL
         //Arrivée - OK
         "34" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","DATEREP","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
@@ -93,19 +93,19 @@ class DossierController extends Zend_Controller_Action
         //Incendie - OK
         "37" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
         //SAP - OK
-        "38" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
+        "38" => array("DATEINSERT","OBJET","OPERSDIS","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
         //Intervention div - OK
-        "39" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
+        "39" => array("DATEINSERT","OBJET","OPERSDIS","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
     //ARRETE
         //Ouverture - OK
-        "40" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
+        "40" => array("DATEINSERT","DATESIGN","PREVENTIONNISTE"),
         //Fermeture - OK
         "41" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Mise en demeure - OK
         "42" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Mise en demeure de l'exploitant - OK
         "43" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
-        //GN6 - OK
+        //Utilisation exceptionnelle de locaux - OK
         "44" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Courrier - OK
         "45" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
@@ -706,7 +706,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->serviceInstructeurId = $groupement["ID_GROUPEMENT"];
         }
 
-
+	
         //$this->view->groupement = $groupement->toArray();
 
     }
@@ -997,21 +997,28 @@ class DossierController extends Zend_Controller_Action
 				}
 			break;
 			case "showDocManquant":
+				$dbDocManquant = new Model_DbTable_DocManquant;
 				//Si on passe un id dossier en param alors on cherche le dernier champ doc manquant si il existe
 				if($this->_getParam('idDossier') && $this->_getParam('idDossier') != '')
 				{
+
 					$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
 					$lastDocManquantInDb = $dbDossDocManquant->getDocManquantDossLast($this->_getParam('idDossier'));
 					//Zend_Debug::dump($lastDocManquantInDb);
+
 					$this->view->oldDocManquant = $lastDocManquantInDb;
-					//echo $this->view->oldDocManquant;
+					
+					$this->view->listeDoc = $dbDocManquant->getDocManquant();
+					//Zend_Debug::dump($listeDocManquant);
+					$this->view->numDocManquant = $this->_getParam('numDoc');
 				}else{
+
 					//On recupere la liste des documents manquant type
-					$dbDocManquant = new Model_DbTable_DocManquant;
 					$this->view->listeDoc = $dbDocManquant->getDocManquant();
 
 					//Zend_Debug::dump($listeDocManquant);
 					$this->view->numDocManquant = $this->_getParam('numDoc');
+
 				}
 			break;
         }
@@ -1176,14 +1183,14 @@ class DossierController extends Zend_Controller_Action
 				//Cas d'une étude uniquement dans le cas d'une levée de reserve
 				$MAJEtab = 1;
 			}
-			else if($this->_getParam("TYPE_DOSSIER") == 2 && ($this->_getParam("selectNature") == 21 || $this->_getParam("selectNature") == 24 || $this->_getParam("selectNature") == 47))
+			else if($this->_getParam("TYPE_DOSSIER") == 2 && ($this->_getParam("selectNature") == 21 || $this->_getParam("selectNature") == 23 || $this->_getParam("selectNature") == 24 || $this->_getParam("selectNature") == 47))
 			{
-				//Cas d'une viste uniquement dans le cas d'une VP, inopinée ou avant ouverture
+				//Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
 				$MAJEtab = 1;
 			}
-			else if($this->_getParam("TYPE_DOSSIER") == 3 && ($this->_getParam("selectNature") == 26 || $this->_getParam("selectNature") == 29 || $this->_getParam("selectNature") == 48))
+			else if($this->_getParam("TYPE_DOSSIER") == 3 && ($this->_getParam("selectNature") == 26 || $this->_getParam("selectNature") == 28 || $this->_getParam("selectNature") == 29 || $this->_getParam("selectNature") == 48))
 			{
-				//Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée ou avant ouverture
+				//Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
 				$MAJEtab = 1;
 			}
 			//echo "VAL = ".$MAJEtab."<br/>";
@@ -1195,7 +1202,6 @@ class DossierController extends Zend_Controller_Action
 				$etabToEdit = $dbEtab->find($this->_getParam('idEtablissement'))->current();
 				$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
 				$etabToEdit->save();
-				
 			}
             else if($MAJEtab == 1)
             {
@@ -1502,18 +1508,22 @@ class DossierController extends Zend_Controller_Action
 
         foreach ($this->view->listeNatures as $index => $nature) {
             if ($dossierType['TYPE_DOSSIER'] == 2 || $dossierType['TYPE_DOSSIER'] == 3) {
-                if ($nature["ID_NATURE"] == 20) {
-                    //cas d'une visite réception de travaux
-                    $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisiteRT();
-                    //$listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisite();
-                } else {
-                    //cas général d'une visite
+				if ($nature["ID_NATURE"] == 20 || $nature["ID_NATURE"] == 25) {
+                    //cas d'un groupe de visite d'une récption de travaux
+					$listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisiteRT();
+                } else if ($nature["ID_NATURE"] == 47 || $nature["ID_NATURE"] == 48){
+					//cas d'une VAO
+					$listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisiteVAO();
+				}else{
+					//cas général d'une visite
                     $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisite();
-                }
-            } else {
+				}
+            } else if ($dossierType['TYPE_DOSSIER'] == 1 ){
                 //cas d'une etude
                 $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocEtude();
-            }
+            } else {
+				$listeDocConsulte = 0;
+			}
 
             //ici on récupère tous les documents qui ont été renseigné dans la base par un utilisateur (avec id du dossier et de la nature)
             $listeDocRenseigne[$nature["ID_NATURE"]] = $dblistedoc->recupDocDossier($this->_getParam("id"),$nature["ID_NATURE"]);
@@ -1834,20 +1844,45 @@ class DossierController extends Zend_Controller_Action
         $this->view->infosDossier = $DBdossier->find($idDossier)->current();
 		//Zend_Debug::dump($this->view->infosDossier);
 		
+		//Récupération du type et de la nature du dossier
+		$dbType = new Model_DbTable_DossierType;
+		$typeDossier = $dbType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
+		$this->view->typeDossier = $typeDossier['LIBELLE_DOSSIERTYPE'];
+		
+		$dbNature = new Model_DbTable_DossierNature;
+		$natureDossier = $dbNature->getDossierNatureLibelle($idDossier);
+		$this->view->natureDossier = $natureDossier['LIBELLE_DOSSIERNATURE'];
+		
+		
+		//On récupère les informations du préventionniste
+		$DBdossierPrev = new Model_DbTable_DossierPreventionniste;
+		$this->view->preventionnistes = $DBdossierPrev->getPrevDossier($idDossier);
+		//Zend_Debug::dump($this->view->preventionnistes);
+		
 		//SERVICEINSTRUC_DOSSIER   servInstructeur
 		$dbGroupement = new Model_DbTable_Groupement;
 		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
 		//Zend_Debug::dump($groupement);
 		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
 		
-		//On recherche si un directeur unique de sécurité existe
+		
 		$dbDossierContact = new Model_DbTable_DossierContact;
-		$dusInfos = $dbDossierContact->recupDUS($idDossier);
-		if(count($dusInfos) == 1)
-			$this->view->dusDossier = $dusInfos[0];
+		//On recherche si un directeur unique de sécurité existe
+		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,8);
+		if(count($contactInfos) == 1)
+			$this->view->dusDossier = $contactInfos[0];
 		
-		//Zend_Debug::dump($dusInfos);
-		
+		//un exploitant existe
+		$exploitantInfos = $dbDossierContact->recupInfoContact($idDossier,7);
+		if(count($exploitantInfos) == 1)
+			$this->view->exploitantDossier = $exploitantInfos[0];
+		//Zend_Debug::dump($this->view->exploitantDossier);
+			
+		//un responsable de sécurité existe
+		$respsecuInfos = $dbDossierContact->recupInfoContact($idDossier,9);
+		if(count($respsecuInfos) == 1)
+			$this->view->respsecuDossier = $respsecuInfos[0];
+			
 		//Affichage dossier incomplet pour generation dossier incomplet
 		//Recuperation des documents manquants dans le cas d'un dossier incomplet
 		$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
@@ -1911,16 +1946,22 @@ class DossierController extends Zend_Controller_Action
             $dblistedoc = new Model_DbTable_DossierListeDoc;
             
             if ($dossierType['TYPE_DOSSIER'] == 2 || $dossierType['TYPE_DOSSIER'] == 3) {
-                if ($dossierNature['ID_NATURE'] == 20) {
-                    //cas d'une visite réception de travaux
+				
+                if ($dossierNature["ID_NATURE"] == 20 || $dossierNature["ID_NATURE"] == 25) {
+                    //cas d'un groupe de visite d'une récption de travaux
                     $listeDocConsulte = $dblistedoc->getDocVisiteRT();
-                } else {
+                } else if ($dossierNature["ID_NATURE"] == 47 || $dossierNature["ID_NATURE"] == 48){
+					//cas d'une VAO
+					$listeDocConsulte = $dblistedoc->getDocVisiteVAO();
+				} else {
                     $listeDocConsulte = $dblistedoc->getDocVisite();
                 }
 
-            } else {
+            } else if($dossierType['TYPE_DOSSIER'] == 1){
                 $listeDocConsulte = $dblistedoc->getDocEtude();
-            }
+            } else {
+				$listeDocConsulte = 0;
+			}
 
             //on envoi la liste de base à la vue
             $this->view->listeDocs = $listeDocConsulte;

@@ -11,11 +11,25 @@ function verifInfos($var){
 
 $odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR.$this->fichierSelect);
 
+
+try {
+	$odf->setVars('typeDossier',verifInfos($this->typeDossier),true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try {
+	$odf->setVars('natureDossier',verifInfos($this->natureDossier),true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
 try {
 	$odf->setVars('libelle_commission',verifInfos($this->commissionInfos['LIBELLE_COMMISSION']),true,'UTF8');
 } catch (OdfException $e) {
 
 }
+
 try {
 	$odf->setVars('date_commEntete',verifInfos($this->dateCommEntete),true,'UTF8');
 } catch (OdfException $e) {
@@ -64,6 +78,30 @@ try {
 }
 
 try {
+	if($this->infosDossier['DATEVISITE_DOSSIER']){
+		$date = new Zend_Date($this->infosDossier['DATEVISITE_DOSSIER'], Zend_Date::DATES);
+		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+		$odf->setVars('dateVisite',verifInfos($date),true,'UTF8');
+	}else{
+		$odf->setVars('dateVisite',verifInfos(""),true,'UTF8');
+	}
+}catch (OdfException $e){
+
+}
+
+try {
+	if($this->infosDossier['DATECOMM_DOSSIER']){
+		$date = new Zend_Date($this->infosDossier['DATECOMM_DOSSIER'], Zend_Date::DATES);
+		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+		$odf->setVars('dateComm',verifInfos($date),true,'UTF8');
+	}else{
+		$odf->setVars('dateComm',verifInfos(""),true,'UTF8');
+	}
+}catch (OdfException $e){
+
+}
+
+try {
 	if($this->infosDossier['DATEINCOMPLET_DOSSIER']){
 		$date = new Zend_Date($this->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
 		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
@@ -88,6 +126,20 @@ try {
 }
 
 
+//PARTIE PREVENTIONNISTE
+	try{
+		$preventionniste = $odf->setSegment('preventionnistes');
+		foreach($this->preventionnistes as $prev){
+			//echo $prev['NOM_UTILISATEURINFORMATIONS']." / ".$prev['NOM_UTILISATEURINFORMATIONS'];
+			$preventionniste->nom(utf8_decode($prev['NOM_UTILISATEURINFORMATIONS']));
+			$preventionniste->prenom(utf8_decode($prev['PRENOM_UTILISATEURINFORMATIONS']));
+			$preventionniste->merge();
+		}
+		$odf->mergeSegment($preventionniste);
+	} catch (OdfException $e) {
+
+	}
+
 // PARTIE DOC CONSULTE
 	try{
 		//Generation du segment listeDocs
@@ -110,7 +162,7 @@ try {
 					$date = new Zend_Date($date, Zend_Date::DATES);
 					$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 				}
-				$docConsulte->datedoc(utf8_decode($date));
+				$docConsulte->datedoc(utf8_decode($date)."\n");
 				$docConsulte->merge();
 			}
 			/*
@@ -332,21 +384,39 @@ try{
 
 //Informations du DUS du dossier
 try{
-	$odf->setVars('nomDusDossier',verifInfos($this->dusDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('nomDus',verifInfos($this->dusDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('prenomDus',verifInfos($this->dusDossier['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('mailDus',verifInfos($this->dusDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('telFixeDus',verifInfos($this->dusDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('telPortDus',verifInfos($this->dusDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('societeDus',verifInfos($this->dusDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
 } catch (OdfException $e){
 
 }
+
+//Informations de l'exploitant du dossier
 try{
-	$odf->setVars('prenomDusDossier',verifInfos($this->dusDossier['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('nomExploitant',verifInfos($this->exploitantDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('prenomExploitant',verifInfos($this->exploitantDossier['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('mailExploitant',verifInfos($this->exploitantDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('telFixeExploitant',verifInfos($this->exploitantDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('telPortExploitant',verifInfos($this->exploitantDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('societeExploitant',verifInfos($this->exploitantDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
 } catch (OdfException $e){
 
 }
+
+//Informations du responsable sécurité du dossier
 try{
-	$odf->setVars('mailDusDossier',verifInfos($this->dusDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('nomRespSecu',verifInfos($this->respsecuDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('prenomRespSecu',verifInfos($this->respsecuDossier['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('mailRespSecu',verifInfos($this->respsecuDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('telFixeRespSecu',verifInfos($this->respsecuDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('telPortRespSecu',verifInfos($this->respsecuDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('societeRespSecu',verifInfos($this->respsecuDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
 } catch (OdfException $e){
 
 }
-
 
 //Surface totale entité
 try{

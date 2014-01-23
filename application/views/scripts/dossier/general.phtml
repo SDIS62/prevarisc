@@ -258,6 +258,9 @@
 			if($(this).val() == 1){
 				//incomplet on cache l'avis et on le met sur null
 				afficherCacherAvis(1);
+				
+				$("#HORSDELAI").hide();
+				
 				//On compte combien de div ayant la class notre page comporte
 				var numDivDocManquant = $('.docManquant').length;
 				numDivDocManquant++;
@@ -285,9 +288,11 @@
 			if($(this).is(":checked")){
 				//Si il est coché on cache l'avis
 				afficherCacherAvis(1);
+
 			}else{
 				//Sinon on affiche l'avis
 				afficherCacherAvis(0);
+				$("#DATECOMM").show();
 			}
 		});
 		
@@ -320,10 +325,17 @@
 		{
 			//act = 0 on affiche
 			$("#AVIS").show();
+			$("#AVIS_COMMISSION").show();
+			$("#DATECOMM").show();
 		}else if (act == 1){
 			//act = 1 on cache
 			$("#AVIS").hide();
 			$("#AVIS_DOSSIER option[value='0']").attr('selected', true);
+			$("#AVIS_COMMISSION").hide();
+			$("#AVIS_DOSSIER_COMMISSION option[value='0']").attr('selected', true);
+			$("#DATECOMM").hide();
+			$("#DATECOMM_INPUT").val('');
+			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 		}
 	}
 	
@@ -908,8 +920,15 @@
 				var incomplet = $("input[name=INCOMPLET_DOSSIER]:checked").val();
 				var horsdelai = $(".horsdelai").is(':checked');
 
-				if(incomplet == 1 || horsdelai){
+				if(incomplet == 1){
 					$("#AVIS").hide();
+					$("#AVIS_COMMISSION").hide();
+					$("#HORSDELAI").hide();
+					$("#DATECOMM").hide();
+				}else if (horsdelai){
+					$("#AVIS").hide();
+					$("#AVIS_COMMISSION").hide();
+					$("#DATECOMM").hide();
 				}
 				
 				if($("#selectNature").val() == 1 || $("#selectNature").val() == 2){
@@ -977,12 +996,7 @@
 		//Gestion des cas calendrier comm visite en fonction du type de dossier
 		$(".hideCalendar").hide();
 		
-		
-		/*
-		if($("#TYPE_DOSSIER").val() == 2){
-			$("#showCommission").hide();
-		}
-		*/
+
 		return false;
 	});
 
@@ -1080,8 +1094,11 @@
 	
 	function verifDossier()
 	{
-		//Dans le cas d'une visite périodique on ne vérifie pas l'objet (id 21 et 26)
-		if($("#selectNature").val() != 21 && $("#selectNature").val() != 26){
+		//On ne vérifie pas l'objet dans les cas suivant :
+		//visite périodique (21 et 26)
+		//arrêté > ouverture (40)
+		var nature = $("#selectNature").val();
+		if(nature != 21 && nature != 26 && nature != 40 && nature != 41 && nature != 42 && nature != 44){
 			if($("#OBJET_DOSSIER").val() == ''){
 				$("#OBJET_DOSSIER").focus();
 				$("#OBJET_DOSSIER").css("border-color","red");
@@ -1268,11 +1285,15 @@
 		{
 			//si la date n'est pas renseignée
 			$(this).prev().prev().click();
+			
 		}else{
 			//$(this).prev().hidden();
 			$(this).prev().prev().prev().attr('readonly','readonly');
 			$(".incomplet").val(['0']);
 			$("#AVIS").show();
+			$("#AVIS_COMMISSION").show();
+			$("#HORSDELAI").show();
+			afficherCacherAvis(0);
 			//alert('');
 		}		
 		return false;
@@ -1372,9 +1393,6 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Objet</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['OBJET_DOSSIER'])."</div >
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
-						<!--
-							<input type='text' name='OBJET_DOSSIER' id='OBJET_DOSSIER' value='".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."' style='width:400px;' />
-						-->
 						<textarea name='OBJET_DOSSIER' id='OBJET_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
 					</div>
 				</li>
@@ -1385,6 +1403,15 @@ echo "
 						<input type='text' id='DEMANDEUR_DOSSIER' name='DEMANDEUR_DOSSIER' value='".( ($this->infosDossier['DEMANDEUR_DOSSIER'])?$this->infosDossier['DEMANDEUR_DOSSIER']:"" )."' style='width:650px' /><br/>
 					</div>
 				</li>
+				
+				<li class='row-fluid' id='LIEUREUNION' style='".( (in_array('LIEUREUNION', $this->afficherChamps) && $this->infosDossier['LIEUREUNION_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Lieu réunion</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['LIEUREUNION_DOSSIER'])."</div >
+					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
+						<textarea name='LIEUREUNION_DOSSIER' id='LIEUREUNION_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['LIEUREUNION_DOSSIER'])?htmlspecialchars($this->infosDossier['LIEUREUNION_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					</div>
+				</li>
+				
 				<li class='row-fluid' id='NUMDOCURBA' style='".( (in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0 )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Numéro document d'urbanisme</div>
 					<!--
@@ -1515,7 +1542,7 @@ echo "
 				</li>
 				<li class='row-fluid' id='ELEMENTSMANQUANT' style='".( ($action != 'new' && in_array('ELEMENTSMANQUANT', $this->afficherChamps) )? "": "display:none;" )."margin-bottom:20px;'>
 				</li>
-				<li class='row-fluid' id='DATECOMM' style='".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATECOMM' style='".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' && $this->infosDossier['HORSDELAI_DOSSIER'] == 0)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de commission en salle</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".$this->dateCommValue.( ( $this->idDateCommissionAffect != '' )? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='icon-calendar' ></i></a>" : "" )."				
@@ -1609,8 +1636,8 @@ echo "
 						}
 						echo "
 						</div>
-						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || !$this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Complet
-						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'])? "checked='checked'" : "")."> Incomplet					
+						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || $this->infosDossier['INCOMPLET_DOSSIER'] == 0)? "checked='checked'" : "")."> Complet
+						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'] == 1)? "checked='checked'" : "")."> Incomplet					
 					</div>
 				</li>
 				<li class='row-fluid' id='HORSDELAI' style='".( ($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL && $this->infosDossier['HORSDELAI_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
@@ -1700,8 +1727,7 @@ echo "
 						echo "
 						</select>
 					</div>
-				</li>
-				
+				</li>				
 				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
