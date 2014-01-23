@@ -418,6 +418,18 @@ try{
 
 }
 
+//Informations du proprietaire de l'établissement
+try{
+	$odf->setVars('nomProprio',verifInfos($this->proprioInfos['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('prenomProprio',verifInfos($this->proprioInfos['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('mailProprio',verifInfos($this->proprioInfos['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('telFixeProprio',verifInfos($this->proprioInfos['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('telPortProprio',verifInfos($this->proprioInfos['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('societeProprio',verifInfos($this->proprioInfos['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
+} catch (OdfException $e){
+
+}
+
 //Surface totale entité
 try{
 	$odf->setVars('surfaceTotale',verifInfos($this->entite['SURFACETOTALE_ETABLISSEMENTINFORMATIONS']),true,'UTF8');

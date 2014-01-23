@@ -1883,6 +1883,11 @@ class DossierController extends Zend_Controller_Action
 		if(count($respsecuInfos) == 1)
 			$this->view->respsecuDossier = $respsecuInfos[0];
 			
+		//un proprietaire
+		$proprioInfos = $dbDossierContact->recupInfoContact($idDossier,17);
+		if(count($proprioInfos) == 1)
+			$this->view->respsecuDossier = $proprioInfos[0];
+			
 		//Affichage dossier incomplet pour generation dossier incomplet
 		//Recuperation des documents manquants dans le cas d'un dossier incomplet
 		$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
