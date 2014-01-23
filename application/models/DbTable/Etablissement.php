@@ -207,19 +207,31 @@
         // Commission
         public function getDefaultCommission($request)
         {
+            $model_commission = new Model_DbTable_Commission;
+            
+            if(isset($request["ID_PERE"]))
+            {
+                $etablissement_pere = $this->find($request["ID_PERE"])->current();
+                
+                if($etablissement_pere !== null)
+                {
+                    $etablissement_info_pere = $this->getInformations($etablissement_pere->ID_ETABLISSEMENT);
+                    if($etablissement_info_pere->ID_COMMISSION != null)
+                    {
+                        return $model_commission->find($etablissement_info_pere->ID_COMMISSION)->current()->toArray();
+                    }
+                }
+            }
+            
             if(isset($request["NUMINSEE_COMMUNE"]))
             {
                 $index = isset($request["NUMINSEE_COMMUNE"][1]) && $request["NUMINSEE_COMMUNE"][1] != "" ? 1 : 0;
 
                 switch ($request["ID_GENRE"]) {
                     case 2:
-                        $model_commission = new Model_DbTable_Commission;
-
                         return $model_commission->getCommission($request["NUMINSEE_COMMUNE"][$index], $request["ID_CATEGORIE"], $request["ID_TYPE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) && $request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] == 1 ? true : false);
                         break;
                     case 5:
-                        $model_commission = new Model_DbTable_Commission;
-
                         return $model_commission->getCommissionIGH($request["NUMINSEE_COMMUNE"][$index], $request["ID_CLASSE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) && $request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] == 1 ? true : false);
                         break;
                 }
