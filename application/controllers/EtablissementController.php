@@ -297,20 +297,20 @@
             $champs_descriptif_technique = array();
             
             $translation_champs_des_tech = array(
-                "DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT" => "Surface",
-                "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "SHON",
-                "DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT" => "SHOB",
+                "DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT" => "Surface emprise au sol (m²)",
+                "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "SHON (m²)",
+                "DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT" => "SHOB (m²)",
                 "DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT" => "Nombre de niveaux",
-                "DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT" => "PBDN",
+                "DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT" => "PBDN (m)",
                 "DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT" => "Nombre de façades accessibles",
                 "DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT" => "Voie engin",
                 "DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT" => "Voie echelle",
                 "DESCTECH_DESSERTE_ESPACELIBRE_ETABLISSEMENT" => "Espace libre",
-                "DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT" => "Latéral CF",
-                "DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT" => "Superposé CF",
-                "DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT" => "Vis-à-vis",
-                "DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT" => "Structure SF",
-                "DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT" => "Plancher SF",
+                "DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT" => "Latéral CF (heure)",
+                "DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT" => "Superposé CF (heure)",
+                "DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT" => "Vis-à-vis (m)",
+                "DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT" => "Structure SF (heure)",
+                "DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT" => "Plancher SF (heure)",
                 "DESCTECH_DISTRIBUTION_CLOISONNEMENTTRAD_ETABLISSEMENT" => "Cloisonnement traditionnel",
                 "DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT" => "Secteurs",
                 "DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT" => "Compartiments",
@@ -322,7 +322,7 @@
                 "DESCTECH_DESENFUMAGE_MECANIQUE_ETABLISSEMENT" => "Mecanique",
                 "DESCTECH_DESENFUMAGE_COMMENTAIRE_ETABLISSEMENT" => "Commentaire",
                 "DESCTECH_CHAUFFERIES_NB_ETABLISSEMENT" => "Nombre",
-                "DESCTECH_CHAUFFERIES_PUISSMAX_ETABLISSEMENT" => "Puissance max",
+                "DESCTECH_CHAUFFERIES_PUISSMAX_ETABLISSEMENT" => "Puissance max (kw)",
                 "DESCTECH_COUPURENRJ_GAZ_ETABLISSEMENT" => "Gaz",
                 "DESCTECH_COUPURENRJ_ELEC_ETABLISSEMENT" => "Électricité",
                 "DESCTECH_COUPURENRJ_PHOTOVOLTAIQUE_ETABLISSEMENT" => "Photovoltaïque",
@@ -347,11 +347,11 @@
                 "DESCTECH_SERVICESECU_SP_ETABLISSEMENT" => "Sapeurs Pompiers",
                 "DESCTECH_SERVICESECU_COMMENTAIRESP_ETABLISSEMENT" => "Commentaire sur les SP",
                 "DESCTECH_DEFENSE_PTEAU_ETABLISSEMENT" => "Nombre de point d'eau",
-                "DESCTECH_DEFENSE_VOLUMEPTEAU_ETABLISSEMENT" => "Volume des points d'eau",
+                "DESCTECH_DEFENSE_VOLUMEPTEAU_ETABLISSEMENT" => "Volume des points d'eau (m3)",
                 "DESCTECH_DEFENSE_PTEAUCOMMENTAIRE_ETABLISSEMENT" => "Commentaires sur le / les points d'eau naturel",
                 "DESCTECH_DEFENSE_PI_ETABLISSEMENT" => "PI",
                 "DESCTECH_DEFENSE_BI_ETABLISSEMENT" => "BI",
-                "DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT" => "Débit simultané"
+                "DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT" => "Débit simultané (m3/h)"
             );
 
             foreach($this->view->DB_etablissement->toArray() as $key => $value)
@@ -369,12 +369,12 @@
                         case "DESSERTE": $title = "Desserte"; break;
                         case "ISOLEMENT": $title = "Isolement par rapport aux tiers"; break;
                         case "STABILITE": $title = "Stabilité au feu"; break;
-                        case "DISTRIBUTION": $title = "Distribution au feu"; break;
+                        case "DISTRIBUTION": $title = "Distribution intérieure"; break;
                         case "LOCAUXARISQUE": $title = "Locaux à risques"; break;
                         case "ESPACES": $title = "Espaces d'attentes sécurisés"; break;
                         case "DESENFUMAGE": $title = "Désenfumage"; break;
                         case "CHAUFFERIES": $title = "Chaufferies"; break;
-                        case "COUPURENRJ": $title = "Coupure des énergies"; break;
+                        case "COUPURENRJ": $title = "Localisation des coupures d'énergies"; break;
                         case "ASCENSEURS": $title = "Ascenseurs"; break;
                         case "MOYENSSECOURS": $title = "Moyens de secours"; break;
                         case "PCSECU": $title = "PC Sécurité"; break;
