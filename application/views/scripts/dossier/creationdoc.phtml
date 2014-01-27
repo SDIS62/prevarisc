@@ -129,11 +129,19 @@ try {
 //PARTIE PREVENTIONNISTE
 	try{
 		$preventionniste = $odf->setSegment('preventionnistes');
+		$nbPrev = count($this->preventionnistes);
 		foreach($this->preventionnistes as $prev){
-			//echo $prev['NOM_UTILISATEURINFORMATIONS']." / ".$prev['NOM_UTILISATEURINFORMATIONS'];
-			$preventionniste->nom(utf8_decode($prev['NOM_UTILISATEURINFORMATIONS']));
-			$preventionniste->prenom(utf8_decode($prev['PRENOM_UTILISATEURINFORMATIONS']));
+			//echo $prev['NOM_UTILISATEURINFORMATIONS']." / ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
+			$preventionniste->setVars('nom', $prev['NOM_UTILISATEURINFORMATIONS'], true, 'UTF-8');
+			if($nbPrev > 1)
+				$sep = ", ";
+			else
+				$sep = " ";
+			$preventionniste->setVars('prenom', $prev['PRENOM_UTILISATEURINFORMATIONS'].$sep, true, 'UTF-8');
+			//$preventionniste->nom(utf8_decode($prev['NOM_UTILISATEURINFORMATIONS']));
+			//$preventionniste->prenom(utf8_decode($prev['PRENOM_UTILISATEURINFORMATIONS']));
 			$preventionniste->merge();
+			$nbPrev--;
 		}
 		$odf->mergeSegment($preventionniste);
 	} catch (OdfException $e) {
@@ -229,17 +237,22 @@ try {
 				if($cpt)
 				{
 					$prescription->num(utf8_decode($this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']));
+					
 					if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
 					{
-						$prescription->libelle(utf8_decode($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']));
+						//$prescription->libelle(utf8_decode($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']));
+						$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
 					}else{
-						$prescription->libelle(utf8_decode($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']));
+						//$prescription->libelle(utf8_decode($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']));
+						$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
 					}
 					$cpt = false;
 				}
 			}
-			$prescription->texte(utf8_decode($texte));
-			$prescription->article(utf8_decode($article));
+			$prescription->setVars('texte', $texte, true, 'UTF-8');
+			//$prescription->texte(utf8_decode($texte));
+			$prescription->setVars('article', $article, true, 'UTF-8');
+			//$prescription->article(utf8_decode($article));
 			$prescription->merge();
 		}
 		$odf->mergeSegment($prescription);	

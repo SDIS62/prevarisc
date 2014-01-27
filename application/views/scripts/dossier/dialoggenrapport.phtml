@@ -23,8 +23,8 @@
 	while($file = readdir($dir)) {
 		if($file != '.' && $file != '..' && !is_dir($dirname.$file))
 		{
-			//echo '<a href="'.$dirname.$file.'">'.$file.'</a>';
-			echo "<option value='".DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents".DIRECTORY_SEPARATOR.$file."'>".$file."</option>";
+			if($file != '.gitignore')
+				echo "<option value='".DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents".DIRECTORY_SEPARATOR.$file."'>".$file."</option>";
 		}
 	}
 	echo "</select><br/><br/>";
