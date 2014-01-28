@@ -1,9 +1,9 @@
 <?php
 if(!$this->edit)
-	echo "<li id='prescriptionDossier_".$this->idPrescriptionDossier."'>";
+	echo "<li class='row-fluid' id='prescriptionDossier_".$this->idPrescriptionDossier."' style='list-style-type:none; margin-bottom:15px;'>";
 
 	echo "
-			<table style='width:900px;'>
+			<table >
 	";
 
 	$nbAssoc = count($this->textes);
@@ -14,14 +14,14 @@ if(!$this->edit)
 		$texte = $this->textes[$j];
 		echo "
 			<tr>
-				<td style='width:15%;'>".$texte."</td>
-				<td style='width:15%;'>".$article."</td>
+				<td class='span2'>".$texte."</td>
+				<td class='span2'>".$article."</td>
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' class='numPresc' style='width:5%;'>".$this->numPresc."</td>";			
-			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>".nl2br($this->libelle)."</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->idPrescriptionDossier."'>Modifier</button></td>";
+			echo "<td rowspan='".$nbAssoc."' class='span1 numPresc'>".$this->numPresc."</td>";			
+			echo "<td rowspan='".$nbAssoc."' class='span6'>".nl2br($this->libelle)."</td>";
+			echo "<td class='span1' rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->idPrescriptionDossier."'>Modifier</button></td>";
 			$cpt = false;
 		}
 		echo "

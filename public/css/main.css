@@ -837,3 +837,7 @@ ul#gestionCommissionMenu li.active {
 #geoportail .gpControlBasicLayerToolbar {
 
 }
+
+.listePrescriptions li:hover {
+	cursor: row-resize;
+}

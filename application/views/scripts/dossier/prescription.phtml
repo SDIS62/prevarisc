@@ -30,7 +30,7 @@ for($i=0; $i < $nbPrescDossier; $i++)
 	{
 		echo "
 			<li class='row-fluid' id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none; margin-bottom:15px;'>
-				<table style='width:900px;'>
+				<table>
 		";
 		$nbAssoc = count($this->prescriptionDossier[$i]);
 		$cpt = true;
@@ -40,13 +40,13 @@ for($i=0; $i < $nbPrescDossier; $i++)
 			$texte = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
 			echo "
 				<tr>
-					<td style='width:15%;'>".$texte."</td>
-					<td style='width:15%;'>".$article."</td>
+					<td class='span2'>".$texte."</td>
+					<td class='span2'>".$article."</td>
 			";
 			if($cpt)
 			{
-				echo "<td rowspan='".$nbAssoc."' class='numPresc' style='width:5%;'>".$this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']."</td>";
-				echo "<td rowspan='".$nbAssoc."' style='width:70%;'>";
+				echo "<td rowspan='".$nbAssoc."' class='span1 numPresc' >".$this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']."</td>";
+				echo "<td rowspan='".$nbAssoc."' class='span6'>";
 				if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
 				{
 					echo nl2br($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
@@ -54,7 +54,7 @@ for($i=0; $i < $nbPrescDossier; $i++)
 					echo nl2br($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
 				}
 				echo "</td>";
-				echo "<td rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."'>Modifier</button></td>";
+				echo "<td class='span1' rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."'>Modifier</button></td>";
 				$cpt = false;
 			}
 			echo "
@@ -77,6 +77,7 @@ echo "
 <script type="text/javascript">
 
 $(document).ready(function(){
+	
 	$(".listePrescriptions").sortable({
 		update: function(event, ui) {
 				var listePrescriptionUpdate = new Array();
@@ -259,7 +260,7 @@ $(document).ready(function(){
 				//alert(compteurTA);
 				if(compteurTA > 0  && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
 				{
-					alert($("#formPrescription").serialize());
+					//alert($("#formPrescription").serialize());
 					//.replace("'", "\'")
 					$.ajax({
 						type: "POST",
