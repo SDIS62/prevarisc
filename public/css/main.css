@@ -275,128 +275,23 @@ ul#onglets_horizontaux .selection_onglets_hor a {
 }
 
 /* Recherche */
-#recherche #plus_critere_div {
-    background-color: #F5F5F5
+.avis {
+    display: inline-block;
+    padding: 2px 4px;
+    font-size: 11.844px;
+    font-weight: bold;
+    line-height: 14px;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: #999;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
-
-#recherche #plus_critere_div > div {
-	text-align: center;
-}
-
-#recherche #plus_critere_div > div div {
-	text-align: left;
-}
-
-#recherche fieldset {
-
-	display: inline-block;
-	border: 1px solid silver;
-	padding: 5px;
-}
-
-#recherche fieldset legend {
-
-	color: gray;
-}
-
-#recherche fieldset input {
-
-	margin: 0;
-	padding: 0;
-
-}
-
-/* Liste des cellules + Résumé des cellules */
-ul.user_ets span.icone_enfants {
-    display: none;
-}
-#liste_cell_conteneur,
-#results_container {
-	position: relative;
-	margin: 36px 0 54px 0;
-}
-
-#result_etablissement{
-	color: #333;
-	font-size: 14px;
-	margin: 34px 0 0 0;
-}
-.recherche_liste .slide:hover {
-	cursor: pointer;
-}
-.recherche_liste .ui-icon {
-	background-position: -32px -16px;
-}
-.recherche_liste .active .ui-icon {
-	background-position: -64px -16px;
-}
-
-.recherche_liste li {
-    margin-bottom: 2px;
-}
-
-.recherche_liste .recherche_liste {
-	margin-left: 50px;
-}
-
-#depli-cont{
-	position: absolute;
-	text-align: right;
-	width: 645px;
-	top:8px;
-}
-#tout_deplier{
-	background-image: url("../img/fleche-grise-bas.png");
-	background-repeat: no-repeat;
-	background-position: right center;
-	padding: 0 14px 0 0;
-	text-decoration: none;
-}
-.etablissement{
-	background-color: #ebebeb ;
-	line-height: 20px;
-    padding: 3px;
-	position: relative;
-    vertical-align: middle;
-}
-.etablissement:hover{
-	background-color: #f2f2f2;
-}
-.icone{
-	padding: 0 2px 0 3px;
-}
-.type{
-	display: inline-block;
-	width: 50px;
-}
-.type2{
-	margin-right: 7px;
-}
-.nom-etablissement{
-
-}
-.avis{
-	background-color: gray;
-	color: #fff;
-	border-radius: 2px;
-	height: 14px;
-	line-height: 14px;
-	font-size: 10px;
-	font-variant: small-caps;
-	right: 7px;
-	text-align: center;
-	width: 14px;
-	top: 7px;
-}
-a.thumbnail {
-    float: left;
-    margin-bottom: 5px;
-}
-a.thumbnail + a.thumbnail {
-    margin-left: 5px;
-}
-#liste_doss .avis, .etablissement .avis{
-	position: absolute;
+span.avis + span.avis {
+    margin-right: 2px;
 }
 .F { background-color:#8eb571; }
 .D{ background-color:#d15c6a; }
@@ -408,136 +303,69 @@ a.thumbnail + a.thumbnail {
 	margin: -2px 0 0 25px;
 	width: 605px;
 }
-.child > div{
+
+.child > div {
 	background-color: rgb(245,245,245);
 }
-.sous-child{
+
+.sous-child {
 	display: none;
 	margin: -2px 0 0 50px;
 	width: 580px;
 }
-.sous-child > div{
+
+.sous-child > div {
 	background-color: #fafafa;
 }
-.fleche{
-	position: absolute;
-	left: -12px;
-	bottom: 3px;
-}
-.probleme{
-	position: absolute;
-	right: -33px;
-}
-.probleme > img{
-	position: relative;
-	top: 2px;
-}
-.def2{
-	color: #d63b55;
-}
-.type{
-	font-weight: bold;
-	color: black;
-	font-size: 9px;
-	font-family: Arial;
-	margin: 0 8px 0 5px;
-}
-.ville{
-	position: absolute;
-	right: 45px;
-	font-style: italic;
-	bottom: 7px;
-	line-height: 9px;
-	font-size: 9px
-}
-.etablissement a,
-#liste_doss a {
-	color: #333333;
-	text-decoration: underline;
-}
-.etablissement a:hover, 
-#liste_doss a:hover {
-	text-decoration: none;
-}
-#resume{
-	color: #464646;
-	font-size: 10px;
-	float: right;
-	top: 0;
-	width: 256px;
-}
-#resume h3 {
-	color: #000;
-	float: none;
-	font-size: 11px;
-	font-weight: bold;
-	margin: 0 0 18px 0;
-}
-#resume p{
-	margin: 0 0 9px 0;
-	line-height: 13px;
-}
-#resume p a{
-	text-decoration: none;
-}
-#resume p a:hover{
-	text-decoration: underline;
-}
-#resume p img {
-	margin:0 5px 0 0;
-	vertical-align: bottom;
-}	
-.highlight{
-	color: #ca0425;
-}
-#pagination{
-	color: #383838;
-	font-size: 11px;
-	margin: 27px 0 0 0;
-}
-#pagination span{
-	border-top: 1px dotted #949494;
-	padding: 3px 0 0 0;
+
+/* Recherche de dossier & ets */
+
+ul.recherche_liste {
+    list-style: none;
+    margin-left: 0;
 }
 
-/* Recherche de dossier */
-#liste_doss{
-	color: #58585A;
-	font-size: 11px;
-	margin: 0 0 0 0;
-}
-#liste_doss li {
-    background-color: #ebebeb ;
-	line-height: 20px;
-    padding: 3px;
-	position: relative;
-    vertical-align: middle;
-}
-#liste_doss li .doss-icon{
-	display: block;
-	position: absolute;
-	left: -20px;
-	bottom: -3px;
+ul.recherche_liste li {
+    background-color: #ebebeb;
+    padding: 6px;
 }
 
-.doss-date{
-	font-weight: bold;
-	font-family: "Courier New", "Courier", monospace;
-	position: absolute;
-	left: 240px;
+ul.recherche_liste li.slide + li.ui-helper-hidden {
+    padding: 0;
+    margin-left: 50px;
+    background-color: white;
+}
 
+ul.recherche_liste li:hover {
+    background-color: #f5f5f5;
+    /*cursor: pointer;*/
 }
-.doss-objet{
-	position: absolute;
-	left: 340px
+
+ul.recherche_liste li.slide:hover {
+    cursor: pointer;
 }
-.doss-donneur-avis{
-	font-style: italic;
-	position: absolute;
-	right: 4px;
+
+ul.recherche_liste li .avis {
+    float: right
+}
+
+ul.recherche_liste li + li {
+    margin-top: 3px;
+}
+
+ul.recherche_liste .active .ui-icon {
+    background-position: -64px -16px;
 }
 
 /* 8.Etablissements */
+
+form#formulaire_etablissement_footer dl dt {
+    width: 225px;
+}
+
+form#formulaire_etablissement_footer dl dd {
+    margin-left: 250px;
+}
 
 #ligne_informations {
 

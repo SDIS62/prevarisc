@@ -88,11 +88,11 @@
                         $this->view->fact_dange = $dossier_donnant_avis->FACTDANGE_DOSSIER;
                         
                         $tmp_date = new Zend_Date($dossier_donnant_avis->DATEVISITE_DOSSIER, Zend_Date::DATES);
-                        $this->view->last_visite =  $tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
+                        $this->view->last_visite =  $tmp_date->get( Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
                         
-                        $tmp_date = new Zend_Date($this->view->last_visite, Zend_Date::DATES);
+                        $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
                         $tmp_date->add($this->informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
-                        $this->view->next_visite =  $tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
+                        $this->view->next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
                     }
                 }
 

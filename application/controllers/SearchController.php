@@ -6,6 +6,7 @@
             // Appels ajax
             $ajaxContext = $this->_helper->getHelper('AjaxContext');
             $ajaxContext->addActionContext('run', 'json')
+                        ->addActionContext('search-child-doss', 'json')
                         ->addActionContext('search-child', 'json')
                         ->addActionContext("next", 'json')
                         ->initContext();
@@ -60,8 +61,28 @@
             $search->setItem("etablissement");
 
             // On gère l'affichage
-            $html = "<ul class='recherche_liste unstyled'>";
+            $html = "<ul class='recherche_liste'>";
             $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/etablissement.phtml', $search->run($this->_request->id) );
+            $html .= "</ul>";
+
+            // Envoi du html sur la vue
+            $this->view->html = $html;
+        }
+        
+        public function searchChildDossAction()
+        {
+            // Resultats HTML
+            $html = null;
+
+            // Création de l'objet recherche
+            $search = new Model_DbTable_Search;
+
+            // On set le type de recherche
+            $search->setItem("dossier");
+
+            // On gère l'affichage
+            $html = "<ul class='recherche_liste'>";
+            $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/dossier.phtml', $search->run($this->_request->id) );
             $html .= "</ul>";
 
             // Envoi du html sur la vue

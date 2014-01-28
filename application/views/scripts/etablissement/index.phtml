@@ -176,7 +176,7 @@
                     
                 <!-- Type et activités -->
                 <dl class='edit' >
-                    <dt>Types et activités</dt>
+                    <dt>Types & activités</dt>
                     <dd>
                         <ul id='activite_ul' class='unstyled'>
                             <!-- Type et activité principal -->
@@ -220,7 +220,7 @@
                 <?php unset($this->types_activites_secondaires[-1]); ?>
                 
                 <dl class='read dl-horizontal'>
-                    <dt>Type / Activité principal</dt>
+                    <dt>Type/activité principal</dt>
                     <dd>
                         <?php
                             $map_activite = array_flip(array_map(function($row) { return $row['ID_TYPEACTIVITE']; }, $this->DB_activite));
@@ -235,7 +235,7 @@
 
                     <?php if($this->types_activites_secondaires) : ?>
                     
-                    <dt>Types / Activités secondaires</dt>
+                    <dt>Types/activités secondaires</dt>
                     <dd>
                         <?php foreach($this->types_activites_secondaires as $type) : ?>
                         <?php echo $type["LIBELLE_TYPE"] . " " ?>
@@ -244,11 +244,7 @@
                         <abbr title='<?php echo $type["LIBELLE_ACTIVITE"]?>' ><?php echo substr($type["LIBELLE_ACTIVITE"], 0, 50) . (strlen($type["LIBELLE_ACTIVITE"]) > 50 ? '(...)' : '') ?></abbr>
                         <?php endif ?>
                         / 
-                        
                         <?php endforeach ?>
-                        
-                         
-                        
                     </dd>
                     <?php endif ?>
                    
@@ -265,19 +261,6 @@
                     </div>
                     <div class='read'>
                         <?php echo ($this->DB_informations["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
-                    </div>
-                </dd>
-            </dl>
-            
-            <!-- Présence d'extinction automatique à eau ? -->
-            <dl id='extinction_eau' class='champs dl-horizontal'>
-                <dt>Extinction automatique à eau</dt>
-                <dd>
-                    <div class='edit'>
-                        <input type='checkbox' id='extinction_eau_checkbox' name='EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
-                    </div>
-                    <div class='read'>
-                        <?php echo ($this->DB_informations["EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS"]) ? "Oui" : "Non" ?>
                     </div>
                 </dd>
             </dl>
@@ -631,7 +614,7 @@
                     <dt>Adresse</dt>
                     <dd>
                         <?php if( count($this->adresses) == 1 ) echo "<span class='read'><em>Etablissement non localisé</em></span>"; ?>
-                        <ul>
+                        <ul class="unstyled">
                             <?php foreach( $this->adresses as $key => $item ) : ?>
                             <li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_adresses' class='ui-helper-hidden'" ?> >
                                 <span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
@@ -642,13 +625,12 @@
                                     <input type='hidden' value='<?php echo $item["NUMINSEE_COMMUNE"] ?>' name='NUMINSEE_COMMUNE[]' />
                                     <input type='hidden' value='<?php echo $item["COMPLEMENT_ADRESSE"] ?>' name='COMPLEMENT_ADRESSE[]' />
                                     <span><?php echo strtolower($item["NUMERO_ADRESSE"]." ".$item["LIBELLE_RUE"]." ".$item["CODEPOSTAL_COMMUNE"]). " " .$item["LIBELLE_COMMUNE"] ?></span>
-                                    <a href='' style='text-decoration: none;' class="close" onclick='$(this).parent().remove(); return false;'>&times;</a>
+                                    <a href='' style='text-decoration: none; float: none;' class="close" onclick='$(this).parent().remove(); return false;'>&times;</a>
                                 </span>
                             </li>
                             <?php endforeach ?>
                         </ul>
                         <div class='edit'>
-                            <br class='clear' />
                             <a href='' class='edit' onclick="$('#dialog-adresse').dialog('open'); return false;">Ajouter une adresse</a>
                         </div>
                         <div class='read'>
@@ -704,7 +686,7 @@
                 <!-- Adresses héritées des enfants (pour le site) -->
                 <?php if(isset($this->adresse_site) && $this->adresse_site != null) : ?>
                 <dl class='dl-horizontal'>
-                    <dt class='read edit' >Adresse héritées des établissements enfants</dt>
+                    <dt class='read edit' >Adresse principale</dt>
                     <dd>
                         <div class='read'>
                         <p style='margin-bottom: 3px'><?php echo $this->adresse_site ?></p>
@@ -764,7 +746,7 @@
                 
                 <!-- Date du PC -->
                 <dl id='datepc' class='champs dl-horizontal'>
-                    <dt>Date du permis de construire initial</dt>
+                    <dt>Date PC initial</dt>
                     <dd>
                         <div class='edit'>
                             <input type='text' class='date edit' name='DATEPCINITIAL_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"] == "1970-01-02 00:00:02" ? "00/00/0000" : date("d/m/Y", strtotime($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"])) ?>' size=7 style='text-align: center'  />
@@ -782,7 +764,7 @@
                         </div>
                     </dd>
                     
-                    <dt>Date du permis de construire modificatif</dt>
+                    <dt>Date PC modificatif</dt>
                     <dd>
                         <div class='edit'>
                             <input type='text' class='date edit' name='DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->DB_informations["DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS"] == "1970-01-02 00:00:02" ? "00/00/0000" : date("d/m/Y", strtotime($this->DB_informations["DATEPCINITIAL_ETABLISSEMENTINFORMATIONS"])) ?>' size=7 style='text-align: center'  />
@@ -815,7 +797,7 @@
                     <dt>Commission compétente</dt>
                     <dd>
                         <div class='edit'>
-                            <select id='commission_select' name='ID_COMMISSION' style='width: 100%'>
+                            <select id='commission_select' name='ID_COMMISSION' style='width: 75%'>
                                 <option value='0'>Par défaut</option>
                                 <?php foreach( $this->DB_commission as $item ) : ?>
                                 <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->DB_informations["ID_COMMISSION"] ) echo "selected" ?> ><?php echo $item["LIBELLE_COMMISSION"] ?></option>
@@ -837,34 +819,36 @@
                     <dt>Préventionnistes</dt>
                     <dd>
                         <?php if( count($this->preventionnistes) == 1 ) echo "<span class='read'><em>Pas de préventionnistes liés.</em></span>"; ?>
-                        <ul id="list_prev">
+                        <ul id="list_prev" class="unstyled">
                             <?php foreach( $this->preventionnistes as $key => $item ) : ?>
                             <li style='list-style-type:none' <?php if( $key == -1 ) echo "id='prototype_preventionniste_lies' class='ui-helper-hidden'" ?> >
                                 <span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
                                     <input type='hidden' value='<?php echo $item["ID_UTILISATEUR"] ?>' name='ID_UTILISATEUR[]' />
                                     <span><?php echo $item["NOM_UTILISATEURINFORMATIONS"]." ".$item["PRENOM_UTILISATEURINFORMATIONS"] ?></span>
-                                    <a href='' style='text-decoration: none;' class="close" onclick='$(this).parent().parent().remove(); return false;'>&times;</a>
+                                    <a href='' style='text-decoration: none; float: none;' class="close" onclick='$(this).parent().parent().remove(); return false;'>&times;</a>
                                 </span>
                             </li>
                             <?php endforeach ?>
                         </ul>
                         <div class='edit'>
-                            <input type='text' id='preventionnistes-autocomplete' value=''  style='width: 100%' />
+                            <div style='clear: both' ></div>
+                            <input type='text' id='preventionnistes-autocomplete' value=''  style='width: 75%' />
                         </div>
                         <div class='read'>
                             <?php unset($this->preventionnistes[-1]); ?>
                             <?php echo $this->partialLoop('user/user.phtml', $this->preventionnistes ) ?>
                         </div>
+                        <div style='clear: both' ></div>
                     </dd>
                 </dl>
 
                 <?php if( $this->last_visite ) : ?>
                 <dl class='read dl-horizontal'>
-                    <dt>Dernière visite périodique</dt>
+                    <dt>Dernière VP</dt>
                     <dd><?php echo $this->last_visite ?></dd>
                     
                     <?php if($this->DB_informations["PERIODICITE_ETABLISSEMENTINFORMATIONS"] != 0) : ?>
-                    <dt>Prochaine visite périodique</dt>
+                    <dt>Prochaine VP</dt>
                     <dd><?php echo $this->next_visite ?></dd>
                     <?php endif ?>
                 </dl>
@@ -874,7 +858,7 @@
             
             <!-- Durée et nombre de prev -->
             <dl id='stat_prev' class='champs dl-horizontal'>
-                <dt <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >Nombre de préventionnistes / visite</dt>
+                <dt <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >Nb. de préventionnistes/visite</dt>
                 <dd <?php if(empty($this->DB_etablissement["NBPREV_ETABLISSEMENT"])) echo "class='edit'" ?> >
                     <div class='edit'>
                         <input type='number'  name='NBPREV_ETABLISSEMENT' value='<?php echo $this->DB_etablissement["NBPREV_ETABLISSEMENT"] ?>' />
@@ -1488,12 +1472,8 @@
 						<?php endif ?>
 					}
 					else {
-						$("#notification_wait").hide();
-						$("#save_button").removeAttr("disabled");
-						$("#save_historique_button").removeAttr("disabled");
-						$("#cancel_button").removeAttr("disabled");
-						$("#notification_erreur").show().html(result["error"]);
-						setTimeout( function() { $("#notification_erreur").fadeOut(); }, 5000);
+						alert(result["error"]);
+                        window.location.reload();
 					}
 				},
 				error: function(result) {
