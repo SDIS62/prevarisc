@@ -4,9 +4,9 @@
 	<!-- Nom -->
 	<input type='text' id='nom' name='NOM_PRENOM' class='bigger' style="width: 100%; padding: 8px; font-size: 1.5em;" />
     
-    <div id="plus_critere_div" style="padding: 15px">
+    <div id="plus_critere_div">
 	
-        <div>
+        <div class="well text-center">
             <!-- Fonction -->
             <select id='fonction' name='ID_FONCTION[]' multiple='multiple'>
                 <?php foreach( $this->DB_fonction as $fonction ) : ?>
@@ -14,6 +14,7 @@
                 <?php endforeach ?>
             </select>
         </div>
+        
     </div>
     
     <input type="hidden" name="format" value="json" />

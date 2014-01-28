@@ -2,11 +2,11 @@
     <p><strong>Nombre total d'éléments : <?php echo $this->paginator->getTotalItemCount() ?></strong> (<a href="" id="clear" >&times; Annuler la recherche</a>)</p>
     <div style="clear: both"></div>
     <?php if($this->item == "etablissement") : ?>
-        <ul class='recherche_liste unstyled'>
+        <ul class='recherche_liste'>
             <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->paginator ) ?>
         </ul>
     <?php elseif($this->item == "dossier") : ?>
-        <ul id="liste_doss" class='unstyled'>
+        <ul class="recherche_liste no_slide">
             <?php echo $this->partialLoop('search/results/dossier.phtml', $this->paginator ) ?>
         </ul>
     <?php else : ?>
