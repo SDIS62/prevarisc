@@ -2643,7 +2643,7 @@ class DossierController extends Zend_Controller_Action
 				if(count($article) == 0){
 					//l'article n'existe pas donc on l'enregistre
 					$article = $dbArticle->createRow();
-					$article->LIBELLE_ARTICLE = $articleArray[$i];
+					$article->LIBELLE_ARTICLE = mysql_real_escape_string($articleArray[$i]);
 					$article->save();
 					$idArticle = $article->ID_ARTICLE;
 				}else if(count($article) == 1){
@@ -2660,7 +2660,7 @@ class DossierController extends Zend_Controller_Action
 				if(count($texte) == 0){
 					//le texte n'existe pas donc on l'enregistre
 					$texte = $dbTexte->createRow();
-					$texte->LIBELLE_TEXTE = $texteArray[$i];
+					$texte->LIBELLE_TEXTE = mysql_real_escape_string($texteArray[$i]);
 					$texte->save();
 					$idTexte = $texte->ID_TEXTE;
 				}else if(count($texte) == 1){

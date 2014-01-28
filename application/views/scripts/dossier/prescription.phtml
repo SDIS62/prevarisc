@@ -26,43 +26,46 @@ $nbPrescDossier = count($this->prescriptionDossier);
 //echo $nbPrescDossier;
 for($i=0; $i < $nbPrescDossier; $i++)
 {
-	echo "
-		<li class='row-fluid' id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none; margin-bottom:15px;'>
-			<table style='width:900px;'>
-	";
-	$nbAssoc = count($this->prescriptionDossier[$i]);
-	$cpt = true;
-	for($j=0; $j < $nbAssoc; $j++)
+	if(isset($this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']))
 	{
-		$article = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
-		$texte = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
 		echo "
-			<tr>
-				<td style='width:15%;'>".$texte."</td>
-				<td style='width:15%;'>".$article."</td>
+			<li class='row-fluid' id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none; margin-bottom:15px;'>
+				<table style='width:900px;'>
 		";
-		if($cpt)
+		$nbAssoc = count($this->prescriptionDossier[$i]);
+		$cpt = true;
+		for($j=0; $j < $nbAssoc; $j++)
 		{
-			echo "<td rowspan='".$nbAssoc."' class='numPresc' style='width:5%;'>".$this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']."</td>";
-			echo "<td rowspan='".$nbAssoc."' style='width:70%;'>";
-			if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
+			$article = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
+			$texte = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
+			echo "
+				<tr>
+					<td style='width:15%;'>".$texte."</td>
+					<td style='width:15%;'>".$article."</td>
+			";
+			if($cpt)
 			{
-				echo nl2br($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
-			}else{
-				echo nl2br($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
+				echo "<td rowspan='".$nbAssoc."' class='numPresc' style='width:5%;'>".$this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']."</td>";
+				echo "<td rowspan='".$nbAssoc."' style='width:70%;'>";
+				if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
+				{
+					echo nl2br($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
+				}else{
+					echo nl2br($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
+				}
+				echo "</td>";
+				echo "<td rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."'>Modifier</button></td>";
+				$cpt = false;
 			}
-			echo "</td>";
-			echo "<td rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."'>Modifier</button></td>";
-			$cpt = false;
+			echo "
+				</tr>
+			";
 		}
 		echo "
-			</tr>
+				</table>
+			</li>
 		";
 	}
-	echo "
-			</table>
-		</li>
-	";
 }
 	
 echo "
@@ -256,6 +259,8 @@ $(document).ready(function(){
 				//alert(compteurTA);
 				if(compteurTA > 0  && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
 				{
+					alert($("#formPrescription").serialize());
+					//.replace("'", "\'")
 					$.ajax({
 						type: "POST",
 						url: "/dossier/prescriptionadd",
