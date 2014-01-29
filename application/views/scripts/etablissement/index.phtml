@@ -516,7 +516,7 @@
                                 <span class='edit ui-state-highlight' style='float: left; padding: 2px; margin: 0 2px 1em 0; -moz-border-raidus: 2px;' >
                                     <input type='hidden' value='<?php echo $item["ID_FILS_ETABLISSEMENT"] ?>' name='ID_FILS_ETABLISSEMENT[]' />
                                     <span><?php echo $item["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?></span>
-                                    <a href='' style='text-decoration: none;' class="close" onclick='$(this).parent().remove(); return false;'>&times;</a>
+                                    <a href='' style='text-decoration: none; float:none' class="close" onclick='$(this).parent().remove(); return false;'>&times;</a>
                                 </span>
                             </li>
                             <?php endforeach ?>
@@ -838,7 +838,6 @@
                             <?php unset($this->preventionnistes[-1]); ?>
                             <?php echo $this->partialLoop('user/user.phtml', $this->preventionnistes ) ?>
                         </div>
-                        <div style='clear: both' ></div>
                     </dd>
                 </dl>
 
