@@ -121,8 +121,7 @@ $(document).ready(function() {
 				},
 				drop: function(date, allDay) {
 					var idDossier = $(this).attr('id');
-					//alert(date);
-					//alert(date);
+
 					//alert('drop');
 					$.ajax({
 						url: "/calendrier-des-commissions/affecteDossOdj?datadebut="+date,
@@ -393,16 +392,22 @@ $(document).ready(function() {
 			<div class='row-fluid'>
 				<div id='calendar' name='calendar' class='span9'>
 				</div>
-				<div id='external-events' class='span3' style='color:black;border:1px solid black;text-align:center;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
+				<div id='external-events' class='span3' style='color:black;border:1px solid black;text-align:center;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 					<div style='' >
 		";			
 				echo "<h3>Liste des dossiers prévus</h3>";
 				if( count($this->listeDossierNonAffect) != 0 ){
 					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 						echo "
-							<div class='external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
-								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >".$dossierNonAffect['OBJET_DOSSIER']."</a>
+						<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
+							<div class='external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+									Etab. : ".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
+									<br/>
+									Objet : ".$dossierNonAffect['OBJET_DOSSIER']."
+									<br/>
+									Num. doc. urba. : ".( (isset($dossierNonAffect['NUM_DOCURBA']))? $dossierNonAffect['NUM_DOCURBA']: "" )."
 							</div>
+						</a>
 						";
 					}
 				}else{
@@ -418,16 +423,21 @@ $(document).ready(function() {
 		//dans le cas ou on ne prend pas en compte les heures (cas par défaut)
 		echo "
 			<h3>Liste des dossiers prévus</h3>
-			<ul class='unstyled' id='listeDossierNoHours' class='sortable'>
+			<ul class='unstyled sortable' id='listeDossierNoHours'>
 		";
 		//Zend_Debug::dump($this->listeDossierNonAffect);
 		if( count($this->listeDossierNonAffect) != 0 ){
 			foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 				echo "
 					<li num='".$dossierNonAffect['NUM_DOSSIER']."'  >
-						<div class='external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 0;-moz-border-radius:10px 0; -webkit-border-radius:10px 0;'>
-							<img src='/images/folder.png' alt='' />&nbsp;&nbsp;
-							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >".$dossierNonAffect['OBJET_DOSSIER']."</a>
+						<div class='row-fluid external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
+								Etablissement : ".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
+								<br/>
+								Objet : ".$dossierNonAffect['OBJET_DOSSIER']."
+								<br/>
+								Numéro document d'urbanisme : ".( (isset($dossierNonAffect['NUM_DOCURBA']))? $dossierNonAffect['NUM_DOCURBA']: "" )."
+							</a>
 						</div>
 					</li>
 				";

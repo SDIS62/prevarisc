@@ -67,11 +67,26 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
         $this->view->infosDateComm = $infosDateComm;
         $this->view->infosCommission = $infosCommission;
-        $this->view->listeDossierNonAffect = $listeDossiersNonAffect;
-        Zend_Debug::dump($this->view->listeDossierNonAffect);
+        //$this->view->listeDossierNonAffect = $listeDossiersNonAffect;
+       
 		
-        //echo $this->_getParam('dateCommId');
-
+		$dbDocUrba = new Model_DbTable_DossierDocUrba;
+		$cpt = 0;
+		foreach($listeDossiersNonAffect as $dossierNonAffect)
+		{
+			$docsUrba = $dbDocUrba->find($dossierNonAffect['ID_DOSSIER'])->toArray();
+			//Zend_Debug::dump($docsUrba);
+			//echo count($docsUrba);
+			if(count($docsUrba) >= 1)
+			{
+				//echo $docsUrba[0]['NUM_DOCURBA'];
+				$listeDossiersNonAffect[$cpt]["NUM_DOCURBA"] = $docsUrba[0]['NUM_DOCURBA'];
+			}
+			
+			$cpt++;
+		}
+		$this->view->listeDossierNonAffect = $listeDossiersNonAffect;
+		//Zend_Debug::dump($this->view->listeDossierNonAffect);
     }
 
     public function resizeodjAction()
@@ -163,7 +178,8 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         }
 
         //echo $requete;
-
+		
+		
         foreach ($dbDateCommission->fetchAll($requete)->toArray() as $commissionEvent) {
             $items[] = array(
                 "id" => $commissionEvent['ID_DATECOMMISSION'],
@@ -192,14 +208,34 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         $dateFin = $dateFin->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
 
         $dbDossierAffect = new Model_DbTable_DossierAffectation;
+		
+		//Zend_Debug::dump($dbDossierAffect);
+		$listeDossiersAffect = $dbDossierAffect->getDossierAffect($this->_getParam('dateCommId'));
 
         $items = array();
+		
+		$dbDocUrba = new Model_DbTable_DossierDocUrba;
+		$cpt = 0;
+		foreach($listeDossiersAffect as $dossierAffect)
+		{
+			$docsUrba = $dbDocUrba->find($dossierAffect['ID_DOSSIER'])->toArray();
 
-        foreach ($dbDossierAffect->getDossierAffect($this->_getParam('dateCommId')) as $dossierAffect) {
+			if(count($docsUrba) >= 1)
+			{
+				$listeDossiersNonAffect[$cpt]["NUM_DOCURBA"] = $docsUrba[0]['NUM_DOCURBA'];
+			}
+			$cpt++;
+		}
+
+        foreach ($listeDossiersAffect as $dossierAffect) {
+			$affichage = "Etab. : ".$dossierAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierAffect['LIBELLE_COMMUNE'].") || ";
+			$affichage .= "Objet : ".$dossierAffect['OBJET_DOSSIER']." || ";
+			$affichage .= "Num. doc. urba. : ".( (isset($dossierAffect['NUM_DOCURBA']))? $dossierAffect['NUM_DOCURBA']: "" );
+
             $items[] = array(
                 "id" => $dossierAffect['ID_DOSSIER_AFFECT'],
                 "url" => "/dossier/index/id/".$dossierAffect['ID_DOSSIER_AFFECT'],
-                "title" => $dossierAffect['OBJET_DOSSIER'],
+                "title" => $affichage,
                 "start" => date($dateDebut." ".$dossierAffect['HEURE_DEB_AFFECT']),
                 "end" => date($dateDebut." ".$dossierAffect['HEURE_FIN_AFFECT']),
                 //"className" => "display-".$commissionEvent['ID_COMMISSIONTYPEEVENEMENT'],
@@ -207,19 +243,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             );
         }
 
-        /*
-            foreach ($dbDossierAffect->fetchAll("ID_DATECOMMISSION_AFFECT = '" .$this->_getParam('dateCommId'). "' ")->toArray() as $dossierAffect) {
-                $items[] = array(
-                    "id" => $dossierAffect['ID_DOSSIER_AFFECT'],
-                    "url" => "commission/id/".$dossierAffect['ID_DOSSIER_AFFECT'],
-                    "title" => 'toto',
-                    "start" => date($dateDebut." ".$dossierAffect['HEURE_DEB_AFFECT']),
-                    "end" => date($dateDebut." ".$dossierAffect['HEURE_FIN_AFFECT']),
-                    //"className" => "display-".$commissionEvent['ID_COMMISSIONTYPEEVENEMENT'],
-                    "allDay" => false,
-                );
-            }
-        */
         //Zend_Debug::dump($items);
         $this->view->items = $items;
     }
