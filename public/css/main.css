@@ -681,3 +681,15 @@ ul#gestionCommissionMenu li.active {
 .listePrescriptions li:hover {
 	cursor: row-resize;
 }
+
+.dossierODJ:hover{
+	cursor: row-resize;
+}
+
+.eventExtODJ:hover{
+	cursor: move;
+}
+
+.fc-event-bg:hover{
+	cursor:move;
+}
