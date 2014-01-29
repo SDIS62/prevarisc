@@ -365,6 +365,10 @@ ul.recherche_liste .active .ui-icon {
     background-position: -64px -16px;
 }
 
+a.thumbnail + a.thumbnail {
+    margin-left: 5px;
+}
+
 /* 8.Etablissements */
 
 form#formulaire_etablissement_footer dl dt {
