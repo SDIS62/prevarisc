@@ -1704,7 +1704,15 @@ echo "
 					</div>
 				</li>				
 				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'></div>
+					<div class='left libelle span3' style='float:left;'>
+				";
+				if($this->infosDossier['AVIS_DOSSIER'] == 1)
+				{
+					echo "Avis du rapporteur";
+				}else if($this->infosDossier['AVIS_DOSSIER'] == 3){
+					echo "Avis du groupe de visite";
+				}
+				echo "</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>";
 					echo $this->AVIS_VALUE['LIBELLE_AVIS'];
 					if($this->infosDossier['TYPE_DOSSIER'] == 1){

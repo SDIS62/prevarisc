@@ -16,6 +16,17 @@
 				->limit(1);
 				 
 			return $this->getAdapter()->fetchAll($select);	
-
+		}
+		
+		public function recupContactEtablissement($idEtablissement)
+		{
+			//Permet de récuperer les informations concernant le directeur unique de sécurité
+			$select = $this->select()
+				->setIntegrityCheck(false)
+				->from(array('ec' => 'etablissementcontact'))
+				->join(array('ui' => 'utilisateurinformations'),'ec.ID_UTILISATEURINFORMATIONS = ui.ID_UTILISATEURINFORMATIONS')
+				->where('ec.ID_ETABLISSEMENT = ?',$idEtablissement);
+				 
+			return $this->getAdapter()->fetchAll($select);	
 		}
     }

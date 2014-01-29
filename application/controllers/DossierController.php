@@ -1142,7 +1142,7 @@ class DossierController extends Zend_Controller_Action
         $idDossier = $nouveauDossier->ID_DOSSIER;
 		
 		
-		 $DBetablissementDossier = new Model_DbTable_EtablissementDossier;
+		$DBetablissementDossier = new Model_DbTable_EtablissementDossier;
         if ($this->_getParam('do') == 'new')
 		{
             if ( isset( $_POST['idEtablissement'] ) &&  $_POST['idEtablissement'] != "" ) {
@@ -1159,8 +1159,21 @@ class DossierController extends Zend_Controller_Action
             $saveNature->ID_DOSSIER = $idDossier;
             $saveNature->ID_NATURE = $_POST['selectNature'];
             $saveNature->save();
-
-
+			
+			//Récupération des contacts de l'établissement (Resp. unique de sécu, Proprio, Exploitant, DUS)
+			$dbDossierContact = new Model_DbTable_DossierContact;
+			$contactsEtab = $dbDossierContact->recupContactEtablissement($this->_getParam('idEtablissement'));
+			//Zend_Debug::dump($contactsEtab);
+			foreach($contactsEtab as $contact)
+			{
+				if($contact['ID_FONCTION'] == 8 || $contact['ID_FONCTION'] == 9 || $contact['ID_FONCTION'] == 17 || $contact['ID_FONCTION'] == 7)
+				{
+					$newContact = $dbDossierContact->createRow();
+					$newContact->ID_DOSSIER = $idDossier;
+					$newContact->ID_UTILISATEURINFORMATIONS = $contact['ID_UTILISATEURINFORMATIONS'];
+					$newContact->save();
+				}
+			}			
         } else {
             //gestion des natures en mode édition
             $DBdossierNature = new Model_DbTable_DossierNature;
