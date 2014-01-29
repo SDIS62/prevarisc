@@ -226,6 +226,16 @@
 					//afficher message indiquant la perte des documents consultés
 					
 				}
+				//Modif de la dénomination de l'avis
+				if(idType == 1)
+				{
+					//dans le cas d'une étude
+					$("#AVIS_DOSSIER").parent().prev().prev().html("Avis du rapporteur");
+				}else if(idType == 3){
+					//cas d'une visite ou d'un groupe de visite
+					$("#AVIS_DOSSIER").parent().prev().prev().html("Avis du groupe de visite");
+				}
+				
 				$.ajax({
 					url: "/dossier/fonction",
 					data: "do=showNature&idType="+idType,
@@ -1009,7 +1019,6 @@
 
 		if(idNature != 0)
 		{
-		
 			if($("#do").val() == 'edit'){
 				
 				var listeNature = $("#listeNature").recupNatures();
@@ -1020,7 +1029,7 @@
 			}else{
 				//idNatureBd = $("#selectNature").val();
 				//$("#selectNature").parent().prepend("<div class='nature' style=''><input type='hidden' name='natureId[]' id='nature_"+$("#selectNature").val()+"' value='"+idNatureBd+"' />"+$("#selectNature option:selected").text()+" <a href='' idNature='"+idNatureBd+"'class='suppNature'>&times;</a></div>");
-
+				
 				var listeNature = $("#listeNature").recupNatures();
 				
 				$("#InfosDossier").afficheChamps($(this).val());
@@ -1188,8 +1197,8 @@
 			success: function(affichageResultat){
 				$("#dialogComm").html('').html(affichageResultat).dialog({
 					resizable: false,
-					height:400,
-					width:650,
+					height:550,
+					width:800,
 					modal: true,
 					title: 'Génération des rapports',
 					buttons: {
@@ -1695,7 +1704,7 @@ echo "
 					</div>
 				</li>				
 				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'>Avis du rapporteur</div>
+					<div class='left libelle span3' style='float:left;'></div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>";
 					echo $this->AVIS_VALUE['LIBELLE_AVIS'];
 					if($this->infosDossier['TYPE_DOSSIER'] == 1){

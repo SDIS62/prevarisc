@@ -8,6 +8,7 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
     public function getDossierNonAffect($idDateCom)
     {
         //retourne l'ensemble des dossier programés à la date de comm passée en param et dont les horaires n'ont pas étés précisés
+		/*
         $select = "SELECT *
             FROM ".$this->_name.", dossier
             WHERE dossier.ID_DOSSIER = ".$this->_name.".ID_DOSSIER_AFFECT
@@ -16,6 +17,17 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
             AND ".$this->_name.".HEURE_FIN_AFFECT IS NULL
             ORDER BY NUM_DOSSIER;
         ";
+		*/
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from(array("da" => "dossieraffectation"))
+			->join(array("d" => "dossier") , "da.ID_DOSSIER_AFFECT = d.ID_DOSSIER")
+			->join(array("ed"=> "etablissementdossier"), "ed.ID_DOSSIER = d.ID_DOSSIER")
+			->join(array("ei"=> "etablissementinformations"), "ed.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT AND ei.DATE_ETABLISSEMENTINFORMATIONS = (select MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE ID_ETABLISSEMENT = ed.ID_ETABLISSEMENT)")
+			->where("da.ID_DATECOMMISSION_AFFECT = ?",$idDateCom)
+			->where("da.HEURE_DEB_AFFECT IS NULL")
+			->where("da.HEURE_FIN_AFFECT IS NULL")
+			->order("da.NUM_DOSSIER");
         //echo $select;
         return $this->getAdapter()->fetchAll($select);
     }

@@ -68,7 +68,8 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         $this->view->infosDateComm = $infosDateComm;
         $this->view->infosCommission = $infosCommission;
         $this->view->listeDossierNonAffect = $listeDossiersNonAffect;
-        //Zend_Debug::dump($this->view->listeDossierNonAffect );
+        Zend_Debug::dump($this->view->listeDossierNonAffect);
+		
         //echo $this->_getParam('dateCommId');
 
     }
