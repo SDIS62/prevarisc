@@ -131,15 +131,12 @@ try {
 		$preventionniste = $odf->setSegment('preventionnistes');
 		$nbPrev = count($this->preventionnistes);
 		foreach($this->preventionnistes as $prev){
-			//echo $prev['NOM_UTILISATEURINFORMATIONS']." / ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
 			$preventionniste->setVars('nom', $prev['NOM_UTILISATEURINFORMATIONS'], true, 'UTF-8');
 			if($nbPrev > 1)
 				$sep = ", ";
 			else
 				$sep = " ";
 			$preventionniste->setVars('prenom', $prev['PRENOM_UTILISATEURINFORMATIONS'].$sep, true, 'UTF-8');
-			//$preventionniste->nom(utf8_decode($prev['NOM_UTILISATEURINFORMATIONS']));
-			//$preventionniste->prenom(utf8_decode($prev['PRENOM_UTILISATEURINFORMATIONS']));
 			$preventionniste->merge();
 			$nbPrev--;
 		}
@@ -161,25 +158,18 @@ try {
 					$date = $docExistant['DATE_CONSULTE'];
 				}
 			}
-			$docConsulte->libelledoc(utf8_decode($document['LIBELLE_DOC']));
+			$docConsulte->setVars('libelledoc', $document['LIBELLE_DOC'], true, 'UTF-8');
 			if($exist){
-				$docConsulte->exist('X');
-				$docConsulte->refdoc(utf8_decode($ref));
+				$docConsulte->setVars('exist', "X", true, 'UTF-8');
+				$docConsulte->setVars('refdoc', $ref, true, 'UTF-8');
 				//Conversion de la date ang -> fr
 				if ($date) {
 					$date = new Zend_Date($date, Zend_Date::DATES);
 					$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 				}
-				$docConsulte->datedoc(utf8_decode($date)."\n");
+				$docConsulte->setVars('datedoc', $date."\n", true, 'UTF-8');
 				$docConsulte->merge();
 			}
-			/*
-			else{
-				$docConsulte->exist('', true, "ISO-8859-15");
-				$docConsulte->refdoc('', true, "ISO-8859-15");
-				$docConsulte->datedoc('', true, "ISO-8859-15");
-			}
-			*/
 		}
 		$odf->mergeSegment($docConsulte);
 	} catch (OdfException $e) {
@@ -187,18 +177,19 @@ try {
 	}
 	
 	try{
-		//Liste des doncuments conusltés ajoutés s'il y en à
+		//Liste des doncuments conusltés ajoutés
 		$listeDocAjout = $this->listeDocsAjout;
 		$docAjout = $odf->setSegment('listeDocsAjout');
 		foreach($this->listeDocsAjout as $documentAjout){
-			$docAjout->exist('X');
-			$docAjout->libelledoc(utf8_decode($documentAjout['LIBELLE_DOCAJOUT']));
-			$docAjout->refdoc(utf8_decode($documentAjout['REF_DOCAJOUT']));
+			$docAjout->setVars('exist', "X", true, 'UTF-8');
+			$docAjout->setVars('libelledoc', $documentAjout['LIBELLE_DOCAJOUT'], true, 'UTF-8');
+			$docAjout->setVars('refdoc', $documentAjout['REF_DOCAJOUT'], true, 'UTF-8');
+
 			if ($documentAjout['DATE_DOCAJOUT']) {
 				$date = new Zend_Date($documentAjout['DATE_DOCAJOUT'], Zend_Date::DATES);
 				$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 			}
-			$docAjout->datedoc(utf8_decode($date));
+			$docAjout->setVars('datedoc', $date, true, 'UTF-8');
 			$docAjout->merge();
 		}
 		$odf->mergeSegment($docAjout);
@@ -236,23 +227,18 @@ try {
 
 				if($cpt)
 				{
-					$prescription->num(utf8_decode($this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']));
-					
+					$prescription->setVars('num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
 					if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
 					{
-						//$prescription->libelle(utf8_decode($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']));
 						$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
 					}else{
-						//$prescription->libelle(utf8_decode($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']));
 						$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
 					}
 					$cpt = false;
 				}
 			}
 			$prescription->setVars('texte', $texte, true, 'UTF-8');
-			//$prescription->texte(utf8_decode($texte));
 			$prescription->setVars('article', $article, true, 'UTF-8');
-			//$prescription->article(utf8_decode($article));
 			$prescription->merge();
 		}
 		$odf->mergeSegment($prescription);	
@@ -265,7 +251,7 @@ try {
 		$texteAppl = $odf->setSegment('texteAppl');
 		foreach($this->listeTextesAppl as $texteappl){
 			$texteappl = str_replace("’","'",$texteappl['LIBELLE_TEXTESAPPL']);
-			$texteAppl->libelleTexteAppl(utf8_decode($texteappl),true,'UTF8');
+			$texteAppl->setVars('libelleTexteAppl', $texteappl, true, 'UTF-8');
 			$texteAppl->merge();
 		}
 		$odf->mergeSegment($texteAppl);	
@@ -408,6 +394,7 @@ try{
 	$odf->setVars('mailDus',verifInfos($this->dusDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('telFixeDus',verifInfos($this->dusDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('telPortDus',verifInfos($this->dusDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('numFaxDus',verifInfos($this->dusDossier['TELFAX_UTILISATEURINFORMATIONS']),true,'UTF8');	
 	$odf->setVars('societeDus',verifInfos($this->dusDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
 } catch (OdfException $e){
 
@@ -420,6 +407,7 @@ try{
 	$odf->setVars('mailExploitant',verifInfos($this->exploitantDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('telFixeExploitant',verifInfos($this->exploitantDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('telPortExploitant',verifInfos($this->exploitantDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('numFaxExploitant',verifInfos($this->exploitantDossier['TELFAX_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('societeExploitant',verifInfos($this->exploitantDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
 } catch (OdfException $e){
 
@@ -432,7 +420,8 @@ try{
 	$odf->setVars('mailRespSecu',verifInfos($this->respsecuDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('telFixeRespSecu',verifInfos($this->respsecuDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('telPortRespSecu',verifInfos($this->respsecuDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('societeRespSecu',verifInfos($this->respsecuDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
+	$odf->setVars('numFaxRespSecu',verifInfos($this->respsecuDossier['TELFAX_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('societeRespSecu',verifInfos($this->respsecuDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');
 } catch (OdfException $e){
 
 }
@@ -444,7 +433,8 @@ try{
 	$odf->setVars('mailProprio',verifInfos($this->proprioInfos['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('telFixeProprio',verifInfos($this->proprioInfos['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
 	$odf->setVars('telPortProprio',verifInfos($this->proprioInfos['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('societeProprio',verifInfos($this->proprioInfos['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
+	$odf->setVars('numFaxProprio',verifInfos($this->proprioInfos['TELFAX_UTILISATEURINFORMATIONS']),true,'UTF8');
+	$odf->setVars('societeProprio',verifInfos($this->proprioInfos['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');
 } catch (OdfException $e){
 
 }
