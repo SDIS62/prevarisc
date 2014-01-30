@@ -79,7 +79,8 @@ $(document).ready(function() {
 									end: result["items"][x]["end"],
 									allDay: result["items"][x]["allDay"],
 									url: result["items"][x]["url"],
-									color: "#dcdcdc",
+									backgroundColor: "#dcdcdc",
+									textColor : "black"
 								});
 							}
 							callback(events);
@@ -142,7 +143,8 @@ $(document).ready(function() {
 					copiedEventObject.start = date;
 					copiedEventObject.url = "/dossier/index/id/"+idDossier;
 					copiedEventObject.allDay = allDay;
-					copiedEventObject.color = "#dcdcdc";
+					copiedEventObject.backgroundColor = "#dcdcdc";
+					copiedEventObject.textColor = "black";
 					
 					// render the event on the calendar
 					// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
