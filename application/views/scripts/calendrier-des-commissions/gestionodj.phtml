@@ -79,7 +79,7 @@ $(document).ready(function() {
 									end: result["items"][x]["end"],
 									allDay: result["items"][x]["allDay"],
 									url: result["items"][x]["url"],
-									color: "black"
+									color: "#dcdcdc",
 								});
 							}
 							callback(events);
@@ -142,7 +142,7 @@ $(document).ready(function() {
 					copiedEventObject.start = date;
 					copiedEventObject.url = "/dossier/index/id/"+idDossier;
 					copiedEventObject.allDay = allDay;
-					copiedEventObject.color = "black";
+					copiedEventObject.color = "#dcdcdc";
 					
 					// render the event on the calendar
 					// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
@@ -202,7 +202,6 @@ $(document).ready(function() {
 		width: 800,
 		height: 600,
 		buttons: {
-
 			"annuler": function() {
 				dialogDateCommission.dialog("close");
 				return false;
@@ -296,8 +295,6 @@ $(document).ready(function() {
 			var num = 0;
 			$(".sortable > li").each(function(){
 				//on parcour les li pour récolter les changements et mettre à jour dans la base
-				
-				//on change le num de li
 				$(this).attr('num',num);
 				
 				//on récupere l'id du dossier
@@ -403,9 +400,20 @@ $(document).ready(function() {
 								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
 									Etab. : ".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
 									<br/>
-									Objet : ".$dossierNonAffect['OBJET_DOSSIER']."
-									<br/>
-									Num. doc. urba. : ".( (isset($dossierNonAffect['NUM_DOCURBA']))? $dossierNonAffect['NUM_DOCURBA']: "" )."
+						";
+						if($dossierNonAffect['LIBELLE_DOSSIERNATURE'] != "")
+						{
+							echo "Nature : ".$dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
+						}
+						if($dossierNonAffect['OBJET_DOSSIER'] != "")
+						{
+							echo "Objet : ".$dossierNonAffect['OBJET_DOSSIER']."<br/>";
+						}
+						if(isset($dossierNonAffect['NUM_DOCURBA']))
+						{
+							echo "Numéro document d'urbanisme : ".$dossierNonAffect['NUM_DOCURBA'];
+						}
+						echo "
 								</a>
 							</div>
 						";
@@ -434,9 +442,20 @@ $(document).ready(function() {
 							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
 								Etablissement : ".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
 								<br/>
-								Objet : ".$dossierNonAffect['OBJET_DOSSIER']."
-								<br/>
-								Numéro document d'urbanisme : ".( (isset($dossierNonAffect['NUM_DOCURBA']))? $dossierNonAffect['NUM_DOCURBA']: "" )."
+				";
+				if($dossierNonAffect['LIBELLE_DOSSIERNATURE'] != "")
+				{
+					echo "Nature : ".$dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
+				}
+				if($dossierNonAffect['OBJET_DOSSIER'] != "")
+				{
+					echo "Objet : ".$dossierNonAffect['OBJET_DOSSIER']."<br/>";
+				}
+				if(isset($dossierNonAffect['NUM_DOCURBA']))
+				{
+					echo "Numéro document d'urbanisme : ".$dossierNonAffect['NUM_DOCURBA'];
+				}
+				echo "
 							</a>
 						</div>
 					</li>

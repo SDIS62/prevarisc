@@ -202,7 +202,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         //Permet la récupération des différents éléments du calendrier pour la commission concernée
         $dateDebut = new Zend_Date(substr($this->_request->start, 0, -3), Zend_Date::TIMESTAMP);
         $dateDebut = $dateDebut->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
-		//echo $dateDebut;
 
         $dateFin = new Zend_Date(substr($this->_request->end, 0, -3), Zend_Date::TIMESTAMP);
         $dateFin = $dateFin->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
@@ -228,9 +227,19 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		}
 
         foreach ($listeDossiersAffect as $dossierAffect) {
-			$affichage = "Etab. : ".$dossierAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierAffect['LIBELLE_COMMUNE'].") || ";
-			$affichage .= "Objet : ".$dossierAffect['OBJET_DOSSIER']." || ";
-			$affichage .= "Num. doc. urba. : ".( (isset($dossierAffect['NUM_DOCURBA']))? $dossierAffect['NUM_DOCURBA']: "" );
+			$affichage = "Etab. : ".$dossierAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierAffect['LIBELLE_COMMUNE'].")";
+			if($dossierAffect['LIBELLE_DOSSIERNATURE'] != "")
+			{
+				$affichage .= " || Nature : ".$dossierAffect['LIBELLE_DOSSIERNATURE'];
+			}
+			if($dossierAffect['OBJET_DOSSIER'] != "")
+			{
+				$affichage .= " || Objet : ".$dossierAffect['OBJET_DOSSIER'];
+			}
+			if(isset($dossierAffect['NUM_DOCURBA']))
+			{
+				$affichage .= " || Num. doc. urba. : ".$dossierAffect['NUM_DOCURBA'];
+			}
 
             $items[] = array(
                 "id" => $dossierAffect['ID_DOSSIER_AFFECT'],
@@ -238,11 +247,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 "title" => $affichage,
                 "start" => date($dateDebut." ".$dossierAffect['HEURE_DEB_AFFECT']),
                 "end" => date($dateDebut." ".$dossierAffect['HEURE_FIN_AFFECT']),
-                //"className" => "display-".$commissionEvent['ID_COMMISSIONTYPEEVENEMENT'],
                 "allDay" => false,
             );
         }
-
         //Zend_Debug::dump($items);
         $this->view->items = $items;
     }
@@ -745,8 +752,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         $commResize->save();
     }
 
-
-    public function gestionheuresAction()
+	public function gestionheuresAction()
     {
         //Permet de prendre en compte ou non les horraires de passage en commission
         $this->_helper->viewRenderer->setNoRender();
