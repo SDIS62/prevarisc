@@ -117,11 +117,11 @@ class DossierController extends Zend_Controller_Action
 
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
-        $ajaxContext->addActionContext('selectiontexte', 'json')
-                        ->addActionContext('selectionarticle', 'json')
-                        ->addActionContext('selectionabreviation', 'json')
-                        ->addActionContext('selectionetab', 'json')
-                        ->initContext();
+        //->addActionContext('selectiontexte', 'json')
+		$ajaxContext->addActionContext('selectionarticle', 'json')
+			->addActionContext('selectionabreviation', 'json')
+			->addActionContext('selectionetab', 'json')
+			->initContext();
 
         if( !isset($this->view->action) )
 			$this->view->action = $this->_request->getActionName();
@@ -1431,26 +1431,6 @@ class DossierController extends Zend_Controller_Action
 
     }
 
-//Autocomplétion pour selection TEXTE
-    public function selectiontexteAction()
-    {
-        if (isset($_GET['q'])) {
-            $DBprescTexte = new Model_DbTable_PrescriptionTexte;
-            //$this->view->selectTexte = $DBprescTexte->selectTexte($_GET['q']);
-            $this->view->selectTexte = $DBprescTexte->fetchAll("LIBELLE_TEXTE LIKE '%".$_GET['q']."%'")->toArray();
-        }
-    }
-
-//Autocomplétion pour selection ARTICLE
-    public function selectionarticleAction()
-    {
-        if (isset($_GET['q'])) {
-            $DBprescArticle = new Model_DbTable_PrescriptionArticle;
-            //$this->view->selectArticle = $DBprescArticle->selectArticle($_GET['q']);
-            $this->view->selectArticle = $DBprescArticle->fetchAll("LIBELLE_ARTICLE LIKE '%".$_GET['q']."%'")->toArray();
-        }
-    }
-
 //Autocomplétion pour selection ABREVIATION
     public function selectionabreviationAction()
     {
@@ -2276,6 +2256,27 @@ class DossierController extends Zend_Controller_Action
 	}
 
 //GESTION DE LA PARTIE PRESCRIPTION
+
+//Autocomplétion pour selection TEXTE
+    public function selectiontexteAction()
+    {
+        if (isset($_GET['q'])) {
+            $DBprescTexte = new Model_DbTable_PrescriptionTexte;
+            //$this->view->selectTexte = $DBprescTexte->selectTexte($_GET['q']);
+            $this->view->selectTexte = $DBprescTexte->fetchAll("LIBELLE_TEXTE LIKE '%".$_GET['q']."%'")->toArray();
+        }
+    }
+
+//Autocomplétion pour selection ARTICLE
+    public function selectionarticleAction()
+    {
+        if (isset($_GET['q'])) {
+            $DBprescArticle = new Model_DbTable_PrescriptionArticle;
+            //$this->view->selectArticle = $DBprescArticle->selectArticle($_GET['q']);
+            $this->view->selectArticle = $DBprescArticle->fetchAll("LIBELLE_ARTICLE LIKE '%".$_GET['q']."%'")->toArray();
+        }
+    }
+
     public function prescriptionAction()
     {
 		//on affiche les prescriptions du dossier
@@ -2546,7 +2547,7 @@ class DossierController extends Zend_Controller_Action
 				//pour chacun des articles et des textes on verifie leurs existance ou non
 				if($articleArray[$i] != '')
 				{
-					$article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".$articleArray[$i]."'")->toArray();
+					$article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.$articleArray[$i].'"')->toArray();
 					//echo count($article);
 					//Zend_Debug::dump($article);
 					if(count($article) == 0){
@@ -2565,7 +2566,7 @@ class DossierController extends Zend_Controller_Action
 				
 				if($texteArray[$i] != '')
 				{
-					$texte = $dbTexte->fetchAll("LIBELLE_TEXTE LIKE '".$texteArray[$i]."'")->toArray();
+					$texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.$texteArray[$i].'"')->toArray();
 					if(count($texte) == 0){
 						//le texte n'existe pas donc on l'enregistre
 						$texte = $dbTexte->createRow();
@@ -2586,6 +2587,7 @@ class DossierController extends Zend_Controller_Action
 				$prescDossierAssoc->ID_TEXTE = $idTexte;
 				$prescDossierAssoc->ID_ARTICLE = $idArticle;
 				$prescDossierAssoc->save();
+				//Zend_Debug::dump($prescDossierAssoc);
 				$idArticle = NULL;
 				$idTexte = NULL;
 				$numAssoc++;
@@ -2602,6 +2604,7 @@ class DossierController extends Zend_Controller_Action
 	
 	public function prescriptionaddAction()
 	{
+
 		$this->_helper->viewRenderer->setNoRender();
 		$dbTexte = new Model_DbTable_PrescriptionTexteListe;
 		$dbArticle = new Model_DbTable_PrescriptionArticleListe;
@@ -2650,13 +2653,13 @@ class DossierController extends Zend_Controller_Action
 			//pour chacun des articles et des textes on verifie leurs existance ou non
 			if($articleArray[$i] != '')
 			{
-				$article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".$articleArray[$i]."'")->toArray();
+				$article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.$articleArray[$i].'"')->toArray();
 				//echo count($article);
 				//Zend_Debug::dump($article);
 				if(count($article) == 0){
 					//l'article n'existe pas donc on l'enregistre
 					$article = $dbArticle->createRow();
-					$article->LIBELLE_ARTICLE = mysql_real_escape_string($articleArray[$i]);
+					$article->LIBELLE_ARTICLE = $articleArray[$i];
 					$article->save();
 					$idArticle = $article->ID_ARTICLE;
 				}else if(count($article) == 1){
@@ -2669,11 +2672,11 @@ class DossierController extends Zend_Controller_Action
 			
 			if($texteArray[$i] != '')
 			{
-				$texte = $dbTexte->fetchAll("LIBELLE_TEXTE LIKE '".$texteArray[$i]."'")->toArray();
+				$texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.$texteArray[$i].'"')->toArray();
 				if(count($texte) == 0){
 					//le texte n'existe pas donc on l'enregistre
 					$texte = $dbTexte->createRow();
-					$texte->LIBELLE_TEXTE = mysql_real_escape_string($texteArray[$i]);
+					$texte->LIBELLE_TEXTE = $texteArray[$i];
 					$texte->save();
 					$idTexte = $texte->ID_TEXTE;
 				}else if(count($texte) == 1){
@@ -2703,6 +2706,7 @@ class DossierController extends Zend_Controller_Action
 		$this->view->idPrescriptionDossier = $idPrescDossier;
 		
 		$this->render('prescriptionaddtype');
+
 	}
 
 	public function prescriptioneditAction()

@@ -503,10 +503,10 @@ $(document).ready(function(){
 							{
 								//cas ou on ajoute une prescription directement dans un article
 								//alert("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val());
-								if($("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).html())
+								if($(".prescriptiontypeArticle_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).html())
 								{
 									//alert('visible '+"#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val());
-									$("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).append(msg);
+									$(".prescriptiontypeArticle_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).append(msg);
 								}
 							}
 							
@@ -535,10 +535,10 @@ $(document).ready(function(){
 		var article = $("#LIBELLE_ARTICLE").val();
 		if(texte != '' || article != '')
 		{
-			var assoc = "";
-			assoc += "<tr><td><input type='hidden' name='texte[]' value='"+texte+"' />"+texte+"</td>";
-			assoc += "<td><input type='hidden' name='article[]' value='"+article+"' />"+article+"</td>";
-			assoc += "<td><a href='' class='suppAssoc'>&times;</a></td></tr>";
+			var assoc = '';
+			assoc += '<tr><td><input type="hidden" name="texte[]" value="'+texte+'" />'+texte+'</td>';
+			assoc += '<td><input type="hidden" name="article[]" value="'+article+'" />'+article+'</td>';
+			assoc += '<td><a href="" class="suppAssoc">&times;</a></td></tr>';
 			$("#association").append(assoc);
 			$("#LIBELLE_TEXTE").val('');
 			$("#LIBELLE_ARTICLE").val('');

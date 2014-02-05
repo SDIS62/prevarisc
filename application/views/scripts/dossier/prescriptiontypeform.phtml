@@ -9,10 +9,14 @@ echo "
 	<button id='emplacement' class='search btn' style='display:none;'>Rechercher les prescriptions  selon le classement</button>
 	<button id='word' class='search btn'>Rechercher les prescriptions par mots clés</button>
 	<br/><br/>
-	<div id='selectWord' style='display:none;'>
-		Saisissez le ou les mots clés (séparés d'un espace) <input type='texte' name='motscles' id='motscles' value='' style='width:500px;' />
-		<button class='search btn' id='wordSearch'>Rechercher</button>
+";
+echo '
+	<div id="selectWord" style="display:none;">
+		Saisissez le ou les mots clés (séparés d\'un espace) <input type="texte" name="motscles" id="motscles" value="" style="width:500px;" />
+		<button class="search btn" id="wordSearch">Rechercher</button>
 	</div>
+';
+echo "
 	<div id='selectEmplacement' ></div>
 	<div id='listePrescriptionTypeSearch' style='margin-top:20px;display:none;'></div>
 	<div id='listePrescriptionType' style='margin-top:20px;'>

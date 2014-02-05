@@ -8,7 +8,11 @@ echo "
 	<input type='hidden' name='numPresc' id='numPresc' value='".$this->numPresc."' />
 	<div id='selectEmplacement' ></div>
 	<br/><br/>
-	<span>Texte : </span><span><input type='texte' name='LIBELLE_TEXTE' id='LIBELLE_TEXTE' value='' /></span>
+";
+echo '
+	<span>Texte : </span><span><input type="texte" name="LIBELLE_TEXTE" id="LIBELLE_TEXTE" value="" /></span>
+';
+echo "
 	<span>Article : </span><span><input type='article' name='LIBELLE_ARTICLE' id='LIBELLE_ARTICLE' value='' /></span>
 	<button id='addAssoc' >Ajouter</button>
 	<br/><br/>
@@ -22,13 +26,13 @@ echo "
 ";
 foreach($this->assoc as $val => $ue)
 {
-	echo "
+	echo '
 		<tr>
-			<td><input type='hidden' name='texte[]' value='".$ue['LIBELLE_TEXTE']."' />".$ue['LIBELLE_TEXTE']."</td>
-			<td><input type='hidden' name='article[]' value='".$ue['LIBELLE_ARTICLE']."' />".$ue['LIBELLE_ARTICLE']."</td>
-			<td><a href='' class='suppAssoc'>&times;</a></td>
+			<td><input type="hidden" name="texte[]" value="'.$ue['LIBELLE_TEXTE'].'" />'.$ue['LIBELLE_TEXTE'].'</td>
+			<td><input type="hidden" name="article[]" value="'.$ue['LIBELLE_ARTICLE'].'" />'.$ue['LIBELLE_ARTICLE'].'</td>
+			<td><a href="" class="suppAssoc">&times;</a></td>
 		</tr>
-	";
+	';
 }
 
 echo "
@@ -67,6 +71,7 @@ $(document).ready(function(){
 	$("#LIBELLE_TEXTE").live('focus',function(){
 		$("#texteId").val('');
 	});
+	
 	
 	$("#LIBELLE_TEXTE").autocomplete("/gestion-prescriptions/selectiontexte?format=json",{
 		minChars: 2,

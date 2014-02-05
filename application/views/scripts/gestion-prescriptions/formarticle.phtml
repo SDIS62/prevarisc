@@ -10,7 +10,7 @@ if($this->idTexte)
 	//edition d'un texte existant
 	echo "<input type='hidden' name='idArticle' id='idArticle' value='".$this->idArticle."' />";
 }
-echo "
-		Libellé de l'article : <input type='text' name='LIBELLE_PRESCRIPTIONARTICLE' value='".( ($this->articleInfo)?$this->articleInfo['LIBELLE_PRESCRIPTIONARTICLE']:"")."' />
+echo '
+		Libellé de l\'article : <input type="text" name="LIBELLE_PRESCRIPTIONARTICLE" value="'.( ($this->articleInfo)?$this->articleInfo['LIBELLE_PRESCRIPTIONARTICLE']:'').'" />
 	</form>
-";
+';

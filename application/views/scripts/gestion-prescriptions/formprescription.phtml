@@ -8,9 +8,15 @@ echo "
 	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:$this->article)."' />
 	<div id='selectEmplacement' ></div>
 	<br/><br/>
-	<span>Texte : </span><span><input type='texte' name='LIBELLE_TEXTE' id='LIBELLE_TEXTE' value='' style='width:400px;'/></span>
-	<span>Article : </span><span><input type='article' name='LIBELLE_ARTICLE' id='LIBELLE_ARTICLE' value='' style='width:400px;'/></span>
-	<button id='addAssoc' class='btn' >Ajouter</button>
+";
+
+echo '
+	<span>Texte : </span><span><input type="texte" name="LIBELLE_TEXTE" id="LIBELLE_TEXTE" value="" style="width:400px;"/></span>
+	<span>Article : </span><span><input type="article" name="LIBELLE_ARTICLE" id="LIBELLE_ARTICLE" value="" style="width:400px;"/></span>
+	<button id="addAssoc" class="btn" >Ajouter</button>
+';
+
+echo "
 	<br/><br/>
 	<div>
 		<table id='association' style='width:500px;'>
@@ -24,13 +30,13 @@ if($this->do == 'edit')
 {
 	foreach($this->assoc as $val => $ue)
 	{
-		echo "
+		echo '
 			<tr>
-				<td><input type='hidden' name='texte[]' value='".$ue['LIBELLE_TEXTE']."' />".$ue['LIBELLE_TEXTE']."</td>
-				<td><input type='hidden' name='article[]' value='".$ue['LIBELLE_ARTICLE']."' />".$ue['LIBELLE_ARTICLE']."</td>
-				<td><a href='' class='suppAssoc'>&times;</a></td>
+				<td><input type="hidden" name="texte[]" value="'.$ue['LIBELLE_TEXTE'].'" />'.$ue['LIBELLE_TEXTE'].'</td>
+				<td><input type="hidden" name="article[]" value="'.$ue['LIBELLE_ARTICLE'].'" />'.$ue['LIBELLE_ARTICLE'].'</td>
+				<td><a href="" class="suppAssoc">&times;</a></td>
 			</tr>
-		";
+		';
 	}
 }
 echo "

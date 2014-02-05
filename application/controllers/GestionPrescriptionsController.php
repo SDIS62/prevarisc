@@ -320,7 +320,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         if (isset($_GET['q'])) {
             $DBprescTexte = new Model_DbTable_PrescriptionTexteListe;
             //$this->view->selectTexte = $DBprescTexte->selectTexte($_GET['q']);
-            $this->view->selectTexte = $DBprescTexte->fetchAll("LIBELLE_TEXTE LIKE '%".$_GET['q']."%'")->toArray();
+            $this->view->selectTexte = $DBprescTexte->fetchAll('LIBELLE_TEXTE LIKE "%'.$_GET['q'].'%"')->toArray();
         }
     }
 
@@ -330,7 +330,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         if (isset($_GET['q'])) {
             $DBprescArticle = new Model_DbTable_PrescriptionArticleListe;
             //$this->view->selectArticle = $DBprescArticle->selectArticle($_GET['q']);
-            $this->view->selectArticle = $DBprescArticle->fetchAll("LIBELLE_ARTICLE LIKE '%".$_GET['q']."%'")->toArray();
+            $this->view->selectArticle = $DBprescArticle->fetchAll('LIBELLE_ARTICLE LIKE "%'.$_GET['q'].'%"')->toArray();
         }
     }
 
@@ -382,7 +382,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 			//pour chacun des articles et des textes on verifie leurs existance ou non
 			if($articleArray[$i] != '')
 			{
-				$article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".$articleArray[$i]."'")->toArray();
+				$article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.$articleArray[$i].'"')->toArray();
 				//echo count($article);
 				//Zend_Debug::dump($article);
 				if(count($article) == 0){
@@ -401,7 +401,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 			
 			if($texteArray[$i] != '')
 			{
-				$texte = $dbTexte->fetchAll("LIBELLE_TEXTE LIKE '".$texteArray[$i]."'")->toArray();
+				$texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.$texteArray[$i].'"')->toArray();
 				if(count($texte) == 0){
 					//le texte n'existe pas donc on l'enregistre
 					$texte = $dbTexte->createRow();

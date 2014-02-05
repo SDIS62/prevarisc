@@ -246,7 +246,7 @@ $(document).ready(function(){
 	var dialogPresc = $('<div style="display:none;"></div>').appendTo('body');
 	
 	dialogPresc.dialog({
-		title: "Ajout d'une prescription type",
+		title: "Ajout d'une prescription",
 		modal: true,
 		autoOpen: false,
 		width: 1000,
@@ -260,8 +260,12 @@ $(document).ready(function(){
 				//alert(compteurTA);
 				if(compteurTA > 0  && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
 				{
-					//alert($("#formPrescription").serialize());
-					//.replace("'", "\'")
+					/*
+					var dataSave = $("#formPrescription").serialize();
+					//alert(dataSave);
+					dataSave = decodeURIComponent(dataSave);
+					//alert(dataSave);
+					*/
 					$.ajax({
 						type: "POST",
 						url: "/dossier/prescriptionadd",
@@ -272,12 +276,14 @@ $(document).ready(function(){
 					});
 					dialogPresc.html("");
 					dialogPresc.dialog("close");
+					//dialogPresc.dialog("destroy");
 				}
 				return false;
 			},
 			"Annuler": function() {
 				dialogPresc.html("");
 				dialogPresc.dialog("close");
+				//dialogPresc.dialog("destroy");
 			}
 		},
 		close: function(event, ui){
@@ -306,9 +312,9 @@ $(document).ready(function(){
 		if(texte != '' || article != '')
 		{
 			var assoc = "";
-			assoc += "<tr><td><input type='hidden' name='texte[]' value='"+texte+"' />"+texte+"</td>";
-			assoc += "<td><input type='hidden' name='article[]' value='"+article+"' />"+article+"</td>";
-			assoc += "<td><a href='' class='suppAssoc'>&times;</a></td></tr>";
+			assoc += '<tr><td><input type="hidden" name="texte[]" value="'+texte+'" />'+texte+'</td>';
+			assoc += '<td><input type="hidden" name="article[]" value="'+article+'" />'+article+'</td>';
+			assoc += '<td><a href="" class="suppAssoc">&times;</a></td></tr>';
 			$("#association").append(assoc);
 			$("#LIBELLE_TEXTE").val('');
 			$("#LIBELLE_ARTICLE").val('');
