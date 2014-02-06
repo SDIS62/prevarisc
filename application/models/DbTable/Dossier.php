@@ -220,4 +220,32 @@
 
 		}
 
+		public function findLastVpCreationDoc($idEtab,$idDossier,$dateVisite)
+		{
+			$select = $this->select()
+				->setIntegrityCheck(false)
+				->from(array('d' => 'dossier'),"max(d.DATEVISITE_DOSSIER) as maxdate")
+				->join(array('ed' => 'etablissementdossier') , "ed.ID_DOSSIER = d.ID_DOSSIER")
+				->join(array("dn" => "dossiernature") , "d.ID_DOSSIER = dn.ID_DOSSIER")
+				->where("ed.ID_ETABLISSEMENT = ?",$idEtab)
+				->where("ed.ID_DOSSIER <> ?",$idDossier)
+				->where("dn.ID_NATURE = 21 OR dn.ID_NATURE = 26")
+				->where("d.DATEVISITE_DOSSIER IS NOT NULL")
+				->where("d.DATEVISITE_DOSSIER < ?",$dateVisite);
+				
+			//echo $select->__toString();
+			return $this->getAdapter()->fetchRow($select);	
+
+		}
+		
+		public function getAvisDossier($id_dossier)
+        {
+           $select = $this->select()
+				->setIntegrityCheck(false)
+				->from(array('a' => 'avis'),"LIBELLE_AVIS")
+				->join(array('d' => 'dossier') , "d.AVIS_DOSSIER_COMMISSION = a.ID_AVIS")
+				->where("d.ID_DOSSIER = ?",$id_dossier);
+            //echo $select;
+            return $this->getAdapter()->fetchRow($select);
+        }
     }

@@ -387,6 +387,15 @@ try{
 
 }
 
+//Date de la dernière visite periodique
+try{
+	$odf->setVars('dateLastVP',verifInfos($this->dateLastVP),true,'UTF8');
+	$odf->setVars('avisLastVP',verifInfos($this->avisLastVP),true,'UTF8');
+} catch (OdfException $e){
+
+}
+
+
 //Informations du DUS du dossier
 try{
 	$odf->setVars('nomDus',verifInfos($this->dusDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');

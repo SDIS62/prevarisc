@@ -117,8 +117,8 @@ class DossierController extends Zend_Controller_Action
 
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
-        //->addActionContext('selectiontexte', 'json')
-		$ajaxContext->addActionContext('selectionarticle', 'json')
+			$ajaxContext->addActionContext('selectiontexte', 'json')
+			->addActionContext('selectionarticle', 'json')
 			->addActionContext('selectionabreviation', 'json')
 			->addActionContext('selectionetab', 'json')
 			->initContext();
@@ -169,8 +169,6 @@ class DossierController extends Zend_Controller_Action
             $this->view->etablissementLibelle = $DBetablissement->getLibelle($this->_getParam("id_etablissement"));
         }
         //echo $this->view->idEtablissement;
-
-		
 		
         $this->_forward('general');
     }
@@ -1719,18 +1717,11 @@ class DossierController extends Zend_Controller_Action
 
         $this->view->fichierSelect = $this->_getParam("fichierSelect");
 
-        //RECUPERATIONS DES INFOS CONCERNANT L'ETABLISSEMENT
-        $model_typeactivite = new Model_DbTable_TypeActivite;
-
-        //Récupération des documents d'urbanisme
-        $DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
-        $dossierDocUrba = $DBdossierDocUrba->getDossierDocUrba($idDossier);
-        $listeDocUrba = "";
-        foreach ($dossierDocUrba as $var) {
-            $listeDocUrba .= $var['NUM_DOCURBA'].", ";
-        }
-
-        $this->view->listeDocUrba = substr($listeDocUrba, 0, -2);
+		/******
+		/
+		/RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
+		/
+		******/
 
         $model_etablissement = new Model_DbTable_Etablissement;
         $etablissement = $model_etablissement->find($idEtab)->current();
@@ -1755,11 +1746,12 @@ class DossierController extends Zend_Controller_Action
 			$categorie = explode(" ",$categorie['LIBELLE_CATEGORIE']);
 			$this->view->categorieEtab = $categorie[0];
 		}
-	
 
-        $this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
-		
+		$this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+
+        $model_typeactivite = new Model_DbTable_TypeActivite;		
 		$dbType = new Model_DbTable_Type;
+		
 		$lettreType = $dbType->find($object_informations['ID_TYPE'])->current();
         $this->view->typeLettreP = $lettreType['LIBELLE_TYPE'];
 
@@ -1829,8 +1821,24 @@ class DossierController extends Zend_Controller_Action
 				$adresse .= $array_adresses[0]["LIBELLE_COMMUNE"]." ";
             $this->view->etablissementAdresse = $adresse;
         }
-
         //Zend_Debug::dump($etablissement->toArray());
+		
+		/******
+		/
+		/RECUPERATIONS DES INFORMATIONS SUR LE DOSSIER
+		/
+		******/
+	
+        //Récupération des documents d'urbanisme
+        $DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
+        $dossierDocUrba = $DBdossierDocUrba->getDossierDocUrba($idDossier);
+        $listeDocUrba = "";
+        foreach ($dossierDocUrba as $var) {
+            $listeDocUrba .= $var['NUM_DOCURBA'].", ";
+        }
+
+        $this->view->listeDocUrba = substr($listeDocUrba, 0, -2);
+		
 
         //Récupération de tous les champs de la table dossier
         $DBdossier = new Model_DbTable_Dossier;
@@ -1856,8 +1864,7 @@ class DossierController extends Zend_Controller_Action
 		$dbGroupement = new Model_DbTable_Groupement;
 		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
 		//Zend_Debug::dump($groupement);
-		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
-		
+		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];		
 		
 		$dbDossierContact = new Model_DbTable_DossierContact;
 		//On recherche si un directeur unique de sécurité existe
@@ -2060,12 +2067,29 @@ class DossierController extends Zend_Controller_Action
 			$this->view->listeTextesAppl = $dbDossierTextesAppl->recupTextesDossierGenDoc($this->_getParam('idDossier'));
 			
 			//Zend_Debug::dump($this->view->listeTextesAppl);
+		
+		/*
+        DATE DE LA DERNIERE VISITE PERIODIQUE
+        */		
+		
+		$dateVisite = $this->view->infosDossier["DATEVISITE_DOSSIER"];
+		$dateLastVP = $DBdossier->findLastVpCreationDoc($idEtab,$idDossier,$dateVisite);
+		
+		//Zend_Debug::dump($dateLastVP);
+		if($dateLastVP['maxdate'] != NULL)
+		{
+			$ZendDateLastVP = new Zend_Date($dateLastVP['maxdate'], Zend_Date::DATES);
+			$this->view->dateLastVP = $ZendDateLastVP->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			$avisLastVP =  $DBdossier->getAvisDossier($dateLastVP['ID_DOSSIER']);
+			$this->view->avisLastVP = $avisLastVP['LIBELLE_AVIS'];
+			//Zend_Debug::dump($avisLastVP);
+		}else{
+			$this->view->dateLastVP = NULL;
+		}
+		
 			
-			
-            $this->render('creationdoc');
-
-        //Zend_Debug::dump($this->view->infosDossier);
-
+        $this->render('creationdoc');
+		
     }
 
     public function generationconvocAction()
