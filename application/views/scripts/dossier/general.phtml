@@ -1535,7 +1535,7 @@ echo "
 				<li class='row-fluid' id='DATEVISITE' style='".( ($action != 'new' && in_array('DATEVISITE', $this->afficherChamps) && $this->dateVisiteValue != '' )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de visite</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						".$this->dateVisiteValue.( ( $this->dateVisiteValue != '' )?"":"")."
+						".$this->dateVisiteValue.( ( $this->idDateVisiteAffect != '' )?  "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateVisiteAffect."' title='afficher ordre du jour' ><i class='icon-calendar' ></i></a>" : "" )."
 					</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".( ($this->dateVisiteInput)?$this->dateVisiteInput:"" )."'  disabled='disabled'/>
