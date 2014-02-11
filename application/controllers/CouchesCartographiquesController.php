@@ -30,22 +30,42 @@ class CouchesCartographiquesController extends Zend_Controller_Action
      */
     public function addAction()
     {
-        // Modèles
-        $model_couchecarto = new Model_DbTable_CoucheCarto;
-        $model_couchecartotype = new Model_DbTable_CoucheCartoType;
-
-        // On envoie sur la vue les différents type de couches
-        $this->view->rowset_couchecartotypes = $model_couchecartotype->fetchAll();
-
-        // On process les données
-        if($this->_request->isPost())
+        try 
         {
-            $data = $this->getRequest()->getPost();
-            $model_couchecarto->insert($data);
+            // Modèles
+            $model_couchecarto = new Model_DbTable_CoucheCarto;
+            $model_couchecartotype = new Model_DbTable_CoucheCartoType;
+
+            // On envoie sur la vue les différents type de couches
+            $this->view->rowset_couchecartotypes = $model_couchecartotype->fetchAll();
+
+            // On process les données
+            if($this->_request->isPost())
+            {
+                $data = $this->getRequest()->getPost();
+                $model_couchecarto->insert($data);
+
+                // Redirection
+                $this->_helper->redirector('list');
+            }
             
-            // Redirection
-            $this->_helper->redirector('list');
+            $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Ajout réussi !',
+                    'message' => 'Le traitement est ok.'
+                ));
+        } 
+        catch (Exception $ex) 
+        {
+            $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie!',
+                    'message' => $ex->getMessage()
+                ));
         }
+        
+        // Redirection
+        $this->_helper->redirector('index');
     }
 
     public function editAction()
@@ -70,13 +90,33 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 
     public function deleteAction()
     {
-        // Modèle
-        $model_couchecarto = new Model_DbTable_CoucheCarto;
-        
-        // Suppression
-        $model_couchecarto->delete("ID_COUCHECARTO = " . $this->getRequest()->getParam('id'));
+        try
+        {
+            // Modèle
+            $model_couchecarto = new Model_DbTable_CoucheCarto;
+
+            // Suppression
+            $model_couchecarto->delete("ID_COUCHECARTO = " . $this->getRequest()->getParam('id'));
+
+            // Redirection
+            $this->_helper->redirector('list');
+            
+            $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Suppression réussie !',
+                    'message' => 'Le traitement est ok.'
+                ));
+        }
+        catch (Exception $ex) 
+        {
+            $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie!',
+                    'message' => $ex->getMessage()
+                ));
+        }
         
         // Redirection
-        $this->_helper->redirector('list');
+        $this->_helper->redirector('index');
     }
 }

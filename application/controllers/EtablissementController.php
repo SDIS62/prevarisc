@@ -4,10 +4,10 @@
         private $informations;
         private $DB_etablissement;
         
-        // Initialisation de la classe reprÃ©sentant les genres des Ã©tablissements
+        // Initialisation de la classe représentant les genres des établissements
         public function init()
         {
-            // Actions Ã  effectuÃ©es en AJAX
+            // Actions à  effectuées en AJAX
             $ajaxContext = $this->_helper->getHelper('AjaxContext');
             $ajaxContext->addActionContext('save', 'json')
                         ->addActionContext('get', 'json')
@@ -18,18 +18,18 @@
 
             $this->DB_etablissement = new Model_DbTable_Etablissement;
 
-            if ($this->_request->format != "json") {
-
+            if ($this->_request->format != "json") 
+            {
                 $this->view->genre = "null";
 
-                // DÃ©finition du layout
+                // Définition du layout
                 $this->_helper->layout->setLayout('etablissement');
 
-                // Nom de l'action appellÃ©e
+                // Nom de l'action appellée
                 if( !isset($this->view->action) )
                     $this->view->action = $this->_request->getActionName();
 
-                // ModÃ¨les commun aux actions
+                // Modeles commun aux actions
                 $DB_avis = new Model_DbTable_Avis;
                 // On récupère que les avis utilisés sur les établissements
                 $this->view->DB_avis = $DB_avis->getAvis(0);
@@ -41,27 +41,28 @@
                 // Liste des champs à afficher en fonction du genre
                 $liste_champs = $this->DB_etablissement->getListeChamps();
 
-                // DonnÃ©es de l'Ã©tablissement
-                if ($this->_request->id) {
-
+                // Données de l'établissement
+                if ($this->_request->id) 
+                {
                     // Etablissement
                     $this->view->DB_etablissement = $this->DB_etablissement->find( $this->_request->id )->current();
 
-                    // Informations de l'Ã©tablissement
+                    // Informations de l'établissement
                     $this->informations = $this->DB_etablissement->getInformations( $this->_request->id );
                     $this->view->DB_informations = $this->informations;
 
                     // Envoi le genre
                     $this->view->genre = Zend_Json::encode( $this->view->DB_genre[$this->informations["ID_GENRE"]-1]["LIBELLE_GENRE"] );
 
-                    // L'Ã©tablissement fait-il partie d'un autre Ã©tablissement ?
+                    // L'établissement fait-il partie d'un autre établissement ?
                     $result = null;
                     $id_enfant = $this->_request->id;
                     do {
 
                         $parent = $this->DB_etablissement->getParent( $id_enfant );
 
-                        if ($parent != null) {
+                        if ($parent != null) 
+                        {
                             $result[] = $parent;
                             $id_enfant = $parent["ID_ETABLISSEMENT"];
                         }
@@ -99,33 +100,42 @@
                 // Envoi des champs des genres
                 $this->view->liste_champs = Zend_Json::encode( $liste_champs );
 
-                // DonnÃ©e communes Ã  tout les genres
-                foreach ($liste_champs as $key => $champs) {
+                // Données communes à tous les genres
+                foreach ($liste_champs as $key => $champs) 
+                {
                     $liste_champs[$key] = array_merge($liste_champs[$key], array("libelle", "statut", "genre", "telephone", "fax", "courriel", "type_plans", "numero_plans", "date_plan[]", "statut_plans"));
                 }
 
-                // DÃ©finition du titre
+                // Définition du titre
                 $this->view->title = ( $this->_request->id ) ? ucfirst($this->view->action) . " | " . $this->informations["LIBELLE_ETABLISSEMENTINFORMATIONS"] : "Création d'un établissement";
 
-                // Mode de lecture (read si il y'a un id spÃ©cifiÃ©, edit si on est en crÃ©ation)
+                // Mode de lecture (read si il y'a un id spécifié, edit si on est en création)
                 $this->view->mode_de_lecture = Zend_Json::encode( ( $this->_request->id ) ? "read" : "edit" );
             }
         }
 
-        // Accueil de la fiche Ã©tablissement
+        // Accueil de la fiche établissement
         public function indexAction()
         {
             $this->view->id_etablissement = $this->_request->id;
 
-            // On rÃ©cupÃ¨re l'ensemble des donnÃ©es dont on a besoin
-            $DB_categorie = new Model_DbTable_Categorie;					$this->view->DB_categorie = $DB_categorie->fetchAllPK();
-            $DB_type = new Model_DbTable_Type;								$this->view->DB_type = $DB_type->fetchAll()->toArray();
-            $DB_activite = new Model_DbTable_TypeActivite;					$this->view->DB_activite = $DB_activite->fetchAll()->toArray();
-            $DB_commission = new Model_DbTable_Commission;					$this->view->DB_commission = $DB_commission->fetchAllPK();
-            $DB_preventionnistes = new Model_DbTable_Commission;			$this->view->DB_preventionnistes = $DB_preventionnistes->fetchAll()->toArray();
-            $DB_typesplan = new Model_DbTable_TypePlan;						$this->view->DB_typesplan = $DB_typesplan->fetchAllPK();
-            $DB_famille = new Model_DbTable_Famille;						$this->view->DB_famille = $DB_famille->fetchAllPK();
-            $DB_classe = new Model_DbTable_Classe;							$this->view->DB_classe = $DB_classe->fetchAllPK();
+            // On récupère l'ensemble des données dont on a besoin
+            $DB_categorie = new Model_DbTable_Categorie;
+            $this->view->DB_categorie = $DB_categorie->fetchAllPK();
+            $DB_type = new Model_DbTable_Type;
+            $this->view->DB_type = $DB_type->fetchAll()->toArray();
+            $DB_activite = new Model_DbTable_TypeActivite;
+            $this->view->DB_activite = $DB_activite->fetchAll()->toArray();
+            $DB_commission = new Model_DbTable_Commission;
+            $this->view->DB_commission = $DB_commission->fetchAllPK();
+            $DB_preventionnistes = new Model_DbTable_Commission;
+            $this->view->DB_preventionnistes = $DB_preventionnistes->fetchAll()->toArray();
+            $DB_typesplan = new Model_DbTable_TypePlan;
+            $this->view->DB_typesplan = $DB_typesplan->fetchAllPK();
+            $DB_famille = new Model_DbTable_Famille;
+            $this->view->DB_famille = $DB_famille->fetchAllPK();
+            $DB_classe = new Model_DbTable_Classe;
+            $this->view->DB_classe = $DB_classe->fetchAllPK();
             $DB_adresse = new Model_DbTable_EtablissementAdresse;
             $DB_plans = new Model_DbTable_EtablissementInformationsPlan;
             $DB_rubriques = new Model_DbTable_EtablissementInformationsRubrique;
@@ -133,7 +143,7 @@
             $model_groupement = new Model_DbTable_Groupement;
             $model_admin = new Model_DbTable_Admin;
 
-            // Gestion des prototypes pour l'ajout en ajax & des modÃ¨les
+            // Gestion des prototypes pour l'ajout en ajax & des modeles
             $plans = ( isset($this->informations) ) ? $DB_plans->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $this->informations->ID_ETABLISSEMENTINFORMATIONS)->toArray() : null;
             $plans[-1] = array_fill_keys ( array( "ID_TYPEPLAN", "NUMERO_ETABLISSEMENTPLAN", "DATE_ETABLISSEMENTPLAN", "ID_STATUTPLAN" ) , null );
             $this->view->plans = $plans;
@@ -158,20 +168,20 @@
             $adresses[-1] = array_fill_keys ( array( "LON_ETABLISSEMENTADRESSE", "LAT_ETABLISSEMENTADRESSE", "NUMERO_ADRESSE", "ID_RUE", "NUMINSEE_COMMUNE", "COMPLEMENT_ADRESSE", "LIBELLE_COMMUNE", "LIBELLE_RUE", "CODEPOSTAL_COMMUNE" ) , null );
             $this->view->adresses = $adresses;
 
-            // Si c'est un Ã©tablissement existant
-            if ($this->_request->id) {
-
+            // Si c'est un etablissement existant
+            if ($this->_request->id) 
+            {
                 // Images pour le diapo
                 $this->view->diapo_plans = $this->DB_etablissement->getPlans($this->_request->id);
                 $this->view->diapo = $this->DB_etablissement->getDiaporama($this->_request->id);
 
-                // Adresse du pÃ¨re
-                if ($this->view->etablissement_parents) {
-
+                // Adresse du pere
+                if ($this->view->etablissement_parents) 
+                {
                     $pere = end($this->view->etablissement_parents);
 
-                    if ($pere) {
-
+                    if ($pere) 
+                    {
                         $this->view->pere = $pere;
                         $adresses_pere = $DB_adresse->get($pere["ID_ETABLISSEMENT"]);
                         $this->view->adresses_pere = $adresses_pere;
@@ -223,9 +233,9 @@
                 // récupération de l'id de l'établissement
                 $this->view->idwinprev = $this->view->DB_etablissement->NUMEROID_ETABLISSEMENT == "" ? $this->_request->id : $this->view->DB_etablissement->NUMEROID_ETABLISSEMENT;
             }
-            // Pour un nouveel Ã©tablissement
-            elseif (isset($_GET["pere"])) {
-
+            // Pour un nouveel établissement
+            elseif (isset($_GET["pere"])) 
+            {
                 $this->view->adresses_pere = $DB_adresse->get($_GET["pere"]);
             }
 
@@ -257,7 +267,8 @@
             }
             */
 
-            if (count($adresses) > 1) {
+            if (count($adresses) > 1) 
+            {
                 // Envoi des groupements de l'ets
                 $this->view->array_groupements = $model_groupement->getGroupementParVille($adresses[0]["NUMINSEE_COMMUNE"]);
             }
@@ -266,8 +277,8 @@
 
         public function carteAction()
         {
-            if ($this->_request->id) {
-
+            if ($this->_request->id) 
+            {
                 $DB_adresse = new Model_DbTable_EtablissementAdresse;
                 $search = new Model_DbTable_Search;
 
@@ -282,8 +293,8 @@
 
         public function descriptifAction()
         {
-            if ($this->_request->DESCRIPTIF_ETABLISSEMENT) {
-
+            if ($this->_request->DESCRIPTIF_ETABLISSEMENT) 
+            {
                 $etablissement = $this->DB_etablissement->find( $this->_request->id )->current();
                 $etablissement->DESCRIPTIF_ETABLISSEMENT = $this->_request->DESCRIPTIF_ETABLISSEMENT;
                 $etablissement->save();
@@ -400,13 +411,16 @@
             $dbTextesAppl = new Model_DbTable_TextesAppl;
             $etsTexteApplicable = new Model_DbTable_EtsTextesAppl;
             
-            if($this->_getParam('toDo') == 'save') {
+            if($this->_getParam('toDo') == 'save') 
+            {
                 $this->_helper->viewRenderer->setNoRender();
                 $row = $etsTexteApplicable->createRow();
                 $row->ID_TEXTESAPPL = $this->_getParam('idTexte');
                 $row->ID_ETABLISSEMENT = $this->_getParam('id');
                 $row->save();
-            }else if ($this->_getParam('toDo') == 'delete') {
+            }
+            else if ($this->_getParam('toDo') == 'delete') 
+            {
                 $this->_helper->viewRenderer->setNoRender();
                 $row = $etsTexteApplicable->find($this->_getParam('idTexte'),$this->_getParam('id'))->current();
                 $row->delete();
@@ -419,7 +433,8 @@
             $liste = $etsTexteApplicable->recupTextes($this->_getParam("id"));
             //Zend_Debug::dump($liste);
             $listeId = array();
-            foreach($liste as $val => $ue){
+            foreach($liste as $val => $ue)
+            {
                 array_push($listeId,$ue['ID_TEXTESAPPL']);
             }
             
@@ -440,7 +455,7 @@
 
         public function dossiersAction()
         {
-            // CrÃ©ation de l'objet recherche
+            // Création de l'objet recherche
             $search = new Model_DbTable_Search;
             
             // récupération des types de dossier autre
@@ -456,7 +471,7 @@
                 }
             }
 
-            // On balance le rÃ©sultat sur la vue
+            // On balance le résultat sur la vue
             $this->view->etudes = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", 1)->order("COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
             $this->view->visites = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", array(2, 3))->order("DATEVISITE_DOSSIER,COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
             $this->view->autres = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", $types_autre)->order("DATEINSERT_DOSSIER DESC")->run();
@@ -466,7 +481,7 @@
         {
             $historique = array();
 
-            // ModÃ¨les additionnels
+            // Modèles additionnels
             $DB_categorie = new Model_DbTable_Categorie;					$categories = $DB_categorie->fetchAll()->toArray();
             $DB_famille = new Model_DbTable_Famille;						$familles = $DB_famille->fetchAll()->toArray();
             $DB_type = new Model_DbTable_Type;						        $types = $DB_type->fetchAll()->toArray();
@@ -474,23 +489,23 @@
             $DB_utilisateurs = new Model_DbTable_Utilisateur;
             $DB_utilisateursInfo = new Model_DbTable_UtilisateurInformations;
 
-            // Instances des modÃ¨les
+            // Instances des modèles
             $DB_information = new Model_DbTable_EtablissementInformations;
 
-            // On rÃ©cupÃ¨re toutes les fiches de l'Ã©tablissement
+            // On récupère toutes les fiches de l'établissement
             $fiches = $DB_information->fetchAll("ID_ETABLISSEMENT = " . $this->_request->id, "DATE_ETABLISSEMENTINFORMATIONS")->toArray();
 
             // On traite le tout
-            foreach ($fiches as $id => $fiche) {
-
-                foreach ($fiche as $key => $item) {
-
+            foreach ($fiches as $id => $fiche) 
+            {
+                foreach ($fiche as $key => $item) 
+                {
                     $tmp = ( array_key_exists($key, $historique) ) ? $historique[$key][ count($historique[$key])-1 ] : null;
 
                     $value = null;
 
-                    switch ($key) {
-
+                    switch ($key) 
+                    {
                         case "LIBELLE_ETABLISSEMENTINFORMATIONS":
                             $value = $item;
                             break;
@@ -500,23 +515,26 @@
                             break;
 
                         case "ID_CATEGORIE":
-                            if (isset($categories[$item - 1])) {
+                            if (isset($categories[$item - 1])) 
+                            {
                                 $value = $categories[$item - 1]["LIBELLE_CATEGORIE"];
                             }
                             break;
 
                         case "ID_TYPE":
-                            if (isset($types[$item - 1])) {
+                            if (isset($types[$item - 1])) 
+                            {
                                 $value = $types[$item - 1]["LIBELLE_TYPE"];
                             }
                             break;
                     }
 
-                    if ( !isset( $historique[$key] ) || $tmp["valeur"] != $value ) {
-
+                    if ( !isset( $historique[$key] ) || $tmp["valeur"] != $value ) 
+                    {
                         $date = new Zend_Date($fiche["DATE_ETABLISSEMENTINFORMATIONS"], Zend_Date::DATES);
 
-                        if ($tmp != null) {
+                        if ($tmp != null) 
+                        {
                             $historique[$key][ count($historique[$key])-1 ]["fin"] = $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
                         }
 
@@ -529,7 +547,7 @@
                 }
             }
 
-            // On met ds le sens aujourd'hui -> passÃ©
+            // On met ds le sens aujourd'hui -> passé
             foreach ($historique as $key => $item) {
                 $historique[$key] = array_reverse($item);
             }
@@ -537,7 +555,7 @@
             $liste_champs = Zend_Json::decode($this->view->liste_champs);
             $genre = Zend_Json::decode($this->view->genre);
 
-            // Envoi des variables Ã  la vue
+            // Envoi des variables à la vue
             $this->view->historique = $historique;
             $this->view->fiches = $fiches;
             $this->view->classement = $liste_champs[$genre];
@@ -553,19 +571,20 @@
         {
             $DB_information = new Model_DbTable_EtablissementInformations;
 
-            if ($this->_request->date != "undefined") {
-
+            if ($this->_request->date != "undefined") 
+            {
                 $array_date = $this->getDate($this->_request->date);
                 $this->view->bool_fiche = (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $this->_request->id . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $array_date . "'"))) ? true : false;
-            } else {
-
+            } 
+            else 
+            {
                 $this->view->bool_fiche = false;
             }
         }
 
         public function saveAction()
         {
-            // Instances des modÃ¨les
+            // Instances des modèles
             $DB_information = new Model_DbTable_EtablissementInformations;
             $DB_tab["ID_TYPEPLAN"] = new Model_DbTable_EtablissementInformationsPlan;
             $DB_tab["ID_RUBRIQUE"] = new Model_DbTable_EtablissementInformationsRubrique;
@@ -582,80 +601,87 @@
             $historique = false;
             $new = false;
             
-            try {
-            
+            try 
+            {
                 if(!isset($_GET["ID_UTILISATEUR"]) || count($_GET["ID_UTILISATEUR"]) == 0 || $_GET["ID_UTILISATEUR"][0] == null)
                 {
                     throw new Exception("Pas de préventionnistes liés.");
                 }
 
                 // Si il n'y a pas d'id
-                if (!$this->_request->id) {
-                    // On créé un nouvel Ã©tablissement
+                if (!$this->_request->id) 
+                {
+                    // On créé un nouvel établissement
                     $etablissement = $this->DB_etablissement->createRow();
                     $new = true;
-                } else {
+                } 
+                else 
+                {
                     // On récupère l'instance d'un établissement
                     $etablissement = $this->DB_etablissement->find( $this->_request->id )->current();
                 }
 
                 // Est ce que l'on créé un nouveau bloc d'informations
-                if (!$this->_request->id || $this->_request->historique == 1) {
-
+                if (!$this->_request->id || $this->_request->historique == 1) 
+                {
                     $historique = true;
 
-                    if ($this->_request->historique && $this->_request->id) {
-
+                    if ($this->_request->historique && $this->_request->id) 
+                    {
                         $rowtmp = null;
 
                         $array_date = $this->getDate($this->_request->date);
-                        if (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $this->_request->id . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $array_date . "'"))) {
-
+                        if (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $this->_request->id . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $array_date . "'"))) 
+                        {
                             $informations = $row;
 
                             // On vide les tables des plans / rubrique / secondaire
-                            foreach ($DB_tab as $key => $tab) {
-                                if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
-
+                            foreach ($DB_tab as $key => $tab) 
+                            {
+                                if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) 
+                                {
                                     $tab->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
-                                } else {
-
+                                } 
+                                else 
+                                {
                                     $tab->delete( "ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                                 }
                             }
                         }
 
-
                         $DB_tab["NUMERO_ADRESSE"]->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                         $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                     }
 
-                    if (!isset($informations)) {
-
+                    if (!isset($informations)) 
+                    {
                         $update = false;
                         $informations = $DB_information->createRow();
                         $informations->DATE_ETABLISSEMENTINFORMATIONS = $this->getDate(isset($this->_request->date) ? $this->_request->date : date("d/m/Y", time()));
                     }
 
                     unset($_GET["historique"]);
-                } else {
-
-                    // On recupÃ¨re le dernier bloc d'informations de l'Ã©tablissement
+                } 
+                else 
+                {
+                    // On recupère le dernier bloc d'informations de l'établissement
                     $informations = $this->DB_etablissement->getInformations( $this->_request->id );
 
                     // On vide les tables des plans / rubrique / secondaire
-                    foreach ($DB_tab as $key => $tab) {
-                        if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
-
+                    foreach ($DB_tab as $key => $tab) 
+                    {
+                        if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) 
+                        {
                             $tab->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
-                        } else {
-
+                        } 
+                        else 
+                        {
                             $tab->delete( "ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                         }
                     }
                 }
 
-                // On met Ã  0 les checkbox, elles seront checkÃ©es si dans le formulaire elles le sont
+                // On met à  0 les checkbox, elles seront checkées si dans le formulaire elles le sont
                 $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->ICPE_ETABLISSEMENTINFORMATIONS = 0;
                 $informations->R12320_ETABLISSEMENTINFORMATIONS = 0;
@@ -671,23 +697,24 @@
                 $_GET['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] = isset($_GET['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS']) ? (int) $_GET['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] : 0;
                 $_GET['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] = isset($_GET['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS']) ? (int) $_GET['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] : 0;
 
-                // Sauvegarde de la base pour rÃ©cupÃ©rer les id
+                // Sauvegarde de la base pour récupérer les id
                 $etablissement->save();
                 $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
                 $informations->save();
 
                 // On populate les informations
-                foreach ($_GET as $key => $data) {
-
-                    // DonnÃ©es non historisÃ©es
-                    if ( in_array($key, array("NUMEROID_ETABLISSEMENT", "TELEPHONE_ETABLISSEMENT", "FAX_ETABLISSEMENT", "COURRIEL_ETABLISSEMENT", "NUMEROID_ETABLISSEMENT", "NBPREV_ETABLISSEMENT", "DUREEVISITE_ETABLISSEMENT")) ) {
-
+                foreach ($_GET as $key => $data) 
+                {
+                    // Données non historisées
+                    if ( in_array($key, array("NUMEROID_ETABLISSEMENT", "TELEPHONE_ETABLISSEMENT", "FAX_ETABLISSEMENT", "COURRIEL_ETABLISSEMENT", "NUMEROID_ETABLISSEMENT", "NBPREV_ETABLISSEMENT", "DUREEVISITE_ETABLISSEMENT")) ) 
+                    {
                         $etablissement->$key = $data;
                     }
-                    // DonnÃ©es historisÃ©es
-                    else if ( !is_array($data) ) {
-
-                        if (in_array($key, $DB_information->info(Zend_Db_Table_Abstract::COLS))) {
+                    // Données historisées
+                    else if ( !is_array($data) ) 
+                    {
+                        if (in_array($key, $DB_information->info(Zend_Db_Table_Abstract::COLS))) 
+                        {
                             if( in_array($key, array("DATEPCINITIAL_ETABLISSEMENTINFORMATIONS", "DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS")) )
                                 $informations->$key = $this->getDate($data);
                             else
@@ -695,21 +722,21 @@
                         }
                     }
                     // Données dans une table a part
-                    else {
-
+                    else 
+                    {
                         // est ce que l'on veut ajouter une ligne dans la bonne table ?
-                        if ( array_key_exists($key, $DB_tab) ) {
-
+                        if ( array_key_exists($key, $DB_tab) ) 
+                        {
                             // on parcourt les données du tableau envoyé
-                            for ( $i=0; $i<count($data); $i++ ) {
-
-                                // CrÃ©ation de la ligne
+                            for ( $i=0; $i<count($data); $i++ ) 
+                            {
+                                // Création de la ligne
                                 $item = $DB_tab[$key]->createRow();
 
-                                foreach ( $DB_tab[$key]->info(Zend_Db_Table_Abstract::COLS) as $col ) {
-
-                                    if ( isset($_GET[$col][$i]) ) {
-                                    
+                                foreach ( $DB_tab[$key]->info(Zend_Db_Table_Abstract::COLS) as $col ) 
+                                {
+                                    if ( isset($_GET[$col][$i]) ) 
+                                    {
                                         // On check si lenfant correspondant bien a l'établissement actuel
                                         if($key == "ID_FILS_ETABLISSEMENT")
                                         {
@@ -740,9 +767,12 @@
                                 
                                 // Ajout de la clé étrangère
                                 // Gestion historique ou pas
-                                if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
+                                if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) 
+                                {
                                     $item->ID_ETABLISSEMENTINFORMATIONS = $informations->ID_ETABLISSEMENTINFORMATIONS;
-                                } else {
+                                } 
+                                else 
+                                {
                                     $item->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
                                 }
 
@@ -760,8 +790,9 @@
                 $etablissement->save();
                 $informations->save();
 
-                // On spÃ©cifi le pÃ¨re
-                if ($this->_request->ID_PERE != "") {
+                // On spécifie le père
+                if ($this->_request->ID_PERE != "") 
+                {
 
                     $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                     $pere_information = $this->DB_etablissement->getInformations($this->_request->ID_PERE);
@@ -790,7 +821,9 @@
                     $item->ID_FILS_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
                     $item->save();
                     
-                } else {
+                } 
+                else 
+                {
                     $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                 }
 
@@ -805,8 +838,9 @@
                 // On update les cat et la perio des celulles enfants si il y en a
                 $this->DB_etablissement->recalcEnfants($etablissement->ID_ETABLISSEMENT, $informations->ID_ETABLISSEMENTINFORMATIONS, $historique);
 
-            } catch (Exception $e) {
-
+            } 
+            catch (Exception $e) 
+            {
                 $this->_helper->viewRenderer->setNoRender();
                 $db->rollBack();
                 $this->view->error = $e->getMessage();
@@ -817,8 +851,8 @@
         private function getDate($input)
         {
             $array_date = explode("/", $input);
-            if (!is_array($array_date) || count($array_date) != 3) {
-
+            if (!is_array($array_date) || count($array_date) != 3) 
+            {
                 throw new Exception('Erreur dans la date', 500);
             }
             if($array_date[2] != '0000')
@@ -867,7 +901,10 @@
         {
             // Variables
             $this->view->categorie = $this->DB_etablissement->getDefaultCategorie($_GET);
-            if ($this->view->categorie != null) { $_GET["ID_CATEGORIE"] = $this->view->categorie; }
+            if ($this->view->categorie != null) 
+            { 
+                $_GET["ID_CATEGORIE"] = $this->view->categorie;
+            }
             $this->view->periodicite = $this->DB_etablissement->getDefaultPeriodicite($_GET);
             $this->view->commission = $this->DB_etablissement->getDefaultCommission($_GET);
             $this->view->preventioniste = $this->DB_etablissement->getDefaultPrev($_GET);
