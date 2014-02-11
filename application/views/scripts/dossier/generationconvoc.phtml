@@ -22,8 +22,6 @@ foreach($this->membresFiles as $val => $membre){
 				$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONVISITE_".$membre->COURRIER_CONVOCATIONVISITE;
 			}
 
-			echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier;
-
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			//Generation du segment villeDoss 			
 			$villeODF = $odf->setSegment('villeDoss');
