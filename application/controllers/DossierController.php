@@ -168,21 +168,16 @@ class DossierController extends Zend_Controller_Action
             $DBetablissement = new Model_DbTable_Etablissement;
             $this->view->etablissementLibelle = $DBetablissement->getLibelle($this->_getParam("id_etablissement"));
         }
-        //echo $this->view->idEtablissement;
-		
+
         $this->_forward('general');
     }
 
     public function pieceJointeAction()
     {
-		
-		
         $this->_forward("index", "piece-jointe", null, array(
             "type" => "dossier",
             "id" => $this->_request->id,
         ));
-		
-		
     }
 
     public function addAction()
@@ -201,7 +196,7 @@ class DossierController extends Zend_Controller_Action
         //Récupération de la liste des avis pour la génération du select
         $DBlisteAvis = new Model_DbTable_Avis;
         $this->view->listeAvis = $DBlisteAvis->getAvis();
-        //Zend_Debug::dump($this->view->listeAvis);
+
         if ($this->_getParam("idEtablissement"))
 		{
             $this->view->idEtablissement = $this->_getParam("idEtablissement");
@@ -210,9 +205,9 @@ class DossierController extends Zend_Controller_Action
 		}
 		
 		
-		/***************
+		/******
 			RECUPERATIONS INFOS ETABLISSEMENT (cellule ou etab pour generation des avis)
-		******************/
+		******/
 		if ($this->_getParam("id_etablissement")) {
 			//echo "ICI ON EST DANS UN ETAB (creation dossier)";
 			$DBetab = new Model_DbTable_Etablissement;
@@ -273,8 +268,7 @@ class DossierController extends Zend_Controller_Action
             //Récupération de tous les champs de la table dossier
             $DBdossier = new Model_DbTable_Dossier;
             $this->view->infosDossier = $DBdossier->find($idDossier)->current();
-            //Zend_Debug::dump($this->view->infosDossier->toArray());
-			
+
 			//récuperation des informations sur le créateur du dossier
 			$DB_user = new Model_DbTable_Utilisateur;
 			$DB_informations = new Model_DbTable_UtilisateurInformations;
@@ -284,7 +278,6 @@ class DossierController extends Zend_Controller_Action
 			}else{
 				$this->view->user_info = "";
 			}
-			//Zend_Debug::dump($this->view->user_info->toArray());
 
             //Conversion de la date d'insertion du dossier
             if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
@@ -454,11 +447,9 @@ class DossierController extends Zend_Controller_Action
 
             $listeDateAffectDossier = $dbAffectDossier->recupDateDossierAffect($this->_getParam("id"));
 
-            //Zend_Debug::dump($listeDateAffectDossier);
+            Zend_Debug::dump($listeDateAffectDossier);
             $dbDateComm = new Model_DbTable_DateCommission;
             $dateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
-			
-			//Zend_Debug::dump($dateComm);
 			
             //En fonction du type de dossier on traite les dates d'affectation existantes differement
             if ($this->view->infosDossier['TYPE_DOSSIER'] == 1) {
@@ -473,8 +464,6 @@ class DossierController extends Zend_Controller_Action
             } elseif ($this->view->infosDossier['TYPE_DOSSIER'] == 2 || $this->view->infosDossier['TYPE_DOSSIER'] == 3) {
 
                 // CAS D'UNE VISITE
-                //echo "dossier de type 2".count($listeDateAffectDossier);
-                
 				foreach($listeDateAffectDossier as $val => $ue){
 					if($ue['ID_COMMISSIONTYPEEVENEMENT'] == 1){
 						//COMMISSION EN SALLE
@@ -485,17 +474,7 @@ class DossierController extends Zend_Controller_Action
 					}else{
 						//VISITE OU GROUPE DE VISITE
 						$nbDateExist = count($listeDateAffectDossier);		
-/*						
-						if($nbDateExist == 1){
-							//On verifie qu'il ne s'agit pas d'une principale avant de continuer
-							$infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
-							if (!$infosDateComm['DATECOMMISSION_LIEES']) {
-								echo "NULL";
-							} else {
-								echo "PAS NULL";
-							}
-						}
-*/						
+
 						if ($nbDateExist == 1) {
 							//Si 1 seule date alors la date de viste et de commission est la même
 							$date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
@@ -504,7 +483,7 @@ class DossierController extends Zend_Controller_Action
 							$this->view->dateCommValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
 							$this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 							$this->view->idDateVisiteAffect = $dateComm['ID_DATECOMMISSION'];
-							//$this->view->idDateCommissionAffect = $dateComm['ID_DATECOMMISSION_AFFECT'];
+
 						} elseif ($nbDateExist == 2) {
 							//Si 2 dates alors on affiche toutes les dates -1 dans visite et la dernière dans date de passage en comm
 							$infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
@@ -520,7 +499,7 @@ class DossierController extends Zend_Controller_Action
 							$nbDateDecompte = $nbDatesTotal;
 							$listeDateValue = "";
 							$listeDateInput = "";
-							//echo "nb dates total = ".$nbDatesTotal."<br/>";
+
 							foreach ($recupCommLiees as  $val => $ue) {
 								$date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
 								if ($nbDateDecompte == $nbDatesTotal) {
@@ -538,12 +517,8 @@ class DossierController extends Zend_Controller_Action
 								$this->view->dateVisiteValue = $listeDateValue;
 								$this->view->dateVisiteInput = $listeDateInput;
 
-								//echo $nbDateDecompte." --- ".$ue['DATE_COMMISSION']."<br/>";
-
 								$nbDateDecompte--;
 							}
-
-							//echo "<br/>";
 							//Zend_Debug::dump($recupCommLiees);
 						}
 						
@@ -554,125 +529,7 @@ class DossierController extends Zend_Controller_Action
 				}
 			}
 				
-				
-				
-				
-				/*
-                if ($nbDateExist == 1) {
-                    //Si 1 seule date alors la date de viste et de commission est la même
-                    $date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
-                    $this->view->dateVisiteValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->dateVisiteInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                    $this->view->dateCommValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                    $this->view->idDateVisiteAffect = $dateComm['ID_DATECOMMISSION'];
-                    //$this->view->idDateCommissionAffect = $dateComm['ID_DATECOMMISSION_AFFECT'];
-                } elseif ($nbDateExist == 2) {
-                    //Si 2 dates alors on affiche toutes les dates -1 dans visite et la dernière dans date de passage en comm
-                    $infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
-                    //Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
-                    if (!$infosDateComm['DATECOMMISSION_LIEES']) {
-                        $commPrincipale = $affectDossier['ID_DATECOMMISSION_AFFECT'];
-                    } else {
-                        $commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
-                    }
-                    //récupération de l'ensemble des dates liées
-                    $recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
-                    $nbDatesTotal = count($recupCommLiees);
-                    $nbDateDecompte = $nbDatesTotal;
-                    $listeDateValue = "";
-                    $listeDateInput = "";
-                    //echo "nb dates total = ".$nbDatesTotal."<br/>";
-                    foreach ($recupCommLiees as  $val => $ue) {
-                        $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
-                        if ($nbDateDecompte == $nbDatesTotal) {
-                            //premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
-                            $this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
-                        }
-                        if ($nbDateDecompte > 2) {
-                            $listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR).", ";
-                            $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR).", ";
-                        } elseif ($nbDateDecompte == 2) {
-                            $listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                            $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                        } elseif ($nbDateDecompte == 1) {
-                            //derniere date donc date de commission renseigner l'input hidden avec l'id et le date com value et input
-                            $this->view->dateCommValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                            $this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                            $this->view->idDateCommissionAffect = $ue['ID_DATECOMMISSION'];
-                        }
-
-                        $this->view->dateVisiteValue = $listeDateValue;
-                        $this->view->dateVisiteInput = $listeDateInput;
-
-                        //echo $nbDateDecompte." --- ".$ue['DATE_COMMISSION']."<br/>";
-
-                        $nbDateDecompte--;
-                    }
-
-                    //echo "<br/>";
-                    //Zend_Debug::dump($recupCommLiees);
-                }
-				
-            } elseif ($this->view->infosDossier['TYPE_DOSSIER'] == 3) {
-                //CAS D'UN GROUPE DE VISITE
-                //$listeDateAffectDossier doit contenir deux dates. Une pour la visite et une pour le passage en commission
-                //Zend_Debug::dump($listeDateAffectDossier);
-
-                foreach ($listeDateAffectDossier as  $val => $ue) {
-                    if ($ue['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
-                        //il sagit de la date de commission en salle
-                        $date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
-                        $this->view->dateCommValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                        $this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                        $this->view->idDateCommissionAffect = $ue['ID_DATECOMMISSION'];
-                    } elseif ($ue['ID_COMMISSIONTYPEEVENEMENT'] == 3) {
-                        //il sagit (de la / des) date(s) de visite
-                        $infosDateComm = $dbDateComm->find($ue['ID_DATECOMMISSION'])->current();
-                        //Zend_Debug::dump($infosDateComm);
-                        //echo "!!!!!!!!!! - ".$infosDateComm['DATECOMMISSION_LIEES'];
-                        //Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
-                        if (!$infosDateComm['DATECOMMISSION_LIEES']) {
-                            $commPrincipale = $ue['ID_DATECOMMISSION'];
-                        } else {
-                            $commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
-                        }
-                        //Zend_Debug::dump($commPrincipale);
-                        $recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
-                        //Zend_Debug::dump($recupCommLiees);
-                        $nbDatesTotal = count($recupCommLiees);
-                        $nbDateDecompte = $nbDatesTotal;
-                        $listeDateValue = "";
-                        $listeDateInput = "";
-                        //echo "nb dates total = ".$nbDatesTotal."<br/>";
-                        foreach ($recupCommLiees as  $val => $ue) {
-                            $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
-                            if ($nbDateDecompte == $nbDatesTotal) {
-                                //premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
-                                $this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
-                            }
-                            if ($nbDateDecompte > 1) {
-                                $listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR).", ";
-                                $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR).", ";
-                            } elseif ($nbDateDecompte == 1) {
-                                $listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                                $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                            }
-
-                            $this->view->dateVisiteValue = $listeDateValue;
-                            $this->view->dateVisiteInput = $listeDateInput;
-
-                            //echo $nbDateDecompte." --- ".$ue['DATE_COMMISSION']."<br/>";
-
-                            $nbDateDecompte--;
-                        }
-                    }
-                }
-            }
-			*/
-			
-			//Recuperation des documents manquants dans le cas d'un dossier incomplet
-			
+			//Recuperation des documents manquants dans le cas d'un dossier incomplet			
 			$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
 			$this->view->listeDocManquant = $dbDossDocManquant->getDocManquantDoss($this->_getParam("id"));
 			//Zend_Debug::dump($this->view->listeDocManquant);
@@ -717,18 +574,16 @@ class DossierController extends Zend_Controller_Action
                 if ($this->_getParam("idEtablissement")) {
                     $DBetab = new Model_DbTable_Etablissement;
                     $etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
-                    //echo "pour l'établissement ".$etabTab->LIBELLE_ETABLISSEMENTINFORMATIONS;
+
 					$this->view->etablissement = $etabTab->toArray();
-					//Zend_Debug::dump($this->view->etablissement);
+
 					$DbAdresse = new Model_DbTable_EtablissementAdresse;
 					$this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
-					//Zend_Debug::dump($adresse);
+
                 } elseif ($this->_getParam("idDossier")) {
                     $DBdossier = new Model_DbTable_Dossier;
                     $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
 					$this->view->listeEtablissement = $tabEtablissement;
-					//echo count($this->view->listeEtablissement);
-					//Zend_Debug::dump($this->view->listeEtablissement);
                 }
             break;
             case "showNature":
@@ -854,7 +709,6 @@ class DossierController extends Zend_Controller_Action
                 $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
             break;
             case 'showListeDossierEtab':
-                //echo $this->_getParam('idListeEtab');
                 //On place dans un tableau chacun des idEtablissement liés au dossier
                 //$listeEtab = split("-", $this->_getParam('idListeEtab'));
                 $listeEtab = explode("-", $this->_getParam('idListeEtab'));
@@ -863,7 +717,6 @@ class DossierController extends Zend_Controller_Action
                 $dbDossier = new Model_DbTable_Dossier;
                 $listeDossierEtab = array();
                 foreach ($listeEtab as $lib => $val) {
-                    //echo $val."<br/>";
                     $listeDossierEtab[$val] = $dbDossier->getDossierEtab($val,$this->_getParam('idDossier'));
                 }
                 //Zend_Debug::dump($listeDossierEtab);
@@ -1050,8 +903,6 @@ class DossierController extends Zend_Controller_Action
         foreach ($_POST as $libelle => $value) {
             //On exclu la lecture de selectNature => select avec les natures;
             //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
-            //  !  \\
-            //
             if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant") {
                 //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
                 if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER") {
@@ -1124,8 +975,7 @@ class DossierController extends Zend_Controller_Action
 		}
 
         $nouveauDossier->save();
-	
-		//echo $this->_getParam("selectNature")." - ".$this->_getParam("TYPE_DOSSIER")."<br/>";
+
 		if ($this->_getParam("selectNature") == 21 && $this->_getParam("TYPE_DOSSIER") == 2) {
 			//VISITE PERIODIQUE
 			//Dans le cas d'une visite périodique on renseigne le champ DATEVISITE_DOSSIER pour pouvoir calculer la périodicité suviante
@@ -1250,15 +1100,13 @@ class DossierController extends Zend_Controller_Action
 		//GESTION DE LA RECUPERATION DES DOCUMENTS CONSULTES DE LA PRECEDENTE VP SI IL EN EXISTE UNE (UNIQUEMENT EN CREATION DE DOSSIER)
 		if( ( $idNature == 21 || $idNature == 26 ) &&  $_POST['idEtablissement'] != "" )
 		{
-			//echo "ici on check les precedentes vp";
 			$lastVP = $DBdossier->findLastVp($this->_getParam("idEtablissement"));
 			//Zend_Debug::dump($lastVP);
 			$idDossierLastVP = $lastVP['ID_DOSSIER'];
-			//echo $lastVP['ID_DOSSIER'];
+
 			if($lastVP['ID_DOSSIER'] != '')
 			{
-				//echo $lastVP['ID_DOSSIER']." IL FAUT RECUP DES DOCUMENTS CONSULTES";
-				
+
 		        $dblistedoc = new Model_DbTable_DossierListeDoc;
 				$dblistedocAjout = new Model_DbTable_ListeDocAjout;
 
@@ -1267,8 +1115,7 @@ class DossierController extends Zend_Controller_Action
 
 				//ici on récupère tous les documents qui ont été ajoutés par l'utilisateur (document non proposé par défaut)
 				$listeDocAjout = $dblistedocAjout->getDocAjout($idDossierLastVP,$idNature);
-				//Zend_Debug::dump($listeDocAjout);
-				
+
 				//on copie les docrenseigne pour la nouvelle visite
 				$dbDocConsulte = new Model_DbTable_DossierDocConsulte;
 				foreach($listeDocRenseigne as $val => $ue)
@@ -1302,7 +1149,6 @@ class DossierController extends Zend_Controller_Action
 		{
 			$docManquantArray = Array();
 			$dateDocManquantArray = Array();
-			//array_push($prescriptionArray, $assoc);
 			if ( isset($_POST['docManquant']) ) 
 			{
 				foreach ($_POST['docManquant']  as $libelle => $value) {
@@ -1318,9 +1164,7 @@ class DossierController extends Zend_Controller_Action
 						array_push($dateDocManquantArray, $value);
 				}
 			}
-			//Zend_Debug::dump($docManquantArray);
-			//Zend_Debug::dump($dateDocManquantArray);
-			
+
 			$nbDocParam = count($docManquantArray);
 			$nbDateParam = count($dateDocManquantArray);
 
@@ -1330,7 +1174,6 @@ class DossierController extends Zend_Controller_Action
 			foreach ($docManquantArray  as $libelle => $value)
 			{
 				$docEnC = $dbDossDocManquant->getDocManquantDossNum($idDossier,$cpt);
-				//Zend_Debug::dump($docEnC);
 				if($docEnC && $docEnC['DATE_DOCSMANQUANT'] == NULL)
 				{
 					//echo "On find et on met à jour ".$docEnC['ID_DOCMANQUANT']."<br/>";

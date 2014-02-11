@@ -6,28 +6,27 @@ if(count($this->membresFiles) == 0){
 	echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun membre n'a été renseigné pour la commission</span><br/><br/><br/>";
 	return false;
 }
-foreach($this->membresFiles as $val => $membre){	
+
+foreach($this->membresFiles as $val => $membre){
+
 	if($membre->ID_GROUPEMENT == NULL && $membre->ID_UTILISATEURINFORMATIONS == NULL){
 		//génération du document par commune pour les maires par exemple		
 		//si le document concernant ce membre existe alors on rentre dans la boucle
-		
 		if($membre->COURRIER_CONVOCATIONSALLE != NULL){
-			//echo "<br/>".$membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE."<br/>";
-			if($this->typeCommission == 1)
+			if($this->typeCommission == 1 || $this->typeCommission == 3)
 			{
 				//Salle
 				$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONSALLE_".$membre->COURRIER_CONVOCATIONSALLE;
-			}else if($this->typeCommission == 2 || $this->typeCommission == 3){
+			}else if($this->typeCommission == 2){
 				//Visite et Groupe de visite
-				$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONVISITE_".$membre->COURRIER_CONVOCATIONSALLE;
+				$nomFichier = $membre->ID_COMMISSIONMEMBRE."CONVOCATIONVISITE_".$membre->COURRIER_CONVOCATIONVISITE;
 			}
+
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
-			//Generation du segment ListePrescription 
+			//Generation du segment villeDoss 			
 			$villeODF = $odf->setSegment('villeDoss');
 			
 			foreach($this->listeCommunes as $val => $commune){
-				//Zend_Debug::dump($commune);
-				//LIBELLE COMMUNE = 0
 				//Array des infos de la commune = 1
 				$firstLetter = $commune[0]{0}; 
 				if(in_array($firstLetter, $consonne)){
@@ -90,11 +89,10 @@ foreach($this->membresFiles as $val => $membre){
 			$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 			
 			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>La convocation pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré</span><br/><br/><br/>";
-			
 		}else{
 			echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun document type n'a été renseigné pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE."</span><br/><br/><br/>";
 		}
-		
+
 	}else if($membre->ID_GROUPEMENT != NULL){
 		//génération du document par groupement de commune pour les gendarmerie/police par exemple
 		//echo "membre de groupement ".$membre->LIBELLE_COMMISSIONMEMBRE."<br/>";
@@ -125,15 +123,7 @@ foreach($this->membresFiles as $val => $membre){
 			//Liste des champs à ajouter
 			
 			addChamp($grpLoop,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
-			/*
-			$firstLetter = $infosGroupement["VILLEADRESSE_UTILISATEURINFORMATIONS"]{0};
-			
-			if(in_array($firstLetter, $consonne)){
-				$communeShow = "d'".$infosGroupement["VILLEADRESSE_UTILISATEURINFORMATIONS"];
-			}else{
-				$communeShow = "de ".$infosGroupement["VILLEADRESSE_UTILISATEURINFORMATIONS"];
-			}
-			*/
+
 			$dateDuJour = new Zend_Date();
 			addChamp($grpLoop,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 			
@@ -188,9 +178,8 @@ foreach($this->membresFiles as $val => $membre){
 			echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun document type n'a été renseigné pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE."</span><br/><br/><br/>";
 			
 		}		
-		
-	}
 	
+	}
 }
 
 function addChamp($segment,$nomOdf, $variable){
