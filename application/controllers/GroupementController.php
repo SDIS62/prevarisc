@@ -16,7 +16,7 @@
         {
             // Titre
             $this->view->title = "Groupements de communes";
-            
+
             $this->_helper->layout->setLayout('menu_left');
 
             // Liste des models
@@ -27,7 +27,7 @@
 
             // Envoi dans la vue les groupements et leur types
             $this->view->array_groupementstypes = $array_groupementstypes;
-            
+
             $commune = new Model_DbTable_AdresseCommune;
             $this->view->villes_tests = $commune->fetchAll()->toArray();
         }
@@ -47,11 +47,10 @@
 
             $this->view->types = $types;
 
-            // Coordonn�e du groupement
+            // Coordonnées du groupement
             $DB_informations = new Model_DbTable_UtilisateurInformations;
 
-            if ( isset($_GET["id"]) && $_GET["id"] != 0 ) 
-            {
+            if ( isset($_GET["id"]) && $_GET["id"] != 0 ) {
                 $groupement = $groupements->find($_GET["id"])->current();
                 $this->view->groupement = $groupement->toArray();
                 $this->view->libelle = $groupement["LIBELLE_GROUPEMENT"];
@@ -59,8 +58,7 @@
                 $this->view->preventionnistes = $groupements->getPreventionnistes($_GET["id"]);
                 $this->view->ville_du_groupement = $groupement->findModel_DbTable_AdresseCommuneViaModel_DbTable_GroupementCommune()->toArray();
                 $this->view->user_info = $DB_informations->find( $groupement->ID_UTILISATEURINFORMATIONS )->current();
-            } 
-            else
+            } else
                 $this->view->preventionnistes = array();
         }
 
@@ -73,8 +71,7 @@
 
         public function addAction()
         {
-            try 
-            {
+            try {
                 // Modele groupement et groupement communes et groupement prev.
                 $groupements = new Model_DbTable_Groupement;
                 $groupementscommune = new Model_DbTable_GroupementCommune;
@@ -82,14 +79,11 @@
                 $DB_informations = new Model_DbTable_UtilisateurInformations;
 
                 // Si c'est pour un nouveau groupement
-                if ($_POST["id_gpt"] == 0) 
-                {
+                if ($_POST["id_gpt"] == 0) {
                     $new_groupement = $groupements->createRow();
                     $id_coord = $DB_informations->insert(array_intersect_key($_POST, $DB_informations->info('metadata')));
                     $new_groupement->ID_UTILISATEURINFORMATIONS = $id_coord;
-                } 
-                else 
-                {
+                } else {
                     $new_groupement_item = $groupements->find( $_POST["id_gpt"] );
                     $new_groupement = $new_groupement_item->current();
 
@@ -98,16 +92,13 @@
 
                     $info = $DB_informations->find( $new_groupement->ID_UTILISATEURINFORMATIONS )->current();
 
-                    if ($info == null) 
-                    {
+                    if ($info == null) {
                         if($_POST["ID_UTILISATEURCIVILITE"] == "null")
                             unset($_POST["ID_UTILISATEURCIVILITE"]);
                         unset($_POST["ID_FONCTION"]);
                         $id = $DB_informations->insert(array_intersect_key($_POST, $DB_informations->info('metadata')));
                         $new_groupement->ID_UTILISATEURINFORMATIONS = $id;
-                    } 
-                    else 
-                    {
+                    } else {
                         if($_POST["ID_UTILISATEURCIVILITE"] == "null")
                             unset($_POST["ID_UTILISATEURCIVILITE"]);
                         unset($_POST["ID_FONCTION"]);
@@ -121,10 +112,8 @@
                 $new_groupement->save();
 
                 // On associe les communes
-                if ( isset($_POST["villes"]) ) 
-                {
-                    foreach ($_POST["villes"] as $value) 
-                    {
+                if ( isset($_POST["villes"]) ) {
+                    foreach ($_POST["villes"] as $value) {
                         $new = $groupementscommune->createRow();
 
                         $new->ID_GROUPEMENT = $new_groupement->ID_GROUPEMENT;
@@ -135,10 +124,8 @@
                 }
 
                 // On associe les preventionnistes
-                if ( isset($_POST["prev"]) ) 
-                {
-                    foreach ($_POST["prev"] as $value) 
-                    {
+                if ( isset($_POST["prev"]) ) {
+                    foreach ($_POST["prev"] as $value) {
                         $new = $groupementsprev->createRow();
 
                         $new->ID_GROUPEMENT = $new_groupement->ID_GROUPEMENT;
@@ -152,31 +139,28 @@
                 $this->view->id = $new_groupement->ID_GROUPEMENT;
                 $this->view->libelle = $new_groupement->LIBELLE_GROUPEMENT;
                 $this->view->type = $new_groupement->ID_GROUPEMENTTYPE;
-                
+
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Ajout réussi !',
                     'message' => 'Le traitement est ok.'
                 ));
-                
-            } 
-            catch (Exception $e) 
-            {
+
+            } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
                     'title' => 'Aie',
                     'message' => $e->getMessage()
                 ));
             }
-            
+
             // Redirection
             $this->_helper->redirector('index');
         }
 
         public function deleteAction()
         {
-            try 
-            {
+            try {
                 $this->_helper->viewRenderer->setNoRender(); // On desactive la vue
 
                 // On supprime le groupement
@@ -189,30 +173,27 @@
                 $communes->delete("ID_GROUPEMENT = " . $_GET["id"]);
                 $prev->delete("ID_GROUPEMENT = " . $_GET["id"]);
                 $groupements->delete("ID_GROUPEMENT = " . $_GET["id"]);
-            
+
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Suppression réussie !',
                     'message' => 'Le traitement est ok.'
                 ));
-            } 
-            catch (Exception $e) 
-            {
+            } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
                     'title' => 'Aie',
                     'message' => $e->getMessage()
                 ));
             }
-            
+
             // Redirection
             $this->_helper->redirector('index');
         }
 
         public function addTypeAction()
         {
-            try 
-            {
+            try {
                 // Modèle
                 $model_groupementtype = new Model_DbTable_GroupementType();
 
@@ -222,15 +203,13 @@
                 $new->save();
 
                 $this->view->id = $new->ID_GROUPEMENTTYPE;
-                
+
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Ajout réussi !',
                     'message' => 'Le traitement est ok.'
                 ));
-            } 
-            catch (Exception $ex) 
-            {
+            } catch (Exception $ex) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
                     'title' => 'Aie',
@@ -244,6 +223,6 @@
         public function deleteTypeAction()
         {
             // On desactive la vue
-            $this->_helper->viewRenderer->setNoRender(); 
+            $this->_helper->viewRenderer->setNoRender();
         }
     }

@@ -5,15 +5,15 @@ class GestionDesCommunesController extends Zend_Controller_Action
     /**
      * Affichage de la liste des villes
      *
-     */  
+     */
     public function indexAction()
     {
         // Définition du layout
         $this->_helper->layout->setLayout('menu_left');
-        
-        // Modèles 
+
+        // Modèles
         $commune = new Model_DbTable_AdresseCommune;
-        
+
         // Liste des villes pour le select
         $this->view->rowset_communes = $commune->fetchAll(null, "LIBELLE_COMMUNE");
     }
@@ -28,7 +28,7 @@ class GestionDesCommunesController extends Zend_Controller_Action
         $commune = $DB_communes->find($this->_request->numinsee)->current();
         $this->view->commune = $commune;
 
-        // On envoit le tout sur la vue
+        // On envoie le tout sur la vue
         $this->view->user_info = $DB_informations->find( $commune->ID_UTILISATEURINFORMATIONS )->current();
 
         $this->view->ext = $this->_request->ext;
@@ -36,8 +36,7 @@ class GestionDesCommunesController extends Zend_Controller_Action
 
     public function saveAction()
     {
-        try 
-        {
+        try {
 
             $this->_helper->viewRenderer->setNoRender();
 
@@ -48,42 +47,34 @@ class GestionDesCommunesController extends Zend_Controller_Action
             // On récupère la commune
             $commune = $DB_communes->find($_GET["numinsee"])->current();
 
-            if ($commune->ID_UTILISATEURINFORMATIONS == 0)
-            {
+            if ($commune->ID_UTILISATEURINFORMATIONS == 0) {
                 $commune->ID_UTILISATEURINFORMATIONS = $DB_informations->insert(array_intersect_key($_POST, $DB_informations->info('metadata')));
-            }
-            else
-            {
+            } else {
                 $info = $DB_informations->find( $commune->ID_UTILISATEURINFORMATIONS )->current();
 
-                if ($info == null)
-                {
+                if ($info == null) {
                     $id = $DB_informations->insert(array_intersect_key($_POST, $DB_informations->info('metadata')));
                     $commune->ID_UTILISATEURINFORMATIONS = $id;
-                }
-                else
-                {
+                } else {
                     $info->setFromArray(array_intersect_key($_POST, $DB_informations->info('metadata')))->save();
                 }
             }
 
             $commune->save();
-            
+
             $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Sauvegarde réussie !',
                     'message' => 'Le traitement est ok.'
                 ));
-        } 
-        catch (Exception $ex) 
-        {
+        } catch (Exception $ex) {
             $this->_helper->flashMessenger(array(
                     'context' => 'error',
                     'title' => 'Aie',
                     'message' => $ex->getMessage()
                 ));
         }
-        
+
         // Redirection
         $this->_helper->redirector('index');
     }
