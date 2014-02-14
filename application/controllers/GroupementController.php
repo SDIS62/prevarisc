@@ -213,7 +213,7 @@
         {
             try 
             {
-                // Mod�le
+                // Modèle
                 $model_groupementtype = new Model_DbTable_GroupementType();
 
                 // Ajout du type
@@ -243,6 +243,7 @@
 
         public function deleteTypeAction()
         {
-            $this->_helper->viewRenderer->setNoRender(); // On desactive la vue
+            // On desactive la vue
+            $this->_helper->viewRenderer->setNoRender(); 
         }
     }
