@@ -1,29 +1,30 @@
 <?php
 
-    class PieceJointeController extends Zend_Controller_Action
+class PieceJointeController extends Zend_Controller_Action
+{
+    public $path;
+
+    public function init()
     {
-        public $path;
+        $this->path = REAL_DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;
 
-        public function init()
-        {
-            $this->path = REAL_DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;
-            
-            // Actions à effectuées en AJAX
-            $ajaxContext = $this->_helper->getHelper('AjaxContext');
-            $ajaxContext->addActionContext('check', 'json')
-                ->initContext();
-        }
+        // Actions à effectuées en AJAX
+        $ajaxContext = $this->_helper->getHelper('AjaxContext');
+        $ajaxContext->addActionContext('check', 'json')
+            ->initContext();
+    }
 
-        public function indexAction()
-        {
+    public function indexAction()
+    {
+        try {
             // Modèles
             $DBused = new Model_DbTable_PieceJointe;
 
             // Cas dossier
-            if ($this->_request->type == "dossier") {				
+            if ($this->_request->type == "dossier") {
                 $this->view->type = "dossier";
                 $this->view->identifiant = $this->_request->id;
-				$this->view->pjcomm = $this->_request->pjcomm;
+                $this->view->pjcomm = $this->_request->pjcomm;
                 $listePj = $DBused->affichagePieceJointe("dossierpj", "dossierpj.ID_DOSSIER", $this->_request->id);
             }
 
@@ -43,12 +44,20 @@
 
             // On envoi la liste des PJ dans la vue
             $this->view->listePj = $listePj;
-			//Zend_Debug::dump($this->view->listePj);
+            //Zend_Debug::dump($this->view->listePj);
             $this->view->path = DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;;
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
         }
+    }
 
-        public function formAction()
-        {
+    public function formAction()
+    {
+        try {
             // Placement
             $this->view->type = $this->_getParam('type');
             $this->view->identifiant = $this->_getParam('id');
@@ -59,10 +68,18 @@
                 $DBdossier = new Model_DbTable_Dossier;
                 $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
             }
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
         }
+    }
 
-        public function addAction()
-        {
+    public function addAction()
+    {
+        try {
             $this->_helper->viewRenderer->setNoRender(true);
             $this->_helper->layout->disableLayout();
 
@@ -154,10 +171,18 @@
                 // CALLBACK
                 echo "<script type='text/javascript'>window.top.window.callback('".$nouvellePJ->ID_PIECEJOINTE."', '".$extension."');</script>";
             }
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
         }
+    }
 
-        public function deleteAction()
-        {
+    public function deleteAction()
+    {
+        try {
             $this->_helper->viewRenderer->setNoRender(true);
 
             // Modèle
@@ -191,16 +216,23 @@
                 $DBitem->delete("ID_PIECEJOINTE = " . (int) $this->_request->id_pj);
                 $pj->delete();
             }
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
         }
+    }
 
-        public function checkAction()
-        {
-			
+    public function checkAction()
+    {
+        try {
             // Si elle existe
             $this->view->exists = file_exists($this->path . $this->_request->idpj . $this->_request->ext);
 
             if ($this->view->exists) {
-				
+
                 // Modèle
                 $DBused = new Model_DbTable_PieceJointe;
 
@@ -213,5 +245,12 @@
                     "id" => $this->_request->id,
                 ));
             }
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
         }
     }
+}

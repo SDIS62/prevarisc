@@ -68,7 +68,7 @@
             // Envoi du html sur la vue
             $this->view->html = $html;
         }
-        
+
         public function searchChildDossAction()
         {
             // Resultats HTML

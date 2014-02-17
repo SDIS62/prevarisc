@@ -4,7 +4,7 @@ class AdresseController extends Zend_Controller_Action
 {
     /**
      * @inheritdoc
-     */ 
+     */
     public function init()
     {
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
@@ -21,8 +21,16 @@ class AdresseController extends Zend_Controller_Action
      */
     public function getVilleParCodePostalAction()
     {
-        $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        $this->view->villes = $DB_adresse->getVilleByCP( $this->_request->code_postal );
+        try {
+            $DB_adresse = new Model_DbTable_EtablissementAdresse;
+            $this->view->villes = $DB_adresse->getVilleByCP( $this->_request->code_postal );
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
+        }
     }
 
     /**
@@ -31,8 +39,16 @@ class AdresseController extends Zend_Controller_Action
      */
     public function getTypesVoieParVilleAction()
     {
-        $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        $this->view->types_voies = $DB_adresse->getTypesVoieByVille( $this->_request->code_insee );
+        try {
+            $DB_adresse = new Model_DbTable_EtablissementAdresse;
+            $this->view->types_voies = $DB_adresse->getTypesVoieByVille( $this->_request->code_insee );
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
+        }
     }
 
     /**
@@ -41,8 +57,16 @@ class AdresseController extends Zend_Controller_Action
      */
     public function getVoiesAction()
     {
-        $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        $this->view->resultats = $DB_adresse->getVoies( $this->_request->code_insee, $this->_request->q );
+        try {
+            $DB_adresse = new Model_DbTable_EtablissementAdresse;
+            $this->view->resultats = $DB_adresse->getVoies( $this->_request->code_insee, $this->_request->q );
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
+        }
     }
 
     /**
@@ -51,7 +75,15 @@ class AdresseController extends Zend_Controller_Action
      */
     public function getAction()
     {
-        $model_adresse = new Model_DbTable_AdresseCommune;
-        $this->view->resultats = $model_adresse->get($this->_request->q);
+        try {
+            $model_adresse = new Model_DbTable_AdresseCommune;
+            $this->view->resultats = $model_adresse->get($this->_request->q);
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
+        }
     }
 }
