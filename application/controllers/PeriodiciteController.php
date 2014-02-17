@@ -1,55 +1,61 @@
 <?php
-    
+
 class PeriodiciteController extends Zend_Controller_Action
 {
     /**
      * Tableau des périodicités
      *
-     */  
+     */
     public function indexAction()
     {
-        // Définition du layout
-        $this->_helper->layout->setLayout('menu_left');
+        try {
+            // Définition du layout
+            $this->_helper->layout->setLayout('menu_left');
 
-        // Liste des types d'activité
-        $activite_model = new Model_DbTable_Type();
-        $this->view->array_types = $activite_model->fetchAll()->toArray();
+            // Liste des types d'activité
+            $activite_model = new Model_DbTable_Type();
+            $this->view->array_types = $activite_model->fetchAll()->toArray();
 
-        // Liste des catégorie
-        $cat_model = new Model_DbTable_Categorie();
-        $this->view->array_categories = $cat_model->fetchAll()->toArray();
+            // Liste des catégorie
+            $cat_model = new Model_DbTable_Categorie();
+            $this->view->array_categories = $cat_model->fetchAll()->toArray();
 
-        // Liste des classes
-        $classe_model = new Model_DbTable_Classe();
-        $this->view->array_classes = $classe_model->fetchAll()->toArray();
+            // Liste des classes
+            $classe_model = new Model_DbTable_Classe();
+            $this->view->array_classes = $classe_model->fetchAll()->toArray();
 
-        // Les périodicités
-        $perio_model = new Model_DbTable_Periodicite();
-        $tableau = $perio_model->fetchAll()->toArray();
+            // Les périodicités
+            $perio_model = new Model_DbTable_Periodicite();
+            $tableau = $perio_model->fetchAll()->toArray();
 
-        $result = array();
+            $result = array();
 
-        for ($i=0; $i < count($tableau); $i++)
-        {
-            // Sans local sommeil
-            $result[$tableau[$i]["ID_CATEGORIE"]][$tableau[$i]["ID_TYPE"]][$tableau[$i]["LOCALSOMMEIL_PERIODICITE"]] = $tableau[$i]["PERIODICITE_PERIODICITE"];
+            for ($i=0; $i < count($tableau); $i++) {
+                // Sans local sommeil
+                $result[$tableau[$i]["ID_CATEGORIE"]][$tableau[$i]["ID_TYPE"]][$tableau[$i]["LOCALSOMMEIL_PERIODICITE"]] = $tableau[$i]["PERIODICITE_PERIODICITE"];
 
-            // Avec local (on exclu igh == categ à 0)
-            if($tableau[$i]["ID_CATEGORIE"] != 0)
-                $result[$tableau[$i++]["ID_CATEGORIE"]][$tableau[$i]["ID_TYPE"]][$tableau[$i]["LOCALSOMMEIL_PERIODICITE"]] = $tableau[$i]["PERIODICITE_PERIODICITE"];
+                // Avec local (on exclu igh == categ à 0)
+                if($tableau[$i]["ID_CATEGORIE"] != 0)
+                    $result[$tableau[$i++]["ID_CATEGORIE"]][$tableau[$i]["ID_TYPE"]][$tableau[$i]["LOCALSOMMEIL_PERIODICITE"]] = $tableau[$i]["PERIODICITE_PERIODICITE"];
+            }
+
+            $this->view->tableau = $result;
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur inattendue',
+                'message' => $e->getMessage()
+            ));
         }
-
-        $this->view->tableau = $result;
     }
 
     /**
      * Sauvegarde du tableau des périodicités
      *
-     */  
+     */
     public function saveAction()
     {
-        try
-        {
+        try {
             // Model des périodicités
             $perio_model = new Model_DbTable_Periodicite();
 
@@ -69,23 +75,21 @@ class PeriodiciteController extends Zend_Controller_Action
                 $item->LOCALSOMMEIL_PERIODICITE = $result[2];
                 $item->PERIODICITE_PERIODICITE = $value;
                 $item->save();
-                
+
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Mise à jour réussie !',
                     'message' => 'Le tableau des périodicités a bien été mis à jour.'
                 ));
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
                 'title' => 'Aie',
                 'message' => $e->getMessage()
             ));
         }
-        
+
         // Redirection
         $this->_helper->redirector('index');
     }
