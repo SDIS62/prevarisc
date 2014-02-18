@@ -36,4 +36,4 @@ composer.phar
 # MySQL WokBench #
 ##################
 *.mwb.*
-/nbproject/private/
+/nbproject/
