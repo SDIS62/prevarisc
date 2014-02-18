@@ -43,15 +43,14 @@ class CouchesCartographiquesController extends Zend_Controller_Action
                 $data = $this->getRequest()->getPost();
                 $model_couchecarto->insert($data);
 
-                // Redirection
-                $this->_helper->redirector('list');
-            }
-
-            $this->_helper->flashMessenger(array(
+                $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Ajout réussi !',
-                    'message' => 'Le traitement est ok.'
+                    'message' => 'La couche cartographique '.$data['NOM_COUCHECARTO'].' a été ajoutée.'
                 ));
+
+            }
+
         } catch (Exception $ex) {
             $this->_helper->flashMessenger(array(
                     'context' => 'error',
@@ -61,7 +60,9 @@ class CouchesCartographiquesController extends Zend_Controller_Action
         }
 
         // Redirection
-        $this->_helper->redirector('index');
+        if ($this->_request->isPost()) {
+            $this->_helper->redirector('list');
+        }
     }
 
     public function editAction()
@@ -93,13 +94,10 @@ class CouchesCartographiquesController extends Zend_Controller_Action
             // Suppression
             $model_couchecarto->delete("ID_COUCHECARTO = " . $this->getRequest()->getParam('id'));
 
-            // Redirection
-            $this->_helper->redirector('list');
-
             $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Suppression réussie !',
-                    'message' => 'Le traitement est ok.'
+                    'message' => 'La couche cartographique a été supprimée.'
                 ));
         } catch (Exception $ex) {
             $this->_helper->flashMessenger(array(
@@ -110,6 +108,6 @@ class CouchesCartographiquesController extends Zend_Controller_Action
         }
 
         // Redirection
-        $this->_helper->redirector('index');
+        $this->_helper->redirector('list');
     }
 }

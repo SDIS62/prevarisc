@@ -143,7 +143,7 @@
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Ajout réussi !',
-                    'message' => 'Le traitement est ok.'
+                    'message' => 'Le groupement '.$new_groupement->LIBELLE_GROUPEMENT.' a été ajouté.'
                 ));
 
             } catch (Exception $e) {
@@ -177,7 +177,7 @@
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
                     'title' => 'Suppression réussie !',
-                    'message' => 'Le traitement est ok.'
+                    'message' => 'Le groupement a été supprimé.'
                 ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
