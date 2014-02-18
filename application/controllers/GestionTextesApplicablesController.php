@@ -10,42 +10,23 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        try {
-            $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_left');
 
-            //on commence par afficher tous les texte applicables regroupés par leurs type
-            $dbTextesAppl = new Model_DbTable_TextesAppl;
-            $this->view->listeTextesAppl = $dbTextesAppl->recupTextesAppl();
-            //Zend_Debug::dump($this->view->listeTextesAppl);
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
+        //on commence par afficher tous les texte applicables regroupés par leurs type
+        $dbTextesAppl = new Model_DbTable_TextesAppl;
+        $this->view->listeTextesAppl = $dbTextesAppl->recupTextesAppl();
 
     }
 
     public function formtexteapplAction()
     {
-        try {
-            //Cas d'une création d'un texte
-            $dbTypeTextesAppl = new Model_DbTable_TypeTextesAppl;
-            $this->view->listeType = $dbTypeTextesAppl->getType();
-            //Zend_Debug::dump($this->view->listeType);
-            if ($this->_getParam("id")) {
-                $this->view->idTexteAppl = $this->_getParam("id");
-                $dbTextesAppl = new Model_DbTable_TextesAppl;
-                $this->view->texteEdit = $dbTextesAppl->find($this->_getParam("id"));
-                //Zend_Debug::dump($this->view->texteEdit->toArray());
-            }
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
+        //Cas d'une création d'un texte
+        $dbTypeTextesAppl = new Model_DbTable_TypeTextesAppl;
+        $this->view->listeType = $dbTypeTextesAppl->getType();
+        if ($this->_getParam("id")) {
+            $this->view->idTexteAppl = $this->_getParam("id");
+            $dbTextesAppl = new Model_DbTable_TextesAppl;
+            $this->view->texteEdit = $dbTextesAppl->find($this->_getParam("id"));
         }
     }
 
@@ -69,6 +50,13 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
                 $newRow['ID_TYPETEXTEAPPL'] = $this->_getParam("type");
                 $newRow->save();
             }
+
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Sauvegarde réussie !',
+                'message' => 'Le texte applicable a bien été sauvegardé.'
+            ));
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -76,5 +64,9 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
+
+        // Redirection
+        $this->_helper->redirector('index');
+
     }
 }

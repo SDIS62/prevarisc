@@ -22,28 +22,21 @@ class UsersController extends Zend_Controller_Action
      */
     public function listAction()
     {
-        try {
-            // Modèles
-            $DB_groupe = new Model_DbTable_Groupe;
-            $DB_user = new Model_DbTable_Utilisateur;
-            $DB_groupe = new Model_DbTable_Groupe;
 
-            // Récupération de l'ensemble des informations et on envoie sur la vue
-            $this->view->groupes = $DB_groupe->fetchAll()->toArray();
+        // Modèles
+        $DB_groupe = new Model_DbTable_Groupe;
+        $DB_user = new Model_DbTable_Utilisateur;
+        $DB_groupe = new Model_DbTable_Groupe;
 
-            // Si on affiche un groupe en particulier, on envoie ses informations
-            if ($this->hasParam('gid')) {
-                $this->view->users = $DB_user->getUsersWithInformations($this->_request->getParam('gid'));
-                $this->view->groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
-            } else {
-                $this->view->users = $DB_user->getUsersWithInformations();
-            }
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
+        // Récupération de l'ensemble des informations et on envoie sur la vue
+        $this->view->groupes = $DB_groupe->fetchAll()->toArray();
+
+        // Si on affiche un groupe en particulier, on envoie ses informations
+        if ($this->hasParam('gid')) {
+            $this->view->users = $DB_user->getUsersWithInformations($this->_request->getParam('gid'));
+            $this->view->groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
+        } else {
+            $this->view->users = $DB_user->getUsersWithInformations();
         }
     }
 
@@ -60,6 +53,11 @@ class UsersController extends Zend_Controller_Action
             // Si un groupe est spécifié, on l'édite
             if ($this->hasParam('gid')) {
                 $this->view->groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Ajout réussi !',
+                    'message' => 'Le groupe a été ajouté.'
+                ));
             }
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
@@ -67,6 +65,11 @@ class UsersController extends Zend_Controller_Action
                 'title' => 'Erreur inattendue',
                 'message' => $e->getMessage()
             ));
+        }
+
+        //redirection
+        if ($this->hasParam('gid')) {
+            $this->_helper->redirector('list');
         }
     }
 
@@ -97,16 +100,25 @@ class UsersController extends Zend_Controller_Action
 
                 // On supprime le groupe
                 $DB_groupe->delete($this->_request->getParam('gid'));
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Suppression réussie !',
+                    'message' => 'Le groupe a été supprimé.'
+                ));
             }
 
-            // Redirection
-            $this->_helper->redirector('list');
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
                 'title' => 'Erreur inattendue',
                 'message' => $e->getMessage()
             ));
+        }
+
+        if ($this->hasParam('gid') && $this->_request->getParam('gid') != 1) {
+            // Redirection
+            $this->_helper->redirector('list');
         }
     }
 
@@ -128,8 +140,12 @@ class UsersController extends Zend_Controller_Action
                 $DB_groupe->insert(array_intersect_key($_POST, $DB_groupe->info('metadata')));
             }
 
-            // Redirection
-            $this->_helper->redirector('list');
+            $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Sauvegarde réussie !',
+                    'message' => 'Le groupe '.$groupe->LIBELLE_GROUPE.' a été supprimé.'
+                ));
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -137,6 +153,9 @@ class UsersController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
+
+        // Redirection
+        $this->_helper->redirector('list');
     }
 
     /**
@@ -145,39 +164,32 @@ class UsersController extends Zend_Controller_Action
      */
     public function editAction()
     {
-        try {
-            // Modèles
-            $DB_user = new Model_DbTable_Utilisateur;
-            $DB_informations = new Model_DbTable_UtilisateurInformations;
-            $model_commune = new Model_DbTable_AdresseCommune;
-            $model_commissions = new Model_DbTable_Commission;
-            $model_groupements = new Model_DbTable_Groupement;
+        // Modèles
+        $DB_user = new Model_DbTable_Utilisateur;
+        $DB_informations = new Model_DbTable_UtilisateurInformations;
+        $model_commune = new Model_DbTable_AdresseCommune;
+        $model_commissions = new Model_DbTable_Commission;
+        $model_groupements = new Model_DbTable_Groupement;
 
-            // Récupération de l'utilisateur
-            $user = $DB_user->find($this->_request->getParam('uid'))->current();
+        // Récupération de l'utilisateur
+        $user = $DB_user->find($this->_request->getParam('uid'))->current();
 
-            // Envoie sur la vue des informations de l'utilisateur
-            $this->view->user = $user;
-            $this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
-            $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
-            $this->view->params = array("LDAP_ACTIF" => $ldap_options['enabled']);
-            $this->view->commune = $model_commune->find($user->NUMINSEE_COMMUNE)->current();
+        // Envoie sur la vue des informations de l'utilisateur
+        $this->view->user = $user;
+        $this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
+        $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
+        $this->view->params = array("LDAP_ACTIF" => $ldap_options['enabled']);
+        $this->view->commune = $model_commune->find($user->NUMINSEE_COMMUNE)->current();
 
-            // Récupération des commissions et des groupements
-            $this->view->rowset_commissions = $model_commissions->fetchAll();
-            $this->view->rowset_commissionsUser = $DB_user->getCommissions($user->ID_UTILISATEUR);
-            $this->view->rowset_groupements = $model_groupements->fetchAll();
-            $this->view->rowset_groupementsUser = $DB_user->getGroupements($user->ID_UTILISATEUR);
+        // Récupération des commissions et des groupements
+        $this->view->rowset_commissions = $model_commissions->fetchAll();
+        $this->view->rowset_commissionsUser = $DB_user->getCommissions($user->ID_UTILISATEUR);
+        $this->view->rowset_groupements = $model_groupements->fetchAll();
+        $this->view->rowset_groupementsUser = $DB_user->getGroupements($user->ID_UTILISATEUR);
 
-            // Rendu de la vue add
-            $this->render('add');
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
+        // Rendu de la vue add
+        $this->render('add');
+
     }
 
     /**
@@ -196,6 +208,13 @@ class UsersController extends Zend_Controller_Action
             $this->view->rowset_groupements = $model_groupements->fetchAll();
             $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
             $this->view->params = array("LDAP_ACTIF" => $ldap_options['enabled']);
+
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Ajout réussi!',
+                'message' => 'l\'utilisateur a été ajouté.'
+            ));
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -203,6 +222,9 @@ class UsersController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
+
+        //redirection
+        $this->_helper->redirector('list');
     }
 
     /**
@@ -211,27 +233,20 @@ class UsersController extends Zend_Controller_Action
      */
     public function maireAddAction()
     {
-        try {
-            // Modèles
-            $model_commissions = new Model_DbTable_Commission;
-            $model_groupements = new Model_DbTable_Groupement;
+        // Modèles
+        $model_commissions = new Model_DbTable_Commission;
+        $model_groupements = new Model_DbTable_Groupement;
 
-            // On dit à la vue que nous avons affaire à un maire !
-            $this->view->maire = true;
+        // On dit à la vue que nous avons affaire à un maire !
+        $this->view->maire = true;
 
-            // Récupération des commissions et des groupements
-            $this->view->rowset_commissions = $model_commissions->fetchAll();
-            $this->view->rowset_groupements = $model_groupements->fetchAll();
+        // Récupération des commissions et des groupements
+        $this->view->rowset_commissions = $model_commissions->fetchAll();
+        $this->view->rowset_groupements = $model_groupements->fetchAll();
 
-            // Rendu de la vue add
-            $this->render('add');
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
+        // Rendu de la vue add
+        $this->render('add');
+
     }
 
     /**
@@ -338,8 +353,12 @@ class UsersController extends Zend_Controller_Action
                 }
             }
 
-            // Redirection
-            $this->_helper->redirector('list');
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Sauvegarde réussie!',
+                'message' => 'l\'utilisateur'.$DB_user->USERNAME_UTILISATEUR.' a été sauvegardé.'
+            ));
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -347,6 +366,9 @@ class UsersController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
+
+        // Redirection
+        $this->_helper->redirector('list');
     }
 
     /**
@@ -369,8 +391,12 @@ class UsersController extends Zend_Controller_Action
             // On sauvegarde
             $user->save();
 
-            // Redirection
-            $this->_helper->redirector('list');
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Changement réussi!',
+                'message' => 'l\'état de l\'utilisateur '.$user->USERNAME_UTILISATEUR.' a été modifié'
+            ));
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -378,6 +404,9 @@ class UsersController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
+
+        // Redirection
+        $this->_helper->redirector('list');
     }
 
     /**
@@ -386,75 +415,60 @@ class UsersController extends Zend_Controller_Action
      */
     public function matriceDesDroitsAction()
     {
-        try {
-            // Modèles
-            $model_groupes = new Model_DbTable_Groupe;
-            $model_resource = new Model_DbTable_Resource;
-            $model_groupes_privilege = new Model_DbTable_GroupePrivilege;
+        // Modèles
+        $model_groupes = new Model_DbTable_Groupe;
+        $model_resource = new Model_DbTable_Resource;
+        $model_groupes_privilege = new Model_DbTable_GroupePrivilege;
 
-            // On envoit les données sur la vue
-            $this->view->rowset_groupes = $model_groupes->fetchAll();
-            $this->view->rowset_resources = $model_resource->fetchAll();
-            $this->view->rowset_groupes_privilege = $model_groupes_privilege->fetchAll()->toArray();
+        // On envoit les données sur la vue
+        $this->view->rowset_groupes = $model_groupes->fetchAll();
+        $this->view->rowset_resources = $model_resource->fetchAll();
+        $this->view->rowset_groupes_privilege = $model_groupes_privilege->fetchAll()->toArray();
 
-            // Si des données sont envoyées, on procède à leur traitement
-            if ($this->_request->isPost()) {
-                try {
-                    foreach ($this->_request->getParam('groupe') as $id_groupe => $privileges) {
-                        foreach ($privileges as $id_privilege => $value_privilege) {
-                            $groupe_privilege_exists = $model_groupes_privilege->find($id_groupe, $id_privilege)->current() !== null;
+        // Si des données sont envoyées, on procède à leur traitement
+        if ($this->_request->isPost()) {
+            try {
+                foreach ($this->_request->getParam('groupe') as $id_groupe => $privileges) {
+                    foreach ($privileges as $id_privilege => $value_privilege) {
+                        $groupe_privilege_exists = $model_groupes_privilege->find($id_groupe, $id_privilege)->current() !== null;
 
-                            if ($value_privilege == 1 && !$groupe_privilege_exists) {
-                                $row_groupe_priv = $model_groupes_privilege->createRow();
-                                $row_groupe_priv->ID_GROUPE = $id_groupe;
-                                $row_groupe_priv->id_privilege = $id_privilege;
-                                $row_groupe_priv->save();
-                            }
+                        if ($value_privilege == 1 && !$groupe_privilege_exists) {
+                            $row_groupe_priv = $model_groupes_privilege->createRow();
+                            $row_groupe_priv->ID_GROUPE = $id_groupe;
+                            $row_groupe_priv->id_privilege = $id_privilege;
+                            $row_groupe_priv->save();
+                        }
 
-                            if ($value_privilege == 0 && $groupe_privilege_exists) {
-                                $model_groupes_privilege->delete('ID_GROUPE = ' . $id_groupe . ' AND id_privilege = ' . $id_privilege);
-                            }
+                        if ($value_privilege == 0 && $groupe_privilege_exists) {
+                            $model_groupes_privilege->delete('ID_GROUPE = ' . $id_groupe . ' AND id_privilege = ' . $id_privilege);
                         }
                     }
-
-                    $this->_helper->flashMessenger(array(
-                        'context' => 'success',
-                        'title' => 'Mise à jour réussie !',
-                        'message' => 'La matrice des droits a bien été mise à jour.'
-                    ));
-                } catch (Exception $e) {
-                    $this->_helper->flashMessenger(array(
-                        'context' => 'error',
-                        'title' => 'Aie',
-                        'message' => $e->getMessage()
-                    ));
                 }
 
-                // Redirection
-                $this->_helper->redirector('matrice-des-droits');
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Mise à jour réussie !',
+                    'message' => 'La matrice des droits a bien été mise à jour.'
+                ));
+            } catch (Exception $e) {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie',
+                    'message' => $e->getMessage()
+                ));
             }
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
+            // Redirection
+            $this->_helper->redirector('matrice-des-droits');
         }
     }
 
     private function getDate($input)
     {
-        try {
-            $array_date = explode("/", $input);
 
-            return $array_date[2]."-".$array_date[1]."-".$array_date[0]." 00:00:00";
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
+        $array_date = explode("/", $input);
+
+        return $array_date[2]."-".$array_date[1]."-".$array_date[0]." 00:00:00";
+
     }
 
 }

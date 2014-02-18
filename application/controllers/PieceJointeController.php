@@ -16,65 +16,51 @@ class PieceJointeController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        try {
-            // Modèles
-            $DBused = new Model_DbTable_PieceJointe;
+        // Modèles
+        $DBused = new Model_DbTable_PieceJointe;
 
-            // Cas dossier
-            if ($this->_request->type == "dossier") {
-                $this->view->type = "dossier";
-                $this->view->identifiant = $this->_request->id;
-                $this->view->pjcomm = $this->_request->pjcomm;
-                $listePj = $DBused->affichagePieceJointe("dossierpj", "dossierpj.ID_DOSSIER", $this->_request->id);
-            }
-
-            // Cas établissement
-            else if ($this->_request->type == "etablissement") {
-                $this->view->type = "etablissement";
-                $this->view->identifiant = $this->_request->id;
-                $listePj = $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $this->_request->id);
-            }
-
-            // Cas d'une date de commission
-            else if ($this->_request->type == "dateCommission") {
-                $this->view->type = "dateCommission";
-                $this->view->identifiant = $this->_request->id;
-                $listePj = $DBused->affichagePieceJointe("datecommissionpj", "datecommissionpj.ID_DATECOMMISSION", $this->_request->id);
-            }
-
-            // On envoi la liste des PJ dans la vue
-            $this->view->listePj = $listePj;
-            //Zend_Debug::dump($this->view->listePj);
-            $this->view->path = DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;;
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
+        // Cas dossier
+        if ($this->_request->type == "dossier") {
+            $this->view->type = "dossier";
+            $this->view->identifiant = $this->_request->id;
+            $this->view->pjcomm = $this->_request->pjcomm;
+            $listePj = $DBused->affichagePieceJointe("dossierpj", "dossierpj.ID_DOSSIER", $this->_request->id);
         }
+
+        // Cas établissement
+        else if ($this->_request->type == "etablissement") {
+            $this->view->type = "etablissement";
+            $this->view->identifiant = $this->_request->id;
+            $listePj = $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $this->_request->id);
+        }
+
+        // Cas d'une date de commission
+        else if ($this->_request->type == "dateCommission") {
+            $this->view->type = "dateCommission";
+            $this->view->identifiant = $this->_request->id;
+            $listePj = $DBused->affichagePieceJointe("datecommissionpj", "datecommissionpj.ID_DATECOMMISSION", $this->_request->id);
+        }
+
+        // On envoi la liste des PJ dans la vue
+        $this->view->listePj = $listePj;
+        //Zend_Debug::dump($this->view->listePj);
+        $this->view->path = DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;;
+
     }
 
     public function formAction()
     {
-        try {
-            // Placement
-            $this->view->type = $this->_getParam('type');
-            $this->view->identifiant = $this->_getParam('id');
+        // Placement
+        $this->view->type = $this->_getParam('type');
+        $this->view->identifiant = $this->_getParam('id');
 
-            // Ici suivant le type on chage toutes les infos nécessaire pour lier aux différents établissements, dossiers
-            if ($this->view->type == 'dossier') {
+        // Ici suivant le type on change toutes les infos nécessaires pour lier aux différents établissements, dossiers
+        if ($this->view->type == 'dossier') {
 
-                $DBdossier = new Model_DbTable_Dossier;
-                $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
-            }
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
+            $DBdossier = new Model_DbTable_Dossier;
+            $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
         }
+
     }
 
     public function addAction()
@@ -106,8 +92,12 @@ class PieceJointeController extends Zend_Controller_Action
 
             // On check si l'upload est okay
             if (!move_uploaded_file($_FILES['fichier']['tmp_name'], $this->path . $nouvellePJ->ID_PIECEJOINTE . $extension) ) {
-
                 $nouvellePJ->delete();
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie',
+                    'message' => 'Impossible de charger la pièce jointe.'
+                ));
             } else {
 
                 // Dans le cas d'un dossier
@@ -168,6 +158,12 @@ class PieceJointeController extends Zend_Controller_Action
                 // On sauvegarde le tout
                 $linkPj->save();
 
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Ajout réussi!',
+                    'message' => 'La pièce jointe '.$nouvellePJ->NOM_PIECEJOINTE.' a bien été ajoutée.'
+                ));
+
                 // CALLBACK
                 echo "<script type='text/javascript'>window.top.window.callback('".$nouvellePJ->ID_PIECEJOINTE."', '".$extension."');</script>";
             }
@@ -216,6 +212,13 @@ class PieceJointeController extends Zend_Controller_Action
                 $DBitem->delete("ID_PIECEJOINTE = " . (int) $this->_request->id_pj);
                 $pj->delete();
             }
+
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Suppression réussie!',
+                'message' => 'La pièce jointe a été supprimée.'
+            ));
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -223,34 +226,30 @@ class PieceJointeController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
+
+        //redirection
+        $this->_helper->redirector('index');
     }
 
     public function checkAction()
     {
-        try {
             // Si elle existe
-            $this->view->exists = file_exists($this->path . $this->_request->idpj . $this->_request->ext);
+         $this->view->exists = file_exists($this->path . $this->_request->idpj . $this->_request->ext);
 
-            if ($this->view->exists) {
+         if ($this->view->exists) {
 
-                // Modèle
-                $DBused = new Model_DbTable_PieceJointe;
+             // Modèle
+             $DBused = new Model_DbTable_PieceJointe;
 
-                // Données de la pj
-                $this->view->html = $this->view->partial("piece-jointe/display.phtml", array (
-                    "path" => DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR,
-                    "listePj" => $DBused->fetchAll("ID_PIECEJOINTE = " . $this->_request->idpj)->toArray(),
-                    "droit_ecriture" => true,
-                    "type" => $this->_request->type,
-                    "id" => $this->_request->id,
-                ));
-            }
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
+             // Données de la pj
+             $this->view->html = $this->view->partial("piece-jointe/display.phtml", array (
+                 "path" => DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR,
+                 "listePj" => $DBused->fetchAll("ID_PIECEJOINTE = " . $this->_request->idpj)->toArray(),
+                 "droit_ecriture" => true,
+                 "type" => $this->_request->type,
+                 "id" => $this->_request->id,
+             ));
+         }
+
     }
 }
