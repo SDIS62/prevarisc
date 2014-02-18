@@ -4,22 +4,22 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 {
     /**
      * @inheritdoc
-     */  
+     */
     public function init()
     {
         // Définition du layout menu_left
         $this->_helper->layout->setLayout('menu_left');
     }
-    
+
     /**
      * Liste des couches cartographiques
      *
      */
     public function listAction()
     {
-        // Modèles 
+        // Modèles
         $model_couchecarto = new Model_DbTable_CoucheCarto;
-        
+
         // On envoie la liste complète sur la vue
         $this->view->rowset_couches = $model_couchecarto->getList();
     }
@@ -30,20 +30,37 @@ class CouchesCartographiquesController extends Zend_Controller_Action
      */
     public function addAction()
     {
-        // Modèles
-        $model_couchecarto = new Model_DbTable_CoucheCarto;
-        $model_couchecartotype = new Model_DbTable_CoucheCartoType;
+        try {
+            // Modèles
+            $model_couchecarto = new Model_DbTable_CoucheCarto;
+            $model_couchecartotype = new Model_DbTable_CoucheCartoType;
 
-        // On envoie sur la vue les différents type de couches
-        $this->view->rowset_couchecartotypes = $model_couchecartotype->fetchAll();
+            // On envoie sur la vue les différents type de couches
+            $this->view->rowset_couchecartotypes = $model_couchecartotype->fetchAll();
 
-        // On process les données
-        if($this->_request->isPost())
-        {
-            $data = $this->getRequest()->getPost();
-            $model_couchecarto->insert($data);
-            
-            // Redirection
+            // On process les données
+            if ($this->_request->isPost()) {
+                $data = $this->getRequest()->getPost();
+                $model_couchecarto->insert($data);
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Ajout réussi !',
+                    'message' => 'La couche cartographique '.$data['NOM_COUCHECARTO'].' a été ajoutée.'
+                ));
+
+            }
+
+        } catch (Exception $ex) {
+            $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie!',
+                    'message' => $ex->getMessage()
+                ));
+        }
+
+        // Redirection
+        if ($this->_request->isPost()) {
             $this->_helper->redirector('list');
         }
     }
@@ -60,7 +77,7 @@ class CouchesCartographiquesController extends Zend_Controller_Action
             $row->TRANSPARENT_COUCHECARTO = 0;
             $row->INTERACT_COUCHECARTO = 0;
             $row->setFromArray(array_intersect_key($data, $model_couchecarto->info('metadata')))->save();
-            
+
             // Redirection
             $this->_helper->redirector('list');
         }
@@ -70,12 +87,26 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 
     public function deleteAction()
     {
-        // Modèle
-        $model_couchecarto = new Model_DbTable_CoucheCarto;
-        
-        // Suppression
-        $model_couchecarto->delete("ID_COUCHECARTO = " . $this->getRequest()->getParam('id'));
-        
+        try {
+            // Modèle
+            $model_couchecarto = new Model_DbTable_CoucheCarto;
+
+            // Suppression
+            $model_couchecarto->delete("ID_COUCHECARTO = " . $this->getRequest()->getParam('id'));
+
+            $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Suppression réussie !',
+                    'message' => 'La couche cartographique a été supprimée.'
+                ));
+        } catch (Exception $ex) {
+            $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Aie!',
+                    'message' => $ex->getMessage()
+                ));
+        }
+
         // Redirection
         $this->_helper->redirector('list');
     }
