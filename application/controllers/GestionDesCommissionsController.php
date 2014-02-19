@@ -5,41 +5,25 @@
         // Page d'acceuil
         public function indexAction()
         {
-            try {
-                // Titre
-                $this->view->title = "Gestion des commissions";
+            // Titre
+            $this->view->title = "Gestion des commissions";
 
-                $this->_helper->layout->setLayout('menu_left');
+            $this->_helper->layout->setLayout('menu_left');
 
-                // Modèles de données
-                $model_typesDesCommissions = new Model_DbTable_CommissionType;
+            // Modèles de données
+            $model_typesDesCommissions = new Model_DbTable_CommissionType;
 
-                $this->view->rowset_typesDesCommissions = $model_typesDesCommissions->fetchAll();
-            } catch (Exception $e) {
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Erreur inattendue',
-                    'message' => $e->getMessage()
-                ));
-            }
+            $this->view->rowset_typesDesCommissions = $model_typesDesCommissions->fetchAll();
         }
 
         public function formAction()
         {
-            try {
-                // Modèles de données
-                $model_typesDesCommissions = new Model_DbTable_CommissionType;
-                $model_commissions = new Model_DbTable_Commission;
+            // Modèles de données
+            $model_typesDesCommissions = new Model_DbTable_CommissionType;
+            $model_commissions = new Model_DbTable_Commission;
 
-                $this->view->rowset_typesDesCommissions = $model_typesDesCommissions->fetchAll();
-                $this->view->rowset_commissions = $model_commissions->fetchAll();
-            } catch (Exception $e) {
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Erreur inattendue',
-                    'message' => $e->getMessage()
-                ));
-            }
+            $this->view->rowset_typesDesCommissions = $model_typesDesCommissions->fetchAll();
+            $this->view->rowset_commissions = $model_commissions->fetchAll();
         }
 
         public function saveAction()
@@ -64,10 +48,16 @@
                         $item->save();
                     }
                 }
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Les informations ont été sauvegardées',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la sauvegarde',
                     'message' => $e->getMessage()
                 ));
             }
@@ -76,23 +66,15 @@
         // Récupération des commission avec un type donné
         public function getCommissionsAction()
         {
-            try {
-                // Modèles de données
-                $model_commission = new Model_DbTable_Commission;
-                $model_typesDesCommissions = new Model_DbTable_CommissionType;
+            // Modèles de données
+            $model_commission = new Model_DbTable_Commission;
+            $model_typesDesCommissions = new Model_DbTable_CommissionType;
 
-                // On récupère les commissions du type demandé
-                $this->view->rowset_commissions = $model_commission->fetchAll("ID_COMMISSIONTYPE = " . $this->_request->id_type_des_commissions );
+            // On récupère les commissions du type demandé
+            $this->view->rowset_commissions = $model_commission->fetchAll("ID_COMMISSIONTYPE = " . $this->_request->id_type_des_commissions );
 
-                // On récupère le type
-                $this->view->row_typeDesCommissions = $model_typesDesCommissions->fetchRow("ID_COMMISSIONTYPE = " . $this->_request->id_type_des_commissions);
-            } catch (Exception $e) {
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Erreur inattendue',
-                    'message' => $e->getMessage()
-                ));
-            }
+            // On récupère le type
+            $this->view->row_typeDesCommissions = $model_typesDesCommissions->fetchRow("ID_COMMISSIONTYPE = " . $this->_request->id_type_des_commissions);
         }
 
         public function addCommissionAction()
@@ -119,10 +101,16 @@
                 }
 
                 $this->view->tid = $_GET["tid"];
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'La commission a bien été sauvegardée',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la sauvegarde',
                     'message' => $e->getMessage()
                 ));
             }

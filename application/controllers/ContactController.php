@@ -20,69 +20,53 @@ class ContactController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        try {
-            $DB_contact = new Model_DbTable_UtilisateurInformations;
-            $this->view->contacts = $DB_contact->getContact($this->_request->item, $this->_request->id);
+        $DB_contact = new Model_DbTable_UtilisateurInformations;
+        $this->view->contacts = $DB_contact->getContact($this->_request->item, $this->_request->id);
 
-            // Placement
-            $this->view->item = $this->_request->item;
-            $this->view->id = $this->_request->id;
+        // Placement
+        $this->view->item = $this->_request->item;
+        $this->view->id = $this->_request->id;
 
-            $this->view->ajax = $this->_request->ajax;
+        $this->view->ajax = $this->_request->ajax;
 
-            // Si on est dans un établissement, on cherche les contacts des ets parents
-            if ($this->_request->item == "etablissement") {
+        // Si on est dans un établissement, on cherche les contacts des ets parents
+        if ($this->_request->item == "etablissement") {
 
-                $model_ets = new Model_DbTable_Etablissement;
-                $etablissement_parents = $model_ets->getAllParents($this->_request->id);
-                $array = array();
+            $model_ets = new Model_DbTable_Etablissement;
+            $etablissement_parents = $model_ets->getAllParents($this->_request->id);
+            $array = array();
 
-                if($etablissement_parents != null)
-                    foreach($etablissement_parents as $ets)
-                        if ($ets != null) {
-                            $contacts = $DB_contact->getContact($this->_request->item, $ets["ID_ETABLISSEMENT"]);
-                            if($contacts != null)
-                                $array[] = $contacts;
-                        }
-                $this->view->contacts_parent = $array;
-            }
-
-            // Taille des cases
-            $this->view->size = ( $this->_request->item == "dossier" ) ? 3 : 4;
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
+            if($etablissement_parents != null)
+                foreach($etablissement_parents as $ets)
+                    if ($ets != null) {
+                        $contacts = $DB_contact->getContact($this->_request->item, $ets["ID_ETABLISSEMENT"]);
+                        if($contacts != null)
+                            $array[] = $contacts;
+                    }
+            $this->view->contacts_parent = $array;
         }
+
+        // Taille des cases
+        $this->view->size = ( $this->_request->item == "dossier" ) ? 3 : 4;
     }
 
     public function formAction()
     {
-        try {
-            // On récupère la liste des fonctions des contacts
-            $DB_contactfonction = new Model_DbTable_Fonction;
-            $this->view->contact_fonction_list = $DB_contactfonction->fetchAll()->toArray();
+        // On récupère la liste des fonctions des contacts
+        $DB_contactfonction = new Model_DbTable_Fonction;
+        $this->view->contact_fonction_list = $DB_contactfonction->fetchAll()->toArray();
 
-            // On récupère la liste des civilités
-            $DB_civilite = new Model_DbTable_UtilisateurCivilite;
-            $this->view->civilite_list = $DB_civilite->fetchAll()->toArray();
+        // On récupère la liste des civilités
+        $DB_civilite = new Model_DbTable_UtilisateurCivilite;
+        $this->view->civilite_list = $DB_civilite->fetchAll()->toArray();
 
-            // Groupes
-            $DB_groupe = new Model_DbTable_Groupe;
-            $this->view->groupes = $DB_groupe->fetchAll()->toArray();
+        // Groupes
+        $DB_groupe = new Model_DbTable_Groupe;
+        $this->view->groupes = $DB_groupe->fetchAll()->toArray();
 
-            // Placement
-            $this->view->item = $this->_request->item;
-            $this->view->id = $this->_request->id;
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
+        // Placement
+        $this->view->item = $this->_request->item;
+        $this->view->id = $this->_request->id;
     }
 
     public function addAction()
@@ -129,10 +113,17 @@ class ContactController extends Zend_Controller_Action
             $contact->$key = $id_item;
             $contact->ID_UTILISATEURINFORMATIONS = $exist ? $_POST["ID_UTILISATEURINFORMATIONS"] : $id;
             $contact->save();
+
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Le contact a bien été ajouté',
+                'message' => ''
+            ));
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de l\'ajout du contact',
                 'message' => $e->getMessage()
             ));
         }
@@ -153,10 +144,16 @@ class ContactController extends Zend_Controller_Action
                 $row->setFromArray(array_intersect_key($_POST, $DB_informations->info('metadata')))->save();
             } else
                 $this->_forward("form");
+
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Le contact a bien été modifié',
+                'message' => ''
+            ));
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de la modification du contact',
                 'message' => $e->getMessage()
             ));
         }
@@ -212,10 +209,16 @@ class ContactController extends Zend_Controller_Action
             } else {
                 $DB_current->delete("ID_UTILISATEURINFORMATIONS = " . $this->_request->id . " AND " . $primary . " = " . $this->_request->id_item); // Porteuse
             }
+
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Le contact a bien été supprimé',
+                'message' => ''
+            ));
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de la suppression du contact',
                 'message' => $e->getMessage()
             ));
         }
@@ -223,15 +226,7 @@ class ContactController extends Zend_Controller_Action
 
     public function getAction()
     {
-        try {
-            $DB_informations = new Model_DbTable_UtilisateurInformations;
-            $this->view->resultats = $DB_informations->getAllContacts($this->_request->q);
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
+        $DB_informations = new Model_DbTable_UtilisateurInformations;
+        $this->view->resultats = $DB_informations->getAllContacts($this->_request->q);
     }
 }

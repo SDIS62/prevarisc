@@ -30,10 +30,15 @@
 
                 // Suppression de la commission
                 $model_commission->delete("ID_COMMISSION = " . $this->_request->id);
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'La commission a bien été supprimée',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la suppression de la commission',
                     'message' => $e->getMessage()
                 ));
             }
@@ -42,19 +47,10 @@
         // Champ de compétence de la commission
         public function competencesAction()
         {
-            try {
-                // Les modèles
-                $model_regles = new Model_DbTable_CommissionRegle;
-
-                // On récupère les règles de la commission
-                $this->view->array_regles = $model_regles->get($this->_request->id_commission);
-            } catch (Exception $e) {
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Erreur inattendue',
-                    'message' => $e->getMessage()
-                ));
-            }
+            // Les modèles
+            $model_regles = new Model_DbTable_CommissionRegle;
+            // On récupère les règles de la commission
+            $this->view->array_regles = $model_regles->get($this->_request->id_commission);
         }
 
         public function addRegleAction()
@@ -69,10 +65,15 @@
                 $row_regle = $model_regles->createRow();
                 $row_regle->ID_COMMISSION = $this->_request->id_commission;
                 $row_regle->save();
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'La régle a bien été enregistrées',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de l\'ajout de la régle',
                     'message' => $e->getMessage()
                 ));
             }
@@ -98,10 +99,16 @@
                 $model_reglesLocalSommeil->delete("ID_REGLE = " .  $this->_request->id_regle);
                 $model_reglesEtudeVisite->delete("ID_REGLE = " .  $this->_request->id_regle);
                 $model_regles->delete("ID_REGLE = " .  $this->_request->id_regle);
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Les régles ont bien été supprimées',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la suppression des régles',
                     'message' => $e->getMessage()
                 ));
             }
@@ -189,10 +196,15 @@
                         ));
                     }
                 }
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Les régles ont bien été enregistrées',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de l\'enregistrement des régles',
                     'message' => $e->getMessage()
                 ));
             }
@@ -249,43 +261,33 @@
         // Membres de la commission
         public function membresAction()
         {
-            try {
-                // Les modèles
-                $model_types = new Model_DbTable_Type;
-                $model_membres = new Model_DbTable_CommissionMembre;
+            // Les modèles
+            $model_types = new Model_DbTable_Type;
+            $model_membres = new Model_DbTable_CommissionMembre;
 
-                // On récupère les règles de la commission
-                $this->view->array_membres = $model_membres->get($this->_request->id_commission);
+            // On récupère les règles de la commission
+            $this->view->array_membres = $model_membres->get($this->_request->id_commission);
 
-                // On met le libellé du type dans le tableau des activités
-                $types = $model_types->fetchAll()->toArray();
-                $types_sort = array();
+            // On met le libellé du type dans le tableau des activités
+            $types = $model_types->fetchAll()->toArray();
+            $types_sort = array();
 
-                foreach ($types as $_type) {
-                    $types_sort[$_type['ID_TYPE']] = $_type;
-                }
+            foreach ($types as $_type) {
+                $types_sort[$_type['ID_TYPE']] = $_type;
+            }
 
-                foreach ($this->view->array_membres as &$membre) {
-                    $type_sort = array();
+            foreach ($this->view->array_membres as &$membre) {
+                $type_sort = array();
 
-                    foreach ($membre['types'] as $type) {
-                        if (!array_key_exists($types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE'], $type_sort)) {
-                            $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']] = array();
-                        }
-
-                        $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']][] = $type;
+                foreach ($membre['types'] as $type) {
+                    if (!array_key_exists($types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE'], $type_sort)) {
+                        $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']] = array();
                     }
 
-                    $membre['types'] = $type_sort;
+                    $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']][] = $type;
                 }
 
-                // Zend_Debug::DUmp($this->view->array_membres);
-            } catch (Exception $e) {
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Erreur inattendue',
-                    'message' => $e->getMessage()
-                ));
+                $membre['types'] = $type_sort;
             }
         }
 
@@ -303,12 +305,21 @@
                 $row_membre->LIBELLE_COMMISSIONMEMBRE = '';
                 $row_membre->PRESENCE_COMMISSIONMEMBRE = 0;
                 $row_membre->save();
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Le membre a bien été ajouté',
+                    'message' => ''
+                ));
+
             } catch (Exception $e) {
+
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de l\'ajout du membre',
                     'message' => $e->getMessage()
                 ));
+
             }
         }
 
@@ -338,10 +349,17 @@
                 $model_membresDossierNatures->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
                 $model_membresDossierTypes->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
                 $row_membre->delete();
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Le membre a bien été supprimé',
+                    'message' => ''
+                ));
+
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la suppression du membre',
                     'message' => $e->getMessage()
                 ));
             }
@@ -441,10 +459,16 @@
                         }
                     }
                 }
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Les modifications ont bien été sauvegardées',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la sauvegarde des modifications',
                     'message' => $e->getMessage()
                 ));
             }
@@ -456,19 +480,11 @@
         // Courriers types des membres de la commission
         public function courriersAction()
         {
-            try {
-                // Les modèles
-                $model_membres = new Model_DbTable_CommissionMembre;
+            // Les modèles
+            $model_membres = new Model_DbTable_CommissionMembre;
 
-                // On récupère la liste des membres de la commission
-                $this->view->rowset_membres = $model_membres->fetchAll("ID_COMMISSION = " . $this->_request->id_commission);
-            } catch (Exception $e) {
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Erreur inattendue',
-                    'message' => $e->getMessage()
-                ));
-            }
+            // On récupère la liste des membres de la commission
+            $this->view->rowset_membres = $model_membres->fetchAll("ID_COMMISSION = " . $this->_request->id_commission);
         }
 
         // Courriers types des membres de la commission
@@ -518,10 +534,15 @@
 
                 // CALLBACK
                 echo "<script type='text/javascript'>window.top.window.callback('$error');</script>";
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Le document a bien été sauvegardé',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la sauvegarde du document',
                     'message' => $e->getMessage()
                 ));
             }
@@ -545,10 +566,15 @@
                 // On met à null dans la DB
                 $row_membre->$row = null;
                 $row_membre->save();
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Le document a bien été supprimé',
+                    'message' => ''
+                ));
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la suppression du document',
                     'message' => $e->getMessage()
                 ));
             }

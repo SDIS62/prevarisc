@@ -190,7 +190,7 @@
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Erreur inattendue',
+                    'title' => 'Erreur lors de la sauvegarde des informations',
                     'message' => $e->getMessage()
                 ));
             }
@@ -377,24 +377,16 @@
         // Logout
         public function logoutAction()
         {
-            try {
-                // On update la dernière action effectuée par l'utilisateur
-                $model_user = new Model_DbTable_Utilisateur;
-                $user = $model_user->find(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR)->current();
-                $user->LASTACTION_UTILISATEUR = null;
-                $user->save();
+            // On update la dernière action effectuée par l'utilisateur
+            $model_user = new Model_DbTable_Utilisateur;
+            $user = $model_user->find(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR)->current();
+            $user->LASTACTION_UTILISATEUR = null;
+            $user->save();
 
-                $this->_helper->viewRenderer->setNoRender();
-                Zend_Auth::getInstance()->clearIdentity();
+            $this->_helper->viewRenderer->setNoRender();
+            Zend_Auth::getInstance()->clearIdentity();
 
-                $this->_helper->redirector->gotoUrl($this->view->url(array("controller" => null, "action" => null)));
-            } catch (Exception $e) {
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Erreur inattendue',
-                    'message' => $e->getMessage()
-                ));
-            }
+            $this->_helper->redirector->gotoUrl($this->view->url(array("controller" => null, "action" => null)));
         }
 
         public function getpreventionnisteAction()

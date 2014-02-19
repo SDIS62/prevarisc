@@ -43,23 +43,13 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 
     public function showprescriptiontexteAction()
     {
-        try {
-            if ($this->_getParam('id')) {
-                //ici on affiche les textes appartenant à la catégorie dont on passe l'id en param
-                $idCategorie = $this->_getParam('id');
-                $dbPrescripionTexte = new Model_DbTable_PrescriptionTexte;
-                $this->view->idCategorie = $idCategorie;
-                $this->view->listePrescriptionTexte = $dbPrescripionTexte->recupPrescriptionTexte($idCategorie);
-                //Zend_Debug::dump($this->view->listePrescriptionTexte);
-
-                $this->showprescriptionTypeAction($this->_getParam('id'),0,0);
-            }
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
+        if ($this->_getParam('id')) {
+            //ici on affiche les textes appartenant à la catégorie dont on passe l'id en param
+            $idCategorie = $this->_getParam('id');
+            $dbPrescripionTexte = new Model_DbTable_PrescriptionTexte;
+            $this->view->idCategorie = $idCategorie;
+            $this->view->listePrescriptionTexte = $dbPrescripionTexte->recupPrescriptionTexte($idCategorie);
+            $this->showprescriptionTypeAction($this->_getParam('id'),0,0);
         }
     }
 
@@ -71,7 +61,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             $idTexte = $this->_getParam('idTexte');
             $dbPrescripionArticle = new Model_DbTable_PrescriptionArticle;
             $this->view->listePrescriptionArticle = $dbPrescripionArticle->recupPrescriptionArticle($idTexte);
-            
+
             $dbPrescripionTexte = new Model_DbTable_PrescriptionTexte;
             $idCategorie = $dbPrescripionTexte->find($idTexte)->current()->toArray();
             $idCategorie = $idCategorie['ID_PRESCRIPTIONCAT'];
@@ -122,20 +112,20 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             $categorie->LIBELLE_PRESCRIPTION_CAT = $this->_getParam('LIBELLE_PRESCRIPTION_CAT');
             $categorie->save();
             $this->view->categorie = $categorie;
-            
+
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
-                'title' => 'Sauvegarde réussie !',
-                'message' => 'La catégorie a bien été sauvegardée.'
+                'title' => 'La catégorie a bien été sauvegardée',
+                'message' => ''
             ));
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de la sauvegarde de la catégorie',
                 'message' => $e->getMessage()
             ));
         }
-        
+
         //redirection
         $this->_helper->redirector('index');
     }
@@ -179,21 +169,21 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             $texte->LIBELLE_PRESCRIPTIONTEXTE = $this->_getParam('LIBELLE_PRESCRIPTIONTEXTE');
             $texte->save();
             $this->view->texte = $texte;
-            
+
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
-                'title' => 'Sauvegarde réussie !',
-                'message' => 'Le texte a bien été sauvegardé.'
+                'title' => 'Le texte a bien été sauvegardé',
+                'message' => ''
             ));
-            
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de la sauvegarde du texte',
                 'message' => $e->getMessage()
             ));
         }
-        
+
         //redirection
         $this->_helper->redirector('index');
     }
@@ -237,21 +227,21 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             $article->LIBELLE_PRESCRIPTIONARTICLE = $this->_getParam('LIBELLE_PRESCRIPTIONARTICLE');
             $article->save();
             $this->view->article = $article;
-            
+
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
-                'title' => 'Sauvegarde réussie !',
-                'message' => 'L\'article a bien été sauvegardé.'
+                'title' => 'L\'article a bien été sauvegardé',
+                'message' => ''
             ));
-            
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de la sauvegarde de l\'article',
                 'message' => $e->getMessage()
             ));
         }
-        
+
         //redirection
         $this->_helper->redirector('index');
     }
@@ -259,12 +249,10 @@ class GestionPrescriptionsController extends Zend_Controller_Action
     public function formprescriptionAction()
     {
         if ($this->_getParam('idPrescType')) {
-            //$this->_helper->viewRenderer->setNoRender();
             $this->view->idPrescType = $this->_getParam('idPrescType');
             $this->view->do = 'edit';
             $dbPrescTypeAssoc = new Model_DbTable_PrescriptionTypeAssoc;
             $this->view->assoc = $dbPrescTypeAssoc->getPrescriptionAssoc($this->_getParam('idPrescType'));
-            //Zend_Debug::dump($assoc);
         } else {
             $this->view->do = 'new';
             $dbCategorie = new Model_DbTable_PrescriptionCat;
@@ -320,7 +308,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             //on viens de choisir une catégorie il faut afficher les texte de la catégorie
             $dbTexte = new Model_DbTable_PrescriptionTexte;
             $this->view->texteListe = $dbTexte->recupPrescriptionTexte($this->_getParam('PRESCRIPTIONTYPE_CATEGORIE'));
-            
+
         } elseif (!$this->view->article) {
             $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
             $categorieLibelle = $dbPrescriptionCat->find($this->view->categorie)->current()->toArray();
@@ -331,7 +319,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             //on viens de choisir un texte il faut afficher les articles
             $dbArticle = new Model_DbTable_PrescriptionArticle;
             $this->view->texteArticle = $dbArticle->recupPrescriptionArticle($this->_getParam('PRESCRIPTIONTYPE_TEXTE'));
-            
+
         } else {
             $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
             $categorieLibelle = $dbPrescriptionCat->find($this->view->categorie)->current()->toArray();
@@ -455,21 +443,21 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             $this->view->textes = $texteArray;
             $this->view->articles = $articleArray;
             $this->view->libelle = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-            
+
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
-                'title' => 'Sauvegarde réussie !',
-                'message' => 'La prescription type a été sauvegardée.'
+                'title' => 'La prescription a bien été sauvegardée',
+                'message' => ''
             ));
 
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de la sauvegarde de la prescription',
                 'message' => $e->getMessage()
             ));
         }
-        
+
         // Redirection
         $this->_helper->redirector('index');
     }

@@ -8,26 +8,18 @@ class IndexController extends Zend_Controller_Action
      */
     public function indexAction()
     {
-        try {
-            // Définition du layout
-            $this->_helper->layout->setLayout('menu_left');
+        // Définition du layout
+        $this->_helper->layout->setLayout('menu_left');
 
-            // Modèles
-            $DB_messages = new Model_DbTable_News;
-            $DB_groupe = new Model_DbTable_Groupe;
+        // Modèles
+        $DB_messages = new Model_DbTable_News;
+        $DB_groupe = new Model_DbTable_Groupe;
 
-            // Récupération du fil d'actualité pour l'utilisateur
-            $this->view->flux = $DB_messages->getNews(Zend_Auth::getInstance()->getIdentity()->ID_GROUPE);
+        // Récupération du fil d'actualité pour l'utilisateur
+        $this->view->flux = $DB_messages->getNews(Zend_Auth::getInstance()->getIdentity()->ID_GROUPE);
 
-            // Récupération de l'ensemble des groupes
-            $this->view->groupes = $DB_groupe->fetchAll()->toArray();
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
+        // Récupération de l'ensemble des groupes
+        $this->view->groupes = $DB_groupe->fetchAll()->toArray();
     }
 
     /**
@@ -45,13 +37,13 @@ class IndexController extends Zend_Controller_Action
 
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
-                'title' => 'Ajout réussi !',
-                'message' => 'Le message a bien été ajouté.'
+                'title' => 'Le message a bien été ajouté',
+                'message' => ''
             ));
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Aie',
+                'title' => 'Erreur lors de l\'ajout du message',
                 'message' => $e->getMessage()
             ));
         }
@@ -75,13 +67,13 @@ class IndexController extends Zend_Controller_Action
 
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
-                'title' => 'Suppression réussie !',
-                'message' => 'Le message a bien été supprimé.'
+                'title' => 'Le message a bien été supprimé',
+                'message' => ''
             ));
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Aie',
+                'title' => 'Erreur lors de la suppression du message',
                 'message' => $e->getMessage()
             ));
         }

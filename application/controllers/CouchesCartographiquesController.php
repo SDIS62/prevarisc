@@ -4,22 +4,22 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 {
     /**
      * @inheritdoc
-     */  
+     */
     public function init()
     {
         // Définition du layout menu_left
         $this->_helper->layout->setLayout('menu_left');
     }
-    
+
     /**
      * Liste des couches cartographiques
      *
      */
     public function listAction()
     {
-        // Modèles 
+        // Modèles
         $model_couchecarto = new Model_DbTable_CoucheCarto;
-        
+
         // On envoie la liste complète sur la vue
         $this->view->rowset_couches = $model_couchecarto->getList();
     }
@@ -38,11 +38,10 @@ class CouchesCartographiquesController extends Zend_Controller_Action
         $this->view->rowset_couchecartotypes = $model_couchecartotype->fetchAll();
 
         // On process les données
-        if($this->_request->isPost())
-        {
+        if ($this->_request->isPost()) {
             $data = $this->getRequest()->getPost();
             $model_couchecarto->insert($data);
-            
+
             // Redirection
             $this->_helper->redirector('list');
         }
@@ -60,7 +59,7 @@ class CouchesCartographiquesController extends Zend_Controller_Action
             $row->TRANSPARENT_COUCHECARTO = 0;
             $row->INTERACT_COUCHECARTO = 0;
             $row->setFromArray(array_intersect_key($data, $model_couchecarto->info('metadata')))->save();
-            
+
             // Redirection
             $this->_helper->redirector('list');
         }
@@ -72,10 +71,10 @@ class CouchesCartographiquesController extends Zend_Controller_Action
     {
         // Modèle
         $model_couchecarto = new Model_DbTable_CoucheCarto;
-        
+
         // Suppression
         $model_couchecarto->delete("ID_COUCHECARTO = " . $this->getRequest()->getParam('id'));
-        
+
         // Redirection
         $this->_helper->redirector('list');
     }

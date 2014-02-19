@@ -43,7 +43,7 @@ class PieceJointeController extends Zend_Controller_Action
 
         // On envoi la liste des PJ dans la vue
         $this->view->listePj = $listePj;
-        //Zend_Debug::dump($this->view->listePj);
+
         $this->view->path = DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;;
 
     }
@@ -95,8 +95,8 @@ class PieceJointeController extends Zend_Controller_Action
                 $nouvellePJ->delete();
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
-                    'title' => 'Aie',
-                    'message' => 'Impossible de charger la pièce jointe.'
+                    'title' => 'Impossible de charger la pièce jointe',
+                    'message' => ''
                 ));
             } else {
 
@@ -160,8 +160,8 @@ class PieceJointeController extends Zend_Controller_Action
 
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
-                    'title' => 'Ajout réussi!',
-                    'message' => 'La pièce jointe '.$nouvellePJ->NOM_PIECEJOINTE.' a bien été ajoutée.'
+                    'title' => 'La pièce jointe '.$nouvellePJ->NOM_PIECEJOINTE.' a bien été ajoutée',
+                    'message' => ''
                 ));
 
                 // CALLBACK
@@ -170,7 +170,7 @@ class PieceJointeController extends Zend_Controller_Action
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de l\'ajout de la pièce jointe',
                 'message' => $e->getMessage()
             ));
         }
@@ -215,14 +215,14 @@ class PieceJointeController extends Zend_Controller_Action
 
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
-                'title' => 'Suppression réussie!',
-                'message' => 'La pièce jointe a été supprimée.'
+                'title' => 'La pièce jointe a été supprimée',
+                'message' => ''
             ));
 
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur inattendue',
+                'title' => 'Erreur lors de la suppression de la pièce jointe',
                 'message' => $e->getMessage()
             ));
         }

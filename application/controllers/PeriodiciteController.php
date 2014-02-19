@@ -71,14 +71,14 @@ class PeriodiciteController extends Zend_Controller_Action
 
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
-                    'title' => 'Mise à jour réussie !',
-                    'message' => 'Le tableau des périodicités a bien été mis à jour.'
+                    'title' => 'Le tableau des périodicités a bien été sauvegardé',
+                    'message' => ''
                 ));
             }
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Aie',
+                'title' => 'Erreur lors de la sauvegarde du tableau des périodicités',
                 'message' => $e->getMessage()
             ));
         }

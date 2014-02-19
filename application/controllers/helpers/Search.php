@@ -41,43 +41,37 @@
             if( array_key_exists("ID_AVIS", $criteres) && count($criteres["ID_AVIS"]) > 0 )
                 $search->setCriteria("avis.ID_AVIS", $criteres["ID_AVIS"]);
 
-            if( array_key_exists("LIBELLE_COMMUNE", $criteres) && $criteres["LIBELLE_COMMUNE"] != "Commune" )
-            {
-                if( array_key_exists("ID_GENRE", $criteres) && count($criteres["ID_GENRE"]) > 0 )
-                {
-                    foreach($criteres["ID_GENRE"] as $genre) {
-                        switch($genre)
-                        {
-                            case "1": 
+            if ( array_key_exists("LIBELLE_COMMUNE", $criteres) && $criteres["LIBELLE_COMMUNE"] != "Commune" ) {
+                if ( array_key_exists("ID_GENRE", $criteres) && count($criteres["ID_GENRE"]) > 0 ) {
+                    foreach ($criteres["ID_GENRE"] as $genre) {
+                        switch ($genre) {
+                            case "1":
                                 $search->setCriteria("adressecommunesite.LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
-                                
+
                                 if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
                                     $search->setCriteria("etablissementadressesite.ID_RUE", $criteres["ID_RUE"]);
                                 break;
-                                
+
                             case "3":
                                 $search->setCriteria("adressecommunecell.LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
-                                
+
                                 if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
                                     $search->setCriteria("etablissementadressecell.ID_RUE", $criteres["ID_RUE"]);
                                 break;
-                                
+
                             default:
                                 $search->setCriteria("adressecommune.LIBELLE_COMMUNE", $criteres["LIBELLE_COMMUNE"]);
-                                
+
                                 if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
                                     $search->setCriteria("etablissementadresse.ID_RUE", $criteres["ID_RUE"]);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_SITE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_CELLULE", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
                     $search->setCriteria("LIBELLE_COMMUNE_ADRESSE_DEFAULT", $criteres["LIBELLE_COMMUNE"], true, "orHaving");
-                    
-                    if( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" )
-                    {
+
+                    if ( array_key_exists("ID_RUE", $criteres) && $criteres["ID_RUE"] != "" ) {
                         $search->setCriteria("ID_RUE_SITE", $criteres["ID_RUE"], true, "having");
                         $search->setCriteria("ID_RUE_CELL", $criteres["ID_RUE"], true, "having");
                         $search->setCriteria("etablissementadresse.ID_RUE", $criteres["ID_RUE"], true, "orWhere");
@@ -87,7 +81,7 @@
 
             if( array_key_exists("LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", $criteres) )
                 $search->setCriteria("LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", (bool) $criteres["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]);
-                
+
             if( array_key_exists("ID_STATUT", $criteres) && count($criteres["ID_STATUT"]) > 0 )
                 $search->setCriteria("ID_STATUT", $criteres["ID_STATUT"]);
 
@@ -100,7 +94,7 @@
 
             if( array_key_exists("ID_DOSSIERNATURE", $criteres) && count($criteres["ID_DOSSIERNATURE"]) > 0 )
                 $search->setCriteria("ID_DOSSIERNATURE", $criteres["ID_DOSSIERNATURE"], true, "having");
-                
+
             if( array_key_exists("NUM_DOCURBA", $criteres) && $criteres["NUM_DOCURBA"] != "Numéro de document d'urbanisme" )
                 $search->setCriteria("NUM_DOCURBA", $criteres["NUM_DOCURBA"]);
 

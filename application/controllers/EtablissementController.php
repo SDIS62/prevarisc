@@ -401,7 +401,6 @@
 
                 //on recupere tout les textes applicables qui ont été cochés dans le dossier
                 $liste = $etsTexteApplicable->recupTextes($this->_getParam("id"));
-                //Zend_Debug::dump($liste);
                 $listeId = array();
                 foreach ($liste as $val => $ue) {
                     array_push($listeId,$ue['ID_TEXTESAPPL']);
