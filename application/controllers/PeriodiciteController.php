@@ -1,11 +1,11 @@
 <?php
-    
+
 class PeriodiciteController extends Zend_Controller_Action
 {
     /**
      * Tableau des périodicités
      *
-     */  
+     */
     public function indexAction()
     {
         // Définition du layout
@@ -29,8 +29,7 @@ class PeriodiciteController extends Zend_Controller_Action
 
         $result = array();
 
-        for ($i=0; $i < count($tableau); $i++)
-        {
+        for ($i=0; $i < count($tableau); $i++) {
             // Sans local sommeil
             $result[$tableau[$i]["ID_CATEGORIE"]][$tableau[$i]["ID_TYPE"]][$tableau[$i]["LOCALSOMMEIL_PERIODICITE"]] = $tableau[$i]["PERIODICITE_PERIODICITE"];
 
@@ -40,16 +39,16 @@ class PeriodiciteController extends Zend_Controller_Action
         }
 
         $this->view->tableau = $result;
+
     }
 
     /**
      * Sauvegarde du tableau des périodicités
      *
-     */  
+     */
     public function saveAction()
     {
-        try
-        {
+        try {
             // Model des périodicités
             $perio_model = new Model_DbTable_Periodicite();
 
@@ -69,23 +68,21 @@ class PeriodiciteController extends Zend_Controller_Action
                 $item->LOCALSOMMEIL_PERIODICITE = $result[2];
                 $item->PERIODICITE_PERIODICITE = $value;
                 $item->save();
-                
+
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
-                    'title' => 'Mise à jour réussie !',
-                    'message' => 'Le tableau des périodicités a bien été mis à jour.'
+                    'title' => 'Le tableau des périodicités a bien été sauvegardé',
+                    'message' => ''
                 ));
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Aie',
+                'title' => 'Erreur lors de la sauvegarde du tableau des périodicités',
                 'message' => $e->getMessage()
             ));
         }
-        
+
         // Redirection
         $this->_helper->redirector('index');
     }
