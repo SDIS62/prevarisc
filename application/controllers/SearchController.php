@@ -27,13 +27,20 @@
         public function etablissementAction()
         {
             // Modèles
-            $DB_categorie = new Model_DbTable_Categorie;					$this->view->DB_categorie = $DB_categorie->fetchAll()->toArray();
-            $DB_classe = new Model_DbTable_Classe;							$this->view->DB_classe = $DB_classe->fetchAll()->toArray();
-            $DB_famille = new Model_DbTable_Famille;						$this->view->DB_famille = $DB_famille->fetchAll()->toArray();
-            $DB_type = new Model_DbTable_Type;								$this->view->DB_type = $DB_type->fetchAll()->toArray();
-            $DB_avis = new Model_DbTable_Avis;								$this->view->DB_avis = $DB_avis->fetchAll()->toArray();
-            $DB_statut = new Model_DbTable_Statut;							$this->view->DB_statut = $DB_statut->fetchAll()->toArray();
-            $DB_genre = new Model_DbTable_Genre;							$this->view->DB_genre = $DB_genre->fetchAll()->toArray();
+            $DB_categorie = new Model_DbTable_Categorie;
+            $this->view->DB_categorie = $DB_categorie->fetchAll()->toArray();
+            $DB_classe = new Model_DbTable_Classe;
+            $this->view->DB_classe = $DB_classe->fetchAll()->toArray();
+            $DB_famille = new Model_DbTable_Famille;
+            $this->view->DB_famille = $DB_famille->fetchAll()->toArray();
+            $DB_type = new Model_DbTable_Type;
+            $this->view->DB_type = $DB_type->fetchAll()->toArray();
+            $DB_avis = new Model_DbTable_Avis;
+            $this->view->DB_avis = $DB_avis->fetchAll()->toArray();
+            $DB_statut = new Model_DbTable_Statut;
+            $this->view->DB_statut = $DB_statut->fetchAll()->toArray();
+            $DB_genre = new Model_DbTable_Genre;
+            $this->view->DB_genre = $DB_genre->fetchAll()->toArray();
         }
 
         public function dossierAction()
@@ -46,7 +53,8 @@
         public function utilisateurAction()
         {
             // Modèles
-            $DB_fonction = new Model_DbTable_Fonction();			$this->view->DB_fonction = $DB_fonction->fetchAll()->toArray();
+            $DB_fonction = new Model_DbTable_Fonction();
+            $this->view->DB_fonction = $DB_fonction->fetchAll()->toArray();
         }
 
         public function searchChildAction()
@@ -68,7 +76,7 @@
             // Envoi du html sur la vue
             $this->view->html = $html;
         }
-        
+
         public function searchChildDossAction()
         {
             // Resultats HTML
