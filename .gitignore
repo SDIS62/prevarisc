@@ -37,3 +37,7 @@ composer.phar
 ##################
 *.mwb.*
 /nbproject/
+
+# Phar #
+########
+*.phar

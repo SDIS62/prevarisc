@@ -1,0 +1,57 @@
+<form class="modal" action='<?php echo $this->url(array('action' => 'edit-descriptif')) ?>' method='post'>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Modification des descriptifs</h3>
+    </div>
+    <div class="modal-body">
+        <h4>Historique de l'établissement</h4>
+        <textarea name='historique' cols='' rows='' style='width: 100%; height: 100px;' ><?php echo $this->historique ?></textarea>
+
+        <h4>Descriptif de l'établissement</h4>
+        <textarea name='descriptif' cols='' rows='' style='width: 100%; height: 100px;' ><?php echo $this->descriptif ?></textarea>
+
+        <h4>Dérogations accordées</h4>
+        <textarea name='derogations' cols='' rows='' style='width: 100%; height: 100px;' ><?php echo $this->derogations ?></textarea>
+
+        <h4>Descriptif technique</h4>
+        <?php
+            foreach($this->champs_descriptif_technique as $title => $champ_destech)
+            {
+                echo "<h5 class='lead'>".$title."</h5>";
+                echo "<dl>";
+                
+                foreach($champ_destech as $key => $value)
+                {
+                    echo "<dt>".$key."</dt>";
+                    echo "<dd>";
+
+                    switch($value['type']) {
+                        case 'tinyint':
+                            echo "<input type='hidden' name='descriptifs_techniques[" . $value['key'] . "]' value='0' />";
+                            echo "<input type='checkbox' name='descriptifs_techniques[" . $value['key'] . "]' " . ($value['value'] == 1 ? 'checked' : '') . " value='1' />";
+                            break;
+
+                        case 'int':
+                            echo "<input type='number' name='descriptifs_techniques[" . $value['key'] . "]' value='" . ($value['value'] == '' ? '0' : $value['value']) . "' />";
+                            break;
+
+                        case 'text':
+                            echo "<textarea name='descriptifs_techniques[" . $value['key'] . "]' cols='' rows='' style='width: 100%; height: 50px;' >" . $value['value'] . "</textarea>";
+                            break;
+
+                        default:
+                            echo "<input type='text' name='descriptifs_techniques[" . $value['key'] . "]' value='" . $value['value'] . "' />";
+                    }
+
+                    echo "</dd>";
+                }
+                echo "</dl>";
+            }
+        ?>
+
+    </div>
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' />
+    </div>
+</div>

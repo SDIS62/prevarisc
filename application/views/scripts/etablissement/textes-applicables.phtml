@@ -1,47 +1,29 @@
-<div id="text_app_div">
-<?php
-    $idTypeMarq = "";
-    foreach($this->listeTextesAppl as $val => $ue){
-        $idType = $ue['ID_TYPETEXTEAPPL'];
-        if($idTypeMarq != $idType){
-            echo "
-                <h3>".$ue['LIBELLE_TYPETEXTEAPPL']."</h3>			
-            ";
-            $idTypeMarq = $idType;
-        }
-        echo "
-            <div class='grid_1'>
-                <input type='checkbox' name='texte' id='".$ue['ID_TEXTESAPPL']."' ".( (in_array($ue['ID_TEXTESAPPL'],$this->listeIdTexte))? "checked" : "" )."/>
-            </div>
-            <div class='grid_12 alpha'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
-            <hr class='clear'>
-        ";
-    }
-?>
+<div class='pull-right' >
+    <a data-toggle="modal" data-target="#reponse-modal" class='btn' href="<?php echo $this->url(array('action' => 'edit-textes-applicables')) ?>">Modifier les textes applicables</a>
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#text_app_div input[type=checkbox]").click(function() {
-        
-            var idTexte = $(this).attr('id');
-            
-            if($(this).is(':checked')) {
-                var toDo = "save";			
-            }else{
-                var toDo = "delete";
-            }
+<h3>Textes applicables</h3>
 
-            $.ajax({
-                type: "POST",
-                url: "/etablissement/textes-applicables",
-                data: "&id=<?php echo $this->id_etablissement ?>&texteApplicable&toDo="+toDo+"&idTexte="+idTexte,
-                success: function(msg){
-                    
-                }
-            });
-            
+<div class='row-fluid'>
+    <?php foreach($this->textes_applicables as $titre => $textes_applicables) : ?>
+        <h4><?php echo $titre ?></h4>
+        <?php foreach($textes_applicables as $texte_applicable) : ?>
+            <p class="<?php echo !in_array($texte_applicable, $this->textes_applicables_de_etablissement) ? "muted" : ""  ?>">
+                <span style="<?php echo in_array($texte_applicable, $this->textes_applicables_de_etablissement) ? "font-weight: bold" : ""  ?>"><?php echo $texte_applicable['LIBELLE_TEXTESAPPL'] ?></span>
+            </p>
+        <?php endforeach ?>
+    <?php endforeach ?>
+</div>
+
+<!-- Blocs pour les contenus ajax -->
+<div id="reponse-modal" class="modal hide fade"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $("a[data-toggle='modal']").click(function() {
+            var target = $(this).attr("data-target");
+            var url = $(this).attr("href");
+            $(target).load(url);
         });
-        
-    });
+    }, false);
 </script>
