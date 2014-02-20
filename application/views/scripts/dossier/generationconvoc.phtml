@@ -65,9 +65,7 @@ foreach($this->membresFiles as $val => $membre){
 				//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 				//Generation du segment pour l'affichage des différentes infos du dossier	
 				foreach($this->dossierComm as $val => $dossierInfos){
-					//echo $dossierInfos["LIBELLE_COMMUNE"]." ".$commune[0]."<br/>";
-					if($dossierInfos["LIBELLE_COMMUNE"] == $commune[0]){
-						//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
+						if($dossierInfos["LIBELLE_COMMUNE"] == $commune[0]){
 
 						$dateInsertDossier = new Zend_Date($dossierInfos["DATEINSERT_DOSSIER"]);
 						$villeODF->infosDoss->dateDe($dateInsertDossier->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
@@ -75,6 +73,10 @@ foreach($this->membresFiles as $val => $membre){
 						$villeODF->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
 						$villeODF->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
 						$villeODF->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
+						
+						$villeODF->infosDoss->heureDebut(utf8_decode($dossierInfos["HEURE_DEB_AFFECT"]));
+						$villeODF->infosDoss->heureFin(utf8_decode($dossierInfos["HEURE_FIN_AFFECT"]));
+						
 						//$villeODF->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
 						$villeODF->infosDoss->merge(); 
 					}
@@ -156,6 +158,12 @@ foreach($this->membresFiles as $val => $membre){
 						$grpLoop->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
 						$grpLoop->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
 						$grpLoop->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
+						
+						if($dossierInfos["HEURE_DEB_AFFECT"] != '')
+							$grpLoop->infosDoss->heureDebut(utf8_decode($dossierInfos["HEURE_DEB_AFFECT"]));
+						
+						if($dossierInfos["HEURE_FIN_AFFECT"] != '')
+							$grpLoop->infosDoss->heureFin(utf8_decode($dossierInfos["HEURE_FIN_AFFECT"]));
 						//$grpLoop->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
 											
 						$grpLoop->infosDoss->merge(); 

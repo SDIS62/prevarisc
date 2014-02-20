@@ -198,33 +198,15 @@ class UsersController extends Zend_Controller_Action
      */
     public function addAction()
     {
-        try {
-            // Modèles
-            $model_commissions = new Model_DbTable_Commission;
-            $model_groupements = new Model_DbTable_Groupement;
+		// Modèles
+		$model_commissions = new Model_DbTable_Commission;
+		$model_groupements = new Model_DbTable_Groupement;
 
-            // Récupération des commissions et des groupements
-            $this->view->rowset_commissions = $model_commissions->fetchAll();
-            $this->view->rowset_groupements = $model_groupements->fetchAll();
-            $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
-            $this->view->params = array("LDAP_ACTIF" => $ldap_options['enabled']);
-
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Ajout réussi!',
-                'message' => 'l\'utilisateur a été ajouté.'
-            ));
-
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
-
-        //redirection
-        $this->_helper->redirector('list');
+		// Récupération des commissions et des groupements
+		$this->view->rowset_commissions = $model_commissions->fetchAll();
+		$this->view->rowset_groupements = $model_groupements->fetchAll();
+		$ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
+		$this->view->params = array("LDAP_ACTIF" => $ldap_options['enabled']);
     }
 
     /**

@@ -1881,7 +1881,7 @@ class DossierController extends Zend_Controller_Action
             //On récupère la liste des dossiers
             $dbDateCommPj = new Model_DbTable_DateCommissionPj;
             $listeDossiers = $dbDateCommPj->getDossiersInfos($dateCommId);
-
+		
             //Récupération des membres de la commission
             $model_membres = new Model_DbTable_CommissionMembre;
 
