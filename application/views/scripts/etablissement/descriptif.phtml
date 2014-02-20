@@ -1,74 +1,68 @@
-<h3 class='pull-left' >Descriptif de l'établissement</h3>
-
-<!-- Boutons -->
 <div class='pull-right' >
-	
-	<div class="read">
-		<button id='modifier_button' class='btn'>Modifier</button>
-	</div>
-	
-	<div class="edit">
-		<button id='cancel_button' class='btn'>Annuler</button>
-		<button id='save_button' class="save btn" >Sauvegarder</button>
-	</div>
-	
+    <a data-toggle="modal" data-target="#reponse-modal" class='btn' href="<?php echo $this->url(array('action' => 'edit-descriptif')) ?>">Modifier les descriptifs</a>
 </div>
 
-<div style='clear: both' ></div>
+<h3>Descriptif de l'établissement</h3>
+
+<h4>Historique de l'établissement</h4>
+<p><?php echo empty($this->historique) ? "Aucun historique disponible pour cet établissement." : nl2br($this->historique) ?></p>
 
 <h4>Descriptif général</h4>
+<p><?php echo empty($this->descriptif) ? "Aucun descriptif disponible pour cet établissement." : nl2br($this->descriptif) ?></p>
 
-<div class="read">
-	<p><?php echo empty($this->DB_etablissement->DESCRIPTIF_ETABLISSEMENT) ? "Aucun descriptif disponible pour cet établissement." : nl2br($this->DB_etablissement->DESCRIPTIF_ETABLISSEMENT) ?></p>
-</div>
-
-<form class="edit" id="descriptif" action="" method="POST" >
-	<textarea name='DESCRIPTIF_ETABLISSEMENT' id='descriptif_general' cols='' rows='' style='width: 100%; height: 250px;' ><?php echo $this->DB_etablissement->DESCRIPTIF_ETABLISSEMENT ?></textarea>
-</form>
+<h4>Dérogations accordées</h4>
+<p><?php echo empty($this->derogations) ? "Aucunes dérogations accordées pour cet établissement." : nl2br($this->derogations) ?></p>
 
 <h4>Descriptif technique</h4>
-    <?php
-        foreach($this->champs_descriptif_technique as $title => $champ_destech)
-        {
-            echo "<h5>".$title."</h5>";
-            echo "<dl>";
-            foreach($champ_destech as $key => $value)
-            {
-                echo "<dt>".$key."</dt>";
-                if($value['value'] == null)
-                {
-                    echo "<dd class='muted'>Aucune donnée</dd>";
-                }
-                else
-                {
-                    echo "<dd>" . $value['type'] == 'tinyint' ? ( $value['value'] == 1 ? 'Oui' : 'Non') : $value['value'] . "</dd>";
-                }
+<div class='row-fluid'>
+	<?php
+		$i = 0;
+
+	    foreach($this->champs_descriptif_technique as $title => $champ_destech)
+	    {
+	    	$j = 0;
+	    	echo '<div class="span4">';
+	        echo "<h5 class='lead'>".$title."</h5>";
+	        echo "<dl>";
+
+	        foreach($champ_destech as $key => $value)
+	        {
+	            if(!$value['value'] == null && !$value['value'] == 0)
+	            {
+	            	echo "<dt>".$key."</dt>";
+	                echo "<dd>" . $value['type'] == 'tinyint' ? ( $value['value'] == 1 ? 'Oui' : 'Non') : $value['value'] . "</dd>";
+	                $j++;
+	            }
+	        }
+
+	        echo "</dl>";
+	       
+	        if($j == 0) {
+	        	echo "<p class='muted'>Aucune donnée disponible</p>";
+	        }
+        	$j = 0;
+
+        	 echo '</div>';
+
+	        $i++;
+            
+            if($i == 3) {
+            	echo "</div> <div class='row-fluid' >";
+            	$i = 0;
             }
-            echo "</dl>";
-        }
-    ?>
-<form class="edit" id="descriptif_technique" action="" method="POST" >
-    
-    <h5></h5>
-</form>
+	    }
+	?>
+</div>
 
-<script type="text/javascript">
+<!-- Blocs pour les contenus ajax -->
+<div id="reponse-modal" class="modal hide fade"></div>
 
-	$("#descriptif_general").elastic();
-	
-	$("#modifier_button").click(function() {
-		$(".read").hide();
-		$(".edit").show();
-	});
-	
-	$("#cancel_button").click(function() {
-		window.location.reload();
-	});
-	
-	$("#save_button").click(function() {
-		$("#descriptif").submit();
-	});
-	
-	$(".edit").hide();
-	
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $("a[data-toggle='modal']").click(function() {
+            var target = $(this).attr("data-target");
+            var url = $(this).attr("href");
+            $(target).load(url);
+        });
+    }, false);
 </script>
