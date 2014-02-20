@@ -488,6 +488,110 @@
         }
 
         // Courriers types des membres de la commission
+        public function documentsAction()
+        {
+            // Les modèles
+            $model_commission = new Model_DbTable_Commission;
+
+            $commission = $model_commission->find($this->_request->id_commission)->current();
+
+            // On récupère la liste des membres de la commission
+            $this->view->name_document_cr = $commission->DOCUMENT_CR;
+        }
+
+        // Courriers types des membres de la commission
+        public function addDocumentAction()
+        {
+            try {
+
+                $this->_helper->viewRenderer->setNoRender();
+
+                $error = "null";
+
+                // Extension du fichier uploadé
+                $string_extension = strrchr($_FILES['COURRIER']['name'], ".");
+
+                // On check si on veut uploader un document odt
+                if ($string_extension == ".odt") {
+
+                    if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], REAL_DATA_PATH . "/uploads/documents_commission/" . $_FILES['COURRIER']['name']) ) {
+
+                         // Les modèles
+                        $model_commission = new Model_DbTable_Commission;
+
+                        $commission = $model_commission->find($this->_request->id_commission)->current();
+
+
+                        // Si il y a déjà un courrier, on le supprime
+                        if ($commission->DOCUMENT_CR != null) {
+
+                            unlink(REAL_DATA_PATH . "/uploads/documents_commission/" . $commission->DOCUMENT_CR);
+                        }
+
+                        // On met à jour le libellé du courrier modifié
+                        $commission->DOCUMENT_CR = $_FILES['COURRIER']['name'];
+
+                        // et on sauvegarde
+                        $commission->save();
+
+                    } else {
+
+                        $error = "Le téléchargement a échoué.";
+                    }
+                } else {
+
+                    $error = "Extension non supportée.";
+                }
+
+                // CALLBACK
+                echo "<script type='text/javascript'>window.top.window.callback('$error');</script>";
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Le document a bien été sauvegardé',
+                    'message' => ''
+                ));
+            } catch (Exception $e) {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Erreur lors de la sauvegarde du document',
+                    'message' => $e->getMessage()
+                ));
+            }
+        }
+
+        // Courriers types des membres de la commission
+        public function deleteDocumentAction()
+        {
+            try {
+                $this->_helper->viewRenderer->setNoRender();
+
+                // Les modèles
+                $model_commission = new Model_DbTable_Commission;
+
+                $commission = $model_commission->find($this->_request->id_commission)->current();
+
+                // On supprime le fichier
+                unlink(DATA_PATH . "/uploads/documents_commission/" . $commission->DOCUMENT_CR);
+
+                // On met à null dans la DB
+                $commission->DOCUMENT_CR = null;
+                $commission->save();
+
+                $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Le document a bien été supprimé',
+                    'message' => ''
+                ));
+            } catch (Exception $e) {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Erreur lors de la suppression du document',
+                    'message' => $e->getMessage()
+                ));
+            }
+        }
+
+        // Courriers types des membres de la commission
         public function addCourrierAction()
         {
             try {

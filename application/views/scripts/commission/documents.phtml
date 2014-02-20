@@ -1,0 +1,77 @@
+<!-- Tableau contenant les documents -->
+<table class='table table-condensed'>
+	<thead>
+		<tr>
+			<th>Compte Rendu type de la commission</th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		<tr>
+			<td style='text-align: center;' >
+				<p style='line-height: 37px; padding-top: 16px;' >
+					<?php if($this->name_document_cr != null) : ?>
+						<span><img src='/images/file.gif' alt='' /></span>
+						<span style='vertical-align: top;'>
+							<strong style='font-size: 1.3em;' >
+								<a href='/data/uploads/documents_commission/<?php echo $this->name_document_cr ?>' style='color: #0174A7' ><?php echo $this->name_document_cr ?></a>
+							</strong>
+							<a class='delete-courrier' href='/commission/delete-document?id_commission=<?php echo $_GET["id_commission"] ?>' >supprimer</a>
+						</span>
+					<?php else : ?>
+						<strong>Aucun document défini.</strong>
+					<?php endif ?>
+				</p>
+				<p>	
+					<form class='courrier' action='/commission/add-document' enctype='multipart/form-data' method='post' target='iframe' >
+						<input id='add-file' type='file' name='COURRIER' />
+						<input type='hidden' name='id_commission' value='<?php echo $_GET["id_commission"] ?>' />
+					</form>
+				</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<iframe id='iframe' name="iframe" marginheight="0" marginwidth="0" height="0" width="0"></iframe>
+
+<script type="text/javascript">
+
+	// Callback
+	function callback(error) {
+	
+		if(error != 'null') {
+			
+			alert(error);
+		}
+		else {
+			
+			// On recharge l'onglet
+			var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
+                $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
+		}
+	}
+	
+	// Gestion de l'envoi auto du formulaire
+	$("form.courrier input[type=file]").change(function() {
+		$(this).parent().submit();
+	});
+	
+	// Gestion de la suppression d'un courrier
+	$("a.delete-courrier").click(function() {
+	
+		var a = this;
+		
+		$.ajax({
+			url: a.href,
+			success: function(result) {
+			
+				var current_index = $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs("option","active");
+                $("#<?php echo $_GET["id_commission"] ?>_tabs").tabs('load',current_index);
+			}
+		});
+
+		return false;
+	});
+	
+</script>

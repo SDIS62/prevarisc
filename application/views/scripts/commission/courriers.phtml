@@ -16,6 +16,7 @@
 				<th>Convocation en visite</th>
 				<th>Convocation en salle</th>
 				<th>Ordre du jour</th>
+				<th>PV</th>
 			</tr>
 		</thead>
 		
@@ -41,6 +42,13 @@
 					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
 						"type" => "ODJ",
 						"name_courrier" => $row_membre->COURRIER_ODJ,
+						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
+					));
+
+					// Convocation visite
+					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
+						"type" => "PV",
+						"name_courrier" => $row_membre->COURRIER_PV,
 						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
 					));
 				?>
