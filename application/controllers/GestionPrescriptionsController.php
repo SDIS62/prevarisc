@@ -125,9 +125,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
-
-        //redirection
-        $this->_helper->redirector('index');
     }
 
     public function formtexteAction()
@@ -183,9 +180,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
-
-        //redirection
-        $this->_helper->redirector('index');
     }
 
     public function formarticleAction()
@@ -241,9 +235,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
-
-        //redirection
-        $this->_helper->redirector('index');
     }
 
     public function formprescriptionAction()
@@ -457,8 +448,5 @@ class GestionPrescriptionsController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
-
-        // Redirection
-        $this->_helper->redirector('index');
     }
 }
