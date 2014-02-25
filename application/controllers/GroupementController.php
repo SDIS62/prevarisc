@@ -154,8 +154,6 @@
                 ));
             }
 
-            // Redirection
-            $this->_helper->redirector('index');
         }
 
         public function deleteAction()
