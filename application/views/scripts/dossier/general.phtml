@@ -328,6 +328,9 @@
 
 		showCalendar();		
 		majAvisSelect();
+		
+		//$('#SERVICEINSTRUC_DOSSIER').prepend('<option value="NULL" selected="selected">Saisissez un service instructeur</option>');
+		
 	});
 	//FIN DOC READY FUNCTION
 	
@@ -1489,24 +1492,20 @@ echo "
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>	
-				<li class='row-fluid' id='SERVICEINSTRUC' style='".( ($action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='SERVICEINSTRUC' style='".( ($action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && ( $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' || $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != NULL) )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Service instructeur</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
-						<!--
-							<input type='text' name='SERVICEINSTRUC_DOSSIER' id='SERVICEINSTRUC_DOSSIER' value='".( ($this->infosDossier['SERVICEINSTRUC_DOSSIER'])?htmlspecialchars($this->infosDossier['SERVICEINSTRUC_DOSSIER'], ENT_QUOTES):"" )."' />
-							<div id='servInstrInfos' style='displaye:none;'>
-								<input type='hidden' name='SERVICEINSTRUC_DOSSIER' id='SERVICEINSTRUC_DOSSIER' value='' />
-							</div>
-						-->
-					";
-					
-					echo $this->listeGroupement($this->serviceInstructeurId, array(
-						"id" => "SERVICEINSTRUC_DOSSIER",
-						"name" => "SERVICEINSTRUC_DOSSIER",
-						"class" => "bigger",
-						"style" => "width: 400px"
-					));
+				";
+				/*
+				echo $this->listeGroupement($this->serviceInstructeurId, array(
+					"id" => "SERVICEINSTRUC_DOSSIER",
+					"name" => "SERVICEINSTRUC_DOSSIER",
+					"class" => "bigger",
+					"style" => "width: 400px"
+				));
+				*/
+				listeGroupementDossier($this->serviceInstructeurId);
 				echo "						
 					</div>
 				</li>
@@ -1971,4 +1970,46 @@ echo "
 		<div id='dialogComm' style='display:none;'></div>
 	</div>
 ";
+
+function listeGroupementDossier($selected, $attribs = null)
+{
+	echo $attribs;
+	// Modèles
+	$model_groupements = new Model_DbTable_Groupement;
+	$model_groupementstypes = new Model_DbTable_GroupementType;
+
+	// Liste des types de groupement
+	$array_groupementstypes = $model_groupementstypes->fetchAll()->toArray();
+
+	// Initialisation du tableau des groupements
+	$array_groupements = array();
+
+	// Pour chaque type, on retouve les model_groupements
+	foreach ($array_groupementstypes as $value) {
+
+		$array_groupements[ $value["ID_GROUPEMENTTYPE"] ] = array(
+			0 => $value["LIBELLE_GROUPEMENTTYPE"],
+			1 => $model_groupements->fetchAll("ID_GROUPEMENTTYPE = ".$value["ID_GROUPEMENTTYPE"])->toArray()
+		);
+	}
+
+	// Attributs
+	if ($attribs) {
+		$attribs = $this->_htmlAttribs($attribs);
+	} else {
+		$attribs = '';
+	}
+
+	// Affichage
+	echo "<select id='SERVICEINSTRUC_DOSSIER' name='SERVICEINSTRUC_DOSSIER' style='width:400px;'>";
+	echo "<option value='' >Selectionnez le service instructeur</option>";
+	foreach ($array_groupements as $key => $groupements) {
+		echo "<optgroup id='gpt_$key' label='".$groupements[0]."'>";
+		foreach( $groupements[1] as $groupement)
+			echo "<option value='".$groupement["ID_GROUPEMENT"]."' ". ( ($groupement["ID_GROUPEMENT"] == $selected) ? "selected" : "" ) .">".$groupement["LIBELLE_GROUPEMENT"]."</option>";
+		echo "</optgroup>";
+	}
+	echo "</select>";
+}
+
 ?>
