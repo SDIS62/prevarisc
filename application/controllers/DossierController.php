@@ -813,17 +813,9 @@ class DossierController extends Zend_Controller_Action
             case "showDocManquant":
                 $dbDocManquant = new Model_DbTable_DocManquant;
                 //Si on passe un id dossier en param alors on cherche le dernier champ doc manquant si il existe
-                if ($this->_getParam('idDossier') && $this->_getParam('idDossier') != '') {
-                    $dbDossDocManquant = new Model_DbTable_DossierDocManquant;
-                    $lastDocManquantInDb = $dbDossDocManquant->getDocManquantDossLast($this->_getParam('idDossier'));
-                    $this->view->oldDocManquant = $lastDocManquantInDb;
-                    $this->view->listeDoc = $dbDocManquant->getDocManquant();
-                    $this->view->numDocManquant = $this->_getParam('numDoc');
-                } else {
-                    //On recupere la liste des documents manquant type
-                    $this->view->listeDoc = $dbDocManquant->getDocManquant();
-                    $this->view->numDocManquant = $this->_getParam('numDoc');
-                }
+				//On recupere la liste des documents manquant type
+				$this->view->listeDoc = $dbDocManquant->getDocManquant();
+				$this->view->numDocManquant = $this->_getParam('numDoc');
             break;
         }
     }

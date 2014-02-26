@@ -271,6 +271,9 @@
 				
 				$("#HORSDELAI").hide();
 				
+				$("#inputComplet").hide();
+				//$("#cancelIncomplet").show();
+				
 				//On compte combien de div ayant la class notre page comporte
 				var numDivDocManquant = $('.docManquant').length;
 				numDivDocManquant++;
@@ -291,6 +294,13 @@
 				//complet on affiche l'avis
 				afficherCacherAvis(0);
 			}
+		});
+		
+		$(".cancelIncomplet").live('click',function(){
+			$(this).parent().remove();
+			$("#inputComplet").show();
+			$(".incomplet").val(['0']);
+			return false;
 		});
 		
 		$(".horsdelai").click(function(){
@@ -1297,7 +1307,7 @@
 			
 		}else{
 			//$(this).prev().hidden();
-			$(this).prev().prev().prev().attr('readonly','readonly');
+			$(this).prev().prev().prev().attr('readonly','readonly');			$("#inputComplet").show();
 			$(".incomplet").val(['0']);
 			$("#AVIS").show();
 			$("#AVIS_COMMISSION").show();
@@ -1612,7 +1622,7 @@ echo "
 						$dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 						echo nl2br($ue['DOCMANQUANT']);
 						if($ue['DATE_DOCSMANQUANT'] != '')
-							echo "<font style='color:green;' >Reception document(s) le ".$dateDocManquant."</font><br/>";
+							echo "<br/><font style='color:green;' >Reception document(s) le ".$dateDocManquant."</font><br/>";
 						echo "<br/>";
 					}
 					echo "
@@ -1643,8 +1653,10 @@ echo "
 						}
 						echo "
 						</div>
-						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || $this->infosDossier['INCOMPLET_DOSSIER'] == 0)? "checked='checked'" : "")."> Complet
-						<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'] == 1)? "checked='checked'" : "")."> Incomplet					
+						<div id='inputComplet' ".( ($this->infosDossier['INCOMPLET_DOSSIER'] == 1) ? "style='display:none;'" : "").">
+							<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || $this->infosDossier['INCOMPLET_DOSSIER'] == 0)? "checked='checked'" : "")."> Complet
+							<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'] == 1)? "checked='checked'" : "")."> Incomplet					
+						</div>
 					</div>
 				</li>
 				<li class='row-fluid' id='HORSDELAI' style='".( ($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL && $this->infosDossier['HORSDELAI_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>

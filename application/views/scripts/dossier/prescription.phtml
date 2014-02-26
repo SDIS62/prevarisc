@@ -29,8 +29,8 @@ for($i=0; $i < $nbPrescDossier; $i++)
 	if(isset($this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']))
 	{
 		echo "
-			<li class='row-fluid' id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none; margin-bottom:15px;'>
-				<table>
+			<li class='table-responsive' id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none; margin-bottom:15px;'>
+				<table class='table'>
 		";
 		$nbAssoc = count($this->prescriptionDossier[$i]);
 		$cpt = true;
