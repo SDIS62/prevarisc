@@ -156,9 +156,9 @@
         // Cat�gorie
         public function getDefaultCategorie($request)
         {
-              if ((!isset($request["ID_CATEGORIE"]) || $request["ID_CATEGORIE"] != 0) && $request["ID_GENRE"] != 3) {
-                  return null;
-              }
+          if ((!isset($request["ID_CATEGORIE"]) || $request["ID_CATEGORIE"] != 0) && $request["ID_GENRE"] != 3) {
+              return null;
+          }
 
             switch ($request["ID_GENRE"]) {
 

@@ -1,14 +1,14 @@
-<p style='float: right;'><a href='/dossier?id_etablissement=<?php echo $this->DB_etablissement["ID_ETABLISSEMENT"] ?>' class='btn'>Créer un nouveau dossier</a></p>
+<div class='pull-right' >
+    <a class='btn' href="<?php echo $this->url(array('controller' => 'dossier', 'id_etablissement' => $this->etablissement['general']['ID_ETABLISSEMENT']), null, true) ?>">Ajouter un dossier</a>
+</div>
 
-<div class='clear:both'></div>
+<h3>Liste des dossiers</h3>
 
 <div id="content_visites_ets">
 <?php if( count($this->visites) > 0 ) : ?>
-    <h3>Visites</h3>
+    <h4>Visites</h4>
     <ul class='recherche_liste'>
-    <?php
-	echo $this->partialLoop('search/results/dossier.phtml', $this->visites); 
-    ?>
+    <?php echo $this->partialLoop('search/results/dossier.phtml', $this->visites); ?>
     </ul>
 <?php endif ?>
 </div>
@@ -16,11 +16,9 @@
 <div id="content_etudes_ets">
 <?php if( count($this->etudes) > 0 ) : ?>
     <?php if( count($this->visites) > 0 ) echo "<hr />"; ?>
-    <h3>Études</h3>
+    <h4>Études</h4>
     <ul class='recherche_liste'>
-    <?php
-	echo $this->partialLoop('search/results/dossier.phtml', $this->etudes); 
-    ?>
+    <?php echo $this->partialLoop('search/results/dossier.phtml', $this->etudes);  ?>
     </ul>
 <?php endif ?>
 </div>
@@ -28,35 +26,34 @@
 <div id="content_autres_ets">
 <?php if( count($this->autres) > 0 ) : ?>
     <?php if( count($this->visites) > 0 || count($this->etudes) > 0) echo "<hr />"; ?>
-    <h3>Autres</h3>
+    <h4>Autres</h4>
     <ul class='recherche_liste'>
-    <?php
-	echo $this->partialLoop('search/results/dossier.phtml', $this->autres); 
-    ?>
+    <?php echo $this->partialLoop('search/results/dossier.phtml', $this->autres);  ?>
     </ul>
 <?php endif ?>
 </div>
 
 <script>
-    $(".slide").live("click", function() {       
-        var container = this;
-        if( $(this).hasClass("active") ) {
-            
-            $(container).next().slideUp(400, function() {$(container).next().remove()});
-            $(container).toggleClass("active");
-        }
-        else {
-            $.ajax({
-                url: "/search/search-child-doss?format=json&id="+$(this).attr("id"),
-                beforeSend: function() {
-                    $(container).find(".load").show();
-                },
-                success: function( result ) {
-                    $(container).find(".load").hide();
-                    $(container).after("<li class='ui-helper-hidden' >" + result.html + "</li>").next().slideDown();
-                    $(container).toggleClass("active");
-                }
-            });
-        }
+    $(document).ready(function() {
+        $(".slide").live("click", function() {       
+            var container = this;
+            if( $(this).hasClass("active") ) {
+                $(container).next().slideUp(400, function() {$(container).next().remove()});
+                $(container).toggleClass("active");
+            }
+            else {
+                $.ajax({
+                    url: "/search/search-child-doss?format=json&id="+$(this).attr("id"),
+                    beforeSend: function() {
+                        $(container).find(".load").show();
+                    },
+                    success: function( result ) {
+                        $(container).find(".load").hide();
+                        $(container).after("<li class='ui-helper-hidden' >" + result.html + "</li>").next().slideDown();
+                        $(container).toggleClass("active");
+                    }
+                });
+            }
+        });
     });
 </script>

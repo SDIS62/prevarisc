@@ -1,0 +1,26 @@
+<tr <?php if($this->plan === null) echo "id='prototype_plan' class='hide prototypes'" ?>>
+    <td>
+        <select name='PLANS[<?php echo $this->plan === null ? -1 : $this->plan['ID_ETABLISSEMENTINFORMATIONSPLAN'] ?>][ID_TYPEPLAN]' style='width: 175px'>
+            <?php foreach( $this->types_plans as $type_plans ) : ?>
+                <option value='<?php echo $type_plans["ID_TYPEPLAN"] ?>' <?php if( $this->plan['ID_TYPEPLAN'] == $type_plans["ID_TYPEPLAN"] ) echo "selected" ?> >
+                    <?php echo $type_plans['LIBELLE_TYPEPLAN'] ?>
+                </option>
+            <?php endforeach ?>
+        </select>
+    </td>
+    <td>
+        <input type='text' name='PLANS[<?php echo $this->plan === null ? -1 : $this->plan['ID_ETABLISSEMENTINFORMATIONSPLAN'] ?>][NUMERO_ETABLISSEMENTPLAN]' value='<?php echo $this->plan["NUMERO_ETABLISSEMENTPLAN"] ?>' />
+    </td>
+    <td>
+        <input type='date' name='PLANS[<?php echo $this->plan === null ? -1 : $this->plan['ID_ETABLISSEMENTINFORMATIONSPLAN'] ?>][DATE_ETABLISSEMENTPLAN]' value='<?php echo $this->plan['DATE_ETABLISSEMENTPLAN'] !== null ? date("Y-m-d", strtotime($this->plan['DATE_ETABLISSEMENTPLAN'])) : date("Y-m-d")  ?>' />
+    </td>
+    <td>
+        <input type='hidden' name='PLANS[<?php echo $this->plan === null ? -1 : $this->plan['ID_ETABLISSEMENTINFORMATIONSPLAN'] ?>][MISEAJOUR_ETABLISSEMENTPLAN]' value='0' />
+        <input type='checkbox' name='PLANS[<?php echo $this->plan === null ? -1 : $this->plan['ID_ETABLISSEMENTINFORMATIONSPLAN'] ?>][MISEAJOUR_ETABLISSEMENTPLAN]' value='1' <?php if( true || $this->plan["MISEAJOUR_ETABLISSEMENTPLAN"] ) echo "checked" ?> />
+    </td>
+    <td>
+        <small>
+            <a href="#" onclick='$(this).parent().parent().parent().remove(); return false;' >Retirer</a>
+        </small>
+    </td>
+</tr>

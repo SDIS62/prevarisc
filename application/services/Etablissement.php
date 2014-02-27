@@ -1,61 +1,168 @@
 <?php
 
-class Service_Etablissement implements Service_Interface_Etablissement
+class Service_Etablissement
 {
-    /*
-    private $repository;
-
-    public function __construct($repository)
-    {
-        $this->repository = $repository;
-    }
-    */
-
+    /**
+     * Récupération d'un établissement
+     *
+     * @param int $id_etablissement
+     * @return array
+     * @throws Exception si l'établissement n'existe pas
+     */
     public function get($id_etablissement)
     {
+        // Récupération de la ressource cache à partir du bootstrap
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
+        if(($etablissement = unserialize($cache->load('etablissement_id_' . $id_etablissement))) === false)
+        {
+            $model_etablissement = new Model_DbTable_Etablissement;
+
+            $search = new Model_DbTable_Search;
+
+            $DB_rubriques = new Model_DbTable_EtablissementInformationsRubrique;
+            $DB_adresse = new Model_DbTable_EtablissementAdresse;
+            $DB_plans = new Model_DbTable_EtablissementInformationsPlan;
+            $DB_genre = new Model_DbTable_Genre;
+            $DB_categorie = new Model_DbTable_Categorie;
+            $DB_famille = new Model_DbTable_Famille;
+            $DB_classe = new Model_DbTable_Classe;
+            $DB_type = new Model_DbTable_Type;
+            $DB_typeactivite = new Model_DbTable_TypeActivite;
+            $DB_commission = new Model_DbTable_Commission;
+            $DB_statut = new Model_DbTable_Statut;
+            $DB_dossier = new Model_DbTable_Dossier;
+
+            // Récupération de l'établissement
+            $general = $model_etablissement->find($id_etablissement)->current();
+
+            // Si l'établissement n'existe pas, on généère une erreur
+            if($general === null) {
+                throw new Exception("L'établissement n'existe pas.");
+            }
+
+            // On récupère la dernière fiche d'informations de l'établissement
+            $informations = $model_etablissement->getInformations($id_etablissement);
+
+            // Récupération des parents de l'établissement
+            $results = array();
+            $id_enfant = $id_etablissement;
+            do {
+                $parent = $model_etablissement->getParent($id_enfant);
+                if ($parent != null) {
+                    $results[] = $parent;
+                    $id_enfant = $parent["ID_ETABLISSEMENT"];
+                }
+            } while($parent != null);
+            $etablissement_parents = count($results) == 0 ? array() : array_reverse($results);
+
+            // Récupération de l'avis de l'établissement + dates de VP
+            $avis = null;
+            $last_visite = null;
+            $next_visite = null;
+            if ($general->ID_DOSSIER_DONNANT_AVIS != null) {
+                $dossier_donnant_avis = $DB_dossier->find($general->ID_DOSSIER_DONNANT_AVIS)->current();
+                $avis = $dossier_donnant_avis->AVIS_DOSSIER_COMMISSION;
+                $tmp_date = new Zend_Date($dossier_donnant_avis->DATEVISITE_DOSSIER, Zend_Date::DATES);
+                $last_visite =  $tmp_date->get( Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
+
+                if($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS != 0) {
+                    $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
+                    $tmp_date->add($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
+                    $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
+                }
+            }
+
+            // récupération de la date de PC initial
+            $pc_inital = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", 1)->setCriteria("ID_NATURE", 1)->order('DATEINSERT_DOSSIER ASC')->run();
+            $pc_inital = $pc_inital->getAdapter()->getItems(0, 1)->toArray();
+            if(count($pc_inital) == 1) {
+                $tmp_date = new Zend_Date($pc_inital[0]['DATEINSERT_DOSSIER'], Zend_Date::DATES);
+                $pc_inital =  $tmp_date->get( Zend_Date::DAY . " " . Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
+            }
+            else {
+                $pc_inital = null;
+            }
+
+            $etablissement = array(
+                'general' => $general,
+                'informations' => array_merge($informations->toArray(), array(
+                    "LIBELLE_GENRE" => $DB_genre->find($informations->ID_GENRE)->current()->LIBELLE_GENRE,
+                    "LIBELLE_CATEGORIE" => @$DB_categorie->find($informations->ID_CATEGORIE)->current()->LIBELLE_CATEGORIE,
+                    "LIBELLE_FAMILLE" => @$DB_famille->find($informations->ID_FAMILLE)->current()->LIBELLE_FAMILLE,
+                    "LIBELLE_CLASSE" => @$DB_classe->find($informations->ID_CLASSE)->current()->LIBELLE_CLASSE,
+                    "LIBELLE_TYPE_PRINCIPAL" => @$DB_type->find($informations->ID_TYPE)->current()->LIBELLE_TYPE,
+                    "LIBELLE_TYPEACTIVITE_PRINCIPAL" => @$DB_typeactivite->find($informations->ID_TYPEACTIVITE)->current()->LIBELLE_ACTIVITE,
+                    "LIBELLE_COMMISSION" => @$DB_commission->find($informations->ID_COMMISSION)->current()->LIBELLE_COMMISSION,
+                    "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
+                )),
+                'parents' => $etablissement_parents,
+                'avis' => $avis,
+                'last_visite' => $last_visite,
+                'next_visite' => $next_visite,
+                'pc_initial' => $pc_inital,
+                'plans' => $DB_plans->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS)->toArray(),
+                'diapo_plans' => $model_etablissement->getPlans($id_etablissement),
+                'diapo' => $model_etablissement->getDiaporama($id_etablissement),
+                'types_activites_secondaires' => $model_etablissement->getTypesActivitesSecondaires($informations->ID_ETABLISSEMENTINFORMATIONS),
+                'rubriques' => $DB_rubriques->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS, "ID_ETABLISSEMENTINFORMATIONSRUBRIQUE")->toArray(),
+                'etablissement_lies' => $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray(),
+                'preventionnistes' => $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $id_etablissement)->run()->getAdapter()->getItems(0, 99999999999)->toArray(),
+                'adresses' => $DB_adresse->get($id_etablissement)
+            );
+
+            // On stocke en cache
+            $cache->save(serialize($etablissement));
+        }
+
+        return $etablissement;
     }
 
+    /**
+     * Récupération de l'historique d'un établissement
+     *
+     * @param int $id_etablissement
+     * @return array
+     */
     public function getHistorique($id_etablissement)
     {
         $historique = array();
 
-        // Modèles additionnels
-        $DB_categorie = new Model_DbTable_Categorie;					$categories = $DB_categorie->fetchAll()->toArray();
-        $DB_famille = new Model_DbTable_Famille;						$familles = $DB_famille->fetchAll()->toArray();
-        $DB_type = new Model_DbTable_Type;						        $types = $DB_type->fetchAll()->toArray();
-        $DB_classe = new Model_DbTable_Classe;							$classes = $DB_classe->fetchAll()->toArray();
+        $DB_information = new Model_DbTable_EtablissementInformations;
+        $DB_categorie = new Model_DbTable_Categorie;					
+        $DB_famille = new Model_DbTable_Famille;						
+        $DB_type = new Model_DbTable_Type;						        
+        $DB_classe = new Model_DbTable_Classe;							
         $DB_utilisateurs = new Model_DbTable_Utilisateur;
         $DB_utilisateursInfo = new Model_DbTable_UtilisateurInformations;
+        $DB_statut = new Model_DbTable_Statut;
 
-        // Instances des modèles
-        $DB_information = new Model_DbTable_EtablissementInformations;
+        $categories = $DB_categorie->fetchAll()->toArray();
+        $familles = $DB_famille->fetchAll()->toArray();
+        $types = $DB_type->fetchAll()->toArray();
+        $classes = $DB_classe->fetchAll()->toArray();
+        $statuts = $DB_statut->fetchAll()->toArray();
 
         // On récupère toutes les fiches de l'établissement
-        $fiches = $DB_information->fetchAll("ID_ETABLISSEMENT = " . $this->_request->id, "DATE_ETABLISSEMENTINFORMATIONS")->toArray();
+        $fiches = $DB_information->fetchAll("ID_ETABLISSEMENT = " . $id_etablissement, "DATE_ETABLISSEMENTINFORMATIONS")->toArray();
 
         // On traite le tout
-        foreach ($fiches as $id => $fiche) {
+        foreach ($fiches as $fiche) {
             foreach ($fiche as $key => $item) {
                 $tmp = ( array_key_exists($key, $historique) ) ? $historique[$key][ count($historique[$key])-1 ] : null;
-
                 $value = null;
-
                 switch ($key) {
                     case "LIBELLE_ETABLISSEMENTINFORMATIONS":
                         $value = $item;
                         break;
-
                     case "ID_STATUT":
-                        $value = $this->view->DB_statut[$item - 1]["LIBELLE_STATUT"];
+                        $value = $statuts[$item - 1]["LIBELLE_STATUT"];
                         break;
-
                     case "ID_CATEGORIE":
                         if (isset($categories[$item - 1])) {
                             $value = $categories[$item - 1]["LIBELLE_CATEGORIE"];
                         }
                         break;
-
                     case "ID_TYPE":
                         if (isset($types[$item - 1])) {
                             $value = $types[$item - 1]["LIBELLE_TYPE"];
@@ -65,15 +172,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
                 if ( !isset( $historique[$key] ) || $tmp["valeur"] != $value ) {
                     $date = new Zend_Date($fiche["DATE_ETABLISSEMENTINFORMATIONS"], Zend_Date::DATES);
-
                     if ($tmp != null) {
                         $historique[$key][ count($historique[$key])-1 ]["fin"] = $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
                     }
-
                     $historique[$key][] = array(
                         "valeur" => $value,
                         "debut" =>  $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ),
-                        "author" => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"] == 0 ? null : array("id" => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"], "object" => $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"])->current()->ID_UTILISATEUR))
+                        "author" => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"] == 0 ? null : array('id' => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"], 'object' => $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"])->current()->ID_UTILISATEURINFORMATIONS)->toArray())
                     );
                 }
             }
@@ -84,15 +189,15 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $historique[$key] = array_reverse($item);
         }
 
-        $liste_champs = Zend_Json::decode($this->view->liste_champs);
-        $genre = Zend_Json::decode($this->view->genre);
-
-        // Envoi des variables à la vue
-        $this->view->historique = $historique;
-        $this->view->fiches = $fiches;
-        $this->view->classement = $liste_champs[$genre];
+        return $historique;
     }
 
+    /**
+     * Récupération des dossiers d'un établissement
+     *
+     * @param int $id_etablissement
+     * @return array
+     */
     public function getDossiers($id_etablissement)
     {
         // Création de l'objet recherche
@@ -110,11 +215,19 @@ class Service_Etablissement implements Service_Interface_Etablissement
         }
 
         // On balance le résultat sur la vue
-        $this->view->etudes = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", 1)->order("COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
-        $this->view->visites = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", array(2, 3))->order("DATEVISITE_DOSSIER,COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
-        $this->view->autres = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $this->_request->id)->setCriteria("d.TYPE_DOSSIER", $types_autre)->order("DATEINSERT_DOSSIER DESC")->run();
+        $results = array();
+        $results['etudes'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", 1)->order("COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
+        $results['visites'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", array(2, 3))->order("DATEVISITE_DOSSIER,COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
+        $results['autres'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", $types_autre)->order("DATEINSERT_DOSSIER DESC")->run();
+        return $results;
     }
 
+    /**
+     * Récupération des descriptifs d'un établissement
+     *
+     * @param int $id_etablissement
+     * @return array
+     */
     public function getDescriptifs($id_etablissement)
     {
         $dbtable_etablissement = new Model_DbTable_Etablissement;
@@ -227,7 +340,16 @@ class Service_Etablissement implements Service_Interface_Etablissement
         );
     }
 
-    public function saveDescriptifs($id_etablissement, $historique, $descriptif, $derogations, $descriptifs_techniques)
+    /**
+     * Sauvegarde des descriptifs d'un établissement
+     *
+     * @param int $id_etablissement
+     * @param string $historique
+     * @param string $descriptif
+     * @param string $derogations
+     * @param array $descriptifs_techniques
+     */
+    public function saveDescriptifs($id_etablissement, $historique, $descriptif, $derogations, array $descriptifs_techniques)
     {
 
         $dbtable_etablissement = new Model_DbTable_Etablissement;
@@ -244,34 +366,17 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $etablissement->save();
     }
 
-    public function getAdresses($id_etablissement)
+    /**
+     * On cherche l'ensemble des établissements correspondant au libellé donné qui satisfassent à la contrainte d'être enfant (ou parent) du genre donné
+     *
+     * @param string $libelle
+     * @param int $id_genre
+     * @param bool $enfants Optionnel
+     * @return array
+     */
+    public function findAll($libelle, $id_genre, $enfants = true)
     {
-        if ($this->_request->id) {
-            $DB_adresse = new Model_DbTable_EtablissementAdresse;
-            $search = new Model_DbTable_Search;
-
-            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $this->_request->id)->run();
-            $this->view->etablissement_lies = $etablissement_lies;
-
-            $adresses = $DB_adresse->get($this->_request->id);
-            $adresses[-1] = array_fill_keys ( array( "LON_ETABLISSEMENTADRESSE", "LAT_ETABLISSEMENTADRESSE", "NUMERO_ADRESSE", "ID_RUE", "NUMINSEE_COMMUNE", "COMPLEMENT_ADRESSE", "LIBELLE_COMMUNE", "LIBELLE_RUE", "CODEPOSTAL_COMMUNE" ) , null );
-            $this->view->adresses = $adresses;
-        }
-    }
-
-    public function getPlans($id_etablissement)
-    {
-        $this->DB_etablissement->getDiaporama($this->_request->id);
-    }
-
-    public function getDiapo($id_etablissement)
-    {
-        $this->DB_etablissement->getPlans($this->_request->id);
-    }
-
-    public function findAll($libelle)
-    {
-        // CrÃ©ation de l'objet recherche
+        // Création de l'objet recherche
         $search = new Model_DbTable_Search;
 
         // On set le type de recherche
@@ -282,321 +387,389 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $libelle, false);
 
         // On filtre par le genre
-        if ($this->_request->g) {
-            if ($this->_request->genre_pere == 1) {
-                if($this->_request->g == 2)
-                    $search->setCriteria("etablissementinformations.ID_GENRE", 1);
-                elseif($this->_request->g == 3)
-                    $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-            }
-
-            if ($this->_request->genre_enfant == 1) {
-                if($this->_request->g == 1)
-                    $search->setCriteria("etablissementinformations.ID_GENRE", array(2,4,5,6));
-                elseif($this->_request->g == 2)
-                    $search->setCriteria("etablissementinformations.ID_GENRE", 3);
-            }
+        if (!$enfants) {
+            if($id_genre == 2)
+                $search->setCriteria("etablissementinformations.ID_GENRE", 1);
+            elseif($id_genre == 3)
+                $search->setCriteria("etablissementinformations.ID_GENRE", 2);
         }
 
-        // On balance le rÃ©sultat sur la vue
-        $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+        if ($enfants) {
+            if($id_genre == 1)
+                $search->setCriteria("etablissementinformations.ID_GENRE", array(2,4,5,6));
+            elseif($id_genre == 2)
+                $search->setCriteria("etablissementinformations.ID_GENRE", 3);
+        }
+
+        return $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
     }
 
-    public function ficheExiste($id_etablissement)
+    /**
+     * On vérifie si une fiche existe à la date donnée pour l'établissement
+     *
+     * @param int $id_etablissement
+     * @param Datetime $date
+     * @return array
+     */
+    public function ficheExiste($id_etablissement, Datetime $date)
     {
         $DB_information = new Model_DbTable_EtablissementInformations;
 
-        if ($this->_request->date != "undefined") {
-            $array_date = $this->getDate($this->_request->date);
-            $this->view->bool_fiche = (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $this->_request->id . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $array_date . "'"))) ? true : false;
-        } else {
-            $this->view->bool_fiche = false;
-        }
+        return (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $id_etablissement . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $date . "'"))) ? true : false;
     }
 
-    public function save($id_etablissement)
+    /**
+     * Sauvegarde d'un établissement
+     *
+     * @param int $id_genre
+     * @param array $data
+     * @param int $id_etablissement Optionnel
+     * @param int $date Optionnel format : Y-m-d
+     * @return int $id_etablissement
+     * @throws Exception Si une erreur apparait lors de la sauvegarde
+     */
+    public function save($id_genre, array $data, $id_etablissement = null, $date = '')
     {
-        // Instances des modèles
-        $DB_information = new Model_DbTable_EtablissementInformations;
-        $DB_tab["ID_TYPEPLAN"] = new Model_DbTable_EtablissementInformationsPlan;
-        $DB_tab["ID_RUBRIQUE"] = new Model_DbTable_EtablissementInformationsRubrique;
-        $DB_tab["ID_TYPE_SECONDAIRE"] = new Model_DbTable_EtablissementInformationsTypesActivitesSecondaires;
-        $DB_tab["ID_FILS_ETABLISSEMENT"] = new Model_DbTable_EtablissementLie;
-        $DB_tab["ID_UTILISATEUR"] = new Model_DbTable_EtablissementInformationsPreventionniste;
-        $DB_tab["NUMERO_ADRESSE"] = new Model_DbTable_EtablissementAdresse;
+        $DB_etablissement = new Model_DbTable_Etablissement;
+        $DB_informations = new Model_DbTable_EtablissementInformations;
+        $DB_plans = new Model_DbTable_EtablissementInformationsPlan;
+        $DB_rubrique = new Model_DbTable_EtablissementInformationsRubrique;
+        $DB_types_activites_secondaires = new Model_DbTable_EtablissementInformationsTypesActivitesSecondaires;
+        $DB_etablissements_lies = new Model_DbTable_EtablissementLie;
+        $DB_preventionniste = new Model_DbTable_EtablissementInformationsPreventionniste;
+        $DB_adresse = new Model_DbTable_EtablissementAdresse;
 
         // On commence la transaction
         $db = Zend_Db_Table::getDefaultAdapter();
         $db->beginTransaction();
 
-        // Variable pour savoir si on créé ou Update
-        $historique = false;
-        $new = false;
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         try {
-            if (!isset($_GET["ID_UTILISATEUR"]) || count($_GET["ID_UTILISATEUR"]) == 0 || $_GET["ID_UTILISATEUR"][0] == null) {
-                throw new Exception("Pas de préventionnistes liés.");
+            $etablissement = $id_etablissement == null ? $DB_etablissement->createRow() : $DB_etablissement->find($id_etablissement)->current();
+
+            if($date == '') {
+                $informations = $DB_informations->createRow(array('DATE_ETABLISSEMENTINFORMATIONS' => date('Y-m-d')));
             }
+            else {
+                $information_a_la_date_donnee = $DB_informations->fetchRow("ID_ETABLISSEMENT = '" .  $id_etablissement . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $date . "'");
 
-            // Si il n'y a pas d'id
-            if (!$this->_request->id) {
-                // On créé un nouvel établissement
-                $etablissement = $this->DB_etablissement->createRow();
-                $new = true;
-            } else {
-                // On récupère l'instance d'un établissement
-                $etablissement = $this->DB_etablissement->find( $this->_request->id )->current();
-            }
-
-            // Est ce que l'on créé un nouveau bloc d'informations
-            if (!$this->_request->id || $this->_request->historique == 1) {
-                $historique = true;
-
-                if ($this->_request->historique && $this->_request->id) {
-                    $rowtmp = null;
-
-                    $array_date = $this->getDate($this->_request->date);
-                    if (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $this->_request->id . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $array_date . "'"))) {
-                        $informations = $row;
-
-                        // On vide les tables des plans / rubrique / secondaire
-                        foreach ($DB_tab as $key => $tab) {
-                            if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
-                                $tab->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
-                            } else {
-                                $tab->delete( "ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                            }
-                        }
-                    }
-
-                    $DB_tab["NUMERO_ADRESSE"]->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                    $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                if($information_a_la_date_donnee != null) {
+                    $informations = $information_a_la_date_donnee;
+                    $DB_plans->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
+                    $DB_rubrique->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
+                    $DB_types_activites_secondaires->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
+                    $DB_preventionniste->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
+                    $DB_etablissements_lies->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                    $DB_adresse->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                 }
-
-                if (!isset($informations)) {
-                    $update = false;
-                    $informations = $DB_information->createRow();
-                    $informations->DATE_ETABLISSEMENTINFORMATIONS = $this->getDate(isset($this->_request->date) ? $this->_request->date : date("d/m/Y", time()));
-                }
-
-                unset($_GET["historique"]);
-            } else {
-                // On recupère le dernier bloc d'informations de l'établissement
-                $informations = $this->DB_etablissement->getInformations( $this->_request->id );
-
-                // On vide les tables des plans / rubrique / secondaire
-                foreach ($DB_tab as $key => $tab) {
-                    if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
-                        $tab->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
-                    } else {
-                        $tab->delete( "ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                    }
-                }
-            }
-
-            // On met à  0 les checkbox, elles seront checkées si dans le formulaire elles le sont
-            $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS = 0;
-            $informations->ICPE_ETABLISSEMENTINFORMATIONS = 0;
-            $informations->R12320_ETABLISSEMENTINFORMATIONS = 0;
-            $informations->EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS = 0;
-            $informations->SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS = 0;
-            $informations->ID_STATUT = null;
-            $informations->ID_GENRE = 1;
-            $informations->ID_CLASSE = null;
-
-            $_GET['NBPREV_ETABLISSEMENT'] = isset($_GET['NBPREV_ETABLISSEMENT']) ? (int) $_GET['NBPREV_ETABLISSEMENT'] : 0;
-            $_GET['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] = isset($_GET['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS']) ? (int) $_GET['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] : 0;
-            $_GET['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] = isset($_GET['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS']) ? (int) $_GET['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] : 0;
-            $_GET['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] = isset($_GET['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS']) ? (int) $_GET['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] : 0;
-            $_GET['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] = isset($_GET['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS']) ? (int) $_GET['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] : 0;
-
-            // Sauvegarde de la base pour récupérer les id
-            $etablissement->save();
-            $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
-            $informations->save();
-
-            // On populate les informations
-            foreach ($_GET as $key => $data) {
-                // Données non historisées
-                if ( in_array($key, array("NUMEROID_ETABLISSEMENT", "TELEPHONE_ETABLISSEMENT", "FAX_ETABLISSEMENT", "COURRIEL_ETABLISSEMENT", "NUMEROID_ETABLISSEMENT", "NBPREV_ETABLISSEMENT", "DUREEVISITE_ETABLISSEMENT")) ) {
-                    $etablissement->$key = $data;
-                }
-                // Données historisées
-                else if ( !is_array($data) ) {
-                    if (in_array($key, $DB_information->info(Zend_Db_Table_Abstract::COLS))) {
-                        if( in_array($key, array("DATEPCINITIAL_ETABLISSEMENTINFORMATIONS", "DATEPCMODIFICATIF_ETABLISSEMENTINFORMATIONS")) )
-                            $informations->$key = $this->getDate($data);
-                        else
-                            $informations->$key = $data;
-                    }
-                }
-                // Données dans une table a part
                 else {
-                    // est ce que l'on veut ajouter une ligne dans la bonne table ?
-                    if ( array_key_exists($key, $DB_tab) ) {
-                        // on parcourt les données du tableau envoyé
-                        for ( $i=0; $i<count($data); $i++ ) {
-                            // Création de la ligne
-                            $item = $DB_tab[$key]->createRow();
+                    $informations = $DB_informations->createRow(array('DATE_ETABLISSEMENTINFORMATIONS' => $date));
+                }
+            }
 
-                            foreach ( $DB_tab[$key]->info(Zend_Db_Table_Abstract::COLS) as $col ) {
-                                if ( isset($_GET[$col][$i]) ) {
-                                    // On check si lenfant correspondant bien a l'établissement actuel
-                                    if ($key == "ID_FILS_ETABLISSEMENT") {
-                                        $genre_actuel = $_GET["ID_GENRE"];
-                                        $genre_enfant = $this->DB_etablissement->getInformations($_GET[$col][$i])->ID_GENRE;
+            // Sauvegarde des champs d'établissement (non historisés) en fonction
+            $etablissement->NUMEROID_ETABLISSEMENT = $data['NUMEROID_ETABLISSEMENT'];
+            $etablissement->TELEPHONE_ETABLISSEMENT = $data['TELEPHONE_ETABLISSEMENT'];
+            $etablissement->FAX_ETABLISSEMENT = $data['FAX_ETABLISSEMENT'];
+            $etablissement->COURRIEL_ETABLISSEMENT = $data['COURRIEL_ETABLISSEMENT'];
+            $etablissement->NBPREV_ETABLISSEMENT = (int) $data['NBPREV_ETABLISSEMENT'];
+            $etablissement->DUREEVISITE_ETABLISSEMENT = $data['DUREEVISITE_ETABLISSEMENT'];
+            $etablissement->save();
 
-                                        switch ($genre_actuel) {
-                                            case 1:
-                                                if($genre_enfant != 2 && $genre_enfant != 4 && $genre_enfant != 5 && $genre_enfant != 6)
-                                                    throw new Exception('L\'établissement enfant n\'est pas compatible (Un Site ne ne peut contenir que des établissements)', 500);
-                                                break;
+            // Sauvegarde des champs de la fiche d'informations en fonction du genre
+            $informations->ICPE_ETABLISSEMENTINFORMATIONS = $informations->PERIODICITE_ETABLISSEMENTINFORMATIONS = 
+            $informations->R12320_ETABLISSEMENTINFORMATIONS = $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS = 
+            $informations->ID_CLASSE = $informations->ID_FAMILLE =  $informations->ID_CATEGORIE = $informations->ID_TYPE =
+            $informations->ID_TYPEACTIVITE = $informations->ID_COMMISSION = $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = 
+            $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = $informations->EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS = 
+            $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = null;
 
-                                            case 2:
-                                                if($genre_enfant != 3)
-                                                    throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
-                                                break;
+            switch($id_genre) {
+                // Établissement
+                case 2:
+                    $informations->ID_CATEGORIE = $data['ID_CATEGORIE'];
+                    $informations->PERIODICITE_ETABLISSEMENTINFORMATIONS = (int) $data['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
+                    $informations->ID_TYPE = $data['ID_TYPE'];
+                    $informations->ID_TYPEACTIVITE = $data['ID_TYPEACTIVITE'];
+                    $informations->R12320_ETABLISSEMENTINFORMATIONS = (int) $data['R12320_ETABLISSEMENTINFORMATIONS'];
+                    $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS = (int) $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS = $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS ? (int) $data['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] : null;
+                    $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = $data['ID_CATEGORIE'] == 5 ? (int) $data['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] : null;
+                    $informations->ID_COMMISSION = $data['ID_COMMISSION'];
+                    break;
 
-                                            default:
-                                                if($genre_enfant != null)
-                                                    throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
-                                        }
-                                    }
+                // Cellule
+                case 3:
+                    $informations->ID_CATEGORIE = $data['ID_CATEGORIE'];
+                    $informations->PERIODICITE_ETABLISSEMENTINFORMATIONS = (int) $data['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
+                    $informations->ID_TYPE = $data['ID_TYPE'];
+                    $informations->ID_TYPEACTIVITE = $data['ID_TYPEACTIVITE'];
+                    $informations->R12320_ETABLISSEMENTINFORMATIONS = (int) $data['R12320_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = $data['ID_CATEGORIE'] == 5 ? (int) $data['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] : null;
+                    break;
 
-                                    $item->$col = $col == "DATE_ETABLISSEMENTPLAN" ? $this->getDate($_GET[$col][$i]) : $_GET[$col][$i];
-                                }
-                            }
+                // Habitation
+                case 4:
+                    $informations->ID_FAMILLE = $data['ID_FAMILLE'];
+                    break;
 
-                            // Ajout de la clé étrangère
-                            // Gestion historique ou pas
-                            if ( !in_array($key, array("ID_FILS_ETABLISSEMENT", "NUMERO_ADRESSE")) ) {
-                                $item->ID_ETABLISSEMENTINFORMATIONS = $informations->ID_ETABLISSEMENTINFORMATIONS;
-                            } else {
-                                $item->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
-                            }
+                // IGH
+                case 5:
+                    $informations->ID_CLASSE = $data['ID_CLASSE'];
+                    $informations->PERIODICITE_ETABLISSEMENTINFORMATIONS = (int) $data['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    $informations->ID_COMMISSION = $data['ID_COMMISSION'];
+                    break;
 
-                            // Sauvegarde
-                            $item->save();
-                        }
+                // EIC
+                case 6:
+                    $informations->ICPE_ETABLISSEMENTINFORMATIONS = (int) $data['ICPE_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    break;
+            }
+
+            $informations->LIBELLE_ETABLISSEMENTINFORMATIONS = $data['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+            $informations->ID_GENRE = $id_genre;
+            $informations->ID_STATUT = $data['ID_STATUT'];
+            $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR;
+            $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
+
+            $informations->save();
+
+            // Sauvegarde des préventionnistes
+            if(array_key_exists('ID_UTILISATEUR', $data) && count($data['ID_UTILISATEUR']) > 0) {
+                foreach($data['ID_UTILISATEUR'] as $id_preventionniste) {
+                    $DB_preventionniste->createRow(array(
+                        "ID_ETABLISSEMENTINFORMATIONS" => $informations->ID_ETABLISSEMENTINFORMATIONS,
+                        "ID_UTILISATEUR" => $id_preventionniste
+                    ))->save();
+                }
+            }
+
+            // Sauvegarde des rubriques pour les EIC
+            if($id_genre == 6 && count($data['RUBRIQUES']) > 0) {
+                foreach($data['RUBRIQUES'] as $rubrique) {
+                    $DB_rubrique->createRow(array(
+                        "ID_RUBRIQUE" => $rubrique["ID_RUBRIQUE"],
+                        "NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE" => (int) $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
+                        "VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE" => (double) $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
+                        "NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE" => $rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
+                        "ID_ETABLISSEMENTINFORMATIONS" => $informations->ID_ETABLISSEMENTINFORMATIONS,
+                        "CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE" => $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"]
+                    ))->save();
+                }
+            }
+
+            // Sauvegarde des plans en fonction du genre
+            if(in_array($id_genre, array(2, 3, 5 ,6)) && array_key_exists('PLANS', $data) && count($data['PLANS']) > 0) {
+                foreach($data['PLANS'] as $plan) {
+                    $DB_plans->createRow(array(
+                        "ID_ETABLISSEMENTINFORMATIONS" => $informations->ID_ETABLISSEMENTINFORMATIONS,
+                        "NUMERO_ETABLISSEMENTPLAN" => $plan["NUMERO_ETABLISSEMENTPLAN"],
+                        "DATE_ETABLISSEMENTPLAN" => $plan["DATE_ETABLISSEMENTPLAN"],
+                        "MISEAJOUR_ETABLISSEMENTPLAN" => $plan["MISEAJOUR_ETABLISSEMENTPLAN"],
+                        "ID_TYPEPLAN" => $plan["ID_TYPEPLAN"]
+                    ))->save();
+                }
+            }
+
+            // Sauvegarde des types et activités secondaires en fonction du genre
+            if(in_array($id_genre, array(2, 3)) && array_key_exists('TYPES_ACTIVITES_SECONDAIRES', $data) && count($data['TYPES_ACTIVITES_SECONDAIRES']) > 0) {
+                foreach($data['TYPES_ACTIVITES_SECONDAIRES'] as $type_activite_secondaire) {
+                    $DB_types_activites_secondaires->createRow(array(
+                        "ID_ETABLISSEMENTINFORMATIONS" => $informations->ID_ETABLISSEMENTINFORMATIONS,
+                        "ID_TYPE_SECONDAIRE" => $type_activite_secondaire["ID_TYPE_SECONDAIRE"],
+                        "ID_TYPEACTIVITE_SECONDAIRE" => $type_activite_secondaire["ID_TYPEACTIVITE_SECONDAIRE"]
+                    ))->save();
+                }
+            }
+
+            // Sauvegarde des adresses en fonction du genre
+            if(in_array($id_genre, array(2, 4, 5, 6)) && array_key_exists('ADRESSES', $data) && count($data['ADRESSES']) > 0) {
+                foreach($data['ADRESSES'] as $adresse) {
+                    $DB_adresse->createRow(array(
+                        "NUMERO_ADRESSE" => $adresse["NUMERO_ADRESSE"],
+                        "COMPLEMENT_ADRESSE" => $adresse["COMPLEMENT_ADRESSE"],
+                        "LON_ETABLISSEMENTADRESSE" => $adresse["LON_ETABLISSEMENTADRESSE"],
+                        "LAT_ETABLISSEMENTADRESSE" => $adresse["LAT_ETABLISSEMENTADRESSE"],
+                        "ID_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT,
+                        "ID_RUE" => $adresse["ID_RUE"],
+                        "NUMINSEE_COMMUNE" => $adresse["NUMINSEE_COMMUNE"]
+                    ))->save();
+                }
+            }
+
+            // Sauvegarde des établissements liés
+            if(array_key_exists('ID_FILS_ETABLISSEMENT', $data) && count($data['ID_FILS_ETABLISSEMENT']) > 0) {
+                foreach($data['ID_FILS_ETABLISSEMENT'] as $id_etablissement_enfant) {
+                    $genre_enfant = $DB_etablissement->getInformations($id_etablissement_enfant)->ID_GENRE;
+
+                    if($id_genre == 1 && ($genre_enfant != 2 && $genre_enfant != 4 && $genre_enfant != 5 && $genre_enfant != 6)) {
+                        throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne ne peut contenir que des établissements)', 500);
+                    }
+                    elseif($id_genre == 2 && ($genre_enfant != 3)) {
+                        throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
+                    }
+                    elseif($genre_enfant != null) {
+                        throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
+                    }
+                    else {
+                        $DB_etablissements_lies->createRow(array(
+                            "ID_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT,
+                            "ID_FILS_ETABLISSEMENT" => $id_etablissement_enfant
+                        ))->save();
+                        $cache->remove('etablissement_id_' . $id_etablissement_enfant);
                     }
                 }
             }
 
-            // On sauvegarde l'utilisateur qui a sauvegardé la fiche
-            $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR;
-
-            // On sauvegarde les changements
-            $etablissement->save();
-            $informations->save();
-
-            // On spécifie le père
-            if ($this->_request->ID_PERE != "") {
-
-                $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                $pere_information = $this->DB_etablissement->getInformations($this->_request->ID_PERE);
-
-                // on test si le père peut être enregistré (genre)
-                // si l'établissement = site alors pas de pere
-                // si l'établissement = cellule alos père = etablissement
-                switch ($informations->ID_GENRE) {
-                    case 2:
-                        if($pere_information->ID_GENRE != 1)
-                            throw new Exception('Le père n\'est pas compatible (Un établissement a comme père un site)', 500);
-                        break;
-                    case 3:
-                        if($pere_information->ID_GENRE != 2)
-                            throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
-                        break;
-                    default:
-                        if($this->_request->ID_PERE !=null)
-                            throw new Exception('Le père n\'est pas compatible (Les sites, habitation, IGH et EIC n\'ont pas de père)', 500);
-                        break;
+            // Sauvegarde du père de l'établissement
+            if(array_key_exists("ID_PERE", $data) && !empty($data['ID_PERE'])) {
+                $genre_pere = $DB_etablissement->getInformations($data['ID_PERE'])->ID_GENRE;
+                
+                if($id_genre == 2 && $genre_pere != 1) {
+                    throw new Exception('Le père n\'est pas compatible (Un établissement a comme père un site)', 500);
                 }
-
-                $item = $DB_tab["ID_FILS_ETABLISSEMENT"]->createRow();
-                $item->ID_ETABLISSEMENT = (int) $this->_request->ID_PERE;
-                $item->ID_FILS_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
-                $item->save();
-
-            } else {
-                $DB_tab["ID_FILS_ETABLISSEMENT"]->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                elseif($id_genre == 3 && $genre_pere != 2) {
+                    throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
+                }
+                elseif($genre_pere == null) {
+                    throw new Exception('Le père n\'est pas compatible (Les sites, habitation, IGH et EIC n\'ont pas de père)', 500);
+                }
+                else {
+                    $DB_etablissements_lies->delete("ID_FILS_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                    $DB_etablissements_lies->createRow(array(
+                        "ID_ETABLISSEMENT" => (int) $data['ID_PERE'],
+                        "ID_FILS_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT
+                    ))->save();
+                    $cache->remove('etablissement_id_' . (int) $data['ID_PERE']);
+                }
             }
 
+            $cache->remove('etablissement_id_' . $id_etablissement);
             $db->commit();
-
-            // On donne le lien vers l'Ã©tablissement pour le rechargement
-            if ($etablissement->ID_ETABLISSEMENT) {
-                $this->view->url = "/etablissement/index/id/".$etablissement->ID_ETABLISSEMENT."?confirm=1";
-            }
-
-            // On update les cat et la perio des celulles enfants si il y en a
-            $this->DB_etablissement->recalcEnfants($etablissement->ID_ETABLISSEMENT, $informations->ID_ETABLISSEMENTINFORMATIONS, $historique);
-
-        } catch (Exception $e) {
-            $this->_helper->viewRenderer->setNoRender();
-            $db->rollBack();
-            $this->view->error = $e->getMessage();
-            //throw $e;
         }
+        catch(Exception $e) {
+            $db->rollBack();
+            throw $e;
+        }
+
+        return $etablissement->ID_ETABLISSEMENT;
     }
 
-    public function getDefaultValues($data)
+    /**
+     * Récupération des valeurs par défauts en fonction du genre et d'autres critères donnés pour un établissement
+     *
+     * @param int $id_genre
+     * @param array $data
+     * @return array
+     */
+    public function getDefaultValues($id_genre, array $data)
     {
+        $model_etablissement = new Model_DbTable_Etablissement;
+
         $results = array();
 
-        $results["ID_CATEGORIE"] = $this->repository->getDefaultCategorie($data);
-
-        if ($results["ID_CATEGORIE"] != null) {
-            $results["ID_CATEGORIE"] = $this->view->categorie;
-        }
-
-        $results['periodicite'] = $this->repository->getDefaultPeriodicite($data);
-        $results['commission'] = $this->repository->getDefaultCommission($data);
-        $results['preventioniste'] = $this->repository->getDefaultPrev($data);
+        $results["categorie"] = $model_etablissement->getDefaultCategorie($data);
+        $results['periodicite'] = $model_etablissement->getDefaultPeriodicite($data);
+        $results['commission'] = $model_etablissement->getDefaultCommission($data);
+        $results['preventioniste'] = $model_etablissement->getDefaultPrev($data);
 
         return $results;
     }
 
-
-    public function getAllPJ($id)
+    /**
+     * Récupération des pièces jointes d'un établissement
+     *
+     * @param int $id_etablissement
+     * @return array
+     */
+    public function getAllPJ($id_etablissement)
     {
 
     }
 
-    public function savePJ($data)
+    /**
+     * Ajout d'une pièce jointe pour un établissement
+     *
+     * @param int $id_etablissement
+     * @param array $data
+     */
+    public function savePJ($id_etablissement, array $data)
     {
 
     }
 
-    public function deletePJ($data)
+    /**
+     * Suppression d'une pièce jointe d'un établissement
+     *
+     * @param int $id_pj
+     */
+    public function deletePJ($id_pj)
     {
 
     }
 
-
-    public function getAllContacts($id)
+    /**
+     * Récupération des contacts d'un établissement
+     *
+     * @param int $id_etablissement
+     * @return array
+     */
+    public function getAllContacts($id_etablissement)
     {
 
     }
 
-    public function saveContact($data)
+    /**
+     * Ajout d'un contact à un établissement
+     *
+     * @param int $id_etablissement
+     * @param array $data
+     * @return array
+     */
+    public function saveContact($id_etablissement, array $data)
     {
 
     }
 
-    public function deleteContact($data)
+    /**
+     * Suppression d'un contact
+     *
+     * @param int $id_contact
+     * @return array
+     */
+    public function deleteContact($id_contact)
     {
 
     }
 
-    // Récupération de tous les textes applicables qui ont été cochés
+    /**
+     * Récupération des textes applicables sur l'établissement
+     *
+     * @param int $id_etablissement
+     * @return array
+     */
     public function getAllTextesApplicables($id_etablissement)
     {
         $etsTexteApplicable = new Model_DbTable_EtsTextesAppl;
         return $etsTexteApplicable->recupTextes($id_etablissement);
     }
 
-    public function saveTextesApplicables($id_etablissement, $textes_applicables)
+    /**
+     * Sauvegarde des textes applicables sur un établissement
+     *
+     * @param int $id_etablissement
+     * @param array $textes_applicables
+     * @return array
+     */
+    public function saveTextesApplicables($id_etablissement, array $textes_applicables)
     {
         $etsTexteApplicable = new Model_DbTable_EtsTextesAppl;
 
@@ -617,18 +790,4 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
         }
     }
-
-    private function getDate($input)
-    {
-        $array_date = explode("/", $input);
-        if (!is_array($array_date) || count($array_date) != 3) {
-            throw new Exception('Erreur dans la date', 500);
-        }
-        if($array_date[2] != '0000')
-
-            return $array_date[2]."-".$array_date[1]."-".$array_date[0]." 00:00:01";
-        else
-            return "1970-01-02 00:00:02";
-    }
-
 }

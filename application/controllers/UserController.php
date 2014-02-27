@@ -402,7 +402,7 @@
             $search->setCriteria("fonction.ID_FONCTION", 13);
 
             // On recherche avec le libellé
-            $search->setCriteria("NOM_UTILISATEURINFORMATIONS", $this->_request->getQuery("q"), false);
+            $search->setCriteria("NOM_UTILISATEURINFORMATIONS", $this->_request->q, false);
 
             // On balance le résultat sur la vue
             $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();

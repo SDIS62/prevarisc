@@ -1,0 +1,139 @@
+<form class="modal adresse" action='<?php echo $this->url(array('action' => 'add')) ?>' method='post' >
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Ajouter une adresse</h3>
+    </div>
+
+    <div class="modal-body">
+        <dl class='dl-horizontal'>
+            <dt>Ville</dt>
+            <dd>
+                <input name='commune_ac' type='text' placeholder='Nom de la commune ou code postal ...' />
+                <input name='code_insee' type='hidden' />
+                <input name='code_postal' type='hidden' />
+            </dd>
+
+            <dt>Voie</dt>
+            <dd>
+                <input type='text' name='voie_ac' placeholder='Nom de la voie ...' disabled />
+                <input type='hidden' name='type_voie' />
+                <input type='hidden' name='voie' />
+            </dd>
+            
+            <dt>Numéro</dt>
+            <dd>
+                <input class="input-small" type='text' name='numero' placeholder='Numéro ...' disabled />
+            </dd>
+
+            <dt>Complément d'adresse</dt>
+            <dd>
+                <input type='text' name='complement' placeholder="Complément d'adresse" disabled />
+            </dd>
+
+            <dt>Type de l'adresse</dt>
+            <dd>
+                <select>
+                    <option>Adresse postale</option>
+                </select>
+            </dd>
+
+            <dt>Géolocalisation</dt>
+            <dd>
+                Longitude: <span class='lon'>Inconnu</span>; Latitude: <span class='lat'>Inconnu</span>
+                <button id="geolocme" class='btn btn-small'>Géolocaliser cette adresse</button>
+                <input type='hidden' name='lon' />
+                <input type='hidden' name='lat' />
+            </dd>
+        </dl>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' />
+    </div>
+
+</form>
+
+<script>
+    $(document).ready(function() {
+        // Auto complétion de la ville
+        $("input[name='commune_ac']").autocomplete("/adresse/get?format=json", {
+            minChars: 3,
+            parse: function(data) {
+                return $.map(data["resultats"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
+            },
+            formatItem: function(item) {
+                return item.LIBELLE_COMMUNE + " (" + item.NUMINSEE_COMMUNE + ")";
+            }
+        }).result(function(e, item) {
+            $("input[name='code_insee']").val( item.NUMINSEE_COMMUNE );
+            $("input[name='code_postal']").val( item.CODEPOSTAL_COMMUNE );
+            $("input[name='voie_ac']").removeAttr('disabled');
+        }).click(function() {
+            $(this).val("");
+            $("input[name='voie_ac'], input[name='numero'], input[name='complement']").val("").attr("disabled", true).blur();
+            $("input[name='voie']").val("").blur();
+        });
+
+        // Auto complétion de la rue
+        $("input[name='voie_ac']").autocomplete('/adresse/get-voies?format=json', {
+            minChars: 3,
+            extraParams: { code_insee: function(){ return $("input[name='code_insee']").val() } },
+            parse: function(data) {
+                return $.map(data["resultats"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
+            },
+            formatItem: function(item) {
+                return item.LIBELLE_RUE;
+            }
+        }).result(function(e, item) {
+            $("input[name='voie']").val( item.ID_RUE );
+            $("input[name='type_voie']").val( item.ID_RUETYPE );
+            $("input[name='numero'], input[name='complement']").removeAttr("disabled");
+        }).click(function() {
+            $(this).val("");
+            $("input[name='numero'], input[name='complement']").val("").attr("disabled", true).blur();
+        });
+
+        // Sauvegarde de l'adresse
+        $('#geolocme').click(function() {
+            element = $(this);
+            $.ajax({
+                url: "/proxy?url=http://nominatim.openstreetmap.org/search",
+                dataType: 'json',
+                timeout: 10000,
+                data: {
+                    format: "json",
+                    limit: 1,
+                    country: "France",
+                    street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
+                    city: $("input[name='commune_ac']").val(),
+                    postalcode: $("input[name='code_insee']").val().substring(0,2)
+                },
+                beforeSend: function() {
+                    element.text("Géolocalisation en cours ...");
+                },
+                success: function(geolocations) {
+                    element.text("Géolocaliser cette adresse");
+                    if(geolocations.length > 0) {
+                        $("input[name='lon']").val(geolocations[0].lon);
+                        $("span.lon").text(geolocations[0].lon);
+                        $("input[name='lat']").val(geolocations[0].lat);
+                        $("span.lat").text(geolocations[0].lat);
+                    }
+                    else {
+                        $("input[name='lon']").val(0);
+                        $("span.lon").text("Introuvable");
+                        $("input[name='lat']").val(0);
+                        $("span.lat").text("Introuvable");
+                    }
+                },
+                error: function() {
+                    element.text("Serveur de géolocalisation introuvable").attr('disabled', true);
+                }
+            });
+
+            return false;
+        });
+    });
+</script>

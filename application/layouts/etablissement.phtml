@@ -1,101 +1,52 @@
 <?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
 
-<div id="div_load" style="text-align: center; margin: 100px auto">
-    <h3>Chargement de la fiche établissement <?php echo $this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"]?></h3>
-    <img src="/images/load.gif" alt="chargement" />
+<!-- Contenu -->
+<div id='ligne_informations'>
+
+    <!-- Libelle -->
+    <p id='libelle'>
+        <?php if( $this->etablissement['parents'] > 0 ) : ?>
+            <?php foreach($this->etablissement['parents'] as $etablissement) : ?>
+                <?php echo "<a href='/etablissement/index/id/" . $etablissement["ID_ETABLISSEMENT"] . "'>" . $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] . "</a> - "; ?>
+            <?php endforeach ?>
+        <?php endif ?>
+        <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." " ?>
+    </p>
+    
+    <!-- Avis -->
+    <?php if($this->etablissement['avis'] != null) : ?>
+        <p class='avis <?php echo $this->etablissement['avis'] == 1 ? 'F' : 'D' ?>'>
+            <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') ." à l'exploitation " ?>
+        </p>
+    <?php endif ?>
+    
+    &nbsp;
+    
+    <!-- Statut -->
+    <p>Statut : <?php echo $this->etablissement['informations']['LIBELLE_STATUT'] ?></p>
+
+    <?php if(!empty($this->etablissement['general']['NUMEROID_ETABLISSEMENT'])) : ?>
+    <p style='float: right'><small>id: <?php echo $this->etablissement['general']['NUMEROID_ETABLISSEMENT'] ?></small></p>
+    <?php endif ?>
+
 </div>
 
-<!-- Information de modification -->
-<?php if($this->action != "add") : ?>
-    <div id='title_action' class='edit bigger ui-helper-hidden' style='display: block; padding: 10px; font-size: 1.5em; text-align: center; background-color: #6BBA70; border: 1px solid #008C00; color: white; font-weight: bold;'>
-        Modification de la fiche établissement <em><?php echo $this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"]?></em>.
-    </div>
-<?php else : ?>
-    <h2 class='page-header' >
-        <i class='sprite sprite-building_add' ></i>
-        Ajout d'un établissement <?php if(isset($_GET["pere"])) echo "enfant de \"" . $_GET["libelle"] . "\"" ?> dans la base de données.
-    </h2>
-<?php endif ?>
+<!-- Onglets horizontaux -->
+<ul id='onglets_horizontaux' class='read' >
+    <li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
+    <?php if($this->genre != "\"EIC\"" ) : ?>
+        <li class='<?php echo ( $this->action == "textes-applicables" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li>
+    <?php endif ?>
+    <?php if($this->genre != "\"Site\"" ) : ?>
+        <li class='<?php echo ( $this->action == "descriptif" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li>
+    <?php endif ?>
+    <li class='<?php echo ( $this->action == "pieces-jointes" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
+    <li class='<?php echo ( $this->action == "contacts" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>
+    <li class='<?php echo ( $this->action == "dossiers" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'>Dossiers</a></li>
+    <li class='<?php echo ( $this->action == "historique" ) ? "selection_onglets_hor" : "read" ?>' style='float: right;' ><a style='border-right: none; padding: 0' href='<?php echo $this->url(array("action"=>"historique")) ?>'>Afficher l'historique</a></li>
+</ul>
 
-<!-- Contenu -->
-<form id='formulaire_etablissement_header' action='' onsubmit='return false;' class='ui-helper-hidden' >
-
-    <input type='submit' class='ui-helper-hidden' />
-
-    <div id='ligne_informations' class='change_historique read'>
-
-        <!-- Libelle -->
-        <div class='read'>
-            <p id='libelle'>
-                <?php
-                    if( $this->etablissement_parents != null ) {
-                        foreach($this->etablissement_parents as $item) {
-                        
-                            echo "<a href='/etablissement/index/id/" . $item["ID_ETABLISSEMENT"] . "'>" . $item["LIBELLE_ETABLISSEMENTINFORMATIONS"] . "</a> - ";
-                        }
-                    }
-                ?>
-                
-                <?php echo $this->DB_informations["LIBELLE_ETABLISSEMENTINFORMATIONS"]." " ?>
-            </p>
-        </div>
-        
-        <!-- Avis -->
-        <?php if($this->avis != null) : ?>
-        <div class='read'>
-            <p class='avis <?php echo $this->DB_avis[$this->avis-1]["LIBELLE_AVIS"][0] ?>'>
-                <?php echo $this->DB_avis[$this->avis-1]["LIBELLE_AVIS"]." à l'exploitation " ?>
-                <?php if($this->avis == 3 && $this->DB_informations["ID_GENRE"] == 2 ) : ?>
-                    <span id="dangerosite" class="read champs">
-                        ; Facteur de dangerosité : <?php echo $this->fact_dange == 0 ? "-" : $this->fact_dange ?>
-                        ; <?php echo $this->DB_informations["SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS"] == 0 ? "" : "Présence d'un schéma de mise en sécurité" ?>
-                    </span>
-                <?php endif ?>
-            </p>
-        </div>
-        <?php elseif($this->genre != "Site") : ?>
-        <div class='read'>
-            <p class='avis'>
-                Aucun avis disponible à l'exploitation
-            </p>
-        </div>
-        <?php endif ?>
-        
-        &nbsp;
-        
-        <!-- Statut -->
-        <div class='read'>
-            <p>Statut : <?php if(isset($this->DB_statut[$this->DB_informations["ID_STATUT"]-1])) echo $this->DB_statut[$this->DB_informations["ID_STATUT"]-1]["LIBELLE_STATUT"] ?></p>
-        </div>
-
-    </div>
-    
-    <!-- Onglets horizontaux -->
-    <ul id='onglets_horizontaux' class='read' >
-        <li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
-        <?php if($this->genre != "\"EIC\"" ) : ?>
-            <li class='<?php echo ( $this->action == "textes-applicables" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li>
-        <?php endif ?>
-        <?php if($this->genre != "\"Site\"" ) : ?>
-            <li class='<?php echo ( $this->action == "descriptif" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li>
-        <?php endif ?>
-        <li class='<?php echo ( $this->action == "pieces-jointes" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
-        <li class='<?php echo ( $this->action == "contacts" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>
-        <li class='<?php echo ( $this->action == "dossiers" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'>Dossiers</a></li>
-        <li class='<?php echo ( $this->action == "historique" ) ? "selection_onglets_hor" : "read" ?>' style='float: right;' ><a style='border-right: none' href='<?php echo $this->url(array("action"=>"historique")) ?>'>Afficher l'historique</a></li>
-    </ul>
-    
-    <script type="text/javascript">
-        $(".edit").hide();
-    </script>
-    
-</form>	
-
-<script>
-    var liste_champs = <?php echo $this->liste_champs ?>;
-</script>
-
-<div id='fiche_etablissement' class="ui-helper-hidden <?php if($this->action != "index" && $this->action != "add") echo "grid_16" ?>">
+<div id='fiche_etablissement'>
 
 <?php $this->placeholder('before_content')->captureEnd() ?>
 
@@ -103,41 +54,6 @@
 <?php $this->placeholder('after_content')->captureStart() // Capture du 'after_content' ?>
 
 </div>
-					
-<script>
-
-    // Bouton pour obtenir les données opérationelles
-    $("#donnees_operationelles_button").button().click(function() {
-        window.location.href= "/";
-        return false;
-    });
-    
-    // Fonction de l'affichage des champs en fonction du genre
-    if( $("#genre").text() == "" ) {
-    
-        $(".champs").hide();
-        for( var x in liste_champs[<?php echo $this->genre ?>] ) {
-            $("#" + liste_champs[<?php echo $this->genre ?>][x]).show();
-        }
-    }
-    else {
-    
-        $("#genre").change(function() {
-            $(".champs").hide();
-            for( var x in liste_champs[$("#genre option:selected").text()] ) {
-                $("#" + liste_champs[$("#genre option:selected").text()][x]).show();
-            }
-            $("#icpe_checkbox").change();
-        }).change();
-    }
-    
-    // Fin du chargement
-    $(document).ready(function() {
-        $("#fiche_etablissement, #formulaire_etablissement_header").show();
-        $("#div_load").remove();
-    });
-
-</script>
 
 <?php $this->placeholder('after_content')->captureEnd() ?>
 

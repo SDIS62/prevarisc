@@ -106,6 +106,10 @@ form * {
     box-sizing: content-box;
 }
 
+form select {
+    box-sizing: border-box;
+}
+
 textarea {
     width: 100%;
     box-sizing: border-box;
@@ -144,6 +148,11 @@ form#ajouter_news button {
 
 form#ajouter_news button + button {
 	margin-left: 4px;
+}
+
+form#etablissement dt,
+form#etablissement dd {
+	line-height: 30px;
 }
 
 /* Fil d'actualité */
@@ -370,15 +379,6 @@ a.thumbnail + a.thumbnail {
 }
 
 /* 8.Etablissements */
-
-form#formulaire_etablissement_footer dl dt {
-    width: 225px;
-}
-
-form#formulaire_etablissement_footer dl dd {
-    margin-left: 250px;
-}
-
 #ligne_informations {
 
 	margin-bottom: 15px;
@@ -396,21 +396,10 @@ form#formulaire_etablissement_footer dl dd {
 	top: 2px;
 }
 
-#ligne_informations button {
-	font-size: 0.9em;
-	float: right;
-}
-
 #tabs h4,
 #dossierInfos h4,
 #dossier_Pdroite h4,
-#fiche_etablissement h4 {
-
-	/*
-	border-top: 1px solid #e9e9e9;
-	background-color: #f2f2f2;
-	*/
-	
+h4.h4_subtitle {
 	border-top: 1px solid #e9e9e9;
 	background-color: #eaeaea;
 	text-shadow: 1px 1px 0 white;
@@ -418,66 +407,14 @@ form#formulaire_etablissement_footer dl dd {
 	margin: 1em 0 1em 0;
 }
 
-#fiche_etablissement h5 {
-
-	/*color: #eeeeee;*/
+.nav-tabs > li.tabs-right {
+	float: right;
+	margin-left: 10px;
+	margin-right: 0;
 }
 
-#fiche_etablissement ul#menu_carte {
-
-	text-align: right;
-	margin-bottom: 1em;
-}
-
-#fiche_etablissement ul#menu_carte li {
-
-	color: #858585;
-	border: 1px solid #858585;
-	padding: 0 5px 0 5px;
-	display: inline;
-}
-
-#fiche_etablissement ul#menu_carte li:hover {
-
-	color: #CA0425;
-	border-color: #CA0425;
-	cursor: pointer;
-}
-
-#fiche_etablissement ul#menu_carte li.active {
-
-	color: #CA0425;
-	border-color: #CA0425;
-}
-
-#fiche_etablissement dl.plans:last-child dd:last-child {
-
-	display: none;
-}
-
-#historique_menu {
-	padding: 0;
-}
-
-#historique_menu ul {
-	height: 400px;
-}
-
-#historique_menu ul li {
-	height: 16px;
-	margin: 6px 0 6px 0;
-}
-
-#historique_menu ul li a {
-	background-color: #EEE;
-	padding: 3px 0 3px 0;
-	display: block;
-	text-decoration: none;
-}
-
-#historique_menu ul li a:hover {
-	color: white;
-	background-color: silver;
+.nav-tabs > li.tabs-right > a {
+	margin-right: 0;
 }
 
 /* Contacts */
