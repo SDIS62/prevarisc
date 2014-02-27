@@ -530,8 +530,6 @@ class DossierController extends Zend_Controller_Action
 
         //23/10/12 Ajout du service instructeur remplacé par le select des groupements de communes
         // Liste des types de groupement
-
-
         if ($this->view->infosDossier['SERVICEINSTRUC_DOSSIER']) {
             $groupements = new Model_DbTable_Groupement();
             $servInstructeur = $this->view->infosDossier['SERVICEINSTRUC_DOSSIER'];
