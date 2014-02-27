@@ -1548,6 +1548,11 @@ class DossierController extends Zend_Controller_Action
             $model_typesactivitessecondaire = new Model_DbTable_EtablissementInformationsTypesActivitesSecondaires;
             $array_types_activites_secondaires = $model_typesactivitessecondaire->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $object_informations->ID_ETABLISSEMENTINFORMATIONS)->toArray();
 
+			$idGenreEtab = $object_informations['ID_GENRE'];
+			$dbGenre = new Model_DbTable_Genre;
+			$infosGenre = $dbGenre->find($idGenreEtab)->current();
+			$this->view->genreEtab = $infosGenre['LIBELLE_GENRE'];
+			
 
             $typeS = "";
             $actS = "";
@@ -1581,8 +1586,13 @@ class DossierController extends Zend_Controller_Action
                 $activitePrincipale = $model_typeactivite->find($this->view->infoPere["ID_TYPEACTIVITE"])->current();
                 $this->view->libelleActivitePPere = $activitePrincipale["LIBELLE_ACTIVITE"];
                 $this->view->categorieEtabPere = $this->view->infoPere['ID_CATEGORIE'];
+				//Récuperation du genre du pere
+				$idGenrePere = $this->view->infoPere['ID_GENRE'];
+				$infosGenrePere = $dbGenre->find($idGenrePere)->current();
+				$this->view->genrePere = $infosGenrePere['LIBELLE_GENRE'];
             }
-
+			
+			
             // Adresses
             $model_adresse = new Model_DbTable_EtablissementAdresse;
             $array_adresses = $model_adresse->get($idEtab);
@@ -1673,6 +1683,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->avisDossierCommission = $libelleAvisCommission["LIBELLE_AVIS"];
 
             $DBdossierCommission = new Model_DbTable_Commission;
+			
             if ($this->view->infosDossier['COMMISSION_DOSSIER']) {
                 $this->view->commissionInfos = $DBdossierCommission->find($this->view->infosDossier['COMMISSION_DOSSIER'])->current();
             } else {

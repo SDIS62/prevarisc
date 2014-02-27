@@ -25,7 +25,8 @@ try {
 }
 
 try {
-	$odf->setVars('libelle_commission',verifInfos($this->commissionInfos['LIBELLE_COMMISSION']),true,'UTF8');
+	if(isset($this->commissionInfos['LIBELLE_COMMISSION']))
+		$odf->setVars('libelle_commission',verifInfos($this->commissionInfos['LIBELLE_COMMISSION']),true,'UTF8');
 } catch (OdfException $e) {
 
 }
@@ -286,6 +287,12 @@ try {
 	
 //INFORMATIONS CONCERNANT L'ETABLISSEMENT
 try{
+	$odf->setVars('genreEtab',verifInfos($this->genreEtab),true,'UTF8');
+} catch (OdfException $e) {
+
+}
+
+try{
 	$odf->setVars('etablissementLibelle',verifInfos($this->etablissementLibelle),true,'UTF8');
 } catch (OdfException $e) {
 
@@ -495,6 +502,12 @@ try{
 
 try{
 	$odf->setVars('categorieEtabPere',verifInfos($this->categorieEtabPere),true,'UTF8');	
+} catch (OdfException $e) {
+
+}
+
+try{
+	$odf->setVars('genrePere',verifInfos($this->genrePere),true,'UTF8');	
 } catch (OdfException $e) {
 
 }
