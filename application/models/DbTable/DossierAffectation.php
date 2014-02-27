@@ -21,6 +21,7 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 			->where("da.ID_DATECOMMISSION_AFFECT = ?",$idDateCom)
 			->where("da.HEURE_DEB_AFFECT IS NULL")
 			->where("da.HEURE_FIN_AFFECT IS NULL")
+			->group("d.ID_DOSSIER")
 			->order("da.NUM_DOSSIER");
         //echo $select;
         return $this->getAdapter()->fetchAll($select);
@@ -42,7 +43,8 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 			->join(array("ac"=> "adressecommune"), "ac.NUMINSEE_COMMUNE = ea.NUMINSEE_COMMUNE")
 			->where("da.ID_DATECOMMISSION_AFFECT = ?",$idDateCom)
 			->where("da.HEURE_DEB_AFFECT IS NOT NULL")
-			->where("da.HEURE_FIN_AFFECT IS NOT NULL");
+			->where("da.HEURE_FIN_AFFECT IS NOT NULL")
+			->group("d.ID_DOSSIER");
         return $this->getAdapter()->fetchAll($select);
     }
 
