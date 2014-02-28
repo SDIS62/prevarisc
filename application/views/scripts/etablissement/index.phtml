@@ -60,7 +60,7 @@
                     <ul class='unstyled'>
                         <li>
                             <strong><?php echo $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] ?> - <?php echo $this->etablissement['informations']['LIBELLE_TYPEACTIVITE_PRINCIPAL'] ?></strong>
-                            <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "<span class='badge badge-info'>Présence de locaux à sommeil</span>" ?>
+                            <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] && $this->etablissement['informations']['ID_GENRE'] == 2) echo "<span class='badge badge-info'>Présence de locaux à sommeil</span>" ?>
                         </li>
                         <?php foreach($this->etablissement['types_activites_secondaires'] as $type_activite) : ?>
                             <li><?php echo $type_activite['LIBELLE_TYPE'] ?> - <?php echo $type_activite['LIBELLE_ACTIVITE'] ?></li>
@@ -183,12 +183,11 @@
 
         <!-- Carte de l'emplacement de l'établissement / informations  -->
         <div class='span6'>
-
             <!-- Cartes et diaporama -->
             <ul id='menu_nav' class="nav nav-tabs" style="margin: 0; padding: 0; border-bottom: none;">
-                <?php if( count($this->etablissement['diapo_plans']) > 0 ) : ?> <li class='tabs-right' ><a href='#plans' data-toggle="tab">Plans</a></li>             <?php endif ?>
-                <?php if( count($this->etablissement['diapo']) > 0 ) : ?>       <li class='tabs-right' ><a href='#diaporama' data-toggle="tab">Diaporama</a></li>     <?php endif ?>
-                <?php if( count($this->etablissement['adresses']) > 0) : ?>     <li class='tabs-right' ><a href='#geoportail' data-toggle="tab">Carte</a></li>        <?php endif ?>
+                <?php if( count($this->etablissement['diapo_plans']) > 0 ) : ?> <li class='tabs-right' ><a href='#plans-tab-pane' data-toggle="tab">Plans</a></li>             <?php endif ?>
+                <?php if( count($this->etablissement['diapo']) > 0 ) : ?>       <li class='tabs-right' ><a href='#diaporama-tab-pane' data-toggle="tab">Diaporama</a></li>     <?php endif ?>
+                <?php if( count($this->etablissement['adresses']) > 0) : ?>     <li class='tabs-right' ><a href='#geoportail' data-toggle="tab">Carte</a></li>                 <?php endif ?>
             </ul>
             <div class="tab-content">
                 <?php if( count($this->etablissement['adresses']) > 0) : ?>
@@ -209,44 +208,56 @@
                 <?php endif ?>
 
                 <?php if( count($this->etablissement['diapo']) > 0 ) : ?>
-                <div id='diaporama' class="carousel slide tab-pane">
-                    <ol class="carousel-indicators">
-                        <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
-                        <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
-                        <?php endforeach ?>
-                    </ol>
-                    <!-- Carousel items -->
-                    <div class="carousel-inner" style="background-color: #333">
-                        <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
-                        <div class="item <?php if($key == 0 ) echo 'active' ?>"  >
-                            <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                <div id='diaporama-tab-pane' class='tab-pane'>
+                    <div id='diaporama' class="carousel slide">
+                        <ol class="carousel-indicators">
+                            <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
+                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
+                            <?php endforeach ?>
+                        </ol>
+                        <!-- Carousel items -->
+                        <div class="carousel-inner" style="background-color: #333">
+                            <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
+                            <div class="item <?php if($key == 0 ) echo 'active' ?>"  >
+                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                                <div class="carousel-caption">
+                                  <h4><?php echo $item['NOM_PIECEJOINTE'] ?></h4>
+                                  <p><?php echo $item['DESCRIPTION_PIECEJOINTE'] ?></p>
+                                </div>
+                            </div>
+                            <?php endforeach ?>
                         </div>
-                        <?php endforeach ?>
+                        <!-- Carousel nav -->
+                        <a class="carousel-control left" href="#diaporama" data-slide="prev" style="box-sizing: content-box;">&lsaquo;</a>
+                        <a class="carousel-control right" href="#diaporama" data-slide="next" style="box-sizing: content-box;">&rsaquo;</a>
                     </div>
-                    <!-- Carousel nav -->
-                    <a class="carousel-control left" href="#diaporama" data-slide="prev" style="box-sizing: content-box;">&lsaquo;</a>
-                    <a class="carousel-control right" href="#diaporama" data-slide="next" style="box-sizing: content-box;">&rsaquo;</a>
                 </div>
                 <?php endif ?>
 
                 <?php if( count($this->etablissement['diapo_plans']) > 0 ) : ?>
-                <div id='plans' class="carousel slide tab-pane">
-                    <ol class="carousel-indicators">
-                        <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
-                        <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
-                        <?php endforeach ?>
-                    </ol>
-                    <!-- Carousel items -->
-                    <div class="carousel-inner" style="background-color: #333">
-                        <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
-                        <div class="item <?php if($key == 0 ) echo 'active' ?>" >
-                            <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                <div id='plans-tab-pane' class='tab-pane'>
+                    <div id='plans' class="carousel slide">
+                        <ol class="carousel-indicators">
+                            <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
+                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
+                            <?php endforeach ?>
+                        </ol>
+                        <!-- Carousel items -->
+                        <div class="carousel-inner" style="background-color: #333">
+                            <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
+                            <div class="item <?php if($key == 0 ) echo 'active' ?>" >
+                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                                <div class="carousel-caption">
+                                  <h4><?php echo $item['NOM_PIECEJOINTE'] ?></h4>
+                                  <p><?php echo $item['DESCRIPTION_PIECEJOINTE'] ?></p>
+                                </div>
+                            </div>
+                            <?php endforeach ?>
                         </div>
-                        <?php endforeach ?>
+                        <!-- Carousel nav -->
+                        <a class="carousel-control left" href="#plans" data-slide="prev" style="box-sizing: content-box;">&lsaquo;</a>
+                        <a class="carousel-control right" href="#plans" data-slide="next" style="box-sizing: content-box;">&rsaquo;</a>
                     </div>
-                    <!-- Carousel nav -->
-                    <a class="carousel-control left" href="#plans" data-slide="prev" style="box-sizing: content-box;">&lsaquo;</a>
-                    <a class="carousel-control right" href="#plans" data-slide="next" style="box-sizing: content-box;">&rsaquo;</a>
                 </div>
                 <?php endif ?>
             </div>
@@ -375,7 +386,8 @@
         // Par défaut, on montre le premier onglet disponible (carte, diapo, ou plans) sinon rien
         $('#menu_nav a:last').tab('show');
 
-        $(".slide").live("click", function() {       
+        // Slide des établissements enfants contenant d'autres établissements
+        $(".recherche_liste .slide").live("click", function() {       
             var container = this;
             if( $(this).hasClass("active") ) {
                 $(container).next().slideUp(400, function() {$(container).next().remove()});

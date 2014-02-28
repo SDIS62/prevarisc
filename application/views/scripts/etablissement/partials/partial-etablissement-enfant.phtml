@@ -1,7 +1,7 @@
 <tr <?php if($this->etablissement === null ) echo "id='prototype_etablissements_enfants' class='hide prototypes'" ?> >
     <td>
         <span><?php echo $this->etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?></span>
-        <input type="hidden" value="<?php echo $this->etablissement["ID_ETABLISSEMENTINFORMATIONS"] ?>" name="ID_FILS_ETABLISSEMENT[]">
+        <input type="hidden" value="<?php echo $this->etablissement["ID_ETABLISSEMENT"] ?>" name="ID_FILS_ETABLISSEMENT[]">
     </td>
     <td>
         <small><a href="#" onclick='$(this).parent().parent().parent().remove(); return false;' >Retirer</a></small>

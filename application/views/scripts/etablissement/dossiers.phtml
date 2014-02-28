@@ -4,6 +4,13 @@
 
 <h3>Liste des dossiers</h3>
 
+<?php if(count($this->visites) == 0 && count($this->etudes) == 0 && count($this->autres) == 0) : ?>
+    <div class='well well-large text-center'>
+        <p class='lead'>Il n'y a pas de dossiers pour cet établissement.</p>
+        <p><a href='<?php echo $this->url(array('controller' => 'dossier', 'id_etablissement' => $this->etablissement['general']['ID_ETABLISSEMENT']), null, true) ?>' class='btn btn-large'>Ajouter un dossier</a></p>
+    </div>
+<?php else : ?>
+
 <div id="content_visites_ets">
 <?php if( count($this->visites) > 0 ) : ?>
     <h4>Visites</h4>
@@ -32,6 +39,7 @@
     </ul>
 <?php endif ?>
 </div>
+<?php endif ?>
 
 <script>
     $(document).ready(function() {

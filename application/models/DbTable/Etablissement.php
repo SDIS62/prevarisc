@@ -380,7 +380,7 @@
                 ->from("etablissementpj", null)
                 ->joinLeft("piecejointe", "piecejointe.ID_PIECEJOINTE = etablissementpj.ID_PIECEJOINTE")
                 ->where("EXTENSION_PIECEJOINTE = '.jpg' OR EXTENSION_PIECEJOINTE = '.JPG' OR EXTENSION_PIECEJOINTE = '.png'")
-                ->where("PLACEMENT_ETABLISSEMENTPJ = 0")
+                ->where("PLACEMENT_ETABLISSEMENTPJ = 2")
                 ->where("etablissementpj.ID_ETABLISSEMENT = " . $id_etablissement);
 
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;

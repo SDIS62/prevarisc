@@ -11,7 +11,7 @@
             <a class='btn' href="<?php echo $this->url(array('action' => 'index')) ?>">Annuler la modification</a>
             <input type='submit' class="btn btn-success" value='Sauvegarder'>
         </div>
-        <input type="date" name="date" class='input-medium' style="position: relative; top: 5px;" value='<?php echo date("Y-m-d") ?>'>
+        <input type="date" name="date" class='input-medium' style="position: relative; top: 5px;" value='<?php echo $this->etablissement['informations']['DATE_ETABLISSEMENTINFORMATIONS']?>'>
     </div>
     <h3>Modification de l'établissement</h3>
     <?php endif ?>
@@ -110,7 +110,7 @@
                 </dd>
             </dl>
 
-            <h4 class='champ_types champs h4_subtitle'>Activités de l'établissement <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="$('#prototype_types_activites_secondaires').clone().appendTo( $('#activite_ul') ).removeClass('hide prototypes').attr('id', ''); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a></h4>
+            <h4 class='champ_types champs h4_subtitle'>Activités de l'établissement <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_types_activites_secondaires').clone().appendTo( $('#activite_ul') ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a></h4>
             <dl class='dl-horizontal champ_types champs'>
                 
                 <!-- Type et activités -->
@@ -156,8 +156,8 @@
                     </p>
                 </dd>
 
-                <dt>Local à sommeil ?</dt>
-                <dd>
+                <dt class='champs champ_localsommeil'>Local à sommeil ?</dt>
+                <dd class='champs champ_localsommeil'>
                     <p>
                         <input type='hidden' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='0' />
                         <input type='checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
@@ -166,7 +166,7 @@
             </dl>
             
             <!-- Rubriques -->
-            <h4 class='champs_icpe champs rubrique h4_subtitle'>Rubriques ICPE <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="$('#prototype_rubriques').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', ''); return false;">Ajouter une rubrique</a></h4>
+            <h4 class='champs_icpe champs rubrique h4_subtitle'>Rubriques ICPE <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_rubriques').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter une rubrique</a></h4>
             <table class='table table-condensed champs_icpe champs rubrique'>
                 <thead>
                     <tr>
@@ -218,7 +218,7 @@
             </dl>
             
             <!-- Plan -->
-            <h4 class="champ_plans champs h4_subtitle">Plans <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="$('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', ''); return false;">Ajouter un plan</a></h4>
+            <h4 class="champ_plans champs h4_subtitle">Plans <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter un plan</a></h4>
             <table class='table table-condensed champ_plans champs'>
                 <thead>
                     <tr>
@@ -387,6 +387,7 @@
 
         // Ajout d'une adresse
         $("form.adresse input[type='submit']").live('click', function() {
+            time = Date.now;
             node = $('#prototype_adresse').clone().prependTo( $('table.champ_adresse') ).removeClass('hide prototypes').attr('id', '');
             node.find('input[name="ADRESSES[-1][LON_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lon"]').val());
             node.find('input[name="ADRESSES[-1][LAT_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lat"]').val());
@@ -395,6 +396,7 @@
             node.find('input[name="ADRESSES[-1][NUMINSEE_COMMUNE]"]').val($('form.adresse').find('input[name="code_insee"]').val());
             node.find('input[name="ADRESSES[-1][COMPLEMENT_ADRESSE]"]').val($('form.adresse').find('input[name="complement"]').val());
             node.find('span').text($('form.adresse').find('input[name="numero"]').val() + " " + $('form.adresse').find('input[name="voie_ac"]').val() + " " + $('form.adresse').find('input[name="code_postal"]').val() + " " + $('form.adresse').find('input[name="commune_ac"]').val());
+            node.find('input').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); });
             $('form.adresse').find('button.close').click();
             return false;
         });
@@ -418,7 +420,7 @@
 
                 // Établissement
                 case '2':
-                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission').show();
+                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_localsommeil').show();
                     break;
 
                 // Cellule

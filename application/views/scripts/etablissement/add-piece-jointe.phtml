@@ -1,0 +1,45 @@
+<form class="modal adresse" action='<?php echo $this->url(array('action' => 'add-piece-jointe')) ?>' method='post' enctype='multipart/form-data' >
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Ajouter une pièce jointe</h3>
+    </div>
+
+    <div class="modal-body">
+    	<dl class='dl-horizontal'>
+
+    		<dt>Libellé</dt>
+			<dd>
+				<p><input type='text' name='name' /></p>
+			</dd>
+
+			<dt>Fichier à envoyer</dt>
+			<dd>
+				<p><input type='file' name='file' /></p>
+			</dd>
+
+			<dt>Mise en avant</dt>
+			<dd>
+				<ul class='unstyled'>
+					<li><input type='radio' name='mise_en_avant' value='0' checked >Seulement dans la liste principale</li>
+					<li><input type='radio' name='mise_en_avant' value='1' >Afficher l'image dans le diaporama</li>
+					<li><input type='radio' name='mise_en_avant' value='2' >Afficher l'image dans les plans</li>
+				</ul>
+				<p class='muted'><small>Uniquement pour les images.</small></p>
+			</dd>
+			
+			<dt>Description</dt>
+			<dd>
+				<p>
+					<textarea name='description' rows='3'></textarea>
+				</p>
+			</dd>
+		</dl>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' id='submit' value='Ajouter' class='btn btn-success' />
+    </div>
+
+</form>

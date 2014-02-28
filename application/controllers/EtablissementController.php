@@ -181,11 +181,60 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
+    }
 
-        $this->_forward("index", "piece-jointe", null, array(
-                "type" => "etablissement",
-                "id" => $this->_request->id
-            ));
+    public function editPiecesJointesAction()
+    {
+        $this->_helper->layout->setLayout('etablissement');
+
+        $service_etablissement = new Service_Etablissement;
+
+        $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
+    }
+
+    public function addPieceJointeAction()
+    {
+        $this->_helper->layout->disableLayout();
+
+        $service_etablissement = new Service_Etablissement;
+
+        if($this->_request->isPost())
+        {
+            try {
+                $post = $this->_request->getPost();
+                $service_etablissement->addPJ($this->_request->id, $_FILES['file'], $post['name'], $post['description'], $post['mise_en_avant']);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'La pièce jointe a bien été ajoutée.'));
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Mise à jour annulée', 'message' => 'La pièce jointe n\'a été ajoutée. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+
+            $this->_helper->redirector('edit-pieces-jointes', null, null, array('id' => $this->_request->id));
+        }
+    }
+
+    public function deletePieceJointeAction()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $service_etablissement = new Service_Etablissement;
+
+        if($this->_request->isGet())
+        {
+            try {
+                $post = $this->_request->getPost();
+                $service_etablissement->deletePJ($this->_request->id, $this->_request->id_pj);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression réussie !', 'message' => 'La pièce jointe a bien été supprimée.'));
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Suppression annulée', 'message' => 'La pièce jointe n\'a été supprimée. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+
+            $this->_helper->redirector('edit-pieces-jointes', null, null, array('id' => $this->_request->id));
+        }
     }
 
     public function contactsAction()
@@ -222,6 +271,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->historique = $service_etablissement->getHistorique($this->_request->id);
     }
+
+    /* API */
 
     public function getAction()
     {

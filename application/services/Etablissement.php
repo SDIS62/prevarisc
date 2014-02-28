@@ -1,6 +1,6 @@
 <?php
 
-class Service_Etablissement
+class Service_Etablissement implements Service_Interface_Etablissement
 {
     /**
      * Récupération d'un établissement
@@ -408,10 +408,10 @@ class Service_Etablissement
      * On vérifie si une fiche existe à la date donnée pour l'établissement
      *
      * @param int $id_etablissement
-     * @param Datetime $date
+     * @param string $date format Y-m-d
      * @return array
      */
-    public function ficheExiste($id_etablissement, Datetime $date)
+    public function ficheExiste($id_etablissement, $date)
     {
         $DB_information = new Model_DbTable_EtablissementInformations;
 
@@ -553,7 +553,7 @@ class Service_Etablissement
             }
 
             // Sauvegarde des rubriques pour les EIC
-            if($id_genre == 6 && count($data['RUBRIQUES']) > 0) {
+            if($id_genre == 6 && array_key_exists('RUBRIQUES', $data) && count($data['RUBRIQUES']) > 0) {
                 foreach($data['RUBRIQUES'] as $rubrique) {
                     $DB_rubrique->createRow(array(
                         "ID_RUBRIQUE" => $rubrique["ID_RUBRIQUE"],
@@ -609,14 +609,13 @@ class Service_Etablissement
             if(array_key_exists('ID_FILS_ETABLISSEMENT', $data) && count($data['ID_FILS_ETABLISSEMENT']) > 0) {
                 foreach($data['ID_FILS_ETABLISSEMENT'] as $id_etablissement_enfant) {
                     $genre_enfant = $DB_etablissement->getInformations($id_etablissement_enfant)->ID_GENRE;
-
                     if($id_genre == 1 && ($genre_enfant != 2 && $genre_enfant != 4 && $genre_enfant != 5 && $genre_enfant != 6)) {
                         throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne ne peut contenir que des établissements)', 500);
                     }
                     elseif($id_genre == 2 && ($genre_enfant != 3)) {
                         throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
                     }
-                    elseif($genre_enfant != null) {
+                    elseif($genre_enfant == null) {
                         throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
                     }
                     else {
@@ -692,28 +691,77 @@ class Service_Etablissement
      */
     public function getAllPJ($id_etablissement)
     {
+        $DBused = new Model_DbTable_PieceJointe;
 
+        return $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $id_etablissement);
     }
 
     /**
      * Ajout d'une pièce jointe pour un établissement
      *
      * @param int $id_etablissement
-     * @param array $data
+     * @param string $file
+     * @param string $name
+     * @param string $description
+     * @param int $mise_en_avant 0 = aucune mise en avant, 1 = diaporama, 2 = plans
      */
-    public function savePJ($id_etablissement, array $data)
+    public function addPJ($id_etablissement, $file, $name = '', $description = '', $mise_en_avant = 0)
     {
+        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
+        $extension = strrchr($file['name'], ".");
 
+        $DBpieceJointe = new Model_DbTable_PieceJointe;
+
+        $nouvellePJ = $DBpieceJointe->createRow(array(
+            'EXTENSION_PIECEJOINTE' => $extension,
+            'NOM_PIECEJOINTE' => $name == '' ? $file['name'] : $name,
+            'DESCRIPTION_PIECEJOINTE' => $description,
+            'DATE_PIECEJOINTE' => date('Y-m-d')
+        ))->save();
+
+        if(!move_uploaded_file($file['tmp_name'], $path . $nouvellePJ . $extension)) {
+            throw new Exception('Ne peut pas déplacer le fichier ' . $file['tmp_name']);
+        }
+        else {
+            $DBsave = new Model_DbTable_EtablissementPj;
+
+            $linkPj = $DBsave->createRow(array(
+                'ID_ETABLISSEMENT' => $id_etablissement,
+                'ID_PIECEJOINTE' => $nouvellePJ,
+                'PLACEMENT_ETABLISSEMENTPJ' => (int) $mise_en_avant != 0 && in_array($extension, array(".jpg", ".jpeg", ".png", ".gif")) ? $mise_en_avant : 0,
+            ))->save();
+
+            GD_Resize::run($path . $nouvellePJ . $extension, $path . "miniatures" . DIRECTORY_SEPARATOR . $nouvellePJ . ".jpg", 450);
+        }
+
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $cache->remove('etablissement_id_' . $id_etablissement);
     }
 
     /**
      * Suppression d'une pièce jointe d'un établissement
      *
+     * @param int $id_etablissement
      * @param int $id_pj
      */
-    public function deletePJ($id_pj)
+    public function deletePJ($id_etablissement, $id_pj)
     {
+        $DBpieceJointe = new Model_DbTable_PieceJointe;
+        $DBitem = new Model_DbTable_EtablissementPj;
 
+        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
+
+        $pj = $DBpieceJointe->find($id_pj)->current();
+
+        if ($DBitem != null) {
+            if( file_exists($path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )                         unlink($path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
+            if( file_exists($path . "miniatures" . DS . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )     unlink($path . "miniatures" . DS . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
+            $DBitem->delete("ID_PIECEJOINTE = " . (int) $this->_request->id_pj);
+            $pj->delete();
+        }
+
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $cache->remove('etablissement_id_' . $id_etablissement);
     }
 
     /**
@@ -724,7 +772,7 @@ class Service_Etablissement
      */
     public function getAllContacts($id_etablissement)
     {
-
+        //
     }
 
     /**
@@ -734,9 +782,9 @@ class Service_Etablissement
      * @param array $data
      * @return array
      */
-    public function saveContact($id_etablissement, array $data)
+    public function addContact($id_etablissement, array $data)
     {
-
+        //
     }
 
     /**
@@ -747,7 +795,7 @@ class Service_Etablissement
      */
     public function deleteContact($id_contact)
     {
-
+        //
     }
 
     /**

@@ -3,5 +3,5 @@
 interface Service_Interface_TexteApplicable
 {
     public function getAllTextesApplicables($id);
-    public function saveTextesApplicables($id, $data);
+    public function saveTextesApplicables($id_etablissement, array $textes_applicables);
 }
