@@ -1,22 +1,17 @@
-<!-- Si javascript n'est pas activé, on le notifie-->
 <noscript>
-    <p class='grid_16 ui-state-error' style=' padding: 10px 0'>
-        &nbsp;
-        <strong>Javascript desactivé</strong>
-        Javascript n'est pas activé sur votre navigateur. Prevarisc ne peut fonctionner correctement sans l'activation du Javascript.
-    </p>
+    <ul class="unstyled" >
+        <li class="alert alert-error"><strong class="alert-error">Javascript desactivé</strong> Javascript n'est pas activé sur votre navigateur. Prevarisc ne peut fonctionner correctement sans l'activation du Javascript.</li>
+    </ul>
 </noscript>
 
 <?php if(APPLICATION_ENV == "testing") : ?>
-<p class='grid_16 ui-state-highlight' style=' padding: 10px 0'>
-    &nbsp;
-    <strong>Environnement TESTING</strong>
-    Vous êtes sur une version de test, des bugs ou ralentissements peuvent apparaître.
-</p>
+    <ul class="unstyled" >
+        <li class="alert alert-warning"><strong class="alert-warning">Environnement TESTING</strong> Vous êtes sur une version de test, des bugs ou ralentissements peuvent apparaître.</li>
+    </ul>
 <?php endif ?>
 
-<?php if( $this->flashMessenger()->hasMessages() ): ?>
-    <ul id="flashmessenger" class="unstyled" >
+<?php if( $this->flashMessenger()->hasMessages()) : ?>
+    <ul class="unstyled" >
         <?php echo $this->flashMessenger()->output(); ?>
     </ul>
 <?php endif ?>
