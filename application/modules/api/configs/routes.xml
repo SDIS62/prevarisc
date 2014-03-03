@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<router>
+
+    <api type="Zend_Controller_Router_Route_Static">
+        <route>/api/1.0</route>
+        <defaults module="api" controller="api" action="index" />
+        <chains>
+            <intervention type="Zend_Controller_Router_Route">
+                <route>test</route>
+                <defaults method="test" />
+            </intervention>
+        </chains>
+    </api>
+
+</router>
