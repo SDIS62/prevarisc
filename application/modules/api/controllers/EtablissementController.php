@@ -1,6 +1,6 @@
 <?php
 
-class Api_ApiController extends Zend_Controller_Action
+class Api_EtablissementController extends Zend_Controller_Action
 {
     public function indexAction()
     {
@@ -9,11 +9,8 @@ class Api_ApiController extends Zend_Controller_Action
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
         
-        // On configure le serveur du Web Service
         $server = new SDIS62_Rest_Server;
-        $server->setClass("Api_Service_Api");
-        
-        // On gère la demande
+        $server->setClass("Api_Service_Etablissement");
         $server->handle($this->_request->getParams());
     }
 }

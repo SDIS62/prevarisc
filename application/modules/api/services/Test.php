@@ -1,6 +1,6 @@
 <?php
 
-class Api_Service_Api
+class Api_Service_Test
 {
     /**
      * Test

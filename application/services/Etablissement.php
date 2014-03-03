@@ -85,7 +85,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             }
 
             $etablissement = array(
-                'general' => $general,
+                'general' => $general->toArray(),
                 'informations' => array_merge($informations->toArray(), array(
                     "LIBELLE_GENRE" => $DB_genre->find($informations->ID_GENRE)->current()->LIBELLE_GENRE,
                     "LIBELLE_CATEGORIE" => @$DB_categorie->find($informations->ID_CATEGORIE)->current()->LIBELLE_CATEGORIE,
@@ -101,7 +101,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 'last_visite' => $last_visite,
                 'next_visite' => $next_visite,
                 'pc_initial' => $pc_inital,
-                'plans' => $DB_plans->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS)->toArray(),
+                'plans' => $model_etablissement->getPlansInformations($informations->ID_ETABLISSEMENTINFORMATIONS),
                 'diapo_plans' => $model_etablissement->getPlans($id_etablissement),
                 'diapo' => $model_etablissement->getDiaporama($id_etablissement),
                 'types_activites_secondaires' => $model_etablissement->getTypesActivitesSecondaires($informations->ID_ETABLISSEMENTINFORMATIONS),
@@ -175,10 +175,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     if ($tmp != null) {
                         $historique[$key][ count($historique[$key])-1 ]["fin"] = $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
                     }
+                    $author = $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"])->current()->ID_UTILISATEURINFORMATIONS)->toArray();
                     $historique[$key][] = array(
                         "valeur" => $value,
                         "debut" =>  $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ),
-                        "author" => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"] == 0 ? null : array('id' => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"], 'object' => $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"])->current()->ID_UTILISATEURINFORMATIONS)->toArray())
+                        "author" => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"] == 0 ? null : array('id' => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"], 'name' => $author['NOM_UTILISATEURINFORMATIONS'] . ' ' . $author['PRENOM_UTILISATEURINFORMATIONS'])
                     );
                 }
             }
@@ -216,9 +217,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
         // On balance le résultat sur la vue
         $results = array();
-        $results['etudes'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", 1)->order("COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
-        $results['visites'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", array(2, 3))->order("DATEVISITE_DOSSIER,COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run();
-        $results['autres'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", $types_autre)->order("DATEINSERT_DOSSIER DESC")->run();
+        $results['etudes'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", 1)->order("COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run()->getAdapter()->getItems(0, 999999)->toArray();
+        $results['visites'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", array(2, 3))->order("DATEVISITE_DOSSIER,COALESCE(DATECOMM_DOSSIER,DATEINSERT_DOSSIER) DESC")->run()->getAdapter()->getItems(0, 999999)->toArray();
+        $results['autres'] = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", $types_autre)->order("DATEINSERT_DOSSIER DESC")->run()->getAdapter()->getItems(0, 999999)->toArray();
         return $results;
     }
 
@@ -772,30 +773,98 @@ class Service_Etablissement implements Service_Interface_Etablissement
      */
     public function getAllContacts($id_etablissement)
     {
-        //
+        $DB_contact = new Model_DbTable_UtilisateurInformations;
+
+        return $DB_contact->getContact('etablissement', $id_etablissement);
     }
 
     /**
      * Ajout d'un contact à un établissement
      *
      * @param int $id_etablissement
-     * @param array $data
-     * @return array
+     * @param string $nom
+     * @param string $prenom
+     * @param int $id_fonction
+     * @param string $societe
+     * @param string $fixe
+     * @param string $mobile
+     * @param string $fax
+     * @param string $email
+     * @param string $adresse
+     * @param string $web
      */
-    public function addContact($id_etablissement, array $data)
+    public function addContact($id_etablissement, $nom, $prenom, $id_fonction, $societe, $fixe, $mobile, $fax, $email, $adresse, $web)
     {
-        //
+        $DB_informations = new Model_DbTable_UtilisateurInformations;
+        $DB_contact = new Model_DbTable_EtablissementContact;
+
+        $id_contact = $DB_informations->createRow(array(
+            'NOM_UTILISATEURINFORMATIONS' => (string) $nom,
+            'PRENOM_UTILISATEURINFORMATIONS' => (string) $prenom,
+            'TELFIXE_UTILISATEURINFORMATIONS' => (string) $fixe,
+            'TELPORTABLE_UTILISATEURINFORMATIONS' => (string) $mobile,
+            'TELFAX_UTILISATEURINFORMATIONS' => (string) $fax,
+            'MAIL_UTILISATEURINFORMATIONS' => (string) $email,
+            'SOCIETE_UTILISATEURINFORMATIONS' => (string) $societe,
+            'WEB_UTILISATEURINFORMATIONS' => (string) $web,
+            'OBS_UTILISATEURINFORMATIONS' => (string) $adresse,
+            'ID_FONCTION' => (string) $id_fonction
+        ))->save();
+
+        $DB_contact->createRow(array(
+            'ID_ETABLISSEMENT' => $id_etablissement,
+            'ID_UTILISATEURINFORMATIONS' => $id_contact
+        ))->save();
+    }
+
+    /**
+     * Ajout d'un contact existant à un établissement
+     *
+     * @param int $id_etablissement
+     * @param int $id_contact
+     */
+    public function addContactExistant($id_etablissement, $id_contact)
+    {
+        $DB_contact = new Model_DbTable_EtablissementContact;
+
+        $DB_contact->createRow(array(
+            'ID_ETABLISSEMENT' => $id_etablissement,
+            'ID_UTILISATEURINFORMATIONS' => $id_contact
+        ))->save();
     }
 
     /**
      * Suppression d'un contact
      *
+     * @param int $id_etablissement
      * @param int $id_contact
-     * @return array
      */
-    public function deleteContact($id_contact)
+    public function deleteContact($id_etablissement, $id_contact)
     {
-        //
+        $DB_current = new Model_DbTable_EtablissementContact;
+        $DB_informations = new Model_DbTable_UtilisateurInformations;
+        $DB_contact = array(
+            new Model_DbTable_EtablissementContact,
+            new Model_DbTable_DossierContact,
+            new Model_DbTable_GroupementContact,
+            new Model_DbTable_CommissionContact
+        );
+
+        // Appartient à d'autre ets ?
+        $exist = false;
+        foreach ($DB_contact as $key => $model) {
+            if (count($model->fetchAll("ID_UTILISATEURINFORMATIONS = " . $id_contact)->toArray()) > (($model == $DB_current) ? 1 : 0) ) {
+                $exist = true;
+            }
+        }
+
+        // Est ce que le contact n'appartient pas à d'autre etablissement ?
+        if (!$exist) {
+            $DB_current->delete("ID_UTILISATEURINFORMATIONS = " . $id_contact); // Porteuse
+            $DB_informations->delete( "ID_UTILISATEURINFORMATIONS = " . $id_contact ); // Contact
+        } else {
+            $DB_current->delete("ID_UTILISATEURINFORMATIONS = " . $id_contact . " AND ID_ETABLISSEMENT = " . $id_etablissement); // Porteuse
+        }
     }
 
     /**

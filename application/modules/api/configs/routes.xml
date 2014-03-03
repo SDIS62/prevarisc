@@ -1,15 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <router>
 
-    <api type="Zend_Controller_Router_Route_Static">
+    <api_1_0 type="Zend_Controller_Router_Route_Static">
         <route>/api/1.0</route>
-        <defaults module="api" controller="api" action="index" />
+        <defaults module="api" action="index" />
         <chains>
-            <intervention type="Zend_Controller_Router_Route">
+
+            <!-- Établissement -->
+            <etablissement type="Zend_Controller_Router_Route">
+                <route>etablissement</route>
+                <defaults controller="etablissement" />
+                <chains>
+                    <get type="Zend_Controller_Router_Route">
+                        <route></route>
+                        <defaults method="get" />
+                    </get>
+                    <historique type="Zend_Controller_Router_Route">
+                        <route>historique</route>
+                        <defaults method="getHistorique" />
+                    </historique>
+                    <descriptifs type="Zend_Controller_Router_Route">
+                        <route>descriptifs</route>
+                        <defaults method="getDescriptifs" />
+                    </descriptifs>
+                    <textes_applicables type="Zend_Controller_Router_Route">
+                        <route>textes_applicables</route>
+                        <defaults method="getTextesApplicables" />
+                    </textes_applicables>
+                    <pieces_jointes type="Zend_Controller_Router_Route">
+                        <route>pieces_jointes</route>
+                        <defaults method="getPiecesJointes" />
+                    </pieces_jointes>
+                    <contacts type="Zend_Controller_Router_Route">
+                        <route>contacts</route>
+                        <defaults method="getContacts" />
+                    </contacts>
+                    <dossiers type="Zend_Controller_Router_Route">
+                        <route>dossiers</route>
+                        <defaults method="getDossiers" />
+                    </dossiers>
+                    <defaults_values type="Zend_Controller_Router_Route">
+                        <route>defaults_values</route>
+                        <defaults method="getDefaultValues" />
+                    </defaults_values>
+                </chains>
+            </etablissement>
+
+            <!-- Test -->
+            <test type="Zend_Controller_Router_Route">
                 <route>test</route>
-                <defaults method="test" />
-            </intervention>
+                <defaults controller="test" method="test" />
+            </test>
+
         </chains>
-    </api>
+    </api_1_0>
 
 </router>
