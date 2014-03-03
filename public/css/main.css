@@ -389,11 +389,13 @@ a.thumbnail + a.thumbnail {
 	display: inline;
 }
 
-#ligne_informations p#libelle {
-
+#ligne_informations #libelle {
 	font-size: 1.7em;
 	position: relative;
 	top: 2px;
+	font-weight: normal;
+	display: inline;
+	line-height: 0.8em;
 }
 
 #tabs h4,

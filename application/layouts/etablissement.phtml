@@ -4,14 +4,14 @@
 <div id='ligne_informations'>
 
     <!-- Libelle -->
-    <p id='libelle'>
+    <h2 id='libelle'>
         <?php if( $this->etablissement['parents'] > 0 ) : ?>
             <?php foreach($this->etablissement['parents'] as $etablissement) : ?>
                 <?php echo "<a href='/etablissement/index/id/" . $etablissement["ID_ETABLISSEMENT"] . "'>" . $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] . "</a> - "; ?>
             <?php endforeach ?>
         <?php endif ?>
         <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." " ?>
-    </p>
+    </h2>
     
     <!-- Avis -->
     <?php if($this->etablissement['avis'] != null) : ?>
@@ -32,7 +32,7 @@
 </div>
 
 <!-- Onglets horizontaux -->
-<ul id='onglets_horizontaux' class='read' >
+<ul id='onglets_horizontaux' >
     <li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
     <?php if($this->genre != "\"EIC\"" ) : ?>
         <li class='<?php echo ( $this->action == "textes-applicables" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li>
