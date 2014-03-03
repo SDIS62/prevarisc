@@ -244,6 +244,63 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        $this->view->contacts = $service_etablissement->getAllContacts($this->_request->id);
+    }
+
+    public function editContactsAction()
+    {
+        $this->_helper->layout->setLayout('etablissement');
+
+        $service_etablissement = new Service_Etablissement;
+
+        $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        $this->view->contacts = $service_etablissement->getAllContacts($this->_request->id);
+    }
+
+    public function addContactAction()
+    {
+        $this->_helper->layout->disableLayout();
+
+        $service_etablissement = new Service_Etablissement;
+        $service_contact = new Service_Contact;
+
+        $this->view->fonctions = $service_contact->getFonctions();
+
+        if($this->_request->isPost())
+        {
+            try {
+                $post = $this->_request->getPost();
+                $service_etablissement->addContact($this->_request->id, $post['firstname'], $post['lastname'], $post['id_fonction'], $post['societe'], $post['fixe'], $post['mobile'], $post['fax'], $post['mail'], $post['adresse'], $post['web']);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'Le contact a bien été ajouté.'));
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Mise à jour annulée', 'message' => 'Le contact n\'a été ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+
+            $this->_helper->redirector('edit-contacts', null, null, array('id' => $this->_request->id));
+        }
+    }
+
+    public function deleteContactAction()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $service_etablissement = new Service_Etablissement;
+
+        if($this->_request->isGet())
+        {
+            try {
+                $post = $this->_request->getPost();
+                $service_etablissement->deleteContact($this->_request->id, $this->_request->id_contact);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression réussie !', 'message' => 'Le contact a bien été supprimé de la fiche établissement.'));
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Suppression annulée', 'message' => 'Le contact n\'a été supprimé. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+
+            $this->_helper->redirector('edit-contacts', null, null, array('id' => $this->_request->id));
+        }
     }
 
     public function dossiersAction()
@@ -310,25 +367,6 @@ class EtablissementController extends Zend_Controller_Action
 
         // On balance le rÃ©sultat sur la vue
         echo Zend_Json::Encode(array('resultats' => $search->run()->getAdapter()->getItems(0, 99999999999)->toArray()));
-    }
-
-    public function ficheExisteAction()
-    {
-        header('Content-type: application/json');
-
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
-        $DB_information = new Model_DbTable_EtablissementInformations;
-
-        if ($this->_request->date != "undefined") {
-
-            $array_date = $this->getDate($this->_request->date);
-            $this->view->bool_fiche = (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $this->_request->id . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $array_date . "'"))) ? true : false;
-        } else {
-
-            $this->view->bool_fiche = false;
-        }
     }
 
     public function getDefaultValuesAction()

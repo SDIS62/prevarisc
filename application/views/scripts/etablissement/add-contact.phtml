@@ -1,0 +1,62 @@
+<form class="modal contact" action='<?php echo $this->url(array('action' => 'add-contact')) ?>' method='post' >
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Ajouter un contact</h3>
+    </div>
+
+    <div class="modal-body">
+
+	    <p class='text-center'>
+	    	<input type='text' name='lastname' placeholder='Nom' />
+	    	<input type='text' name='firstname' placeholder='Prénom' />
+	    </p>
+
+    	<dl class='dl-horizontal'>
+
+			<dt>Société</dt>
+			<dd>
+				<input type='text' name='societe' />
+			</dd>
+
+			<dt>Fonction</dt>
+			<dd>
+				<select name='id_fonction' >
+					<?php foreach($this->fonctions as $fonction) : ?>
+						<option value='<?php echo $fonction["ID_FONCTION"] ?>' <?php if(($fonction["ID_FONCTION"] == $this->contact["ID_FONCTION"])) echo "selected" ?> >
+							<?php echo $fonction["LIBELLE_FONCTION"] ?>
+						</option>
+					<?php endforeach ?>
+				</select>
+			</dd>
+
+			<dt>Téléphones</dt>
+			<dd>
+				<input type='text' name='fixe' placeholder='Téléphone fixe ...' />
+				<input type='text' name='mobile' placeholder='Portable ...' /><br/>
+				<input type='text' name='fax' placeholder='Fax ...' />
+			</dd>
+
+			<dt>Courriel</dt>
+			<dd>
+				<input type='text' name='mail' />
+			</dd>
+			
+			<dt>Site Web</dt>
+			<dd>
+				<input type='text' name='web' />
+			</dd>
+
+			<dt>Adresse</dt>
+			<dd>
+				<textarea name='adresse' style="width: 100%"><?php if(isset($this->user_info["OBS_UTILISATEURINFORMATIONS"])) echo $this->user_info["OBS_UTILISATEURINFORMATIONS"] ?></textarea>
+			</dd>
+		</dl>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' id='submit' value='Ajouter' class='btn btn-success' />
+    </div>
+
+</form>

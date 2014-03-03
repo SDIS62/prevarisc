@@ -1,4 +1,37 @@
-<div id='contact-content'></div>
-<script type="text/javascript">
-	$("#contact-content").load("/contact?item=etablissement&id=<?php echo $this->DB_etablissement["ID_ETABLISSEMENT"] ?>");
-</script>
+<div class='pull-right' >
+    <a class='btn' href="<?php echo $this->url(array('action' => 'edit-contacts')) ?>">Gestion des contacts</a>
+</div>
+
+<h3>Contacts</h3>
+
+<?php if(count($this->contacts) == 0) : ?>
+
+    <div class='well well-large text-center'>
+        <p class='lead'>Il n'y a pas de contacts pour cet établissement.</p>
+        <p><a href='<?php echo $this->url(array('action' => 'edit-contacts')) ?>' class='btn btn-large'>Ajouter un contact</a></p>
+    </div>
+
+<?php else : ?>
+
+	<div class='row-fluid'>
+	<?php foreach($this->contacts as $contact) : ?>
+		<div class="fiche_contact span4">
+		    <p class="fiche_contact_nom"><?php echo $contact['NOM_UTILISATEURINFORMATIONS'] . " " . $contact['PRENOM_UTILISATEURINFORMATIONS']  ?></p>
+		    <p class="fiche_contact_fonction"><?php echo $contact['LIBELLE_FONCTION']  ?> <?php echo !empty($contact['SOCIETE_UTILISATEURINFORMATIONS']) ? '-  ' . $contact['SOCIETE_UTILISATEURINFORMATIONS'] : ''  ?></p>
+		    <ul class='unstyled'>
+		        <li><span>Téléphone</span><span class="valeur"><?php echo $contact['TELFIXE_UTILISATEURINFORMATIONS'] . (!empty($contact['TELPORTABLE_UTILISATEURINFORMATIONS']) ? " / ".$contact['TELPORTABLE_UTILISATEURINFORMATIONS'] : ''); ?></span>
+		        </li>
+		        <li><span>Fax</span><span class="valeur"><?php echo $contact['TELFAX_UTILISATEURINFORMATIONS']  ?></span></li>
+		        <li><span>Couriel</span><span class="valeur"><a href='mailto:<?php echo $contact['MAIL_UTILISATEURINFORMATIONS']  ?>'><?php echo $contact['MAIL_UTILISATEURINFORMATIONS']  ?></a></span></li>
+		        <li><span>Site web</span><span class="valeur"><a href="<?php echo $contact['WEB_UTILISATEURINFORMATIONS']  ?>"><?php echo $contact['WEB_UTILISATEURINFORMATIONS']  ?></a></span></li>
+		        <li><span>Adresse</span><span class="valeur"><?php echo $contact['OBS_UTILISATEURINFORMATIONS']  ?></span></li>
+		    </ul>
+		</div>
+		<?php if(!isset($i)) $i = 1; else $i++; ?>
+		<?php if($i == 3) : ?>
+			</div> <div class='row-fluid'>
+		<?php endif ?>
+	<?php endforeach ?>
+	</div>
+
+<?php endif ?>
