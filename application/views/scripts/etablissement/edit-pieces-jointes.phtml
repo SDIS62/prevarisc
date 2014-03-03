@@ -1,51 +1,44 @@
-<form action='<?php echo $this->url(array('action' => 'edit-pieces-jointes')) ?>' method='post'>
+<div class='pull-right' >
+	<a href='<?php echo $this->url(array('action' => 'add-piece-jointe')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" ><i class="icon-upload"></i> Ajouter une pièce jointe</a>
+    <a class='btn' href="<?php echo $this->url(array('action' => 'pieces-jointes')) ?>">Revenir sur l'affichage des pièces jointes</a>
+</div>
 
-    <div class='pull-right' >
-    	<a href='<?php echo $this->url(array('action' => 'add-piece-jointe')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" ><i class="icon-upload"></i> Ajouter une pièce jointe</a>
-        <div class="btn-group">
-            <a class='btn' href="<?php echo $this->url(array('action' => 'pieces-jointes')) ?>">Revenir sur l'affichage des pièces jointes</a>
-            <input type='submit' class="btn btn-success" value='Sauvegarder les modifications'>
-        </div>
-    </div>
+<h3>Gestion des pièces jointes</h3>
 
-    <h3>Gestion des pièces jointes</h3>
-
-	<?php if(count($this->pieces_jointes) == 0) : ?>
-	    <p class='muted'>Il n'y a pas de pièces jointes pour cet établissement.</p>
-	<?php else : ?>
-	<table class='table table-bordered table-condensed table-hover'> 
-		<thead> 
-			<tr>
-				<th>Nom</th> 
-				<th>Description</th>
-				<th>Date d'ajout</th>
-				<th></th>
-			</tr> 
-		</thead> 
-		<tbody>
-			<?php foreach ($this->pieces_jointes as $piecejointe) : ?>
-				<tr>   
-					<td>
-						<a href='/data/uploads/pieces-jointes/<?php echo $piecejointe['ID_PIECEJOINTE'] . $piecejointe['EXTENSION_PIECEJOINTE'] ?>' target='_blank' >
-							<?php echo $piecejointe['NOM_PIECEJOINTE'] ?>
-						</a>
-					</td>
-					<td>
-						<?php echo empty($piecejointe['DESCRIPTION_PIECEJOINTE']) ? 'Aucune description.' : nl2br(str_replace("<br />", "" ,$piecejointe['DESCRIPTION_PIECEJOINTE'])) ?>
-					</td>
-					<td>
-						<?php echo date_format(new DateTime($piecejointe['DATE_PIECEJOINTE']), 'd/m/Y') ?>
-					</td>
-					<td>
-						<a href='<?php echo $this->url(array('action' => 'delete-piece-jointe', 'id_pj' => $piecejointe['ID_PIECEJOINTE'])) ?>'>Supprimer la pièce jointe</a>
-					</td>
-				</tr>
-			<?php endforeach ?>
-		</tbody>
-	</table>
-	<?php endif ?>
-
-</form>
+<?php if(count($this->pieces_jointes) == 0) : ?>
+    <p class='muted'>Il n'y a pas de pièces jointes pour cet établissement.</p>
+<?php else : ?>
+<table class='table table-bordered table-condensed table-hover'> 
+	<thead> 
+		<tr>
+			<th>Nom</th> 
+			<th>Description</th>
+			<th>Date d'ajout</th>
+			<th></th>
+		</tr> 
+	</thead> 
+	<tbody>
+		<?php foreach ($this->pieces_jointes as $piecejointe) : ?>
+			<tr>   
+				<td>
+					<a href='/data/uploads/pieces-jointes/<?php echo $piecejointe['ID_PIECEJOINTE'] . $piecejointe['EXTENSION_PIECEJOINTE'] ?>' target='_blank' >
+						<?php echo $piecejointe['NOM_PIECEJOINTE'] ?>
+					</a>
+				</td>
+				<td>
+					<?php echo empty($piecejointe['DESCRIPTION_PIECEJOINTE']) ? 'Aucune description.' : nl2br(str_replace("<br />", "" ,$piecejointe['DESCRIPTION_PIECEJOINTE'])) ?>
+				</td>
+				<td>
+					<?php echo date_format(new DateTime($piecejointe['DATE_PIECEJOINTE']), 'd/m/Y') ?>
+				</td>
+				<td>
+					<a href='<?php echo $this->url(array('action' => 'delete-piece-jointe', 'id_pj' => $piecejointe['ID_PIECEJOINTE'])) ?>'>Supprimer la pièce jointe</a>
+				</td>
+			</tr>
+		<?php endforeach ?>
+	</tbody>
+</table>
+<?php endif ?>
 
 <div id="reponse-modal" class="modal hide fade" ></div>
 
