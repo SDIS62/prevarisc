@@ -87,14 +87,17 @@
                         <th>Nom</th>
                         <th>Valeur</th>
                         <th>Classement</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Rubriques -->
-                    <?php echo $this->partial('etablissement/partials/partial-rubrique.phtml') ?>
                     <?php foreach($this->etablissement['rubriques'] as $rubrique) : ?>
-                        <?php echo $this->partial('etablissement/partials/partial-rubrique.phtml', array('rubrique' => $rubrique)) ?>
+                        <tr>
+                            <td><?php echo $rubrique["ID_RUBRIQUE"] == 1 ? 'Substance' : 'Activité' ?></td>
+                            <td><?php echo $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
+                            <td><?php echo $rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
+                            <td><?php echo $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
+                            <td><?php echo $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
+                        </tr>
                     <?php endforeach ?>
                 </tbody>
             </table>
@@ -106,10 +109,12 @@
             <h4 class='h4_subtitle'>Les effectifs</h4>
             <dl class='dl-horizontal'>
                 <!-- Effectif public -->
+                <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5))) : ?>
                 <dt>Public</dt>
                 <dd>
                     <p><?php echo $this->etablissement['informations']['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] ?></p>
                 </dd>
+                <?php endif ?>
 
                 <!-- Effectif personnel -->
                 <dt>Personnel</dt>
@@ -118,7 +123,7 @@
                 </dd>
 
                 <!-- Effectif hebergé -->
-                <?php if($this->etablissement['informations']['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']) : ?>
+                <?php if($this->etablissement['informations']['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] && $this->etablissement['informations']['ID_GENRE'] == 2) : ?>
                 <dt>Dont hebergé</dt>
                 <dd>
                     <p><?php echo $this->etablissement['informations']['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] ?></p>
@@ -161,7 +166,7 @@
                 <tbody>
                     <?php foreach($this->etablissement['plans'] as $plan) : ?>
                         <tr>
-                            <td><?php echo $plan["ID_TYPEPLAN"] ?></td>
+                            <td><?php echo $plan["LIBELLE_TYPEPLAN"] ?></td>
                             <td><?php echo $plan["NUMERO_ETABLISSEMENTPLAN"] ?></td>
                             <td><?php echo date_format(new DateTime($plan["DATE_ETABLISSEMENTPLAN"]), 'd/m/Y') ?></td>
                             <td><?php echo $plan["MISEAJOUR_ETABLISSEMENTPLAN"] ? 'A jour' : 'Pas à jour' ?></td>
@@ -334,7 +339,7 @@
             <h4 class='h4_subtitle'>Service prévention</h4>
             <dl class='dl-horizontal'>
                 <!-- Commission compétente -->
-                <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 5, 6))) : ?>
+                <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 5))) : ?>
                 <dt>Commission</dt>
                 <dd>
                     <p><?php echo $this->etablissement['informations']['LIBELLE_COMMISSION'] ?></p>

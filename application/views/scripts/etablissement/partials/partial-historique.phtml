@@ -16,7 +16,7 @@
 				<?php echo $item["valeur"] ?>
 				<span style="font-size: 0.8em">
 					(Dernière modification par 
-					<?php echo $item["author"] == null ? "<em>Inconnu</em>" : "<a href='/user/profile/uid/".$item["author"]["id"]."'>".$item["author"]["object"]['NOM_UTILISATEURINFORMATIONS']." ". $item["author"]["object"]['PRENOM_UTILISATEURINFORMATIONS'] . "</a>"?>)
+					<?php echo $item["author"] == null ? "<em>Inconnu</em>" : "<a href='/user/profile/uid/".$item["author"]["id"]."'>".$item["author"]["name"] . "</a>"?>)
 				</span>
 			</td>
 		</tr>

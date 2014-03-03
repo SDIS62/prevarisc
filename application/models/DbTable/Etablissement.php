@@ -17,18 +17,6 @@
             return $result == null ? null : $result->toArray();
         }
 
-        public function getListeChamps()
-        {
-            return array (
-                    "Site" => array( "periodicite", "etablissement_lies", "preventionnistes" ),
-                    "Établissement" => array( "adresse", "categorie", "periodicite", "r123_20", "type_principal", "activite_principale", "types_secondaires", "activite_secondaires", "commission", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_justifianttotal", "effectif_total", "preventionnistes", "avis", "etablissement_lies", "datepc", "dangerosite", "mise_secu", "stat_prev", "extinction_eau" ),
-                    "Cellule" => array( "adresse_cellule", "r123_20", "type_principal", "activite_principale", "types_secondaires", "activite_secondaires", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_justifianttotal", "effectif_total", "preventionnistes", "avis", "periodicite", "categorie", "numerotation", "etablissement_lies", "datepc", "stat_prev", "extinction_eau", "surfaces_cell" ),
-                    "Habitation" => array( "adresse", "famille", "preventionnistes", "datepc", "stat_prev"),
-                    "IGH" => array( "adresse", "classe", "periodicite", "commission", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_total", "effectif_heberge", "preventionnistes", "avis", "datepc", "stat_prev" ),
-                    "EIC" => array( "icpe", "adresse", "effectifs", "effectif_personnel", "effectif_total", "preventionnistes", "datepc", "stat_prev" )
-                );
-        }
-
         // NOTE : à faire après enregistrement d'un établissement
         public function getIDWinprev($id)
         {
@@ -382,6 +370,17 @@
                 ->where("EXTENSION_PIECEJOINTE = '.jpg' OR EXTENSION_PIECEJOINTE = '.JPG' OR EXTENSION_PIECEJOINTE = '.png'")
                 ->where("PLACEMENT_ETABLISSEMENTPJ = 2")
                 ->where("etablissementpj.ID_ETABLISSEMENT = " . $id_etablissement);
+
+            return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
+        }
+
+        public function getPlansInformations($id_etablissement_informations)
+        {
+            $select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from("etablissementinformationsplan")
+                ->join("typeplan", "etablissementinformationsplan.ID_TYPEPLAN = typeplan.ID_TYPEPLAN")
+                ->where("etablissementinformationsplan.ID_ETABLISSEMENTINFORMATIONS = ?", $id_etablissement_informations);
 
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
         }
