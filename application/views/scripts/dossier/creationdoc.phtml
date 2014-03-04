@@ -455,30 +455,204 @@ try{
 
 }
 
-//Surface totale entité
+//Descriptif de l'établissement
 try{
-	$odf->setVars('surfaceTotale',verifInfos($this->entite['SURFACETOTALE_ETABLISSEMENTINFORMATIONS']),true,'UTF8');
-} catch (OdfException $e){
+	$odf->setVars('historiqueDescriptifEtab',verifInfos($this->etabDesc['DESCRIPTIF_HISTORIQUE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('descriptifEtab',verifInfos($this->etabDesc['DESCRIPTIF_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('derogAccEtab',verifInfos($this->etabDesc['DESCRIPTIF_DEROGATIONS_ETABLISSEMENT']),true,'UTF8');
+	
+	//Implantation
+	$odf->setVars('surfaceEmpriseSol',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('SHON',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('SHOB',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('nbNiveaux',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('PBDN',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('surfaceTotale',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('surfaceAccessible',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT']),true,'UTF8');
+	
+	//Desserte
+	$odf->setVars('nbFacadeAccess',verifInfos($this->etabDesc['DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('voieEngin',verifInfos($this->etabDesc['DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('voieEchelle',verifInfos($this->etabDesc['DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('espaceLibre',verifInfos($this->etabDesc['DESCTECH_DESSERTE_ESPACELIBRE_ETABLISSEMENT']),true,'UTF8');
+	
+	//Isolement par rapport aux tiers
+	$odf->setVars('lateralCF',verifInfos($this->etabDesc['DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('superposeCF',verifInfos($this->etabDesc['DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('visAvis',verifInfos($this->etabDesc['DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT']),true,'UTF8');
+	
+	//Stabilité au feu
+	$odf->setVars('structureSF',verifInfos($this->etabDesc['DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('plancherSF',verifInfos($this->etabDesc['DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT']),true,'UTF8');
+	
+	//Distribution intérieure
+	$cloisonnementTrad = $this->etabDesc['DESCTECH_DISTRIBUTION_CLOISONNEMENTTRAD_ETABLISSEMENT'];
+	if($cloisonnementTrad == 1){
+		$cloisonnementTrad = "Oui";
+	}else{
+		$cloisonnementTrad = "Non";
+	}
+	$odf->setVars('cloisonnementTrad',verifInfos($cloisonnementTrad),true,'UTF8');
+	
+	$secteurs = $this->etabDesc['DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT'];
+	if($secteurs == 1){
+		$secteurs = "Oui";
+	}else{
+		$secteurs = "Non";
+	}	
+	$odf->setVars('secteurs',verifInfos($secteurs),true,'UTF8');
+	
+	$compartiments = $this->etabDesc['DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT'];
+	if($compartiments == 1){
+		$compartiments = "Oui";
+	}else{
+		$compartiments = "Non";
+	}	
+	$odf->setVars('compartiments',verifInfos($compartiments),true,'UTF8');
+	
+	//Locaux à risques
+	$odf->setVars('locauxRisquesMoyens',verifInfos($this->etabDesc['DESCTECH_LOCAUXARISQUE_NBRISQUESMOYENS_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('locauxRisquesImportants',verifInfos($this->etabDesc['DESCTECH_LOCAUXARISQUE_NBRISQUESIMPORTANTS_ETABLISSEMENT']),true,'UTF8');
+	//Espaces d'attentes sécurisés
+	$odf->setVars('espacesAttentesNombre',verifInfos($this->etabDesc['DESCTECH_ESPACES_NOMBRE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('espacesAttentesNiveaux',verifInfos($this->etabDesc['DESCTECH_ESPACES_NIVEAUCONCERNE_ETABLISSEMENT']),true,'UTF8');
+	
+	//Désenfumage
+	$desenfNaturel = $this->etabDesc['DESCTECH_DESENFUMAGE_NATUREL_ETABLISSEMENT'];
+	if($desenfNaturel == 1){
+		$desenfNaturel = "Oui";
+	}else{
+		$desenfNaturel = "Non";
+	}	
+	$odf->setVars('desenfNaturel',verifInfos($desenfNaturel),true,'UTF8');
+	
+	$desenfMecanique = $this->etabDesc['DESCTECH_DESENFUMAGE_MECANIQUE_ETABLISSEMENT'];
+	if($desenfMecanique == 1){
+		$desenfMecanique = "Oui";
+	}else{
+		$desenfMecanique = "Non";
+	}	
+	$odf->setVars('desenfMecanique',verifInfos($desenfMecanique),true,'UTF8');
+	
+	$odf->setVars('desenfCommentaire',verifInfos($this->etabDesc['DESCTECH_DESENFUMAGE_COMMENTAIRE_ETABLISSEMENT']),true,'UTF8');
+	
+	//Chaufferies
+	$odf->setVars('nbChaufferie',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_NB_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('puissanceMaxChauff',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_PUISSMAX_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('nbChauff30kw',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_NB30KW']),true,'UTF8');
+	$odf->setVars('nbChauff70kw',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_NB70KW']),true,'UTF8');
+	$odf->setVars('nbChauff2mw',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_NB2MW']),true,'UTF8');
+	$odf->setVars('puissTotalChaff',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_PUISSANCETOTALE']),true,'UTF8');
+	
+	//Localisation des coupures d'énergies
+	$odf->setVars('locGaz',verifInfos($this->etabDesc['DESCTECH_COUPURENRJ_GAZ_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('locElectricite',verifInfos($this->etabDesc['DESCTECH_COUPURENRJ_ELEC_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('locPhotovoltaique',verifInfos($this->etabDesc['DESCTECH_COUPURENRJ_PHOTOVOLTAIQUE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('locAutre',verifInfos($this->etabDesc['DESCTECH_COUPURENRJ_AUTRE_ETABLISSEMENT']),true,'UTF8');
+	
+	//Ascenseurs
+	$odf->setVars('nbAscTot',verifInfos($this->etabDesc['DESCTECH_ASCENSEURS_NBTOTAL_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('nbAscAS4',verifInfos($this->etabDesc['DESCTECH_ASCENSEURS_NBAS4_ETABLISSEMENT']),true,'UTF8');
+	
+	//Moyens de secours
+	$colSeches = $this->etabDesc['DESCTECH_MOYENSSECOURS_COLONNESSECHES_ETABLISSEMENT'];
+	if($colSeches == 1){
+		$colSeches = "Oui";
+	}else{
+		$colSeches = "Non";
+	}	
+	$odf->setVars('colSeches',verifInfos($colSeches),true,'UTF8');
+
+	
+	$colHumides = $this->etabDesc['DESCTECH_MOYENSSECOURS_COLONNESHUMIDES_ETABLISSEMENT'];
+	if($colHumides == 1){
+		$colHumides = "Oui";
+	}else{
+		$colHumides = "Non";
+	}	
+	$odf->setVars('colHumides',verifInfos($colHumides),true,'UTF8');
+	
+	$ria = $this->etabDesc['DESCTECH_MOYENSSECOURS_RIA_ETABLISSEMENT'];
+	if($ria == 1){
+		$ria = "Oui";
+	}else{
+		$ria = "Non";
+	}	
+	$odf->setVars('RIA',verifInfos($ria),true,'UTF8');
+	
+	$sprinkleur = $this->etabDesc['DESCTECH_MOYENSSECOURS_SPRINKLEUR_ETABLISSEMENT'];
+	if($sprinkleur == 1){
+		$sprinkleur = "Oui";
+	}else{
+		$sprinkleur = "Non";
+	}	
+	$odf->setVars('sprinkleur',verifInfos($sprinkleur),true,'UTF8');
+	
+	$brouillardEau = $this->etabDesc['DESCTECH_MOYENSSECOURS_BROUILLARDEAU_ETABLISSEMENT'];
+	if($brouillardEau == 1){
+		$brouillardEau = "Oui";
+	}else{
+		$brouillardEau = "Non";
+	}	
+	$odf->setVars('brouillardEau',verifInfos($brouillardEau),true,'UTF8');
+	
+	//PC sécurité
+	$presencePCS = $this->etabDesc['DESCTECH_PCSECU_PRESENCE_ETABLISSEMENT'];
+	if($presencePCS == 1){
+		$presencePCS = "Oui";
+	}else{
+		$presencePCS = "Non";
+	}	
+	$odf->setVars('presencePCS',verifInfos($presencePCS),true,'UTF8');
+	
+	$odf->setVars('localisationPCS',verifInfos($this->etabDesc['DESCTECH_PCSECU_LOCALISATION_ETABLISSEMENT']),true,'UTF8');
+	
+	//SSI
+	$presenceSSI = $this->etabDesc['DESCTECH_SSI_PRESENCE_ETABLISSEMENT'];
+	if($presenceSSI == 1){
+		$presenceSSI = "Oui";
+	}else{
+		$presenceSSI = "Non";
+	}	
+	$odf->setVars('presenceSSI',verifInfos($presenceSSI),true,'UTF8');
+	
+	$odf->setVars('catSSI',verifInfos($this->etabDesc['DESCTECH_SSI_CATEGORIE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('alarmeSSI',verifInfos($this->etabDesc['DESCTECH_SSI_ALARME_TYPE_ETABLISSEMENT']),true,'UTF8');
+	
+	//Servuce de sécurité
+	$persQualEL18 = $this->etabDesc['DESCTECH_SERVICESECU_EL18_ETABLISSEMENT'];
+	if($persQualEL18 == 1){
+		$persQualEL18 = "Oui";
+	}else{
+		$persQualEL18 = "Non";
+	}	
+	$odf->setVars('persQualEL18',verifInfos($persQualEL18),true,'UTF8');
+	
+	$persDesignes = $this->etabDesc['DESCTECH_SERVICESECU_PERSONNELSDESIGNES_ETABLISSEMENT'];
+	if($persDesignes == 1){
+		$persDesignes = "Oui";
+	}else{
+		$persDesignes = "Non";
+	}	
+	$odf->setVars('persDesignes',verifInfos($persDesignes),true,'UTF8');
+	
+	$odf->setVars('nbAgentSecu',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_AGENTDESECU_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('nbChefEquipeSecu',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_CHEFEQUIPE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('nbChefServSecu',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_CHEFDESERVICESECU_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('nbSp',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_SP_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('commentaireSp',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_COMMENTAIRESP_ETABLISSEMENT']),true,'UTF8');
+	
+	//Défense incendie
+	$odf->setVars('nbPointEau',verifInfos($this->etabDesc['DESCTECH_DEFENSE_PTEAU_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('volumePointEau',verifInfos($this->etabDesc['DESCTECH_DEFENSE_VOLUMEPTEAU_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('commentairePointEauNat',verifInfos($this->etabDesc['DESCTECH_DEFENSE_PTEAUCOMMENTAIRE_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('PI',verifInfos($this->etabDesc['DESCTECH_DEFENSE_PI_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('BI',verifInfos($this->etabDesc['DESCTECH_DEFENSE_BI_ETABLISSEMENT']),true,'UTF8');
+	$odf->setVars('debitSimultane',verifInfos($this->etabDesc['DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT']),true,'UTF8');
+	
+}catch (OdfException $e){
 
 }
-//Surface accessible entité
-try{
-	$odf->setVars('surfaceAccessible',verifInfos($this->entite['SURFACEACCPUBLIC_ETABLISSEMENTINFORMATIONS']),true,'UTF8');
-} catch (OdfException $e){
-
-}
-//Extinction automatique eau entité
-try{
-	$valExtinction = $this->entite['EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS'];
-	if($valExtinction == null || $valExtinction == 0)
-		$valExtinction = "non";
-	else
-		$valExtinction = "oui";
-	$odf->setVars('extinctionAuto',verifInfos($valExtinction),true,'UTF8');
-} catch (OdfException $e){
-
-}
-
 
 
 //INFORMATION CONCERNANT LE PERE DE L'ENTITE
@@ -511,7 +685,7 @@ try{
 } catch (OdfException $e) {
 
 }
-
+/*
 try{
 	$valExtinctionP = $this->infoPere['EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS'];
 	if($valExtinctionP == null || $valExtinctionP == 0)
@@ -522,7 +696,7 @@ try{
 } catch (OdfException $e){
 
 }
-
+*/
 //INFORMATION DU GN
 if($this->GN == 2){
 	try{
