@@ -217,15 +217,22 @@ class DossierController extends Zend_Controller_Action
             $DBdossier = new Model_DbTable_Dossier;
             $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
             $this->view->listeEtablissement = $tabEtablissement;
-            $DBetab = new Model_DbTable_Etablissement;
-            $etablissement = $DBetab->getInformations($tabEtablissement[0]['ID_ETABLISSEMENT'])->toArray();
-            $this->view->genre = $etablissement['ID_GENRE'];
-            $commissionEtab = $etablissement['ID_COMMISSION'];
-            $idEtablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
+			if(count($tabEtablissement) > 0){
+				$DBetab = new Model_DbTable_Etablissement;
+				$etablissement = $DBetab->getInformations($tabEtablissement[0]['ID_ETABLISSEMENT'])->toArray();
+				$this->view->genre = $etablissement['ID_GENRE'];
+				$commissionEtab = $etablissement['ID_COMMISSION'];
+				$idEtablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
+			}
         }
-        $this->view->commissionEtab = $commissionEtab;
-        $genreInfo = $this->view->genre;
-        $this->view->idEtablissement = $idEtablissement;
+
+		if(isset($commissionEtab)){
+			$this->view->commissionEtab = $commissionEtab;
+		}
+		$genreInfo = $this->view->genre;
+		if(isset($idEtablissement)){
+			$this->view->idEtablissement = $idEtablissement;
+		}
 
         $today = new Zend_Date();
         $this->view->dateToday = $today->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
@@ -1060,6 +1067,8 @@ class DossierController extends Zend_Controller_Action
 
 
             if ( isset($_POST['docManquant']) ) {
+				//comparatif (combien en param et combien en bd pour mise à jour du dernier si besoin)
+
                 $docManquantArray = Array();
                 $dateDocManquantArray = Array();
                 if ( isset($_POST['docManquant']) ) {
@@ -1085,8 +1094,8 @@ class DossierController extends Zend_Controller_Action
                 foreach ($docManquantArray  as $libelle => $value) {
                     $docEnC = $dbDossDocManquant->getDocManquantDossNum($idDossier,$cpt);
                     if ($docEnC && $docEnC['DATE_DOCSMANQUANT'] == NULL) {
-                        //echo "On find et on met à jour ".$docEnC['ID_DOCMANQUANT']."<br/>";
                         $dossDocManquant = $dbDossDocManquant->find($docEnC['ID_DOCMANQUANT'])->current();
+						$dossDocManquant->DOCMANQUANT = $value;
                         if ($nbDateParam > 0 && $cpt < $nbDateParam) {
                             $dateTab = explode("/",$dateDocManquantArray[$cpt]);
                             $value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
@@ -1094,7 +1103,6 @@ class DossierController extends Zend_Controller_Action
                         }
                         $dossDocManquant->save();
                     } elseif (!$docEnC) {
-                        //echo "existe pas<br/>";
                         $dossDocManquant = $dbDossDocManquant->createRow();
                         $dossDocManquant->ID_DOSSIER = $idDossier;
                         $dossDocManquant->NUM_DOCSMANQUANT = $cpt;
@@ -1501,6 +1509,7 @@ class DossierController extends Zend_Controller_Action
 
     public function creationdocAction($idDossier, $idEtab)
     {
+		
         try {
             $this->view->idDossier = $idDossier;
 
@@ -1514,6 +1523,7 @@ class DossierController extends Zend_Controller_Action
 
             $model_etablissement = new Model_DbTable_Etablissement;
             $etablissement = $model_etablissement->find($idEtab)->current();
+			$this->view->etabDesc = $etablissement;
 
             $this->view->numWinPrev = $etablissement['NUMEROID_ETABLISSEMENT'];
             $this->view->numTelEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
@@ -1522,7 +1532,8 @@ class DossierController extends Zend_Controller_Action
             //Informations de l'établissement (catégorie, effectifs, activité / type principal)
             $object_informations = $model_etablissement->getInformations($idEtab);
             $this->view->entite = $object_informations;
-
+			//echo $this->view->entite['ID_ETABLISSEMENT'];
+			
             $this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
             $this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
@@ -1911,6 +1922,29 @@ class DossierController extends Zend_Controller_Action
                     $numCommune++;
                 }
             }
+			//Zend_Debug::dump($listeDossiers);
+			foreach($listeDossiers as $val => $ue)
+			{
+				echo $ue['ID_ETABLISSEMENTDOSSIER']." ".$ue['ID_DOSSIER_AFFECT']."<br/>";
+				/*
+				echo $ue
+				$dbEtabLie = new Model_DbTable_EtablissementLie;
+				$etabLie = $dbEtabLie->recupEtabCellule($object_informations['ID_ETABLISSEMENT']);
+				if ($etabLie != null) {
+					$idPere = $etabLie[0]['ID_ETABLISSEMENT'];
+					$this->view->infoPere = $model_etablissement->getInformations($idPere);
+					$lettreType = $dbType->find($this->view->infoPere['ID_TYPE'])->current();
+					$this->view->typeLettrePPere = $lettreType['LIBELLE_TYPE'];
+					$activitePrincipale = $model_typeactivite->find($this->view->infoPere["ID_TYPEACTIVITE"])->current();
+					$this->view->libelleActivitePPere = $activitePrincipale["LIBELLE_ACTIVITE"];
+					$this->view->categorieEtabPere = $this->view->infoPere['ID_CATEGORIE'];
+					//Récuperation du genre du pere
+					$idGenrePere = $this->view->infoPere['ID_GENRE'];
+					$infosGenrePere = $dbGenre->find($idGenrePere)->current();
+					$this->view->genrePere = $infosGenrePere['LIBELLE_GENRE'];
+				}
+				*/
+			}
 
             $this->view->listeCommunes = $tabCommune;
             $this->view->dossierComm = $listeDossiers;
@@ -1919,11 +1953,13 @@ class DossierController extends Zend_Controller_Action
             $this->view->nomComm = $listeDossiers[0]["LIBELLE_DATECOMMISSION"];
             $this->view->dateComm = $listeDossiers[0]["DATE_COMMISSION"];
             $this->view->heureDeb = $listeDossiers[0]["HEUREDEB_COMMISSION"];
+			
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le document a bien été généré',
                 'message' => ''
             ));
+			
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
