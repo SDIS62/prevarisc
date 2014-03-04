@@ -240,7 +240,7 @@
             </table>
             
             <!-- Etablissement lié -->
-            <h4 class='h4_subtitle'>Établissements liés <?php if($this->etablissement['general']) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->etablissement['general']->ID_ETABLISSEMENT ?>&libelle=<?php echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
+            <h4 class='h4_subtitle'>Établissements liés <?php if($this->etablissement['general']) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>&libelle=<?php echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
             <dl class='dl-horizontal' >
                 <dt class="etablissement_pere">Père de l'établissement</dt>
                 <dd class="etablissement_pere">	
