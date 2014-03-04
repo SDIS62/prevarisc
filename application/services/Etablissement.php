@@ -239,6 +239,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
         $translation_champs_des_tech = array(
             "DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT" => "Surface emprise au sol (m²)",
+            "DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT" => "Surface totale (m²)",
+            "DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT" => "Surface accessible au public (m²)",
             "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "SHON (m²)",
             "DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT" => "SHOB (m²)",
             "DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT" => "Nombre de niveaux",
@@ -475,7 +477,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $etablissement->FAX_ETABLISSEMENT = $data['FAX_ETABLISSEMENT'];
             $etablissement->COURRIEL_ETABLISSEMENT = $data['COURRIEL_ETABLISSEMENT'];
             $etablissement->NBPREV_ETABLISSEMENT = (int) $data['NBPREV_ETABLISSEMENT'];
-            $etablissement->DUREEVISITE_ETABLISSEMENT = $data['DUREEVISITE_ETABLISSEMENT'];
+            $etablissement->DUREEVISITE_ETABLISSEMENT = empty($data['DUREEVISITE_ETABLISSEMENT']) ? null : $data['DUREEVISITE_ETABLISSEMENT'];
             $etablissement->save();
 
             // Sauvegarde des champs de la fiche d'informations en fonction du genre
@@ -597,8 +599,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $DB_adresse->createRow(array(
                         "NUMERO_ADRESSE" => $adresse["NUMERO_ADRESSE"],
                         "COMPLEMENT_ADRESSE" => $adresse["COMPLEMENT_ADRESSE"],
-                        "LON_ETABLISSEMENTADRESSE" => $adresse["LON_ETABLISSEMENTADRESSE"],
-                        "LAT_ETABLISSEMENTADRESSE" => $adresse["LAT_ETABLISSEMENTADRESSE"],
+                        "LON_ETABLISSEMENTADRESSE" => empty($adresse["LON_ETABLISSEMENTADRESSE"]) ? null : $adresse["LON_ETABLISSEMENTADRESSE"],
+                        "LAT_ETABLISSEMENTADRESSE" => empty($adresse["LAT_ETABLISSEMENTADRESSE"]) ? null : $adresse["LAT_ETABLISSEMENTADRESSE"],
                         "ID_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT,
                         "ID_RUE" => $adresse["ID_RUE"],
                         "NUMINSEE_COMMUNE" => $adresse["NUMINSEE_COMMUNE"]
