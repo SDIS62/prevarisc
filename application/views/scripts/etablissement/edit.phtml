@@ -326,9 +326,7 @@
                 <dd class="champ_commission champs">
                     <select name='ID_COMMISSION' >
                         <?php foreach( $this->DB_commission as $item ) : ?>
-                            <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->etablissement['informations']["ID_COMMISSION"] ) echo "selected" ?> >
-                                <?php echo $item["LIBELLE_COMMISSION"] ?>
-                            </option>
+                            <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->etablissement['informations']["ID_COMMISSION"] ) echo "selected" ?> ><?php echo $item["LIBELLE_COMMISSION"] ?></option>
                         <?php endforeach ?>
                     </select>
                 </dd>
