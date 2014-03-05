@@ -1,4 +1,4 @@
-<tr <?php if($this->preventionniste === null ) echo "id='prototype_preventionniste' class='hide prototypes'" ?> >
+<tr <?php echo $this->preventionniste === null ? "id='prototype_preventionniste' class='hide prototypes'" : "class='preventionniste'" ?> >
     <td>
         <input type='hidden' value='<?php echo $this->preventionniste["ID_UTILISATEUR"] ?>' name='ID_UTILISATEUR[]' />
         <span><?php echo $this->preventionniste["NOM_UTILISATEURINFORMATIONS"]." ".$this->preventionniste["PRENOM_UTILISATEURINFORMATIONS"] ?></span>

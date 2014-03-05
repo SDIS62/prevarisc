@@ -10,5 +10,5 @@ interface Service_Interface_Etablissement extends Service_Interface_Contact, Ser
     public function findAll($libelle, $id_genre, $enfants = true);
     public function ficheExiste($id_etablissement, $date);
     public function save($id_genre, array $data, $id_etablissement = null, $date = '');
-    public function getDefaultValues($id_genre, array $data);
+    public function getDefaultValues($genre, $categorie = null, $local_sommeil = null, $classe = null);
 }
