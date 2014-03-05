@@ -368,16 +368,4 @@ class EtablissementController extends Zend_Controller_Action
         // On balance le rÃ©sultat sur la vue
         echo Zend_Json::Encode(array('resultats' => $search->run()->getAdapter()->getItems(0, 99999999999)->toArray()));
     }
-
-    public function getDefaultValuesAction()
-    {
-        header('Content-type: application/json');
-
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
-        $service_etablissement = new Service_Etablissement;
-
-        $service_etablissement->getDefaultValues($genre, $data);
-    }
 }

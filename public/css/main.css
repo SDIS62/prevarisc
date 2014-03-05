@@ -632,3 +632,7 @@ ul#gestionCommissionMenu li.active {
 .fc-event-bg:hover{
 	cursor:move;
 }
+
+.confirm-modal-hide {
+	display: none;
+}

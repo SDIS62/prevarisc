@@ -251,7 +251,7 @@
 
                 <dt class="etablissements_enfants">Enfants de l'établissement</dt>
                 <dd class="etablissements_enfants">
-                    <table class='table table-condensed'>
+                    <table id='etablissements_enfants' class='table table-condensed'>
                         <thead>
                             <tr>
                                 <th>Nom de l'établissement</th>
@@ -280,7 +280,7 @@
         <!-- Carte de l'emplacement de l'établissement / informations  -->
         <div class='span6'>
             <h4 class="champ_adresse champs h4_subtitle">Adresse <a style='font-size: 0.85em; float: right; font-weight: normal;' data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" href="<?php echo $this->url(array('action' => 'build', 'controller' => 'adresse')) ?>">Ajouter une adresse</a></h4>
-            <table class='table table-condensed champ_adresse champs'>
+            <table id='adresses' class='table table-condensed champ_adresse champs'>
                 <thead>
                     <tr>
                         <th>Localisation</th>
@@ -324,8 +324,7 @@
                 <!-- Commission compétente -->
                 <dt class="champ_commission champs">Commission</dt>
                 <dd class="champ_commission champs">
-                    <select id='commission_select' name='ID_COMMISSION' >
-                        <option value='0'>Par défaut</option>
+                    <select name='ID_COMMISSION' >
                         <?php foreach( $this->DB_commission as $item ) : ?>
                             <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->etablissement['informations']["ID_COMMISSION"] ) echo "selected" ?> >
                                 <?php echo $item["LIBELLE_COMMISSION"] ?>
@@ -337,7 +336,7 @@
                 <!-- Préventionnistes -->
                 <dt>Préventionnistes</dt>
                 <dd class='preventionnistes'>
-                    <table class='table table-condensed'>
+                    <table id='preventionnistes' class='table table-condensed'>
                         <thead>
                             <tr>
                                 <th>Nom</th>
@@ -375,20 +374,138 @@
 
 </form>
 
+<!-- Boite de confirmation de l'édition (cachée par défaut) -->
+<div id="confirm-modal" class="modal hide fade" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Confirmation de l'édition</h3>
+    </div>
+
+    <div class="modal-body">
+        <dl>
+            <dt>Date d'enregistrement de la fiche d'informations</dt>
+            <dd id='confirm-modal-date'><span class='confirm-modal-input'></span> <span class='label label-info hide'>Fiche d'informations déjà existante</span></dd>
+        </dl>
+
+        <dl>
+            <dt>Valeurs conseillées</dt>
+            <dd>
+                <ul>
+                    <li id='confirm-modal-commission' class='champ_commission champs'>Commission renseignée : <a href="#" class='label label-info confirm-modal-input'>Aucune</a>, la commission conseillée : <a href="#" class='label confirm-modal-advisable'></a></li>
+                    <li id='confirm-modal-periodicite' class='champ_periodicite champs'>Périodicité renseignée : <a href="#" class='label label-info confirm-modal-input'>Aucune</a>, la périodicité conseillée : <a href="#" class='label confirm-modal-advisable'></a></li>
+                    <li id='confirm-modal-localsommeil' class='champ_localsommeil champs'>Présence de local à sommeil renseignée : <a href="#" class='label label-info confirm-modal-input'></a>, la présence conseillée : <a href="#" class='label confirm-modal-advisable'></a></li>
+                    <li id='confirm-modal-preventionnistes' >Préventionnistes affectés : <a href="#" class='label confirm-modal-input label-info'>Aucuns</a>, les préventionnistes conseillés : <a href="#" class='label confirm-modal-advisable'></a></li>
+                </ul>
+            </dd>
+        </dl>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' value='Confirmer et sauvegarder les changements' class='btn btn-success' />
+    </div>
+</div>
+
 <div id="reponse-modal" class="modal hide fade" ></div>
 
 <script type="text/javascript">
     $(document).ready(function() {
         // Action à la sauvegarde de l'établissement
         $("form#etablissement input[type='submit']").click(function() {
-            $('.prototypes').remove();
-            // $("select[name='ID_GENRE']").find('option:selected').val()
+            // On va chercher les valeurs par défauts pour faire apparaitre la boite de confirmation
+            var etablissements_enfants = [];
+            $("table#etablissements_enfants tbody tr.etablissement_enfant").each(function(index) { etablissements_enfants[index] = $(this).find('input[name="ID_FILS_ETABLISSEMENT[]"]').first().val(); });
+            $.getJSON('/api/1.0/etablissement/defaults_values', {
+                genre: $("select[name='ID_GENRE']").find('option:selected').val(),
+                numinsee: $("#adresses").find('tr.adresse').first().find('input[type="hidden"]').first().val(),
+                type: $("select[name='ID_TYPE']").find('option:selected').val(),
+                categorie: $("select[name='ID_CATEGORIE']").find('option:selected').val(),
+                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").is(':checked'),
+                classe: $("select[name='ID_CLASSE']").find('option:selected').val(),
+                id_etablissement_pere: $("input[name='ID_PERE']").val(),
+                ids_etablissements_enfants: etablissements_enfants
+            }, function(data) {
+                // Si il y a des données disponibles dans les valeurs par défauts proposées, on ouvre la boite de confirmation, sinon on sauvegarde la fiche
+                if(data.status == 'success' && Object.keys(data.response).length > 0) {
+                    // A l'apparition de la boite de confirmation on met à jour les valeurs saisies par l'utilisateur dans la boite
+                    var preventionnistes = [];
+                    var date = new Date($('input[name="date"]').val());
+                    $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text());
+                    $('#confirm-modal-periodicite .confirm-modal-input').text($('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val());
+                    $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]').is(':checked') ? 'Oui' : 'Non' );
+                    $('table#preventionnistes tbody tr.preventionniste').each(function(index) { preventionnistes[index] = $(this).find('td').first().find('span').text(); });
+                    $('#confirm-modal-preventionnistes .confirm-modal-input').text(preventionnistes.toString() == '' ? 'Aucuns' : preventionnistes.toString());
+                    $('#confirm-modal-date .confirm-modal-input').text(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
+                    // On met à jour les valeurs par défauts
+                    $('#confirm-modal-commission .confirm-modal-advisable').attr('id', data.response.commission ? data.response.commission.ID_COMMISSION : '').text(data.response.commission ? data.response.commission.LIBELLE_COMMISSION : '');
+                    $('#confirm-modal-periodicite .confirm-modal-advisable').text(data.response.periodicite);
+                    $('#confirm-modal-localsommeil .confirm-modal-advisable').text(data.response.local_sommeil && data.response.local_sommeil == true ? 'Oui' : 'Non');
+                    if(data.response.preventionnistes && data.response.preventionnistes.length > 0) {
+                        var preventionnistes = [];
+                        var preventionnistes_ids = [];
+                        for(var x in data.response.preventionnistes) {
+                            preventionnistes[x] = data.response.preventionnistes[x].nom + ' ' + data.response.preventionnistes[x].prenom;
+                            preventionnistes_ids[x] = data.response.preventionnistes[x].uid;
+                        }
+                        $('#confirm-modal-preventionnistes .confirm-modal-advisable').attr('ids', preventionnistes_ids.toString()).text(preventionnistes.toString());
+                    }
+                    $('#confirm-modal').find('li').removeClass('confirm-modal-hide');
+                    $('#confirm-modal').find('li').each(function(index) {
+                        if($(this).find('.confirm-modal-input').text() == $(this).find('.confirm-modal-advisable').text() || $(this).find('.confirm-modal-advisable').text() == '') {
+                            $(this).addClass("confirm-modal-hide");
+                        }
+                    });
+                    if($('#confirm-modal').find('li.confirm-modal-hide').length == 4) {
+                        $("form#etablissement").submit();
+                    }
+                    else {
+                        $('#confirm-modal').modal({show: true});
+                    }
+                }
+                else {
+                    $("form#etablissement").submit();
+                }
+            });
+            return false;
+        });
+
+        // Comportement des labels interactifs dans la boite de confirmation
+        $('#confirm-modal a.label').click(function() {
+            $(this).parent().find('a.label').toggleClass('label-info');
+        });
+
+        // Gestion de la prise en compte des valeurs par défaut dans la boite de confirmation
+        $('#confirm-modal input[type="submit"]').click(function() {
+            $('#confirm-modal').find('a.label-info').each(function(index) {
+                if($(this).hasClass('confirm-modal-advisable')) {
+                    switch($(this).parent().attr('id')) {
+                        case 'confirm-modal-preventionnistes':
+                            $('table#preventionnistes').remove();
+                            var preventionnistes_ids = $(this).attr('ids').split(",");
+                            for(var x in preventionnistes_ids) {
+                                $('<input>').attr({type: 'hidden', name: 'ID_UTILISATEUR[]', value: preventionnistes_ids[x]}).appendTo('form#etablissement');
+                            }
+                            break;
+                        case 'confirm-modal-commission':
+                            $('select[name="ID_COMMISSION"]').find('option[value=' + $(this).attr('id') + ']').attr('selected', true);
+                            break;
+                        case 'confirm-modal-periodicite':
+                            $('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val($(this).text());
+                            break;
+                        case 'confirm-modal-localsommeil':
+                            $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]').attr('checked', $(this).text() == 'Oui');
+                            break;
+                    }
+                }
+            });
+            
+            $("form#etablissement").submit();
         });
 
         // Ajout d'une adresse
         $("form.adresse input[type='submit']").live('click', function() {
             time = Date.now;
-            node = $('#prototype_adresse').clone().prependTo( $('table.champ_adresse') ).removeClass('hide prototypes').attr('id', '');
+            node = $('#prototype_adresse').clone().prependTo( $('table.champ_adresse') ).removeClass('hide prototypes').addClass('adresse').attr('id', '');
             node.find('input[name="ADRESSES[-1][LON_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lon"]').val());
             node.find('input[name="ADRESSES[-1][LAT_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lat"]').val());
             node.find('input[name="ADRESSES[-1][NUMERO_ADRESSE]"]').val($('form.adresse').find('input[name="numero"]').val());
@@ -453,10 +570,6 @@
 
         // Actions sur le changement de type principal
         $("select[name='ID_TYPE']").change(function() {
-            // Mise à jour automatique du local à sommeil en fonction de l'activité de l'établissement
-            if(($(this).val() == 7 || $(this).val() == 11) && $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'").is(':checked') == false) {
-                $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'").attr('checked', 'checked').parent().append('<span class="label label-info">Mise à jour automatique due au type d\'activité de l\'établissement.</span>');
-            }
             // Si l'établissement est un parking, alors l'effectif public est le nombre de places de stationnement
             if($(this).val() == '16') {
                 $("dt.effectif_public").html('Places de stationnement');
@@ -599,7 +712,7 @@
                 return item.replace( item, html );
             },
             updater: function (item) {
-                node = $('#prototype_etablissements_enfants').clone().prependTo( $('.etablissements_enfants table') ).removeClass('hide  prototypes').attr('id', '');
+                node = $('#prototype_etablissements_enfants').clone().prependTo( $('.etablissements_enfants table') ).removeClass('hide  prototypes').addClass('etablissement_enfant').attr('id', '');
                 node.find('span').text($($.parseHTML(item)).last().prev().text());
                 node.find("input[type='hidden']").val($($.parseHTML(item)).last().prev().data('id'));
                 return;
@@ -636,7 +749,7 @@
                 return item.replace( item, html );
             },
             updater: function (item) {
-                node = $('#prototype_preventionniste').clone().prependTo( $('.preventionnistes table') ).removeClass('hide prototypes').attr('id', '');
+                node = $('#prototype_preventionniste').clone().prependTo( $('.preventionnistes table') ).removeClass('hide prototypes').addClass('preventionniste').attr('id', '');
                 node.find('span').text($($.parseHTML(item)).last().text());
                 node.find("input[type='hidden']").val($($.parseHTML(item)).last().data('id'));
                 return;
