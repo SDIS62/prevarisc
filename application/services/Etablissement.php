@@ -712,7 +712,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             case 2:
                 // Périodicité en fonction de la catégorie/type/local à sommeil
                 if($categorie !== null && $type !== null && $local_sommeil !== null) {
-                    $results['periodicite'] = $DB_periodicite->gn4($categorie, $type, (bool) $local_sommeil);
+                    $results['periodicite'] = $DB_periodicite->gn4($categorie, $type, $local_sommeil == 'false' ? 0 : 1);
                 }
 
                 // Local à sommeil en fonction du type
@@ -721,7 +721,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
 
                 // Commission en fonction des compétences des commissions
-                if($id_etablissement_pere !== null) {
+                if($id_etablissement_pere !== null && $id_etablissement_pere != '') {
                     $etablissement = $this->get($id_etablissement_pere);
                     if($etablissement['informations']['ID_COMMISSION'] != null || $etablissement['informations']['ID_COMMISSION'] != 0) {
                         $results['commission'] = $model_commission->find($etablissement['informations']['ID_COMMISSION'])->current()->toArray();
@@ -729,7 +729,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 
                 if(!array_key_exists('commission', $results) && ($numinsee !== null && $categorie !== null && $type !== null && $local_sommeil !== null)) {
-                    $commission = $model_commission->getCommission($numinsee, $categorie, $type, (bool) $local_sommeil);
+                    $commission = $model_commission->getCommission($numinsee, $categorie, $type, $local_sommeil == 'false' ? 0 : 1);
                     if($commission !== null) {
                         $results['commission'] = $commission[0];
                     }
@@ -758,7 +758,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             // Habitation
             case 4:
                 // Préventionnistes du site ou des groupements de communes
-                if($numinsee !== null || $id_etablissement_pere !== null) {
+                if($numinsee !== null || ($id_etablissement_pere !== null  && $id_etablissement_pere != '')) {
                     $results['preventionnistes'] = $model_prev->getPrev($numinsee === null ? '' : $numinsee, $id_etablissement_pere === null ? '' : $id_etablissement_pere);
                 }
                 break;
@@ -771,7 +771,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 
                 // Commission en fonction des compétences des commissions
-                if($id_etablissement_pere !== null) {
+                if($id_etablissement_pere !== null  && $id_etablissement_pere != '') {
                     $etablissement = $this->get($id_etablissement_pere);
                     if($etablissement['informations']['ID_COMMISSION'] != null || $etablissement['informations']['ID_COMMISSION'] != 0) {
                         $results['commission'] = $model_commission->find($etablissement['informations']['ID_COMMISSION'])->current()->toArray();
@@ -786,7 +786,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
 
                 // Préventionnistes du site ou des groupements de communes
-                if($numinsee !== null || $id_etablissement_pere !== null) {
+                if($numinsee !== null || ($id_etablissement_pere !== null  && $id_etablissement_pere != '')) {
                     $results['preventionnistes'] = $model_prev->getPrev($numinsee === null ? '' : $numinsee, $id_etablissement_pere === null ? '' : $id_etablissement_pere);
                 }
                 break;
