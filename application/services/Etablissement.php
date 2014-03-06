@@ -841,7 +841,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
     public function addPJ($id_etablissement, $file, $name = '', $description = '', $mise_en_avant = 0)
     {
         $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
-        $extension = strrchr($file['name'], ".");
+        $extension = strtolower(strrchr($file['name'], "."));
 
         $DBpieceJointe = new Model_DbTable_PieceJointe;
 
