@@ -27,9 +27,9 @@
         }
         elseif($this->DATECOMM_DOSSIER != null)
         {
-            $date = substr($this->DATEINSERT_DOSSIER, 0, 10);
+            $date = substr($this->DATECOMM_DOSSIER, 0, 10);
             if($date != '0000-00-00'){
-                $date = new DateTime(substr($this->DATEINSERT_DOSSIER,0,10));
+                $date = new DateTime(substr($this->DATECOMM_DOSSIER,0,10));
                 $date = date_format($date, 'd/m/Y');
             }else{
                 $date = "00/00/0000";

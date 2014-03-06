@@ -58,12 +58,25 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             // Récupération de l'avis de l'établissement + dates de VP
             $avis = null;
-            $last_visite = null;
-            $next_visite = null;
             if ($general->ID_DOSSIER_DONNANT_AVIS != null) {
                 $dossier_donnant_avis = $DB_dossier->find($general->ID_DOSSIER_DONNANT_AVIS)->current();
                 $avis = $dossier_donnant_avis->AVIS_DOSSIER_COMMISSION;
-                $tmp_date = new Zend_Date($dossier_donnant_avis->DATEVISITE_DOSSIER, Zend_Date::DATES);
+            }
+
+            // récupération de la dernière date de vp
+            $last_visite = $search->setItem("dossier")
+                ->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)
+                ->setCriteria("d.TYPE_DOSSIER", array(2,3))
+                ->setCriteria("ID_NATURE", array(21,26))
+                ->order('DATEVISITE_DOSSIER DESC')
+                ->run()
+                ->getAdapter()
+                ->getItems(0, 1)
+                ->toArray();
+            $next_visite = null;
+
+            if($last_visite !== null && count($last_visite) == 1) {
+                $tmp_date = new Zend_Date($last_visite[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
                 $last_visite =  $tmp_date->get( Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
 
                 if($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS != 0) {
