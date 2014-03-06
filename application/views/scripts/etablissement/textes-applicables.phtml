@@ -4,16 +4,26 @@
 
 <h3>Textes applicables</h3>
 
+<?php if(count($this->textes_applicables_de_etablissement) == 0) : ?>
+
+    <div class='well well-large text-center'>
+        <p class='lead'>Il n'y a pas de textes applicables pour cet établissement.</p>
+        <p><a href='<?php echo $this->url(array('action' => 'edit-textes-applicables')) ?>' class='btn btn-large'>Gérer les textes applicables</a></p>
+    </div>
+
+<?php else : ?>
+
 <div class='row-fluid'>
-    <?php foreach($this->textes_applicables as $titre => $textes_applicables) : ?>
+    <?php foreach($this->textes_applicables_de_etablissement as $titre => $textes_applicables) : ?>
         <h4><?php echo $titre ?></h4>
         <ul class='unstyled'>
             <?php foreach($textes_applicables as $texte_applicable) : ?>
-                <li class="<?php echo !in_array($texte_applicable, $this->textes_applicables_de_etablissement) ? "muted" : ""  ?>">
-                    <?php echo in_array($texte_applicable, $this->textes_applicables_de_etablissement) ? "✓" : ""  ?>
-                    <span style="<?php echo in_array($texte_applicable, $this->textes_applicables_de_etablissement) ? "font-weight: bold" : ""  ?>"><?php echo $texte_applicable['LIBELLE_TEXTESAPPL'] ?></span>
+                <li>
+                    ✓ <?php echo $texte_applicable['LIBELLE_TEXTESAPPL'] ?>
                 </li>
             <?php endforeach ?>
         </ul>
     <?php endforeach ?>
 </div>
+
+<?php endif ?>

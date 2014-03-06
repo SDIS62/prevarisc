@@ -14,8 +14,8 @@
         <?php foreach($textes_applicables as $texte_applicable) : ?>
             <p>
                 <input type="hidden" name="textes_applicables[<?php echo $texte_applicable['ID_TEXTESAPPL'] ?>]" value='0' />
-                <input type="checkbox" name="textes_applicables[<?php echo $texte_applicable['ID_TEXTESAPPL'] ?>]" value='1' <?php echo in_array($texte_applicable, $this->textes_applicables_de_etablissement) ? "checked" : ""  ?> />
-                <span style="<?php echo in_array($texte_applicable, $this->textes_applicables_de_etablissement) ? "font-weight: bold" : ""  ?>">
+                <input type="checkbox" name="textes_applicables[<?php echo $texte_applicable['ID_TEXTESAPPL'] ?>]" value='1' <?php echo array_key_exists($titre, $this->textes_applicables_de_etablissement) && array_key_exists($texte_applicable['ID_TEXTESAPPL'], $this->textes_applicables_de_etablissement[$titre]) ? "checked" : ""  ?> />
+                <span style="<?php echo array_key_exists($titre, $this->textes_applicables_de_etablissement) && array_key_exists($texte_applicable['ID_TEXTESAPPL'], $this->textes_applicables_de_etablissement[$titre]) ? "font-weight: bold" : ""  ?>">
                     <?php echo $texte_applicable['LIBELLE_TEXTESAPPL'] ?>
                 </span>
             </p>
