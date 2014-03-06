@@ -33,17 +33,13 @@
 
 <!-- Onglets horizontaux -->
 <ul id='onglets_horizontaux' >
-    <li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
-    <?php if($this->genre != "\"EIC\"" ) : ?>
-        <li class='<?php echo ( $this->action == "textes-applicables" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li>
-    <?php endif ?>
-    <?php if($this->genre != "\"Site\"" ) : ?>
-        <li class='<?php echo ( $this->action == "descriptif" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li>
-    <?php endif ?>
-    <li class='<?php echo ( $this->action == "pieces-jointes" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
-    <li class='<?php echo ( $this->action == "contacts" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>
-    <li class='<?php echo ( $this->action == "dossiers" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'>Dossiers</a></li>
-    <li class='<?php echo ( $this->action == "historique" ) ? "selection_onglets_hor" : "read" ?>' style='float: right;' ><a style='border-right: none; padding: 0' href='<?php echo $this->url(array("action"=>"historique")) ?>'>Afficher l'historique</a></li>
+    <li><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
+    <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "EIC" ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li><?php endif ?>
+    <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "Site" ) : ?><li><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li><?php endif ?>
+    <li><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
+    <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>
+    <li><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'>Dossiers</a></li>
+    <li style='float: right;' ><a style='border-right: none; padding: 0' href='<?php echo $this->url(array("action"=>"historique")) ?>'>Afficher l'historique</a></li>
 </ul>
 
 <div id='fiche_etablissement'>
