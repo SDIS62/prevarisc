@@ -319,7 +319,7 @@
                 </dd>
             </dl>
 
-            <h4 class='h4_subtitle'>Service prévention</h4>
+            <h4 class='h4_subtitle'>Données prévention</h4>
             <dl class='dl-horizontal'>
                 <!-- Commission compétente -->
                 <dt class="champ_commission champs">Commission</dt>
@@ -610,7 +610,14 @@
                     $(this).next().append($("<option />").val(activites[x]["ID_TYPEACTIVITE"]).text(activites[x]["LIBELLE_ACTIVITE"]));
                 }
             }
-        }).change();
+        })
+
+        // On choisit d'initialiser ou de remettre à 0 les activités en fonction du type
+        $("select.type_select").each(function(index) {
+            if($(this).next().find("option").length == 0) {
+                $(this).change();
+            }
+        });
 
         // Auto-complétion de l'établissement père
         $(".etablissement_pere input[type='text']").typeahead({

@@ -146,19 +146,21 @@ class EtablissementController extends Zend_Controller_Action
         $this->_helper->layout->setLayout('etablissement');
 
         $service_etablissement = new Service_Etablissement;
-        $service_textesapplicables = new Service_TextesApplicables;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
-
-        $this->view->textes_applicables = $service_textesapplicables->getAll();
         $this->view->textes_applicables_de_etablissement = $service_etablissement->getAllTextesApplicables($this->_request->id);
     }
 
     public function editTextesApplicablesAction()
     {
+        $this->_helper->layout->setLayout('etablissement');
+
         $service_etablissement = new Service_Etablissement;
-        
-        $this->textesApplicablesAction();
+        $service_textes_applicables = new Service_TextesApplicables;
+
+        $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        $this->view->textes_applicables_de_etablissement = $service_etablissement->getAllTextesApplicables($this->_request->id);
+        $this->view->textes_applicables = $service_textes_applicables->getAll();
 
         if($this->_request->isPost()) {
             try {
