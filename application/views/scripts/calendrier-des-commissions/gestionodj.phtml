@@ -271,6 +271,28 @@ $(document).ready(function() {
 		}
 	});
 	
+	$("#createPv").click(function(){
+		if($("#external-events").children("div").children("div").length == 0){
+			$.ajax({
+				url: "/dossier/generationpv",
+				data: "dateCommId="+$("#dateCommId").val(),
+				type:"POST",
+				//async: false,
+				beforeSend: function(){
+					$("#infoGeneration").html("Création en cours, veuillez patienter");
+				},
+				success: function(affichageResultat){
+					$("#infoGeneration").html(affichageResultat);
+				},
+				error: function(){
+					return false;
+				}
+			});
+		}else{
+			$("#infoGeneration").html("<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Certains dossiers prévus n'ont pas été placés dans le calendrier</span><br/><br/><br/>");
+		}
+	});
+	
 	$(".heures").click(function(){
 		var gestionHeures = $(this).attr('id');
 		$.ajax({
@@ -379,7 +401,9 @@ $(document).ready(function() {
 			<button id='createConvoc' class='btn' >Générer Convocations</button>
 			&nbsp;
 			<button id='createOdj' class='btn' >Génerer l'ordre du jour</button>
-			<br/><br/><br/>
+			&nbsp;
+			<button id='createPv' class='btn' >Génerer PV</button>
+			<br/><br/>
 			<div id='infoGeneration'></div>
 			<br/>
 	";

@@ -18,7 +18,7 @@ foreach($this->membresFiles as $val => $membre){
 				//$odf = new odf("./data/uploads/courriers/ordreDuJour.odt");
 				//Generation du segment membres
 				$membreLoop = $odf->setSegment('membresComm');
-				
+
 				foreach($this->listeCommunes as $val => $commune){
 					//Zend_Debug::dump($commune);
 					//LIBELLE COMMUNE = 0
@@ -33,6 +33,7 @@ foreach($this->membresFiles as $val => $membre){
 					//Zend_Debug::dump($commune[1]);
 					if(count($commune[1]) == 1){
 						foreach($commune[1] as $comm => $info){	
+							//Zend_Debug::dump($info);
 							addChamp($membreLoop,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
 							addChamp($membreLoop,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
 							addChamp($membreLoop,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
@@ -61,26 +62,45 @@ foreach($this->membresFiles as $val => $membre){
 					//Generation du segment pour l'affichage des différentes infos du dossier	
 					//Zend_Debug::dump($this->dossierComm);
 					foreach($this->dossierComm as $val => $dossierInfos){
-						//echo $dossierInfos["LIBELLE_COMMUNE"]." ".$commune[0]."<br/>";
+						//Zend_Debug::dump($dossierInfos);
+						$membreLoop->infosDoss->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+						$membreLoop->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+						$membreLoop->infosDoss->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
+						$membreLoop->infosDoss->setVars('objetDossier', $dossierInfos["OBJET_DOSSIER"], true, 'UTF-8');
+						$membreLoop->infosDoss->setVars('communeConcerne', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
 						
-						//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
-						$membreLoop->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
-						$membreLoop->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
-						$membreLoop->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
-						$membreLoop->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
-						$membreLoop->infosDoss->heureDebDossier(utf8_decode($dossierInfos["HEURE_DEB_AFFECT"]));
-						$membreLoop->infosDoss->heureFinDossier(utf8_decode($dossierInfos["HEURE_FIN_AFFECT"]));
-						$membreLoop->infosDoss->communeConcerne(utf8_decode($dossierInfos["LIBELLE_COMMUNE"]));
+						
+						if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
+							$heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
+							$heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
+							$membreLoop->infosDoss->setVars('heureDebDossier', $heureDebut, true, 'UTF-8');
+						}else{
+							$membreLoop->infosDoss->setVars('heureDebDossier', '', true, 'UTF-8');
+						}
+						if(isset($dossierInfos["HEURE_FIN_AFFECT"])){
+							$heureFinTab = explode(":",$dossierInfos["HEURE_FIN_AFFECT"]);
+							$heureFin = $heureFinTab[0].":".$heureFinTab[1];
+							$membreLoop->infosDoss->setVars('heureFinDossier', $heureFin, true, 'UTF-8');
+						}else{
+							$membreLoop->infosDoss->setVars('heureFinDossier', '', true, 'UTF-8');
+						}
+						
+						$listeDocUrba = "";
+						foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
+							$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
+						}
+						$membreLoop->infosDoss->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
 						$membreLoop->infosDoss->merge(); 
 
 					}
 					$membreLoop->merge();
-
 				}
+
 				$odf->mergeSegment($membreLoop);
-				$idPj = savePj($this->idComm);
+				$idPj = savePj($this->idComm,$membre->LIBELLE_COMMISSIONMEMBRE);
 				$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 				echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré </span><br/><br/><br/>";
+
 			}else{
 				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 			}
@@ -88,7 +108,7 @@ foreach($this->membresFiles as $val => $membre){
 	}else if($membre->ID_GROUPEMENT != NULL){
 		//génération du document par groupement de commune pour les gendarmerie/police par exemple
 		//echo "membre de groupement ".$membre->LIBELLE_COMMISSIONMEMBRE."<br/>";
-		
+
 			//si le membre du groupement en question posède un document le concernant on génére la convocation
 			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
 			
@@ -148,27 +168,53 @@ foreach($this->membresFiles as $val => $membre){
 					//echo "Dossier de la ville de ".$val['LIBELLE_COMMUNE']." concerné<br/>";
 					//ici on peux traiter les dossiers !
 					//echo $dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"];
+					$grpLoop->infosDoss->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+					$grpLoop->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+					$grpLoop->infosDoss->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
+					$grpLoop->infosDoss->setVars('objetDossier', $dossierInfos["OBJET_DOSSIER"], true, 'UTF-8');
+					$grpLoop->infosDoss->setVars('communeConcerne', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
 					
-					$grpLoop->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
-					$grpLoop->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
-					$grpLoop->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
-					$grpLoop->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
-					$grpLoop->infosDoss->heureDebDossier(utf8_decode($dossierInfos["HEURE_DEB_AFFECT"]));
-					$grpLoop->infosDoss->heureFinDossier(utf8_decode($dossierInfos["HEURE_FIN_AFFECT"]));
-					$grpLoop->infosDoss->communeConcerne(utf8_decode($dossierInfos["LIBELLE_COMMUNE"]));
+					
+					if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
+						$heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
+						$heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
+						$grpLoop->infosDoss->setVars('heureDebDossier', $heureDebut, true, 'UTF-8');
+					}else{
+						$grpLoop->infosDoss->setVars('heureDebDossier', '', true, 'UTF-8');
+					}
+					if(isset($dossierInfos["HEURE_FIN_AFFECT"])){
+						$heureFinTab = explode(":",$dossierInfos["HEURE_FIN_AFFECT"]);
+						$heureFin = $heureFinTab[0].":".$heureFinTab[1];
+						$grpLoop->infosDoss->setVars('heureFinDossier', $heureFin, true, 'UTF-8');
+					}else{
+						$grpLoop->infosDoss->setVars('heureFinDossier', '', true, 'UTF-8');
+					}
+					
+					$listeDocUrba = "";
+					foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
+						$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
+					}
+					$grpLoop->infosDoss->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
+				
+					//$grpLoop->infosDoss->nomEtab(utf8_decode($dossierInfos["LIBELLE_ETABLISSEMENTINFORMATIONS"]));
+					//$grpLoop->infosDoss->natureDossier(utf8_decode($dossierInfos["LIBELLE_DOSSIERNATURE"]));
+					//$grpLoop->infosDoss->objetDossier(utf8_decode($dossierInfos["OBJET_DOSSIER"]));
+					//$grpLoop->infosDoss->numDocUrba(utf8_decode($dossierInfos["NUM_DOCURBA"]));
+					//$grpLoop->infosDoss->heureDebDossier(utf8_decode($dossierInfos["HEURE_DEB_AFFECT"]));
+					//$grpLoop->infosDoss->heureFinDossier(utf8_decode($dossierInfos["HEURE_FIN_AFFECT"]));
+					//$grpLoop->infosDoss->communeConcerne(utf8_decode($dossierInfos["LIBELLE_COMMUNE"]));
 					$grpLoop->infosDoss->merge(); 
 
 				}
 				$grpLoop->merge();
 				$odf->mergeSegment($grpLoop);
-				$idPj = savePj($this->idComm);
+				$idPj = savePj($this->idComm,$membre->LIBELLE_COMMISSIONMEMBRE);
 				$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 				echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré </span><br/><br/><br/>";
 			}else{
 				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 			}
 	}
-	
 }
 
 
@@ -218,7 +264,7 @@ $odf->mergeSegment($dossierLoop);
 //$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
 //REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier
 
-function savePj($dateCommId){
+function savePj($dateCommId,$libelleMembre){
 	//ENREGISTEMENT DANS PIECE JOINTES
 	//echo "on enregistre ici";
 	$dateDuJour = new Zend_Date();
@@ -226,7 +272,7 @@ function savePj($dateCommId){
 	$nouvellePJ = $DBpieceJointe->createRow();
 	$nouvellePJ->NOM_PIECEJOINTE = "Ordre du jour";
 	$nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
-	$nouvellePJ->DESCRIPTION_PIECEJOINTE = "Ordre du jour générée le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR." à ".Zend_Date::HOUR.":".Zend_Date::MINUTE);
+	$nouvellePJ->DESCRIPTION_PIECEJOINTE = "Ordre du jour générée ".$libelleMembre." ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR." à ".Zend_Date::HOUR.":".Zend_Date::MINUTE);
 	$nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY." ".Zend_Date::HOUR.":".Zend_Date::MINUTE.":".Zend_Date::SECOND);
 	$nouvellePJ->save();
 	

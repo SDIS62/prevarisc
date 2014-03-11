@@ -165,8 +165,12 @@ try {
 				$docConsulte->setVars('refdoc', $ref, true, 'UTF-8');
 				//Conversion de la date ang -> fr
 				if ($date) {
-					$date = new Zend_Date($date, Zend_Date::DATES);
-					$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+					if($date != "0000-00-00"){
+						$date = new Zend_Date($date, Zend_Date::DATES);
+						$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+					}else{
+						$date = "";
+					}
 				}
 				$docConsulte->setVars('datedoc', $date."\n", true, 'UTF-8');
 				$docConsulte->merge();

@@ -1880,33 +1880,49 @@ class DossierController extends Zend_Controller_Action
     public function generationconvocAction()
     {
         try {
-            //$this->_helper->viewRenderer->setNoRender();
+			//$this->_helper->viewRenderer->setNoRender();
             $dateCommId = $this->_getParam("dateCommId");
             $this->view->idComm = $dateCommId;
+			
 
             //on recupere le type de commission (salle / visite / groupe de visite)
             $dbDateComm = new Model_DbTable_DateCommission;
             $commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();
             //1 = salle . 2 = visite . 3 = groupe de visite
+			//Zend_Debug::dump($commissionInfo);
             $this->view->typeCommission = $commissionInfo['ID_COMMISSIONTYPEEVENEMENT'];
-
-            //On récupère la liste des dossiers
+			
+			//On récupère la liste des dossiers
             $dbDateCommPj = new Model_DbTable_DateCommissionPj;
-            $listeDossiers = $dbDateCommPj->getDossiersInfos($dateCommId);
-		
-            //Récupération des membres de la commission
-            $model_membres = new Model_DbTable_CommissionMembre;
-
-            $this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $listeDossiers[0]["COMMISSION_DOSSIER"]);
-
+            $listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
+			//Zend_Debug::dump($listeDossiers);
+			
+			//Récupération des membres de la commission
+			$model_membres = new Model_DbTable_CommissionMembre;
+			$listeMembres = $model_membres->get($commissionInfo['COMMISSION_CONCERNE']);
+			//Zend_Debug::dump($listeMembres);
+			foreach($listeMembres as $var => $membre){
+				//echo $membre['id_membre'];
+				$listeMembres[$var]['infosFiles'] = $model_membres->fetchAll("ID_COMMISSIONMEMBRE = " . $membre['id_membre']);
+			}
+			
+			$this->view->informationsMembre = $listeMembres;
+			//Zend_Debug::dump($listeMembres);
+			
+			//$this->view->membresDroit = $listeMembres;
+			//echo $listeDossiers[0]["COMMISSION_DOSSIER"]." ! <br/>";
+			$this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $listeDossiers[0]["COMMISSION_DOSSIER"]);
+			//Zend_Debug::dump($this->view->membresFiles);
+			
             //On récupère le nom de la commission
             $model_commission = new Model_DbTable_Commission;
-            $this->view->commissionInfos = $model_commission->find($listeDossiers[0]["COMMISSION_DOSSIER"])->toArray();
-
+            $this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();
+			//Zend_Debug::dump($this->view->commissionInfos);			
+	
             //afin de récuperer les informations des communes (adresse des mairies etc)
             $model_adresseCommune = new Model_DbTable_AdresseCommune;
             $model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
-
+			
             $libelleCommune = "";
             $tabCommune[] = array();
             $numCommune = 0;
@@ -1922,44 +1938,44 @@ class DossierController extends Zend_Controller_Action
                     $numCommune++;
                 }
             }
+
+			//Zend_Debug::dump($tabCommune);
 			//Zend_Debug::dump($listeDossiers);
+			$dbDossier = new Model_DbTable_Dossier;
+			$dbDocUrba = new Model_DbTable_DossierDocUrba;
+			$service_etablissement = new Service_Etablissement;
 			foreach($listeDossiers as $val => $ue)
 			{
-				echo $ue['ID_ETABLISSEMENTDOSSIER']." ".$ue['ID_DOSSIER_AFFECT']."<br/>";
-				/*
-				echo $ue
-				$dbEtabLie = new Model_DbTable_EtablissementLie;
-				$etabLie = $dbEtabLie->recupEtabCellule($object_informations['ID_ETABLISSEMENT']);
-				if ($etabLie != null) {
-					$idPere = $etabLie[0]['ID_ETABLISSEMENT'];
-					$this->view->infoPere = $model_etablissement->getInformations($idPere);
-					$lettreType = $dbType->find($this->view->infoPere['ID_TYPE'])->current();
-					$this->view->typeLettrePPere = $lettreType['LIBELLE_TYPE'];
-					$activitePrincipale = $model_typeactivite->find($this->view->infoPere["ID_TYPEACTIVITE"])->current();
-					$this->view->libelleActivitePPere = $activitePrincipale["LIBELLE_ACTIVITE"];
-					$this->view->categorieEtabPere = $this->view->infoPere['ID_CATEGORIE'];
-					//Récuperation du genre du pere
-					$idGenrePere = $this->view->infoPere['ID_GENRE'];
-					$infosGenrePere = $dbGenre->find($idGenrePere)->current();
-					$this->view->genrePere = $infosGenrePere['LIBELLE_GENRE'];
-				}
-				*/
+				//On recupere la liste des établissements qui concernent le dossier
+				$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+				
+				//on recupere la liste des infos des établissement
+				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+				$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
+				
+				
+				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+				//Zend_Debug::dump($etablissement);
 			}
+			//Zend_Debug::dump($listeDossiers);
 
             $this->view->listeCommunes = $tabCommune;
+			//Zend_Debug::dump($tabCommune);
             $this->view->dossierComm = $listeDossiers;
+			//Zend_Debug::dump($this->view->listeCommunes);
 
             //récuperation du nom de la commission
             $this->view->nomComm = $listeDossiers[0]["LIBELLE_DATECOMMISSION"];
             $this->view->dateComm = $listeDossiers[0]["DATE_COMMISSION"];
             $this->view->heureDeb = $listeDossiers[0]["HEUREDEB_COMMISSION"];
-			
+
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le document a bien été généré',
                 'message' => ''
             ));
-			
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -2014,9 +2030,32 @@ class DossierController extends Zend_Controller_Action
                     $numCommune++;
                 }
             }
+			
+			$dbDossier = new Model_DbTable_Dossier;
+			$dbDocUrba = new Model_DbTable_DossierDocUrba;
+			$service_etablissement = new Service_Etablissement;
+			
+			foreach($listeDossiers as $val => $ue)
+			{
 
+				//On recupere la liste des établissements qui concernent le dossier
+				$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+				
+			
+				//on recupere la liste des infos des établissement
+				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+				$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
+				
+				
+				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+				//Zend_Debug::dump($etablissement);
+
+			}
+			//Zend_Debug::dump($listeDossiers);
             $this->view->listeCommunes = $tabCommune;
             $this->view->dossierComm = $listeDossiers;
+			 $this->view->heureDeb = $listeDossiers[0]["HEUREDEB_COMMISSION"];
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le document a bien été généré',
@@ -2030,6 +2069,108 @@ class DossierController extends Zend_Controller_Action
             ));
         }
     }
+	
+	public function generationpvAction()
+    {
+        try {
+			$dateCommId = $this->_getParam("dateCommId");
+            $this->view->idComm = $dateCommId;
+			//Suivant si l'on prend en compte les heures ou non on choisi la requete à effectuer
+            $dbDateComm = new Model_DbTable_DateCommission;
+            $commSelect = $dbDateComm->find($dateCommId)->current();
+			//Zend_Debug::dump($commSelect);
+			
+			$dbDateComm = new Model_DbTable_DateCommission;
+            $commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();
+            //1 = salle . 2 = visite . 3 = groupe de visite
+			//Zend_Debug::dump($commissionInfo);
+			
+			//on recupere le type de commission (salle / visite / groupe de visite)
+			$dbDateComm = new Model_DbTable_DateCommission;
+            $commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();		
+
+			//On récupère le nom de la commission
+            $model_commission = new Model_DbTable_Commission;
+            $this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();			
+			//Zend_Debug::dump($this->view->commissionInfos);
+			
+			$model_membres = new Model_DbTable_CommissionMembre;
+			$this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $commissionInfo['COMMISSION_CONCERNE']);
+			//Zend_Debug::dump($this->view->membresFiles);
+			
+			$dbDateCommPj = new Model_DbTable_DateCommissionPj;
+			
+			//afin de récuperer les informations des communes (adresse des mairies etc)
+            $model_adresseCommune = new Model_DbTable_AdresseCommune;
+            $model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
+			
+			$libelleCommune = "";
+			$tabCommune[] = array();
+            $numCommune = 0;
+            foreach ($dbDateCommPj->getDossiersInfos($dateCommId) as $doss => $infos) {
+                if ($libelleCommune != $infos["LIBELLE_COMMUNE"]) {
+                    $libelleCommune = $infos["LIBELLE_COMMUNE"];
+
+                    $adresseCommune = $model_adresseCommune->find($infos["NUMINSEE_COMMUNE"])->toArray();
+
+                    $communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+
+                    $tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+                    $numCommune++;
+                }
+            }
+						
+
+            $listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
+			
+			$dbDossier = new Model_DbTable_Dossier;
+			$dbDocUrba = new Model_DbTable_DossierDocUrba;
+			$service_etablissement = new Service_Etablissement;
+			$dbDossierContact = new Model_DbTable_DossierContact;
+			foreach($listeDossiers as $val => $ue)
+			{
+				//On recupere la liste des établissements qui concernent le dossier
+				$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+				
+				//on recupere la liste des infos des établissement
+				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+				$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
+				
+				
+				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+				/*
+				$exploitantInfos = $dbDossierContact->recupInfoContact($ue['ID_DOSSIER'],7);
+				//Zend_Debug::dump($exploitantInfos);
+				if(count($exploitantInfos) == 1)
+					$listeDossiers[$val]['exploitantInfos']  = $exploitantInfos[0];
+				*/
+				//Zend_Debug::dump($etablissement);
+			}
+			//Zend_Debug::dump($listeDossiers);
+			
+			//$this->view->listeCommunes = $tabCommune;
+			$this->view->dossierComm = $listeDossiers;
+			/*
+			//récuperation du nom de la commission
+            $this->view->nomComm = $listeDossiers[0]["LIBELLE_DATECOMMISSION"];
+            $this->view->dateComm = $listeDossiers[0]["DATE_COMMISSION"];
+            $this->view->heureDeb = $listeDossiers[0]["HEUREDEB_COMMISSION"];
+			*/
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'Le document a bien été généré',
+                'message' => ''
+            ));
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur lors de la génération du document',
+                'message' => $e->getMessage()
+            ));
+        }
+    }
+
 
     public function descriptifAction()
     {
