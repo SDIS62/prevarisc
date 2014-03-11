@@ -248,4 +248,26 @@
             //echo $select;
             return $this->getAdapter()->fetchRow($select);
         }
+		
+		public function getEtablissementDossierGenConvoc($id_dossier)
+        {
+            $select = "
+                SELECT etablissementdossier.ID_ETABLISSEMENTDOSSIER ,t1.ID_ETABLISSEMENT, LIBELLE_ETABLISSEMENTINFORMATIONS, LIBELLE_GENRE
+                FROM etablissementdossier, etablissementinformations t1, genre
+                WHERE etablissementdossier.ID_ETABLISSEMENT = t1.ID_ETABLISSEMENT
+                AND t1.ID_GENRE = genre.ID_GENRE
+                AND etablissementdossier.ID_DOSSIER = '".$id_dossier."'
+				AND (genre.ID_GENRE = 2 || genre.ID_GENRE = 3)
+                AND t1.DATE_ETABLISSEMENTINFORMATIONS = (
+                    SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS)
+                    FROM etablissementdossier, etablissementinformations
+                    WHERE etablissementinformations.ID_ETABLISSEMENT = t1.ID_ETABLISSEMENT
+                )
+				GROUP BY ID_ETABLISSEMENT;
+
+            ";
+
+            //echo $select;
+            return $this->getAdapter()->fetchAll($select);
+        }
     }
