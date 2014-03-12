@@ -58,10 +58,10 @@
 <script>
     $(document).ready(function() {
         // Auto complétion de la ville
-        $("input[name='commune_ac']").autocomplete("/adresse/get?format=json", {
+        $("input[name='commune_ac']").autocomplete("/api/1.0/adresse/get_communes", {
             minChars: 3,
             parse: function(data) {
-                return $.map(data["resultats"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
+                return $.map(data["response"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
             },
             formatItem: function(item) {
                 return item.LIBELLE_COMMUNE + " (" + item.NUMINSEE_COMMUNE + ")";
@@ -77,11 +77,11 @@
         });
 
         // Auto complétion de la rue
-        $("input[name='voie_ac']").autocomplete('/adresse/get-voies?format=json', {
+        $("input[name='voie_ac']").autocomplete('/api/1.0/adresse/get_voies', {
             minChars: 3,
             extraParams: { code_insee: function(){ return $("input[name='code_insee']").val() } },
             parse: function(data) {
-                return $.map(data["resultats"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
+                return $.map(data["response"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
             },
             formatItem: function(item) {
                 return item.LIBELLE_RUE;
@@ -95,7 +95,7 @@
             $("input[name='numero'], input[name='complement']").val("").attr("disabled", true).blur();
         });
 
-        // Sauvegarde de l'adresse
+        // Géolocalisation de l'adresse
         $('#geolocme').click(function() {
             element = $(this);
             $.ajax({
