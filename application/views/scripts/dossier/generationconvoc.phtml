@@ -24,20 +24,38 @@ foreach($this->informationsMembre as $val => $membre){
 			//Visite et Groupe de visite
 			$nomFichier = $membre['infosFiles'][0]['ID_COMMISSIONMEMBRE']."CONVOCATIONVISITE_".$membre['infosFiles'][0]['COURRIER_CONVOCATIONVISITE'];
 		}
-	}		
+	}
+	
+	/*** VERIF AVANT TOUTE GENERATION DE ZONE ****/
+	$cptConcerne = 0;
+	foreach($this->listeCommunes as $val => $commune){
+		foreach($this->dossierComm as $val => $dossierInfos){
+			if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
+				if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
+					//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
+					if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
+					{
+						$cptConcerne ++;
+					}
+				}
+			}
+		}
+	}
 
-	if($erreurFile == 0)
+	if($erreurFile == 0 && $cptConcerne > 0 )
 	{
 		if($membre['infosFiles'][0]['ID_GROUPEMENT'] == NULL && $membre['infosFiles'][0]['ID_UTILISATEURINFORMATIONS'] == NULL){
-		
+			
 			//génération du document par commune pour les maires par exemple		
 			//si le document concernant ce membre existe alors on rentre dans la boucle
 			
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
-
+			
+			
 			//Generation du segment villeDoss
 			$villeODF = $odf->setSegment('villeDoss');
 			foreach($this->listeCommunes as $val => $commune){
+				//Zend_Debug::dump($commune);
 				//Array des infos de la commune = 1
 				$firstLetter = $commune[0]{0};
 				if(in_array($firstLetter, $consonne)){
@@ -45,24 +63,21 @@ foreach($this->informationsMembre as $val => $membre){
 				}else{
 					$communeShow = "de ".$commune[0];
 				}
-				
-
 				if(count($commune[1]) == 1){
-
 					foreach($commune[1] as $comm => $info){	
-						addChamp($villeODF,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
-						addChamp($villeODF,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
-						addChamp($villeODF,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
-						addChamp($villeODF,'communeMairie',$commune[0]);
+						if($info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] != "")
+							addChamp($villeODF,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
+						if($info["RUEADRESSE_UTILISATEURINFORMATIONS"] != "")
+							addChamp($villeODF,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
+							
+						if($info["CPADRESSE_UTILISATEURINFORMATIONS"] != "")
+							addChamp($villeODF,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
+							
+						if($commune[0] != "")
+							addChamp($villeODF,'communeMairie',$commune[0]);
 					}
-				}else{
-					addChamp($villeODF,'numMairie','');
-					addChamp($villeODF,'rueMairie','');
-					addChamp($villeODF,'cpMairie','');
-					addChamp($villeODF,'communeMairie','');
-					echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le contact de la commune ".$commune[0]." n'a pas été renseigné</span><br/><br/><br/>";
 				}
-				
+
 				addChamp($villeODF,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
 				
 				$dateDuJour = new Zend_Date();
@@ -74,48 +89,63 @@ foreach($this->informationsMembre as $val => $membre){
 				addChamp($villeODF,'heureDebutComm',$this->heureDeb);
 				//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 				//Generation du segment pour l'affichage des différentes infos du dossier
-				Zend_Debug::dump($this->dossierComm);
+				//Zend_Debug::dump($this->dossierComm);
 				foreach($this->dossierComm as $val => $dossierInfos){
-					echo $dossierInfos['DESCRIPTIF_DOSSIER']."<br/> plop";
-					if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
-						//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
+					//echo $dossierInfos['DESCRIPTIF_DOSSIER']."<br/> plop";
+					if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
+						if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
+							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
+							//echo "<br/> !!! ".$dossierInfos["ID_DOSSIER"]."<br/>";
+							//echo "Comm membre".$dossierInfos['infosEtab']['informations']['ID_CATEGORIE'];
+							//echo $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']." - ".$dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']." - ".$dossierInfos['TYPE_DOSSIER']."<br/>";
+							//echo $membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE']." - ".$membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE']." - ".$membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'];
+							if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
+							{
+								//echo $dossierInfos["HEURE_FIN_AFFECT"];
+								//Verif car peux etre null
+								//- Classe ".$dossierInfos['infosEtab']['informations']['LIBELLE_CLASSE']."
+								//- Classe ".$membre['classes'][ $dossierInfos['infosEtab']['informations']['LIBELLE_CLASSE']]['ID_COMMISSIONMEMBRE']."
 
-						if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
-						{
-							//Verif car peux etre null
-							//- Classe ".$dossierInfos['infosEtab']['informations']['LIBELLE_CLASSE']."
-							//- Classe ".$membre['classes'][ $dossierInfos['infosEtab']['informations']['LIBELLE_CLASSE']]['ID_COMMISSIONMEMBRE']."
+								//On recherche le pere de l'établissement concerné
+								$villeODF->infosDoss->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+								$villeODF->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+								$villeODF->infosDoss->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
+								$villeODF->infosDoss->setVars('objetDossier', $dossierInfos["OBJET_DOSSIER"], true, 'UTF-8');
 
-							//On recherche le pere de l'établissement concerné
-							$villeODF->infosDoss->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-							$villeODF->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-							$villeODF->infosDoss->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
-							$villeODF->infosDoss->setVars('objetDossier', $dossierInfos["OBJET_DOSSIER"], true, 'UTF-8');
+								if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
+									$heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
+									$heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
+									$villeODF->infosDoss->setVars('heureDebDossier', $heureDebut, true, 'UTF-8');
+								}else{
+									$villeODF->infosDoss->setVars('heureDebDossier', '', true, 'UTF-8');
+								}
+								
+								if(isset($dossierInfos["HEURE_FIN_AFFECT"])){
+									$heureFinTab = explode(":",$dossierInfos["HEURE_FIN_AFFECT"]);
+									$heureFin = $heureFinTab[0].":".$heureFinTab[1];
+									try{
+										$villeODF->infosDoss->setVars('heureFinDossier', $heureFin, true, 'UTF-8');
+									}catch (OdfException $e) {
+		
+									}
+								}else{
+									try{
+										$villeODF->infosDoss->setVars('heureFinDossier', '', true, 'UTF-8');
+									}catch (OdfException $e) {
+		
+									}
+								}
 
-							if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
-								$heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
-								$heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
-								$villeODF->infosDoss->setVars('heureDebDossier', $heureDebut, true, 'UTF-8');
+								$listeDocUrba = "";
+								foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
+									$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
+								}
+								$villeODF->infosDoss->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
+								$villeODF->infosDoss->merge(); 
 							}else{
-								$villeODF->infosDoss->setVars('heureDebDossier', '', true, 'UTF-8');
+								//cas membre n'a pas les droits
 							}
-							if(isset($dossierInfos["HEURE_FIN_AFFECT"])){
-								$heureFinTab = explode(":",$dossierInfos["HEURE_FIN_AFFECT"]);
-								$heureFin = $heureFinTab[0].":".$heureFinTab[1];
-								$villeODF->infosDoss->setVars('heureFinDossier', $heureFin, true, 'UTF-8');
-							}else{
-								$villeODF->infosDoss->setVars('heureFinDossier', '', true, 'UTF-8');
-							}
-
-							$listeDocUrba = "";
-							foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
-								$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
-							}
-							$villeODF->infosDoss->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
-							$villeODF->infosDoss->merge(); 
-						}else{
-							//cas membre n'a pas les droits
-						}					
+						}
 					}
 				}
 				$villeODF->merge();
@@ -216,12 +246,14 @@ foreach($this->informationsMembre as $val => $membre){
 			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>La convocation pour le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']." à bien été généré</span><br/><br/><br/>";
 		}
 	}else{
-		echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun document type n'a été renseigné pour le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']."</span><br/><br/><br/>";
+		echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']." n'a aucun document renseigné ou il n'a pas les droits pour ces dossiers</span><br/><br/><br/>";
 	}
 }
 
 function addChamp($segment,$nomOdf, $variable){
 	try{
+		if($variable == "")
+			$variable = "";
 		$segment->$nomOdf(utf8_decode($variable));
 	}catch (OdfException $e) {
 	
