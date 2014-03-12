@@ -16,9 +16,9 @@
 	</thead>
 	<tbody>
 
-	<!-- etablissement/:id -->
+	<!-- etablissement -->
 	<tr>
-		<td>GET etablissement/:id</td>
+		<td>GET etablissement</td>
 		<td>
 			Retourne un seul établissement identifié par le paramètre id.<br>
 			
@@ -31,9 +31,9 @@
 		</td>
 	</tr>
 
-	<!-- etablissement/historique/:id -->
+	<!-- etablissement/historique -->
 	<tr>
-		<td>GET etablissement/historique/:id</td>
+		<td>GET etablissement/historique</td>
 		<td>
 			Retourne l'historique complet d'un établissement identifié par le paramètre id.<br>
 			
@@ -46,9 +46,9 @@
 		</td>
 	</tr>
 
-	<!-- etablissement/descriptifs/:id -->
+	<!-- etablissement/descriptifs -->
 	<tr>
-		<td>GET etablissement/descriptifs/:id</td>
+		<td>GET etablissement/descriptifs</td>
 		<td>
 			Retourne les descriptifs de l'établissement identifié par le paramètre id.<br>
 			
@@ -61,9 +61,9 @@
 		</td>
 	</tr>
 
-	<!-- etablissement/textes_applicables/:id -->
+	<!-- etablissement/textes_applicables -->
 	<tr>
-		<td>GET etablissement/textes_applicables/:id</td>
+		<td>GET etablissement/textes_applicables</td>
 		<td>
 			Retourne les textes applicables de l'établissement identifié par le paramètre id.<br>
 			
@@ -76,9 +76,9 @@
 		</td>
 	</tr>
 
-	<!-- etablissement/pieces_jointes/:id -->
+	<!-- etablissement/pieces_jointes -->
 	<tr>
-		<td>GET etablissement/pieces_jointes/:id</td>
+		<td>GET etablissement/pieces_jointes</td>
 		<td>
 			Retourne les pièces jointes de l'établissement identifié par le paramètre id.<br>
 			
@@ -91,9 +91,9 @@
 		</td>
 	</tr>
 
-	<!-- etablissement/contacts/:id -->
+	<!-- etablissement/contacts -->
 	<tr>
-		<td>GET etablissement/contacts/:id</td>
+		<td>GET etablissement/contacts</td>
 		<td>
 			Retourne les contacts de l'établissement identifié par le paramètre id.<br>
 			
@@ -106,9 +106,9 @@
 		</td>
 	</tr>
 
-	<!-- etablissement/dossiers/:id -->
+	<!-- etablissement/dossiers -->
 	<tr>
-		<td>GET etablissement/dossiers/:id</td>
+		<td>GET etablissement/dossiers</td>
 		<td>
 			Retourne une collection de dossiers appartenants à l'établissement identifié par le paramètre id.<br>
 			
@@ -132,9 +132,13 @@
 			<strong>Paramètres</strong>
 			<ul>
 				<li>genre (requis) : Le genre de l'établissement.</li>
+				<li>numinsee : Numéro insee de la commune de l'établissement.</li>
+				<li>type : Type d'activité de l'établissement.</li>
 				<li>categorie : Catégorie de l'établissement. (pour un genre etablissement ou cellule)</li>
 				<li>local_sommeil : Vaut true si l'établissement possède un ou des locaux à sommeil. (pour un genre etablissement)</li>
 				<li>classe : Classe de l'établissement. (pour un genre igh)</li>
+				<li>id_etablissement_pere : Liste des ids des établissement parents.</li>
+				<li>ids_etablissements_enfants : Liste des ids des établissement enfants.</li>
 			</ul>
 		</td>
 	</tr>
@@ -163,15 +167,139 @@
 				<strong>Paramètres</strong>
 				<ul>
 					<li>label : Libellé (exact ou non) de l'établissement recherché.</li>
-					<li>genre : Genres des établissements recherchés.</li>
-					<li>categorie : Catégories des établissements recherchés.</li>
-					<li>classe : Catégories des établissements recherchés.</li>
-					<li>famille : Familles des établissements recherchés.</li>
-					<li>type : Type des établissements recherchés.</li>
+					<li>identifiant : Identifiant de l'établissement.</li>
+					<li>genres : Genres des établissements recherchés.</li>
+					<li>categories : Catégories des établissements recherchés.</li>
+					<li>classes : Catégories des établissements recherchés.</li>
+					<li>familles : Familles des établissements recherchés.</li>
+					<li>types : Type des établissements recherchés.</li>
 					<li>avis_favorable : Inclure uniquement les établissements favorables quand le paramètre avis_favorable vaut true.</li>
-					<li>statut : Statuts des établissements recherchés</li>
+					<li>statuts : Statuts des établissements recherchés</li>
 					<li>local_sommeil : Inclure uniquement les établissements contenants des locaux à sommeil quand le paramètre local_sommeil vaut true.</li>
+					<li>lon : Longitude approximative de l'emplacement de l'établissement (A utiliser conjointement avec le paramètre lat).</li>
+					<li>lat : Latitude approximative de l'emplacement de l'établissement (A utiliser conjointement avec le paramètre lon).</li>
 					<li>count : Nombre maximum d'établissements dans le résultat. Défaut : 10, Maximum : 100.</li>
+					<li>page : Numéro de page à afficher.</li>
+				</ul>
+			</td>
+		</tr>
+
+		<!-- search/dossiers -->
+		<tr>
+			<td>GET search/dossiers</td>
+			<td>
+				Retourne une collection de dossiers correspondants à la requête.<br>
+				
+				<strong>URL </strong>/api/1.0/search/dossiers<br>
+
+				<strong>Paramètres</strong>
+				<ul>
+					<li>num_doc_urba : Numéro de document d'urbanisme présent dans le dossier recherché.</li>
+					<li>count : Nombre maximum de dossiers dans le résultat. Défaut : 10, Maximum : 100.</li>
+					<li>page : Numéro de page à afficher.</li>
+				</ul>
+			</td>
+		</tr>
+
+		<!-- search/users -->
+		<tr>
+			<td>GET search/users</td>
+			<td>
+				Retourne une collection d'utilisateurs correspondants à la requête.<br>
+				
+				<strong>URL </strong>/api/1.0/search/users<br>
+
+				<strong>Paramètres</strong>
+				<ul>
+					<li>name : Nom approximatif de l'utilisateur.</li>
+					<li>fonctions : Ids des fonctions des utilisateurs à rechercher.</li>
+					<li>count : Nombre maximum d'établissements dans le résultat. Défaut : 10, Maximum : 100.</li>
+					<li>page : Numéro de page à afficher.</li>
+				</ul>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+### Contact
+
+<table class='table table-bordered table-condensed'>
+	<thead>
+		<tr>
+			<th>Ressource</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- contacts -->
+		<tr>
+			<td>GET contacts</td>
+			<td>
+				Récupération de l'ensemble des contacts.<br>
+				
+				<strong>URL </strong>/api/1.0/contacts<br>
+
+				<strong>Paramètres</strong>
+				<ul>
+					<li>name (requis) : Nom du contact.</li>
+				</ul>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+### Adresse
+
+<table class='table table-bordered table-condensed'>
+	<thead>
+		<tr>
+			<th>Ressource</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- adresse/get_communes -->
+		<tr>
+			<td>GET adresse/get_communes</td>
+			<td>
+				Récupération des communes via le nom ou le code postal.
+				
+				<strong>URL </strong>/api/1.0/adresse/get_communes<br>
+
+				<strong>Paramètres</strong>
+				<ul>
+					<li>q (requis) : Code postal ou nom d'une commune.</li>
+				</ul>
+			</td>
+		</tr>
+
+		<!-- adresse/get_types_voie_par_ville -->
+		<tr>
+			<td>GET adresse/get_types_voie_par_ville</td>
+			<td>
+				Retourne les types de voie d'une commune identifiée par son code insee.
+				
+				<strong>URL </strong>/api/1.0/adresse/get_types_voie_par_ville<br>
+
+				<strong>Paramètres</strong>
+				<ul>
+					<li>code_insee (requis) : Code insee de la commune.</li>
+				</ul>
+			</td>
+		</tr>
+
+		<!-- adresse/get_voies -->
+		<tr>
+			<td>GET adresse/get_voies</td>
+			<td>
+				Retourne les voies par rapport à une ville.
+				
+				<strong>URL </strong>/api/1.0/adresse/get_voies<br>
+
+				<strong>Paramètres</strong>
+				<ul>
+					<li>code_insee (requis) : Code insee de la commune.</li>
+					<li>q : Nom de la voie.</li>
 				</ul>
 			</td>
 		</tr>
