@@ -104,6 +104,11 @@ class EtablissementController extends Zend_Controller_Action
         $this->render('edit');
     }
 
+    public function buildAdresseAction()
+    {
+        $this->_helper->layout->disableLayout();
+    }
+
     public function descriptifAction()
     {
         $this->_helper->layout->setLayout('etablissement');
@@ -245,8 +250,17 @@ class EtablissementController extends Zend_Controller_Action
 
         $service_etablissement = new Service_Etablissement;
 
-        $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        $etablissement = $service_etablissement->get($this->_request->id);
+        $contacts_etablissements_parents = array();
+
+        // Récupération des contacts des établissements parents
+        foreach($etablissement['parents'] as $etablissement_parent) {
+            $contacts_etablissements_parents = array_merge($contacts_etablissements_parents, $service_etablissement->getAllContacts($etablissement_parent['ID_ETABLISSEMENT']));
+        }
+
+        $this->view->etablissement = $etablissement;
         $this->view->contacts = $service_etablissement->getAllContacts($this->_request->id);
+        $this->view->contacts_etablissements_parents = $contacts_etablissements_parents;
     }
 
     public function editContactsAction()
@@ -273,6 +287,28 @@ class EtablissementController extends Zend_Controller_Action
             try {
                 $post = $this->_request->getPost();
                 $service_etablissement->addContact($this->_request->id, $post['firstname'], $post['lastname'], $post['id_fonction'], $post['societe'], $post['fixe'], $post['mobile'], $post['fax'], $post['mail'], $post['adresse'], $post['web']);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'Le contact a bien été ajouté.'));
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Mise à jour annulée', 'message' => 'Le contact n\'a été ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+
+            $this->_helper->redirector('edit-contacts', null, null, array('id' => $this->_request->id));
+        }
+    }
+
+    public function addContactExistantAction()
+    {
+        $this->_helper->layout->disableLayout();
+
+        $service_etablissement = new Service_Etablissement;
+        $service_contact = new Service_Contact;
+
+        if($this->_request->isPost())
+        {
+            try {
+                $post = $this->_request->getPost();
+                $service_etablissement->addContactExistant($this->_request->id, $this->_request->id_contact);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'Le contact a bien été ajouté.'));
             }
             catch(Exception $e) {

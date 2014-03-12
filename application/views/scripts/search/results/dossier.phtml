@@ -53,10 +53,12 @@
     <!-- Avis du dossier -->
     <?php if($this->INCOMPLET_DOSSIER == 1) : ?>
     <span class='avis' style='background-color: #f89406;'>Dossier incomplet</span>
+    <?php elseif($this->DIFFEREAVIS_DOSSIER == 1) : ?>
+    <span class='avis' style='background-color: #3a87ad;'>Avis différé</span>
     <?php elseif($this->ID_AVIS == 1) : ?>
-    <span class="avis F">Favorable</span>
+    <span class="avis F">Favorable <?php echo in_array($this->ID_DOSSIERNATURE, array(19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
     <?php elseif($this->ID_AVIS == 2) : ?>
-    <span class="avis D">Défavorable</span>
+    <span class="avis D">Défavorable <?php echo in_array($this->ID_DOSSIERNATURE, array(19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
     <?php else : ?>
     <span class="avis">Avis indisponible</span>
     <?php endif ?>
@@ -64,6 +66,11 @@
     <!-- Alerte sur la reception de travaux -->
     <?php if($this->ALERTE_RECEPTION_TRAVAUX > 0) : ?>
     <span class='avis' style='background-color: #3a87ad'>Présence d'un dossier de reception de travaux</span>
+    <?php endif ?>
+
+    <!-- Alerte sur le fait que la visite fait partie d'un échéancier de travaux -->
+    <?php if($this->ECHEANCIER_TRAVAUX > 0) : ?>
+    <span class='avis' style='background-color: #3a87ad'>Fait l'objet d'un échéancier de travaux</span>
     <?php endif ?>
 
 </li>

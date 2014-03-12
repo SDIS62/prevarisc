@@ -1,12 +1,15 @@
 <div class='pull-right' >
-	<a href='<?php echo $this->url(array('action' => 'add-contact')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" >Ajouter un nouveau contact</a>
+	<div class='btn-group'>
+		<a href='<?php echo $this->url(array('action' => 'add-contact')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" >Ajouter un nouveau contact</a>
+		<a href='<?php echo $this->url(array('action' => 'add-contact-existant')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" >Ajouter contact existant</a>
+	</div>
     <a class='btn' href="<?php echo $this->url(array('action' => 'contacts')) ?>">Revenir sur l'affichage des contacts</a>
 </div>
 
 <h3>Gestion des contacts</h3>
 
 <?php if(count($this->contacts) == 0) : ?>
-    <p class='muted'>Il n'y a pas de contacts pour cet établissement.</p>
+    <p class='muted'>Il n'y a pas de contact.</p>
 <?php else : ?>
 <table class='table table-bordered table-condensed table-hover'> 
 	<thead> 

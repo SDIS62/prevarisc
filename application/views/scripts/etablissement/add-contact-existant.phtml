@@ -1,0 +1,63 @@
+<form class="modal contact" action='<?php echo $this->url(array('action' => 'add-contact-existant')) ?>' method='post' >
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Ajouter un contact existant</h3>
+    </div>
+
+    <div class="modal-body" style='min-height: 100px;'>
+
+		<p class='text-center'>
+	    	<input type='text' name='autocomplete-ignoreit' placeholder='Nom du contact à ajouter ...' />
+	    </p>
+
+	    <p id='bloc-contact-existant' class='text-center lead'>
+	    	<span class='muted'>Aucun contact selectionné</span>
+	    	<input type='hidden' name='id_contact' />
+	    </p>
+	    
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' id='submit' value='Ajouter' class='btn btn-success' />
+    </div>
+
+</form>
+
+<script>
+	// Auto-complétion des préventionnistes
+    $("input[name='autocomplete-ignoreit']").typeahead({
+        minLength: 3,
+        source: function(query, process) {
+            return $.ajax({
+                url: "/api/1.0/contacts",
+                type: 'post',
+                data: {
+                    name: query
+                },
+                success: function (result) {
+                    contacts = [];
+                    $.each(result.response, function (i, contact) {
+                        contacts.push("<span data-id='" + contact.ID_UTILISATEURINFORMATIONS + "'>" + contact.NOM_UTILISATEURINFORMATIONS + " " + contact.PRENOM_UTILISATEURINFORMATIONS + "</span>");
+                    });
+
+                    process(contacts);
+                }
+            });
+        },
+        highlighter: function (item) {
+            libelle = $($.parseHTML(item)).last().text();
+            libelle = libelle.replace( new RegExp( '(' + this.query + ')', 'gi' ), "<strong>$1</strong>" );
+            html = $.parseHTML(item);
+            $(html).last().text(libelle);
+            html = $(html).text();
+            return item.replace( item, html );
+        },
+        updater: function (item) {
+            $('#bloc-contact-existant span').removeClass('muted').text($($.parseHTML(item)).last().text());
+            $('#bloc-contact-existant input[type="hidden"]').val($($.parseHTML(item)).last().data('id'));
+            return;
+        }
+    });
+</script>

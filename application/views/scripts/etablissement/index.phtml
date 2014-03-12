@@ -52,7 +52,7 @@
 
             <!-- Activités de l'établissement -->
             <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3))) : ?>
-            <h4 class='h4_subtitle'>Activités de l'établissement</h4>
+            <h4 class='h4_subtitle'>Activités <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] && $this->etablissement['informations']['ID_GENRE'] == 2) echo "<span class='badge badge-info pull-right'>Présence de locaux à sommeil</span>" ?></h4>
             <dl class='dl-horizontal'>
                 <!-- Type et activités -->
                 <dt>Types & activités</dt>
@@ -60,7 +60,6 @@
                     <ul class='unstyled'>
                         <li>
                             <strong><?php echo $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] ?> - <?php echo $this->etablissement['informations']['LIBELLE_TYPEACTIVITE_PRINCIPAL'] ?></strong>
-                            <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] && $this->etablissement['informations']['ID_GENRE'] == 2) echo "<span class='badge badge-info'>Présence de locaux à sommeil</span>" ?>
                         </li>
                         <?php foreach($this->etablissement['types_activites_secondaires'] as $type_activite) : ?>
                             <li><?php echo $type_activite['LIBELLE_TYPE'] ?> - <?php echo $type_activite['LIBELLE_ACTIVITE'] ?></li>
@@ -135,7 +134,7 @@
                 <!-- Effectif total -->
                 <dt>Total</dt>
                 <dd>
-                    <p><?php echo (int) $this->etablissement['informations']['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] + (int) $this->etablissement['informations']['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] + (int) $this->etablissement['informations']['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] ?></p>
+                    <p><?php echo (int) $this->etablissement['informations']['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] + (int) $this->etablissement['informations']['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] ?></p>
                 </dd>
 
                 <!-- Effectif justifant le classement (que pour les 5ème catégorie) -->
@@ -150,7 +149,7 @@
             
             <!-- Plan -->
             <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5, 6))) : ?>
-            <h4 class='h4_subtitle'>Plans</h4>
+            <h4 class='h4_subtitle'>Plans d'intervention</h4>
             <?php if(count($this->etablissement['plans']) == 0) : ?>
             <p class='muted text-center'>Pas de plans disponible</p>
             <?php else : ?>
@@ -160,7 +159,7 @@
                         <th>Type de plan</th>
                         <th>Numéro du plan</th>
                         <th>Date</th>
-                        <th>A jour ?</th>
+                        <th>A mettre à jour</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -306,7 +305,7 @@
             <?php endif ?>
 
             <?php if(!empty($this->etablissement['general']['TELEPHONE_ETABLISSEMENT']) || !empty($this->etablissement['general']['FAX_ETABLISSEMENT']) || !empty($this->etablissement['general']['COURRIEL_ETABLISSEMENT'])) : ?>
-            <h4 class='h4_subtitle'>Coordonnées de l'établissement</h4>
+            <h4 class='h4_subtitle'>Coordonnées</h4>
             <dl class='dl-horizontal'>
                 <!-- Téléphone -->
                 <?php if(!empty($this->etablissement['general']['TELEPHONE_ETABLISSEMENT'])) : ?>
@@ -347,13 +346,15 @@
                 <?php endif ?>
 
                 <!-- Préventionnistes -->
-                <?php if(count($this->etablissement['preventionnistes']) > 0) : ?>
                 <dt>Préventionnistes</dt>
                 <dd>
-                    <?php echo $this->partialLoop('user/user.phtml', $this->etablissement['preventionnistes'] ) ?>
-                    <div style='clear: both; margin-bottom: 10px;'></div>
+                    <?php if(count($this->etablissement['preventionnistes']) == 0) : ?>
+                        <p class='muted'>Aucun préventionniste lié.</p>
+                    <?php else : ?>
+                        <?php echo $this->partialLoop('user/user.phtml', $this->etablissement['preventionnistes'] ) ?>
+                        <div style='clear: both; margin-bottom: 10px;'></div>
+                    <?php endif ?>
                 </dd>
-                <?php endif ?>
 
                 <!-- Date de dernière visite -->
                 <?php if(!empty($this->etablissement['last_visite']) ) : ?>
@@ -373,13 +374,18 @@
                 <dd><p><?php echo $this->etablissement['pc_initial'] ?></p></dd>
                 <?php endif ?>
 
-                <dt>Données théoriques</dt>
+                <!-- Données pratiques -->
+                <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(1, 2, 3, 5))) : ?>
+                <dt>Données pratiques</dt>
                 <dd>
                     <p>
-                        Nb. de préventionnistes/visite : <?php echo $this->etablissement['general']['NBPREV_ETABLISSEMENT'] ?><br/>
-                        Durée d'une visite : <?php echo $this->etablissement['general']['DUREEVISITE_ETABLISSEMENT'] ?>
+                        <?php if($this->etablissement['informations']['ID_GENRE'] != 1 ) : ?>
+                        Nb. de préventionnistes/visite : <?php echo $this->etablissement['donnees_pratiques']['NBPREV_ETABLISSEMENT'] ?><br/>
+                        <?php endif ?>
+                        Durée d'une visite : <?php echo date_format(new DateTime($this->etablissement['donnees_pratiques']['DUREEVISITE_ETABLISSEMENT']), 'H:i') ?>
                     </p>
                 </dd>
+                <?php endif ?>
             </dl>
         </div>
     </div>

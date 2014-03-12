@@ -9,7 +9,7 @@
 	
 	<fieldset>
 		<legend>Paramètres de base</legend>
-		<dl class='dl-horizontal'>
+		<dl>
 
 			<!-- Type de la couche -->
 			<dt>
@@ -17,9 +17,7 @@
 			</dt>
 			<dd>
 				<select name="ID_COUCHECARTOTYPE">
-					<?php foreach($this->rowset_couchecartotypes as $row) : ?>
-					<option value="<?php echo $row->ID_COUCHECARTOTYPE ?>" <?php if(isset($this->row) && $this->row->ID_COUCHECARTOTYPE == $row->ID_COUCHECARTOTYPE) echo "selected" ?> ><?php echo $row->NOM_COUCHECARTOTYPE ?></option>
-					<?php endforeach ?>
+					<option value="ign" <?php if(isset($this->row) && $this->row->ID_COUCHECARTOTYPE == 'ign') echo "selected" ?> >IGN</option>
 				</select>
 			</dd>
 			
@@ -28,7 +26,7 @@
 	
 	<fieldset id="param_avances" class="ui-helper-hidden">
 		<legend>Paramètres avancés</legend>
-		<dl class='dl-horizontal'>
+		<dl>
 			<!-- Nom de la couche -->
 			<dt>
 				Nom de la couche
@@ -103,18 +101,17 @@
 		</dl>
 	</fieldset>
 
-    <dl class='dl-horizontal'>
-        <dt></dt>
-        <dd><input type='submit' class="btn btn-success" value="<?php echo $this->row ? "Modifier" : "Ajouter" ?> la couche" /></dd>
-    </dl>
+	<input type='submit' class="btn btn-success" value="<?php echo $this->row ? "Modifier" : "Ajouter" ?> la couche" />
     
 	<?php echo $this->row ? '<input type="hidden" name="id" value="' . $_GET["id"] . '" />' : "" ?>
 </form>
 
 <script>
 	
+	// Affichage des champs en fonction du type de la couche
 	$("select[name=ID_COUCHECARTOTYPE]").change(function() {
-		if($(this).find("option:selected").val() == 2 || $(this).find("option:selected").val() == 3) { // IGN / OSM
+
+		if($(this).find("option:selected").val() == 2 || $(this).find("option:selected").val() == 3) {
 			$("#param_avances").hide();
 			$("#param_avances input").val("0");
 			$("#param_avances input[name=TRANSPARENT_COUCHECARTO]").attr("checked", false);

@@ -3,37 +3,51 @@
 
 <?php echo $this->partial('menu_admin.phtml') ?>
 
-<p class='text-right'><a class='btn' href='/couches-cartographiques/add' id='add'>Ajouter une couche</a></p>
+<p class='text-right'><a class='btn' href='<?php echo $this->url(array('action' => 'add')) ?>'>Ajouter une couche</a></p>
 
-<div id='geoportail'>
-<?php $this->carte("50.4727273438818", "2.71490430425517", array(), array('height' => '350px'), $zoom  = 8); ?>
-</div>
+<?php if(count($this->couches_cartographiques) == 0) : ?>
 
-<div style='clear: both'></div>
+    <div class='well well-large text-center'>
+        <p class='lead'>Il n'y a pas de couche cartographique.</p>
+        <p><a href='<?php echo $this->url(array('action' => 'add')) ?>' class='btn btn-large'>Ajouter une couche cartographique</a></p>
+    </div>
 
-<?php if(count($this->rowset_couches) == 0) : ?>
-<p style="text-align: center"><strong>Il n'y a pas de couche ajoutée. <a href="/couches-cartographiques/add">Ajoutez en une</a>.</strong></p>
 <?php else : ?>
-<table class="table-custom">
-    <thead>
-        <tr>
-            <th>Type</th>
-            <th>Nom de la couche</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    
-    <tbody>
-        <?php foreach($this->rowset_couches as $row) : ?>
-        <tr>
-            <td><?php echo $row->NOM_COUCHECARTOTYPE ?></td>
-            <td><?php echo $row->NOM_COUCHECARTO.(($row->ISBASELAYER_COUCHECARTO) ? " (couche de base)" : "") ?></td>
-            <td>
-                <a href="/couches-cartographiques/edit?id=<?php echo $row->ID_COUCHECARTO ?>">Editer la couche</a><br/>
-                <a href="/couches-cartographiques/delete?id=<?php echo $row->ID_COUCHECARTO ?>">Supprimer</a>
-            </td>
-        </tr>
-        <?php endforeach ?>
-    </tbody>
-</table>
+
+    <div id='geoportail-container'  style="height: 250px; max-height: 250px;"></div>
+    <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
+    <script>
+        $(document).ready(function() {
+            viewer = Geoportal.load("geoportail-container", "i4d3km958rzoesb7thga4f59", {
+                lat: 50.4727273438818,
+                lon: 2.71490430425517
+            }, 8, OpenLayers.Util.extend({
+                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
+                overlays:{}
+            }));
+        });
+    </script>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Nom de la couche</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
+            <tr>
+                <td><?php echo $couche_cartographique->NOM_COUCHECARTOTYPE ?></td>
+                <td><?php echo $couche_cartographique->NOM_COUCHECARTO.(($couche_cartographique->ISBASELAYER_COUCHECARTO) ? " (couche de base)" : "") ?></td>
+                <td>
+                    <a href="/couches-cartographiques/edit?id=<?php echo $couche_cartographique->ID_COUCHECARTO ?>">Éditer la couche</a><br/>
+                    <a href="/couches-cartographiques/delete?id=<?php echo $couche_cartographique->ID_COUCHECARTO ?>">Supprimer</a>
+                </td>
+            </tr>
+            <?php endforeach ?>
+        </tbody>
+    </table>
+
 <?php endif ?>

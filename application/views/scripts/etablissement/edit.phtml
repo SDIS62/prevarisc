@@ -25,7 +25,6 @@
                 <input style='width: 100%; box-sizing: border-box; height: 2.5em;' type='text' placeholder="Libellé de l'établissement" name='LIBELLE_ETABLISSEMENTINFORMATIONS' value='<?php if ( $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"] ) echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' />
                 
                 <dl class='dl-horizontal'>
-
                     <!-- Numéro d'identification -->
                     <dt>Identifiant</dt>
                     <dd>
@@ -110,9 +109,8 @@
                 </dd>
             </dl>
 
-            <h4 class='champ_types champs h4_subtitle'>Activités de l'établissement <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_types_activites_secondaires').clone().appendTo( $('#activite_ul') ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a></h4>
+            <h4 class='champ_types champs h4_subtitle'>Activités <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_types_activites_secondaires').clone().appendTo( $('#activite_ul') ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a></h4>
             <dl class='dl-horizontal champ_types champs'>
-                
                 <!-- Type et activités -->
                 <dt>Types & activités</dt>
                 <dd>
@@ -218,14 +216,14 @@
             </dl>
             
             <!-- Plan -->
-            <h4 class="champ_plans champs h4_subtitle">Plans <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter un plan</a></h4>
+            <h4 class="champ_plans champs h4_subtitle">Plans d'intervention <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter un plan</a></h4>
             <table class='table table-condensed champ_plans champs'>
                 <thead>
                     <tr>
                         <th>Type de plan</th>
                         <th>Numéro du plan</th>
                         <th>Date</th>
-                        <th>A jour ?</th>
+                        <th>A mettre à jour</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -279,7 +277,7 @@
 
         <!-- Carte de l'emplacement de l'établissement / informations  -->
         <div class='span6'>
-            <h4 class="champ_adresse champs h4_subtitle">Adresse <a style='font-size: 0.85em; float: right; font-weight: normal;' data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" href="<?php echo $this->url(array('action' => 'build', 'controller' => 'adresse')) ?>">Ajouter une adresse</a></h4>
+            <h4 class="champ_adresse champs h4_subtitle">Adresse <a style='font-size: 0.85em; float: right; font-weight: normal;' data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" href="<?php echo $this->url(array('action' => 'build-adresse')) ?>">Ajouter une adresse</a></h4>
             <table id='adresses' class='table table-condensed champ_adresse champs'>
                 <thead>
                     <tr>
@@ -298,7 +296,7 @@
                 </tbody>
             </table>
 
-            <h4 class='h4_subtitle'>Coordonnées de l'établissement</h4>
+            <h4 class='h4_subtitle'>Coordonnées</h4>
             <dl class='dl-horizontal'>
                 <!-- Téléphone -->
                 <dt>Téléphone</dt>
@@ -358,12 +356,13 @@
                     </table>
                 </dd>
 
-                <dt>Données théoriques</dt>
-                <dd>
+                <!-- Données pratiques -->
+                <dt class="champ_donnees_pratiques champs">Données pratiques</dt>
+                <dd class="champ_donnees_pratiques champs">
                     <label>Nb. de préventionnistes/visite</label>
-                    <input type='number'  name='NBPREV_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["NBPREV_ETABLISSEMENT"] ?>' />
+                    <input type='number'  name='NBPREV_ETABLISSEMENT' value='<?php echo $this->etablissement['donnees_pratiques']["NBPREV_ETABLISSEMENT"] ?>' />
                     <label>Durée d'une visite</label>
-                    <input type='time' name='DUREEVISITE_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["DUREEVISITE_ETABLISSEMENT"] ?>' />
+                    <input type='time' name='DUREEVISITE_ETABLISSEMENT' value='<?php echo $this->etablissement['donnees_pratiques']["DUREEVISITE_ETABLISSEMENT"] ?>' />
                 </dd>
             </dl>
         </div>
@@ -535,12 +534,12 @@
 
                 // Établissement
                 case '2':
-                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_localsommeil').show();
+                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_localsommeil, .champ_donnees_pratiques').show();
                     break;
 
                 // Cellule
                 case '3':
-                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans').show();
+                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_donnees_pratiques').show();
                     $('.etablissements_enfants').hide();
                     break;
 
@@ -552,7 +551,7 @@
 
                 // IGH
                 case '5':
-                    $('.champ_periodicite, .champ_classe, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission').show();
+                    $('.champ_periodicite, .champ_classe, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_donnees_pratiques').show();
                     $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").attr('checked', false).change();
                     break;
 
@@ -729,15 +728,16 @@
             minLength: 3,
             source: function(query, process) {
                 return $.ajax({
-                    url: "/user/getpreventionniste?format=json",
+                    url: "/api/1.0/search/users",
                     type: 'post',
                     data: {
-                        q: query,
+                        name: query,
+                        fonctions: 13,
                         limit: 100,
                     },
                     success: function (result) {
                         preventionnistes = [];
-                        $.each(result.resultats, function (i, preventionniste) {
+                        $.each(result.response, function (i, preventionniste) {
                             preventionnistes.push("<span data-id='" + preventionniste.uid + "'>" + preventionniste.NOM_UTILISATEURINFORMATIONS + " " + preventionniste.PRENOM_UTILISATEURINFORMATIONS + "</span>");
                         });
 

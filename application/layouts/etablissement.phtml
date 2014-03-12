@@ -17,6 +17,16 @@
     <?php if($this->etablissement['avis'] != null) : ?>
         <p class='avis <?php echo $this->etablissement['avis'] == 1 ? 'F' : 'D' ?>'>
             <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') ." à l'exploitation " ?>
+            <?php if($this->etablissement['avis'] != 1) : ?>
+            · Facteur de dangerosité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
+            <?php endif ?>
+        </p>
+    <?php endif ?>
+
+    <!-- Présence d'un dossier avec avis differé -->
+    <?php if($this->etablissement['presence_avis_differe'] == true) : ?>
+        <p class='label label-info'>
+            Présence d'un dossier avec avis differé
         </p>
     <?php endif ?>
     
@@ -34,7 +44,7 @@
 <!-- Onglets horizontaux -->
 <ul id='onglets_horizontaux' >
     <li><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
-    <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "EIC" ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li><?php endif ?>
+    <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "EIC" && $this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li><?php endif ?>
     <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "Site" ) : ?><li><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li><?php endif ?>
     <li><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
     <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>

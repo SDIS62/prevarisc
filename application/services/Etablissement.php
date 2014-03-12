@@ -8,6 +8,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
      * @param int $id_etablissement
      * @return array
      * @throws Exception si l'établissement n'existe pas
+     * @throws Exception si la dernière fiche d'informations n'existe pas
      */
     public function get($id_etablissement)
     {
@@ -44,6 +45,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
             // On récupère la dernière fiche d'informations de l'établissement
             $informations = $model_etablissement->getInformations($id_etablissement);
 
+            // Si l'établissement n'existe pas, on généère une erreur
+            if($informations === null) {
+                throw new Exception("La fiche d'informations de l'établissement n'existe pas.");
+            }
+
             // Récupération des parents de l'établissement
             $results = array();
             $id_enfant = $id_etablissement;
@@ -56,11 +62,12 @@ class Service_Etablissement implements Service_Interface_Etablissement
             } while($parent != null);
             $etablissement_parents = count($results) == 0 ? array() : array_reverse($results);
 
-            // Récupération de l'avis de l'établissement + dates de VP
-            $avis = null;
+            // Récupération de l'avis de l'établissement + dates de VP +  Récupération du facteur de dangerosité
+            $avis = $facteur_dangerosite = null;
             if ($general->ID_DOSSIER_DONNANT_AVIS != null) {
                 $dossier_donnant_avis = $DB_dossier->find($general->ID_DOSSIER_DONNANT_AVIS)->current();
                 $avis = $dossier_donnant_avis->AVIS_DOSSIER_COMMISSION;
+                $facteur_dangerosite = $dossier_donnant_avis->FACTDANGE_DOSSIER;
             }
 
             // récupération de la dernière date de vp
@@ -73,6 +80,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 ->getAdapter()
                 ->getItems(0, 1)
                 ->toArray();
+
             $next_visite = null;
 
             if($last_visite !== null && count($last_visite) == 1) {
@@ -86,7 +94,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
             }
 
-            // récupération de la date de PC initial
+            // Récupération de la date de PC initial
             $pc_inital = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", 1)->setCriteria("ID_NATURE", 1)->order('DATEINSERT_DOSSIER ASC')->run();
             $pc_inital = $pc_inital->getAdapter()->getItems(0, 1)->toArray();
             if(count($pc_inital) == 1) {
@@ -95,6 +103,40 @@ class Service_Etablissement implements Service_Interface_Etablissement
             }
             else {
                 $pc_inital = null;
+            }
+
+            // Y'a t'il un dossier avec avis différé sur l'établissement ?
+            $dossiers_avis_diff = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("DIFFEREAVIS_DOSSIER", 1)->run();
+            $presence_avis_differe = count($dossiers_avis_diff) > 0;
+
+            // Récupération des établissements liés
+            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+
+            // Chargement des données pratiques
+            if($informations->ID_GENRE == 1) {
+                $duree_totale = 0;
+                // Calcul de la durée totale de visite
+                foreach($etablissement_lies as $etablissement) {
+                    if($etablissement['DUREEVISITE_ETABLISSEMENT'] != null) {
+                        $date_zero = new Datetime('00:00:00');
+                        $duree_etablissement = new \Datetime($etablissement['DUREEVISITE_ETABLISSEMENT']);
+                        $duree_etablissement_en_heure = $duree_etablissement->format('U') - $date_zero->format('U');
+                        $duree_totale += (int) $etablissement['NBPREV_ETABLISSEMENT'] * $duree_etablissement_en_heure;
+                    }
+                }
+
+                $duree_totale = gmdate("H:i:s", $duree_totale);
+
+                $donnees_pratiques = array(
+                    'NBPREV_ETABLISSEMENT' => null,
+                    'DUREEVISITE_ETABLISSEMENT' => $duree_totale
+                );
+            }
+            else {
+                $donnees_pratiques = array(
+                    'NBPREV_ETABLISSEMENT' => $general->NBPREV_ETABLISSEMENT,
+                    'DUREEVISITE_ETABLISSEMENT' => $general->DUREEVISITE_ETABLISSEMENT
+                );
             }
 
             $etablissement = array(
@@ -109,6 +151,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_COMMISSION" => @$DB_commission->find($informations->ID_COMMISSION)->current()->LIBELLE_COMMISSION,
                     "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
                 )),
+                'presence_avis_differe' => $presence_avis_differe,
+                'facteur_dangerosite' => $facteur_dangerosite,
+                'donnees_pratiques' => $donnees_pratiques,
                 'parents' => $etablissement_parents,
                 'avis' => $avis,
                 'last_visite' => $last_visite,
@@ -119,7 +164,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 'diapo' => $model_etablissement->getDiaporama($id_etablissement),
                 'types_activites_secondaires' => $model_etablissement->getTypesActivitesSecondaires($informations->ID_ETABLISSEMENTINFORMATIONS),
                 'rubriques' => $DB_rubriques->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS, "ID_ETABLISSEMENTINFORMATIONSRUBRIQUE")->toArray(),
-                'etablissement_lies' => $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray(),
+                'etablissement_lies' => $etablissement_lies,
                 'preventionnistes' => $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $id_etablissement)->run()->getAdapter()->getItems(0, 99999999999)->toArray(),
                 'adresses' => $DB_adresse->get($id_etablissement)
             );
@@ -489,9 +534,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $etablissement->TELEPHONE_ETABLISSEMENT = $data['TELEPHONE_ETABLISSEMENT'];
             $etablissement->FAX_ETABLISSEMENT = $data['FAX_ETABLISSEMENT'];
             $etablissement->COURRIEL_ETABLISSEMENT = $data['COURRIEL_ETABLISSEMENT'];
-            $etablissement->NBPREV_ETABLISSEMENT = (int) $data['NBPREV_ETABLISSEMENT'];
-            $etablissement->DUREEVISITE_ETABLISSEMENT = empty($data['DUREEVISITE_ETABLISSEMENT']) ? null : $data['DUREEVISITE_ETABLISSEMENT'];
-            $etablissement->save();
 
             // Sauvegarde des champs de la fiche d'informations en fonction du genre
             $informations->ICPE_ETABLISSEMENTINFORMATIONS = $informations->PERIODICITE_ETABLISSEMENTINFORMATIONS = 
@@ -499,7 +541,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $informations->ID_CLASSE = $informations->ID_FAMILLE =  $informations->ID_CATEGORIE = $informations->ID_TYPE =
             $informations->ID_TYPEACTIVITE = $informations->ID_COMMISSION = $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = 
             $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = $informations->EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS = 
-            $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = null;
+            $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = $etablissement->NBPREV_ETABLISSEMENT = 
+            $etablissement->DUREEVISITE_ETABLISSEMENT = null;
 
             switch($id_genre) {
                 // Établissement
@@ -515,6 +558,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS = $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS ? (int) $data['EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS'] : null;
                     $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = $data['ID_CATEGORIE'] == 5 ? (int) $data['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] : null;
                     $informations->ID_COMMISSION = $data['ID_COMMISSION'];
+                    $etablissement->NBPREV_ETABLISSEMENT = (int) $data['NBPREV_ETABLISSEMENT'];
+                    $etablissement->DUREEVISITE_ETABLISSEMENT = empty($data['DUREEVISITE_ETABLISSEMENT']) ? null : $data['DUREEVISITE_ETABLISSEMENT'];
                     break;
 
                 // Cellule
@@ -527,6 +572,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = $data['ID_CATEGORIE'] == 5 ? (int) $data['EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS'] : null;
+                    $etablissement->NBPREV_ETABLISSEMENT = (int) $data['NBPREV_ETABLISSEMENT'];
+                    $etablissement->DUREEVISITE_ETABLISSEMENT = empty($data['DUREEVISITE_ETABLISSEMENT']) ? null : $data['DUREEVISITE_ETABLISSEMENT'];
                     break;
 
                 // Habitation
@@ -541,6 +588,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     $informations->ID_COMMISSION = $data['ID_COMMISSION'];
+                    $etablissement->NBPREV_ETABLISSEMENT = (int) $data['NBPREV_ETABLISSEMENT'];
+                    $etablissement->DUREEVISITE_ETABLISSEMENT = empty($data['DUREEVISITE_ETABLISSEMENT']) ? null : $data['DUREEVISITE_ETABLISSEMENT'];
                     break;
 
                 // EIC
@@ -549,6 +598,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     break;
             }
+
+            $etablissement->save();
 
             $informations->LIBELLE_ETABLISSEMENTINFORMATIONS = $data['LIBELLE_ETABLISSEMENTINFORMATIONS'];
             $informations->ID_GENRE = $id_genre;
@@ -730,7 +781,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
                 // Local à sommeil en fonction du type
                 if($type !== null) {
-                    $results['local_sommeil'] = in_array($type, array(11, 7));
+                    if(in_array($type, array(11, 7))) {
+                        $results['local_sommeil'] = true;
+                    }
                 }
 
                 // Commission en fonction des compétences des commissions
@@ -930,7 +983,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
     public function addContact($id_etablissement, $nom, $prenom, $id_fonction, $societe, $fixe, $mobile, $fax, $email, $adresse, $web)
     {
         $DB_informations = new Model_DbTable_UtilisateurInformations;
-        $DB_contact = new Model_DbTable_EtablissementContact;
 
         $id_contact = $DB_informations->createRow(array(
             'NOM_UTILISATEURINFORMATIONS' => (string) $nom,
@@ -945,10 +997,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             'ID_FONCTION' => (string) $id_fonction
         ))->save();
 
-        $DB_contact->createRow(array(
-            'ID_ETABLISSEMENT' => $id_etablissement,
-            'ID_UTILISATEURINFORMATIONS' => $id_contact
-        ))->save();
+        $this->addContactExistant($id_etablissement, $id_contact);
     }
 
     /**

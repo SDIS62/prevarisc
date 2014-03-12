@@ -2,24 +2,30 @@
     <a class='btn' href="<?php echo $this->url(array('action' => 'edit-descriptif')) ?>">Modifier les descriptifs</a>
 </div>
 
-<h3>Descriptif de l'établissement</h3>
+<h3>Descriptifs</h3>
 
-<h4 class='h4_subtitle'>Historique de l'établissement</h4>
-<p><?php echo empty($this->historique) ? "Aucun historique disponible pour cet établissement." : nl2br($this->historique) ?></p>
+<?php if(!empty($this->historique) || !empty($this->descriptif) || !empty($this->derogations)) : ?>
+	<?php if(!empty($this->historique)) : ?>
+	<h4 class='h4_subtitle'>Historique</h4>
+	<p><?php echo nl2br($this->historique) ?></p>
+	<?php endif ?>
 
-<h4 class='h4_subtitle'>Descriptif général</h4>
-<p><?php echo empty($this->descriptif) ? "Aucun descriptif disponible pour cet établissement." : nl2br($this->descriptif) ?></p>
+	<?php if(!empty($this->descriptif)) : ?>
+	<h4 class='h4_subtitle'>Descriptif général</h4>
+	<p><?php echo nl2br($this->descriptif) ?></p>
+	<?php endif ?>
 
-<h4 class='h4_subtitle'>Dérogations accordées</h4>
-<p><?php echo empty($this->derogations) ? "Aucunes dérogations accordées pour cet établissement." : nl2br($this->derogations) ?></p>
+	<?php if(!empty($this->derogations)) : ?>
+	<h4 class='h4_subtitle'>Dérogations accordées</h4>
+	<p><?php echo nl2br($this->derogations) ?></p>
+	<?php endif ?>
+<?php endif ?>
 
 <h4 class='h4_subtitle'>Descriptif technique</h4>
 <div class='row-fluid'>
 	<?php
 		$i = 0;
-
-	    foreach($this->champs_descriptif_technique as $title => $champ_destech)
-	    {
+	    foreach($this->champs_descriptif_technique as $title => $champ_destech) {
 	    	$j = 0;
 	    	echo '<div class="span4">';
 	        echo "<h5 class='lead'>".$title."</h5>";
@@ -42,7 +48,7 @@
 	        }
         	$j = 0;
 
-        	 echo '</div>';
+        	echo '</div>';
 
 	        $i++;
             
