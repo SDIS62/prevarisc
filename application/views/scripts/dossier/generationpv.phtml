@@ -11,18 +11,21 @@ foreach($this->membresFiles as $val => $membre){
 		$nomFichier = $membre->ID_COMMISSIONMEMBRE."PV_".$membre->COURRIER_PV;
 		
 		if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
+		
+			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
+			$dossInfos = $odf->setSegment('dossierInfos');
+			
 			foreach($this->dossierComm as $val => $dossierInfos){
 				try{
-					$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
-					$odf->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
-					$odf->setVars('communeDossier', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
-					$odf->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
+					$dossInfos->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
+					$dossInfos->setVars('communeDossier', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
+					$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
 					
 					$dateComm = new Zend_Date($this->dateComm);				
-					$odf->setVars('dateCommission', $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR), true, 'UTF-8');
+					$dossInfos->setVars('dateCommission', $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR), true, 'UTF-8');
 					
-					$odf ->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-					$odf->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+					$dossInfos ->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+					$dossInfos->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
 					
 					switch($dossierInfos['AVIS_DOSSIER']){
 						case 1:
@@ -35,34 +38,38 @@ foreach($this->membresFiles as $val => $membre){
 							$avis = "";
 						break;					
 					}
-					$odf->setVars('avisDossier', $avis, true, 'UTF-8');
+					$dossInfos->setVars('avisDossier', $avis, true, 'UTF-8');
 					
-					$odf->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
-					$odf->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"], true, 'UTF-8');
+					$dossInfos->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
+					$dossInfos->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"], true, 'UTF-8');
 					
 					$listeDocUrba = "";
 					foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
 						$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
 					}
-					$odf->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
+					$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
 
 					//Informations de l'exploitant du dossier
-					$odf->setVars('nomExploitant',$this->exploitantDossier['exploitantInfos'][0]['NOM_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$odf->setVars('prenomExploitant',$this->exploitantDossier['exploitantInfos'][0]['PRENOM_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$odf->setVars('mailExploitant',$this->exploitantDossier['exploitantInfos'][0]['MAIL_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$odf->setVars('telFixeExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELFIXE_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$odf->setVars('telPortExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELPORTABLE_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$odf->setVars('numFaxExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELFAX_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$odf->setVars('societeExploitant',$this->exploitantDossier['exploitantInfos'][0]['SOCIETE_UTILISATEURINFORMATIONS'],true,'UTF8');	
+					$dossInfos->setVars('nomExploitant',$this->exploitantDossier['exploitantInfos'][0]['NOM_UTILISATEURINFORMATIONS'],true,'UTF8');
+					$dossInfos->setVars('prenomExploitant',$this->exploitantDossier['exploitantInfos'][0]['PRENOM_UTILISATEURINFORMATIONS'],true,'UTF8');
+					$dossInfos->setVars('mailExploitant',$this->exploitantDossier['exploitantInfos'][0]['MAIL_UTILISATEURINFORMATIONS'],true,'UTF8');
+					$dossInfos->setVars('telFixeExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELFIXE_UTILISATEURINFORMATIONS'],true,'UTF8');
+					$dossInfos->setVars('telPortExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELPORTABLE_UTILISATEURINFORMATIONS'],true,'UTF8');
+					$dossInfos->setVars('numFaxExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELFAX_UTILISATEURINFORMATIONS'],true,'UTF8');
+					$dossInfos->setVars('societeExploitant',$this->exploitantDossier['exploitantInfos'][0]['SOCIETE_UTILISATEURINFORMATIONS'],true,'UTF8');	
 
-					$idPj = savePj($this->idComm,$dossierInfos["LIBELLE_DOSSIERNATURE"]." - ".$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." (".$dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"].") pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE);
-					$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
-					echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'><a href='/data/uploads/pieces-jointes/".$idPj.".odt' >Le PV : ".$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." (".$dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"].")  a été généré</a></span><br/><br/>";
+					$dossInfos->merge(); 
+					//echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'><a href='/data/uploads/pieces-jointes/".$idPj.".odt' >Le PV : ".$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." (".$dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"].")  a été généré</a></span><br/><br/>";
 				} catch (OdfException $e){
 
 				}
+				
 			}
+			$odf->mergeSegment($dossInfos);
+			$idPj = savePj($this->idComm,"Le pv a bien été généré");
+			$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");	
 			//$odf->mergeSegment($dossierLoop);
+			echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le PV a été généré avec succes</span><br/><br/><br/>";
 		}else{
 			echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 		}
@@ -70,7 +77,8 @@ foreach($this->membresFiles as $val => $membre){
 		//echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 	}
 }
-	
+
+
 function savePj($dateCommId,$libelleDocument){
 	//ENREGISTEMENT DANS PIECE JOINTES
 	$dateDuJour = new Zend_Date();
