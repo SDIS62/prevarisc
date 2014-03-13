@@ -12,7 +12,7 @@
                 ->from("piecejointe")
                 ->join($table, "piecejointe.ID_PIECEJOINTE = $table.ID_PIECEJOINTE")
                 ->where($champ." = ".$identifiant)
-                ->order("DATE_PIECEJOINTE DESC");
+                ->order("piecejointe.ID_PIECEJOINTE DESC");
 
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
         }
