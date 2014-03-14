@@ -382,7 +382,11 @@
                         <?php if($this->etablissement['informations']['ID_GENRE'] != 1 ) : ?>
                         Nb. de préventionnistes/visite : <?php echo $this->etablissement['donnees_pratiques']['NBPREV_ETABLISSEMENT'] ?><br/>
                         <?php endif ?>
+                        <?php if(isset($this->etablissement['donnees_pratiques']['DUREEVISITE_ETABLISSEMENT'])) : ?>
                         Durée d'une visite : <?php echo date_format(new DateTime($this->etablissement['donnees_pratiques']['DUREEVISITE_ETABLISSEMENT']), 'H:i') ?>
+                        <?php else: ?>
+                        Durée d'une visite : -
+                        <?php endif ?>
                     </p>
                 </dd>
                 <?php endif ?>
