@@ -3,6 +3,7 @@
     <?php if($this->add) : ?>
     <div class='pull-right' >
         <input type='submit' class="btn btn-success" value="Ajouter l'établissement">
+        <input type="hidden" name="date" value='<?php echo date("Y-m-d H:i:s") ?>'>
     </div>
     <h3>Ajout d'un établissement</h3>
     <?php else : ?>
