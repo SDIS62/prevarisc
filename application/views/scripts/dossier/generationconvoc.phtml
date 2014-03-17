@@ -9,6 +9,7 @@ if(count($this->membresFiles) == 0){
 
 //foreach($this->membresFiles as $val => $membre){
 foreach($this->informationsMembre as $val => $membre){
+
 	$erreurFile = 0;
 	if($this->typeCommission == 1 || $this->typeCommission == 3){
 		if($membre['infosFiles'][0]['COURRIER_CONVOCATIONSALLE'] == NULL){
@@ -45,12 +46,9 @@ foreach($this->informationsMembre as $val => $membre){
 	if($erreurFile == 0 && $cptConcerne > 0 )
 	{
 		if($membre['infosFiles'][0]['ID_GROUPEMENT'] == NULL && $membre['infosFiles'][0]['ID_UTILISATEURINFORMATIONS'] == NULL){
-			
 			//génération du document par commune pour les maires par exemple		
 			//si le document concernant ce membre existe alors on rentre dans la boucle
-			
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
-			
 			
 			//Generation du segment villeDoss
 			$villeODF = $odf->setSegment('villeDoss');
