@@ -16,8 +16,8 @@
             $this->_helper->layout->setLayout("menu_left");
 
             // Récupération des paramètres
-            $model_admin = new Model_DbTable_Admin;
-            $this->view->params = $model_admin->getParams();
+            $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
+            $this->view->params = array("LDAP_ACTIF" => $ldap_options['enabled']);
 
             $DB_user = new Model_DbTable_Utilisateur;
             $DB_informations = new Model_DbTable_UtilisateurInformations;
