@@ -240,11 +240,31 @@ class PieceJointeController extends Zend_Controller_Action
 
              // Modèle
              $DBused = new Model_DbTable_PieceJointe;
+             
+             // Cas dossier
+            if ($this->_request->type == "dossier") {
+                $listePj = $DBused->affichagePieceJointe("dossierpj", "dossierpj.ID_PIECEJOINTE", $this->_request->idpj);
+            }
+
+            // Cas établissement
+            else if ($this->_request->type == "etablissement") {
+                $listePj = $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_PIECEJOINTE", $this->_request->idpj);
+            }
+
+            // Cas d'une date de commission
+            else if ($this->_request->type == "dateCommission") {
+                $listePj = $DBused->affichagePieceJointe("datecommissionpj", "datecommissionpj.ID_PIECEJOINTE", $this->_request->idpj);
+            }
+            
+            // Cas par défaut
+            else {
+                $listePj = array();
+            }
 
              // Données de la pj
              $this->view->html = $this->view->partial("piece-jointe/display.phtml", array (
                  "path" => DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR,
-                 "listePj" => $DBused->fetchAll("ID_PIECEJOINTE = " . $this->_request->idpj)->toArray(),
+                 "listePj" => $listePj,
                  "droit_ecriture" => true,
                  "type" => $this->_request->type,
                  "id" => $this->_request->id,
