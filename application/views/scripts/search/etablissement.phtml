@@ -49,14 +49,14 @@
     <div id='criteres_plus' style='margin-top: 4px'>
 		<select name='genres[]' multiple>
 	        <?php foreach( $this->DB_genre as $genre ) : ?>
-	        	<option value='<?php echo $genre["ID_GENRE"] ?>' <?php if(isset($_GET["genres"]) && in_array($genre["ID_GENRE"], (array) $_GET["genres"])) echo 'selected' ?>><?php echo $genre["LIBELLE_GENRE"] ?></option>
+	        	<option value='<?php echo $genre["ID_GENRE"] ?>' <?php if(array_key_exists('genres', $_GET) && in_array($genre["ID_GENRE"], (array) $_GET["genres"])) echo 'selected' ?>><?php echo $genre["LIBELLE_GENRE"] ?></option>
 	        <?php endforeach ?>
 		</select>
 
 		<span id='categorie_span' class='hide'>
 			<select name='categories[]' multiple>
 				<?php foreach( $this->DB_categorie as $categorie ) : ?>
-		        <option value='<?php echo $categorie["ID_CATEGORIE"] ?>' <?php if(isset($_GET["categories"]) && in_array($categorie["ID_CATEGORIE"], (array) $_GET["categories"])) echo 'selected' ?>><?php echo $categorie["LIBELLE_CATEGORIE"] ?></option>
+		        <option value='<?php echo $categorie["ID_CATEGORIE"] ?>' <?php if(array_key_exists('categories', $_GET) && in_array($categorie["ID_CATEGORIE"], (array) $_GET["categories"])) echo 'selected' ?>><?php echo $categorie["LIBELLE_CATEGORIE"] ?></option>
 		        <?php endforeach ?>
 			</select>
 		</span>
@@ -64,7 +64,7 @@
 		<span id='classe_span' class='hide' >
 	        <select name='classes[]' multiple>
 	            <?php foreach( $this->DB_classe as $classe ) : ?>
-	            	<option value='<?php echo $classe["ID_CLASSE"] ?>' <?php if(isset($_GET["classes"]) && in_array($classe["ID_CLASSE"], (array) $_GET["classes"])) echo 'selected' ?>><?php echo $classe["LIBELLE_CLASSE"] ?></option>
+	            	<option value='<?php echo $classe["ID_CLASSE"] ?>' <?php if(array_key_exists('classes', $_GET) && in_array($classe["ID_CLASSE"], (array) $_GET["classes"])) echo 'selected' ?>><?php echo $classe["LIBELLE_CLASSE"] ?></option>
 	            <?php endforeach ?>
 	        </select>
 	    </span>
@@ -72,7 +72,7 @@
 	    <span id='famille_span' class='hide'>
 	    	<select name='familles[]' multiple>
 	            <?php foreach( $this->DB_famille as $famille ) : ?>
-	           		<option value='<?php echo $famille["ID_FAMILLE"] ?>' <?php if(isset($_GET["familles"]) && in_array($famille["ID_FAMILLE"], (array) $_GET["familles"])) echo 'selected' ?>><?php echo $familles["LIBELLE_FAMILLE"] ?></option>
+	           		<option value='<?php echo $famille["ID_FAMILLE"] ?>' <?php if(array_key_exists('familles', $_GET) && in_array($famille["ID_FAMILLE"], (array) $_GET["familles"])) echo 'selected' ?>><?php echo $famille["LIBELLE_FAMILLE"] ?></option>
 	            <?php endforeach ?>
 	        </select>
 	    </span>
@@ -80,7 +80,7 @@
 	    <span id='type_span' class='hide'>
 	        <select name='types[]' multiple>
 	            <?php foreach( $this->DB_type as $type ) : ?>
-	            	<option value='<?php echo $type["ID_TYPE"] ?>' <?php if(isset($_GET["types"]) && in_array($type["ID_TYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_TYPE"] ?></option>
+	            	<option value='<?php echo $type["ID_TYPE"] ?>' <?php if(array_key_exists('types', $_GET) && in_array($type["ID_TYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_TYPE"] ?></option>
 	            <?php endforeach ?>
 	        </select>
 	  </span>
