@@ -32,14 +32,14 @@ class SearchController extends Zend_Controller_Action
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
-                $label = array_key_exists('label', $parameters) && (string) $parameters['label'][0] != '#'? $parameters['label'] : null;
-                $identifiant = array_key_exists('label', $parameters) && (string) $parameters['label'][0] == '#'? substr($parameters['label'], 1) : null;
+                $label = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] != '#' ? $parameters['label'] : null;
+                $identifiant = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] == '#'? substr($parameters['label'], 1) : null;
                 $genres = array_key_exists('genres', $parameters) ? $parameters['genres'] : null;
                 $categories = array_key_exists('categories', $parameters) ? $parameters['categories'] : null;
                 $classes = array_key_exists('classes', $parameters) ? $parameters['classes'] : null;
                 $familles = array_key_exists('familles', $parameters) ? $parameters['familles'] : null;
                 $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
-                $avis_favorable = array_key_exists('avis_favorable', $parameters) ? $parameters['avis_favorable'] : null;
+                $avis_favorable = array_key_exists('avis', $parameters) && count($parameters['avis']) == 1 ? $parameters['avis'][0] == 'true' : null;
                 $statuts = array_key_exists('statuts', $parameters) ? $parameters['statuts'] : null;
                 $local_sommeil = array_key_exists('presences_local_sommeil', $parameters) && count($parameters['presences_local_sommeil']) == 1 ? $parameters['presences_local_sommeil'][0] == 'true' : null;
                 $city = array_key_exists('city', $parameters) && $parameters['city'] != '' ? $parameters['city'] : null;

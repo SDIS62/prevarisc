@@ -98,7 +98,7 @@ class Service_Search
 
             // Critères : avis favorable
             if($avis_favorable !== null) {
-               $this->setCriteria($select, "avis.ID_AVIS", $avis_favorable);
+               $this->setCriteria($select, "avis.ID_AVIS", $avis_favorable ? 1 : 2);
             }
 
             // Critères : statuts
