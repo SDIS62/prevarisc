@@ -2,83 +2,40 @@
 
 class IndexController extends Zend_Controller_Action
 {
-    /**
-     * Page d'accueil
-     *
-     */
     public function indexAction()
     {
-        // Définition du layout
         $this->_helper->layout->setLayout('menu_left');
 
-        // Modèles
-        $DB_messages = new Model_DbTable_News;
-        $DB_groupe = new Model_DbTable_Groupe;
+        $service_feed = new Service_Feed;
+        $service_user = new Service_User;
 
-        // Récupération du fil d'actualité pour l'utilisateur
-        $this->view->flux = $DB_messages->getNews(Zend_Auth::getInstance()->getIdentity()->ID_GROUPE);
-
-        // Récupération de l'ensemble des groupes
-        $this->view->groupes = $DB_groupe->fetchAll()->toArray();
+        $this->view->flux = $service_feed->get(Zend_Auth::getInstance()->getIdentity()->ID_GROUPE);
+        $this->view->groupes = $service_user->getAllGroupes();
     }
 
-    /**
-     * Ajouter un message dans le feed
-     *
-     */
     public function addMessageAction()
     {
         try {
-            // Modèle
-            $model = new Model_DbTable_News;
-
-            // On ajoute la news dans la db
-            $model->add($this->_request->getParam('type'), $this->_request->getParam('text'), $this->_request->getParam('conf') );
-
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Le message a bien été ajouté',
-                'message' => ''
-            ));
+            $service_feed = new Service_Feed;
+            $service_feed->addMessage($this->_request->getParam('type'), $this->_request->getParam('text'), $this->_request->getParam('conf') );
+            $this->_helper->flashMessenger(array('context' => 'success','title' => 'Message ajouté !','message' => 'Le message a bien été ajouté.'));
         } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de l\'ajout du message',
-                'message' => $e->getMessage()
-            ));
+            $this->_helper->flashMessenger(array('context' => 'error','title' => 'Erreur !','message' => 'Erreur lors de l\'ajout du message : ' . $e->getMessage()));
         }
 
-        // Redirection
         $this->_helper->redirector('index');
     }
 
-    /**
-     * Supprimer un message du feed
-     *
-     */
     public function deleteMessageAction()
     {
         try {
-            // Modèle
-            $model = new Model_DbTable_News;
-
-            // On supprime la news dans la db
-            $news = $model->deleteNews($this->_request->getParam('id'));
-
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Le message a bien été supprimé',
-                'message' => ''
-            ));
+            $service_feed = new Service_Feed;
+            $service_feed->deleteMessage($this->_request->getParam('id'));
+            $this->_helper->flashMessenger(array('context' => 'success','title' => 'Message supprimé !','message' => 'Le message a bien été supprimé.'));
         } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de la suppression du message',
-                'message' => $e->getMessage()
-            ));
+            $this->_helper->flashMessenger(array('context' => 'error','title' => 'Erreur !','message' => 'Erreur lors de la suppression du message : ' . $e->getMessage()));
         }
 
-        // Redirection
         $this->_helper->redirector('index');
     }
 }
