@@ -1,37 +1,42 @@
-<!-- Formulaire -->
-<form id='recherche' method='get' action='' >
-	
-	<!-- Nom -->
-	<input type='text' id='nom' name='NOM_PRENOM' class='bigger' style="width: 100%; padding: 8px; font-size: 1.5em;" />
-    
-    <div id="plus_critere_div">
-	
-        <div class="well text-center">
-            <!-- Fonction -->
-            <select id='fonction' name='ID_FONCTION[]' multiple='multiple'>
-                <?php foreach( $this->DB_fonction as $fonction ) : ?>
-                <option value='<?php echo $fonction["ID_FONCTION"] ?>'><?php echo $fonction["LIBELLE_FONCTION"] ?></option>
-                <?php endforeach ?>
-            </select>
-        </div>
-        
-    </div>
-    
-    <input type="hidden" name="format" value="json" />
-    <input type="hidden" name="item" value="utilisateur" />
-	
+<form method='get'>
+
+	<div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
+		<div class="input-append">
+			<input type="text" name='name' class="span6 search-query" placeholder="Nom de l'utilisateur ..." value='<?php if(isset($_GET["name"])) echo $_GET["name"] ?>' />
+			<input type='submit' class="btn" value="Rechercher dans Prevarisc" disabled />
+			<input type='hidden' name='page' value="1" />
+		</div>
+	</div>
+
+	<select name='fonctions[]' multiple>
+		<?php foreach( $this->DB_fonction as $fonction ) : ?>
+        <option value='<?php echo $fonction["ID_FONCTION"] ?>' <?php if(isset($_GET["fonctions"]) && in_array($fonction["ID_FONCTION"], (array) $_GET["fonctions"])) echo 'selected' ?>><?php echo $fonction["LIBELLE_FONCTION"] ?></option>
+        <?php endforeach ?>
+	</select>
+
 </form>
 
-<script type="text/javascript">
+<hr/>
 
-	$("#nom").toggleText("Nom de l'utilisateur");
-	
-	$("#fonction").multiselect({
-		header: false,
-		noneSelectedText: "Fonction de l'utilisateur",
-		selectedList: 1,
-		height: "auto",
-		minWidth: 175
+<?php if( count($this->results) > 0 ) : ?>
+    <p class='muted'><small>Nombre total d'éléments : <?php echo $this->results->getTotalItemCount() ?></small></p>
+    <?php echo $this->partialLoop('user/user_medium.phtml', $this->results ) ?>
+    <br/>
+    <div style='clear: both'></div>
+    <?php echo $this->results ?>
+<?php else : ?>
+	<p class='muted'><small>Aucun résultat disponible.</small></p>
+    <h2 style='color: silver; text-align: center;' ></h2>
+<?php endif ?>
+
+<script>
+    $(document).ready(function() {
+
+    	// Si le champ de recherche est vide, on empêche l'envoi d'une recherche
+    	$("input[name='name']").focus().keyup(function() {$('input[type="submit"]').attr('disabled', $(this).val() == '')}).keyup();
+
+    	// Gestion des multiselects
+		$("select[name='fonctions[]']").multiselect({header: false, noneSelectedText: "Toutes les fonctions"});
+
 	});
-	
 </script>

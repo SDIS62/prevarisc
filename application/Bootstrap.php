@@ -34,6 +34,20 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             'cache_id_prefix' => 'prevarisc'
         )); 
     }
+
+    /**
+     * Initialisation du cache APC spécial recherches
+     */
+    protected function _initCacheSearch()
+    {
+        // Import des paramètres de connexion à la base de données
+        $config_cache = $this->getOption('cache');
+            
+        return Zend_Cache::factory('Core', 'APC', array(
+            'lifetime' => $config_cache['lifetime'],
+            'cache_id_prefix' => 'prevarisc_search'
+        )); 
+    }
     
     /**
      * Initialisation de l'auto-loader
