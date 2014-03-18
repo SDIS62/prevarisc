@@ -110,7 +110,7 @@
                 </dd>
             </dl>
 
-            <h4 class='champ_types champs h4_subtitle'>Activités <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_types_activites_secondaires').clone().appendTo( $('#activite_ul') ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a></h4>
+            <h4 class='champ_types champs h4_subtitle'>Activités <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_types_activites_secondaires').clone().appendTo( $('#activite_ul') ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a></h4>
             <dl class='dl-horizontal champ_types champs'>
                 <!-- Type et activités -->
                 <dt>Types & activités</dt>
@@ -165,7 +165,7 @@
             </dl>
             
             <!-- Rubriques -->
-            <h4 class='champs_icpe champs rubrique h4_subtitle'>Rubriques ICPE <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_rubriques').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter une rubrique</a></h4>
+            <h4 class='champs_icpe champs rubrique h4_subtitle'>Rubriques ICPE <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_rubriques').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter une rubrique</a></h4>
             <table class='table table-condensed champs_icpe champs rubrique'>
                 <thead>
                     <tr>
@@ -217,7 +217,7 @@
             </dl>
             
             <!-- Plan -->
-            <h4 class="champ_plans champs h4_subtitle">Plans d'intervention <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter un plan</a></h4>
+            <h4 class="champ_plans champs h4_subtitle">Plans d'intervention <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now()(); $('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter un plan</a></h4>
             <table class='table table-condensed champ_plans champs'>
                 <thead>
                     <tr>
@@ -502,7 +502,7 @@
 
         // Ajout d'une adresse
         $("form.adresse input[type='submit']").live('click', function() {
-            time = Date.now;
+            time = Date.now();
             node = $('#prototype_adresse').clone().prependTo( $('table.champ_adresse') ).removeClass('hide prototypes').addClass('adresse').attr('id', '');
             node.find('input[name="ADRESSES[-1][LON_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lon"]').val());
             node.find('input[name="ADRESSES[-1][LAT_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lat"]').val());
