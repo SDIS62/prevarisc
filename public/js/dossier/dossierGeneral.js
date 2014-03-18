@@ -13,10 +13,8 @@ $(document).ready(function(){
 	$('.time').live('focus', function() {
 		$(this).timeEntry($.timeEntry.regional['fr']);
 	});
-	
 			
 	$("#DATEINSERT_INPUT").mask("99/99/9999",{placeholder:" "});
-	
 
 	$("#addNumDoc").live('click',function(){
 		if($("#NUM_DOCURBA").val() != ''){
@@ -36,25 +34,15 @@ $(document).ready(function(){
 		if($("#OBJET_DOSSIER").val() != ''){
 			$("#OBJET_DOSSIER").css("border-color","black");
 		}
-	});
-	
+	});	
 	
 	//Permet de vider un input d'une date pour que celle-ci ne s'affiche plus
 	$(".suppDate").live('click',function(){
 		$(this).prev('.date').attr('value','');			
 		return false;
 	});
-	
-	
-	
 
 	$(".hideCalendar").live('click',function(){
-	/*
-		$("#calendar").hide();
-		$("#calendar").parent().hide();
-		$(this).hide();
-		$(".showCalendar").show();	
-	*/
 		return false;
 	});
 
@@ -64,8 +52,6 @@ $(document).ready(function(){
 		var genre = $('#genreInfo').val();
 		var typeDossier = $("#TYPE_DOSSIER").val();
 		var natureDossier = $("#selectNature").val();
-		
-		//alert($(this).val()+" / "+genre+" / "+typeDossier+" / "+natureDossier);
 		
 		if($(this).val() == 2){
 			if(genre == 2 && (typeDossier == 2 || typeDossier == 3))
@@ -78,20 +64,7 @@ $(document).ready(function(){
 		}else{
 			$("#FACTDANGE").hide();
 		}
-		/*
-		if($(this).val() == 3){
-			$("#ANOMALIE").show();
-			$("#ANOMALIE_DOSSIER").val('');
-		}else{
-			$("#ANOMALIE").hide();
-			$("#ANOMALIE_DOSSIER").val('');
-		}
-		*/
 	});
-	
-	
-	
-	
 	
 	/*
 		GESTION DES PRESCRIPTIONS MOTIVANT UN AVIS DEFAVORABLE
@@ -104,26 +77,6 @@ $(document).ready(function(){
 		autoOpen: false,
 		buttons: {
 			"Valider": function() {
-				/*
-				$.ajax({
-					type: "POST",
-					data: "format=html&"+$("#formPhone").serialize(),
-					url: "/admin/savephone",
-					beforeSend: function(){
-						
-					},
-					success: function(msg){
-						dialogMAD.dialog("close");
-						
-						$("#formPhone").remove();
-						$("#adminPhone").click();
-						return false;
-					},
-					error: function(){
-						return false;
-					}
-				});
-				*/
 				dialogMAD.dialog("close");
 				return false;
 			},
@@ -141,12 +94,6 @@ $(document).ready(function(){
 		if($(this).attr('checked')){
 			//aficher une boite dialogue en disant que ça changera l'avis du dossier en défavo
 			//puis faire apparaitre croix de suppression ou alors avec la modif ?
-			/*
-			$(".motiveAvisDef").each(function(){
-				$(this).attr('disabled','disabled');
-			});
-			$(this).attr('disabled','');
-			*/
 			var numPresc = $(this).val();
 			
 			$.ajax({
@@ -159,11 +106,7 @@ $(document).ready(function(){
 			});
 			
 		}else{
-			/*
-			$(".motiveAvisDef").each(function(){
-				$(this).attr('disabled','');
-			});
-			*/
+
 		}
 	});
 	

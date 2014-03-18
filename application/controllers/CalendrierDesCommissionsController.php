@@ -225,15 +225,15 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         }
 
         foreach ($listeDossiersAffect as $dossierAffect) {
-            $affichage = "Etab. : ".$dossierAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierAffect['LIBELLE_COMMUNE'].")";
+            $affichage = $dossierAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierAffect['LIBELLE_COMMUNE'].")";
             if ($dossierAffect['LIBELLE_DOSSIERNATURE'] != "") {
-                $affichage .= " || Nature : ".$dossierAffect['LIBELLE_DOSSIERNATURE'];
+                $affichage .= " | ".$dossierAffect['LIBELLE_DOSSIERNATURE'];
             }
             if ($dossierAffect['OBJET_DOSSIER'] != "") {
-                $affichage .= " || Objet : ".$dossierAffect['OBJET_DOSSIER'];
+                $affichage .= " | Objet : ".$dossierAffect['OBJET_DOSSIER'];
             }
             if (isset($dossierAffect['NUM_DOCURBA'])) {
-                $affichage .= " || Num. doc. urba. : ".$dossierAffect['NUM_DOCURBA'];
+                $affichage .= " | Num. doc. urba. : ".$dossierAffect['NUM_DOCURBA'];
             }
 
             $items[] = array(

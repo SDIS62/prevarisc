@@ -689,18 +689,7 @@ try{
 } catch (OdfException $e) {
 
 }
-/*
-try{
-	$valExtinctionP = $this->infoPere['EXTINCTIONAUTO_ETABLISSEMENTINFORMATIONS'];
-	if($valExtinctionP == null || $valExtinctionP == 0)
-		$valExtinctionP = "non";
-	else
-		$valExtinctionP = "oui";
-	$odf->setVars('extinctionAutoP',verifInfos($valExtinctionP),true,'UTF8');
-} catch (OdfException $e){
 
-}
-*/
 //INFORMATION DU GN
 if($this->GN == 2){
 	try{
@@ -735,8 +724,4 @@ try{
 
 }
 
-//$content_dir = REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
-
-//echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
-//echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idRapportPj.'/';
 ?>

@@ -49,30 +49,30 @@ class DossierController extends Zend_Controller_Action
         "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION"),
     //VISITE DE COMMISSION
         //Réception de travaux - OK
-        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","NPSP","ABSQUORUM","AVIS_COMMISSION"),
         //Avant ouverture - OK
-        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","NPSP","ABSQUORUM","AVIS_COMMISSION"),
         //Périodique - OK
-        "21" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "21" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","PREVENTIONNISTE","DIFFEREAVIS","NPSP","ABSQUORUM","AVIS_COMMISSION"),
         //Chantier - OK
         "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
-        "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","ABSQUORUM","AVIS_COMMISSION"),
         //Inopinéee - OK
-        "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","PREVENTIONNISTE","DIFFEREAVIS","NPSP","ABSQUORUM","AVIS_COMMISSION"),
     //GROUPE DE VISITE
         //Réception de travaux - OK
-        "25" => array("type","DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "25" => array("type","DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","NPSP","ABSQUORUM","AVIS_COMMISSION"),
         //Avant ouverture - OK
-        "48" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "48" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","NPSP","ABSQUORUM","AVIS_COMMISSION"),
         //Périodique - OK
-        "26" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "26" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","ABSQUORUM","AVIS_COMMISSION"),
         //Chantier - OK
         "27" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
-        "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "28" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","NPSP","ABSQUORUM","AVIS_COMMISSION"),
         //Inopinéee - OK
-        "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","NPEA","APPALV","AVIS_COMMISSION"),
+        "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","ABSQUORUM","AVIS_COMMISSION"),
     //REUNION
         //Visite ou sur site - OK"DATEVISITE",
         //"30" => array("DATEINSERT","OBJET","PREVENTIONNISTE","DEMANDEUR"),
@@ -269,6 +269,27 @@ class DossierController extends Zend_Controller_Action
             $DBdossier = new Model_DbTable_Dossier;
             $this->view->infosDossier = $DBdossier->find($idDossier)->current();
 
+			//On verifie les éléments masquant l'avis et la date de commission/visite pour les afficher ou non
+			//document manquant - absence de quorum - hors delai - ne peut se prononcer - differe l'avis
+			//Zend_Debug::dump($this->view->infosDossier);
+			$absQuorum = $this->view->infosDossier['ABSQUORUM'];
+			$horsDelai = $this->view->infosDossier['HORSDELAI_DOSSIER'];
+			$npsp = $this->view->infosDossier['NPSP_DOSSIER'];
+			$differeAvis = $this->view->infosDossier['DIFFEREAVIS_DOSSIER'];
+
+			//echo "absQuorum : ".$absQuorum." - horsDelai : ".$horsDelai." - npsp : ".$npsp." - differeAvis : ".$differeAvis;
+			$afficheAvis = true;
+			if(!isset($absQuorum) || $absQuorum == 0){
+				$afficheAvis = false;
+			}else if(!isset($horsDelai) || $horsDelai == 0){
+				$afficheAvis = false;
+			}else if(!isset($npsp) || $npsp == 0){
+				$afficheAvis = false;
+			}else if(!isset($differeAvis) || $differeAvis == 0){
+				$afficheAvis = false;
+			}
+			$this->view->afficheAvis = $afficheAvis;
+			
             //récuperation des informations sur le créateur du dossier
             $DB_user = new Model_DbTable_Utilisateur;
             $DB_informations = new Model_DbTable_UtilisateurInformations;
@@ -306,89 +327,89 @@ class DossierController extends Zend_Controller_Action
                 $this->view->DATEENVTRANSIT_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
             }
 
-                //Conversion de la date de réception SDIS
-                if ($this->view->infosDossier['DATESDIS_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATESDIS_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATESDIS_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-                //Conversion de la date prefecture
-                if ($this->view->infosDossier['DATEPREF_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATEPREF_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATEPREF_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATEPREF_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
+			//Conversion de la date de réception SDIS
+			if ($this->view->infosDossier['DATESDIS_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATESDIS_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATESDIS_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			//Conversion de la date prefecture
+			if ($this->view->infosDossier['DATEPREF_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATEPREF_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATEPREF_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATEPREF_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
 
-                //Conversion de la date de visite
-                if ($this->view->infosDossier['DATEVISITE_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATEVISITE_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATEVISITE_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATEVISITE_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-                //Conversion de la date commission
-                if ($this->view->infosDossier['DATECOMM_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATECOMM_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATECOMM_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATECOMM_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
+			//Conversion de la date de visite
+			if ($this->view->infosDossier['DATEVISITE_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATEVISITE_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATEVISITE_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATEVISITE_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			//Conversion de la date commission
+			if ($this->view->infosDossier['DATECOMM_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATECOMM_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATECOMM_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATECOMM_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
 
-                //Conversion de la date de réponse
-                if ($this->view->infosDossier['DATEREP_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATEREP_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATEREP_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATEREP_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-                //Conversion de la date de réunion
-                if ($this->view->infosDossier['DATEREUN_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATEREUN_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATEREUN_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATEREUN_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-                //Conversion de la date et l'heure d'intervention
-                if ($this->view->infosDossier['DATEINTERV_DOSSIER'] != '') {
-                    //echo $this->view->infosDossier['DATEINTERV_DOSSIER'];
-                    $dateHeure = explode(" ",$this->view->infosDossier['DATEINTERV_DOSSIER']);
-                    $date = new Zend_Date($dateHeure[0], Zend_Date::DATES);
-                    $this->view->infosDossier['DATEINTERV_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATEINTERV_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                    $heure = explode(":",$dateHeure[1]);
-                    $this->view->HEUREINTERV_INPUT = $heure[0].":".$heure[1];
-                }
-                //Conversion de la date signature
-                if ($this->view->infosDossier['DATESIGN_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATESIGN_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATESIGN_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATESIGN_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
+			//Conversion de la date de réponse
+			if ($this->view->infosDossier['DATEREP_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATEREP_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATEREP_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATEREP_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			//Conversion de la date de réunion
+			if ($this->view->infosDossier['DATEREUN_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATEREUN_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATEREUN_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATEREUN_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			//Conversion de la date et l'heure d'intervention
+			if ($this->view->infosDossier['DATEINTERV_DOSSIER'] != '') {
+				//echo $this->view->infosDossier['DATEINTERV_DOSSIER'];
+				$dateHeure = explode(" ",$this->view->infosDossier['DATEINTERV_DOSSIER']);
+				$date = new Zend_Date($dateHeure[0], Zend_Date::DATES);
+				$this->view->infosDossier['DATEINTERV_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATEINTERV_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				$heure = explode(":",$dateHeure[1]);
+				$this->view->HEUREINTERV_INPUT = $heure[0].":".$heure[1];
+			}
+			//Conversion de la date signature
+			if ($this->view->infosDossier['DATESIGN_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATESIGN_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATESIGN_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATESIGN_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
 
-                //Conversion date incomplet
-                if ($this->view->infosDossier['DATEINCOMPLET_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
-                    $this->view->infosDossier['DATEINCOMPLET_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-                    $this->view->DATEINCOMPLET = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
+			//Conversion date incomplet
+			if ($this->view->infosDossier['DATEINCOMPLET_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATEINCOMPLET_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATEINCOMPLET = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
 
-                //Conversion de la durée de l'intervention
-                if ($this->view->infosDossier['DUREEINTERV_DOSSIER'] != '') {
-                    $heure = explode(":",$this->view->infosDossier['DUREEINTERV_DOSSIER']);
-                    $this->view->infosDossier['DUREEINTERV_DOSSIER'] = $heure[0].":".$heure[1];
-                }
+			//Conversion de la durée de l'intervention
+			if ($this->view->infosDossier['DUREEINTERV_DOSSIER'] != '') {
+				$heure = explode(":",$this->view->infosDossier['DUREEINTERV_DOSSIER']);
+				$this->view->infosDossier['DUREEINTERV_DOSSIER'] = $heure[0].":".$heure[1];
+			}
 
-                if ($this->view->infosDossier["DESCGEN_DOSSIER"] != '') {
-                    $this->view->infosDossier["DESCGEN_DOSSIER"] = nl2br($this->view->infosDossier["DESCGEN_DOSSIER"]);
-                    $this->view->DESCGEN_INPUT = str_replace("<br />", "" ,$this->view->infosDossier["DESCGEN_DOSSIER"]);
-                }
-                if ($this->view->infosDossier["DESCRIPTIF_DOSSIER"] != '') {
-                    $this->view->infosDossier["DESCRIPTIF_DOSSIER"] = nl2br($this->view->infosDossier["DESCRIPTIF_DOSSIER"]);
-                    $this->view->DESCRIPTIF_INPUT = str_replace("<br />", "" ,$this->view->infosDossier["DESCRIPTIF_DOSSIER"]);
-                }
-                if ($this->view->infosDossier["AVIS_DOSSIER"] != '') {
-                    $this->view->AVIS_VALUE = $DBlisteAvis->getAvisLibelle($this->view->infosDossier["AVIS_DOSSIER"]);
-                }
+			if ($this->view->infosDossier["DESCGEN_DOSSIER"] != '') {
+				$this->view->infosDossier["DESCGEN_DOSSIER"] = nl2br($this->view->infosDossier["DESCGEN_DOSSIER"]);
+				$this->view->DESCGEN_INPUT = str_replace("<br />", "" ,$this->view->infosDossier["DESCGEN_DOSSIER"]);
+			}
+			if ($this->view->infosDossier["DESCRIPTIF_DOSSIER"] != '') {
+				$this->view->infosDossier["DESCRIPTIF_DOSSIER"] = nl2br($this->view->infosDossier["DESCRIPTIF_DOSSIER"]);
+				$this->view->DESCRIPTIF_INPUT = str_replace("<br />", "" ,$this->view->infosDossier["DESCRIPTIF_DOSSIER"]);
+			}
+			if ($this->view->infosDossier["AVIS_DOSSIER"] != '') {
+				$this->view->AVIS_VALUE = $DBlisteAvis->getAvisLibelle($this->view->infosDossier["AVIS_DOSSIER"]);
+			}
 
-                if ($this->view->infosDossier["AVIS_DOSSIER_COMMISSION"] != '') {
-                    $this->view->AVIS_COMMISSION_VALUE = $DBlisteAvis->getAvisLibelle($this->view->infosDossier["AVIS_DOSSIER_COMMISSION"]);
-                }
+			if ($this->view->infosDossier["AVIS_DOSSIER_COMMISSION"] != '') {
+				$this->view->AVIS_COMMISSION_VALUE = $DBlisteAvis->getAvisLibelle($this->view->infosDossier["AVIS_DOSSIER_COMMISSION"]);
+			}
 
             //Récupération du libellé du type de dossier
             $libelleType = $DBdossierType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
@@ -430,6 +451,9 @@ class DossierController extends Zend_Controller_Action
                 }
             }
             $this->view->afficherChamps = $afficherChamps;
+
+			//On verifie les éléments masquant l'avis et la date de commission/visite pour les afficher ou non
+
 
         /*
         GESTION DES DATES DE COMMISSIONS ET DE VISITE / GROUPE DE VISITE
@@ -544,6 +568,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->serviceInstructeurLibelle = $groupement["LIBELLE_GROUPEMENT"];
             $this->view->serviceInstructeurId = $groupement["ID_GROUPEMENT"];
         }
+		
     }
 
     public function fonctionAction()
@@ -900,22 +925,10 @@ class DossierController extends Zend_Controller_Action
                 $nouveauDossier->NPSP_DOSSIER = 1;
             }
 
-            if (!$this->_getParam('NPEA_DOSSIER')) {
-                $nouveauDossier->NPEA_DOSSIER = 0;
-            } else {
-                $nouveauDossier->NPEA_DOSSIER = 1;
-            }
-
             if (!$this->_getParam('DIFFEREAVIS_DOSSIER')) {
                 $nouveauDossier->DIFFEREAVIS_DOSSIER = 0;
             } else {
                 $nouveauDossier->DIFFEREAVIS_DOSSIER = 1;
-            }
-
-            if (!$this->_getParam('APPALV_DOSSIER')) {
-                $nouveauDossier->APPALV_DOSSIER = 0;
-            } else {
-                $nouveauDossier->APPALV_DOSSIER = 1;
             }
 
             if (!$this->_getParam('CNE_DOSSIER')) {
@@ -1944,26 +1957,26 @@ class DossierController extends Zend_Controller_Action
 			$dbDossier = new Model_DbTable_Dossier;
 			$dbDocUrba = new Model_DbTable_DossierDocUrba;
 			$service_etablissement = new Service_Etablissement;
+			//Zend_Debug::dump($listeDossiers);
 			foreach($listeDossiers as $val => $ue)
 			{
 				//On recupere la liste des établissements qui concernent le dossier
 				$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
-				
+				//$listeEtab[0]['ID_ETABLISSEMENT'];
 				//on recupere la liste des infos des établissement
 				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
 				$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
 				
-				
 				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
 				//Zend_Debug::dump($etablissement);
-			}
-			//Zend_Debug::dump($listeDossiers);
-
+			}			
+			//Zend_Debug::dump($listeDossiers);			
             $this->view->listeCommunes = $tabCommune;
-			//Zend_Debug::dump($tabCommune);
-            $this->view->dossierComm = $listeDossiers;
 			//Zend_Debug::dump($this->view->listeCommunes);
+            $this->view->dossierComm = $listeDossiers;
+			//Zend_Debug::dump($tabCommune);
+			
 
             //récuperation du nom de la commission
             $this->view->nomComm = $listeDossiers[0]["LIBELLE_DATECOMMISSION"];
@@ -2037,20 +2050,15 @@ class DossierController extends Zend_Controller_Action
 			
 			foreach($listeDossiers as $val => $ue)
 			{
-
 				//On recupere la liste des établissements qui concernent le dossier
 				$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
 				
-			
 				//on recupere la liste des infos des établissement
 				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
 				$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
 				
-				
 				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
-				//Zend_Debug::dump($etablissement);
-
 			}
 			//Zend_Debug::dump($listeDossiers);
             $this->view->listeCommunes = $tabCommune;
@@ -2078,26 +2086,17 @@ class DossierController extends Zend_Controller_Action
 			//Suivant si l'on prend en compte les heures ou non on choisi la requete à effectuer
             $dbDateComm = new Model_DbTable_DateCommission;
             $commSelect = $dbDateComm->find($dateCommId)->current();
-			//Zend_Debug::dump($commSelect);
-			
-			$dbDateComm = new Model_DbTable_DateCommission;
             $commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();
-            //1 = salle . 2 = visite . 3 = groupe de visite
-			//Zend_Debug::dump($commissionInfo);
 			
+            //1 = salle . 2 = visite . 3 = groupe de visite
 			//on recupere le type de commission (salle / visite / groupe de visite)
-			$dbDateComm = new Model_DbTable_DateCommission;
             $commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();		
 
 			//On récupère le nom de la commission
             $model_commission = new Model_DbTable_Commission;
-            $this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();			
-			//Zend_Debug::dump($this->view->commissionInfos);
-			
+            $this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();
 			$model_membres = new Model_DbTable_CommissionMembre;
 			$this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $commissionInfo['COMMISSION_CONCERNE']);
-			//Zend_Debug::dump($this->view->membresFiles);
-			
 			$dbDateCommPj = new Model_DbTable_DateCommissionPj;
 			
 			//afin de récuperer les informations des communes (adresse des mairies etc)
@@ -2119,10 +2118,8 @@ class DossierController extends Zend_Controller_Action
                     $numCommune++;
                 }
             }
-						
-
             $listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
-			
+
 			$dbDossier = new Model_DbTable_Dossier;
 			$dbDocUrba = new Model_DbTable_DossierDocUrba;
 			$service_etablissement = new Service_Etablissement;
@@ -2136,27 +2133,10 @@ class DossierController extends Zend_Controller_Action
 				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
 				$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
 				
-				
 				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
-				/*
-				$exploitantInfos = $dbDossierContact->recupInfoContact($ue['ID_DOSSIER'],7);
-				//Zend_Debug::dump($exploitantInfos);
-				if(count($exploitantInfos) == 1)
-					$listeDossiers[$val]['exploitantInfos']  = $exploitantInfos[0];
-				*/
-				//Zend_Debug::dump($etablissement);
 			}
-			//Zend_Debug::dump($listeDossiers);
-			
-			//$this->view->listeCommunes = $tabCommune;
 			$this->view->dossierComm = $listeDossiers;
-			/*
-			//récuperation du nom de la commission
-            $this->view->nomComm = $listeDossiers[0]["LIBELLE_DATECOMMISSION"];
-            $this->view->dateComm = $listeDossiers[0]["DATE_COMMISSION"];
-            $this->view->heureDeb = $listeDossiers[0]["HEUREDEB_COMMISSION"];
-			*/
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le document a bien été généré',
@@ -2170,7 +2150,6 @@ class DossierController extends Zend_Controller_Action
             ));
         }
     }
-
 
     public function descriptifAction()
     {

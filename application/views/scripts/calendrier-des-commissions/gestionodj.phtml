@@ -424,12 +424,12 @@ $(document).ready(function() {
 						echo "
 							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
-									Etab. : ".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
+									".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
 									<br/>
 						";
 						if($dossierNonAffect['LIBELLE_DOSSIERNATURE'] != "")
 						{
-							echo "Nature : ".$dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
+							echo $dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
 						}
 						if($dossierNonAffect['OBJET_DOSSIER'] != "")
 						{
@@ -466,12 +466,12 @@ $(document).ready(function() {
 					<li num='".$dossierNonAffect['NUM_DOSSIER']."'  >
 						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
-								Etablissement : ".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
+								".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
 								<br/>
 				";
 				if($dossierNonAffect['LIBELLE_DOSSIERNATURE'] != "")
 				{
-					echo "Nature : ".$dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
+					echo $dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
 				}
 				if($dossierNonAffect['OBJET_DOSSIER'] != "")
 				{
