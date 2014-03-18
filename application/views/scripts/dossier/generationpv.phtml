@@ -20,10 +20,10 @@ foreach($this->membresFiles as $val => $membre){
 					$dossInfos->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
 					$dossInfos->setVars('communeDossier', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
 					$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
-					
+
 					$dateComm = new Zend_Date($this->dateComm);				
 					$dossInfos->setVars('dateCommission', $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR), true, 'UTF-8');
-					
+
 					$dossInfos ->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
 					$dossInfos->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
 					
@@ -69,7 +69,7 @@ foreach($this->membresFiles as $val => $membre){
 			$idPj = savePj($this->idComm,"Le pv a bien été généré");
 			$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");	
 			//$odf->mergeSegment($dossierLoop);
-			echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le PV a été généré avec succes</span><br/><br/><br/>";
+			echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'>Le PV a été généré avec succes</span><br/><br/><br/>";
 		}else{
 			echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 		}
