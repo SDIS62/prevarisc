@@ -15,17 +15,21 @@
     <!-- nom de l'établissement -->
     <span class="nom-etablissement">
         <a href='/etablissement/index/id/<?php echo $this->ID_ETABLISSEMENT ?>'>
-            <?php echo $this->LIBELLE_ETABLISSEMENTINFORMATIONS ?>
+            <?php echo empty($this->LIBELLE_ETABLISSEMENTINFORMATIONS) ? "<em class='muted'>Libellé non renseigné</em>" : $this->LIBELLE_ETABLISSEMENTINFORMATIONS ?>
             <small>
                 <?php
                     switch($this->ID_GENRE)
                     {
                         case 1:
-                            echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_SITE;
+                            if(!empty($this->LIBELLE_COMMUNE_ADRESSE_SITE)) {
+                               echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_SITE;
+                            }
                             break;
                             
                         case 3:
-                            echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                            if(!empty($this->LIBELLE_COMMUNE_ADRESSE_CELLULE)) {
+                               echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                            }
                             break;
                             
                         default:
