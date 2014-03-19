@@ -738,7 +738,7 @@
                     },
                     success: function (result) {
                         preventionnistes = [];
-                        $.each(result.response, function (i, preventionniste) {
+                        $.each(result.response.results, function (i, preventionniste) {
                             preventionnistes.push("<span data-id='" + preventionniste.uid + "'>" + preventionniste.NOM_UTILISATEURINFORMATIONS + " " + preventionniste.PRENOM_UTILISATEURINFORMATIONS + "</span>");
                         });
 
