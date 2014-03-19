@@ -61,21 +61,20 @@ foreach($this->informationsMembre as $val => $membre){
 				}else{
 					$communeShow = "de ".$commune[0];
 				}
-
-				if(count($commune[1]) == 1){
-					foreach($commune[1] as $comm => $info){	
-						if($info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] != "")
-							addChamp($villeODF,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
-						if($info["RUEADRESSE_UTILISATEURINFORMATIONS"] != "")
-							addChamp($villeODF,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
-							
-						if($info["CPADRESSE_UTILISATEURINFORMATIONS"] != "")
-							addChamp($villeODF,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
-							
-						if($commune[0] != "")
-							addChamp($villeODF,'communeMairie',$commune[0]);
-					}
+				
+				//echo $commune[0]."<br/>";
+				//Zend_Debug::dump($commune[0]);
+				foreach($commune[1] as $comm => $info){	
+					if($info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] != "")
+						addChamp($villeODF,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
+					if($info["RUEADRESSE_UTILISATEURINFORMATIONS"] != "")
+						addChamp($villeODF,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
+						
+					if($info["CPADRESSE_UTILISATEURINFORMATIONS"] != "")
+						addChamp($villeODF,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
 				}
+				
+				addChamp($villeODF,'communeMairie',$commune[0]);
 
 				addChamp($villeODF,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
 				
@@ -89,8 +88,10 @@ foreach($this->informationsMembre as $val => $membre){
 				//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 				//Generation du segment pour l'affichage des différentes infos du dossier
 				//Zend_Debug::dump($this->dossierComm);
+
 				foreach($this->dossierComm as $val => $dossierInfos){
 					if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
+						//echo $dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']." - ".$commune[0];
 						if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
 							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
 							//echo "<br/> !!! ".$dossierInfos["ID_DOSSIER"]."<br/>";
