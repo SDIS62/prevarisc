@@ -1935,25 +1935,7 @@ class DossierController extends Zend_Controller_Action
             //afin de récuperer les informations des communes (adresse des mairies etc)
             $model_adresseCommune = new Model_DbTable_AdresseCommune;
             $model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
-			/*			
-            $libelleCommune = "";
-            $tabCommune[] = array();
-            $numCommune = 0;
-			//Zend_Debug::dump($dbDateCommPj->getDossiersInfos($dateCommId));
 
-            foreach ($dbDateCommPj->getDossiersInfos($dateCommId) as $doss => $infos) {
-                if ($libelleCommune != $infos["LIBELLE_COMMUNE"]) {
-                    $libelleCommune = $infos["LIBELLE_COMMUNE"];
-
-                    $adresseCommune = $model_adresseCommune->find($infos["NUMINSEE_COMMUNE"])->toArray();
-
-                    $communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
-
-                    $tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
-                    $numCommune++;
-                }
-            }
-			*/
 			//Zend_Debug::dump($tabCommune);
 			//Zend_Debug::dump($listeDossiers);
 			$dbDossier = new Model_DbTable_Dossier;
@@ -1986,24 +1968,36 @@ class DossierController extends Zend_Controller_Action
             $numCommune = 0;			
 			foreach($listeDossiers as $val => $ue)
 			{
-				//echo $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']."<br/>";
-				if ($libelleCommune != $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']) {
-                    $libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+				if($numCommune == 0){
+					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					$numCommune++;
+				}
+				
+				$existe = 0;
+				foreach($tabCommune as $tabKey => $value){
+					//echo $value[0]."<br/>";
+					if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
+						$existe = 1;
+					}
+				}
+				
+				if($existe == 0){
+					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					$numCommune++;
+				}
 
-                    $adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
-
-                    $communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
-
-                    $tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
-                    $numCommune++;
-                }
 			}
 			//Zend_Debug::dump($listeDossiers);			
             $this->view->listeCommunes = $tabCommune;
 			//Zend_Debug::dump($this->view->listeCommunes);
             $this->view->dossierComm = $listeDossiers;
 			//Zend_Debug::dump($tabCommune);
-			
 
             //récuperation du nom de la commission
             $this->view->nomComm = $listeDossiers[0]["LIBELLE_DATECOMMISSION"];
@@ -2057,7 +2051,7 @@ class DossierController extends Zend_Controller_Action
             //afin de récuperer les informations des communes (adresse des mairies etc)
             $model_adresseCommune = new Model_DbTable_AdresseCommune;
             $model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
-
+/*
             $libelleCommune = "";
             $tabCommune[] = array();
             $numCommune = 0;
@@ -2070,7 +2064,7 @@ class DossierController extends Zend_Controller_Action
                     $numCommune++;
                 }
             }
-			
+*/		
 			$dbDossier = new Model_DbTable_Dossier;
 			$dbDocUrba = new Model_DbTable_DossierDocUrba;
 			$service_etablissement = new Service_Etablissement;
@@ -2086,6 +2080,37 @@ class DossierController extends Zend_Controller_Action
 				
 				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+			}
+			
+			$libelleCommune = "";
+            $tabCommune[] = array();
+            $numCommune = 0;			
+			foreach($listeDossiers as $val => $ue)
+			{
+				if($numCommune == 0){
+					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					$numCommune++;
+				}
+				
+				$existe = 0;
+				foreach($tabCommune as $tabKey => $value){
+					//echo $value[0]."<br/>";
+					if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
+						$existe = 1;
+					}
+				}
+				
+				if($existe == 0){
+					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					$numCommune++;
+				}
+
 			}
 			//Zend_Debug::dump($listeDossiers);
             $this->view->listeCommunes = $tabCommune;
@@ -2129,7 +2154,7 @@ class DossierController extends Zend_Controller_Action
 			//afin de récuperer les informations des communes (adresse des mairies etc)
             $model_adresseCommune = new Model_DbTable_AdresseCommune;
             $model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
-			
+/*	
 			$libelleCommune = "";
 			$tabCommune[] = array();
             $numCommune = 0;
@@ -2145,6 +2170,7 @@ class DossierController extends Zend_Controller_Action
                     $numCommune++;
                 }
             }
+*/
             $listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
 
 			$dbDossier = new Model_DbTable_Dossier;
