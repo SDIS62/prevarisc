@@ -289,7 +289,7 @@ class DossierController extends Zend_Controller_Action
 				$afficheAvis = false;
 			}
 			$this->view->afficheAvis = $afficheAvis;
-			
+
             //récuperation des informations sur le créateur du dossier
             $DB_user = new Model_DbTable_Utilisateur;
             $DB_informations = new Model_DbTable_UtilisateurInformations;
@@ -1935,10 +1935,12 @@ class DossierController extends Zend_Controller_Action
             //afin de récuperer les informations des communes (adresse des mairies etc)
             $model_adresseCommune = new Model_DbTable_AdresseCommune;
             $model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
-			
+			/*			
             $libelleCommune = "";
             $tabCommune[] = array();
             $numCommune = 0;
+			//Zend_Debug::dump($dbDateCommPj->getDossiersInfos($dateCommId));
+
             foreach ($dbDateCommPj->getDossiersInfos($dateCommId) as $doss => $infos) {
                 if ($libelleCommune != $infos["LIBELLE_COMMUNE"]) {
                     $libelleCommune = $infos["LIBELLE_COMMUNE"];
@@ -1951,7 +1953,7 @@ class DossierController extends Zend_Controller_Action
                     $numCommune++;
                 }
             }
-
+			*/
 			//Zend_Debug::dump($tabCommune);
 			//Zend_Debug::dump($listeDossiers);
 			$dbDossier = new Model_DbTable_Dossier;
@@ -1964,13 +1966,38 @@ class DossierController extends Zend_Controller_Action
 				$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
 				//$listeEtab[0]['ID_ETABLISSEMENT'];
 				//on recupere la liste des infos des établissement
-				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
-				$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
-				
-				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
-				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+				if(count($listeEtab) > 0)
+				{
+					$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+					$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
+					$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+					$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+					
+					//echo $ue[$val]['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']."<br/>";
+				}else{
+					unset($listeDossiers[$val]);
+				}
 				//Zend_Debug::dump($etablissement);
-			}			
+			}
+			
+			
+			$libelleCommune = "";
+            $tabCommune[] = array();
+            $numCommune = 0;			
+			foreach($listeDossiers as $val => $ue)
+			{
+				//echo $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']."<br/>";
+				if ($libelleCommune != $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']) {
+                    $libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+
+                    $adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+
+                    $communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+
+                    $tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+                    $numCommune++;
+                }
+			}
 			//Zend_Debug::dump($listeDossiers);			
             $this->view->listeCommunes = $tabCommune;
 			//Zend_Debug::dump($this->view->listeCommunes);

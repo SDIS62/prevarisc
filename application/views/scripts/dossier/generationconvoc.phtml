@@ -26,7 +26,7 @@ foreach($this->informationsMembre as $val => $membre){
 			$nomFichier = $membre['infosFiles'][0]['ID_COMMISSIONMEMBRE']."CONVOCATIONVISITE_".$membre['infosFiles'][0]['COURRIER_CONVOCATIONVISITE'];
 		}
 	}
-	
+
 	/*** VERIF AVANT TOUTE GENERATION DE ZONE ****/
 	$cptConcerne = 0;
 	foreach($this->listeCommunes as $val => $commune){
@@ -61,6 +61,7 @@ foreach($this->informationsMembre as $val => $membre){
 				}else{
 					$communeShow = "de ".$commune[0];
 				}
+
 				if(count($commune[1]) == 1){
 					foreach($commune[1] as $comm => $info){	
 						if($info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] != "")
@@ -89,7 +90,6 @@ foreach($this->informationsMembre as $val => $membre){
 				//Generation du segment pour l'affichage des différentes infos du dossier
 				//Zend_Debug::dump($this->dossierComm);
 				foreach($this->dossierComm as $val => $dossierInfos){
-					//echo $dossierInfos['DESCRIPTIF_DOSSIER']."<br/> plop";
 					if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
 						if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
 							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
@@ -106,7 +106,9 @@ foreach($this->informationsMembre as $val => $membre){
 
 								//On recherche le pere de l'établissement concerné
 								$villeODF->infosDoss->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-								$villeODF->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+								if(isset($dossierNonAffect['infosEtab']))
+									$villeODF->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+								
 								$villeODF->infosDoss->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
 								$villeODF->infosDoss->setVars('objetDossier', $dossierInfos["OBJET_DOSSIER"], true, 'UTF-8');
 

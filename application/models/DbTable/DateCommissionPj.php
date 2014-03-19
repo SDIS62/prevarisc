@@ -7,8 +7,8 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
     protected $_primary = "ID_DATECOMMISSION";// Clé primaire
 
     //récupération de la liste des dossiers prévu à la date de commission passée en paramètres
-
-    public function getDossiersInfos($dateCommId)
+/*
+    public function getDossiersInfosOLD($dateCommId)
     {
 		$select = $this->select()
 			->setIntegrityCheck(false)
@@ -28,7 +28,23 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 
         return $this->getAdapter()->fetchAll($select);
     }
+*/
+	public function getDossiersInfos($dateCommId)
+    {
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from(array('doss' => 'dossier'))
+			->join(array('dossAffect' => 'dossieraffectation'),'doss.ID_DOSSIER = dossAffect.ID_DOSSIER_AFFECT')
+			->join(array('dateComm' => 'datecommission'),'dossAffect.ID_DATECOMMISSION_AFFECT = dateComm.ID_DATECOMMISSION')	
+			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
+			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
+			->where('dateComm.ID_DATECOMMISSION = ?',$dateCommId)
+			->group('doss.ID_DOSSIER');
 
+        return $this->getAdapter()->fetchAll($select);
+    }
+	
+	
     public function getDossiersInfosByHour($dateCommId)
     {
 		//Retourne les dossiers avec toutes les informations le concernant classés par heure
