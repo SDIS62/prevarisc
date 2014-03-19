@@ -422,11 +422,17 @@ $(document).ready(function() {
 				if( count($this->listeDossierNonAffect) != 0 ){
 					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 						echo "
-							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
-								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
-									".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
-									<br/>
+							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER']."' >
 						";
+						if(isset($dossierNonAffect['infosEtab'])){
+							//si le dossier est attaché à un établissement
+							echo $dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+						}
+						if(isset($dossierNonAffect['infosEtab']['parents'])){
+							echo " - ".$dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+						}
+						echo "<br/>";
 						if($dossierNonAffect['LIBELLE_DOSSIERNATURE'] != "")
 						{
 							echo $dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
@@ -435,10 +441,14 @@ $(document).ready(function() {
 						{
 							echo "Objet : ".$dossierNonAffect['OBJET_DOSSIER']."<br/>";
 						}
-						if(isset($dossierNonAffect['NUM_DOCURBA']))
+						if(isset($dossierNonAffect['listeDocUrba']))
 						{
-							echo "Numéro document d'urbanisme : ".$dossierNonAffect['NUM_DOCURBA'];
+							echo "Numéro document d'urbanisme : ";
+							foreach($dossierNonAffect['listeDocUrba'] as $val => $ue){
+								echo $ue['NUM_DOCURBA']." . ";
+							}
 						}
+						
 						echo "
 								</a>
 							</div>
