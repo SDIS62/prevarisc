@@ -106,7 +106,8 @@ foreach($this->informationsMembre as $val => $membre){
 
 								//On recherche le pere de l'établissement concerné
 								$villeODF->infosDoss->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-								if(isset($dossierNonAffect['infosEtab']))
+								
+								if(isset($dossierInfos['infosEtab']))
 									$villeODF->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
 								
 								$villeODF->infosDoss->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
