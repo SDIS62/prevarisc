@@ -264,11 +264,13 @@ class Service_Search
      *
      * @param string|array $fonctions
      * @param string $name
+     * @param int|array $groups
+     * @param bool $actif Optionnel
      * @param int $count Par défaut 10, max 100
      * @param int $page par défaut = 1
      * @return array
      */
-    public function users($fonctions = null, $name = null, $count = 10, $page = 1)
+    public function users($fonctions = null, $name = null, $groups = null, $actif = true, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
@@ -282,14 +284,23 @@ class Service_Search
             $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
 
             // Requête principale
-            $select->from(array("u" => "utilisateur"), array("uid" => "ID_UTILISATEUR"))
+            $select->from(array("u" => "utilisateur"), array("uid" => "ID_UTILISATEUR", "*"))
                 ->join("utilisateurinformations", "u.ID_UTILISATEURINFORMATIONS = utilisateurinformations.ID_UTILISATEURINFORMATIONS")
                 ->join("fonction", "utilisateurinformations.ID_FONCTION = fonction.ID_FONCTION", "LIBELLE_FONCTION")
                 ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_UTILISATEUR = u.ID_UTILISATEUR")
                 ->joinLeft("etablissementinformations", "etablissementinformations.ID_ETABLISSEMENTINFORMATIONS = etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS")
                 ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(infos.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations as infos WHERE etablissementinformations.ID_ETABLISSEMENT = infos.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL")
-                ->where("u.ACTIF_UTILISATEUR = 1")
                 ->group("u.ID_UTILISATEUR");
+
+            // Critères : activité
+            if($actif === true) {
+                $this->setCriteria($select, "u.ACTIF_UTILISATEUR", 1);
+            }
+
+            // Critères : groupe
+            if($groups !== null) {
+               $this->setCriteria($select, "ID_GROUPE", $groups);
+            }
 
             // Critères : nom
             if($name !== null) {

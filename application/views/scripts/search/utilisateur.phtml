@@ -20,7 +20,7 @@
 
 <?php if( count($this->results) > 0 ) : ?>
     <p class='muted'><small>Nombre total d'éléments : <?php echo $this->results->getTotalItemCount() ?></small></p>
-    <?php echo $this->partialLoop('user/user_medium.phtml', $this->results ) ?>
+    <?php echo $this->partialLoop('users/embedded/user_medium.phtml', $this->results ) ?>
     <br/>
     <div style='clear: both'></div>
     <?php echo $this->results ?>

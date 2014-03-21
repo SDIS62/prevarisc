@@ -50,14 +50,16 @@ class Api_Service_Search
      *
      * @param string|array $fonctions
      * @param string $name
+     * @param int|array $groups
+     * @param bool $actif Optionnel
      * @param int $count Par défaut 10, max 100
      * @param int $page par défaut = 1
      * @return array
      */
-    public function users($fonctions = null, $name = null, $count = 10, $page = 1)
+    public function users($fonctions = null, $name = null, $groups = null, $actif = true, $count = 10, $page = 1)
     {
         $service_search = new Service_Search;
-        $results = $service_search->users($fonctions, $name, $count, $page);
+        $results = $service_search->users($fonctions, $name, $groups, $actif, $count, $page);
         return $results;
     }
 }

@@ -213,6 +213,8 @@
 				<ul>
 					<li>name : Nom approximatif de l'utilisateur.</li>
 					<li>fonctions : Ids des fonctions des utilisateurs à rechercher.</li>
+					<li>groups : Ids des groupes d'utilisateurs à rechercher.</li>
+					<li>actif : Inclure uniquement les utilisateurs actifs.</li>
 					<li>count : Nombre maximum d'établissements dans le résultat. Défaut : 10, Maximum : 100.</li>
 					<li>page : Numéro de page à afficher.</li>
 				</ul>
