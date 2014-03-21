@@ -682,7 +682,6 @@
 		}
 	};
 	
-	
 	//Affichage des champs en fonction des natures
 	$.fn.afficheChamps = function(listeNature) {
 		$("#InfosDossier > li").hide();
@@ -707,13 +706,15 @@
 				
 				var incomplet = $("input[name=INCOMPLET_DOSSIER]:checked").val();
 				var horsdelai = $(".horsdelai").is(':checked');
+				var absquorum = $(".absquorum").is(':checked');
+				var npsp = $(".npsp").is(':checked');
 
 				if(incomplet == 1){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
 					$("#HORSDELAI").hide();
 					$("#DATECOMM").hide();
-				}else if (horsdelai){
+				}else if (horsdelai || absquorum || npsp){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
 					$("#DATECOMM").hide();
@@ -1361,13 +1362,13 @@ echo "
 					</div>
 				</li>
 
-				<li class='row-fluid' id='ABSQUORUM' style='".( ($action != 'new' && in_array('ABSQUORUM', $this->afficherChamps) && $this->infosDossier['ABSQUORUM'] != NULL )? "" : "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='ABSQUORUM' style='".( ($action != 'new' && in_array('ABSQUORUM', $this->afficherChamps) && $this->infosDossier['ABSQUORUM_DOSSIER'] == 1 )? "" : "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Absence de quorum</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )." >
-						<input type='checkbox' class='absquorum' name='ABS_QUORUM' disabled >
+						<input type='checkbox' class='absquorum' name='ABSQUORUM_DOSSIER' disabled ".( ($this->infosDossier['ABSQUORUM_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='absquorum hideavis' name='ABS_QUORUM' > 				
+						<input type='checkbox' class='absquorum hideavis' name='ABSQUORUM_DOSSIER' ".( ($this->infosDossier['ABSQUORUM_DOSSIER'])? "checked" : "")." > 				
 					</div>
 				</li>
 				
@@ -1422,7 +1423,10 @@ echo "
 						</select>
 					</div>
 				</li>				
+				<!--
 				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1  && $this->afficheAvis)? "": "display:none;" )."margin-bottom:20px;'>
+				-->
+				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && $this->afficheAvis == 1)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
 					echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
