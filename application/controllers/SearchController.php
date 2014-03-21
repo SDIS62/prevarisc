@@ -102,7 +102,7 @@ class SearchController extends Zend_Controller_Action
                 $name = $parameters['name'];
                 $fonctions = array_key_exists('fonctions', $parameters) ? $parameters['fonctions'] : null;
 
-                $search = $service_search->users($fonctions, $name, 50, $parameters['page']);
+                $search = $service_search->users($fonctions, $name, null, true, 50, $parameters['page']);
 
                 require('helpers/SearchPaginatorAdapter.php');
                 $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));
