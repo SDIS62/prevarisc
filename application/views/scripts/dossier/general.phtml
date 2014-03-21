@@ -707,6 +707,7 @@
 				var incomplet = $("input[name=INCOMPLET_DOSSIER]:checked").val();
 				var horsdelai = $(".horsdelai").is(':checked');
 				var absquorum = $(".absquorum").is(':checked');
+				var differeavis = $(".differeavis").is(':checked');
 				var npsp = $(".npsp").is(':checked');
 
 				if(incomplet == 1){
@@ -714,7 +715,7 @@
 					$("#AVIS_COMMISSION").hide();
 					$("#HORSDELAI").hide();
 					$("#DATECOMM").hide();
-				}else if (horsdelai || absquorum || npsp){
+				}else if (horsdelai || absquorum || npsp || differeavis){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
 					$("#DATECOMM").hide();

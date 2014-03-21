@@ -275,7 +275,9 @@ class DossierController extends Zend_Controller_Action
 			$horsDelai = $this->view->infosDossier['HORSDELAI_DOSSIER'];
 			$npsp = $this->view->infosDossier['NPSP_DOSSIER'];
 			$differeAvis = $this->view->infosDossier['DIFFEREAVIS_DOSSIER'];
-			$afficheAvis = 1;			
+
+			//echo "absQuorum : ".$absQuorum." - horsDelai : ".$horsDelai." - npsp : ".$npsp." - differeAvis : ".$differeAvis;
+			$afficheAvis = 1;
 			if(!isset($absQuorum) || $absQuorum != 0){
 				$afficheAvis = 0;
 			}else if(!isset($horsDelai) || $horsDelai != 0){
