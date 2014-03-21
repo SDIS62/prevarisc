@@ -486,7 +486,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
      * @param array $data
      * @param int $id_etablissement Optionnel
      * @param int $date Optionnel format : Y-m-d
-     * @return int $id_etablissement
+     * @return int $id_etablissement Optionnel
      * @throws Exception Si une erreur apparait lors de la sauvegarde
      */
     public function save($id_genre, array $data, $id_etablissement = null, $date = '')
@@ -604,7 +604,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $informations->LIBELLE_ETABLISSEMENTINFORMATIONS = $data['LIBELLE_ETABLISSEMENTINFORMATIONS'];
             $informations->ID_GENRE = $id_genre;
             $informations->ID_STATUT = $data['ID_STATUT'];
-            $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR;
+            $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
             $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
 
             $informations->save();
@@ -627,10 +627,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     if($key > 0) {
                         $DB_rubrique->createRow(array(
                             "ID_RUBRIQUE" => $rubrique["ID_RUBRIQUE"],
-                            "NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE" => !array_key_exists($rubrique['NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE']) ? null : (int) $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
-                            "VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE" => !array_key_exists($rubrique['VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE']) ? null : (double) $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
-                            "NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE" => !array_key_exists($rubrique['NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE']) ? null : $rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
-                            "CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE" => !array_key_exists($rubrique['CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE']) ? null : $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
+                            "NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE" => !array_key_exists('NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE', $rubrique) ? null : (int) $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
+                            "VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE" => !array_key_exists('VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE', $rubrique) ? null : (double) $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
+                            "NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE" => !array_key_exists('NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE', $rubrique) ? null : $rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
+                            "CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE" => !array_key_exists('CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE', $rubrique) ? null : $rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"],
                             "ID_ETABLISSEMENTINFORMATIONS" => $informations->ID_ETABLISSEMENTINFORMATIONS
                         ))->save();
                     }
@@ -643,9 +643,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     if($key > 0) {
                         $DB_plans->createRow(array(
                             "ID_ETABLISSEMENTINFORMATIONS" => $informations->ID_ETABLISSEMENTINFORMATIONS,
-                            "NUMERO_ETABLISSEMENTPLAN" => !array_key_exists($plan['NUMERO_ETABLISSEMENTPLAN']) ? null : $plan["NUMERO_ETABLISSEMENTPLAN"],
-                            "DATE_ETABLISSEMENTPLAN" => !array_key_exists($plan['DATE_ETABLISSEMENTPLAN']) ? null : $plan["DATE_ETABLISSEMENTPLAN"],
-                            "MISEAJOUR_ETABLISSEMENTPLAN" => !array_key_exists($plan['MISEAJOUR_ETABLISSEMENTPLAN']) ? null : $plan["MISEAJOUR_ETABLISSEMENTPLAN"],
+                            "NUMERO_ETABLISSEMENTPLAN" => !array_key_exists('NUMERO_ETABLISSEMENTPLAN', $plan) ? null : $plan["NUMERO_ETABLISSEMENTPLAN"],
+                            "DATE_ETABLISSEMENTPLAN" => !array_key_exists('DATE_ETABLISSEMENTPLAN', $plan) ? null : $plan["DATE_ETABLISSEMENTPLAN"],
+                            "MISEAJOUR_ETABLISSEMENTPLAN" => !array_key_exists('MISEAJOUR_ETABLISSEMENTPLAN', $plan) ? null : $plan["MISEAJOUR_ETABLISSEMENTPLAN"],
                             "ID_TYPEPLAN" => $plan["ID_TYPEPLAN"]
                         ))->save();
                     }
@@ -889,7 +889,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
      * Ajout d'une pièce jointe pour un établissement
      *
      * @param int $id_etablissement
-     * @param string $file
+     * @param array $file
      * @param string $name
      * @param string $description
      * @param int $mise_en_avant 0 = aucune mise en avant, 1 = diaporama, 2 = plans

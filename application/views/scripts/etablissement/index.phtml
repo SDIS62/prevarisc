@@ -351,7 +351,7 @@
                     <?php if(count($this->etablissement['preventionnistes']) == 0) : ?>
                         <p class='muted'>Aucun préventionniste lié.</p>
                     <?php else : ?>
-                        <?php echo $this->partialLoop('user/user.phtml', $this->etablissement['preventionnistes'] ) ?>
+                        <?php echo $this->partialLoop('users/embedded/user.phtml', $this->etablissement['preventionnistes'] ) ?>
                         <div style='clear: both; margin-bottom: 10px;'></div>
                     <?php endif ?>
                 </dd>
