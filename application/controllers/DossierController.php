@@ -271,22 +271,21 @@ class DossierController extends Zend_Controller_Action
 
 			//On verifie les éléments masquant l'avis et la date de commission/visite pour les afficher ou non
 			//document manquant - absence de quorum - hors delai - ne peut se prononcer - differe l'avis
-			//Zend_Debug::dump($this->view->infosDossier);
-			$absQuorum = $this->view->infosDossier['ABSQUORUM'];
+			$absQuorum = $this->view->infosDossier['ABSQUORUM_DOSSIER'];
 			$horsDelai = $this->view->infosDossier['HORSDELAI_DOSSIER'];
 			$npsp = $this->view->infosDossier['NPSP_DOSSIER'];
 			$differeAvis = $this->view->infosDossier['DIFFEREAVIS_DOSSIER'];
 
 			//echo "absQuorum : ".$absQuorum." - horsDelai : ".$horsDelai." - npsp : ".$npsp." - differeAvis : ".$differeAvis;
-			$afficheAvis = true;
-			if(!isset($absQuorum) || $absQuorum == 0){
-				$afficheAvis = false;
-			}else if(!isset($horsDelai) || $horsDelai == 0){
-				$afficheAvis = false;
-			}else if(!isset($npsp) || $npsp == 0){
-				$afficheAvis = false;
-			}else if(!isset($differeAvis) || $differeAvis == 0){
-				$afficheAvis = false;
+			$afficheAvis = 1;
+			if(!isset($absQuorum) || $absQuorum != 0){
+				$afficheAvis = 0;
+			}else if(!isset($horsDelai) || $horsDelai != 0){
+				$afficheAvis = 0;
+			}else if(!isset($npsp) || $npsp != 0){
+				$afficheAvis = 0;
+			}else if(!isset($differeAvis) || $differeAvis != 0){
+				$afficheAvis = 0;
 			}
 			$this->view->afficheAvis = $afficheAvis;
 
@@ -879,7 +878,7 @@ class DossierController extends Zend_Controller_Action
             foreach ($_POST as $libelle => $value) {
                 //On exclu la lecture de selectNature => select avec les natures;
                 //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
-                if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant") {
+                if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "ABSQUORUM_DOSSIER") {
                     //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
                     if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER") {
                         if ($value) {
@@ -917,6 +916,12 @@ class DossierController extends Zend_Controller_Action
                  $nouveauDossier->HORSDELAI_DOSSIER = 0;
             } else {
                 $nouveauDossier->HORSDELAI_DOSSIER = 1;
+            }
+			
+			if (!$this->_getParam('ABSQUORUM_DOSSIER')) {
+                 $nouveauDossier->ABSQUORUM_DOSSIER = 0;
+            } else {
+                $nouveauDossier->ABSQUORUM_DOSSIER = 1;
             }
 
             if (!$this->_getParam('NPSP_DOSSIER')) {
@@ -2425,7 +2430,7 @@ class DossierController extends Zend_Controller_Action
                 $prescDossier->ID_PRESCRIPTION_TYPE = NULL;
                 $prescDossier->LIBELLE_PRESCRIPTION_DOSSIER = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
                 $prescDossier->save();
-
+				
                 $idPrescDossier = $prescDossier->ID_PRESCRIPTION_DOSSIER;
 
                 //on s'occupe de verifier les textes et articles pour les inserer ou récuperer l'id si besoin puis on insert dans assoc
