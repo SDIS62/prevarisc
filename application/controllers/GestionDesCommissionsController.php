@@ -8,7 +8,7 @@
             // Titre
             $this->view->title = "Gestion des commissions";
 
-            $this->_helper->layout->setLayout('menu_left');
+            $this->_helper->layout->setLayout('menu_admin');
 
             // Modèles de données
             $model_typesDesCommissions = new Model_DbTable_CommissionType;

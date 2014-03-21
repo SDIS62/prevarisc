@@ -22,6 +22,9 @@ html {
 
 body {
     background-color: white;
+    margin: 0 auto;  /* zéro ou une autre valeur */
+    width: 100%; 
+    min-width: 1100px;
 }
 
 tbody {
@@ -39,26 +42,28 @@ body > .navbar {
     margin-top: 10px;
 }
 
-@media (min-width: 980px) {
-    .navbar-inner .container-fluid,
-    .navbar-inner .container-fluid .nav-collapse > ul > li,
-    .navbar-inner .container-fluid .nav-collapse > ul > li > a {
-        height: 60px;
-        line-height: 40px;
-        font-size: 14px;
-        text-transform: uppercase;
-        color: #949494;
-        text-shadow: 1px 1px 0 white;
-        text-decoration: none;
-    }
-    
-    .navbar-inner .container-fluid .nav-collapse > ul > li > a:hover {
-        color: #555;
-    }
-    
-    .navbar .nav .dropdown-toggle .caret {
-        margin-top: 18px;
-    }
+.navbar-inner .container-fluid {
+	min-width: 1100px;
+}
+
+.navbar-inner .container-fluid,
+.navbar-inner .container-fluid .nav-collapse > ul > li,
+.navbar-inner .container-fluid .nav-collapse > ul > li > a {
+    height: 60px;
+    line-height: 40px;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #949494;
+    text-shadow: 1px 1px 0 white;
+    text-decoration: none;
+}
+
+.navbar-inner .container-fluid .nav-collapse > ul > li > a:hover {
+    color: #555;
+}
+
+.navbar .nav .dropdown-toggle .caret {
+    margin-top: 18px;
 }
 
 
@@ -113,18 +118,6 @@ form select {
 textarea {
     width: 100%;
     box-sizing: border-box;
-}
-
-.btn.btn-primary {
-    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.33);
-    border: 1px solid #980b0e;
-    background: -moz-linear-gradient(top, #e0242a 0%, #b91e23 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e0242a), color-stop(100%, #b91e23));
-    background: -webkit-linear-gradient(top, #e0242a 0%, #b91e23 100%);
-    background: -o-linear-gradient(top, #e0242a 0%, #b91e23 100%);
-    background: -ms-linear-gradient(top, #e0242a 0%, #b91e23 100%);
-    background: linear-gradient(to bottom, #e0242a 0%, #b91e23 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0242a', endColorstr='#b91e23',GradientType=0 );
 }
 
 /* Formulaire d'ajout de news */

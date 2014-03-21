@@ -2,18 +2,8 @@
 
 class AdminController extends Zend_Controller_Action
 {
-    /**
-     * @inheritdoc
-     */
-    public function init()
+    public function indexAction()
     {
-        // Définition du layout menu_left
-        $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_admin');
     }
-
-    /**
-     * Index du panel d'admnistration
-     *
-     */
-    public function indexAction() {}
 }

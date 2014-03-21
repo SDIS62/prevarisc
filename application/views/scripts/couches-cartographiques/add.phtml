@@ -1,8 +1,3 @@
-<!-- Titre -->
-<h2 class='page-header'>Administration système</h2>
-
-<?php echo $this->partial('menu_admin.phtml') ?>
-
 <h3><?php echo $this->row ? "Modification d'une couche" : "Ajout d'une couche" ?></h3>
 
 <form action="/couches-cartographiques/<?php echo $this->row ? "edit" : "add" ?>" method="post">

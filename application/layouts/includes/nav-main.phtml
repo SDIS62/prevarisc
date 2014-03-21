@@ -9,16 +9,17 @@
             <a class="brand" href="/"><img src='/images/layout-header-logo.png' alt='Prevarisc'  /></a>
             <div class="nav-collapse collapse">
                 <ul class='nav pull-right'>
-                    <li><a href='/'>Accueil</a></li>
-                    <li><a href='#' title='Bientôt disponible ...' >Extractions - Statistiques</a></li>
+                    <li><a href='/'>Tableau de bord</a></li>
+                    <li><a href='/statistiques'>Extractions - Statistiques</a></li>
                     <li><a href='/search'>Recherche</a></li>
+                    <li><a href='/admin'>Administration</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <?php echo Zend_Auth::getInstance()->getIdentity()->NOM_UTILISATEURINFORMATIONS . ' ' . Zend_Auth::getInstance()->getIdentity()->PRENOM_UTILISATEURINFORMATIONS ?> <b class="caret"></b>
+                            <?php echo $this->avatar($this->uid, 'small') ?>
+                            <?php echo Zend_Auth::getInstance()->getIdentity()['infos']['NOM_UTILISATEURINFORMATIONS'] . ' ' . Zend_Auth::getInstance()->getIdentity()['infos']['PRENOM_UTILISATEURINFORMATIONS'] ?> <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?php echo $this->url(array('controller' => 'user', 'action' => 'me'), null, true) ?>">Mon profil</a></li>
-                            <li><a href="<?php echo $this->url(array('controller' => 'user', 'action' => 'logout'), null, true) ?>">Déconnexion</a></li>
+                            <li><a href="<?php echo $this->url(array('controller' => 'session', 'action' => 'logout'), null, true) ?>">Déconnexion</a></li>
                         </ul>
                     </li>
                 </ul>

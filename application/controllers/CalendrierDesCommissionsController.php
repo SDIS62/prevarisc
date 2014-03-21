@@ -16,7 +16,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
     {
         // Titre de la page
         $this->view->title = "Calendrier des commissions";
-        $this->_helper->layout->setLayout('menu_left');
 
         if ($this->_getParam('idComm')) {
             $this->view->idComm = $this->_getParam('idComm');

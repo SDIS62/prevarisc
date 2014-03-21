@@ -16,7 +16,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_admin');
 
         //on liste les documents présents dans $path déclaré global pour le controller
         $path = $this->path; // dossier listé (pour lister le répertoir courant : $dir_nom = '.'  --> ('point')
