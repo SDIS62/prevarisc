@@ -2,25 +2,19 @@
 
 class ErrorController extends Zend_Controller_Action
 {
-    /**
-     * Gestion de la page d'erreur
-     *
-     */
     public function errorAction()
     {
         $this->_helper->layout->setLayout('error');
 
         $errors = $this->_getParam('error_handler');
         
-        if (!$errors || !$errors instanceof ArrayObject)
-        {
+        if (!$errors || !$errors instanceof ArrayObject) {
             $this->view->message = 'Vous avez atteint la page d\'erreur';
             return;
         }
         
         // On envoie le bon code erreur en fonction du type
-        switch ($errors->type)
-        {
+        switch ($errors->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
@@ -39,15 +33,13 @@ class ErrorController extends Zend_Controller_Action
         }
         
         // Log exception, if logger available
-        if ($log = $this->getLog())
-        {
+        if ($log = $this->getLog()) {
             $log->log($this->view->message, $priority, $errors->exception);
             $log->log('Request Parameters', $priority, $errors->request->getParams());
         }
         
         // Si l'affichage des exceptions est activé, on envoie un message
-        if ($this->getInvokeArg('displayExceptions') == true)
-        {
+        if ($this->getInvokeArg('displayExceptions') == true) {
             $this->view->exception = $errors->exception;
         }
         
