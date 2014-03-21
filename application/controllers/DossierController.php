@@ -188,7 +188,7 @@ class DossierController extends Zend_Controller_Action
 
     public function generalAction()
     {
-        $this->view->idUser = Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR;
+        $this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
         //On récupère tous les types de dossier
         $DBdossierType = new Model_DbTable_DossierType;
         $this->view->dossierType = $DBdossierType ->fetchAll();
