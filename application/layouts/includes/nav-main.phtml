@@ -15,7 +15,7 @@
                     <li><a href='/admin'>Administration</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <?php echo $this->avatar($this->uid, 'small') ?>
+                            <?php echo $this->avatar(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], 'small') ?>
                             <?php echo Zend_Auth::getInstance()->getIdentity()['infos']['NOM_UTILISATEURINFORMATIONS'] . ' ' . Zend_Auth::getInstance()->getIdentity()['infos']['PRENOM_UTILISATEURINFORMATIONS'] ?> <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
