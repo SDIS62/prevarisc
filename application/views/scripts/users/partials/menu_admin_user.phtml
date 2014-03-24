@@ -1,0 +1,19 @@
+<h3 class='page-header'>Gestion des utilisateurs</h3>
+
+<ul class="nav nav-pills">
+    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'users' && (Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'index' || Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'edit' || Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'edit-group')) echo "class='active'" ?>>
+        <a href="/users/index">Général</a>
+    </li>
+    <li class='hide' <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'users' && Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'maire-add') echo "class='active'" ?>>
+        <a href="/users/maire-add">Ajouter un maire</a>
+    </li>
+    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'users' && Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'add') echo "class='active'" ?>>
+        <a href="/users/add">Ajouter un utilisateur</a>
+    </li>
+    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'add-group') echo "class='active'" ?>>
+        <a href="/users/add-group">Créer un groupe</a>
+    </li>
+    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'matrice-des-droits') echo "class='active'" ?>>
+        <a href="/users/matrice-des-droits">Gérer les droits des groupes</a>
+    </li>
+</ul>

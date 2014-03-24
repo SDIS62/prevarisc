@@ -1,34 +1,54 @@
-<!-- Titre -->
-<h2 class='page-header'>Fil d'actualité</h2>
+<h2 class='page-header'>
+    Tableau de bord
+    <small>Profil : <?php echo $this->user['infos']['LIBELLE_FONCTION'] ?></small>
+</h2>
 
-<!-- Formulaire d'ajout de messages -->
-<form id='ajouter_news' class='well' action='/index/add-message' method='post' >
-
-	<textarea id='textarea' class='bigger' name='text' cols='' rows='' placeholder="Entrez ici votre message d'information."></textarea>
-    
+<h3 class='page-header'>Vos établissements</h3>
+<?php if( count($this->etablissements) == 0 ) : ?>
+    <p class='muted'><small>Aucun établissement suivi.</small></p>
+<?php else : ?>
+    <ul class='recherche_liste unstyled no_slide'>
+    <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissements ) ?>
+    </ul>
     <br/>
-    
-    <input type='submit' class='btn btn-primary save' value="Envoyer" />
-    
-    <div class="btn-group pull-left ui-helper-hidden">
-        <a href='#' id='conf' class='btn'><i class="icon-lock"></i> Confidentialité</a>
+    <div style='clear: both'></div>
+    <?php echo $this->etablissements ?>
+<?php endif ?>
+
+<div class='row-fluid'>
+
+    <div class='span6'>
+        <a class='btn btn-small pull-right' style='margin-top: 30px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
+        <h3 class='page-header'>Derniers messages</h3>
+        <?php if( count($this->flux) == 0 ) : ?>
+            <p class='muted'><small>Aucun message disponible.</small></p>
+        <?php else : ?>
+            <table class='table table-hover table-condensed'>
+             <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
+            </table>
+        <?php endif ?>
     </div>
 
-	<select name="type" style="float: right">
-		<option>Message de service</option>
-		<option>Informations</option>
-		<option>Message personnel</option>
-		<option>Autre</option>
-	</select>
-    
-    <div id="dialog-conf" title="Confidentialité" class='ui-helper-hidden'>
-        <?php foreach($this->groupes as $groupe) : ?>
-        <input type="checkbox" name="conf[]" value="<?php echo $groupe["ID_GROUPE"] ?>" checked="checked" /><?php echo $groupe["LIBELLE_GROUPE"] ?><br/>
-        <?php endforeach; ?>
+    <div class='span6'>
+        <h3 class='page-header'>Actions disponibles</h3>
+        <p class='well text-center'>
+            <a class='btn' href='/calendrier-des-commissions' ><i class="icon-calendar"></i>Consulter le calendrier des commissions</a><br/><br/>
+            <a class='btn' href='/etablissement/add' ><i class="icon-plus"></i> Ajouter un établissement</a><br/><br/>
+            <a class='btn' href='/dossier/add' ><i class="icon-plus"></i> Ajouter un dossier</a>
+        </p>
     </div>
-</form>
 
-<!-- Liste des messages-->
-<ul id='index-newsfeed' class='liste_informations unstyled'>
-	<?php echo $this->partialLoop('news/display.phtml', $this->flux); ?>
-</ul>
+</div>
+
+<div id="reponse-modal" class="modal hide fade" ></div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Gestion des boites modales
+        $("a[data-toggle='modal']").click(function() {
+            var target = $(this).attr("data-target");
+            var url = $(this).attr("href");
+            $(target).load(url);
+        });
+    });
+</script>

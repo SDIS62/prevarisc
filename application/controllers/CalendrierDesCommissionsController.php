@@ -16,7 +16,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
     {
         // Titre de la page
         $this->view->title = "Calendrier des commissions";
-        $this->_helper->layout->setLayout('menu_left');
 
         if ($this->_getParam('idComm')) {
             $this->view->idComm = $this->_getParam('idComm');
@@ -62,17 +61,16 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
     //Gestion de l'affectation des dossier et de l'ordre du jour ODJ
     public function gestionodjAction()
     {
-        //récuperation sur la dateCommission de l'ordre du jour
+        //récuperation des informations concernant la date de commission concernant l'ordre du jour
         $dbDateComm = new Model_DbTable_DateCommission;
         $infosDateComm = $dbDateComm->find($this->_getParam('dateCommId'))->current();
-
+		
         //Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
         if (!$infosDateComm['DATECOMMISSION_LIEES']) {
             $commPrincipale = $this->_getParam('dateCommId');
         } else {
             $commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
         }
-
         $this->view->recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
 
         //récupération des informations sur la commission
@@ -85,13 +83,34 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         //Si on prend en compte les heures on récupère uniquement les dossiers n'ayant pas d'heure de passage
         $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($this->_getParam('dateCommId'));
 
+
+		$dbDossier = new Model_DbTable_Dossier;
+		$dbDocUrba = new Model_DbTable_DossierDocUrba;
+		$service_etablissement = new Service_Etablissement;
+		foreach($listeDossiersNonAffect as $val => $ue)
+		{
+			//On recupere la liste des établissements qui concernent le dossier
+			$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+			//$listeEtab[0]['ID_ETABLISSEMENT'];
+			//on recupere la liste des infos des établissement
+			if(count($listeEtab) > 0)
+			{
+				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+				$listeDossiersNonAffect[$val]['infosEtab'] = $etablissementInfos;
+				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+				$listeDossiersNonAffect[$val]['listeDocUrba'] = $listeDocUrba;
+			}else{
+				unset($listeDossiersNonAffect[$val]);
+			}
+		}
+
         //Gestion de l'affichage de la date de la commission
         $date =  new Zend_Date($infosDateComm['DATE_COMMISSION'],'yyyy-MM-dd');
         $this->view->dateFr = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR,'fr');
 
         $this->view->infosDateComm = $infosDateComm;
         $this->view->infosCommission = $infosCommission;
-
+/*
         $dbDocUrba = new Model_DbTable_DossierDocUrba;
         $cpt = 0;
         foreach ($listeDossiersNonAffect as $dossierNonAffect) {
@@ -103,6 +122,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
             $cpt++;
         }
+*/
         $this->view->listeDossierNonAffect = $listeDossiersNonAffect;
     }
 
@@ -177,7 +197,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         $dbDateCommission = new Model_DbTable_DateCommission;
 
         $items = array();
-
         $requete = "COMMISSION_CONCERNE = '" . $this->_getParam('idComm') . "' AND DATE_COMMISSION BETWEEN '" . $dateDebut . "'	AND '" . $dateFin . "'";
 
         if ($this->_getParam('type')) {
@@ -213,38 +232,67 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
         $items = array();
 
-        $dbDocUrba = new Model_DbTable_DossierDocUrba;
-        $cpt = 0;
-        foreach ($listeDossiersAffect as $dossierAffect) {
-            $docsUrba = $dbDocUrba->find($dossierAffect['ID_DOSSIER'])->toArray();
+		$dbDossier = new Model_DbTable_Dossier;
+		$dbDocUrba = new Model_DbTable_DossierDocUrba;
+		$service_etablissement = new Service_Etablissement;
+		
+		foreach($listeDossiersAffect as $val => $ue)
+		{
+			//On recupere la liste des établissements qui concernent le dossier
+			$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+			//$listeEtab[0]['ID_ETABLISSEMENT'];
+			//on recupere la liste des infos des établissement
+			if(count($listeEtab) > 0)
+			{
+				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+				$listeDossiersAffect[$val]['infosEtab'] = $etablissementInfos;
+				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+				$listeDossiersAffect[$val]['listeDocUrba'] = $listeDocUrba;
+			}else{
+				unset($listeDossiersAffect[$val]);
+			}
+			//Zend_Debug::dump($etablissement);
+		}
+		//Zend_Debug::dump($listeDossiersAffect);
 
-            if (count($docsUrba) >= 1) {
-                $listeDossiersNonAffect[$cpt]["NUM_DOCURBA"] = $docsUrba[0]['NUM_DOCURBA'];
-            }
-            $cpt++;
-        }
-
         foreach ($listeDossiersAffect as $dossierAffect) {
-            $affichage = "Etab. : ".$dossierAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierAffect['LIBELLE_COMMUNE'].")";
+			//echo $dossierAffect['ID_DOSSIER']." - ".$dossierAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]."<br/>";
+			
+
+            $affichage = $dossierAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+
             if ($dossierAffect['LIBELLE_DOSSIERNATURE'] != "") {
-                $affichage .= " || Nature : ".$dossierAffect['LIBELLE_DOSSIERNATURE'];
-            }
-            if ($dossierAffect['OBJET_DOSSIER'] != "") {
-                $affichage .= " || Objet : ".$dossierAffect['OBJET_DOSSIER'];
-            }
-            if (isset($dossierAffect['NUM_DOCURBA'])) {
-                $affichage .= " || Num. doc. urba. : ".$dossierAffect['NUM_DOCURBA'];
+                $affichage .= " - ".$dossierAffect['LIBELLE_DOSSIERNATURE'];
             }
 
+            if ($dossierAffect['OBJET_DOSSIER'] != "") {
+                $affichage .= " - Objet : ".$dossierAffect['OBJET_DOSSIER'];
+            }
+			
+			if(isset($dossierAffect['listeDocUrba']))
+			{
+				$affichage .= " - Doc urbanisme : ";
+				foreach($dossierAffect['listeDocUrba'] as $val => $ue){
+					$affichage .= $ue['NUM_DOCURBA']." . ";
+				}
+			}
+			
+			/*
+            if (isset($dossierAffect['NUM_DOCURBA'])) {
+                $affichage .= " | Num. doc. urba. : ".$dossierAffect['NUM_DOCURBA'];
+            }
+			*/
             $items[] = array(
-                "id" => $dossierAffect['ID_DOSSIER_AFFECT'],
-                "url" => "/dossier/index/id/".$dossierAffect['ID_DOSSIER_AFFECT'],
+                "id" => $dossierAffect['ID_DOSSIER'],
+                "url" => "/dossier/index/id/".$dossierAffect['ID_DOSSIER'],
                 "title" => $affichage,
                 "start" => date($dateDebut." ".$dossierAffect['HEURE_DEB_AFFECT']),
                 "end" => date($dateDebut." ".$dossierAffect['HEURE_FIN_AFFECT']),
                 "allDay" => false,
             );
+
         }
+
         $this->view->items = $items;
     }
 

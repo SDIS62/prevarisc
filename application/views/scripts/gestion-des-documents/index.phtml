@@ -3,13 +3,13 @@
 	<a id='button-aud' class='btn' >Ajouter un document</a>
 </span>
 
-<h2>Gestion des documents</h2>
+<h3 class='page-header'>Gestion des documents</h3>
 <div id='infosGdd'></div>
 
 <?php if(empty($this->listeFichiers)) : ?>
 <p><strong>Aucun document disponible.</strong></p>
 <?php else : ?>
-<table id='documentType' class='table'>
+<table id='documentType' class='table table-bordered'>
     <thead>
         <tr style='height:20px;'>
             <th>
@@ -126,7 +126,7 @@ $(document).ready(function() {
 						success: function(msg){					
 							//suppression de la ligne
 							elementDoc.parent().parent().remove();
-							alert(msg);
+							//alert(msg);
 						}
 					});
 

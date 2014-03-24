@@ -11,9 +11,9 @@
             $select = $this->select()
                 ->setIntegrityCheck(false)
                 ->from("periodicite", "PERIODICITE_PERIODICITE")
-                ->where("ID_CATEGORIE = '$categorie'")
-                ->where("ID_TYPE = '$type'")
-                ->where("LOCALSOMMEIL_PERIODICITE = '$local_sommeil'");
+                ->where("ID_CATEGORIE = ?", $categorie)
+                ->where("ID_TYPE = ?", $type)
+                ->where("LOCALSOMMEIL_PERIODICITE = ?", $local_sommeil);
 
             // Retourne le résultat
             $result = $this->getAdapter()->fetchOne($select);

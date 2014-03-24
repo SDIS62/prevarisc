@@ -1,25 +1,26 @@
-<table class='table-custom'>
-
+<?php if(count($this->array) == 1 && empty($this->array[0]["valeur"])) : ?>
+<p class='muted'>Pas d'historique disponible.</p>
+<?php else : ?>
+<table class='table table-bordered table-hover'>
 	<thead>
 		<tr>
 			<th style='width: 250px' >Date</th>
 			<th></th>
 		</tr>
 	</thead>
-	
 	<tbody>
-		<?php foreach( $this->array as $item ) : ?>
+		<?php foreach($this->array as $item) : ?>
 		<tr>
 			<td>Du <?php echo $item["debut"] . " " . ( (isset($item["fin"])) ? "au " . $item["fin"] : "à aujourd'hui" ) ?> </td>
 			<td>
 				<?php echo $item["valeur"] ?>
 				<span style="font-size: 0.8em">
 					(Dernière modification par 
-					<?php echo $item["author"] == null ? "<em>Inconnu</em>" : "<a href='/user/profile/uid/".$item["author"]["id"]."'>".$item["author"]["object"]->NOM_UTILISATEURINFORMATIONS." ". $item["author"]["object"]->PRENOM_UTILISATEURINFORMATIONS . "</a>"?>)
+					<?php echo $item["author"] == null ? "<em>Inconnu</em>" : "<a href='/user/profile/uid/".$item["author"]["id"]."'>".$item["author"]["name"] . "</a>"?>)
 				</span>
 			</td>
 		</tr>
 		<?php endforeach ?>
 	</tbody>
-	
 </table>
+<?php endif ?>

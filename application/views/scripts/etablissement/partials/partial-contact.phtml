@@ -1,0 +1,12 @@
+<div class="fiche_contact">
+    <p class="fiche_contact_nom"><?php echo $this->NOM_UTILISATEURINFORMATIONS . " " . $this->PRENOM_UTILISATEURINFORMATIONS ?></p>
+    <p class="fiche_contact_fonction"><?php echo $this->LIBELLE_FONCTION  ?> <?php echo !empty($this->SOCIETE_UTILISATEURINFORMATIONS) ? '-  ' . $this->SOCIETE_UTILISATEURINFORMATIONS : '' ?></p>
+    <ul class='unstyled'>
+        <li><span>Téléphone</span><span class="valeur"><?php echo $this->TELFIXE_UTILISATEURINFORMATIONS . (!empty($this->TELPORTABLE_UTILISATEURINFORMATIONS) ? " / ".$this->TELPORTABLE_UTILISATEURINFORMATIONS : ''); ?></span>
+        </li>
+        <li><span>Fax</span><span class="valeur"><?php echo $this->TELFAX_UTILISATEURINFORMATIONS ?></span></li>
+        <li><span>Couriel</span><span class="valeur"><a href='mailto:<?php echo $this->MAIL_UTILISATEURINFORMATIONS  ?>'><?php echo $this->MAIL_UTILISATEURINFOMATIONS ?></a></span></li>
+        <li><span>Site web</span><span class="valeur"><a href="<?php echo $this->WEB_UTILISATEURINFORMATIONS  ?>"><?php echo $this->WEB_UTILISATEURINFORMATIONS  ?></a></span></li>
+        <li><span>Adresse</span><span class="valeur"><?php echo $this->OBS_UTILISATEURINFORMATIONS ?></span></li>
+    </ul>
+</div>

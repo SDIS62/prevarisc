@@ -136,11 +136,11 @@
 	
 	// Texte de l'auto complete utilisateurs
 	$("#preventionnistes-autocomplete").toggleText("Saisissez le nom d'un préventionniste ...");
-	$("#preventionnistes-autocomplete").autocomplete("/user/getpreventionniste?format=json", {
+	$("#preventionnistes-autocomplete").autocomplete("/api/1.0/search/users?fonctions=13", {
 		minChars: 3,
 		max: 100,
 		parse: function(data) {
-			return $.map(data["resultats"], function(row) {
+			return $.map(data["response"]['results'], function(row) {
 				return {
 					data: row,
 					value: row.NOM_UTILISATEURINFORMATIONS,

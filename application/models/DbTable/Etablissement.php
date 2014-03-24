@@ -17,18 +17,6 @@
             return $result == null ? null : $result->toArray();
         }
 
-        public function getListeChamps()
-        {
-            return array (
-                    "Site" => array( "periodicite", "etablissement_lies", "preventionnistes" ),
-                    "Établissement" => array( "adresse", "categorie", "periodicite", "r123_20", "type_principal", "activite_principale", "types_secondaires", "activite_secondaires", "commission", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_justifianttotal", "effectif_total", "preventionnistes", "avis", "etablissement_lies", "datepc", "dangerosite", "mise_secu", "stat_prev", "extinction_eau" ),
-                    "Cellule" => array( "adresse_cellule", "r123_20", "type_principal", "activite_principale", "types_secondaires", "activite_secondaires", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_heberge", "effectif_justifianttotal", "effectif_total", "preventionnistes", "avis", "periodicite", "categorie", "numerotation", "etablissement_lies", "datepc", "stat_prev", "extinction_eau", "surfaces_cell" ),
-                    "Habitation" => array( "adresse", "famille", "preventionnistes", "datepc", "stat_prev"),
-                    "IGH" => array( "adresse", "classe", "periodicite", "commission", "local_sommeil", "effectifs", "effectif_public", "effectif_personnel", "effectif_total", "effectif_heberge", "preventionnistes", "avis", "datepc", "stat_prev" ),
-                    "EIC" => array( "icpe", "adresse", "effectifs", "effectif_personnel", "effectif_total", "preventionnistes", "datepc", "stat_prev" )
-                );
-        }
-
         // NOTE : à faire après enregistrement d'un établissement
         public function getIDWinprev($id)
         {
@@ -107,156 +95,6 @@
             $commission = $infos->ID_COMMISSION == null ? "0" : $infos->ID_COMMISSION;
 
             return $genre . $codecommune . $nbetscommune . "-" . $rangcell  . "-" . $commission;
-        }
-
-        // Valeurs par d�faut d'un �tablissement
-        // P�riodicit�
-        public function getDefaultPeriodicite($request)
-        {
-          if ((!isset($request["PERIODICITE_ETABLISSEMENTINFORMATIONS"]) || $request["PERIODICITE_ETABLISSEMENTINFORMATIONS"] != "") && $request["ID_GENRE"] != 3) {
-              return null;
-          }
-
-            $DB_periodicite = new Model_DbTable_Periodicite;
-
-            switch ($request["ID_GENRE"]) {
-
-                // La plus contraignante
-                case 1:
-                    $periodicite = null;
-                    foreach ($request["ID_FILS_ETABLISSEMENT"] as $item) {
-                        if ($item > 0) {
-
-                            $tmp = $this->getInformations( $item )->PERIODICITE_ETABLISSEMENTINFORMATIONS;
-                            if($periodicite == null || $tmp < $periodicite)
-                                $periodicite = $tmp;
-                        }
-                    }
-
-                    return ($periodicite) ? $periodicite : "0";
-                    break;
-
-                // Utilise le GE4
-                case 2:
-                    return $DB_periodicite->gn4( $request["ID_CATEGORIE"], $request["ID_TYPE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]));
-                    break;
-
-                // Utilise celle du parent
-                case 3:
-                    return $this->getInformations( $request["ID_PERE"] )->PERIODICITE_ETABLISSEMENTINFORMATIONS;
-                    break;
-
-                // Selon la classe
-                case 5:
-                    return $DB_periodicite->gn4( 0, $request["ID_CLASSE"], false);
-                    break;
-            }
-        }
-
-        // Cat�gorie
-        public function getDefaultCategorie($request)
-        {
-              if ((!isset($request["ID_CATEGORIE"]) || $request["ID_CATEGORIE"] != 0) && $request["ID_GENRE"] != 3) {
-                  return null;
-              }
-
-            switch ($request["ID_GENRE"]) {
-
-                // La plus grande des établissements enfants
-                case 1:
-                    $categorie = null;
-                    if (count($request["ID_FILS_ETABLISSEMENT"]) == 0) {
-                        return null;
-                    }
-                    foreach ($request["ID_FILS_ETABLISSEMENT"] as $item) {
-                        if ($item > 0) {
-
-                            //Cat�gorie
-                            $tmp = $this->getInformations( $item )->ID_CATEGORIE;
-                            if($categorie == null || $tmp < $categorie)
-                                $categorie = $tmp;
-                        }
-                    }
-
-                    return ($categorie) ? $categorie : "5";
-                    break;
-
-                case 2:
-                    if($request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] > 0 && $request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] <= 10)
-
-                        return 5;
-                    elseif($request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] > 10 && $request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] <= 300)
-                        return 4;
-                    elseif($request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] > 300 && $request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] <= 700)
-                        return 3;
-                    elseif($request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] > 700 && $request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] <= 1500)
-                        return 2;
-                    elseif($request["EFFECTIFTOTAL_ETABLISSEMENTINFORMATIONS"] > 1500 )
-                        return 1;
-                    break;
-
-                case 3:
-                    return $this->getInformations( $request["ID_PERE"] )->ID_CATEGORIE;
-                    break;
-
-                    return 5;
-                    break;
-            }
-        }
-
-        // Commission
-        public function getDefaultCommission($request)
-        {
-            $model_commission = new Model_DbTable_Commission;
-            
-            if(isset($request["ID_PERE"]))
-            {
-                $etablissement_pere = $this->find($request["ID_PERE"])->current();
-                
-                if($etablissement_pere !== null)
-                {
-                    $etablissement_info_pere = $this->getInformations($etablissement_pere->ID_ETABLISSEMENT);
-                    if($etablissement_info_pere->ID_COMMISSION != null)
-                    {
-                        return $model_commission->find($etablissement_info_pere->ID_COMMISSION)->current()->toArray();
-                    }
-                }
-            }
-            
-            if(isset($request["NUMINSEE_COMMUNE"]))
-            {
-                $index = isset($request["NUMINSEE_COMMUNE"][1]) && $request["NUMINSEE_COMMUNE"][1] != "" ? 1 : 0;
-
-                switch ($request["ID_GENRE"]) {
-                    case 2:
-                        return $model_commission->getCommission($request["NUMINSEE_COMMUNE"][$index], $request["ID_CATEGORIE"], $request["ID_TYPE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) && $request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] == 1 ? true : false);
-                        break;
-                    case 5:
-                        return $model_commission->getCommissionIGH($request["NUMINSEE_COMMUNE"][$index], $request["ID_CLASSE"], isset($request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]) && $request["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] == 1 ? true : false);
-                        break;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        // Préventionnistes
-        public function getDefaultPrev($request)
-        {
-            include_once 'Preventioniste.php';
-            $model_prev = new Model_DbTable_Preventionniste;
-                
-            if(isset($request["NUMINSEE_COMMUNE"]))
-            {
-                $index = isset($request["NUMINSEE_COMMUNE"][1]) && $request["NUMINSEE_COMMUNE"][1] != "" ? 1 : 0;
-                return $model_prev->getPrev($request["NUMINSEE_COMMUNE"][$index], isset($request["ID_PERE"]) ? $request["ID_PERE"] : '');
-            }
-            else
-            {
-                return $model_prev->getPrev('', isset($request["ID_PERE"]) ? $request["ID_PERE"] : '');
-            }
         }
 
         public function getByUser($id_user)
@@ -380,8 +218,19 @@
                 ->from("etablissementpj", null)
                 ->joinLeft("piecejointe", "piecejointe.ID_PIECEJOINTE = etablissementpj.ID_PIECEJOINTE")
                 ->where("EXTENSION_PIECEJOINTE = '.jpg' OR EXTENSION_PIECEJOINTE = '.JPG' OR EXTENSION_PIECEJOINTE = '.png'")
-                ->where("PLACEMENT_ETABLISSEMENTPJ = 0")
+                ->where("PLACEMENT_ETABLISSEMENTPJ = 2")
                 ->where("etablissementpj.ID_ETABLISSEMENT = " . $id_etablissement);
+
+            return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
+        }
+
+        public function getPlansInformations($id_etablissement_informations)
+        {
+            $select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from("etablissementinformationsplan")
+                ->join("typeplan", "etablissementinformationsplan.ID_TYPEPLAN = typeplan.ID_TYPEPLAN")
+                ->where("etablissementinformationsplan.ID_ETABLISSEMENTINFORMATIONS = ?", $id_etablissement_informations);
 
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
         }

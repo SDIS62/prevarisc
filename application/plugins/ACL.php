@@ -1,29 +1,25 @@
 <?php
+
 class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 {
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
         // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
-        if ( !Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" ) 
-        {
-            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
-            $redirector->gotoSimple('login', 'user', 'default');
+        if ( !Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" && $request->getActionName() != "error" )  {
+            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');
         }
-        elseif(Zend_Auth::getInstance()->hasIdentity())
-        {
-            // On update la dernière action effectuée par l'utilisateur
-            $model_user = new Model_DbTable_Utilisateur;
-            $user = $model_user->find(Zend_Auth::getInstance()->getIdentity()->ID_UTILISATEUR)->current();
-            $user->LASTACTION_UTILISATEUR = date("Y:m-d H:i:s");
-            $user->save();
+        elseif(Zend_Auth::getInstance()->hasIdentity()) {
 
-            // Chargement des ACL
-            
+            $service_user = new Service_User;
+
+            // On update la dernière action effectuée par l'utilisateur
+            $service_user->updateLastActionDate(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR']);
+
+            // Chargement du cache
             $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
             // Chargement des ACL
-            if(($acl = unserialize($cache->load('acl'))) === false)
-            {
+            if(($acl = unserialize($cache->load('acl'))) === false) {
                 // Liste des ressources
                 $resources_dbtable = new Model_DbTable_Resource;
                 $resources = $resources_dbtable->fetchAll();
@@ -36,25 +32,21 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 $acl = new Zend_Acl();
                 
                 // ajouts des ressources
-                foreach($resources as $resource)
-                {
+                foreach($resources as $resource) {
                     $acl->add(new Zend_Acl_Resource($resource->name));
                 }
 
                 // ajouts des roles (les groupes d'utilisateurs) et on fixe leurs règles
-                foreach($groups as $role)
-                {
+                foreach($groups as $role) {
                     $acl->addRole(new Zend_Acl_Role($role->LIBELLE_GROUPE));
                     
                     $privileges = $role->findModel_DbTable_PrivilegeViaModel_DbTable_GroupePrivilege();
                     $resources = array();
 
-                    foreach($privileges as $privilege)
-                    {
+                    foreach($privileges as $privilege) {
                         $resource_privilege = $privilege->findParentModel_DbTable_Resource()->toArray();
                         
-                        if(!array_key_exists($resource_privilege['id_resource'], $resources))
-                        {
+                        if(!array_key_exists($resource_privilege['id_resource'], $resources)) {
                             $resources[$resource_privilege['id_resource']] = $resource_privilege;
                             $resources[$resource_privilege['id_resource']]["privileges"] = array();
                         }
@@ -62,8 +54,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                         $resources[$resource_privilege['id_resource']]["privileges"][$privilege->id_privilege] = $privilege->name;
                     }
 
-                    foreach($resources as $group_resource)
-                    {
+                    foreach($resources as $group_resource) {
                         $acl->allow($role->LIBELLE_GROUPE, $group_resource["name"], $group_resource["privileges"]);
                     }
                 }
@@ -71,9 +62,8 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 // Sauvegarde en cache
                 $cache->save(serialize($acl));
             }
-            
-            $identity = Zend_Auth::getInstance()->getIdentity();
-            $role = $identity->LIBELLE_GROUPE;
+
+            $role = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
             
             // Récupération de la vue
             $view = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('view');
@@ -82,8 +72,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             $page = $view->navigation($view->nav)->findOneBy('active', true);
             
             // Si la page correspond bien, on check l'ACL
-            if($page !== null)
-            {
+            if($page !== null) {
                 // Récupération de la resource demandée par la page active
                 $resource = $this->getPageResource($page);
                 
@@ -91,10 +80,8 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 $privilege = $this->getPagePrivilege($page);
 
                 // check les permissions !
-                if (!$acl->isAllowed($role, $resource, $privilege) && $resource !== null)
-                {
+                if (!$acl->isAllowed($role, $resource, $privilege) && $resource !== null) {
                     $request->setControllerName('error');
-                    $request->setActionName('not-allowed');
                 }
             }
         }
@@ -108,14 +95,10 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
      */  
     private function getPageResource($page)
     {
-        if($page !== null)
-        {
-            return $page->getResource() === null ?
-                $page->getParent() instanceof Zend_Navigation_Page ? $this->getPageResource($page->getParent()) : null :
-                $page->getResource();
+        if($page !== null) {
+            return $page->getResource() === null ? $page->getParent() instanceof Zend_Navigation_Page ? $this->getPageResource($page->getParent()) : null : $page->getResource();
         }
-        else
-        {
+        else {
             return null;
         }
     }

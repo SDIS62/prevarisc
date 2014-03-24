@@ -2,419 +2,86 @@
 
 class UsersController extends Zend_Controller_Action
 {
-    /**
-     * @inheritdoc
-     */
-    public function init()
+    public function indexAction()
     {
-        // Définition du layout menu_left
-        $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_admin');
 
-        $ajaxContext = $this->_helper->getHelper('AjaxContext');
-        $ajaxContext->addActionContext('add', 'json')
-                    ->addActionContext('process', 'json')
-                    ->initContext();
+        $service_user = new Service_User;
+        $service_search = new Service_Search;
+
+        $this->view->users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, false, 100)['results'];
+        $this->view->groupes = $service_user->getAllGroupes();
     }
 
-    /**
-     * Liste des utilisateurs en fonction de leur groupe
-     *
-     */
-    public function listAction()
-    {
-
-        // Modèles
-        $DB_groupe = new Model_DbTable_Groupe;
-        $DB_user = new Model_DbTable_Utilisateur;
-        $DB_groupe = new Model_DbTable_Groupe;
-
-        // Récupération de l'ensemble des informations et on envoie sur la vue
-        $this->view->groupes = $DB_groupe->fetchAll()->toArray();
-
-        // Si on affiche un groupe en particulier, on envoie ses informations
-        if ($this->hasParam('gid')) {
-            $this->view->users = $DB_user->getUsersWithInformations($this->_request->getParam('gid'));
-            $this->view->groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
-        } else {
-            $this->view->users = $DB_user->getUsersWithInformations();
-        }
-    }
-
-    /**
-     * Ajouter un groupe
-     *
-     */
-    public function addGroupAction()
-    {
-        try {
-            // Modèles
-            $DB_groupe = new Model_DbTable_Groupe;
-
-            // Si un groupe est spécifié, on l'édite
-            if ($this->hasParam('gid')) {
-                $this->view->groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
-                $this->_helper->flashMessenger(array(
-                    'context' => 'success',
-                    'title' => 'Ajout réussi !',
-                    'message' => 'Le groupe a été ajouté.'
-                ));
-            }
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
-
-        //redirection
-        if ($this->hasParam('gid')) {
-            $this->_helper->redirector('list');
-        }
-    }
-
-    /**
-     * Supprimer un groupe
-     *
-     */
-    public function deleteGroupAction()
-    {
-        try {
-            // Modèles
-            $DB_user = new Model_DbTable_Utilisateur;
-            $DB_groupe = new Model_DbTable_Groupe;
-
-            // SI un groupe est spécifié, on le supprime
-            if ($this->hasParam('gid') && $this->_request->getParam('gid') != 1) {
-                // récupération de tous les utilisateurs du groupe à supprimer
-                $all_users = $DB_user->fetchAll("ID_GROUPE = " . $this->_request->gid);
-
-                // On bouge les users du groupe à supprimer dans le groupe par défaut
-                if ($all_users != null) {
-                    foreach ($all_users as $item) {
-                        $user = $DB_user->find( $item->ID_UTILISATEUR )->current();
-                        $user->ID_GROUPE = 1;
-                        $user->save();
-                    }
-                }
-
-                // On supprime le groupe
-                $DB_groupe->delete($this->_request->getParam('gid'));
-
-                $this->_helper->flashMessenger(array(
-                    'context' => 'success',
-                    'title' => 'Suppression réussie !',
-                    'message' => 'Le groupe a été supprimé.'
-                ));
-            }
-
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
-
-        if ($this->hasParam('gid') && $this->_request->getParam('gid') != 1) {
-            // Redirection
-            $this->_helper->redirector('list');
-        }
-    }
-
-    /**
-     * Sauvegarder un groupe
-     *
-     */
-    public function saveGroupAction()
-    {
-        try {
-            // Modèles
-            $DB_groupe = new Model_DbTable_Groupe;
-
-            // On analyse si on ajoute ou on édite
-            if ($this->_request->getParam('gid') != '') {
-                $groupe = $DB_groupe->find($this->_request->getParam('gid'))->current();
-                $groupe->setFromArray(array_intersect_key($_POST, $DB_groupe->info('metadata')))->save();
-            } else {
-                $DB_groupe->insert(array_intersect_key($_POST, $DB_groupe->info('metadata')));
-            }
-
-            $this->_helper->flashMessenger(array(
-                    'context' => 'success',
-                    'title' => 'Sauvegarde réussie !',
-                    'message' => 'Le groupe '.$groupe->LIBELLE_GROUPE.' a été supprimé.'
-                ));
-
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
-
-        // Redirection
-        $this->_helper->redirector('list');
-    }
-
-    /**
-     * Éditer un utilisateur
-     *
-     */
     public function editAction()
     {
-        // Modèles
-        $DB_user = new Model_DbTable_Utilisateur;
-        $DB_informations = new Model_DbTable_UtilisateurInformations;
-        $model_commune = new Model_DbTable_AdresseCommune;
-        $model_commissions = new Model_DbTable_Commission;
-        $model_groupements = new Model_DbTable_Groupement;
+        $this->_helper->layout->setLayout('menu_admin');
 
-        // Récupération de l'utilisateur
-        $user = $DB_user->find($this->_request->getParam('uid'))->current();
+        $service_user = new Service_User;
+        $service_groupement = new Service_GroupementCommunes;
+        $service_commission = new Service_Commission;
+        $service_adresse = new Service_Adresse;
 
-        // Envoie sur la vue des informations de l'utilisateur
-        $this->view->user = $user;
-        $this->view->user_info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
-        $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
-        $this->view->params = array("LDAP_ACTIF" => $ldap_options['enabled']);
-        $this->view->commune = $model_commune->find($user->NUMINSEE_COMMUNE)->current();
+        $this->view->user = $service_user->find($this->_request->getParam('uid'));
+        $this->view->commissions = $service_commission->getAll();
+        $this->view->groupements = $service_groupement->findAll();
+        $this->view->fonctions = $service_user->getAllFonctions();
+        $this->view->communes = $service_adresse->getAllCommunes();
+        $this->view->groupes = $service_user->getAllGroupes();
+        $this->view->params = array("LDAP_ACTIF" => Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap')['enabled']);
 
-        // Récupération des commissions et des groupements
-        $this->view->rowset_commissions = $model_commissions->fetchAll();
-        $this->view->rowset_commissionsUser = $DB_user->getCommissions($user->ID_UTILISATEUR);
-        $this->view->rowset_groupements = $model_groupements->fetchAll();
-        $this->view->rowset_groupementsUser = $DB_user->getGroupements($user->ID_UTILISATEUR);
+        $this->view->add = false;
 
-        // Rendu de la vue add
-        $this->render('add');
-
+        if($this->_request->isPost()) {
+            try {
+                $post = $this->_request->getPost();
+                $service_user->save($post, $_FILES['avatar'], $this->_request->uid);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'utilisateur a bien été mis à jour.'));
+                $this->_helper->redirector('index', null, null);
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'utilisateur n\'a pas été mis à jour. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+        }
     }
 
-    /**
-     * Ajouter un utilisateur
-     *
-     */
     public function addAction()
     {
-        try {
-            // Modèles
-            $model_commissions = new Model_DbTable_Commission;
-            $model_groupements = new Model_DbTable_Groupement;
+        $this->_helper->layout->setLayout('menu_admin');
 
-            // Récupération des commissions et des groupements
-            $this->view->rowset_commissions = $model_commissions->fetchAll();
-            $this->view->rowset_groupements = $model_groupements->fetchAll();
-            $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
-            $this->view->params = array("LDAP_ACTIF" => $ldap_options['enabled']);
+        $service_user = new Service_User;
+        $service_groupement = new Service_GroupementCommunes;
+        $service_commission = new Service_Commission;
+        $service_adresse = new Service_Adresse;
 
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Ajout réussi!',
-                'message' => 'l\'utilisateur a été ajouté.'
-            ));
+        $this->view->commissions = $service_commission->getAll();
+        $this->view->groupements = $service_groupement->findAll();
+        $this->view->fonctions = $service_user->getAllFonctions();
+        $this->view->communes = $service_adresse->getAllCommunes();
+        $this->view->groupes = $service_user->getAllGroupes();
+        $this->view->params = array("LDAP_ACTIF" => Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap')['enabled']);
 
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
+        $this->view->add = true;
+
+        if($this->_request->isPost()) {
+            try {
+                $post = $this->_request->getPost();
+                $service_user->save($post, $_FILES['avatar']);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'utilisateur a bien été ajouté.'));
+                $this->_helper->redirector('index', null, null);
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'utilisateur n\'a pas ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
         }
 
-        //redirection
-        $this->_helper->redirector('list');
+        $this->render('edit');
     }
 
-    /**
-     * Ajouter un maire
-     *
-     */
-    public function maireAddAction()
-    {
-        // Modèles
-        $model_commissions = new Model_DbTable_Commission;
-        $model_groupements = new Model_DbTable_Groupement;
-
-        // On dit à la vue que nous avons affaire à un maire !
-        $this->view->maire = true;
-
-        // Récupération des commissions et des groupements
-        $this->view->rowset_commissions = $model_commissions->fetchAll();
-        $this->view->rowset_groupements = $model_groupements->fetchAll();
-
-        // Rendu de la vue add
-        $this->render('add');
-
-    }
-
-    /**
-     * Sauvegarder un utilisateur
-     *
-     */
-    public function processAction()
-    {
-        try {
-            // Modèles
-            $DB_user = new Model_DbTable_Utilisateur;
-            $DB_informations = new Model_DbTable_UtilisateurInformations;
-            $model = new Model_DbTable_AdresseCommune;
-
-            $user = $info = $id = null;
-
-            // Ajout ou édition ?
-            if ($this->hasParam('uid')) {
-                $user = $DB_user->find( $this->getRequest()->getParam('uid') )->current();
-                $info = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
-
-                $info->setFromArray(array_intersect_key($_POST, $DB_informations->info('metadata')));
-
-                $info->DATE_PRV2 = isset($this->_request->DATE_PRV2) ? $this->getDate($this->_request->DATE_PRV2) : "0000-00-00 00:00:00";
-                $info->DATE_RECYCLAGE = isset($this->_request->DATE_RECYCLAGE) ? $this->getDate($this->_request->DATE_RECYCLAGE) : "0000-00-00 00:00:00";
-                $info->DATE_SID = isset($this->_request->DATE_SID) ? $this->getDate($this->_request->DATE_SID) : "0000-00-00 00:00:00";
-
-                $info->save();
-
-                $array_data = array_intersect_key($_POST, $DB_user->info('metadata'));
-
-                if (!empty($_POST["PASSWD_INPUT"])) {
-                    $config_security = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('security');
-                    $array_data["PASSWD_UTILISATEUR"] = md5($user->USERNAME_UTILISATEUR . $config_security['salt'] . $this->_request->PASSWD_INPUT);
-                } elseif (isset($this->_request->ldap_checkbox)) {
-                    $array_data["PASSWD_UTILISATEUR"] = null;
-                }
-
-                $user->setFromArray($array_data)->save();
-                $iduser = $this->getRequest()->getParam('uid');
-            } else {
-                if ($this->_request->maire == 1) {
-                    if (empty($this->_request->NUMINSEE_COMMUNE)) {
-                        throw new Exception('Aucune commune donnée', 500);
-                    }
-
-                    $commune = $model->find($this->_request->NUMINSEE_COMMUNE)->current();
-
-                    if ($commune != null) {
-                        if ($commune->ID_UTILISATEURINFORMATIONS != 0 && $commune->ID_UTILISATEURINFORMATIONS != null) {
-                            $info = $DB_informations->find( $commune->ID_UTILISATEURINFORMATIONS )->current();
-                            $info->setFromArray(array_intersect_key($_POST, $DB_informations->info('metadata')));
-                            $id = $commune->ID_UTILISATEURINFORMATIONS;
-                        }
-                    }
-
-                    $_POST["ID_GROUPE"] = 1;
-                }
-
-                if ($id == null) {
-                    $id = $DB_informations->insert(array_intersect_key($_POST, $DB_informations->info('metadata')));
-                    $info = $DB_informations->find( $id )->current();
-                    $info->DATE_PRV2 = isset($this->_request->DATE_PRV2) ? $this->getDate($this->_request->DATE_PRV2) : "0000-00-00 00:00:00";
-                    $info->DATE_RECYCLAGE = isset($this->_request->DATE_RECYCLAGE) ? $this->getDate($this->_request->DATE_RECYCLAGE) : "0000-00-00 00:00:00";
-                    $info->DATE_SID = isset($this->_request->DATE_SID) ? $this->getDate($this->_request->DATE_SID) : "0000-00-00 00:00:00";
-                    $info->save();
-
-                    if ($this->_request->maire == 1) {
-                        $commune->ID_UTILISATEURINFORMATIONS = $id;
-                        $commune->save();
-                    }
-                }
-
-                $iduser = $DB_user->insert(array_merge(
-                    array_intersect_key($_POST, $DB_user->info('metadata')),
-                    array(
-                        "ID_UTILISATEURINFORMATIONS" => $id,
-                        "PASSWD_UTILISATEUR" => !empty($this->_request->PASSWD_INPUT) ? md5($this->_request->USERNAME_UTILISATEUR."7aec3ab8e8d025c19e8fc8b6e0d75227".$this->_request->PASSWD_INPUT) : null
-                    )
-                ));
-            }
-
-            // Sauvegarde des commissions
-            if (isset($_POST["commissions"])) {
-                $model_commissionsUser = new Model_DbTable_UtilisateurCommission;
-                $model_commissionsUser->delete("ID_UTILISATEUR = " .  $iduser);
-                foreach ($_POST["commissions"] as $id) {
-                    $row = $model_commissionsUser->createRow();
-                    $row->ID_UTILISATEUR = $iduser;
-                    $row->ID_COMMISSION = $id;
-                    $row->save();
-                }
-            }
-
-            // Sauvegarde des groupements
-            if (isset($_POST["groupements"])) {
-                $model_groupementsUser = new Model_DbTable_UtilisateurGroupement;
-                $model_groupementsUser->delete("ID_UTILISATEUR = " .  $iduser);
-                foreach ($_POST["groupements"] as $id) {
-                    $row = $model_groupementsUser->createRow();
-                    $row->ID_UTILISATEUR = $iduser;
-                    $row->ID_GROUPEMENT = $id;
-                    $row->save();
-                }
-            }
-
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Sauvegarde réussie!',
-                'message' => 'l\'utilisateur'.$DB_user->USERNAME_UTILISATEUR.' a été sauvegardé.'
-            ));
-
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
-
-        // Redirection
-        $this->_helper->redirector('list');
-    }
-
-    /**
-     * Activer ou desactiver un utilisateur
-     *
-     */
-    public function activedAction()
-    {
-        try {
-            // Modèle
-            $DB_user = new Model_DbTable_Utilisateur;
-
-            // On trouve l'utilisateur à modifier
-            $user = $DB_user->find( $this->_request->uid )->current();
-
-            // On change son état
-            $user->ACTIF_UTILISATEUR = !(bool) $user->ACTIF_UTILISATEUR;
-            $user->ACTIF_UTILISATEUR = (int) $user->ACTIF_UTILISATEUR;
-
-            // On sauvegarde
-            $user->save();
-
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Changement réussi!',
-                'message' => 'l\'état de l\'utilisateur '.$user->USERNAME_UTILISATEUR.' a été modifié'
-            ));
-
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur inattendue',
-                'message' => $e->getMessage()
-            ));
-        }
-
-        // Redirection
-        $this->_helper->redirector('list');
-    }
-
-    /**
-     * Gestion des droits des utilisateurs
-     *
-     */
     public function matriceDesDroitsAction()
     {
+        $this->_helper->layout->setLayout('menu_admin');
+
         // Modèles
         $model_groupes = new Model_DbTable_Groupe;
         $model_resource = new Model_DbTable_Resource;
@@ -462,13 +129,69 @@ class UsersController extends Zend_Controller_Action
         }
     }
 
-    private function getDate($input)
+    public function editGroupAction()
     {
+        $this->_helper->layout->setLayout('menu_admin');
 
-        $array_date = explode("/", $input);
+        $service_user = new Service_User;
 
-        return $array_date[2]."-".$array_date[1]."-".$array_date[0]." 00:00:00";
+        $this->view->group = $service_user->getGroup($this->_request->gid);
 
+        $this->view->add = false;
+
+        if($this->_request->isPost()) {
+            try {
+                $post = $this->_request->getPost();
+                $service_user->saveGroup($post, $this->_request->gid);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'Le groupe a bien été mis à jour.'));
+                $this->_helper->redirector('index', null, null);
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'Le groupe n\'a pas été mis à jour. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+        }
     }
 
+    public function addGroupAction()
+    {
+        $this->_helper->layout->setLayout('menu_admin');
+
+        $service_user = new Service_User;
+
+        $this->view->add = true;
+
+        if($this->_request->isPost()) {
+            try {
+                $post = $this->_request->getPost();
+                $service_user->saveGroup($post);
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'Le groupe a bien été ajouté.'));
+                $this->_helper->redirector('index', null, null);
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'Le groupe n\'a pas été ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+        }
+
+        $this->render('edit-group');
+    }
+
+    public function deleteGroupAction()
+    {
+        $this->_helper->layout->setLayout('menu_admin');
+
+        $service_user = new Service_User;
+
+        $this->view->add = true;
+
+        try {
+            $post = $this->_request->getPost();
+            $service_user->deleteGroup($this->_request->gid);
+            $this->_helper->flashMessenger(array('context' => 'success','title' => 'Suppression réussie !','message' => 'Le groupe a été supprimé.'));
+        }
+        catch(Exception $e) {
+            $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'Erreur dans la suppression du groupe. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+        }
+
+        $this->_helper->redirector('index', null, null);
+    }
 }

@@ -48,7 +48,6 @@
         {
             echo '<script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/1.3/GeoportalExtended.js"></script>';
             echo '<div id="geo_container" style="height: ' . $size['height'] . '"></div>';
-            echo '<div id="geo_infos"></div>';
         }
 
         // Chargements des couches
@@ -149,7 +148,7 @@
                                 this.getViewer().getMap().setCursor("auto");
                                 this.getViewer().setToolsPanelVisibility(false);
 
-                                callback_geo(this, drag);
+                                //callback_geo(this, drag);
                             }
                         }
                     );

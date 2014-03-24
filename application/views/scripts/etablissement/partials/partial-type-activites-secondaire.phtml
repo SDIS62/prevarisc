@@ -1,0 +1,15 @@
+<li <?php if($this->type_activite_secondaire === null) echo "id='prototype_types_activites_secondaires' class='hide prototypes'" ?> >
+    <select name='TYPES_ACTIVITES_SECONDAIRES[<?php echo $this->type_activite_secondaire === null ? -1 : $this->type_activite_secondaire['ID_ETABLISSEMENTINFORMATIONSTYPESACTIVITESSECONDAIRES'] ?>][ID_TYPE_SECONDAIRE]' class='type_select' style='width: 85px' >
+        <?php foreach( $this->types as $type ) : ?>
+            <option value='<?php echo $type["ID_TYPE"] ?>' <?php if( $type["ID_TYPE"] == $this->type_activite_secondaire["ID_TYPE_SECONDAIRE"] ) echo "selected" ?> ><?php echo $type["LIBELLE_TYPE"] ?></option>
+        <?php endforeach ?>
+    </select>
+    <select id='activite_secondaire_select' class='activite_select' name='TYPES_ACTIVITES_SECONDAIRES[<?php echo $this->type_activite_secondaire === null ? -1 : $this->type_activite_secondaire['ID_ETABLISSEMENTINFORMATIONSTYPESACTIVITESSECONDAIRES'] ?>][ID_TYPEACTIVITE_SECONDAIRE]' style='width: 70%'>
+        <?php foreach( $this->activites as $activite ) : ?>
+            <?php if( $activite["ID_TYPE"] == $this->type_activite_secondaire["ID_TYPE_SECONDAIRE"] ) : ?>
+                <option value='<?php echo $activite["ID_TYPEACTIVITE"] ?>' <?php if( $activite["ID_TYPEACTIVITE"] == $this->type_activite_secondaire["ID_TYPEACTIVITE_SECONDAIRE"] ) echo "selected" ?> ><?php echo $activite["LIBELLE_ACTIVITE"] ?></option>
+            <?php endif ?>
+        <?php endforeach ?>
+    </select>
+    <small><a href="#" onclick='$(this).parent().parent().remove(); return false;' >Retirer</a></small>
+</li>

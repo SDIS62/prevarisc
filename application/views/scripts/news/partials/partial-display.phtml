@@ -1,0 +1,31 @@
+<?php
+	$actual = new Zend_Date();
+	$d = new Zend_Date($this->ID_NEWS, Zend_Date::TIMESTAMP);
+	
+	$in = array( 
+		'`((?:https?|ftp)://\S+[[:alnum:]]/?)`si', 
+		'`((?<!//)(www\.\S+[[:alnum:]]/?))`si'
+	); 
+    
+	$out = array( 
+		'<a href="$1">$1</a>', 
+		'<a href="http://$1">$1</a>'
+	);
+	
+	$this->TEXTE_NEWS = preg_replace($in, $out, $this->TEXTE_NEWS);
+?>
+
+<tr>
+	<td style='width: 80px; vertical-align: top;' class='text-center'>
+		<span style='display: inline-block; width: 60px; height: 60px'><?php $this->avatar($this->ID_UTILISATEUR, 'medium') ?></span>
+	</td>
+
+	<td>
+		<p>
+			<?php echo $this->TEXTE_NEWS ?><br/>
+			<small class='muted'>
+				<?php echo $this->TYPE_NEWS ?> - Posté à <?php echo (( $d->get(Zend_Date::DATES) != $actual->get(Zend_Date::DATES) ) ?  $d->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT)." ".$d->get(Zend_Date::TIME_SHORT) : $d->get(Zend_Date::TIME_SHORT)) ?> - <a href='<?php echo $this->url(array('controller' => 'news', 'action' => 'delete', 'id' => $this->ID_NEWS))?>'>Supprimer le message</a>
+			</small>
+		</p>
+	</td>
+</tr>

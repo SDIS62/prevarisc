@@ -1,107 +1,130 @@
 <?php
-    class SearchController extends Zend_Controller_Action
+
+class SearchController extends Zend_Controller_Action
+{
+    public function indexAction()
     {
-        public function init()
-        {
-            // Appels ajax
-            $ajaxContext = $this->_helper->getHelper('AjaxContext');
-            $ajaxContext->addActionContext('run', 'json')
-                        ->addActionContext('search-child-doss', 'json')
-                        ->addActionContext('search-child', 'json')
-                        ->addActionContext("next", 'json')
-                        ->initContext();
+        $this->_helper->redirector('etablissement');
+    }
 
-            // Définition du layout
-            $this->_helper->layout->setLayout('search');
+    public function etablissementAction()
+    {
+        $this->_helper->layout->setLayout('search');
 
-            // Nom de l'action appellée
-            $this->view->action = $this->_request->getActionName();
-        }
+        $service_search = new Service_Search;
 
-        public function indexAction()
-        {
-            // On redirige vers la recherche par établissement
-            $this->_helper->redirector('etablissement');
-        }
+        $service_genre = new Service_Genre;
+        $service_statut = new Service_Statut;
+        $service_avis = new Service_Avis;
+        $service_categorie = new Service_Categorie;
+        $service_type = new Service_Type;
+        $service_famille = new Service_Famille;
+        $service_classe = new Service_Classe;
 
-        public function etablissementAction()
-        {
-            // Modèles
-            $DB_categorie = new Model_DbTable_Categorie;
-            $this->view->DB_categorie = $DB_categorie->fetchAll()->toArray();
-            $DB_classe = new Model_DbTable_Classe;
-            $this->view->DB_classe = $DB_classe->fetchAll()->toArray();
-            $DB_famille = new Model_DbTable_Famille;
-            $this->view->DB_famille = $DB_famille->fetchAll()->toArray();
-            $DB_type = new Model_DbTable_Type;
-            $this->view->DB_type = $DB_type->fetchAll()->toArray();
-            $DB_avis = new Model_DbTable_Avis;
-            $this->view->DB_avis = $DB_avis->fetchAll()->toArray();
-            $DB_statut = new Model_DbTable_Statut;
-            $this->view->DB_statut = $DB_statut->fetchAll()->toArray();
-            $DB_genre = new Model_DbTable_Genre;
-            $this->view->DB_genre = $DB_genre->fetchAll()->toArray();
-        }
+        $this->view->DB_genre = $service_genre->getAll();
+        $this->view->DB_statut = $service_statut->getAll();
+        $this->view->DB_avis = $service_avis->getAll();
+        $this->view->DB_categorie = $service_categorie->getAll();
+        $this->view->DB_type = $service_type->getAll();
+        $this->view->DB_famille = $service_famille->getAll();
+        $this->view->DB_classe = $service_classe->getAll();
 
-        public function dossierAction()
-        {
-            // Modèles
-            $DB_nature = new Model_DbTable_DossierNatureliste();
-            $this->view->DB_nature = $DB_nature->fetchAll()->toArray();
-        }
+        if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
+            try {
+                $parameters = $this->_request->getQuery();
+                $label = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] != '#' ? $parameters['label'] : null;
+                $identifiant = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] == '#'? substr($parameters['label'], 1) : null;
+                $genres = array_key_exists('genres', $parameters) ? $parameters['genres'] : null;
+                $categories = array_key_exists('categories', $parameters) ? $parameters['categories'] : null;
+                $classes = array_key_exists('classes', $parameters) ? $parameters['classes'] : null;
+                $familles = array_key_exists('familles', $parameters) ? $parameters['familles'] : null;
+                $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
+                $avis_favorable = array_key_exists('avis', $parameters) && count($parameters['avis']) == 1 ? $parameters['avis'][0] == 'true' : null;
+                $statuts = array_key_exists('statuts', $parameters) ? $parameters['statuts'] : null;
+                $local_sommeil = array_key_exists('presences_local_sommeil', $parameters) && count($parameters['presences_local_sommeil']) == 1 ? $parameters['presences_local_sommeil'][0] == 'true' : null;
+                $city = array_key_exists('city', $parameters) && $parameters['city'] != '' ? $parameters['city'] : null;
+                $street = array_key_exists('street', $parameters) && $parameters['street'] != '' ? $parameters['street'] : null;
 
-        public function utilisateurAction()
-        {
-            // Modèles
-            $DB_fonction = new Model_DbTable_Fonction();
-            $this->view->DB_fonction = $DB_fonction->fetchAll()->toArray();
-        }
+                $search = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, 50, $parameters['page']);
 
-        public function searchChildAction()
-        {
-            // Resultats HTML
-            $html = null;
+                require('helpers/SearchPaginatorAdapter.php');
+                $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));
+                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
 
-            // Création de l'objet recherche
-            $search = new Model_DbTable_Search;
-
-            // On set le type de recherche
-            $search->setItem("etablissement");
-
-            // On gère l'affichage
-            $html = "<ul class='recherche_liste'>";
-            $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/etablissement.phtml', $search->run($this->_request->id) );
-            $html .= "</ul>";
-
-            // Envoi du html sur la vue
-            $this->view->html = $html;
-        }
-
-        public function searchChildDossAction()
-        {
-            // Resultats HTML
-            $html = null;
-
-            // Création de l'objet recherche
-            $search = new Model_DbTable_Search;
-
-            // On set le type de recherche
-            $search->setItem("dossier");
-
-            // On gère l'affichage
-            $html = "<ul class='recherche_liste'>";
-            $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/dossier.phtml', $search->run($this->_request->id) );
-            $html .= "</ul>";
-
-            // Envoi du html sur la vue
-            $this->view->html = $html;
-        }
-
-        public function runAction()
-        {
-            // On execute la requete si il y a quelquechose a traiter
-            if ( count($this->_request->getQuery()) > 0 ) {
-                $this->view->html = $this->_helper->Search($_GET, isset($this->_request->page) ? $this->_request->page : 1);
+                $this->view->results = $paginator;
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage() . ')'));
             }
         }
     }
+
+    public function dossierAction()
+    {
+        $this->_helper->layout->setLayout('search');
+
+        $service_search = new Service_Search;
+
+        $DB_nature = new Model_DbTable_DossierNatureliste();
+        $this->view->DB_nature = $DB_nature->fetchAll()->toArray();
+
+        if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
+            try {
+                $parameters = $this->_request->getQuery();
+                $num_doc_urba = array_key_exists('num_doc_urba', $parameters) ? $parameters['num_doc_urba'] : null;
+
+                $search = $service_search->dossiers($num_doc_urba, null, 50, $parameters['page']);
+
+                require('helpers/SearchPaginatorAdapter.php');
+                $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));
+                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
+
+                $this->view->results = $paginator;
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+        }
+    }
+
+    public function utilisateurAction()
+    {
+        $this->_helper->layout->setLayout('search');
+
+        $service_search = new Service_Search;
+        $service_user = new Service_User;
+
+        $this->view->DB_fonction = $service_user->getAllFonctions();
+
+        if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
+            try {
+                $parameters = $this->_request->getQuery();
+                $name = $parameters['name'];
+                $fonctions = array_key_exists('fonctions', $parameters) ? $parameters['fonctions'] : null;
+
+                $search = $service_search->users($fonctions, $name, null, true, 50, $parameters['page']);
+
+                require('helpers/SearchPaginatorAdapter.php');
+                $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));
+                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
+
+                $this->view->results = $paginator;
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+        }
+    }
+
+    public function displayAjaxSearchAction()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $html = "<ul class='recherche_liste'>";
+        $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/' . $this->_request->items . '.phtml', (array) $this->_request->data );
+        $html .= "</ul>";
+
+        echo $html;
+    }
+}

@@ -22,10 +22,25 @@ html {
 
 body {
     background-color: white;
+    margin: 0 auto;  /* zéro ou une autre valeur */
+    width: 100%; 
+    min-width: 1100px;
 }
 
 tbody {
     font-size: 0.9em;
+}
+
+body.login .btn.btn-primary {
+    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.33);
+    border: 1px solid #980b0e;
+    background: -moz-linear-gradient(top, #e0242a 0%, #b91e23 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e0242a), color-stop(100%, #b91e23));
+    background: -webkit-linear-gradient(top, #e0242a 0%, #b91e23 100%);
+    background: -o-linear-gradient(top, #e0242a 0%, #b91e23 100%);
+    background: -ms-linear-gradient(top, #e0242a 0%, #b91e23 100%);
+    background: linear-gradient(to bottom, #e0242a 0%, #b91e23 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0242a', endColorstr='#b91e23',GradientType=0 );
 }
 
 /* On règle la navbar en mode "super sleek"
@@ -39,26 +54,28 @@ body > .navbar {
     margin-top: 10px;
 }
 
-@media (min-width: 980px) {
-    .navbar-inner .container-fluid,
-    .navbar-inner .container-fluid .nav-collapse > ul > li,
-    .navbar-inner .container-fluid .nav-collapse > ul > li > a {
-        height: 60px;
-        line-height: 40px;
-        font-size: 14px;
-        text-transform: uppercase;
-        color: #949494;
-        text-shadow: 1px 1px 0 white;
-        text-decoration: none;
-    }
-    
-    .navbar-inner .container-fluid .nav-collapse > ul > li > a:hover {
-        color: #555;
-    }
-    
-    .navbar .nav .dropdown-toggle .caret {
-        margin-top: 18px;
-    }
+.navbar-inner .container-fluid {
+	min-width: 1100px;
+}
+
+.navbar-inner .container-fluid,
+.navbar-inner .container-fluid .nav-collapse > ul > li,
+.navbar-inner .container-fluid .nav-collapse > ul > li > a {
+    height: 60px;
+    line-height: 40px;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #949494;
+    text-shadow: 1px 1px 0 white;
+    text-decoration: none;
+}
+
+.navbar-inner .container-fluid .nav-collapse > ul > li > a:hover {
+    color: #555;
+}
+
+.navbar .nav .dropdown-toggle .caret {
+    margin-top: 18px;
 }
 
 
@@ -106,44 +123,20 @@ form * {
     box-sizing: content-box;
 }
 
+form select {
+    box-sizing: border-box;
+}
+
 textarea {
     width: 100%;
     box-sizing: border-box;
 }
 
-.btn.btn-primary {
-    text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.33);
-    border: 1px solid #980b0e;
-    background: -moz-linear-gradient(top, #e0242a 0%, #b91e23 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e0242a), color-stop(100%, #b91e23));
-    background: -webkit-linear-gradient(top, #e0242a 0%, #b91e23 100%);
-    background: -o-linear-gradient(top, #e0242a 0%, #b91e23 100%);
-    background: -ms-linear-gradient(top, #e0242a 0%, #b91e23 100%);
-    background: linear-gradient(to bottom, #e0242a 0%, #b91e23 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0242a', endColorstr='#b91e23',GradientType=0 );
-}
-
 /* Formulaire d'ajout de news */
 
-form#ajouter_news {
-
-	overflow: hidden;
-}
-
-form#ajouter_news textarea {
-
-	display: block;
-    width: 100%;
-	margin-bottom: 3px;
-}
-
-form#ajouter_news button {
-
-	float: right;
-}
-
-form#ajouter_news button + button {
-	margin-left: 4px;
+form#etablissement dt,
+form#etablissement dd {
+	line-height: 30px;
 }
 
 /* Fil d'actualité */
@@ -160,54 +153,10 @@ ul#index-newsfeed li .date {
 	text-align: right;
 	margin-bottom: 0;
 }
-ul#index-newsfeed li .action {
-
-	visibility: hidden;
-	margin-right: 1em;
-}
-
-ul#index-newsfeed li:hover .action {
-
-	visibility: visible;
-}
 
 /* Groupement de communes */
 #liste_villes option[disabled] {
     color: #cccccc;
-}
-
-/* Fiche utilisateur */
-
-#user-profile-left {
-
-	box-sizing: border-box;
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing: border-box;
-	border-right: 1px solid #EEE;
-	padding-bottom: 100px;
-}
-
-#user-profile-left #avatar_img img {
-	width: 100%;
-}
-
-.user-profile-box {
-
-	box-sizing: border-box;
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing: border-box;
-	border-right: 1px dotted silver;
-	text-align: center
-}
-
-.user-profile-box:last-child {
-	
-	border-right: none;
-}
-
-ul.user-informations li:hover{
-
-	background: none;
 }
 
 /* Onglets horizontaux */
@@ -370,15 +319,6 @@ a.thumbnail + a.thumbnail {
 }
 
 /* 8.Etablissements */
-
-form#formulaire_etablissement_footer dl dt {
-    width: 225px;
-}
-
-form#formulaire_etablissement_footer dl dd {
-    margin-left: 250px;
-}
-
 #ligne_informations {
 
 	margin-bottom: 15px;
@@ -389,28 +329,19 @@ form#formulaire_etablissement_footer dl dd {
 	display: inline;
 }
 
-#ligne_informations p#libelle {
-
+#ligne_informations #libelle {
 	font-size: 1.7em;
 	position: relative;
 	top: 2px;
-}
-
-#ligne_informations button {
-	font-size: 0.9em;
-	float: right;
+	font-weight: normal;
+	display: inline;
+	line-height: 0.8em;
 }
 
 #tabs h4,
 #dossierInfos h4,
 #dossier_Pdroite h4,
-#fiche_etablissement h4 {
-
-	/*
-	border-top: 1px solid #e9e9e9;
-	background-color: #f2f2f2;
-	*/
-	
+h4.h4_subtitle {
 	border-top: 1px solid #e9e9e9;
 	background-color: #eaeaea;
 	text-shadow: 1px 1px 0 white;
@@ -418,66 +349,14 @@ form#formulaire_etablissement_footer dl dd {
 	margin: 1em 0 1em 0;
 }
 
-#fiche_etablissement h5 {
-
-	/*color: #eeeeee;*/
+.nav-tabs > li.tabs-right {
+	float: right;
+	margin-left: 10px;
+	margin-right: 0;
 }
 
-#fiche_etablissement ul#menu_carte {
-
-	text-align: right;
-	margin-bottom: 1em;
-}
-
-#fiche_etablissement ul#menu_carte li {
-
-	color: #858585;
-	border: 1px solid #858585;
-	padding: 0 5px 0 5px;
-	display: inline;
-}
-
-#fiche_etablissement ul#menu_carte li:hover {
-
-	color: #CA0425;
-	border-color: #CA0425;
-	cursor: pointer;
-}
-
-#fiche_etablissement ul#menu_carte li.active {
-
-	color: #CA0425;
-	border-color: #CA0425;
-}
-
-#fiche_etablissement dl.plans:last-child dd:last-child {
-
-	display: none;
-}
-
-#historique_menu {
-	padding: 0;
-}
-
-#historique_menu ul {
-	height: 400px;
-}
-
-#historique_menu ul li {
-	height: 16px;
-	margin: 6px 0 6px 0;
-}
-
-#historique_menu ul li a {
-	background-color: #EEE;
-	padding: 3px 0 3px 0;
-	display: block;
-	text-decoration: none;
-}
-
-#historique_menu ul li a:hover {
-	color: white;
-	background-color: silver;
+.nav-tabs > li.tabs-right > a {
+	margin-right: 0;
 }
 
 /* Contacts */
@@ -530,7 +409,7 @@ form#formulaire_etablissement_footer dl dd {
 .noTitleStuff .ui-dialog-titlebar { display:none }
 
 /* Auto complétion  */
-.ac_results{padding:0px;border:1px solid black;background-color:white;overflow:hidden;z-index:99999}.ac_results ul{width:100%;list-style-position:outside;list-style:none;padding:0;margin:0}.ac_results li{margin:0px;padding:2px 5px;cursor:default;display:block;font:menu;font-size:12px;line-height:16px;overflow:hidden}.ac_loading{background:white url('/images/template/load/load.gif') right center no-repeat}.ac_odd{background-color:#eee}.ac_over{background-color:#0A246A;color:white}.qtip-wrapper{z-index:10}.timeEntry_control{vertical-align:middle;margin-left:2px}* html .timeEntry_control{margin-top:-4px}
+.ac_results{padding:0px;border:1px solid black;background-color:white;overflow:hidden;z-index:99999}.ac_results ul{width:100%;list-style-position:outside;list-style:none;padding:0;margin:0}.ac_results li{margin:0px;padding:2px 5px;cursor:default;display:block;font:menu;font-size:12px;line-height:16px;overflow:hidden}.ac_odd{background-color:#eee}.ac_over{background-color:#0A246A;color:white}.qtip-wrapper{z-index:10}.timeEntry_control{vertical-align:middle;margin-left:2px}* html .timeEntry_control{margin-top:-4px}
 
 /* Formulaire spécial : box */
 
@@ -692,4 +571,8 @@ ul#gestionCommissionMenu li.active {
 
 .fc-event-bg:hover{
 	cursor:move;
+}
+
+.confirm-modal-hide {
+	display: none;
 }

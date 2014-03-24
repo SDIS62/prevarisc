@@ -1,19 +1,26 @@
-<div class='well' style='color: #FF1A00; font-weight: bold; font-size: 2em;'>
-    <?php echo $this->message ?>
-</div>
+<h1>
+    Aie !
+    <small>Une erreur '<?php echo $this->message ?>' est survenue ...</small>
+</h1>
 
-<?php if (isset($this->exception)): ?>
-
-<h3>Exception information:</h3>
-<p>
-  <b>Message:</b> <?php echo $this->exception->getMessage() ?>
+<p class="lead">
+    <strong>Ne vous inquiétez pas, tout va bien se passer !</strong> 
+    Nous avons été prévenus, nous nous engageons à corriger ce problème dans les plus brefs délais.
 </p>
 
-<h3>Stack trace:</h3>
-<pre><?php echo $this->exception->getTraceAsString() ?>
-</pre>
+<?php if (isset($this->exception)): ?>
+<div class="well">
+    <h3>Exception information:</h3>
+    <p>
+      <b>Message:</b> <?php echo $this->exception->getMessage() ?>
+    </p>
 
-<h3>Request Parameters:</h3>
-<pre><?php echo var_export($this->request->getParams(), true) ?>
-</pre>
+    <h3>Stack trace:</h3>
+    <pre><?php echo $this->exception->getTraceAsString() ?>
+    </pre>
+
+    <h3>Request Parameters:</h3>
+    <pre><?php echo $this->escape(var_export($this->request->getParams(), true)) ?>
+    </pre>
+</div>
 <?php endif ?>

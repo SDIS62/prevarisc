@@ -1,0 +1,197 @@
+<?php echo $this->partial('users/partials/menu_admin_user.phtml') ?>
+
+<form enctype='multipart/form-data' method='post'>
+
+	<?php if($this->add) : ?>
+	<div class='pull-right' >
+	    <input type='submit' class="btn btn-success" value="Ajouter l'utilisateur">
+	</div>
+	<h4>Ajout d'un utilisateur</h4>
+	<?php else : ?>
+	<div class='pull-right' >
+	    <div class="btn-group">
+	        <a class='btn' href="<?php echo $this->url(array('action' => 'index')) ?>">Annuler la modification</a>
+	        <input type='submit' class="btn btn-success" value='Sauvegarder'>
+	    </div>
+	</div>
+	<h4>Modification de l'utilisateur <?php echo $this->user['infos']["NOM_UTILISATEURINFORMATIONS"] . ' ' . $this->user['infos']["PRENOM_UTILISATEURINFORMATIONS"] ?></h4>
+	<?php endif ?>
+
+    <dl class='dl-horizontal well'>
+    	<dt>Photo</dt>
+        <dd>
+        	<p>
+        		<?php $this->avatar($this->user["ID_UTILISATEUR"]) ?>
+        		<input name='avatar' type='file' />
+    		</p>
+    	</dd>
+        
+
+        <dt>Login</dt>
+        <dd>
+        	<p>
+        		<input placeholder='Login de connexion ...' name='USERNAME_UTILISATEUR' value='<?php if(isset($this->user["USERNAME_UTILISATEUR"])) echo $this->user["USERNAME_UTILISATEUR"] ?>' type='text' />
+			</p>
+    	</dd>
+        
+        <dt>Mot de passe</dt>
+        <dd>
+        	<p>
+	            <?php if( !$this->add ) : ?>
+	                <input placeholder='Mot de passe' style='display: none' name='PASSWD_INPUT' type='password' disabled value='<?php echo $this->user["PASSWD_UTILISATEUR"] ?>' />
+	                <input placeholder='Vérification du mot de passe' style='display: none' name='PASSWD_INPUT_VERIF' type='password' disabled value='<?php echo $this->user["PASSWD_UTILISATEUR"] ?>' />
+	                <a href='' id='change_passwd' >Changer votre mot de passe</a>
+	                <?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via le LDAP ? <input type='checkbox' id='ldap2_checkbox' name="ldap_checkbox" value='1' <?php if($this->user["PASSWD_UTILISATEUR"] == "") echo "checked"?> /><?php endif ?>
+	            <?php else : ?>
+	                <input placeholder='Mot de passe' name='PASSWD_INPUT' type='password' />
+	                <input placeholder='Vérification du mot de passe' name='PASSWD_INPUT_VERIF' type='password' />
+	                <?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via le LDAP ? <input type='checkbox' id='ldap_checkbox' name="ldap_checkbox" value='1' /> <?php endif ?>
+	            <?php endif ?>
+            </p>
+        </dd>
+
+        <dt>Groupe</dt>
+        <dd>
+        	<p>
+	            <select name='ID_GROUPE'>
+	                <?php foreach($this->groupes as $groupe) : ?>
+	                <option value="<?php echo $groupe['ID_GROUPE'] ?>" <?php if( $groupe['ID_GROUPE'] == $this->user['ID_GROUPE'] ) echo "selected" ?>><?php echo $groupe['LIBELLE_GROUPE'] ?></option>
+	                <?php endforeach ?>
+	            </select>
+            </p>
+        </dd>
+
+        <dt>Utilisateur actif ?</dt>
+        <dd>
+        	<p>
+        		<input type='hidden' value='0' name='ACTIF_UTILISATEUR' />
+	            <input type='checkbox' name='ACTIF_UTILISATEUR' value='1' <?php if( !isset($this->user) || $this->user['ACTIF_UTILISATEUR'] ) echo "checked" ?> />
+            </p>
+        </dd>
+    </dl>
+
+    <h4>Informations de l'utilisateur</h4>
+    <dl class='dl-horizontal'>
+    	<dt>Nom</dt>
+		<dd>
+			<input type='text' name='PRENOM_UTILISATEURINFORMATIONS' value='<?php echo $this->user['infos']["PRENOM_UTILISATEURINFORMATIONS"] ?>' />
+		</dd>
+
+		<dt>Prénom</dt>
+		<dd>
+			<input type='text' name='NOM_UTILISATEURINFORMATIONS' value='<?php echo $this->user['infos']["NOM_UTILISATEURINFORMATIONS"] ?>' />
+		</dd>
+
+    	<dt>Fonction</dt>
+		<dd>
+			<select name='ID_FONCTION' >
+				<?php foreach($this->fonctions as $fonction) : ?>
+					<option value='<?php echo $fonction["ID_FONCTION"] ?>' <?php if(($fonction["ID_FONCTION"] == $this->user['infos']["ID_FONCTION"])) echo "selected" ?> >
+						<?php echo $fonction["LIBELLE_FONCTION"] ?>
+					</option>
+				<?php endforeach ?>
+			</select>
+		</dd>
+
+		<dt>Téléphones</dt>
+		<dd>
+			<input type='text' name='TELFIXE_UTILISATEURINFORMATIONS' placeholder='Téléphone fixe ...' value='<?php echo $this->user['infos']["TELFIXE_UTILISATEURINFORMATIONS"] ?>' /><br/>
+			<input type='text' name='TELFAX_UTILISATEURINFORMATIONS' placeholder='Portable ...' value='<?php echo $this->user['infos']["TELFAX_UTILISATEURINFORMATIONS"] ?>' /><br/>
+			<input type='text' name='TELPORTABLE_UTILISATEURINFORMATIONS' placeholder='Fax ...' value='<?php echo $this->user['infos']["TELPORTABLE_UTILISATEURINFORMATIONS"] ?>' />
+		</dd>
+
+		<dt>Courriel</dt>
+		<dd>
+			<input type='text' name='MAIL_UTILISATEURINFORMATIONS' value='<?php echo $this->user['infos']["MAIL_UTILISATEURINFORMATIONS"] ?>' />
+		</dd>
+		
+		<dt>Site Web</dt>
+		<dd>
+			<input type='text' name='WEB_UTILISATEURINFORMATIONS' value='<?php echo $this->user['infos']["WEB_UTILISATEURINFORMATIONS"] ?>' />
+		</dd>
+
+		<dt>Adresse</dt>
+		<dd>
+			<textarea name='OBS_UTILISATEURINFORMATIONS' style="width: 100%"><?php if(isset($this->user['infos']["OBS_UTILISATEURINFORMATIONS"])) echo $this->user['infos']["OBS_UTILISATEURINFORMATIONS"] ?></textarea>
+		</dd>
+	</dl>
+    
+    <h4>Domaines de compétences</h4>
+    <dl class='dl-horizontal'>
+        <dt>Commune</dt>
+        <dd>
+        	<p>
+	            <select name='NUMINSEE_COMMUNE'>
+	                <option value="null">Définir une commune ..</option>
+	                <?php foreach($this->communes as $commune) : ?>
+	                <option value="<?php echo $commune['NUMINSEE_COMMUNE'] ?>" <?php if( $commune['NUMINSEE_COMMUNE'] == $this->user['NUMINSEE_COMMUNE'] ) echo "selected" ?>><?php echo $commune['LIBELLE_COMMUNE'] ?></option>
+	                <?php endforeach ?>
+	            </select>
+            </p>
+        </dd>
+        
+        <dt>Commissions</dt>
+        <dd>
+        	<p>
+	            <select name='commissions[]' multiple>
+	                <?php foreach($this->rowset_commissions as $commission) : ?>
+	                <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( $commission['ID_COMMISSION'] == $this->user['commissions']["ID_COMMISSION"] ) echo "selected" ?>><?php echo $commission['LIBELLE_COMMISSION'] ?></option>
+	                <?php endforeach ?>
+	            </select>
+            </p>
+        </dd>
+        
+        <dt>Groupements</dt>
+        <dd>
+        	<p>
+	            <select name='groupements[]' multiple>
+	                <?php foreach($this->groupements as $groupement) : ?>
+	                <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php if( $groupement['ID_GROUPEMENT'] == $this->user['groupements']["ID_GROUPEMENT"] ) echo "selected" ?>><?php echo $groupement['LIBELLE_GROUPEMENT'] ?></option>
+	                <?php endforeach ?>
+	            </select>
+            </p>
+        </dd>
+    </dl>
+        
+</form>
+
+
+<script>
+	$(document).ready(function() {
+
+    	// Gestion des multiselects
+    	$("select[name='commissions[]']").multiselect({header: false, noneSelectedText: "Aucune commission"});
+    	$("select[name='groupements[]']").multiselect({header: false, noneSelectedText: "Aucun groupement"});
+
+		$("#change_passwd").click(function() {
+			$("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val("").attr("disabled", false).show();
+			$("input[name='PASSWD_INPUT']").focus();
+			$(this).hide();
+			return false;
+		});
+		
+		$("#ldap_checkbox").click(function() {
+			if($(this).attr("checked")) {
+				$("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val("").attr("disabled", false).hide();
+			}
+			else {
+				$("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val("").attr("disabled", false).show();
+				$("input[name='PASSWD_INPUT']").focus();
+			}
+		});
+		
+		$("#ldap2_checkbox").change(function() {
+			if($(this).attr("checked")) {
+				$("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val("").attr("disabled", false).hide();
+				$("#change_passwd").hide();
+			}
+			else {
+				$("#change_passwd").show();
+				if($("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val() == "") {
+					$("#change_passwd").click();
+				}
+			}
+		}).change();
+
+	});
+</script>

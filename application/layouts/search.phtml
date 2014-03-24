@@ -1,79 +1,14 @@
 <?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
 
 <!-- Titre -->
-<h2 >
-    Recherche
-</h2>
+<h2>Recherche</h2>
 
 <!-- Onglets permettant de selectionner les entités à rechercher -->
 <ul id='onglets_horizontaux' >
-    <li class='<?php echo ( $this->action == "etablissement" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"etablissement")) ?>'>Établissement</a></li>
-    <li class='<?php echo ( $this->action == "dossier" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"dossier")) ?>'>Dossier</a></li>
-    <li class='<?php echo ( $this->action == "utilisateur" ) ? "selection_onglets_hor" : "read" ?>'><a href='<?php echo $this->url(array("action"=>"utilisateur")) ?>'>Utilisateur</a></li>
+    <li><a href='<?php echo $this->url(array("action"=>"etablissement")) ?>'>Établissement</a></li>
+    <li><a href='<?php echo $this->url(array("action"=>"dossier")) ?>'>Dossier</a></li>
 </ul>
-    
-<!-- Formulaire de recherche -->
-<div>
 
 <?php $this->placeholder('before_content')->captureEnd() ?>
-
-
-<?php $this->placeholder('after_content')->captureStart() // Capture du 'after_content' ?>
-
-</div>
-                    
-<!-- Bouton lançant la recherche -->
-<p style="text-align: center">
-    <a id='search' href="/search/run" class='btn btn-primary' >Rechercher</a>
-    <span id='loader' class='ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement' /></span>
-</p>
-
-<!-- Résultats -->
-<div id='content_resultats' ></div>
-
-<script type="text/javascript">
-    
-    $("#search, div.pagination a").live("click", function() {
-        $.ajax({
-            url: $(this).attr("href"),
-            data: $("#recherche").serialize(),
-            beforeSend: function() {
-                $('html, body').animate({ scrollTop: 0 }, 'slow');
-                $("#loader").show();
-                $("#search").hide();
-                $("#content_resultats").css("opacity", 0.5);
-            },
-            success: function( result ) {
-                $("#loader").hide();
-                $("#search").show();
-                $("#content_resultats").css("opacity", 1);
-                $("#content_resultats").html( result["html"] );
-                
-                if($("form input[name='item']").val() == "etablissement") {
-                    if($("form input[name='par']:checked").val() == "criteres") {
-                        $("#content_resultats").find('li').removeClass("slide");
-                        $("#content_resultats").find('li').find("span.icone_enfants").remove();
-                    }
-                }
-                
-                
-            },
-            error: function(r) {
-                alert(r.responseText);
-            }
-        });
-        
-        return false;
-    });
-    
-    $("#clear").live("click", function() {
-        $("#content_resultats").empty();
-        return false;
-    });
-    
-</script>
-
-<?php $this->placeholder('after_content')->captureEnd() ?>
-
 
 <?php echo $this->render('layout.phtml') // Rendu du layout par défaut avec les placeholders ?>

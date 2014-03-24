@@ -20,7 +20,10 @@
             $return = array_slice($return, 0, count($primary));
 
             // On rajoute les valeurs de toutes les cl� primaires
-            foreach($return as $pos => $item) :	$return[$pos][$key] = $primary[$pos][$key]; endforeach;
+            foreach($return as $pos => $item) : $return[$pos][$key] = $primary[$pos][$key]; endforeach;
+
+            // Clé primaire en clé du tableau associatif
+            $return = $this->mapResult($return, $key);
 
             // On envoi le tout
             return $return;
@@ -33,8 +36,7 @@
 
             // On parcours le tableau
             foreach ($array as $value) {
-
-                $result[] = $value[$key];
+                $result[$value[$key]] = $value;
             }
 
             return $result;

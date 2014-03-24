@@ -1,0 +1,51 @@
+<div class='pull-right' >
+	<div class='btn-group'>
+		<a href='<?php echo $this->url(array('action' => 'add-contact')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" >Ajouter un nouveau contact</a>
+		<a href='<?php echo $this->url(array('action' => 'add-contact-existant')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" >Ajouter contact existant</a>
+	</div>
+    <a class='btn' href="<?php echo $this->url(array('action' => 'contacts')) ?>">Revenir sur l'affichage des contacts</a>
+</div>
+
+<h3>Gestion des contacts</h3>
+
+<?php if(count($this->contacts) == 0) : ?>
+    <p class='muted'>Il n'y a pas de contact.</p>
+<?php else : ?>
+<table class='table table-bordered table-condensed table-hover'> 
+	<thead> 
+		<tr>
+			<th>Fonction</th> 
+			<th>Nom</th>
+			<th></th>
+		</tr> 
+	</thead> 
+	<tbody>
+		<?php foreach ($this->contacts as $contact) : ?>
+			<tr>   
+				<td>
+					<?php echo $contact['LIBELLE_FONCTION'] ?>
+				</td>
+				<td>
+					<?php echo $contact['NOM_UTILISATEURINFORMATIONS'] . ' ' . $contact['PRENOM_UTILISATEURINFORMATIONS'] ?>
+				</td>
+				<td>
+					<a href='<?php echo $this->url(array('action' => 'delete-contact', 'id_contact' => $contact['ID_UTILISATEURINFORMATIONS'])) ?>'>Supprimer le contact</a>
+				</td>
+			</tr>
+		<?php endforeach ?>
+	</tbody>
+</table>
+<?php endif ?>
+
+<div id="reponse-modal" class="modal hide fade" ></div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Gestion des boites modales
+        $("a[data-toggle='modal']").click(function() {
+            var target = $(this).attr("data-target");
+            var url = $(this).attr("href");
+            $(target).load(url);
+        });
+    });
+</script>

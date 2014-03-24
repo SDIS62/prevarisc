@@ -271,6 +271,28 @@ $(document).ready(function() {
 		}
 	});
 	
+	$("#createPv").click(function(){
+		if($("#external-events").children("div").children("div").length == 0){
+			$.ajax({
+				url: "/dossier/generationpv",
+				data: "dateCommId="+$("#dateCommId").val(),
+				type:"POST",
+				//async: false,
+				beforeSend: function(){
+					$("#infoGeneration").html("Création en cours, veuillez patienter");
+				},
+				success: function(affichageResultat){
+					$("#infoGeneration").html(affichageResultat);
+				},
+				error: function(){
+					return false;
+				}
+			});
+		}else{
+			$("#infoGeneration").html("<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Certains dossiers prévus n'ont pas été placés dans le calendrier</span><br/><br/><br/>");
+		}
+	});
+	
 	$(".heures").click(function(){
 		var gestionHeures = $(this).attr('id');
 		$.ajax({
@@ -379,7 +401,9 @@ $(document).ready(function() {
 			<button id='createConvoc' class='btn' >Générer Convocations</button>
 			&nbsp;
 			<button id='createOdj' class='btn' >Génerer l'ordre du jour</button>
-			<br/><br/><br/>
+			&nbsp;
+			<button id='createPv' class='btn' >Génerer PV</button>
+			<br/><br/>
 			<div id='infoGeneration'></div>
 			<br/>
 	";
@@ -398,23 +422,33 @@ $(document).ready(function() {
 				if( count($this->listeDossierNonAffect) != 0 ){
 					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 						echo "
-							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
-								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
-									Etab. : ".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
-									<br/>
+							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER']."' >
 						";
+						if(isset($dossierNonAffect['infosEtab'])){
+							//si le dossier est attaché à un établissement
+							echo $dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+						}
+						if(isset($dossierNonAffect['infosEtab']['parents'])){
+							echo " - ".$dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+						}
+						echo "<br/>";
 						if($dossierNonAffect['LIBELLE_DOSSIERNATURE'] != "")
 						{
-							echo "Nature : ".$dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
+							echo $dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
 						}
 						if($dossierNonAffect['OBJET_DOSSIER'] != "")
 						{
 							echo "Objet : ".$dossierNonAffect['OBJET_DOSSIER']."<br/>";
 						}
-						if(isset($dossierNonAffect['NUM_DOCURBA']))
+						if(isset($dossierNonAffect['listeDocUrba']))
 						{
-							echo "Numéro document d'urbanisme : ".$dossierNonAffect['NUM_DOCURBA'];
+							echo "Numéro document d'urbanisme : ";
+							foreach($dossierNonAffect['listeDocUrba'] as $val => $ue){
+								echo $ue['NUM_DOCURBA']." . ";
+							}
 						}
+						
 						echo "
 								</a>
 							</div>
@@ -442,12 +476,12 @@ $(document).ready(function() {
 					<li num='".$dossierNonAffect['NUM_DOSSIER']."'  >
 						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
-								Etablissement : ".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
+								".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['LIBELLE_COMMUNE'].")
 								<br/>
 				";
 				if($dossierNonAffect['LIBELLE_DOSSIERNATURE'] != "")
 				{
-					echo "Nature : ".$dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
+					echo $dossierNonAffect['LIBELLE_DOSSIERNATURE']."<br/>";
 				}
 				if($dossierNonAffect['OBJET_DOSSIER'] != "")
 				{

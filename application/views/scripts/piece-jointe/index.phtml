@@ -14,7 +14,7 @@
 				<th>Nom</th> 
 				<th>Description</th>
 				<th>Date d'ajout</th>
-                <?php if($this->type == 'dossier') echo "<th>Rapport final</th>"?>
+                <?php if($this->type == 'dossier') echo "<th>Rapport validé</th>"?>
 				<th></th>
 			</tr> 
 		</thead> 
@@ -64,7 +64,7 @@
 								// On ouvre la barre de chargement
 								$("<div id='load' style='text-align: center'><img src='/images/bar.gif' alt='Upload en cours' /></div>").dialog({
 									resizable: false,
-									height: 28,
+									height: 45,
 									width: 250,
 									modal: true,
 									dialogClass: 'noTitleStuff'

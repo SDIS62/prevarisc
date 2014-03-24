@@ -7,14 +7,63 @@
 
         public function get( $id_etablissement )
         {
-            $select = $this->select()
-                ->setIntegrityCheck(false)
-                ->from("etablissementadresse")
-                ->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", array("LIBELLE_COMMUNE", "CODEPOSTAL_COMMUNE"))
-                ->joinLeft("adresserue", "etablissementadresse.ID_RUE = adresserue.ID_RUE AND etablissementadresse.NUMINSEE_COMMUNE = adresserue.NUMINSEE_COMMUNE", "LIBELLE_RUE")
-                ->where("etablissementadresse.ID_ETABLISSEMENT = '$id_etablissement'");
+            $model_etablissement = new Model_DbTable_Etablissement;
+            $informations = $model_etablissement->getInformations($id_etablissement);
 
-            return $this->fetchAll($select)->toArray();
+            switch($informations->ID_GENRE) {
+                // Adresse d'un site
+                case 1:
+                    $search = new Model_DbTable_Search;
+
+                    $etablissement_enfants = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+
+                    if(count($etablissement_enfants) > 0) {
+                        $i = 0;
+                        foreach ($etablissement_enfants as $key => $ets) {
+                            if (($ets["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $ets["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"]) > ($etablissement_enfants[$i]["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $etablissement_enfants[$i]["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"])) {
+                                $i = $key;
+                            }
+                        }
+                        return $this->get($etablissement_enfants[$i]["ID_ETABLISSEMENT"]);
+                    }
+                    else {
+                        return array();
+                    }
+                    break;
+
+                // Adresse d'une cellule
+                case 3:
+                    // Récupération des parents de l'établissement
+                    $results = array();
+                    $id_enfant = $id_etablissement;
+                    do {
+                        $parent = $model_etablissement->getParent($id_enfant);
+                        if ($parent != null) {
+                            $results[] = $parent;
+                            $id_enfant = $parent["ID_ETABLISSEMENT"];
+                        }
+                    } while($parent != null);
+                    $etablissement_parents = count($results) == 0 ? array() : array_reverse($results);
+
+                    $pere = end($etablissement_parents);
+
+                    if ($pere) {
+                        return $this->get($pere["ID_ETABLISSEMENT"]);
+                    }
+
+                    return array();
+                    break;
+
+                // Adresse par défaut
+                default: 
+                    $select = $this->select()
+                        ->setIntegrityCheck(false)
+                        ->from("etablissementadresse")
+                        ->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", array("LIBELLE_COMMUNE", "CODEPOSTAL_COMMUNE"))
+                        ->joinLeft("adresserue", "etablissementadresse.ID_RUE = adresserue.ID_RUE AND etablissementadresse.NUMINSEE_COMMUNE = adresserue.NUMINSEE_COMMUNE", "LIBELLE_RUE")
+                        ->where("etablissementadresse.ID_ETABLISSEMENT = '$id_etablissement'");
+                    return $this->fetchAll($select)->toArray();
+            }
         }
 
         // Donne la liste des rues
