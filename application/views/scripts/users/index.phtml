@@ -35,7 +35,7 @@
                     <?php foreach( $this->users as $user ) : ?>
                     <tr <?php if(!$user["ACTIF_UTILISATEUR"]) echo "class='muted'" ?> >
                         <td style='font-style: italic' ><?php echo $user["USERNAME_UTILISATEUR"] ?></td>
-                        <td><a href='/users/profile?uid=<?php echo $user["ID_UTILISATEUR"] ?>' ><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></a></td>
+                        <td><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></td>
                         <td><?php echo $user["LIBELLE_FONCTION"] ?></td>
                         <td>
                             <?php if(!$user["ACTIF_UTILISATEUR"]) : ?>
