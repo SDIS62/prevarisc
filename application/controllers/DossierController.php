@@ -1172,28 +1172,34 @@ class DossierController extends Zend_Controller_Action
             if ($this->_getParam('COMMISSION_DOSSIER') == '') {
                 $dbDossierAffectation->deleteDateDossierAffect($idDossier);
             } else {
-                $dbDossierAffectation->deleteDateDossierAffect($idDossier);
                 $affectation = $dbDossierAffectation->createRow();
                 if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
-                    $affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE');
-                    $affectation->ID_DOSSIER_AFFECT = $idDossier;
-                    $affectation->save();
-
-                    //On recupere l'affectation à une visite pour renseigner dans dossier car la date sera utilisée dans établissement
-                    $dateCommDoss = $dbDateComm->find($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'))->current();
-                    $nouveauDossier->DATEVISITE_DOSSIER = $dateCommDoss->DATE_COMMISSION;
-                    $nouveauDossier->save();
+					$exist = $dbDossierAffectation->find($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'),$idDossier);
+					if(count($exist) == 0){
+						$affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE');
+						$affectation->ID_DOSSIER_AFFECT = $idDossier;
+						$affectation->save();
+						//On recupere l'affectation à une visite pour renseigner dans dossier car la date sera utilisée dans établissement
+						$dateCommDoss = $dbDateComm->find($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'))->current();
+						$nouveauDossier->DATEVISITE_DOSSIER = $dateCommDoss->DATE_COMMISSION;
+						$nouveauDossier->save();
+						$dbDossierAffectation->deleteDateDossierModifDateAffect($idDossier,$this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'));
+					}
                 }
 
                 $affectation = $dbDossierAffectation->createRow();
                 if ($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') && $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') != '') {
-                    $affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
-                    $affectation->ID_DOSSIER_AFFECT = $idDossier;
-                    $affectation->save();
-                    //On recupere l'affectation à une commission pour renseigner dans dossier car la date sera utilisée dans établissement
-                    $dateCommDoss = $dbDateComm->find($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION'))->current();
-                    $nouveauDossier->DATECOMM_DOSSIER = $dateCommDoss->DATE_COMMISSION;
-                    $nouveauDossier->save();
+					$exist = $dbDossierAffectation->find($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION'),$idDossier);
+					if(count($exist) == 0){
+						$affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
+						$affectation->ID_DOSSIER_AFFECT = $idDossier;
+						$affectation->save();
+						//On recupere l'affectation à une commission pour renseigner dans dossier car la date sera utilisée dans établissement
+						$dateCommDoss = $dbDateComm->find($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION'))->current();
+						$nouveauDossier->DATECOMM_DOSSIER = $dateCommDoss->DATE_COMMISSION;
+						$nouveauDossier->save();
+						$dbDossierAffectation->deleteDateDossierModifDateAffect($idDossier,$this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION'));
+					}
                 }
             }
 
