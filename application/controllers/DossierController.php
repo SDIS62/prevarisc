@@ -150,12 +150,11 @@ class DossierController extends Zend_Controller_Action
 
             $this->view->idDossier = ($this->_getParam("id"));
         }
-
-
     }
 
     public function indexAction()
     {
+
         $this->view->do = "new";
         if ($this->_getParam("id")) {
             $this->view->do = "edit";
@@ -1915,7 +1914,6 @@ class DossierController extends Zend_Controller_Action
             //1 = salle . 2 = visite . 3 = groupe de visite
 			//Zend_Debug::dump($commissionInfo);
             $this->view->typeCommission = $commissionInfo['ID_COMMISSIONTYPEEVENEMENT'];
-			
 			//On récupère la liste des dossiers
             $dbDateCommPj = new Model_DbTable_DateCommissionPj;
             $listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
@@ -1928,6 +1926,7 @@ class DossierController extends Zend_Controller_Action
 			foreach($listeMembres as $var => $membre){
 				//echo $membre['id_membre'];
 				$listeMembres[$var]['infosFiles'] = $model_membres->fetchAll("ID_COMMISSIONMEMBRE = " . $membre['id_membre']);
+				//Zend_Debug::dump($listeMembres[$var]['infosFiles']->toArray());
 			}
 			
 			$this->view->informationsMembre = $listeMembres;
@@ -1976,30 +1975,35 @@ class DossierController extends Zend_Controller_Action
 			
 			$libelleCommune = "";
             $tabCommune[] = array();
-            $numCommune = 0;			
+            $numCommune = 0;
 			foreach($listeDossiers as $val => $ue)
-			{
+			{	
 				if($numCommune == 0){
-					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
-					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
-					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
-					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					if(count($ue['infosEtab']["adresses"]) > 0){
+						$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+						$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+						$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+						$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					}
 					$numCommune++;
 				}
 				
 				$existe = 0;
 				foreach($tabCommune as $tabKey => $value){
-					//echo $value[0]."<br/>";
-					if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
-						$existe = 1;
+					if(count($ue['infosEtab']["adresses"]) > 0){
+						if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
+							$existe = 1;
+						}
 					}
 				}
 				
 				if($existe == 0){
-					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
-					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
-					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
-					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					if(count($ue['infosEtab']["adresses"]) > 0){
+						$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+						$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+						$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+						$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					}
 					$numCommune++;
 				}
 
