@@ -126,6 +126,31 @@ try {
 
 }
 
+//Derogation
+try {
+	$odf->setVars('reglesDerog',verifInfos($this->infosDossier['REGLEDEROG_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	$odf->setVars('justificationDerog',verifInfos($this->infosDossier['JUSTIFDEROG_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	$odf->setVars('mesuresCompensatoiresDerog',verifInfos($this->infosDossier['MESURESCOMPENS_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
+try {
+	$odf->setVars('mesuresComplementairesDerog',verifInfos($this->infosDossier['MESURESCOMPLE_DOSSIER']),true,'UTF8');
+}catch (OdfException $e){
+
+}
+
 
 //PARTIE PREVENTIONNISTE
 	try{
