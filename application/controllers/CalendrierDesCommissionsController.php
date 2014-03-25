@@ -256,11 +256,10 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		//Zend_Debug::dump($listeDossiersAffect);
 
         foreach ($listeDossiersAffect as $dossierAffect) {
-			//echo $dossierAffect['ID_DOSSIER']." - ".$dossierAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]."<br/>";
+			$affichage = $dossierAffect['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]." - ".$dossierAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
+			if(isset($dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']) && $dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] != "")
+				$affichage .= " (".$dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
 			
-
-            $affichage = $dossierAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
-
             if ($dossierAffect['LIBELLE_DOSSIERNATURE'] != "") {
                 $affichage .= " - ".$dossierAffect['LIBELLE_DOSSIERNATURE'];
             }
@@ -269,19 +268,14 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 $affichage .= " - Objet : ".$dossierAffect['OBJET_DOSSIER'];
             }
 			
-			if(isset($dossierAffect['listeDocUrba']))
+			if(isset($dossierAffect['listeDocUrba']) && count($dossierAffect['listeDocUrba']) > 0)
 			{
 				$affichage .= " - Doc urbanisme : ";
 				foreach($dossierAffect['listeDocUrba'] as $val => $ue){
 					$affichage .= $ue['NUM_DOCURBA']." . ";
 				}
 			}
-			
-			/*
-            if (isset($dossierAffect['NUM_DOCURBA'])) {
-                $affichage .= " | Num. doc. urba. : ".$dossierAffect['NUM_DOCURBA'];
-            }
-			*/
+
             $items[] = array(
                 "id" => $dossierAffect['ID_DOSSIER'],
                 "url" => "/dossier/index/id/".$dossierAffect['ID_DOSSIER'],
