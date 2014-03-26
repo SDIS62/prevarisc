@@ -18,7 +18,9 @@ foreach($this->membresFiles as $val => $membre){
 			foreach($this->dossierComm as $val => $dossierInfos){
 				try{
 					$dossInfos->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
-					$dossInfos->setVars('communeDossier', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
+					if(isset($dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"])){
+						$dossInfos->setVars('communeDossier', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
+					}
 					$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
 
 					$dateComm = new Zend_Date($this->dateComm);				

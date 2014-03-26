@@ -579,14 +579,22 @@ class DossierController extends Zend_Controller_Action
                     $etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
 
                     $this->view->etablissement = $etabTab->toArray();
-
+					
                     $DbAdresse = new Model_DbTable_EtablissementAdresse;
                     $this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
-
+					
+					$service_etablissement = new Service_Etablissement;
+					$this->view->etablissementInfos = $service_etablissement->get($this->_getParam("idEtablissement"));
                 } elseif ($this->_getParam("idDossier")) {
                     $DBdossier = new Model_DbTable_Dossier;
                     $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
                     $this->view->listeEtablissement = $tabEtablissement;
+					
+					$service_etablissement = new Service_Etablissement;
+					foreach($this->view->listeEtablissement as $val => $ue){
+						$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+						$this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
+					}
                 }
             break;
             case "showNature":
