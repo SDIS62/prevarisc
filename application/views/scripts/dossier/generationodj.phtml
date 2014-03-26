@@ -56,7 +56,9 @@ foreach($this->membresFiles as $val => $membre){
 					$dateComm = new Zend_Date($this->dateComm);				
 					addChamp($membreLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 					
-					addChamp($membreLoop,'heureDebutComm',$this->heureDeb);
+					$heureCommTab = explode(":",$this->heureDeb);
+					$heureComm = $heureCommTab[0].":".$heureCommTab[1];
+					addChamp($membreLoop,'heureDebutComm',$heureComm);
 
 					//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 					//Generation du segment pour l'affichage des différentes infos du dossier	
