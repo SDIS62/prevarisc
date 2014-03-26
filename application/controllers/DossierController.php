@@ -2186,8 +2186,35 @@ class DossierController extends Zend_Controller_Action
 				
 				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+				
+				
+				
+				
+				//on recupere les prescriptions du dossier
+				$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+				$listePrescDossier = $dbPrescDossier->recupPrescDossier($ue['ID_DOSSIER']);
+				$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+				$prescriptionArray = array();
+				
+				foreach ($listePrescDossier as $tal => $te) {
+					if ($te['ID_PRESCRIPTION_TYPE']) {
+						//cas d'une prescription type
+						$assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($te['ID_PRESCRIPTION_TYPE'],$te['ID_PRESCRIPTION_DOSSIER']);
+						array_push($prescriptionArray, $assoc);
+					} else {
+						//cas d'une prescription particulière
+						$assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($te['ID_PRESCRIPTION_DOSSIER']);
+						array_push($prescriptionArray, $assoc);
+					}
+				}
+				//echo $ue['ID_DOSSIER']."<br/>";
+				//Zend_Debug::dump($listePrescDossier);
+				$listeDossiers[$val]['prescription'] = $prescriptionArray;				
 			}
 			$this->view->dossierComm = $listeDossiers;
+			//Zend_Debug::dump($listeDossiers);
+			
+			
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le document a bien été généré',
