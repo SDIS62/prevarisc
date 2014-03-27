@@ -624,17 +624,14 @@
             minLength: 3,
             source: function(query, process) {
                 return $.ajax({
-                    url: "/etablissement/get",
-                    type: 'post',
+                    url: "/api/1.0/search/etablissements",
+                    type: 'get',
                     data: {
-                        q: query,
-                        limit: 100,
-                        g: $("select[name='ID_GENRE'] option:selected").val(),
-                        genre_pere: 1
+                        name: query
                     },
                     success: function (result) {
                         etablissements = [];
-                        $.each(result.resultats, function (i, etablissement) {
+                        $.each(result.response.results, function (i, etablissement) {
                             switch(etablissement.ID_GENRE)
                             {
                                 case 1:
@@ -676,17 +673,14 @@
             minLength: 3,
             source: function(query, process) {
                 return $.ajax({
-                    url: "/etablissement/get?format=json",
-                    type: 'post',
+                    url: "/api/1.0/search/etablissements",
+                    type: 'get',
                     data: {
-                        q: query,
-                        limit: 100,
-                        g: $("select[name='ID_GENRE'] option:selected").val(),
-                        genre_enfant: 1
+                        name: query
                     },
                     success: function (result) {
                         etablissements = [];
-                        $.each(result.resultats, function (i, etablissement) {
+                        $.each(result.response.results, function (i, etablissement) {
                             switch(etablissement.ID_GENRE)
                             {
                                 case 1:
