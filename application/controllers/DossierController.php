@@ -150,12 +150,11 @@ class DossierController extends Zend_Controller_Action
 
             $this->view->idDossier = ($this->_getParam("id"));
         }
-
-
     }
 
     public function indexAction()
     {
+
         $this->view->do = "new";
         if ($this->_getParam("id")) {
             $this->view->do = "edit";
@@ -580,14 +579,22 @@ class DossierController extends Zend_Controller_Action
                     $etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
 
                     $this->view->etablissement = $etabTab->toArray();
-
+					
                     $DbAdresse = new Model_DbTable_EtablissementAdresse;
                     $this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
-
+					
+					$service_etablissement = new Service_Etablissement;
+					$this->view->etablissementInfos = $service_etablissement->get($this->_getParam("idEtablissement"));
                 } elseif ($this->_getParam("idDossier")) {
                     $DBdossier = new Model_DbTable_Dossier;
                     $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
                     $this->view->listeEtablissement = $tabEtablissement;
+					
+					$service_etablissement = new Service_Etablissement;
+					foreach($this->view->listeEtablissement as $val => $ue){
+						$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+						$this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
+					}
                 }
             break;
             case "showNature":
@@ -1533,372 +1540,356 @@ class DossierController extends Zend_Controller_Action
 
     public function creationdocAction($idDossier, $idEtab)
     {
+		$this->view->idDossier = $idDossier;
+
+		$this->view->fichierSelect = $this->_getParam("fichierSelect");
+
+		/******
+		/
+		/RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
+		/
+		******/
+
+		$model_etablissement = new Model_DbTable_Etablissement;
+		$etablissement = $model_etablissement->find($idEtab)->current();
+		$this->view->etabDesc = $etablissement;
+
+		$this->view->numWinPrev = $etablissement['NUMEROID_ETABLISSEMENT'];
+		$this->view->numTelEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
+		$this->view->numFaxEtab = $etablissement['FAX_ETABLISSEMENT'];
+
+		//Informations de l'établissement (catégorie, effectifs, activité / type principal)
+		$object_informations = $model_etablissement->getInformations($idEtab);
+		$this->view->entite = $object_informations;
+		//echo $this->view->entite['ID_ETABLISSEMENT'];
 		
-        try {
-            $this->view->idDossier = $idDossier;
+		$this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
+		$this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
-            $this->view->fichierSelect = $this->_getParam("fichierSelect");
+		$dbCategorie = new Model_DbTable_Categorie;
+		if ($object_informations["ID_CATEGORIE"]) {
+			$categorie = $dbCategorie->getCategories($object_informations["ID_CATEGORIE"]);
+			$categorie = explode(" ",$categorie['LIBELLE_CATEGORIE']);
+			$this->view->categorieEtab = $categorie[0];
+		}
 
-            /******
-            /
-            /RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
-            /
-            ******/
+		$this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 
-            $model_etablissement = new Model_DbTable_Etablissement;
-            $etablissement = $model_etablissement->find($idEtab)->current();
-			$this->view->etabDesc = $etablissement;
+		$model_typeactivite = new Model_DbTable_TypeActivite;
+		$dbType = new Model_DbTable_Type;
 
-            $this->view->numWinPrev = $etablissement['NUMEROID_ETABLISSEMENT'];
-            $this->view->numTelEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
-            $this->view->numFaxEtab = $etablissement['FAX_ETABLISSEMENT'];
+		$lettreType = $dbType->find($object_informations['ID_TYPE'])->current();
+		$this->view->typeLettreP = $lettreType['LIBELLE_TYPE'];
 
-            //Informations de l'établissement (catégorie, effectifs, activité / type principal)
-            $object_informations = $model_etablissement->getInformations($idEtab);
-            $this->view->entite = $object_informations;
-			//echo $this->view->entite['ID_ETABLISSEMENT'];
-			
-            $this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
-            $this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
+		$activitePrincipale = $model_typeactivite->find($object_informations["ID_TYPEACTIVITE"])->current();
+		$this->view->libelleActiviteP = $activitePrincipale["LIBELLE_ACTIVITE"];
 
-            $dbCategorie = new Model_DbTable_Categorie;
-            if ($object_informations["ID_CATEGORIE"]) {
-                $categorie = $dbCategorie->getCategories($object_informations["ID_CATEGORIE"]);
-                $categorie = explode(" ",$categorie['LIBELLE_CATEGORIE']);
-                $this->view->categorieEtab = $categorie[0];
-            }
+		// Types / activités secondaires
+		$model_typesactivitessecondaire = new Model_DbTable_EtablissementInformationsTypesActivitesSecondaires;
+		$array_types_activites_secondaires = $model_typesactivitessecondaire->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $object_informations->ID_ETABLISSEMENTINFORMATIONS)->toArray();
 
-            $this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+		$idGenreEtab = $object_informations['ID_GENRE'];
+		$dbGenre = new Model_DbTable_Genre;
+		$infosGenre = $dbGenre->find($idGenreEtab)->current();
+		$this->view->genreEtab = $infosGenre['LIBELLE_GENRE'];
+		
 
-            $model_typeactivite = new Model_DbTable_TypeActivite;
-            $dbType = new Model_DbTable_Type;
+		$typeS = "";
+		$actS = "";
 
-            $lettreType = $dbType->find($object_informations['ID_TYPE'])->current();
-            $this->view->typeLettreP = $lettreType['LIBELLE_TYPE'];
+		foreach ($array_types_activites_secondaires as $var) {
+			$lettreTypeS = $dbType->find($var['ID_TYPE_SECONDAIRE'])->current();
+			$typeS .= $lettreTypeS['LIBELLE_TYPE'].", ";
+			$activiteSearchLibelle = $model_typeactivite->find($var['ID_TYPEACTIVITE_SECONDAIRE'])->current();
+			$actS .= $activiteSearchLibelle["LIBELLE_ACTIVITE"].", ";
+		}
 
-            $activitePrincipale = $model_typeactivite->find($object_informations["ID_TYPEACTIVITE"])->current();
-            $this->view->libelleActiviteP = $activitePrincipale["LIBELLE_ACTIVITE"];
+		$this->view->activiteSecondaire = substr($actS, 0, -2);
+		$this->view->typeSecondaire = substr($typeS, 0, -2);
 
-            // Types / activités secondaires
-            $model_typesactivitessecondaire = new Model_DbTable_EtablissementInformationsTypesActivitesSecondaires;
-            $array_types_activites_secondaires = $model_typesactivitessecondaire->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $object_informations->ID_ETABLISSEMENTINFORMATIONS)->toArray();
+		//En fonction du genre on récupère les informations de l'établissement ou du site
+		if ($object_informations['ID_GENRE'] == 2) {
+			//cas d'un établissement
+			$this->view->GN = 2;
+		} elseif ($object_informations['ID_GENRE'] == 3) {
+			//cas d'une céllule
+			$this->view->GN = 3;
+		}
 
-			$idGenreEtab = $object_informations['ID_GENRE'];
-			$dbGenre = new Model_DbTable_Genre;
-			$infosGenre = $dbGenre->find($idGenreEtab)->current();
-			$this->view->genreEtab = $infosGenre['LIBELLE_GENRE'];
-			
+		$dbEtabLie = new Model_DbTable_EtablissementLie;
+		$etabLie = $dbEtabLie->recupEtabCellule($object_informations['ID_ETABLISSEMENT']);
+		if ($etabLie != null) {
+			$idPere = $etabLie[0]['ID_ETABLISSEMENT'];
+			$this->view->infoPere = $model_etablissement->getInformations($idPere);
+			$lettreType = $dbType->find($this->view->infoPere['ID_TYPE'])->current();
+			$this->view->typeLettrePPere = $lettreType['LIBELLE_TYPE'];
+			$activitePrincipale = $model_typeactivite->find($this->view->infoPere["ID_TYPEACTIVITE"])->current();
+			$this->view->libelleActivitePPere = $activitePrincipale["LIBELLE_ACTIVITE"];
+			$this->view->categorieEtabPere = $this->view->infoPere['ID_CATEGORIE'];
+			//Récuperation du genre du pere
+			$idGenrePere = $this->view->infoPere['ID_GENRE'];
+			$infosGenrePere = $dbGenre->find($idGenrePere)->current();
+			$this->view->genrePere = $infosGenrePere['LIBELLE_GENRE'];
+		}
+		
+		
+		// Adresses
+		$model_adresse = new Model_DbTable_EtablissementAdresse;
+		$array_adresses = $model_adresse->get($idEtab);
 
-            $typeS = "";
-            $actS = "";
+		if (count($array_adresses) > 0) {
+			$this->view->communeEtab = $array_adresses[0]["LIBELLE_COMMUNE"];
+			$adresse = "";
+			if($array_adresses[0]['NUMERO_ADRESSE'] != 0)
+				$adresse = $array_adresses[0]['NUMERO_ADRESSE']." ";
+			if($array_adresses[0]["LIBELLE_RUE"] != '')
+				$adresse .= $array_adresses[0]["LIBELLE_RUE"]." ";
+			if($array_adresses[0]["CODEPOSTAL_COMMUNE"] != '')
+				$adresse .= $array_adresses[0]["CODEPOSTAL_COMMUNE"]." ";
+			if($array_adresses[0]["LIBELLE_COMMUNE"] != '')
+				$adresse .= $array_adresses[0]["LIBELLE_COMMUNE"]." ";
+			$this->view->etablissementAdresse = $adresse;
+		}
 
-            foreach ($array_types_activites_secondaires as $var) {
-                $lettreTypeS = $dbType->find($var['ID_TYPE_SECONDAIRE'])->current();
-                $typeS .= $lettreTypeS['LIBELLE_TYPE'].", ";
-                $activiteSearchLibelle = $model_typeactivite->find($var['ID_TYPEACTIVITE_SECONDAIRE'])->current();
-                $actS .= $activiteSearchLibelle["LIBELLE_ACTIVITE"].", ";
-            }
+		/******
+		/
+		/RECUPERATIONS DES INFORMATIONS SUR LE DOSSIER
+		/
+		******/
 
-            $this->view->activiteSecondaire = substr($actS, 0, -2);
-            $this->view->typeSecondaire = substr($typeS, 0, -2);
+		//Récupération des documents d'urbanisme
+		$DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
+		$dossierDocUrba = $DBdossierDocUrba->getDossierDocUrba($idDossier);
+		$listeDocUrba = "";
+		foreach ($dossierDocUrba as $var) {
+			$listeDocUrba .= $var['NUM_DOCURBA'].", ";
+		}
 
-            //En fonction du genre on récupère les informations de l'établissement ou du site
-            if ($object_informations['ID_GENRE'] == 2) {
-                //cas d'un établissement
-                $this->view->GN = 2;
-            } elseif ($object_informations['ID_GENRE'] == 3) {
-                //cas d'une céllule
-                $this->view->GN = 3;
-            }
+		$this->view->listeDocUrba = substr($listeDocUrba, 0, -2);
 
-            $dbEtabLie = new Model_DbTable_EtablissementLie;
-            $etabLie = $dbEtabLie->recupEtabCellule($object_informations['ID_ETABLISSEMENT']);
-            if ($etabLie != null) {
-                $idPere = $etabLie[0]['ID_ETABLISSEMENT'];
-                $this->view->infoPere = $model_etablissement->getInformations($idPere);
-                $lettreType = $dbType->find($this->view->infoPere['ID_TYPE'])->current();
-                $this->view->typeLettrePPere = $lettreType['LIBELLE_TYPE'];
-                $activitePrincipale = $model_typeactivite->find($this->view->infoPere["ID_TYPEACTIVITE"])->current();
-                $this->view->libelleActivitePPere = $activitePrincipale["LIBELLE_ACTIVITE"];
-                $this->view->categorieEtabPere = $this->view->infoPere['ID_CATEGORIE'];
-				//Récuperation du genre du pere
-				$idGenrePere = $this->view->infoPere['ID_GENRE'];
-				$infosGenrePere = $dbGenre->find($idGenrePere)->current();
-				$this->view->genrePere = $infosGenrePere['LIBELLE_GENRE'];
-            }
-			
-			
-            // Adresses
-            $model_adresse = new Model_DbTable_EtablissementAdresse;
-            $array_adresses = $model_adresse->get($idEtab);
+		//Récupération de tous les champs de la table dossier
+		$DBdossier = new Model_DbTable_Dossier;
+		$this->view->infosDossier = $DBdossier->find($idDossier)->current();
 
-            if (count($array_adresses) > 0) {
-                $this->view->communeEtab = $array_adresses[0]["LIBELLE_COMMUNE"];
-                $adresse = "";
-                if($array_adresses[0]['NUMERO_ADRESSE'] != 0)
-                    $adresse = $array_adresses[0]['NUMERO_ADRESSE']." ";
-                if($array_adresses[0]["LIBELLE_RUE"] != '')
-                    $adresse .= $array_adresses[0]["LIBELLE_RUE"]." ";
-                if($array_adresses[0]["CODEPOSTAL_COMMUNE"] != '')
-                    $adresse .= $array_adresses[0]["CODEPOSTAL_COMMUNE"]." ";
-                if($array_adresses[0]["LIBELLE_COMMUNE"] != '')
-                    $adresse .= $array_adresses[0]["LIBELLE_COMMUNE"]." ";
-                $this->view->etablissementAdresse = $adresse;
-            }
+		//Récupération du type et de la nature du dossier
+		$dbType = new Model_DbTable_DossierType;
+		$typeDossier = $dbType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
+		$this->view->typeDossier = $typeDossier['LIBELLE_DOSSIERTYPE'];
 
-            /******
-            /
-            /RECUPERATIONS DES INFORMATIONS SUR LE DOSSIER
-            /
-            ******/
+		$dbNature = new Model_DbTable_DossierNature;
+		$natureDossier = $dbNature->getDossierNatureLibelle($idDossier);
+		$this->view->natureDossier = $natureDossier['LIBELLE_DOSSIERNATURE'];
 
-            //Récupération des documents d'urbanisme
-            $DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
-            $dossierDocUrba = $DBdossierDocUrba->getDossierDocUrba($idDossier);
-            $listeDocUrba = "";
-            foreach ($dossierDocUrba as $var) {
-                $listeDocUrba .= $var['NUM_DOCURBA'].", ";
-            }
+		//On récupère les informations du préventionniste
+		$DBdossierPrev = new Model_DbTable_DossierPreventionniste;
+		$this->view->preventionnistes = $DBdossierPrev->getPrevDossier($idDossier);
 
-            $this->view->listeDocUrba = substr($listeDocUrba, 0, -2);
+		$dbGroupement = new Model_DbTable_Groupement;
+		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
+		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
 
-            //Récupération de tous les champs de la table dossier
-            $DBdossier = new Model_DbTable_Dossier;
-            $this->view->infosDossier = $DBdossier->find($idDossier)->current();
+		$dbDossierContact = new Model_DbTable_DossierContact;
+		//On recherche si un directeur unique de sécurité existe
+		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,8);
+		if(count($contactInfos) == 1)
+			$this->view->dusDossier = $contactInfos[0];
 
-            //Récupération du type et de la nature du dossier
-            $dbType = new Model_DbTable_DossierType;
-            $typeDossier = $dbType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
-            $this->view->typeDossier = $typeDossier['LIBELLE_DOSSIERTYPE'];
+		//un exploitant existe
+		$exploitantInfos = $dbDossierContact->recupInfoContact($idDossier,7);
+		if(count($exploitantInfos) == 1)
+			$this->view->exploitantDossier = $exploitantInfos[0];
 
-            $dbNature = new Model_DbTable_DossierNature;
-            $natureDossier = $dbNature->getDossierNatureLibelle($idDossier);
-            $this->view->natureDossier = $natureDossier['LIBELLE_DOSSIERNATURE'];
+		//un responsable de sécurité existe
+		$respsecuInfos = $dbDossierContact->recupInfoContact($idDossier,9);
+		if(count($respsecuInfos) == 1)
+			$this->view->respsecuDossier = $respsecuInfos[0];
 
-            //On récupère les informations du préventionniste
-            $DBdossierPrev = new Model_DbTable_DossierPreventionniste;
-            $this->view->preventionnistes = $DBdossierPrev->getPrevDossier($idDossier);
+		//un proprietaire
+		$proprioInfos = $dbDossierContact->recupInfoContact($idDossier,17);
+		if(count($proprioInfos) == 1)
+			$this->view->proprioInfos = $proprioInfos[0];
 
-            $dbGroupement = new Model_DbTable_Groupement;
-            $groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
-            $this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
+		//Affichage dossier incomplet pour generation dossier incomplet
+		//Recuperation des documents manquants dans le cas d'un dossier incomplet
+		$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
+		$this->view->listeDocManquant = $dbDossDocManquant->getDocManquantDossLast($idDossier);
 
-            $dbDossierContact = new Model_DbTable_DossierContact;
-            //On recherche si un directeur unique de sécurité existe
-            $contactInfos = $dbDossierContact->recupInfoContact($idDossier,8);
-            if(count($contactInfos) == 1)
-                $this->view->dusDossier = $contactInfos[0];
+		$DBavisDossier = new Model_DbTable_Avis;
+		$libelleAvis = $DBavisDossier->find($this->view->infosDossier["AVIS_DOSSIER"])->current();
+		$this->view->avisDossier = $libelleAvis["LIBELLE_AVIS"];
 
-            //un exploitant existe
-            $exploitantInfos = $dbDossierContact->recupInfoContact($idDossier,7);
-            if(count($exploitantInfos) == 1)
-                $this->view->exploitantDossier = $exploitantInfos[0];
+		//Avis commission
+		$libelleAvisCommission = $DBavisDossier->find($this->view->infosDossier["AVIS_DOSSIER_COMMISSION"])->current();
+		$this->view->avisDossierCommission = $libelleAvisCommission["LIBELLE_AVIS"];
 
-            //un responsable de sécurité existe
-            $respsecuInfos = $dbDossierContact->recupInfoContact($idDossier,9);
-            if(count($respsecuInfos) == 1)
-                $this->view->respsecuDossier = $respsecuInfos[0];
+		$DBdossierCommission = new Model_DbTable_Commission;
+		
+		if ($this->view->infosDossier['COMMISSION_DOSSIER']) {
+			$this->view->commissionInfos = $DBdossierCommission->find($this->view->infosDossier['COMMISSION_DOSSIER'])->current();
+		} else {
+			$this->view->commissionInfos = "Aucune commission";
+		}
 
-            //un proprietaire
-            $proprioInfos = $dbDossierContact->recupInfoContact($idDossier,17);
-            if(count($proprioInfos) == 1)
-                $this->view->proprioInfos = $proprioInfos[0];
+		if ($this->view->infosDossier['INCOMPLET_DOSSIER'] == 1) {
+			$this->view->etatDossier = "Incomplet";
+		} else {
+			$this->view->etatDossier = "Complet";
+		}
 
-            //Affichage dossier incomplet pour generation dossier incomplet
-            //Recuperation des documents manquants dans le cas d'un dossier incomplet
-            $dbDossDocManquant = new Model_DbTable_DossierDocManquant;
-            $this->view->listeDocManquant = $dbDossDocManquant->getDocManquantDossLast($idDossier);
+		//récup de l'id de la piece jointe qu'aura le rapport
+		$DBpieceJointe = new Model_DbTable_PieceJointe;
+		$this->view->idRapportPj = $DBpieceJointe->maxPieceJointe();
 
-            $DBavisDossier = new Model_DbTable_Avis;
-            $libelleAvis = $DBavisDossier->find($this->view->infosDossier["AVIS_DOSSIER"])->current();
-            $this->view->avisDossier = $libelleAvis["LIBELLE_AVIS"];
+		if (!isset($this->view->idRapportPj['MAX(ID_PIECEJOINTE)'])) {
+			$this->view->idPieceJointe = 1;
+		} else {
+			$this->view->idPieceJointe = $this->view->idRapportPj['MAX(ID_PIECEJOINTE)'] + 1;
+		}
 
-            //Avis commission
-            $libelleAvisCommission = $DBavisDossier->find($this->view->infosDossier["AVIS_DOSSIER_COMMISSION"])->current();
-            $this->view->avisDossierCommission = $libelleAvisCommission["LIBELLE_AVIS"];
+		//récuperation de la date de passage en commission
+		$dbAffectDossier = new Model_DbTable_DossierAffectation;
+		$affectDossier = $dbAffectDossier->find(NULL,$idDossier)->current();
+		$this->view->affectDossier = $affectDossier;
 
-            $DBdossierCommission = new Model_DbTable_Commission;
-			
-            if ($this->view->infosDossier['COMMISSION_DOSSIER']) {
-                $this->view->commissionInfos = $DBdossierCommission->find($this->view->infosDossier['COMMISSION_DOSSIER'])->current();
-            } else {
-                $this->view->commissionInfos = "Aucune commission";
-            }
+		//Concernant cette affectation on récupere les infos sur la commission (date aux différents format)
+		$dbDateComm = new Model_DbTable_DateCommission;
+		$dateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
 
-            if ($this->view->infosDossier['INCOMPLET_DOSSIER'] == 1) {
-                $this->view->etatDossier = "Incomplet";
-            } else {
-                $this->view->etatDossier = "Complet";
-            }
+		if ($dateComm['DATE_COMMISSION'] != '') {
+			$date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
+			$this->view->dateCommEntete = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+		}
 
-            //récup de l'id de la piece jointe qu'aura le rapport
-            $DBpieceJointe = new Model_DbTable_PieceJointe;
-            $this->view->idRapportPj = $DBpieceJointe->maxPieceJointe();
+		//PARTIE DOC CONSULTE
 
-            if (!isset($this->view->idRapportPj['MAX(ID_PIECEJOINTE)'])) {
-                $this->view->idPieceJointe = 1;
-            } else {
-                $this->view->idPieceJointe = $this->view->idRapportPj['MAX(ID_PIECEJOINTE)'] + 1;
-            }
+			//récupération du type de dossier (etude / visite)
+			$dbdossier = new Model_DbTable_Dossier;
+			$dossierType = $dbdossier->getTypeDossier((int) $idDossier);
+			$dossierNature = $dbdossier->getNatureDossier((int) $idDossier);
 
-            //récuperation de la date de passage en commission
-            $dbAffectDossier = new Model_DbTable_DossierAffectation;
-            $affectDossier = $dbAffectDossier->find(NULL,$idDossier)->current();
-            $this->view->affectDossier = $affectDossier;
+			//suivant le type on récup la liste des docs
+			$dblistedoc = new Model_DbTable_DossierListeDoc;
 
-            //Concernant cette affectation on récupere les infos sur la commission (date aux différents format)
-            $dbDateComm = new Model_DbTable_DateCommission;
-            $dateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
+			if ($dossierType['TYPE_DOSSIER'] == 2 || $dossierType['TYPE_DOSSIER'] == 3) {
 
-            if ($dateComm['DATE_COMMISSION'] != '') {
-                $date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
-                $this->view->dateCommEntete = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-            }
-
-            //PARTIE DOC CONSULTE
-
-                //récupération du type de dossier (etude / visite)
-                $dbdossier = new Model_DbTable_Dossier;
-                $dossierType = $dbdossier->getTypeDossier((int) $idDossier);
-                $dossierNature = $dbdossier->getNatureDossier((int) $idDossier);
-
-                //suivant le type on récup la liste des docs
-                $dblistedoc = new Model_DbTable_DossierListeDoc;
-
-                if ($dossierType['TYPE_DOSSIER'] == 2 || $dossierType['TYPE_DOSSIER'] == 3) {
-
-                    if ($dossierNature["ID_NATURE"] == 20 || $dossierNature["ID_NATURE"] == 25) {
-                        //cas d'un groupe de visite d'une récption de travaux
-                        $listeDocConsulte = $dblistedoc->getDocVisiteRT();
-                    } elseif ($dossierNature["ID_NATURE"] == 47 || $dossierNature["ID_NATURE"] == 48) {
-                        //cas d'une VAO
-                        $listeDocConsulte = $dblistedoc->getDocVisiteVAO();
-                    } else {
-                        $listeDocConsulte = $dblistedoc->getDocVisite();
-                    }
-
-                } elseif ($dossierType['TYPE_DOSSIER'] == 1) {
-                    $listeDocConsulte = $dblistedoc->getDocEtude();
-                } else {
-                    $listeDocConsulte = 0;
-                }
-
-                //on envoi la liste de base à la vue
-                $this->view->listeDocs = $listeDocConsulte;
-
-                //on recup les docs ajouté pr le dossiers
-                $dblistedocAjout = new Model_DbTable_ListeDocAjout;
-                $listeDocAjout = $dblistedocAjout->getDocAjout((int) $idDossier,$dossierNature['ID_NATURE']);
-                $this->view->listeDocsAjout = $listeDocAjout;
-
-                $this->view->dossierDocConsutle = $dblistedoc->recupDocDossier((int) $idDossier,$dossierNature['ID_NATURE']);
-
-            /*
-            PARTIE PRESCRIPTION
-            */
-
-                //on affiche les prescriptions du dossier
-                $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-                $listePrescDossier = $dbPrescDossier->recupPrescDossier($this->_getParam('idDossier'));
-                $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
-
-                $prescriptionArray = array();
-                foreach ($listePrescDossier as $val => $ue) {
-                    if ($ue['ID_PRESCRIPTION_TYPE']) {
-                        //cas d'une prescription type
-                        $assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
-                        array_push($prescriptionArray, $assoc);
-                    } else {
-                        //cas d'une prescription particulière
-                        $assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
-                        array_push($prescriptionArray, $assoc);
-                    }
-                }
-                $this->view->prescriptionDossier = $prescriptionArray;
-
-            // GESTION DES DATES
-                //Conversion de la date de dépot en mairie pour l'afficher
-                if ($this->view->infosDossier['DATEMAIRIE_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATEMAIRIE_DOSSIER'], Zend_Date::DATES);
-                    $this->view->DATEMAIRIE = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-                //Conversion de la date de dépot en secrétariat pour l'afficher
-                if ($this->view->infosDossier['DATESECRETARIAT_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATESECRETARIAT_DOSSIER'], Zend_Date::DATES);
-                    $this->view->DATESECRETARIAT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-                //Conversion de la date de réception SDIS
-                if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
-                    $this->view->DATEINSERTDOSSIER = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-
-                //Conversion de la date de création du dossier
-                if ($this->view->infosDossier['DATESDIS_DOSSIER'] != '') {
-                    $date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
-                    $this->view->DATESDIS = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }
-
-                $dateDuJour = new Zend_Date();
-                $DBpieceJointe = new Model_DbTable_PieceJointe;
-                $nouvellePJ = $DBpieceJointe->createRow();
-                $nouvellePJ->ID_PIECEJOINTE = $this->view->idPieceJointe;
-                $nouvellePJ->NOM_PIECEJOINTE = "Rapport";
-                $nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
-                $nouvellePJ->DESCRIPTION_PIECEJOINTE = "Rapport de l'établissement ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']." généré le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                $nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY." ".Zend_Date::HOUR.":".Zend_Date::MINUTE.":".Zend_Date::SECOND);
-                $nouvellePJ->save();
-
-                echo "<a href='/data/uploads/pieces-jointes/".$nouvellePJ->ID_PIECEJOINTE.".odt'>Ouvrir le rapport de l'établissement : ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']."<a/><br/><br/>";
-
-                $DBsave = new Model_DbTable_DossierPj;
-                $linkPj = $DBsave->createRow();
-                $linkPj->ID_DOSSIER = $idDossier;
-                $linkPj->ID_PIECEJOINTE = $nouvellePJ->ID_PIECEJOINTE;
-                $linkPj->save();
-
-            /*
-            PARTIE TEXTES APPLICABLES
-            */
-
-                //on recupere tout les textes applicables qui ont été cochés dans le dossier
-                $dbDossierTextesAppl = new Model_DbTable_DossierTextesAppl;
-                $this->view->listeTextesAppl = $dbDossierTextesAppl->recupTextesDossierGenDoc($this->_getParam('idDossier'));
-
-
-            /*
-            DATE DE LA DERNIERE VISITE PERIODIQUE
-            */
-
-            $dateVisite = $this->view->infosDossier["DATEVISITE_DOSSIER"];
-			if($dateVisite != '' && isset($dateVisite)){
-				$dateLastVP = $DBdossier->findLastVpCreationDoc($idEtab,$idDossier,$dateVisite);
-
-				if ($dateLastVP['maxdate'] != NULL) {
-					$ZendDateLastVP = new Zend_Date($dateLastVP['maxdate'], Zend_Date::DATES);
-					$this->view->dateLastVP = $ZendDateLastVP->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-					$avisLastVP =  $DBdossier->getAvisDossier($dateLastVP['ID_DOSSIER']);
-					$this->view->avisLastVP = $avisLastVP['LIBELLE_AVIS'];
+				if ($dossierNature["ID_NATURE"] == 20 || $dossierNature["ID_NATURE"] == 25) {
+					//cas d'un groupe de visite d'une récption de travaux
+					$listeDocConsulte = $dblistedoc->getDocVisiteRT();
+				} elseif ($dossierNature["ID_NATURE"] == 47 || $dossierNature["ID_NATURE"] == 48) {
+					//cas d'une VAO
+					$listeDocConsulte = $dblistedoc->getDocVisiteVAO();
 				} else {
-					$this->view->dateLastVP = NULL;
+					$listeDocConsulte = $dblistedoc->getDocVisite();
+				}
+
+			} elseif ($dossierType['TYPE_DOSSIER'] == 1) {
+				$listeDocConsulte = $dblistedoc->getDocEtude();
+			} else {
+				$listeDocConsulte = 0;
+			}
+
+			//on envoi la liste de base à la vue
+			$this->view->listeDocs = $listeDocConsulte;
+
+			//on recup les docs ajouté pr le dossiers
+			$dblistedocAjout = new Model_DbTable_ListeDocAjout;
+			$listeDocAjout = $dblistedocAjout->getDocAjout((int) $idDossier,$dossierNature['ID_NATURE']);
+			$this->view->listeDocsAjout = $listeDocAjout;
+
+			$this->view->dossierDocConsutle = $dblistedoc->recupDocDossier((int) $idDossier,$dossierNature['ID_NATURE']);
+
+		/*
+		PARTIE PRESCRIPTION
+		*/
+
+			//on affiche les prescriptions du dossier
+			$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+			$listePrescDossier = $dbPrescDossier->recupPrescDossier($this->_getParam('idDossier'));
+			$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+
+			$prescriptionArray = array();
+			foreach ($listePrescDossier as $val => $ue) {
+				if ($ue['ID_PRESCRIPTION_TYPE']) {
+					//cas d'une prescription type
+					$assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
+					array_push($prescriptionArray, $assoc);
+				} else {
+					//cas d'une prescription particulière
+					$assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
+					array_push($prescriptionArray, $assoc);
 				}
 			}
-			
-            $this->render('creationdoc');
+			$this->view->prescriptionDossier = $prescriptionArray;
+
+		// GESTION DES DATES
+			//Conversion de la date de dépot en mairie pour l'afficher
+			if ($this->view->infosDossier['DATEMAIRIE_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATEMAIRIE_DOSSIER'], Zend_Date::DATES);
+				$this->view->DATEMAIRIE = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			//Conversion de la date de dépot en secrétariat pour l'afficher
+			if ($this->view->infosDossier['DATESECRETARIAT_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATESECRETARIAT_DOSSIER'], Zend_Date::DATES);
+				$this->view->DATESECRETARIAT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			//Conversion de la date de réception SDIS
+			if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
+				$this->view->DATEINSERTDOSSIER = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+
+			//Conversion de la date de création du dossier
+			if ($this->view->infosDossier['DATESDIS_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
+				$this->view->DATESDIS = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+
+			$dateDuJour = new Zend_Date();
+			$DBpieceJointe = new Model_DbTable_PieceJointe;
+			$nouvellePJ = $DBpieceJointe->createRow();
+			$nouvellePJ->ID_PIECEJOINTE = $this->view->idPieceJointe;
+			$nouvellePJ->NOM_PIECEJOINTE = "Rapport";
+			$nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
+			$nouvellePJ->DESCRIPTION_PIECEJOINTE = "Rapport de l'établissement ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']." généré le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			$nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY." ".Zend_Date::HOUR.":".Zend_Date::MINUTE.":".Zend_Date::SECOND);
+			$nouvellePJ->save();
+
+			echo "<a href='/data/uploads/pieces-jointes/".$nouvellePJ->ID_PIECEJOINTE.".odt'>Ouvrir le rapport de l'établissement : ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']."<a/><br/><br/>";
+
+			$DBsave = new Model_DbTable_DossierPj;
+			$linkPj = $DBsave->createRow();
+			$linkPj->ID_DOSSIER = $idDossier;
+			$linkPj->ID_PIECEJOINTE = $nouvellePJ->ID_PIECEJOINTE;
+			$linkPj->save();
+
+		/*
+		PARTIE TEXTES APPLICABLES
+		*/
+
+			//on recupere tout les textes applicables qui ont été cochés dans le dossier
+			$dbDossierTextesAppl = new Model_DbTable_DossierTextesAppl;
+			$this->view->listeTextesAppl = $dbDossierTextesAppl->recupTextesDossierGenDoc($this->_getParam('idDossier'));
 
 
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Le document a bien été généré',
-                'message' => ''
-            ));
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de la génération du document',
-                'message' => $e->getMessage()
-            ));
-        }
+		/*
+		DATE DE LA DERNIERE VISITE PERIODIQUE
+		*/
+
+		$dateVisite = $this->view->infosDossier["DATEVISITE_DOSSIER"];
+		if($dateVisite != '' && isset($dateVisite)){
+			$dateLastVP = $DBdossier->findLastVpCreationDoc($idEtab,$idDossier,$dateVisite);
+
+			if ($dateLastVP['maxdate'] != NULL) {
+				$ZendDateLastVP = new Zend_Date($dateLastVP['maxdate'], Zend_Date::DATES);
+				$this->view->dateLastVP = $ZendDateLastVP->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				$avisLastVP =  $DBdossier->getAvisDossier($dateLastVP['ID_DOSSIER']);
+				$this->view->avisLastVP = $avisLastVP['LIBELLE_AVIS'];
+			} else {
+				$this->view->dateLastVP = NULL;
+			}
+		}
+		
+		$this->render('creationdoc');
     }
 
     public function generationconvocAction()
@@ -1915,7 +1906,6 @@ class DossierController extends Zend_Controller_Action
             //1 = salle . 2 = visite . 3 = groupe de visite
 			//Zend_Debug::dump($commissionInfo);
             $this->view->typeCommission = $commissionInfo['ID_COMMISSIONTYPEEVENEMENT'];
-			
 			//On récupère la liste des dossiers
             $dbDateCommPj = new Model_DbTable_DateCommissionPj;
             $listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
@@ -1928,6 +1918,7 @@ class DossierController extends Zend_Controller_Action
 			foreach($listeMembres as $var => $membre){
 				//echo $membre['id_membre'];
 				$listeMembres[$var]['infosFiles'] = $model_membres->fetchAll("ID_COMMISSIONMEMBRE = " . $membre['id_membre']);
+				//Zend_Debug::dump($listeMembres[$var]['infosFiles']->toArray());
 			}
 			
 			$this->view->informationsMembre = $listeMembres;
@@ -1973,33 +1964,37 @@ class DossierController extends Zend_Controller_Action
 				//Zend_Debug::dump($etablissement);
 			}
 			
-			
 			$libelleCommune = "";
             $tabCommune[] = array();
-            $numCommune = 0;			
+            $numCommune = 0;
 			foreach($listeDossiers as $val => $ue)
-			{
+			{	
 				if($numCommune == 0){
-					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
-					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
-					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
-					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					if(count($ue['infosEtab']["adresses"]) > 0){
+						$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+						$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+						$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+						$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					}
 					$numCommune++;
 				}
 				
 				$existe = 0;
 				foreach($tabCommune as $tabKey => $value){
-					//echo $value[0]."<br/>";
-					if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
-						$existe = 1;
+					if(count($ue['infosEtab']["adresses"]) > 0){
+						if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
+							$existe = 1;
+						}
 					}
 				}
 				
 				if($existe == 0){
-					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
-					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
-					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
-					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					if(count($ue['infosEtab']["adresses"]) > 0){
+						$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+						$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+						$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+						$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+					}
 					$numCommune++;
 				}
 
@@ -2199,8 +2194,35 @@ class DossierController extends Zend_Controller_Action
 				
 				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 				$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+				
+				
+				
+				
+				//on recupere les prescriptions du dossier
+				$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+				$listePrescDossier = $dbPrescDossier->recupPrescDossier($ue['ID_DOSSIER']);
+				$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+				$prescriptionArray = array();
+				
+				foreach ($listePrescDossier as $tal => $te) {
+					if ($te['ID_PRESCRIPTION_TYPE']) {
+						//cas d'une prescription type
+						$assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($te['ID_PRESCRIPTION_TYPE'],$te['ID_PRESCRIPTION_DOSSIER']);
+						array_push($prescriptionArray, $assoc);
+					} else {
+						//cas d'une prescription particulière
+						$assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($te['ID_PRESCRIPTION_DOSSIER']);
+						array_push($prescriptionArray, $assoc);
+					}
+				}
+				//echo $ue['ID_DOSSIER']."<br/>";
+				//Zend_Debug::dump($listePrescDossier);
+				$listeDossiers[$val]['prescription'] = $prescriptionArray;				
 			}
 			$this->view->dossierComm = $listeDossiers;
+			//Zend_Debug::dump($listeDossiers);
+			
+			
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le document a bien été généré',
