@@ -380,6 +380,13 @@ class DossierController extends Zend_Controller_Action
 				$this->view->DATESIGN_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 			}
 
+			//Conversion date echeancier de travaux
+			if ($this->view->infosDossier['ECHEANCIERTRAV_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['ECHEANCIERTRAV_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['ECHEANCIERTRAV_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->ECHEANCIERTRAV = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			
 			//Conversion date incomplet
 			if ($this->view->infosDossier['DATEINCOMPLET_DOSSIER'] != '') {
 				$date = new Zend_Date($this->view->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
@@ -887,7 +894,7 @@ class DossierController extends Zend_Controller_Action
                 //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
                 if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "ABSQUORUM_DOSSIER") {
                     //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
-                    if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER") {
+                    if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER" || $libelle == "ECHEANCIERTRAV_DOSSIER") {
                         if ($value) {
                             $dateTab = explode("/",$value);
                             $value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
@@ -1595,7 +1602,6 @@ class DossierController extends Zend_Controller_Action
 		$infosGenre = $dbGenre->find($idGenreEtab)->current();
 		$this->view->genreEtab = $infosGenre['LIBELLE_GENRE'];
 		
-
 		$typeS = "";
 		$actS = "";
 
@@ -2187,6 +2193,7 @@ class DossierController extends Zend_Controller_Action
 		$dbDateComm = new Model_DbTable_DateCommission;
 		$commSelect = $dbDateComm->find($dateCommId)->current();
 		$commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();
+		$this->view->dateComm = $commissionInfo['DATE_COMMISSION'];
 		//Zend_Debug::dump($commSelect);
 		//1 = salle . 2 = visite . 3 = groupe de visite
 		//on recupere le type de commission (salle / visite / groupe de visite)
@@ -2195,6 +2202,7 @@ class DossierController extends Zend_Controller_Action
 		//On récupère le nom de la commission
 		$model_commission = new Model_DbTable_Commission;
 		$this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();
+		//Zend_Debug::dump($this->view->commissionInfos);
 		$model_membres = new Model_DbTable_CommissionMembre;
 		$this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $commissionInfo['COMMISSION_CONCERNE']);
 		$dbDateCommPj = new Model_DbTable_DateCommissionPj;
@@ -2220,27 +2228,7 @@ class DossierController extends Zend_Controller_Action
 			
 			$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 			$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
-			
-			//on recupere les prescriptions du dossier
-			$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-			$listePrescDossier = $dbPrescDossier->recupPrescDossier($ue['ID_DOSSIER']);
-			$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
-			$prescriptionArray = array();
-			
-			foreach ($listePrescDossier as $tal => $te) {
-				if ($te['ID_PRESCRIPTION_TYPE']) {
-					//cas d'une prescription type
-					$assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($te['ID_PRESCRIPTION_TYPE'],$te['ID_PRESCRIPTION_DOSSIER']);
-					array_push($prescriptionArray, $assoc);
-				} else {
-					//cas d'une prescription particulière
-					$assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($te['ID_PRESCRIPTION_DOSSIER']);
-					array_push($prescriptionArray, $assoc);
-				}
-			}
-			//echo $ue['ID_DOSSIER']."<br/>";
-			//Zend_Debug::dump($listePrescDossier);
-			$listeDossiers[$val]['prescription'] = $prescriptionArray;				
+
 		}
 		$this->view->dossierComm = $listeDossiers;
 		//Zend_Debug::dump($listeDossiers);

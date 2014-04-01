@@ -721,6 +721,17 @@
 					$("#DATECOMM").hide();
 				}
 				
+						
+				var type = $("#TYPE_DOSSIER").val();
+				if(type == 2 || type == 3)
+				{
+					if($("#AVIS_DOSSIER_COMMISSION").val() == 2)
+					{
+						$("#FACTDANGE").show();
+						$("#ECHEANCIERTRAV").show();
+					}
+				}
+				
 				if($("#selectNature").val() == 1 || $("#selectNature").val() == 2){
 					$("#docurbaVal").html('');
 					var docurbaVal;
@@ -965,6 +976,30 @@
 		return false;		
 	});
 	
+	$("#AVIS_DOSSIER_COMMISSION").live('change',function(){
+		var type = $("#TYPE_DOSSIER").val();
+		if(type == 2 || type == 3)
+		{
+			if($(this).val() == 2){
+				$("#FACTDANGE").show();
+				$("#ECHEANCIERTRAV").show();
+			}else{
+				$("#FACTDANGE").hide();
+				$("#ECHEANCIERTRAV").hide();
+			}
+		}
+	});
+	
+	$("#echeanciertrav_check").live('click',function(){
+		if($(this).is(':checked'))
+		{
+			$("#ECHEANCIERTRAV_DOSSIER").show();
+		}else{
+			$("#ECHEANCIERTRAV_DOSSIER").val('');
+			$("#ECHEANCIERTRAV_DOSSIER").hide();			
+		}
+	});
+
 	//Action lorsque l'on valide les modifications apportées à un dossier
 	$("#validModification").live('click',function(){
 		if(!verifDossier())
@@ -1462,17 +1497,25 @@ echo "
 					</div>
 				</li>
 				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL && $this->infosDossier['FACTDANGE_DOSSIER'] != 0)? "" : "display:none;")."'>
-					<div class='left libelle span3' style='float:left;'>Facteur de dangerosité</div>
+					<div class='left libelle span3' style='float:left;'>Facteur de criticité</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='factDange ".$this->infosDossier['FACTDANGE_DOSSIER']."'>".$this->infosDossier['FACTDANGE_DOSSIER']."</span></div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<select name='FACTDANGE_DOSSIER' id='FACTDANGE_DOSSIER' >
-							<option value='0'>Choisissez un facteur de dangerosité</option>
+							<option value='0' >-</option>
 							<option value='1'>1</option>
 							<option value='2'>2</option>
-							<option value='3'>3</option>
+							<option value='3' ".( ($this->infosDossier['FACTDANGE_DOSSIER'] == 3)? "selected='selected'" : "").">3</option>
 							<option value='4'>4</option>
 							<option value='5'>5</option>
 						</select>
+					</div>
+				</li>
+				<li class='row-fluid' id='ECHEANCIERTRAV' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL)? "" : "display:none;")."'>
+					<div class='left libelle span3' style='float:left;'>Echéancier de travaux / Schéma de mise en sécurité</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['ECHEANCIERTRAV_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='checkbox' id='echeanciertrav_check' ".( ( $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL )? "checked='checked'" : "" )."/>
+						<input type='text' class='date' value='".$this->ECHEANCIERTRAV."'  style='".( ( $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL )? "" : "display:none;" )."' id='ECHEANCIERTRAV_DOSSIER' name='ECHEANCIERTRAV_DOSSIER' />
 					</div>
 				</li>
 				<li class='row-fluid' id='ANOMALIE' style='".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>

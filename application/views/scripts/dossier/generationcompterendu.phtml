@@ -6,7 +6,7 @@ if(count($this->membresFiles) == 0){
 	return false;
 }
 
-$nomFichier = "Pv_type.odt";
+$nomFichier = $this->commissionInfos['DOCUMENT_CR'];
 
 if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents_commission".DIRECTORY_SEPARATOR.$nomFichier)){
 
@@ -48,7 +48,7 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 				$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
 			}
 			$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
-			
+			/*
 			//Prescription des dossiers
 			if(isset($dossierInfos['prescription']) && count($dossierInfos['prescription']) > 0){
 				$nbPrescDossier = count($dossierInfos['prescription']);
@@ -100,6 +100,7 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 				}
 				
 			}
+			*/
 
 
 
@@ -117,10 +118,9 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 		} catch (OdfException $e){
 
 		}
-		
 	}
 	$odf->mergeSegment($dossInfos);
-	$idPj = savePj($this->idComm,"Le pv a bien été généré");
+	$idPj = savePj($this->idComm,"Compte rendu du ");
 	$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");	
 	//$odf->mergeSegment($dossierLoop);
 	echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'>Le compte rendu a été généré avec succes</span><br/><br/><br/>";
@@ -134,9 +134,9 @@ function savePj($dateCommId,$libelleDocument){
 	$dateDuJour = new Zend_Date();
 	$DBpieceJointe = new Model_DbTable_PieceJointe;
 	$nouvellePJ = $DBpieceJointe->createRow();
-	$nouvellePJ->NOM_PIECEJOINTE = "P.V.";
+	$nouvellePJ->NOM_PIECEJOINTE = "Compte rendu";
 	$nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
-	$nouvellePJ->DESCRIPTION_PIECEJOINTE = "PV : ".$libelleDocument." ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR." à ".Zend_Date::HOUR.":".Zend_Date::MINUTE);
+	$nouvellePJ->DESCRIPTION_PIECEJOINTE = $libelleDocument." ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR." à ".Zend_Date::HOUR.":".Zend_Date::MINUTE);
 	$nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY." ".Zend_Date::HOUR.":".Zend_Date::MINUTE.":".Zend_Date::SECOND);
 	$nouvellePJ->save();
 	//ENREGISTEMENT DANS PIECE JOINTES
