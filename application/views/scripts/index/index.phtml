@@ -1,9 +1,34 @@
+<div class='row-fluid'>
+
+    <div class='span3'>
+        <h2 class='page-header'>Actions disponibles</h2>
+        <p class='well text-center'>
+            <a class='btn' href='/calendrier-des-commissions' ><i class="icon-calendar"></i>Consulter le calendrier des commissions</a><br/><br/>
+            <a class='btn' href='/etablissement/add' ><i class="icon-plus"></i> Ajouter un établissement</a><br/><br/>
+            <a class='btn' href='/dossier/add' ><i class="icon-plus"></i> Ajouter un dossier</a>
+        </p>
+    </div>
+
+    <div class='span9'>
+        <a class='btn btn-small pull-right' style='margin-top: 30px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
+        <h2 class='page-header'>Derniers messages</h2>
+        <?php if( count($this->flux) == 0 ) : ?>
+            <p class='muted'><small>Aucun message disponible.</small></p>
+        <?php else : ?>
+            <table class='table table-hover table-condensed'>
+             <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
+            </table>
+        <?php endif ?>
+    </div>
+
+</div>
+
 <h2 class='page-header'>
     Tableau de bord
     <small>Profil : <?php echo $this->user['infos']['LIBELLE_FONCTION'] ?></small>
 </h2>
 
-<h3 class='page-header'>Vos établissements</h3>
+<h3>Vos établissements</h3>
 <?php if( count($this->etablissements) == 0 ) : ?>
     <p class='muted'><small>Aucun établissement suivi.</small></p>
 <?php else : ?>
@@ -14,31 +39,6 @@
     <div style='clear: both'></div>
     <?php echo $this->etablissements ?>
 <?php endif ?>
-
-<div class='row-fluid'>
-
-    <div class='span6'>
-        <a class='btn btn-small pull-right' style='margin-top: 30px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
-        <h3 class='page-header'>Derniers messages</h3>
-        <?php if( count($this->flux) == 0 ) : ?>
-            <p class='muted'><small>Aucun message disponible.</small></p>
-        <?php else : ?>
-            <table class='table table-hover table-condensed'>
-             <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
-            </table>
-        <?php endif ?>
-    </div>
-
-    <div class='span6'>
-        <h3 class='page-header'>Actions disponibles</h3>
-        <p class='well text-center'>
-            <a class='btn' href='/calendrier-des-commissions' ><i class="icon-calendar"></i>Consulter le calendrier des commissions</a><br/><br/>
-            <a class='btn' href='/etablissement/add' ><i class="icon-plus"></i> Ajouter un établissement</a><br/><br/>
-            <a class='btn' href='/dossier/add' ><i class="icon-plus"></i> Ajouter un dossier</a>
-        </p>
-    </div>
-
-</div>
 
 <div id="reponse-modal" class="modal hide fade" ></div>
 
