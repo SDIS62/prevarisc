@@ -6,9 +6,14 @@
     <?php endif ?>
     
     <!-- Affichage du libellé du type -->
-    <small style='display: inline-block; width: 60px'>
+    <small style='display: inline-block; width: 65px'>
         <strong>
-        <?php echo ($this->ID_TYPE ? $this->LIBELLE_TYPE . "&nbsp;-&nbsp;" : "") . strtoupper(substr($this->LIBELLE_GENRE, 0 , 4)) ?>
+        <?php
+            if($this->ID_TYPE) {
+                echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->LIBELLE_TYPE . '.png') ? "<img src='/images/types/b/icone-type-" . $this->LIBELLE_TYPE . ".png' />&nbsp;-&nbsp;" : $this->LIBELLE_TYPE . "&nbsp;-&nbsp;";
+            }
+            echo strtoupper(substr($this->LIBELLE_GENRE, 0 , 4));
+        ?>
         </strong>
     </small>
     

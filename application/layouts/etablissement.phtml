@@ -10,6 +10,7 @@
                 <?php echo "<a href='/etablissement/index/id/" . $etablissement["ID_ETABLISSEMENT"] . "'>" . $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] . "</a> - "; ?>
             <?php endforeach ?>
         <?php endif ?>
+        <?php echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' />" : ''; ?>
         <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." " ?>
     </h2>
     
