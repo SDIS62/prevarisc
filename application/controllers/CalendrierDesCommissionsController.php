@@ -205,7 +205,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         foreach ($dbDateCommission->fetchAll($requete)->toArray() as $commissionEvent) {
             $items[] = array(
                 "id" => $commissionEvent['ID_DATECOMMISSION'],
-                "title" => $commissionEvent['LIBELLE_DATECOMMISSION'],
+                "title" => "   ".$commissionEvent['LIBELLE_DATECOMMISSION'],
                 "start" => date($commissionEvent['DATE_COMMISSION']." ".$commissionEvent['HEUREDEB_COMMISSION']),
                 "end" => date($commissionEvent['DATE_COMMISSION']." ".$commissionEvent['HEUREFIN_COMMISSION']),
                 "url" => "commission/id/".$commissionEvent['ID_DATECOMMISSION'],
@@ -279,7 +279,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             $items[] = array(
                 "id" => $dossierAffect['ID_DOSSIER'],
                 "url" => "/dossier/index/id/".$dossierAffect['ID_DOSSIER'],
-                "title" => $affichage,
+                "title" => "   ".$affichage,
                 "start" => date($dateDebut." ".$dossierAffect['HEURE_DEB_AFFECT']),
                 "end" => date($dateDebut." ".$dossierAffect['HEURE_FIN_AFFECT']),
                 "allDay" => false,
