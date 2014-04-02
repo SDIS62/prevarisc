@@ -61,7 +61,7 @@
                         <li>
                             <strong>
                                 <?php
-                                    echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' />&nbsp;-&nbsp;" : $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "&nbsp;-&nbsp;";
+                                    echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' title='" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "' />&nbsp;-&nbsp;" : $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "&nbsp;-&nbsp;";
                                 ?>
                                 <?php echo $this->etablissement['informations']['LIBELLE_TYPEACTIVITE_PRINCIPAL'] ?>
                             </strong>
@@ -70,7 +70,7 @@
                             <li>
                                 <strong>
                                     <?php
-                                        echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;";
+                                        echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' title='" . $type_activite['LIBELLE_TYPE'] . "' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;";
                                     ?>
                                     <?php echo $type_activite['LIBELLE_ACTIVITE'] ?>
                                 </strong>
