@@ -155,14 +155,14 @@ class Service_User
 
             $informations->save();
 
-            $user->USERNAME_UTILISATEUR = $data['NOM_UTILISATEURINFORMATIONS'];
+            $user->USERNAME_UTILISATEUR = $data['USERNAME_UTILISATEUR'];
             $user->NUMINSEE_COMMUNE = array_key_exists('NUMINSEE_COMMUNE', $data) ? $data['NUMINSEE_COMMUNE'] : null;
             $user->ID_GROUPE = $data['ID_GROUPE'];
             $user->ACTIF_UTILISATEUR = $data['ACTIF_UTILISATEUR'];
             $user->ID_UTILISATEURINFORMATIONS = $informations->ID_UTILISATEURINFORMATIONS;
 
             if(array_key_exists('PASSWD_INPUT', $data)) {
-                $user->PASSWD_UTILISATEUR = md5($user->USERNAME_UTILISATEUR . Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('security')['salt'] . $data['PASSWD_INPUT']);
+                $user->PASSWD_UTILISATEUR = $data['PASSWD_INPUT'] == '' ? null : md5($user->USERNAME_UTILISATEUR . Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('security')['salt'] . $data['PASSWD_INPUT']);
             }
 
             $user->save();

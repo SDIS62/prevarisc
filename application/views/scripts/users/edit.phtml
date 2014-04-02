@@ -25,7 +25,6 @@
         		<input name='avatar' type='file' />
     		</p>
     	</dd>
-        
 
         <dt>Login</dt>
         <dd>
@@ -37,15 +36,13 @@
         <dt>Mot de passe</dt>
         <dd>
         	<p>
-	            <?php if( !$this->add ) : ?>
-	                <input placeholder='Mot de passe' style='display: none' name='PASSWD_INPUT' type='password' disabled value='<?php echo $this->user["PASSWD_UTILISATEUR"] ?>' />
-	                <input placeholder='Vérification du mot de passe' style='display: none' name='PASSWD_INPUT_VERIF' type='password' disabled value='<?php echo $this->user["PASSWD_UTILISATEUR"] ?>' />
-	                <a href='' id='change_passwd' >Changer votre mot de passe</a>
-	                <?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via le LDAP ? <input type='checkbox' id='ldap2_checkbox' name="ldap_checkbox" value='1' <?php if($this->user["PASSWD_UTILISATEUR"] == "") echo "checked"?> /><?php endif ?>
+	            <?php if( $this->add ) : ?>
+	            	<input placeholder='Mot de passe' name='PASSWD_INPUT' type='password' />
+	            	<?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via le LDAP ? <input type='checkbox' class='ldap' value='1' /><?php endif ?>
 	            <?php else : ?>
-	                <input placeholder='Mot de passe' name='PASSWD_INPUT' type='password' />
-	                <input placeholder='Vérification du mot de passe' name='PASSWD_INPUT_VERIF' type='password' />
-	                <?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via le LDAP ? <input type='checkbox' id='ldap_checkbox' name="ldap_checkbox" value='1' /> <?php endif ?>
+	            	<input placeholder='Mot de passe' name='PASSWD_INPUT' type='password' disabled value='<?php echo $this->user["PASSWD_UTILISATEUR"] ?>' />
+	            	<a href='#' id='change_passwd' >Changer le mot de passe</a>
+	            	<?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via le LDAP ? <input type='checkbox' class='ldap' value='1' <?php if($this->user["PASSWD_UTILISATEUR"] == null) echo "checked"?> /><?php endif ?>
 	            <?php endif ?>
             </p>
         </dd>
@@ -163,35 +160,22 @@
     	$("select[name='commissions[]']").multiselect({header: false, noneSelectedText: "Aucune commission"});
     	$("select[name='groupements[]']").multiselect({header: false, noneSelectedText: "Aucun groupement"});
 
-		$("#change_passwd").click(function() {
-			$("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val("").attr("disabled", false).show();
-			$("input[name='PASSWD_INPUT']").focus();
-			$(this).hide();
-			return false;
-		});
-		
-		$("#ldap_checkbox").click(function() {
-			if($(this).attr("checked")) {
-				$("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val("").attr("disabled", false).hide();
-			}
-			else {
-				$("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val("").attr("disabled", false).show();
-				$("input[name='PASSWD_INPUT']").focus();
-			}
-		});
-		
-		$("#ldap2_checkbox").change(function() {
-			if($(this).attr("checked")) {
-				$("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val("").attr("disabled", false).hide();
-				$("#change_passwd").hide();
-			}
-			else {
-				$("#change_passwd").show();
-				if($("input[name='PASSWD_INPUT'], input[name=PASSWD_INPUT_VERIF]").val() == "") {
-					$("#change_passwd").click();
-				}
-			}
-		}).change();
+    	// Gestion du changement du mot de passe et de la case à cocher LDAP
+    	$('#change_passwd').click(function() {
+    		$('input[name="PASSWD_INPUT"]').attr('disabled', false).val('').focus();
+    		$('input.ldap').attr('checked', false);
+    		$(this).hide();
+    	});
 
+    	$('input.ldap').change(function() {
+    		if( $(this).attr('checked') ) {
+    			$('input[name="PASSWD_INPUT"]').attr('disabled', false).val('').hide();
+    			$('#change_passwd').hide();
+    		}
+    		else {
+    			$('input[name="PASSWD_INPUT"]').show();
+    			$('#change_passwd').click();
+    		}
+    	});
 	});
 </script>
