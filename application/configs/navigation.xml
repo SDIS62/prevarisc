@@ -964,34 +964,24 @@
 		<statistiques>
 			<label>Statistiques</label>
 			<controller>statistiques</controller>
-			<resource></resource>
-			<privilege></privilege>
 			<pages>
 				<index>
 					<label>Statistiques</label>
 					<controller>statistiques</controller>
 					<action>index</action>
-					<resource></resource>
-					<privilege></privilege>
 				</index>
 				<ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
 					<controller>statistiques</controller>
 					<action>ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle</action>
-					<resource></resource>
-					<privilege></privilege>
 				</ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>	
 				<liste-des-erp-sous-avis-defavorable>
 					<controller>statistiques</controller>
 					<action>liste-des-erp-sous-avis-defavorable</action>
-					<resource></resource>
-					<privilege></privilege>
 				</liste-des-erp-sous-avis-defavorable>			
 				<prochaines-visites-de-controle-periodique-a-faire-sur-une-commune>
 					<label>Prochaine visite de controle periodique a faire sur une commmune</label>
 					<controller>statistiques</controller>
 					<action>prochaines-visites-de-controle-periodique-a-faire-sur-une-commune</action>
-					<resource></resource>
-					<privilege></privilege>
 				</prochaines-visites-de-controle-periodique-a-faire-sur-une-commune>
 			</pages>
 		</statistiques>

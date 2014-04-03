@@ -38,7 +38,7 @@
                     "ID_STATUT",
                     "DATE_ETABLISSEMENTINFORMATIONS"
                 ))
-                ->joinLeft("avis", "etablissementinformations.ID_AVIS = avis.ID_AVIS", "LIBELLE_AVIS")
+                ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("ID_AVIS" => "AVIS_DOSSIER_COMMISSION"))
                 ->joinLeft("commission", "commission.ID_COMMISSION = etablissementinformations.ID_COMMISSION", "LIBELLE_COMMISSION")
                 ->joinLeft("categorie", "etablissementinformations.ID_CATEGORIE = categorie.ID_CATEGORIE", "LIBELLE_CATEGORIE")
                 ->joinLeft("etablissementadresse", "e.ID_ETABLISSEMENT = etablissementadresse.ID_ETABLISSEMENT", array("NUMERO_ADRESSE", "COMPLEMENT_ADRESSE"))
@@ -83,7 +83,7 @@
                 $this->etablissements->where("(pERP.ID_CATEGORIE != 0 AND pERP.PERIODICITE_PERIODICITE != 0) OR (pIGH.ID_CATEGORIE = 0 AND pIGH.PERIODICITE_PERIODICITE != 0)");
                 */
 
-                $this->etablissements->where("etablissementinformations.PERIODICITE__ETABLISSEMENTINFORMATIONS > 0 AND etablissementinformations.PERIODICITE__ETABLISSEMENTINFORMATIONS IS NOT NULL");
+                $this->etablissements->where("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS > 0 AND etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS IS NOT NULL");
 
                 return $this;
             }
@@ -93,7 +93,7 @@
         {
             if ($this->etablissements != null) {
 
-                $this->etablissements->where("avis.ID_AVIS = 3 AND SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS != 1");
+                $this->etablissements->where("dossier.AVIS_DOSSIER_COMMISSION = 2"); // AND SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS != 1
 
                 $this->etablissements->columns(array(
                     "NBJOURS_DEFAVORABLE" => "(
