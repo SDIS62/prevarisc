@@ -8,8 +8,12 @@ class EtablissementController extends Zend_Controller_Action
 
         $service_etablissement = new Service_Etablissement;
         $service_groupement_communes = new Service_GroupementCommunes;
+        $service_carto = new Service_Carto;
 
         $etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->couches_cartographiques = $service_carto->getAll();
+        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
 
         $this->view->etablissement = $etablissement;
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
@@ -24,6 +28,8 @@ class EtablissementController extends Zend_Controller_Action
         $etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->etablissement = $etablissement;
+
+        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
 
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;

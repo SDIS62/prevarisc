@@ -1,126 +1,59 @@
-<h3><?php echo $this->row ? "Modification d'une couche" : "Ajout d'une couche" ?></h3>
+<form action="<?php echo $this->url(array('action' => $this->row ? "edit" : "add")) ?>" method="post">
 
-<form action="/couches-cartographiques/<?php echo $this->row ? "edit" : "add" ?>" method="post">
+	<div class='pull-right btn-group' >
+		<a class='btn' href="<?php echo $this->url(array('action' => 'list')) ?>">Revenir sur la liste des couches cartographiques</a>
+		<input type='submit' class="btn btn-success" value="<?php echo $this->row ? "Modifier" : "Ajouter" ?> la couche" />
+	</div>
+
+	<h3><?php echo $this->row ? "Modification d'une couche cartographique" : "Ajout d'une couche cartographique" ?></h3>
+
+	<dl class='dl-horizontal'>
+
+		<dt>Type de la couche</dt>
+		<dd>
+			<select name="TYPE_COUCHECARTO">
+				<option value="WMS" <?php if(isset($this->row) && $this->row['TYPE_COUCHECARTO'] == 'WMS') echo "selected" ?> >WMS</option>
+			</select>
+		</dd>
+
+		<dt>Nom de la couche</dt>
+		<dd>
+			<input type="text" name="NOM_COUCHECARTO" value="<?php echo $this->row ? $this->row['NOM_COUCHECARTO'] : "" ?>" />
+		</dd>
+
+		<dt>URL du flux</dt>
+		<dd>
+			<input type="text" name="URL_COUCHECARTO" value="<?php echo $this->row ? $this->row['URL_COUCHECARTO'] : "" ?>" />
+		</dd>
+
+		<dt>Couche de base ?</dt>
+		<dd>
+			<p>
+            	<input type="hidden" name="ISBASELAYER_COUCHECARTO" value="0" />
+				<input type="checkbox" name="ISBASELAYER_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row['ISBASELAYER_COUCHECARTO']) echo "checked" ?> />
+			</p>
+		</dd>
+
+		<dt>Nom de la couche dans le flux</dt>
+		<dd>
+            <input type="hidden" name="LAYERS_COUCHECARTO" value="0" />
+			<input type="text" name="LAYERS_COUCHECARTO" value="<?php echo isset($this->row) ? $this->row['LAYERS_COUCHECARTO'] : "" ?>" />
+		</dd>
+
+		<dt>Format de l'image de la couche</dt>
+		<dd>
+			<select name="FORMAT_COUCHECARTO">
+				<option value="image/png" <?php if(isset($this->row) && $this->row['FORMAT_COUCHECARTO'] == "image/png") echo "selected" ?> >image/png</option>
+				<option value="image/jpg" <?php if(isset($this->row) && $this->row['FORMAT_COUCHECARTO'] == "image/jpg") echo "selected" ?> >image/jpg</option>
+			</select>
+		</dd>
+
+		<dt>Couche transparente ?</dt>
+		<dd>
+            <input type="hidden" name="TRANSPARENT_COUCHECARTO" value="0" />
+			<input type="checkbox" name="TRANSPARENT_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row['TRANSPARENT_COUCHECARTO']) echo "checked" ?> />
+		</dd>
 	
-	<fieldset>
-		<legend>Paramètres de base</legend>
-		<dl>
+	</dl>
 
-			<!-- Type de la couche -->
-			<dt>
-				Type de la couche
-			</dt>
-			<dd>
-				<select name="ID_COUCHECARTOTYPE">
-					<option value="ign" <?php if(isset($this->row) && $this->row->ID_COUCHECARTOTYPE == 'ign') echo "selected" ?> >IGN</option>
-				</select>
-			</dd>
-			
-		</dl>
-	</fieldset>
-	
-	<fieldset id="param_avances" class="ui-helper-hidden">
-		<legend>Paramètres avancés</legend>
-		<dl>
-			<!-- Nom de la couche -->
-			<dt>
-				Nom de la couche
-			</dt>
-			<dd>
-				<input type="text" name="NOM_COUCHECARTO" value="<?php echo $this->row ? $this->row->NOM_COUCHECARTO : "" ?>" />
-			</dd>
-			
-			<!-- URL de la couche -->
-			<dt>
-				URL du flux
-			</dt>
-			<dd>
-				<input type="text" name="URL_COUCHECARTO" value="<?php echo $this->row ? $this->row->URL_COUCHECARTO : "" ?>" />
-			</dd>
-
-			<!-- Base layer ? -->
-			<dt>
-				Couche de base ?
-			</dt>
-			<dd>
-                <input type="hidden" name="ISBASELAYER_COUCHECARTO" value="0" />
-				<input type="checkbox" name="ISBASELAYER_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->ISBASELAYER_COUCHECARTO) echo "checked" ?> />
-			</dd>
-			
-			<!-- Base layer ? -->
-			<dt>
-				Nom de la couche dans le flux
-			</dt>
-			<dd>
-                <input type="hidden" name="LAYERS_COUCHECARTO" value="0" />
-				<input type="text" name="LAYERS_COUCHECARTO" value="<?php echo isset($this->row) ? $this->row->LAYERS_COUCHECARTO : "" ?>" />
-			</dd>
-
-			<!-- Base layer ? -->
-			<dt>
-				Format de l'image de la couche
-			</dt>
-			<dd>
-				<select name="FORMAT_COUCHECARTO">
-					<option value="image/png" <?php if(isset($this->row) && $this->row->FORMAT_COUCHECARTO == "image/png") echo "selected" ?> >image/png</option>
-					<option value="image/jpg" <?php if(isset($this->row) && $this->row->FORMAT_COUCHECARTO == "image/jpg") echo "selected" ?> >image/jpg</option>
-				</select>
-			</dd>
-
-			<!--Transparent ? -->
-			<dt>
-				Couche transparente ?
-			</dt>
-			<dd>
-                <input type="hidden" name="TRANSPARENT_COUCHECARTO" value="0" />
-				<input type="checkbox" name="TRANSPARENT_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->TRANSPARENT_COUCHECARTO) echo "checked" ?> />
-			</dd>
-			
-			<!--Intrecative ? -->
-			<dt>
-				Interactive ?
-			</dt>
-			<dd>
-                <input type="hidden" name="INTERACT_COUCHECARTO" value="0" />
-				<input type="checkbox" name="INTERACT_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row->INTERACT_COUCHECARTO) echo "checked" ?> />
-			</dd>
-		
-		</dl>
-	</fieldset>
-	
-	<fieldset id="param_cle" class="ui-helper-hidden">
-		<legend>API</legend>
-		<dl class='dl-horizontal'>
-			<dt>Clé d'API</dt>
-			<dd><input type="text" name="API_COUCHECARTO" value="<?php echo $this->row ? $this->row->API_COUCHECARTO : "" ?>" /></dd>
-		</dl>
-	</fieldset>
-
-	<input type='submit' class="btn btn-success" value="<?php echo $this->row ? "Modifier" : "Ajouter" ?> la couche" />
-    
-	<?php echo $this->row ? '<input type="hidden" name="id" value="' . $_GET["id"] . '" />' : "" ?>
 </form>
-
-<script>
-	
-	// Affichage des champs en fonction du type de la couche
-	$("select[name=ID_COUCHECARTOTYPE]").change(function() {
-
-		if($(this).find("option:selected").val() == 2 || $(this).find("option:selected").val() == 3) {
-			$("#param_avances").hide();
-			$("#param_avances input").val("0");
-			$("#param_avances input[name=TRANSPARENT_COUCHECARTO]").attr("checked", false);
-		}
-		else
-			$("#param_avances").show();
-		
-		if($(this).find("option:selected").val() == 3) {
-			$("#param_cle").show();
-		}
-		else {
-			$("#param_cle").hide();
-			$("#param_cle input").val("");
-		}
-	}).change();
-	
-</script>
