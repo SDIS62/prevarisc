@@ -1,34 +1,24 @@
-<div class="grid_16">
+<h2 class='page-header'>Statistiques et extractions</h2>
 
-	<h2>Statistiques et extractions</h2>
+<form id="formulaire_stats" class="form-inline well">
 
-		<form id="formulaire_stats">
-
-			<select id="demande">
-				<option href="">Choisir des données à générer ...</option>
-				<?php foreach($this->liste as $url => $titre) : ?>
-				<option href="/statistiques/<?php echo $url ?>"><?php echo $titre ?></option>
-				<?php endforeach ?>
-			</select>
-			
-			<span id="champssupps"></span>
-			
-			<button id="voir" disabled>Voir</button>
-			<button id="export" disabled>Exporter vers XML</button>
-			
-		</form>
+	<select id="demande">
+		<option href="">Choisir des données à générer ...</option>
+		<?php foreach($this->liste as $url => $titre) : ?>
+		<option href="/statistiques/<?php echo $url ?>"><?php echo $titre ?></option>
+		<?php endforeach ?>
+	</select>
 	
-</div>
-
-<hr class="clear" />
-
-<div class="grid_16">
-
-	<p id="loading" class="ui-helper-hidden" style="font-size: 3em; color: silver; text-align: center; margin-top: 100px;">Génération en cours ...</p>
+	<span id="champssupps"></span>
 	
-	<div id="results"></div>
+	<button id="voir" class='btn btn-small' disabled>Voir</button>
+	<button id="export" class='btn btn-small' disabled>Exporter vers XML</button>
 	
-</div>
+</form>
+
+<p id="loading" class="ui-helper-hidden" style="font-size: 3em; color: silver; text-align: center; margin-top: 100px;">Génération en cours ...</p>
+
+<div id="results"></div>
 
 <script>
 

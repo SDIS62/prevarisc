@@ -59,10 +59,22 @@
                 <dd>
                     <ul class='unstyled'>
                         <li>
-                            <strong><?php echo $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] ?> - <?php echo $this->etablissement['informations']['LIBELLE_TYPEACTIVITE_PRINCIPAL'] ?></strong>
+                            <strong>
+                                <?php
+                                    echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' title='" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "' />&nbsp;-&nbsp;" : $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "&nbsp;-&nbsp;";
+                                ?>
+                                <?php echo $this->etablissement['informations']['LIBELLE_TYPEACTIVITE_PRINCIPAL'] ?>
+                            </strong>
                         </li>
                         <?php foreach($this->etablissement['types_activites_secondaires'] as $type_activite) : ?>
-                            <li><?php echo $type_activite['LIBELLE_TYPE'] ?> - <?php echo $type_activite['LIBELLE_ACTIVITE'] ?></li>
+                            <li>
+                                <strong>
+                                    <?php
+                                        echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' title='" . $type_activite['LIBELLE_TYPE'] . "' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;";
+                                    ?>
+                                    <?php echo $type_activite['LIBELLE_ACTIVITE'] ?>
+                                </strong>
+                            </li>
                        <?php endforeach ?>
                     </ul>
                     <?php if($this->etablissement['informations']['R12320_ETABLISSEMENTINFORMATIONS']) : ?>
@@ -189,22 +201,47 @@
         <div class='span6'>
             <!-- Cartes et diaporama -->
             <ul id='menu_nav' class="nav nav-tabs" style="margin: 0; padding: 0; border-bottom: none;">
-                <?php if( count($this->etablissement['diapo_plans']) > 0 ) : ?> <li class='tabs-right' ><a href='#plans-tab-pane' data-toggle="tab">Plans</a></li>             <?php endif ?>
-                <?php if( count($this->etablissement['diapo']) > 0 ) : ?>       <li class='tabs-right' ><a href='#diaporama-tab-pane' data-toggle="tab">Diaporama</a></li>     <?php endif ?>
-                <?php if( count($this->etablissement['adresses']) > 0) : ?>     <li class='tabs-right' ><a href='#geoportail' data-toggle="tab">Carte</a></li>                 <?php endif ?>
+                <?php if( count($this->etablissement['diapo_plans']) > 0 ) : ?>
+                    <li class='tabs-right' ><a href='#plans-tab-pane' data-toggle="tab">Plans</a></li>
+                <?php endif ?>
+                <?php if( count($this->etablissement['diapo']) > 0 ) : ?>
+                    <li class='tabs-right' ><a href='#diaporama-tab-pane' data-toggle="tab">Diaporama</a></li>
+                <?php endif ?>
+                <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
+                    <li class='tabs-right' ><a href='#geoportail' data-toggle="tab">Carte</a></li>
+                <?php endif ?>
             </ul>
             <div class="tab-content">
-                <?php if( count($this->etablissement['adresses']) > 0) : ?>
+                <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
                 <div id='geoportail' class="tab-pane in" style="height: 350px; max-height: 350px;">
                     <div id='geoportail-container'  style="height: 100%; max-height: 100%;"></div>
                     <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
                     <script>
                         $(document).ready(function() {
-                            viewer = Geoportal.load("geoportail-container", "i4d3km958rzoesb7thga4f59", {
+                            viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
                                 lat: <?php echo $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] ?>,
                                 lon: <?php echo $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] ?>
                             }, 17, OpenLayers.Util.extend({
-                                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()]
+                                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
+                                onView: function() {
+                                    <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
+                                        viewer.getViewer().getMap().addLayer(
+                                            "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
+                                            "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
+                                            "<?php echo $couche_cartographique['URL_COUCHECARTO'] ?>", {
+                                                layers: "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>",
+                                                format: "<?php echo $couche_cartographique['FORMAT_COUCHECARTO'] ?>",
+                                                transparent: "<?php echo $couche_cartographique['TRANSPARENT_COUCHECARTO'] ? 'true' : 'false' ?>"
+                                            }, {
+                                                projection: 'EPSG:4326',
+                                                singleTile: false,
+                                                opacity: 1,
+                                                visibility: true
+                                            }
+                                        );
+                                    <?php endforeach ?>
+                                },
+                                proxyUrl: '/proxy'
                             }));
                         });
                     </script>

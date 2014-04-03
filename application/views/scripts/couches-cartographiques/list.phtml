@@ -1,6 +1,14 @@
-<p class='text-right'><a class='btn' href='<?php echo $this->url(array('action' => 'add')) ?>'>Ajouter une couche</a></p>
+<?php if($this->key_ign == null) : ?>
 
-<?php if(count($this->couches_cartographiques) == 0) : ?>
+    <div class='well well-large text-center'>
+        <p class='lead'>La clé IGN n'est pas renseignée.</p>
+        <p>Vous devez placer la clé IGN dans votre secret.ini comme ceci : </p>
+        <pre>ign.key = XXXXXXXXXXXX</pre>
+    </div>
+
+<?php elseif(count($this->couches_cartographiques) == 0) : ?>
+
+    <p class='text-right'><a class='btn' href='<?php echo $this->url(array('controller' => 'couches-cartographiques', 'action' => 'add'), null, true) ?>'>Ajouter une couche</a></p>
 
     <div class='well well-large text-center'>
         <p class='lead'>Il n'y a pas de couche cartographique.</p>
@@ -9,16 +17,37 @@
 
 <?php else : ?>
 
+    <p class='text-right'><a class='btn' href='<?php echo $this->url(array('controller' => 'couches-cartographiques', 'action' => 'add'), null, true) ?>'>Ajouter une couche</a></p>
+
     <div id='geoportail-container'  style="height: 250px; max-height: 250px;"></div>
     <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
     <script>
         $(document).ready(function() {
-            viewer = Geoportal.load("geoportail-container", "i4d3km958rzoesb7thga4f59", {
+            viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
                 lat: 50.4727273438818,
                 lon: 2.71490430425517
             }, 8, OpenLayers.Util.extend({
                 controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
-                overlays:{}
+                overlays:{},
+                onView: function() {
+                    <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
+                        viewer.getViewer().getMap().addLayer(
+                            "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
+                            "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
+                            "<?php echo $couche_cartographique['URL_COUCHECARTO'] ?>", {
+                                layers: "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>",
+                                format: "<?php echo $couche_cartographique['FORMAT_COUCHECARTO'] ?>",
+                                transparent: "<?php echo $couche_cartographique['TRANSPARENT_COUCHECARTO'] ? 'true' : 'false' ?>"
+                            }, {
+                                projection: 'EPSG:4326',
+                                singleTile: false,
+                                opacity: 1,
+                                visibility: true
+                            }
+                        );
+                    <?php endforeach ?>
+                },
+                proxyUrl: '/proxy'
             }));
         });
     </script>
@@ -34,11 +63,11 @@
         <tbody>
             <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
             <tr>
-                <td><?php echo $couche_cartographique->NOM_COUCHECARTOTYPE ?></td>
-                <td><?php echo $couche_cartographique->NOM_COUCHECARTO.(($couche_cartographique->ISBASELAYER_COUCHECARTO) ? " (couche de base)" : "") ?></td>
+                <td><?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?></td>
+                <td><?php echo $couche_cartographique['NOM_COUCHECARTO'].(($couche_cartographique['ISBASELAYER_COUCHECARTO']) ? " (couche de base)" : "") ?></td>
                 <td>
-                    <a href="/couches-cartographiques/edit?id=<?php echo $couche_cartographique->ID_COUCHECARTO ?>">Éditer la couche</a><br/>
-                    <a href="/couches-cartographiques/delete?id=<?php echo $couche_cartographique->ID_COUCHECARTO ?>">Supprimer</a>
+                    <a href="<?php echo $this->url(array('action' => 'edit', 'id' => $couche_cartographique['ID_COUCHECARTO'])) ?>">Éditer la couche</a><br/>
+                    <a href="<?php echo $this->url(array('action' => 'delete', 'id' => $couche_cartographique['ID_COUCHECARTO'])) ?>">Supprimer</a>
                 </td>
             </tr>
             <?php endforeach ?>

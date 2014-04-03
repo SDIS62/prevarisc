@@ -235,12 +235,13 @@ $(document).ready(function() {
 				type:"POST",
 				//async: false,
 				beforeSend: function(){
-					$("#infoGeneration").html("Création en cours, veuillez patienter");
+					$("#infoGeneration").html("Création en cours, veuillez patienter   <img src='/images/load.gif' />");
 				},
 				success: function(affichageResultat){
 					$("#infoGeneration").html(affichageResultat);
 				},
 				error: function(){
+					$("#infoGeneration").html("Une erreur s'est produite");
 					return false;
 				}
 			});	
@@ -257,12 +258,13 @@ $(document).ready(function() {
 				type:"POST",
 				//async: false,
 				beforeSend: function(){
-					$("#infoGeneration").html("Création en cours, veuillez patienter");
+					$("#infoGeneration").html("Création en cours, veuillez patienter   <img src='/images/load.gif' />");
 				},
 				success: function(affichageResultat){
 					$("#infoGeneration").html(affichageResultat);
 				},
 				error: function(){
+					$("#infoGeneration").html("Une erreur s'est produite");
 					return false;
 				}
 			});
@@ -279,12 +281,36 @@ $(document).ready(function() {
 				type:"POST",
 				//async: false,
 				beforeSend: function(){
-					$("#infoGeneration").html("Création en cours, veuillez patienter");
+					$("#infoGeneration").html("Création en cours, veuillez patienter   <img src='/images/load.gif' />");
 				},
 				success: function(affichageResultat){
 					$("#infoGeneration").html(affichageResultat);
 				},
 				error: function(){
+					$("#infoGeneration").html("Une erreur s'est produite");
+					return false;
+				}
+			});
+		}else{
+			$("#infoGeneration").html("<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Certains dossiers prévus n'ont pas été placés dans le calendrier</span><br/><br/><br/>");
+		}
+	});
+	
+	$("#creationCompteRendu").click(function(){
+		if($("#external-events").children("div").children("div").length == 0){
+			$.ajax({
+				url: "/dossier/generationcompterendu",
+				data: "dateCommId="+$("#dateCommId").val(),
+				type:"POST",
+				//async: false,
+				beforeSend: function(){
+					$("#infoGeneration").html("Création en cours, veuillez patienter   <img src='/images/load.gif' />");
+				},
+				success: function(affichageResultat){
+					$("#infoGeneration").html(affichageResultat);
+				},
+				error: function(){
+					$("#infoGeneration").html("Une erreur s'est produite");
 					return false;
 				}
 			});
@@ -403,6 +429,8 @@ $(document).ready(function() {
 			<button id='createOdj' class='btn' >Génerer l'ordre du jour</button>
 			&nbsp;
 			<button id='createPv' class='btn' >Génerer PV</button>
+			&nbsp;
+			<button id='creationCompteRendu' class='btn' >Génerer le compte rendu</button>
 			<br/><br/>
 			<div id='infoGeneration'></div>
 			<br/>
@@ -427,9 +455,12 @@ $(document).ready(function() {
 						";
 						if(isset($dossierNonAffect['infosEtab'])){
 							//si le dossier est attaché à un établissement
-							echo $dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+							echo $dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
 						}
-						if(isset($dossierNonAffect['infosEtab']['parents'])){
+						if(isset($dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'])){
+							echo " (".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+						}
+						if(isset($dossierNonAffect['infosEtab']['parents']) && isset($dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
 							echo " - ".$dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 						}
 						echo "<br/>";
