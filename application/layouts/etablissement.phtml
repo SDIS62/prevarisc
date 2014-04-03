@@ -19,7 +19,7 @@
         <p class='avis <?php echo $this->etablissement['avis'] == 1 ? 'F' : 'D' ?>'>
             <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') ." à l'exploitation " ?>
             <?php if($this->etablissement['avis'] != 1) : ?>
-            · Facteur de dangerosité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
+            · Facteur de criticité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
             <?php endif ?>
         </p>
     <?php endif ?>
