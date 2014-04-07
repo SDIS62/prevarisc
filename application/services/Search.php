@@ -138,9 +138,9 @@ class Service_Search
                     }
                 }
                 else {
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_SITE", $city, true, "having");
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_CELLULE", $city, true, "having");
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_DEFAULT", $city, true, "having");
+                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_SITE", $city, true, "orHaving");
+                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_CELLULE", $city, true, "orHaving");
+                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_DEFAULT", $city, true, "orHaving");
                     
                     if($street_id !== null) {
                         $this->setCriteria($select, "ID_RUE_SITE", $street_id, true, "orHaving");
