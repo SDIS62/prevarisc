@@ -19,8 +19,7 @@ class Service_Carto
      */
     public function getAll()
     {
-        if(($couches_carto = unserialize($this->cache->load('couches_cartographiques'))) === false)
-        {
+        if(($couches_carto = unserialize($this->cache->load('couches_cartographiques'))) === false) {
             // On récupère l'ensemble des couches
             $couches_carto = $this->repository->fetchAll()->toArray();
 
@@ -43,30 +42,15 @@ class Service_Carto
     }
 
     /**
-     * Ajout d'une couche cartographique
-     *
-     * @param int $id_etablissement
-     * @return array
-     */
-    public function add($data)
-    {
-        $this->repository->insert($data);
-        $this->cache->remove('couches_cartographiques');
-    }
-
-    /**
      * Édition d'une couche cartographique
      *
-     * @param int $id_couche_cartographique
      * @param array $data
+     * @param int $id_couche_cartographique Optionnel
      * @return array
      */
-    public function edit($id_couche_cartographique, $data)
+    public function save($data, $id_couche_cartographique = null)
     {
-        $couche_cartographique = $this->repository->find($id_couche_cartographique)->current();
-        $couche_cartographique->ISBASELAYER_COUCHECARTO = 0;
-        $couche_cartographique->TRANSPARENT_COUCHECARTO = 0;
-        $couche_cartographique->INTERACT_COUCHECARTO = 0;
+        $couche_cartographique = $id_couche_cartographique == null ? $this->repository->createRow() : $this->repository->find($id_couche_cartographique)->current();
         $couche_cartographique->setFromArray(array_intersect_key($data, $this->repository->info('metadata')))->save();
         $this->cache->remove('couches_cartographiques');
     }

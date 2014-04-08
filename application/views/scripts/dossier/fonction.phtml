@@ -36,6 +36,9 @@
 						}else{
 							echo " ( adresse non renseignée )";
 						}
+						if(isset($value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
+							echo " [ ".$value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." ]";
+						}
 						echo "
 							</a>
 						";
@@ -55,6 +58,9 @@
 							".$this->etablissement['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 			if($this->adresseEtab){
 				echo "&nbsp;(".$this->adresseEtab[0]['LIBELLE_COMMUNE'].")";
+			}
+			if(isset($this->etablissementInfos['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
+				echo " [ ".$this->etablissementInfos['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." ]";
 			}
 			echo "
 				</a>

@@ -8,8 +8,12 @@ class EtablissementController extends Zend_Controller_Action
 
         $service_etablissement = new Service_Etablissement;
         $service_groupement_communes = new Service_GroupementCommunes;
+        $service_carto = new Service_Carto;
 
         $etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->couches_cartographiques = $service_carto->getAll();
+        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
 
         $this->view->etablissement = $etablissement;
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
@@ -24,6 +28,8 @@ class EtablissementController extends Zend_Controller_Action
         $etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->etablissement = $etablissement;
+
+        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
 
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
@@ -365,45 +371,5 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->historique = $service_etablissement->getHistorique($this->_request->id);
-    }
-
-    /* API */
-
-    public function getAction()
-    {
-        header('Content-type: application/json');
-
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
-        // CrÃ©ation de l'objet recherche
-        $search = new Model_DbTable_Search;
-
-        // On set le type de recherche
-        $search->setItem("etablissement");
-        $search->limit(5);
-
-        // On recherche avec le libellé
-        $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $this->_request->q, false);
-
-        // On filtre par le genre
-        if ($this->_request->g) {
-            if ($this->_request->genre_pere == 1) {
-                if($this->_request->g == 2)
-                    $search->setCriteria("etablissementinformations.ID_GENRE", 1);
-                elseif($this->_request->g == 3)
-                    $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-            }
-
-            if ($this->_request->genre_enfant == 1) {
-                if($this->_request->g == 1)
-                    $search->setCriteria("etablissementinformations.ID_GENRE", array(2,4,5,6));
-                elseif($this->_request->g == 2)
-                    $search->setCriteria("etablissementinformations.ID_GENRE", 3);
-            }
-        }
-
-        // On balance le rÃ©sultat sur la vue
-        echo Zend_Json::Encode(array('resultats' => $search->run()->getAdapter()->getItems(0, 99999999999)->toArray()));
     }
 }

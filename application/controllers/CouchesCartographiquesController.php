@@ -4,22 +4,23 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 {
     public function listAction()
     {
-        $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_admin');
 
         $service_carto = new Service_Carto;
         $this->view->couches_cartographiques = $service_carto->getAll();
+        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
     }
 
     public function addAction()
     {
-        $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_admin');
 
         $service_carto = new Service_Carto;
 
         if ($this->_request->isPost()) {
             try {
                 $data = $this->getRequest()->getPost();
-                $service_carto->add($data);
+                $service_carto->save($data);
                 $this->_helper->flashMessenger(array('context' => 'success','title' => 'Ajout réussi !','message' => 'La couche cartographique a été ajoutée.'));
                 $this->_helper->redirector('list');
             } catch (Exception $e) {
@@ -30,14 +31,16 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 
     public function editAction()
     {
-        $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_admin');
 
         $service_carto = new Service_Carto;
+
+        $this->view->row = $service_carto->findById($this->getRequest()->getParam('id'));
 
         if ($this->_request->isPost()) {
             try {
                 $data = $this->getRequest()->getPost();
-                $service_carto->edit($this->getRequest()->getParam('id'), $data);
+                $service_carto->save($data, $this->getRequest()->getParam('id'));
                 $this->_helper->flashMessenger(array('context' => 'success','title' => 'Ajout réussi !','message' => 'La couche cartographique a été ajoutée.'));
                 $this->_helper->redirector('list');
             } catch (Exception $e) {

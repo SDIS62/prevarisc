@@ -1,0 +1,32 @@
+<?php echo $this->partial('users/partials/menu_admin_user.phtml') ?>
+
+<form method='post' >
+
+	<?php if($this->add) : ?>
+	<div class='pull-right' >
+	    <input type='submit' class="btn btn-success" value="Ajouter le groupe">
+	</div>
+	<h4>Ajout d'un groupe</h4>
+	<?php else : ?>
+	<div class='pull-right' >
+		<a class='btn' href="<?php echo $this->url(array('action' => 'index')) ?>">Annuler la modification</a>
+	    <div class="btn-group">
+	        <a class='btn btn-danger' href='/users/delete-group?gid=<?php echo $this->group["ID_GROUPE"] ?>'>Supprimer le groupe</a>
+	        <input type='submit' class="btn btn-success" value='Sauvegarder'>
+	    </div>
+	</div>
+	<h4>Modification du groupe</h4>
+	<?php endif ?>
+
+	<dl class='dl-horizontal'>
+		<dt>Libellé</dt>
+		<dd>
+			<input type='text' value='<?php if(isset($this->group["LIBELLE_GROUPE"])) echo $this->group["LIBELLE_GROUPE"] ?>' name='LIBELLE_GROUPE' />
+		</dd>
+		
+		<dt>Description</dt>
+		<dd>
+			<textarea name="DESC_GROUPE" rows="5" ><?php if(isset($this->group["DESC_GROUPE"])) echo $this->group["DESC_GROUPE"] ?></textarea>
+		</dd>
+	</dl>
+</form>

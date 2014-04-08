@@ -4,7 +4,7 @@
 
 		// Texte de l'auto complete utilisateurs
 		$("#preventionnistes-autocomplete").toggleText("Saisissez le nom d'un préventionniste ...");
-		$("#preventionnistes-autocomplete").autocomplete("/user/getpreventionniste?format=json", {
+		$("#preventionnistes-autocomplete").autocomplete("/api/1.0/search/users?fonctions=13", {
 			minChars: 3,
 			max: 100,
 			parse: function(data) {
@@ -30,39 +30,7 @@
 			$("#liste_prev").append(prevAdd);
 		});	
 		//FIN gestion de l'autocomplession pour les préventionniste attachés au dossier
-		
-		//Gestion selection commission via l'autocomplétion
-		/*
-		//FONCTION d'autocompletion
-		$("#commissionSelect").toggleText("Saisissez le libellé d'une commission ...");
-		//Action lorsque l'on souhaite modifier une commission
-		
-		$("#commissionSelect").autocomplete("/calendrier-des-commissions/commissionselection?format=json",{
-			minChars: 2,
-			max: 100,
-			parse: function(data) {
-				return $.map(data["commissionsListe"], function(row) {
-					return {
-						data: row,
-						value: row.LIBELLE_COMMISSION,
-						result: row.LIBELLE_COMMISSION
-					}
-				});
-			},
-			formatItem: function(item) {
-				//alert(item.LIBELLE_COMMISSION);
-				return item.LIBELLE_COMMISSION;
-			}
-		}).result(function(e, item) {
-			$("#COMMISSION_DOSSIER").val(item.ID_COMMISSION);
-			$(".showCalendar").show();
-			if($("#TYPE_DOSSIER").val() == 2){
-				$("#showCommission").hide();
-			}
-			return false;
-		});
-		//FIN AUTO COMPLETE
-		*/
+
 		$("#commissionSelect").live('change',function(){
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
@@ -84,69 +52,35 @@
 		});
 		
 		$(".changeCommission").live('click',function(){
-			//alert('');
 			//ICI SUPPRIMER TOUTES LES LIGNES CORRESPONDANT AU DOSSIER DANS  dossieraffectation ou dans le save...
 			$("#DATEVISITE_INPUT").val('');
 			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
 			$("#DATECOMM_INPUT").val('');
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
-			
-			//$(".showCalendar").hide();
+
 			$(".hideCalendar").hide();
-			
+
 			//a verifier
 			$("#calendar").hide();
 			$("#calendar").parent().hide();
 			$("#calendar").html('');
-			
+
 			$("#calendarVisite").hide();
 			$("#calendarVisite").parent().hide();
 			$("#calendarVisite").html('');
-			
-			//$("#COMMISSION_DOSSIER").val('');
-			//$("#commissionSelect").attr('disabled','');
+
 			$("#commissionSelect").removeAttr('disabled');
 			
 			$(this).hide();
-			//$("#commissionSelect").attr('disabled','').val('').focus();
-			//alert('');
 			return false;
 		});
 
-		/*
-		$("#commissionSelect").click( function(){
-			if( $(this).val() != "Tapez le nom de la commission" ) {
-				$("#COMMISSION_DOSSIER").attr('value','');
-			}
-			
-			$(this).attr('value','');
-			
-			$("#calendar").parent().hide();
-			$("#COMMISSION_DOSSIER").val('');
-			$("#commissionSelect").attr('disabled','').val('').focus();
-
-			//On réinitalise tous les composant de date
-			$(".calendar").html('');
-			$(".showCalendar").hide();
-			
-			$("#DATEVISITE_INPUT").val('');
-			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
-			
-			$("#DATECOMM_INPUT").val('');
-			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
-
-		});
-		*/
 		$(".showCalendar").live('click',function(){
-			//alert($(this).attr('id'));
 			var typeCalendar = $(this).parent().parent().attr('id');
 			var divName;
 			if(typeCalendar == 'DATEVISITE'){
-				//alert('visite');
-				divName = 'calendarVisite';
-			
+				divName = 'calendarVisite';			
 			}else if (typeCalendar == 'DATECOMM'){
-				//alert('commission');
 				divName = 'calendar';
 			}
 
@@ -165,11 +99,8 @@
 			var typeCalendar = $(this).parent().parent().attr('id');
 			var divName;
 			if(typeCalendar == 'DATEVISITE'){
-				//alert('visite');
 				divName = 'calendarVisite';
-			
 			}else if (typeCalendar == 'DATECOMM'){
-				//alert('commission');
 				divName = 'calendar';
 			}
 
@@ -182,38 +113,9 @@
 
 			return false;
 		});
-		/*
-		$(".changeCommission").live('click',function(){
-			//ICI SUPPRIMER TOUTES LES LIGNES CORRESPONDANT AU DOSSIER DANS  dossieraffectation ou dans le save...
-			$("#DATEVISITE_INPUT").val('');
-			$("ID_AFFECTATION_DOSSIER_VISITE").val('');
-			$("#DATECOMM_INPUT").val('');
-			$("ID_AFFECTATION_DOSSIER_COMMISSION").val('');
-			
-			
-			$(".showCalendar").hide();
-			$(".hideCalendar").hide();
-			
-			
-			//a verifier
-			$("#calendar").hide();
-			$("#calendar").parent().hide();
-			$("#calendar").html('');
-			
-			$("#calendarVisite").hide();
-			$("#calendarVisite").parent().hide();
-			$("#calendarVisite").html('');
-			
-			$("#COMMISSION_DOSSIER").val('');
-			
-			$("#commissionSelect").attr('disabled','').val('').focus();
-			
-			return false;
-		});
-		*/
+		
 		//Affichage de la nature en fonction du type choisi... Si on choisi le type 0 Alors on cache la nature
 		//génére via la vue fonction le select
-		//$("#TYPE_DOSSIER").live('change',function(){
 		$("#TYPE_DOSSIER").change(function(){
 			var idType = $(this).val();
 			$("#InfosDossier > li").hide();
@@ -227,7 +129,7 @@
 					
 				}
 				//Modif de la dénomination de l'avis
-				if(idType == 1)
+				if(idType == 1 || idType == 2)
 				{
 					//dans le cas d'une étude
 					$("#AVIS_DOSSIER").parent().prev().prev().html("Avis du rapporteur");
@@ -240,7 +142,6 @@
 					url: "/dossier/fonction",
 					data: "do=showNature&idType="+idType,
 					type:"POST",
-					//async: false,
 					beforeSend: function(){
 						$("#chargement").html("<img src='/images/load.gif' />");
 					},
@@ -248,12 +149,7 @@
 						$("#nature > .form").html(affichageResultat);
 						$("#nature").show();
 						$("#chargement").html("");
-						//alert('');
 						return false;
-						/*
-						alert($("#TYPE_DOSSIER").val());
-						$("#libelleCalendar").html($(this).val());
-						*/
 					},
 					error: function(){
 						return false;
@@ -272,8 +168,6 @@
 				$("#HORSDELAI").hide();
 				
 				$("#inputComplet").hide();
-				//$("#cancelIncomplet").show();
-				
 				//On compte combien de div ayant la class notre page comporte
 				var numDivDocManquant = $('.docManquant').length;
 				numDivDocManquant++;
@@ -300,40 +194,18 @@
 			$(this).parent().remove();
 			$("#inputComplet").show();
 			$(".incomplet").val(['0']);
+			afficherCacherAvis(0);
 			return false;
 		});
-		
-		$(".horsdelai").click(function(){
-			//alert($(this).is(":checked"));
-			if($(this).is(":checked")){
-				//Si il est coché on cache l'avis
-				afficherCacherAvis(1);
 
-			}else{
-				//Sinon on affiche l'avis
-				afficherCacherAvis(0);
-				$("#DATECOMM").show();
-			}
-		});
-		
 		$(".hideavis").click(function(){
-			if($(this).is(":checked")){
-				//Si il est coché on cache l'avis
-				afficherCacherAvis(1);
-			}else{
-				//Sinon on affiche l'avis
-				afficherCacherAvis(0);
-			}		
+			afficherCacherAvis();
 		});
 
 		showCalendar();		
 		majAvisSelect();
-		
-		//$('#SERVICEINSTRUC_DOSSIER').prepend('<option value="NULL" selected="selected">Saisissez un service instructeur</option>');
-		
 	});
-	//FIN DOC READY FUNCTION
-	
+	//FIN DOC READY FUNCTION	
 	function showCalendar()
 	{
 		if($('#COMMISSION_DOSSIER').val() != '')
@@ -342,15 +214,31 @@
 		}
 	}
 	
-	function afficherCacherAvis(act)
+	function afficherCacherAvis()
 	{
-		if(act == 0)
+		var typeDossier = $("#TYPE_DOSSIER").val();
+
+		var cpt = 0;
+		$(".hideavis").each(function(){
+			if($(this).is(":checked"))
+				cpt++;
+		});
+
+		if(cpt == 0)
 		{
 			//act = 0 on affiche
-			$("#AVIS").show();
-			$("#AVIS_COMMISSION").show();
-			$("#DATECOMM").show();
-		}else if (act == 1){
+			if(typeDossier == 1){
+				$("#AVIS").show();
+				$("#AVIS_COMMISSION").show();
+				$("#DATECOMM").show();
+			}else if(typeDossier == 2){
+				$("#AVIS_COMMISSION").show();
+			}else if(typeDossier == 3){
+				$("#AVIS").show();
+				$("#AVIS_COMMISSION").show();
+				$("#DATECOMM").show();
+			}
+		}else if (cpt > 0){
 			//act = 1 on cache
 			$("#AVIS").hide();
 			$("#AVIS_DOSSIER option[value='0']").attr('selected', true);
@@ -365,14 +253,12 @@
 	function majAvisSelect()
 	{
 		var genre = $('#genreInfo').val();
-
 		//etablissement
 		var typeDossier = $("#TYPE_DOSSIER").val();
 		var natureDossier = $("#selectNature").val();
 		if(typeDossier == 1)
 		{
 			//etude
-			//alert(natureDossier);
 			if(natureDossier == 19)
 			{
 				//levée reserve
@@ -381,7 +267,6 @@
 				var addText = " à l'étude";
 			}
 		}else if(typeDossier == 2 || typeDossier == 3){
-			//alert(natureDossier);
 			if(natureDossier == 20 || natureDossier == 25)
 			{
 				var addText = " à la réception des travaux";
@@ -426,7 +311,6 @@
 	}
 	
 	$.fn.afficheCalendar = function(idComm,emplacement,type,divInfo,infoCalendar) {
-		//alert(idComm+" "+emplacement+" "+type);
 		var calendar = $("#"+divInfo).fullCalendar( {
 			header: {
 				left: 'prev,next today',
@@ -477,7 +361,6 @@
 						type = 1;
 					}	
 				}
-				//alert(type);
 				$.ajax({
 					url: '/calendrier-des-commissions/recupevenement?start='+start.getTime()+"&end="+end.getTime()+"&type="+type,
 					data: {
@@ -529,11 +412,6 @@
 					}
 					var nomNature = $("#selectNature option:selected").text().trim();
 					var nomCom = nomNature+" - "+nomEtab;
-					/*
-					}else{
-						var nomCom = "";
-					}
-					*/
 					var type;
 					if($("#TYPE_DOSSIER").val() == 1){
 						//cas type dossier étude. On affiche alors que les commissions de type En Salle
@@ -552,7 +430,6 @@
 							type = 1;
 						}	
 					}
-					//alert(nomEtab+" --- "+nomNature);
 					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end+"&libelleCom="+nomCom+"&type="+type, function() {	
 						$("#dialogComm").dialog("option", "buttons", {
 							'Enregistrer dans le calendrier': function() {
@@ -590,7 +467,6 @@
 				}
 			},
 			eventClick: function( event, jsEvent, view ) {
-				//alert(event.id);
 				// Boite de dialogue
 				if(emplacement == 'calendrierComm'){
 					my_dialog("/calendrier-des-commissions/dialogcomm", "idComm="+idComm+"&idDateComm="+event.id+"&do=edit");
@@ -608,97 +484,16 @@
 							dd='0'+dd
 						if(mm<10)
 							mm='0'+mm
-						
-						//alert(infoCalendar);
+
 						if(dateSelect == "DATEVISITE"){
-						//if(infoCalendar == 'showVisite'){
 							$("#DATEVISITE_INPUT").val(dd+"/"+mm+"/"+aa);
 							$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
 						}else if(dateSelect == "DATECOMM"){
-						//}else if(dateSelect == "showCommission"){
 							$("#DATECOMM_INPUT").val(dd+"/"+mm+"/"+aa);
 							$("#ID_AFFECTATION_DOSSIER_COMMISSION").val(event.id);
 						}
 						$("#"+dateSelect).find(".hideCalendar").click();
-
-				/*	}else if($("#TYPE_DOSSIER").val() == 2){
-						
-						$.ajax({
-							data: "idDate=" + event.id,
-							url: "/calendrier-des-commissions/recupdateliee",
-							type:"GET",
-							success: function(affichageResultat) {
-								//On récupere toutes les dates liées et on les affiche
-								var rez = eval("("+affichageResultat+")");
-								
-								//alert(rez.length);
-								
-								if(rez.length == 1){
-									//alert(rez.length);
-									//Si une seule date on la renseinge aussi dans l'input date de passage en commission
-									var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');					
-									var date = new Date(event.end);					
-									dd = date.getUTCDate();
-									mm = date.getUTCMonth()+1;
-									aa = date.getUTCFullYear();
-									if(dd<10)
-										dd='0'+dd						
-									if(mm<10)
-										mm='0'+mm
-	
-									$("#DATEVISITE_INPUT").val(dd+"/"+mm+"/"+aa);
-									$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
-									$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
-									$("#DATECOMM_INPUT").val(dd+"/"+mm+"/"+aa);
-									if($('#nature_21').val() == 21){
-										$("#DATEVISITE_PERIODIQUE").val(dateFr);
-									}
-
-									$("#hideVisite").click();
-								}else if(rez.length > 1){
-									//Si plusieurs date on prend uniquement la dernière en date de commission et on affiche toutes les dates de visite
-									//Si une seule date on la renseinge aussi dans l'input date de passage en commission
-									var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');					
-
-									var nbResultats = rez.length;
-									var nbResultatsTotal = nbResultats;
-									
-									var listeDates = "";
-									for( var i in rez ) {
-										//alert(nbResultats+" - "+rez[i]['DATE_COMMISSION']);
-										if(nbResultats == nbResultatsTotal){
-											//On prend l'id de la premiere date pour la lier au dossier
-											$("#ID_AFFECTATION_DOSSIER_VISITE").val(rez[0]['ID_DATECOMMISSION']);
-											
-										}
-										var dateFr = convertDateAngToFr(rez[i]['DATE_COMMISSION']);
-										if(nbResultats > 2){
-											listeDates += dateFr+", "; 
-										}else if(nbResultats == 2){
-											listeDates += dateFr;
-										}else if(nbResultats == 1){
-											//ici on met la date dans l'input de commission
-											$("#DATECOMM_INPUT").val(dateFr);
-											if($('#nature_21').val() == 21){
-												$("#DATEVISITE_PERIODIQUE").val(dateFr);
-											}
-											$("#ID_AFFECTATION_DOSSIER_COMMISSION").val(rez[i]['ID_DATECOMMISSION']);
-										}
-										nbResultats--;
-										
-										//alert(rez[i]['DATE_COMMISSION']);
-									}
-									$("#DATEVISITE_INPUT").val(listeDates);
-
-									$("#hideVisite").click();
-								}
-								
-							}
-						});
-						//Fin du cas pour les visites
-					*/
-					}else if($("#TYPE_DOSSIER").val() == 3 ||$("#TYPE_DOSSIER").val() == 2){
-				
+					}else if($("#TYPE_DOSSIER").val() == 3 ||$("#TYPE_DOSSIER").val() == 2){				
 						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');	
 						if(dateSelect == "DATEVISITE"){
 							$.ajax({
@@ -708,11 +503,8 @@
 								success: function(affichageResultat) {
 									//On récupere toutes les dates liées et on les affiche
 									var rez = eval("("+affichageResultat+")");
-									//alert(rez.length);
 									if(rez.length == 1){
-										//alert(rez.length);
 										//Si une seule date on la renseinge aussi dans l'input date de passage en commission
-													
 										var date = new Date(event.end);					
 										dd = date.getUTCDate();
 										mm = date.getUTCMonth()+1;
@@ -730,17 +522,14 @@
 									}else if(rez.length > 1){
 										//Si plusieurs date on prend uniquement la dernière en date de commission et on affiche toutes les dates de visite
 										//Si une seule date on la renseinge aussi dans l'input date de passage en commission
-
 										var nbResultats = rez.length;
 										var nbResultatsTotal = nbResultats;
 										
 										var listeDates = "";
 										for( var i in rez ) {
-											//alert(nbResultats+" - "+rez[i]['DATE_COMMISSION']);
 											if(nbResultats == nbResultatsTotal){
 												//On prend l'id de la premiere date pour la lier au dossier
-												$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
-												
+												$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);												
 											}
 											var dateFr = convertDateAngToFr(rez[i]['DATE_COMMISSION']);
 											if(nbResultats > 1){
@@ -749,8 +538,6 @@
 												listeDates += dateFr;
 											}
 											nbResultats--;
-											
-											//alert(rez[i]['DATE_COMMISSION']);
 										}
 										$("#DATEVISITE_INPUT").val(listeDates);
 
@@ -774,7 +561,6 @@
 						}
 					
 					}
-					//$(".hideCalendar").click();
 				}
 				return false;
 			},
@@ -787,20 +573,18 @@
 				if(tabDateSplited[0] == "Sun" || tabDateSplited[0] == "Sat"){
 					$("#"+divInfo).fullCalendar('refetchEvents');
 				}else{
-					//alert("idComm="+event.id+"&debut="+event.start+"&fin="+event.end);
 					$.ajax({
 						data: "idComm="+event.id+"&debut="+event.start+"&fin="+event.end,
 						url: "/calendrier-des-commissions/deplacecommissiondate",
 						type:"POST",
 						success: function(affichageResultat){
-							//$("#calendar").html(affichageResultat);
+
 						},
 					});
 					
 				}
 			},
-			eventResize: function( event, jsEvent, ui, view ) {
-			
+			eventResize: function( event, jsEvent, ui, view ) {			
 				//heure de fin change uniquement fonctionne uniquement sur la vue semaine et jour. Pas sur mois
 				var view = $("#"+divInfo).fullCalendar('getView');
 				var vueInfo = view.title;
@@ -829,9 +613,7 @@
 			url: url,
 			type:"POST",
 			success: function( result ) {
-				//alert('');
 				$("#dialogComm").html( result );
-				
 				// On créé la boite de dialogue
 				$("#dialogComm").dialog({
 					resizable: false,
@@ -859,7 +641,6 @@
 	
 	$(".today").live('click',function(){
 		var objetDate = new Date();
-		//alert(jour.lenght());
 		$(this).prev().attr('value',$("#dateToday").val());
 		return false;
 	});
@@ -870,7 +651,6 @@
 		var compteur = 1;
 		var idNature;
 		$("#listeNature > .nature  input[name='natureId[]']").each(function(){
-			//alert($(this).attr('id'));
 			var idSplit = $(this).attr('id').split('_');
 			if(compteur == 1)
 				listeIdNature += idSplit[1];
@@ -884,15 +664,11 @@
 	//Cache les natures de la liste
 	$.fn.cacherNatureDuSelect = function(listeNatures) {
 		//Dans le cas d'une édition on cache dans le select des natures ceux qui sont déjà présentes
-		//alert(listeNatures);
 		var tabNature = listeNatures.split('_');
-		//alert(tabNature.length);
-		//alert(tabNature[0]+" - "+tabNature[1]+" - "+tabNature[2]+" - "+tabNature[3]);
 		if(tabNature.length > 0){
 			$("#selectNature [value=0]").text("Ajouter une nature supplémentaire");
 		}
 		for(var i = 0; i < tabNature.length;i++){
-			//alert("i : "+i+" - "+tabNature[i]);
 			$("#selectNature [value="+tabNature[i]+"]").hide();
 		}
 	};
@@ -906,10 +682,8 @@
 		}
 	};
 	
-	
 	//Affichage des champs en fonction des natures
 	$.fn.afficheChamps = function(listeNature) {
-		//alert(listeNature);
 		$("#InfosDossier > li").hide();
 		$.ajax({
 			url: "/dossier/fonction",
@@ -917,23 +691,13 @@
 			type:"POST",
 			//async: false,
 			beforeSend: function(){
-				
+				$('#loading').show();
 			},
 			success: function(affichageResultat){
 				//On affiche tous les champs
-				//alert(affichageResultat);
-
 				if(affichageResultat != ''){
 					var rez = eval("("+affichageResultat+")");
 					for(var i in rez){
-						/*
-						if(rez[i] == 'AVIS'){
-							//Si l'avis est défavorable alors on affiche l'anomalie constatée (analyse de risque)
-							if($("#AVIS_DOSSIER").val() == 3){
-								$("#ANOMALIE").show();
-							}
-						}
-						*/
 						$("#InfosDossier > #"+rez[i]).show();
 						$("#type > .value").hide();
 						$("#type > .form").show();
@@ -942,16 +706,30 @@
 				
 				var incomplet = $("input[name=INCOMPLET_DOSSIER]:checked").val();
 				var horsdelai = $(".horsdelai").is(':checked');
+				var absquorum = $(".absquorum").is(':checked');
+				var differeavis = $(".differeavis").is(':checked');
+				var npsp = $(".npsp").is(':checked');
 
 				if(incomplet == 1){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
 					$("#HORSDELAI").hide();
 					$("#DATECOMM").hide();
-				}else if (horsdelai){
+				}else if (horsdelai || absquorum || npsp || differeavis){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
 					$("#DATECOMM").hide();
+				}
+				
+						
+				var type = $("#TYPE_DOSSIER").val();
+				if(type == 2 || type == 3)
+				{
+					if($("#AVIS_DOSSIER_COMMISSION").val() == 2)
+					{
+						$("#FACTDANGE").show();
+						$("#ECHEANCIERTRAV").show();
+					}
 				}
 				
 				if($("#selectNature").val() == 1 || $("#selectNature").val() == 2){
@@ -971,6 +749,7 @@
 				}
 				$("#chargement").html('');
 
+				$('#loading').hide();
 			},
 			error: function(){
 				return false;
@@ -989,6 +768,7 @@
 		
 		$("#InfosDossier > li").hide();
 		$("#TYPE_DOSSIER option[value='0']").remove();
+		
 		if($("#do").val() != 'new'){
 			$("#validModification").show();
 			$("#annulModification").show();
@@ -998,12 +778,7 @@
 		$("#InfosDossier > li > .form").show();
 		
 		//on fait apparaitre la liste des natures puis on cache les natures déja affichées
-		//$("#selectNature").show();
-		//$("#selectNature").attr('disabled','');
 		$("#selectNature").removeAttr('disabled');
-		
-		//var listeNature = $("#listeNature").recupNatures();
-		//$("#selectNature").cacherNatureDuSelect(listeNature);
 
 		$("#NUM_DOCURBA").show();
 		$("#addNumDoc").show();
@@ -1012,14 +787,10 @@
 		if($("#do").val() == 'edit'){
 			$("#listeNature").gestionSuppNature();
 		}
-		
-		//$("#InfosDossier").afficheChamps(listeNature);
 		$("#InfosDossier").afficheChamps($("#selectNature").val());
 		
 		//Gestion des cas calendrier comm visite en fonction du type de dossier
 		$(".hideCalendar").hide();
-		
-
 		return false;
 	});
 
@@ -1040,9 +811,6 @@
 				$("#selectNature option[value='0']").remove();
 				
 			}else{
-				//idNatureBd = $("#selectNature").val();
-				//$("#selectNature").parent().prepend("<div class='nature' style=''><input type='hidden' name='natureId[]' id='nature_"+$("#selectNature").val()+"' value='"+idNatureBd+"' />"+$("#selectNature option:selected").text()+" <a href='' idNature='"+idNatureBd+"'class='suppNature'>&times;</a></div>");
-				
 				var listeNature = $("#listeNature").recupNatures();
 				
 				$("#InfosDossier").afficheChamps($(this).val());
@@ -1053,52 +821,7 @@
 			majAvisSelect();
 		}
 	});
-	
-/*	
-	//Gestion de la suppression de nature affichage des champs correspondant aux natures restantes
-	$(".suppNature").live('click',function(){
-		//alert('');
-		if($("#do").val() == 'edit'){
-			//alert($(this).attr('idNature'));
-			$.ajax({
-				url: "/dossier/fonction",
-				data: "do=deleteNatureDossier&idNatureSupp="+$(this).attr('idNature'),
-				type:"POST",
-				beforeSend: function(){
-					
-				},
-				success: function(affichageResultat){
-					
-				},
-				error: function(){
-					return false;
-				}
-			});
-		}
 
-		$(this).parent().remove();			
-		var compteur = 0;
-
-		var compteur = $("#listeNature > .nature").length;
-		if(compteur == 0){
-			$("#selectNature [value=0]").text("Veuillez selectionner une nature");
-			$("#creationDossier").hide();
-		}			
-		var listeNature = $("#listeNature").recupNatures();
-		$("#InfosDossier").afficheChamps(listeNature);
-		//alert('3');
-		var idNatureListe = $(this).prev("input").attr('id').split("_");
-		//alert(idNatureListe[1]);
-		$("#selectNature [value="+idNatureListe[1]+"]").show();
-		$("#selectNature").val(0);
-		if($("#do").val() == 'edit'){
-			$("#listeNature").gestionSuppNature();
-		}
-		$("selectNature").removeAttr('disabled');
-		return false;
-	});
-*/
-		
 	function ValidateDate(dateValue)
 	{
 		var date_temp = dateValue.split('/');
@@ -1150,18 +873,6 @@
 		if(!verifDossier())
 			return false;
 
-		/*
-		if($("#NUMDOCURBA").css('display') != 'none'){
-			if($("#NUM_DOCURBA").val() == '' && $(".docurba").length == 0){
-				$("#NUM_DOCURBA").focus();
-				$("#NUM_DOCURBA").css("border-color","red");
-				return false;
-			}else{ 
-				$("#addNumDoc").click();
-			}
-		}
-		*/
-
 		if($("#NUM_DOCURBA").val() != ''){
 			$("#addNumDoc").click();
 		}
@@ -1173,7 +884,6 @@
 			data += "&DATEVISITE_PERIODIQUE="+tabDateVisite[0];
 		}
 		
-		//$("#newDossier").submit();
 		$.ajax({
 			url: "/dossier/save",
 			data: data,
@@ -1185,10 +895,8 @@
 				$("#chargement").html("<img src='/images/load.gif' />");
 			},
 			success: function(affichageResultat){
-				//alert('/dossier/index/id/'+affichageResultat);
 				var idDossier = affichageResultat.replace(' ', '');
 				window.location='/dossier/index/id/'+idDossier;
-				//return false;
 			},
 			error: function(){
 				return false;
@@ -1205,7 +913,7 @@
 			type:"POST",
 			//async: false,
 			beforeSend: function(){
-				//$(".checkbox_generate input").remove();
+
 			},
 			success: function(affichageResultat){
 				$("#dialogComm").html('').html(affichageResultat).dialog({
@@ -1268,6 +976,30 @@
 		return false;		
 	});
 	
+	$("#AVIS_DOSSIER_COMMISSION").live('change',function(){
+		var type = $("#TYPE_DOSSIER").val();
+		if(type == 2 || type == 3)
+		{
+			if($(this).val() == 2){
+				$("#FACTDANGE").show();
+				$("#ECHEANCIERTRAV").show();
+			}else{
+				$("#FACTDANGE").hide();
+				$("#ECHEANCIERTRAV").hide();
+			}
+		}
+	});
+	
+	$("#echeanciertrav_check").live('click',function(){
+		if($(this).is(':checked'))
+		{
+			$("#ECHEANCIERTRAV_DOSSIER").show();
+		}else{
+			$("#ECHEANCIERTRAV_DOSSIER").val('');
+			$("#ECHEANCIERTRAV_DOSSIER").hide();			
+		}
+	});
+
 	//Action lorsque l'on valide les modifications apportées à un dossier
 	$("#validModification").live('click',function(){
 		if(!verifDossier())
@@ -1278,9 +1010,6 @@
 		}
 		
 		var data = $("#editDossier").serialize();
-
-		//alert($("#editDossier").serialize());
-		
 		$.ajax({
 			url: "/dossier/save",
 			data: data,
@@ -1292,7 +1021,6 @@
 				$("#chargement").html("<img src='/images/load.gif' />");
 			},
 			success: function(affichageResultat){
-				//alert(affichageResultat);
 				window.location= affichageResultat;
 			},
 			error: function(){
@@ -1309,23 +1037,18 @@
 			$(this).prev().prev().click();
 			
 		}else{
-			//$(this).prev().hidden();
 			$(this).prev().prev().prev().attr('readonly','readonly');			$("#inputComplet").show();
 			$(".incomplet").val(['0']);
 			$("#AVIS").show();
 			$("#AVIS_COMMISSION").show();
 			$("#HORSDELAI").show();
 			afficherCacherAvis(0);
-			//alert('');
 		}		
 		return false;
 	});
 </script>
 <?php
 echo $this->headScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
-//echo $this->headScript()->appendFile('/js/dossier/calendrier.js','text/javascript');
-
-//echo $this->do;
 
 $action = $this->do;
 
@@ -1372,10 +1095,7 @@ echo "
 				</li>
 				<li class='row-fluid' id='nature' style='".( ($action == 'new')?"display:none;":"")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Nature</div>
-					<!--
-					<div class='right value'></div>
-					-->
-					<div class='right form span9' ".( ($action != 'new' && $action != 'edit' )?"style='display:none;'":"").">
+					<div class='right form span8' ".( ($action != 'new' && $action != 'edit' )?"style='display:none;'":"").">
 						<div id='listeNature' >
 						";
 						echo "
@@ -1388,16 +1108,16 @@ echo "
 								}else{
 									$selected="";
 								}
-								echo "<option value='".$value["ID_DOSSIERNATURE"]."' ".$selected.">".$value['LIBELLE_DOSSIERNATURE']."</div>";
+								echo "<option value='".$value["ID_DOSSIERNATURE"]."' ".$selected.">".$value['LIBELLE_DOSSIERNATURE']."</option>";
 							}
 						echo "
 							</select>
 						</div>
 					</div>
+					<div id='loading' class='left span1' style='display:none;'><img src='/images/load.gif' alt='loading' ></div>
 				</li>
 			</ul>
 			<!-- FIN UL Type/Nature -->
-			
 			<h4>Informations sur le dossier</h4>
 			<!-- BEGIN UL InfosDossier -->
 			<ul id='InfosDossier' class='list unstyled' >
@@ -1497,14 +1217,6 @@ echo "
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 				";
-				/*
-				echo $this->listeGroupement($this->serviceInstructeurId, array(
-					"id" => "SERVICEINSTRUC_DOSSIER",
-					"name" => "SERVICEINSTRUC_DOSSIER",
-					"class" => "bigger",
-					"style" => "width: 400px"
-				));
-				*/
 				listeGroupementDossier($this->serviceInstructeurId);
 				echo "						
 					</div>
@@ -1664,7 +1376,7 @@ echo "
 						<input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' disabled ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "")."> 				
+						<input type='checkbox' class='horsdelai hideavis' name='HORSDELAI_DOSSIER' ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>
 				<li class='row-fluid' id='DIFFEREAVIS' style='".( ($action != 'new' && in_array('DIFFEREAVIS', $this->afficherChamps) && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != NULL && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
@@ -1685,24 +1397,17 @@ echo "
 						<input type='checkbox' class='npsp hideavis' name='NPSP_DOSSIER' ".( ($this->infosDossier['NPSP_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>
-				<li class='row-fluid' id='NPEA' style='".( ($action != 'new' && in_array('NPEA', $this->afficherChamps) && $this->infosDossier['NPEA_DOSSIER'] != NULL && $this->infosDossier['NPEA_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'>Ne peut émettre d'avis</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						<input type='checkbox' class='npea' name='NPEA_DOSSIER' disabled ".( ($this->infosDossier['NPEA_DOSSIER'])? "checked" : "").">
+
+				<li class='row-fluid' id='ABSQUORUM' style='".( ($action != 'new' && in_array('ABSQUORUM', $this->afficherChamps) && $this->infosDossier['ABSQUORUM_DOSSIER'] == 1 )? "" : "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Absence de quorum</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )." >
+						<input type='checkbox' class='absquorum' name='ABSQUORUM_DOSSIER' disabled ".( ($this->infosDossier['ABSQUORUM_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='npea hideavis' name='NPEA_DOSSIER' ".( ($this->infosDossier['NPEA_DOSSIER'])? "checked" : "")."> 				
+						<input type='checkbox' class='absquorum hideavis' name='ABSQUORUM_DOSSIER' ".( ($this->infosDossier['ABSQUORUM_DOSSIER'])? "checked" : "")." > 				
 					</div>
 				</li>
-				<li class='row-fluid' id='APPALV' style='".( ($action != 'new' && in_array('APPALV', $this->afficherChamps) && $this->infosDossier['APPALV_DOSSIER'] != NULL && $this->infosDossier['APPALV_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'>N'a pas procédé à la visite</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						<input type='checkbox' class='appalv' name='APPALV_DOSSIER' disabled ".( ($this->infosDossier['APPALV_DOSSIER'])? "checked" : "").">
-					</div>
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='appalv hideavis' name='APPALV_DOSSIER' ".( ($this->infosDossier['APPALV_DOSSIER'])? "checked" : "")."> 				
-					</div>
-				</li>
+				
 				<li class='row-fluid' id='CNE' style='".( ($action != 'new' && in_array('CNE', $this->afficherChamps) && $this->infosDossier['CNE_DOSSIER'] != NULL && $this->infosDossier['CNE_DOSSIER'] != 0 )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Cellule non exploitée</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
@@ -1712,13 +1417,13 @@ echo "
 						<input type='checkbox hideavis' class='cne' name='CNE_DOSSIER' ".( ($this->infosDossier['CNE_DOSSIER'])? "checked" : "")."> 				
 					</div>
 				</li>				
-				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>
 				";
-				if($this->infosDossier['TYPE_DOSSIER'] == 1)
+				if($this->infosDossier['TYPE_DOSSIER'] == 2 || $this->infosDossier['TYPE_DOSSIER'] == 1)
 				{
 					echo "Avis du rapporteur";
-				}else if($this->infosDossier['TYPE_DOSSIER'] == 3){
+				}else if( $this->infosDossier['TYPE_DOSSIER'] == 3){
 					echo "Avis du groupe de visite";
 				}
 				echo "</div>
@@ -1754,7 +1459,10 @@ echo "
 						</select>
 					</div>
 				</li>				
-				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 )? "": "display:none;" )."margin-bottom:20px;'>
+				<!--
+				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1  && $this->afficheAvis)? "": "display:none;" )."margin-bottom:20px;'>
+				-->
+				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && $this->afficheAvis == 1)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
 					echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
@@ -1788,17 +1496,26 @@ echo "
 						</select>
 					</div>
 				</li>
-				
 				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL && $this->infosDossier['FACTDANGE_DOSSIER'] != 0)? "" : "display:none;")."'>
-					<div class='left libelle span3' style='float:left;'>Facteur de dangerosité</div>
+					<div class='left libelle span3' style='float:left;'>Facteur de criticité</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='factDange ".$this->infosDossier['FACTDANGE_DOSSIER']."'>".$this->infosDossier['FACTDANGE_DOSSIER']."</span></div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<select name='FACTDANGE_DOSSIER' id='FACTDANGE_DOSSIER' >
-							<option value='0'>Choisissez un facteur de dangerosité</option>
+							<option value='0' >-</option>
 							<option value='1'>1</option>
 							<option value='2'>2</option>
-							<option value='3'>3</option>
+							<option value='3' ".( ($this->infosDossier['FACTDANGE_DOSSIER'] == 3)? "selected='selected'" : "").">3</option>
+							<option value='4'>4</option>
+							<option value='5'>5</option>
 						</select>
+					</div>
+				</li>
+				<li class='row-fluid' id='ECHEANCIERTRAV' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL)? "" : "display:none;")."'>
+					<div class='left libelle span3' style='float:left;'>Echéancier de travaux / Schéma de mise en sécurité</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['ECHEANCIERTRAV_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='checkbox' id='echeanciertrav_check' ".( ( $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL )? "checked='checked'" : "" )."/>
+						<input type='text' class='date' value='".$this->ECHEANCIERTRAV."'  style='".( ( $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL )? "" : "display:none;" )."' id='ECHEANCIERTRAV_DOSSIER' name='ECHEANCIERTRAV_DOSSIER' />
 					</div>
 				</li>
 				<li class='row-fluid' id='ANOMALIE' style='".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
@@ -1938,7 +1655,7 @@ echo "
 				<li class='row-fluid' id='PREVENTIONNISTE' style='".( (in_array('PREVENTIONNISTE', $this->afficherChamps) && count($this->preventionnistes) != 0 )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Préventionniste(s)</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						".$this->partialLoop('user/user.phtml', $this->preventionnistes )."
+						".$this->partialLoop('users/embedded/user.phtml', $this->preventionnistes )."
 					</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<ul class='unstyled'>

@@ -10,6 +10,7 @@
                 <?php echo "<a href='/etablissement/index/id/" . $etablissement["ID_ETABLISSEMENT"] . "'>" . $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] . "</a> - "; ?>
             <?php endforeach ?>
         <?php endif ?>
+        <?php echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' title='" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "' />" : ''; ?>
         <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." " ?>
     </h2>
     
@@ -17,8 +18,8 @@
     <?php if($this->etablissement['avis'] != null) : ?>
         <p class='avis <?php echo $this->etablissement['avis'] == 1 ? 'F' : 'D' ?>'>
             <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') ." à l'exploitation " ?>
-            <?php if($this->etablissement['avis'] != 1) : ?>
-            · Facteur de dangerosité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
+            <?php if($this->etablissement['avis'] != 1 && $this->etablissement['facteur_dangerosite'] > 0) : ?>
+            · Facteur de criticité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
             <?php endif ?>
         </p>
     <?php endif ?>
@@ -44,7 +45,7 @@
 <!-- Onglets horizontaux -->
 <ul id='onglets_horizontaux' >
     <li><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
-    <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "EIC" && $this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li><?php endif ?>
+    <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li><?php endif ?>
     <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "Site" ) : ?><li><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li><?php endif ?>
     <li><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
     <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>

@@ -26,7 +26,7 @@ foreach($this->informationsMembre as $val => $membre){
 			$nomFichier = $membre['infosFiles'][0]['ID_COMMISSIONMEMBRE']."CONVOCATIONVISITE_".$membre['infosFiles'][0]['COURRIER_CONVOCATIONVISITE'];
 		}
 	}
-	
+
 	/*** VERIF AVANT TOUTE GENERATION DE ZONE ****/
 	$cptConcerne = 0;
 	foreach($this->listeCommunes as $val => $commune){
@@ -61,20 +61,20 @@ foreach($this->informationsMembre as $val => $membre){
 				}else{
 					$communeShow = "de ".$commune[0];
 				}
-				if(count($commune[1]) == 1){
-					foreach($commune[1] as $comm => $info){	
-						if($info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] != "")
-							addChamp($villeODF,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
-						if($info["RUEADRESSE_UTILISATEURINFORMATIONS"] != "")
-							addChamp($villeODF,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
-							
-						if($info["CPADRESSE_UTILISATEURINFORMATIONS"] != "")
-							addChamp($villeODF,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
-							
-						if($commune[0] != "")
-							addChamp($villeODF,'communeMairie',$commune[0]);
-					}
+				
+				//echo $commune[0]."<br/>";
+				//Zend_Debug::dump($commune[0]);
+				foreach($commune[1] as $comm => $info){	
+					if($info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] != "")
+						addChamp($villeODF,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
+					if($info["RUEADRESSE_UTILISATEURINFORMATIONS"] != "")
+						addChamp($villeODF,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
+						
+					if($info["CPADRESSE_UTILISATEURINFORMATIONS"] != "")
+						addChamp($villeODF,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
 				}
+				
+				addChamp($villeODF,'communeMairie',$commune[0]);
 
 				addChamp($villeODF,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
 				
@@ -84,13 +84,16 @@ foreach($this->informationsMembre as $val => $membre){
 				$dateComm = new Zend_Date($this->dateComm);				
 				addChamp($villeODF,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 				
-				addChamp($villeODF,'heureDebutComm',$this->heureDeb);
+				$heureCommTab = explode(":",$this->heureDeb);
+				$heureComm = $heureCommTab[0].":".$heureCommTab[1];
+				addChamp($villeODF,'heureDebutComm',$heureComm);
 				//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 				//Generation du segment pour l'affichage des différentes infos du dossier
 				//Zend_Debug::dump($this->dossierComm);
+
 				foreach($this->dossierComm as $val => $dossierInfos){
-					//echo $dossierInfos['DESCRIPTIF_DOSSIER']."<br/> plop";
 					if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
+						//echo $dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']." - ".$commune[0];
 						if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
 							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
 							//echo "<br/> !!! ".$dossierInfos["ID_DOSSIER"]."<br/>";
@@ -105,8 +108,12 @@ foreach($this->informationsMembre as $val => $membre){
 								//- Classe ".$membre['classes'][ $dossierInfos['infosEtab']['informations']['LIBELLE_CLASSE']]['ID_COMMISSIONMEMBRE']."
 
 								//On recherche le pere de l'établissement concerné
+								//echo $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"];
 								$villeODF->infosDoss->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-								$villeODF->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+								
+								if(isset($dossierInfos['infosEtab']))
+									$villeODF->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+								
 								$villeODF->infosDoss->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
 								$villeODF->infosDoss->setVars('objetDossier', $dossierInfos["OBJET_DOSSIER"], true, 'UTF-8');
 

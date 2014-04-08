@@ -110,7 +110,7 @@
                 </dd>
             </dl>
 
-            <h4 class='champ_types champs h4_subtitle'>Activités <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_types_activites_secondaires').clone().appendTo( $('#activite_ul') ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a></h4>
+            <h4 class='champ_types champs h4_subtitle'>Activités <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_types_activites_secondaires').clone().appendTo( $('#activite_ul') ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); $('#activite_ul li:last select').change(); return false;">Ajouter un type et une activité secondaire</a></h4>
             <dl class='dl-horizontal champ_types champs'>
                 <!-- Type et activités -->
                 <dt>Types & activités</dt>
@@ -165,7 +165,7 @@
             </dl>
             
             <!-- Rubriques -->
-            <h4 class='champs_icpe champs rubrique h4_subtitle'>Rubriques ICPE <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now; $('#prototype_rubriques').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter une rubrique</a></h4>
+            <h4 class='champs_icpe champs rubrique h4_subtitle'>Rubriques ICPE <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_rubriques').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter une rubrique</a></h4>
             <table class='table table-condensed champs_icpe champs rubrique'>
                 <thead>
                     <tr>
@@ -502,7 +502,7 @@
 
         // Ajout d'une adresse
         $("form.adresse input[type='submit']").live('click', function() {
-            time = Date.now;
+            time = Date.now();
             node = $('#prototype_adresse').clone().prependTo( $('table.champ_adresse') ).removeClass('hide prototypes').addClass('adresse').attr('id', '');
             node.find('input[name="ADRESSES[-1][LON_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lon"]').val());
             node.find('input[name="ADRESSES[-1][LAT_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lat"]').val());
@@ -624,17 +624,14 @@
             minLength: 3,
             source: function(query, process) {
                 return $.ajax({
-                    url: "/etablissement/get",
-                    type: 'post',
+                    url: "/api/1.0/search/etablissements",
+                    type: 'get',
                     data: {
-                        q: query,
-                        limit: 100,
-                        g: $("select[name='ID_GENRE'] option:selected").val(),
-                        genre_pere: 1
+                        name: query
                     },
                     success: function (result) {
                         etablissements = [];
-                        $.each(result.resultats, function (i, etablissement) {
+                        $.each(result.response.results, function (i, etablissement) {
                             switch(etablissement.ID_GENRE)
                             {
                                 case 1:
@@ -676,17 +673,14 @@
             minLength: 3,
             source: function(query, process) {
                 return $.ajax({
-                    url: "/etablissement/get?format=json",
-                    type: 'post',
+                    url: "/api/1.0/search/etablissements",
+                    type: 'get',
                     data: {
-                        q: query,
-                        limit: 100,
-                        g: $("select[name='ID_GENRE'] option:selected").val(),
-                        genre_enfant: 1
+                        name: query
                     },
                     success: function (result) {
                         etablissements = [];
-                        $.each(result.resultats, function (i, etablissement) {
+                        $.each(result.response.results, function (i, etablissement) {
                             switch(etablissement.ID_GENRE)
                             {
                                 case 1:
@@ -738,7 +732,7 @@
                     },
                     success: function (result) {
                         preventionnistes = [];
-                        $.each(result.response, function (i, preventionniste) {
+                        $.each(result.response.results, function (i, preventionniste) {
                             preventionnistes.push("<span data-id='" + preventionniste.uid + "'>" + preventionniste.NOM_UTILISATEURINFORMATIONS + " " + preventionniste.PRENOM_UTILISATEURINFORMATIONS + "</span>");
                         });
 

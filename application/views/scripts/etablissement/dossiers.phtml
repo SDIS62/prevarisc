@@ -43,23 +43,20 @@
 
 <script>
     $(document).ready(function() {
-        $(".slide").live("click", function() {       
+        // Affichage des dossiers enfants
+        $("ul.recherche_liste li.slide").live("click", function() {
             var container = this;
             if( $(this).hasClass("active") ) {
-                $(container).next().slideUp(400, function() {$(container).next().remove()});
-                $(container).toggleClass("active");
+                $(this).next().slideUp(400, function() {$(container).next().remove()});
+                $(this).toggleClass("active");
             }
             else {
-                $.ajax({
-                    url: "/search/search-child-doss?format=json&id="+$(this).attr("id"),
-                    beforeSend: function() {
-                        $(container).find(".load").show();
-                    },
-                    success: function( result ) {
-                        $(container).find(".load").hide();
-                        $(container).after("<li class='ui-helper-hidden' >" + result.html + "</li>").next().slideDown();
-                        $(container).toggleClass("active");
-                    }
+                $(container).find(".load").show();
+                $.getJSON("/api/1.0/search/dossiers", {parent: $(this).attr("id"), count: 100}, function(data) {
+                    $(container).toggleClass("active").find(".load").hide();
+                    $.get("/search/display-ajax-search", {items: 'dossier', data: data.response.results}, function(html) {
+                        $(container).after("<li class='ui-helper-hidden' >" + html + "</li>").next().slideDown();
+                    });
                 });
             }
         });

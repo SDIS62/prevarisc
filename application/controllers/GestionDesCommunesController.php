@@ -9,7 +9,7 @@ class GestionDesCommunesController extends Zend_Controller_Action
     public function indexAction()
     {
         // Définition du layout
-        $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_admin');
 
         // Modèles
         $commune = new Model_DbTable_AdresseCommune;

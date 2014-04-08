@@ -6,26 +6,35 @@
     <?php endif ?>
     
     <!-- Affichage du libellé du type -->
-    <small style='display: inline-block; width: 60px'>
+    <small style='display: inline-block; width: 65px'>
         <strong>
-        <?php echo ($this->ID_TYPE ? $this->LIBELLE_TYPE . "&nbsp;-&nbsp;" : "") . strtoupper(substr($this->LIBELLE_GENRE, 0 , 4)) ?>
+        <?php
+            if($this->ID_TYPE) {
+                echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->LIBELLE_TYPE . '.png') ? "<img src='/images/types/b/icone-type-" . $this->LIBELLE_TYPE . ".png' title='" . $this->LIBELLE_TYPE . "' />&nbsp;-&nbsp;" : $this->LIBELLE_TYPE . "&nbsp;-&nbsp;";
+            }
+            echo strtoupper(substr($this->LIBELLE_GENRE, 0 , 4));
+        ?>
         </strong>
     </small>
     
     <!-- nom de l'établissement -->
     <span class="nom-etablissement">
         <a href='/etablissement/index/id/<?php echo $this->ID_ETABLISSEMENT ?>'>
-            <?php echo $this->LIBELLE_ETABLISSEMENTINFORMATIONS ?>
+            <?php echo empty($this->LIBELLE_ETABLISSEMENTINFORMATIONS) ? "<em class='muted'>Libellé non renseigné</em>" : $this->LIBELLE_ETABLISSEMENTINFORMATIONS ?>
             <small>
                 <?php
                     switch($this->ID_GENRE)
                     {
                         case 1:
-                            echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_SITE;
+                            if(!empty($this->LIBELLE_COMMUNE_ADRESSE_SITE)) {
+                               echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_SITE;
+                            }
                             break;
                             
                         case 3:
-                            echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                            if(!empty($this->LIBELLE_COMMUNE_ADRESSE_CELLULE)) {
+                               echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                            }
                             break;
                             
                         default:
@@ -64,6 +73,9 @@
                 $date = "00/00/0000";
             }
             $date = "Date de l'avis : " . $date . '&nbsp;';
+        }
+        else {
+            $date = "Pas de date";
         }
     ?>
 

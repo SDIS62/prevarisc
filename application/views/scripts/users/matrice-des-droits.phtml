@@ -1,15 +1,10 @@
-<!-- Titre -->
-<h2 class='page-header'>Administration système</h2>
-
-<?php echo $this->partial('menu_admin.phtml') ?>
-
-<?php echo $this->partial('menu_admin_user.phtml') ?>
+<?php echo $this->partial('users/partials/menu_admin_user.phtml') ?>
 
 <form method='post' action='/users/matrice-des-droits'>
 
     <?php foreach($this->rowset_groupes as $groupe) : ?>
 
-    <h3><?php echo $groupe->LIBELLE_GROUPE ?></h3>
+    <h4><?php echo $groupe->LIBELLE_GROUPE ?></h4>
 
     <table class="table table-condensed" >
         <thead>
@@ -26,7 +21,7 @@
                 <td><?php echo $resource->text ?> <small>(<?php echo $resource->name ?>)</small></td>
                 <td>
                 <?php foreach($resource->findModel_DbTable_Privilege()->toArray() as $privilege) : ?>
-                <?php echo $this->partial('users/partial_droit.phtml', array('text' => $privilege['text'], 'name' => $privilege['name'], 'name_input' => 'groupe[' . $groupe->ID_GROUPE . '][' . $privilege['id_privilege'] . ']', 'value' => (int) in_array(array('ID_GROUPE' => (string) $groupe->ID_GROUPE, 'id_privilege' => (string) $privilege['id_privilege']), $this->rowset_groupes_privilege))) ?>
+                <?php echo $this->partial('users/partials/partial-droit.phtml', array('text' => $privilege['text'], 'name' => $privilege['name'], 'name_input' => 'groupe[' . $groupe->ID_GROUPE . '][' . $privilege['id_privilege'] . ']', 'value' => (int) in_array(array('ID_GROUPE' => (string) $groupe->ID_GROUPE, 'id_privilege' => (string) $privilege['id_privilege']), $this->rowset_groupes_privilege))) ?>
                 <?php endforeach ?>
                 </td>
             <tr>

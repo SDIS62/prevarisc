@@ -1,18 +1,19 @@
-<!-- Titre -->
-<h2 class='page-header'>Administration système</h2>
+<h3 class='page-header'>Panneau d'administration</h3>
 
-<?php echo $this->partial('menu_admin.phtml') ?>
-
-<!-- Version courante -->
 <h4>Informations sur la version courante de Prevarisc</h4>
 <dl class='dl-horizontal' >
     <dt>Version</dt>
     <dd>
-        <a href="https://github.com/SDIS62/prevarisc/issues/milestones">Prevarisc <?php echo $this->version_prevarisc ?></a>
+        <p><a href="https://github.com/SDIS62/prevarisc/issues/milestones">Prevarisc <?php echo $this->version_prevarisc ?></a></p>
     </dd>
     
     <dt>Serveur</dt>
     <dd>
-        <span id="APPLICATION_ENV" class="label label_<?php echo strtoupper(APPLICATION_ENV) ?>"><?php echo strtoupper(APPLICATION_ENV) ?></span>
+        <p><span id="APPLICATION_ENV" class="label label_<?php echo strtoupper(APPLICATION_ENV) ?>"><?php echo strtoupper(APPLICATION_ENV) ?></span></p>
+    </dd>
+
+    <dt>Site du projet</dt>
+    <dd>
+        <p><a href="http://prevarisc.sdis62.fr">Aller sur le site du Projet Prevarisc</p>
     </dd>
 </dl>

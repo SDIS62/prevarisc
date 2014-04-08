@@ -1,326 +1,241 @@
-<!-- Formulaire -->
-<form id='recherche' method='get' action='' >
-	
-	<!-- Libelle -->
-	<input type='text' id='libelle' name='LIBELLE_ETABLISSEMENTINFORMATIONS' class='bigger' style="width: 100%; padding: 8px; font-size: 1.5em;" />
-    
-    <!-- Par niveau hierarchique -->
-	<div id='par-niveau' ></div>
-    
-    <div id="plus_critere_div">
+<form method='get'>
 
-        <!-- Par genre-->
-        <div id='par-genre' class="well text-center" >
+	<div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
+		<div class="input-append pull-left">
+			<input type="text" name='label' class="span6 search-query" placeholder="Libellé de l'établissement ou son #ID ..." value='<?php if(isset($_GET["label"])) echo $_GET["label"] ?>' />
+			<input type='submit' class="btn" value="Rechercher dans Prevarisc" disabled />
+			<input type='hidden' name='page' value="1" />
+		</div>
 
-            <!-- Genre -->
-            <select id='genre' name='ID_GENRE[]' multiple='multiple' disabled >
-                <?php foreach( $this->DB_genre as $genre ) : ?>
-                <option value='<?php echo $genre["ID_GENRE"] ?>' ><?php echo $genre["LIBELLE_GENRE"] ?></option>
-                <?php endforeach ?>
-            </select>
-            
-            <!-- Catégorie -->
-            <span id='categorie_span' class='ui-helper-hidden'>
-                <select id='categorie' name='ID_CATEGORIE[]' multiple='multiple' disabled>
-                    <?php foreach( $this->DB_categorie as $categorie ) : ?>
-                    <option value='<?php echo $categorie["ID_CATEGORIE"] ?>'><?php echo $categorie["LIBELLE_CATEGORIE"] ?></option>
-                    <?php endforeach ?>
-                </select>
-            </span>
-            
-            <!-- Classe -->
-            <span id='classe_span' class='ui-helper-hidden' >
-                <select id='classe' name='ID_CLASSE[]' multiple='multiple' disabled >
-                    <?php foreach( $this->DB_classe as $classe ) : ?>
-                    <option value='<?php echo $classe["ID_CLASSE"] ?>'><?php echo $classe["LIBELLE_CLASSE"] ?></option>
-                    <?php endforeach ?>
-                </select>
-            </span>
-            
-            <!-- Famille -->
-            <span id='famille_span' class='ui-helper-hidden'>
-                <select id='famille' name='ID_FAMILLE[]' multiple='multiple' disabled >
-                    <?php foreach( $this->DB_famille as $famille ) : ?>
-                    <option value='<?php echo $famille["ID_FAMILLE"] ?>'><?php echo $famille["LIBELLE_FAMILLE"] ?></option>
-                    <?php endforeach ?>
-                </select>
-            </span>
-            
-            <!-- Types -->
-            <span id='type_span' class='ui-helper-hidden'>
-                <select id='type' name='ID_TYPE[]' multiple='multiple' disabled >
-                    <?php foreach( $this->DB_type as $type ) : ?>
-                    <option value='<?php echo $type["ID_TYPE"] ?>'><?php echo $type["LIBELLE_TYPE"] ?></option>
-                    <?php endforeach ?>
-                </select>
-            </span>
-            
-            <br/><br/>
+		<p id='criteres_plus_choix' class='pull-left hide' style='margin: 8px 0 0 5px'>
+			<small>
+	        	<input type='radio' name='par' value='niveau' checked /> Recherche simple
+	        	<input type='radio' name='par' value='criteres' /> Recherche avancée
+	        </small>
+	    </p>
 
-            <!-- Numéro ID -->
-            <input type='text' id='code' name='NUMEROID_ETABLISSEMENT' class='bigger ui-helper-hidden' size=10 />
-            
-            <!-- Commune et rue -->
-            <input type='text' id='commune' name='LIBELLE_COMMUNE' size=25 /><input type='text' id='rue' name='rue' size=25 disabled="disabled" />
-            <input type='hidden' id='insee' name='insee' />
-            <input type='hidden' id='id_rue' name='ID_RUE' />
-            
-            <br/><br/>
-            
-            <!-- Avis -->
-            <select id='avis' name='ID_AVIS[]' multiple='multiple'>
-                <?php foreach( $this->DB_avis as $avis ) : ?>
-                <option value='<?php echo $avis["ID_AVIS"] ?>'><?php echo $avis["LIBELLE_AVIS"] ?></option>
-                <?php endforeach ?>
-            </select>
-            
-            <!-- Statut -->
-            <select id='statut' name='ID_STATUT[]' multiple='multiple'>
-                <?php foreach( $this->DB_statut as $statut ) : ?>
-                <option value='<?php echo $statut["ID_STATUT"] ?>'><?php echo $statut["LIBELLE_STATUT"] ?></option>
-                <?php endforeach ?>
-            </select>
-            
-            <!-- Local sommeil -->
-            Local sommeil
-            <input type='checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' />
-            
-            <!-- -date de la dernière visite -->
-            Date de la dernière visite
-            <input type='text' class='date ' name='DATEVISITE_DOSSIER'  size=7 />
+	    <p class='pull-right' style='margin: 8px 0 0 5px'>
+			<small>
+	        	Zone de recherche : 
+	        	<strong class='zone_de_recherche_text'>
+	        		<?php echo array_key_exists('zone_de_recherche_text', $_GET) && $_GET['zone_de_recherche_text'] != '' ? $_GET['zone_de_recherche_text'] : 'Département' ?>
+        		</strong>
+        		<a href='#' onclick="$('#zone_de_recherche_modal').modal(); return false; ">(Modifier la zone de recherche)</a>
+        		<input type='hidden' name='zone_de_recherche_text' value="<?php if(array_key_exists('zone_de_recherche_text', $_GET)) echo $_GET['zone_de_recherche_text'] ?>" />
+				<input type='hidden' name='city' value="<?php if(array_key_exists('city', $_GET)) echo $_GET['city'] ?>" />
+				<input type='hidden' name='street' value="<?php if(array_key_exists('street', $_GET)) echo $_GET['street'] ?>" />
+	        </small>
+	    </p>
+	</div>
 
-        </div>
+	<div>
+	    <select name='statuts[]' multiple>
+	        <?php foreach( $this->DB_statut as $statut ) : ?>
+	        	<option value='<?php echo $statut["ID_STATUT"] ?>' <?php if(isset($_GET["statuts"]) && in_array($statut["ID_STATUT"], (array) $_GET["statuts"])) echo 'selected' ?>><?php echo $statut["LIBELLE_STATUT"] ?></option>
+	        <?php endforeach ?>
+	    </select>
 
+	    <select name='presences_local_sommeil[]' multiple>
+        	<option value='true' <?php if(isset($_GET["presences_local_sommeil"]) && in_array('true', (array) $_GET["presences_local_sommeil"])) echo 'selected' ?>>Avec</option>
+        	<option value='false' <?php if(isset($_GET["presences_local_sommeil"]) && in_array('false', (array) $_GET["presences_local_sommeil"])) echo 'selected' ?>>Sans</option>
+	    </select>
+
+	    <select name='avis[]' multiple>
+        	<option value='true' <?php if(isset($_GET["avis"]) && in_array('true', (array) $_GET["avis"])) echo 'selected' ?>>Favorable</option>
+        	<option value='false' <?php if(isset($_GET["avis"]) && in_array('false', (array) $_GET["avis"])) echo 'selected' ?>>Défavorable</option>
+	    </select>
     </div>
 
-    <p style="text-align: center">
-        <input type='radio' name='par' value='niveau' checked /> Recherche simple (affichage par niveau)
-        <input type='radio' name='par' value='criteres' /> Recherche avancée
-    </p>
-    
-    <input type="hidden" name="format" value="json" />
-    <input type="hidden" name="item" value="etablissement" />
+    <div id='criteres_plus' style='margin-top: 4px'>
+		<select name='genres[]' multiple>
+	        <?php foreach( $this->DB_genre as $genre ) : ?>
+	        	<option value='<?php echo $genre["ID_GENRE"] ?>' <?php if(array_key_exists('genres', $_GET) && in_array($genre["ID_GENRE"], (array) $_GET["genres"])) echo 'selected' ?>><?php echo $genre["LIBELLE_GENRE"] ?></option>
+	        <?php endforeach ?>
+		</select>
+
+		<span id='categorie_span' class='hide'>
+			<select name='categories[]' multiple>
+				<?php foreach( $this->DB_categorie as $categorie ) : ?>
+		        <option value='<?php echo $categorie["ID_CATEGORIE"] ?>' <?php if(array_key_exists('categories', $_GET) && in_array($categorie["ID_CATEGORIE"], (array) $_GET["categories"])) echo 'selected' ?>><?php echo $categorie["LIBELLE_CATEGORIE"] ?></option>
+		        <?php endforeach ?>
+			</select>
+		</span>
+
+		<span id='classe_span' class='hide' >
+	        <select name='classes[]' multiple>
+	            <?php foreach( $this->DB_classe as $classe ) : ?>
+	            	<option value='<?php echo $classe["ID_CLASSE"] ?>' <?php if(array_key_exists('classes', $_GET) && in_array($classe["ID_CLASSE"], (array) $_GET["classes"])) echo 'selected' ?>><?php echo $classe["LIBELLE_CLASSE"] ?></option>
+	            <?php endforeach ?>
+	        </select>
+	    </span>
+
+	    <span id='famille_span' class='hide'>
+	    	<select name='familles[]' multiple>
+	            <?php foreach( $this->DB_famille as $famille ) : ?>
+	           		<option value='<?php echo $famille["ID_FAMILLE"] ?>' <?php if(array_key_exists('familles', $_GET) && in_array($famille["ID_FAMILLE"], (array) $_GET["familles"])) echo 'selected' ?>><?php echo $famille["LIBELLE_FAMILLE"] ?></option>
+	            <?php endforeach ?>
+	        </select>
+	    </span>
+
+	    <span id='type_span' class='hide'>
+	        <select name='types[]' multiple>
+	            <?php foreach( $this->DB_type as $type ) : ?>
+	            	<option value='<?php echo $type["ID_TYPE"] ?>' <?php if(array_key_exists('types', $_GET) && in_array($type["ID_TYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_TYPE"] ?></option>
+	            <?php endforeach ?>
+	        </select>
+	  </span>
+    </div>
 
 </form>
 
+<hr/>
 
-<script type="text/javascript">
+<?php if( count($this->results) > 0 ) : ?>
+    <p class='muted'><small>Nombre total d'éléments : <?php echo $this->results->getTotalItemCount() ?></small></p>
+    <ul class='recherche_liste unstyled'>
+    <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->results ) ?>
+    </ul>
+    <br/>
+    <div style='clear: both'></div>
+    <?php echo $this->results ?>
+<?php else : ?>
+	<p class='muted'><small>Aucun résultat disponible.</small></p>
+    <h2 style='color: silver; text-align: center;' ></h2>
+<?php endif ?>
 
-	$('.date').live('click', function() {
-		$(this).datepicker({showOn:'focus', dateFormat: 'dd/mm/yy', firstDay: 1}).focus();
-	});
+<!-- Boite modale de la zone de recherche -->
+<form id='zone_de_recherche_modal' class="modal hide adresse">
 
-	$("#code").toggleText("Numéro d'id");
-	$("#libelle").toggleText("Libellé de l'établissement");
-	$("#commune").toggleText("Commune");
-	$("#rue").toggleText("Rue");
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Définir la zone de recherche</h3>
+    </div>
 
-	$("#commune").autocomplete("/adresse/get?format=json", {
-		minChars: 3,
-		max: 100,
-		parse: function(data) {
-			return $.map(data["resultats"], function(row) {
-				return {
-					data: row,
-					value: row.LIBELLE_COMMUNE,
-					result: row.LIBELLE_COMMUNE
-				}
+    <div class="modal-body">
+        <dl class='dl-horizontal'>
+            <dt>Ville</dt>
+            <dd>
+                <input name='commune_ac' type='text' placeholder='Nom de la commune ou code postal ...' />
+                <input name='code_insee' type='hidden' />
+            </dd>
+
+            <dt>Voie</dt>
+            <dd>
+                <input type='text' name='voie_ac' placeholder='Nom de la voie ...' disabled />
+                <input type='hidden' name='voie' />
+            </dd>
+        </dl>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <a class='submit btn btn-success' >Définir la zone de recherche</a>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+
+    	// Si le champ de recherche est vide, on empêche l'envoi d'une recherche
+    	// $("input[name='label']").focus().keyup(function() {$('input[type="submit"]').attr('disabled', $(this).val() == '')}).keyup();
+    	$("input[name='label']").focus();
+    	$('input[type="submit"]').attr('disabled', false);
+
+    	// Gestion des multiselects
+    	$("select[name='statuts[]']").multiselect({header: false, noneSelectedText: "Tous les statuts"});
+		$("select[name='genres[]']").multiselect({header: false, noneSelectedText: "Tous les genres"});
+		$("select[name='categories[]']").multiselect({header: false, noneSelectedText: "Toutes les catégories"});
+		$("select[name='classes[]']").multiselect({header: false, noneSelectedText: "Toutes les classes"});
+		$("select[name='familles[]']").multiselect({header: false, noneSelectedText: "Toutes les familles"});
+		$("select[name='types[]']").multiselect({header: false, noneSelectedText: "Tous les types d'activités"});
+		$("select[name='avis[]']").multiselect({header: false, noneSelectedText: "Tous les avis"});
+		$("select[name='presences_local_sommeil[]']").multiselect({header: false, noneSelectedText: "Qu'importe la présence de local à sommeil", minWidth: 300});
+
+		// Fonction d'affichage des critères en fonction du genre
+		function display_criteres_by_genres() {
+			$("#categorie_span, #classe_span, #famille_span, #type_span").hide();
+			var array = $("select[name='genres[]']").multiselect("getChecked").each(function() {
+				switch(this.value) {
+					case '2' : $("#type_span, #categorie_span").show(); break;
+					case '3' : $("#type_span, #categorie_span").show(); break;
+					case '4' : $("#famille_span").show(); break;
+					case '5' : $("#classe_span").show(); break;
+				}	
 			});
-		},
-		formatItem: function(item) {
-			return item.LIBELLE_COMMUNE;
 		}
-	}).result(function(e, item) {
-		// window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
-        $("#insee").val(item.NUMINSEE_COMMUNE);
-        $("#rue").val("").removeAttr("disabled");
-		$("#rue_id").val("");
-	}).click(function() {
-        $(this).val("");
-        $("#insee").val("");
-		$("#rue").val("").attr("disabled", "disabled").blur();
-		$("#rue_id").val("");
-    });
-    
-    // Auto complétion de la rue
-	$("#rue").autocomplete('/adresse/get-voies', {
-		minChars: 3,
-		max: 100,
-		extraParams: {
-			format: "json",
-			code_insee: function(){ return $("#insee").val() }
-		},
-		parse: function(data) {
-			return $.map(data["resultats"], function(row) {
-				return {
-					data: row,
-					value: row.LIBELLE_RUE,
-					result: row.LIBELLE_RUE
-				}
-			});
-		},
-		formatItem: function(item) {
-			return item.LIBELLE_RUE;
-		}
-	}).result(function(e, item) {
-        $("#id_rue").val(item.ID_RUE);
-	}).click(function() {
-        $(this).val("");
-        $("#id_rue").val("");
-    });
-	
-	$("#libelle").autocomplete("/etablissement/get?format=json", {
-		minChars: 3,
-		max: 100,
-		parse: function(data) {
-			return $.map(data["resultats"], function(row) {
-				return {
-					data: row,
-					value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
-					result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
-				}
-			});
-		},
-		formatItem: function(item) {
-        
-            var LIBELLE_COMMUNE = "non localisé";
-            
-            switch(item.ID_GENRE)
-            {
-                case "1":
-                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
-                    break;
-                    
-                case "3":
-                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
-                    break;
-                    
-                default:
-                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
-            }
-            
-			return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
-		}
-	}).result(function(e, item) {
-		window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
-	});
-	
-	$("#avis").multiselect({
-		header: false,
-		noneSelectedText: "Avis",
-		selectedList: 1,
-		height: "auto",
-		minWidth: 175
-	});
 
-	$("#genre").multiselect({
-		header: false,
-		noneSelectedText: "Genre",
-		selectedList: 1,
-		height: "auto",
-		minWidth: 175
-	});
-	
-	$("#categorie").multiselect({
-		header: false,
-		noneSelectedText: "Catégorie",
-		selectedList: 1,
-		height: "auto",
-		minWidth: 150
-	});
-	
-	$("#famille").multiselect({
-		header: false,
-		noneSelectedText: "Famille",
-		selectedList: 1,
-		height: "auto",
-		minWidth: 175
-	});
-	
-	$("#classe").multiselect({
-		header: false,
-		noneSelectedText: "Classe",
-		selectedList: 1,
-		height: "auto",
-		minWidth: 100
-	});
-	
-	$("#type").multiselect({
-		header: false,
-		noneSelectedText: "Type",
-		selectedList: 1,
-		height: "auto",
-		minWidth: 100
-	});
-	
-	$("#statut").multiselect({
-		header: false,
-		noneSelectedText: "Statut",
-		selectedList: 1,
-		height: "auto",
-		minWidth: 175
-	});
-	
-	$("#genre").bind("multiselectclick", function(event, ui) {
-	
-		$("#categorie_span, #classe_span, #famille_span, #type_span").hide();
-		
-		var array = $("#genre").multiselect("getChecked").each(function() {
+		// Affichage des critères en fonction du genre
+		$("select[name='genres[]']").bind("multiselectclick", function() {display_criteres_by_genres()});
+		display_criteres_by_genres();
 
-			if ( this.value == 2 )
-				$("#type_span, #categorie_span").show();
-			else if ( this.value == 3 )
-				$("#type_span, #categorie_span").show();
-			else if( this.value == 4 ) 
-				$("#famille_span").show();
-			else if( this.value == 5 ) 
-				$("#classe_span").show();
+		// Affichage des établissements enfants
+		$("ul.recherche_liste li.slide").live("click", function() {
+			var container = this;
+			if( $(this).hasClass("active") ) {
+				$(this).next().slideUp(400, function() {$(container).next().remove()});
+				$(this).toggleClass("active");
+			}
+			else {
+				$(container).find(".load").show();
+				$.getJSON("/api/1.0/search/etablissements", {parent: $(this).attr("id"), count: 100}, function(data) {
+					$(container).toggleClass("active").find(".load").hide();
+					$.post("/search/display-ajax-search", {items: 'etablissement', data: data.response.results}, function(html) {
+						$(container).after("<li class='ui-helper-hidden' >" + html + "</li>").next().slideDown();
+					});
+				});
+			}
 		});
 
-	});
+		// Auto complétion de la ville
+        $("form#zone_de_recherche_modal input[name='commune_ac']").autocomplete("/api/1.0/adresse/get_communes", {
+            minChars: 3,
+            parse: function(data) {
+                return $.map(data["response"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
+            },
+            formatItem: function(item) {
+                return item.LIBELLE_COMMUNE + " (" + item.NUMINSEE_COMMUNE + ")";
+            }
+        }).result(function(e, item) {
+        	$("input[name='code_insee']").val( item.NUMINSEE_COMMUNE );
+            $("input[name='voie_ac']").removeAttr('disabled');
+        }).click(function() {
+            $(this).val("");
+            $("input[name='voie_ac']").val("").attr("disabled", true).blur();
+            $("input[name='voie']").val("").blur();
+        });
 
-	$(".slide").live("click", function() {
-					
-		var container = this;
-		
-		if( $(this).hasClass("active") ) {
-			
-			$(container).next().slideUp(400, function() {$(container).next().remove()});
-			$(container).toggleClass("active");
-		}
-		else {
-			$.ajax({
-				url: "/search/search-child?format=json&id="+$(this).attr("id"),
-				beforeSend: function() {
-					$(container).find(".load").show();
-				},
-				success: function( result ) {
-					$(container).find(".load").hide();
-					$(container).after("<li class='ui-helper-hidden' >" + result.html + "</li>").next().slideDown();
-					$(container).toggleClass("active");
-				}
-			});
-		}
-	});
-	
-	// $("#type").multiselect("disable");
-    
-    $("input[name='par']").click(function() {
-	
-		if($(this).val() == "niveau") {
-		
-			$("#par-genre").hide();
-			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("disable");
-			$("#commune").val("Commune");
-			$("#extra").hide();
-		}
-		else {
-		
-			$("#par-genre").show();
-			$("#genre, #categorie, #classe, #famille, #type, #avis, #statut").multiselect("enable");
-		}
-	});
+        // Auto complétion de la rue
+        $("form#zone_de_recherche_modal input[name='voie_ac']").autocomplete('/api/1.0/adresse/get_voies', {
+            minChars: 3,
+            extraParams: { code_insee: function(){ return $("input[name='code_insee']").val() } },
+            parse: function(data) {
+                return $.map(data["response"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
+            },
+            formatItem: function(item) {
+                return item.LIBELLE_RUE;
+            }
+        }).result(function(e, item) {
+            $("input[name='voie']").val( item.ID_RUE );
+        }).click(function() {
+            $(this).val("");
+        });
 
-	$("input[name='par'][value='niveau']").click();
-	
+        // Validation de la zone de recherche
+        $('form#zone_de_recherche_modal a.submit').click(function() {
+        	var text = 'Département';
+        	
+        	if($("input[name='commune_ac']").val() != '') {
+        		var text = $("input[name='commune_ac']").val();
+        		if($("input[name='voie_ac']").val() != '') {
+        			var text = $("input[name='commune_ac']").val() + ', ' + $("input[name='voie_ac']").val();
+        		}
+        	}
+        	$("input[name='zone_de_recherche_text']").val(text);
+            $(".zone_de_recherche_text").text(text);
+
+            $("input[name='city']").val($("input[name='commune_ac']").val());
+            $("input[name='street']").val($("input[name='voie']").val());
+        	$('form#zone_de_recherche_modal').modal('hide');
+        });
+	});
 </script>

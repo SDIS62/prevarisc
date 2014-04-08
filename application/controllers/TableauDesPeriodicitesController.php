@@ -1,6 +1,6 @@
 <?php
 
-class PeriodiciteController extends Zend_Controller_Action
+class TableauDesPeriodicitesController extends Zend_Controller_Action
 {
     /**
      * Tableau des périodicités
@@ -9,7 +9,7 @@ class PeriodiciteController extends Zend_Controller_Action
     public function indexAction()
     {
         // Définition du layout
-        $this->_helper->layout->setLayout('menu_left');
+        $this->_helper->layout->setLayout('menu_admin');
 
         // Liste des types d'activité
         $activite_model = new Model_DbTable_Type();

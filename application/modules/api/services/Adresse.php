@@ -10,13 +10,8 @@ class Api_Service_Adresse
      */
     public function get($q)
     {
-        if(strlen($q) == 5 && is_numeric($q)) {
-            $DB_adresse = new Model_DbTable_EtablissementAdresse;
-            return $DB_adresse->getVilleByCP($q);
-        }
-
-        $model_adresse = new Model_DbTable_AdresseCommune;
-        return $model_adresse->get($q);
+        $service_adresse = new Service_Adresse;
+        return $service_adresse->get($q);
     }
     
     /**
@@ -27,8 +22,8 @@ class Api_Service_Adresse
      */
     public function getTypesVoieParVille($code_insee)
     {
-        $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        return $DB_adresse->getTypesVoieByVille($code_insee);
+        $service_adresse = new Service_Adresse;
+        return $service_adresse->getTypesVoieByVille($code_insee);
     }
 
     /**
@@ -40,7 +35,7 @@ class Api_Service_Adresse
      */
     public function getVoies($code_insee, $q = '')
     {
-        $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        return $DB_adresse->getVoies($code_insee, $q);
+        $service_adresse = new Service_Adresse;
+        return $service_adresse->getVoies($code_insee, $q);
     }
 }
