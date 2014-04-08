@@ -8,20 +8,22 @@
             </a>
             <a class="brand" href="/"><img src='/images/layout-header-logo.png' alt='Prevarisc'  /></a>
             <div class="nav-collapse collapse">
-                <ul class='nav pull-right'>
-                    <li>
-                    <form class="navbar-search pull-left" action="/search/etablissement" method="GET">
-                       <div class="input-append">
-                        <input name="label" class="input-xlarge" id="nav-main-search-field" type="text" placeholder="Rechercher" />
-                        <input name="page" type="hidden" value="1" />
-                        <button class="btn" type="submit"><i class="icon-search"></i></button>
-                      </div>
-                    </form>
-                    </li>
+                <ul class='nav'>
                     <li><a href='/'>Accueil</a></li>
                     <li><a href='/statistiques'>Extractions - Statistiques</a></li>
-                    
                     <li><a href='/admin'>Administration</a></li>
+                </ul>
+                <ul class='nav pull-right'>
+                    <li>
+                        <form class="navbar-search" action="/search/etablissement" method="get">
+                            <div class="input-append">
+                                <input name="label" class="input-xlarge" id="nav-main-search-field" type="text" placeholder="Rechercher ..." style='margin-top: 10px' />
+                                <input name="page" type="hidden" value="1"  />
+                                <button class="btn" type="submit" style='margin-top: 10px'><i class="icon-search"></i></button>
+                                <button class="btn" type="button" style='margin-top: 10px'>Recherche avancée »</button>
+                            </div>
+                        </form>
+                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <?php echo $this->avatar(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], 'small') ?>
@@ -36,41 +38,39 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-$("#nav-main-search-field").autocomplete("/api/1.0/search/etablissements?format=json", {
-    minChars: 3,
-    max: 100,
-    width: 500,
-    parse: function(data) {
+
+<script>
+    $("#nav-main-search-field").autocomplete("/api/1.0/search/etablissements?format=json", {
+        minChars: 3,
+        max: 100,
+        width: 500,
+        parse: function(data) {
             return $.map(data["response"]["results"], function(row) {
-                    return {
-                            data: row,
-                            value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
-                            result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
-                    }
+                return {
+                    data: row,
+                    value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
+                    result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+                }
             });
-    },
-    formatItem: function(item) {
+        },
+        formatItem: function(item) {
+            var LIBELLE_COMMUNE = "non localisée";
+            switch(item.ID_GENRE) {
+                case "1":
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
+                    break;
 
-        var LIBELLE_COMMUNE = "non localisée";
+                case "3":
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                    break;
 
-        switch(item.ID_GENRE)
-        {
-            case "1":
-                LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
-                break;
+                default:
+                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+            }
 
-            case "3":
-                LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
-                break;
-
-            default:
-                LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+            return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
         }
-
-        return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
-    }
-}).result(function(e, item) {
+    }).result(function(e, item) {
         window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
-});    
+    });    
 </script>
