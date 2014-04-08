@@ -253,7 +253,7 @@
                     <div id='diaporama' class="carousel slide">
                         <ol class="carousel-indicators">
                             <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
-                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
+                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $item['ID_PIECEJOINTE'] ?>" data-slide-to="<?php echo $key ?>"></li>
                             <?php endforeach ?>
                         </ol>
                         <!-- Carousel items -->
@@ -280,7 +280,7 @@
                     <div id='plans' class="carousel slide">
                         <ol class="carousel-indicators">
                             <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
-                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
+                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $item['ID_PIECEJOINTE'] ?>" data-slide-to="<?php echo $key ?>"></li>
                             <?php endforeach ?>
                         </ol>
                         <!-- Carousel items -->
