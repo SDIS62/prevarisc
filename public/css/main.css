@@ -73,6 +73,10 @@ body > .navbar {
     color: #555;
 }
 
+.navbar .nav .dropdown-toggle .caret {
+    margin-top: 18px;
+}
+
 
 /* Style de la page d'erreur
 -------------------------------------------------- */
