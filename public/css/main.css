@@ -61,7 +61,7 @@ body > .navbar {
 .navbar-inner .container-fluid,
 .navbar-inner .container-fluid .nav-collapse > ul > li,
 .navbar-inner .container-fluid .nav-collapse > ul > li > a {
-    line-height: 23px;
+    line-height: 40px;
     font-size: 14px;
     text-transform: uppercase;
     color: #949494;
@@ -71,6 +71,10 @@ body > .navbar {
 
 .navbar-inner .container-fluid .nav-collapse > ul > li > a:hover {
     color: #555;
+}
+
+.navbar .nav .dropdown-toggle .caret {
+    margin-top: 18px;
 }
 
 

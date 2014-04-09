@@ -42,7 +42,7 @@ class Service_User
         $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
         $search->setCriteria("etablissementinformations.ID_CATEGORIE", array("1","2","3","4"));
         $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
         // 5ème catégorie defavorable
         $search = new Model_DbTable_Search;
@@ -51,7 +51,7 @@ class Service_User
         $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
         $search->setCriteria("avis.ID_AVIS", 2);
         $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
         // 5ème catégorie avec local à sommeil
         $search = new Model_DbTable_Search;
@@ -60,16 +60,16 @@ class Service_User
         $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
         $search->setCriteria("etablissementinformations.ID_GENRE", 2);
         $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
-        $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
         // EIC - IGH - HAB
         $search = new Model_DbTable_Search;
         $search->setItem("etablissement");
         $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
         $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4"));
-        $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
-        return $etablissements;
+        return array_unique($etablissements, SORT_REGULAR);
     }
 
     /**
