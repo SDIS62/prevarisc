@@ -14,6 +14,7 @@
 <!--#include file="./jquery.tipsy.js" -->
 <!--#include file="./jquery.fancybox-1.3.4.js" -->
 <!--#include file="./bootstrap.min.js" -->
+<!--#include file="./dropzone.min.js" -->
 
 document.addEventListener("DOMContentLoaded", function() {
     // Titres

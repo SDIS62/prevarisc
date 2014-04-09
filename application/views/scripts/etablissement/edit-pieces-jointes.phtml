@@ -1,14 +1,17 @@
 <div class='pull-right' >
-	<a href='<?php echo $this->url(array('action' => 'add-piece-jointe')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" ><i class="icon-upload"></i> Ajouter une pièce jointe</a>
+    <a id="addPJQuick" class="btn"><i class="icon-upload"></i> Ajout rapide</a>
+    <a href='<?php echo $this->url(array('action' => 'add-piece-jointe')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" ><i class="icon-upload"></i> Ajouter une pièce jointe</a>
     <a class='btn' href="<?php echo $this->url(array('action' => 'pieces-jointes')) ?>">Revenir sur l'affichage des pièces jointes</a>
 </div>
 
 <h3>Gestion des pièces jointes</h3>
 
+<div id="dropzone" class="dropzone" style="display:none"></div>
+
 <?php if(count($this->pieces_jointes) == 0) : ?>
     <p class='muted'>Il n'y a pas de pièce jointe.</p>
 <?php else : ?>
-<table class='table table-bordered table-condensed table-hover'> 
+<table id="table-pieces-jointes" class='table table-bordered table-condensed table-hover'> 
 	<thead> 
 		<tr>
 			<th>Nom</th> 
@@ -43,12 +46,34 @@
 <div id="reponse-modal" class="modal hide fade" ></div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    Dropzone.autoDiscover = false;
+    
+    $(document).ready(function() { 
         // Gestion des boites modales
         $("a[data-toggle='modal']").click(function() {
             var target = $(this).attr("data-target");
             var url = $(this).attr("href");
             $(target).load(url);
+        });
+        
+        
+        /* GESTION DU GLISSEZ DEPOSER */
+        $("#addPJQuick").click(function() {
+            $('#dropzone').toggle();
+        });
+
+        var myDropzone = new Dropzone("#dropzone", { 
+            url: "<?php echo $this->url(array('action' => 'add-piece-jointe')) ?>?mise_en_avant=0",
+            paramName: "file"
+        });
+        myDropzone.on("success", function(file, responseText) {
+            console.log(responseText);
+            if (responseText !== undefined) {
+                $('#fiche_etablissement').empty().append(responseText);
+            } else
+            {
+                document.location.reload();
+            }
         });
     });
 </script>
