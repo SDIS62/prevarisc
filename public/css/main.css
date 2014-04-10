@@ -43,6 +43,11 @@ body.login .btn.btn-primary {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0242a', endColorstr='#b91e23',GradientType=0 );
 }
 
+body.login input[type='submit'] {
+    display: block;
+    margin: 0 auto;
+}
+
 /* On règle la navbar en mode "super sleek"
 -------------------------------------------------- */
 
