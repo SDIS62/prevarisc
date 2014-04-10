@@ -307,8 +307,10 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
         switch($etablissement['informations']['ID_GENRE']) {
             case '1':
-
-
+                $resource = array();
+                foreach($etablissement['etablissement_lies'] as $etablissements_enfant) {
+                    $resource = array_merge($resource, $this->getEtablissementPageResourses($etablissements_enfant['ID_ETABLISSEMENT']));
+                }
                 break;
 
             case '2':
