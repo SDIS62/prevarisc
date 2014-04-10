@@ -193,16 +193,19 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
      * @return null|Zend_Acl_Resource_Interface
      */  
     private function develop_resources(&$list_resources_finale) {
-        foreach($list_resources_finale as $key => $result) {
-            foreach(explode('_', $result) as $pos => $resource_pos_item) {
-                if(count(explode('-', $resource_pos_item)) > 1) {
-                    foreach(explode('-', $resource_pos_item) as $item) {
-                        $name = explode('_', $result);
-                        $name[$pos] = $item;
+        for($i = 0; $i < count($list_resources_finale); $i++) {
+            $resource_exploded = explode('_', $list_resources_finale[$i]);
+            for($j = 0; $j < count($resource_exploded); $j++) {
+                if(count(explode('-', $resource_exploded[$j])) > 1) {
+                    $resource_exploded2 = explode('-', $resource_exploded[$j]);
+                    for($k = 0; $k < count($resource_exploded2); $k++) {
+                        $name = explode('_', $list_resources_finale[$i]);
+                        $name[$j] = $resource_exploded2[$k];
                         $list_resources_finale[] = implode($name, '_');
                     }
-                    unset($list_resources_finale[$key]);
+                    unset($list_resources_finale[$i]);
                     $list_resources_finale = array_unique($list_resources_finale);
+                    $list_resources_finale = array_values($list_resources_finale);
                     $this->develop_resources($list_resources_finale);
                 }
             }
@@ -333,6 +336,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
         }
 
         $list_resources_finale = array($resource);
-        return $this->develop_resources($list_resources_finale);
+        $this->develop_resources($list_resources_finale);
+        return $list_resources_finale;
     }
 }
