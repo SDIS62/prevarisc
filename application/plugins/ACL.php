@@ -145,43 +145,51 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             $view = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('view');
             
             // Récupération de la page active
-            $page = $view->navigation($view->nav)->findActive($view->navigation($view->nav)->getContainer())['page'];
-            if($page->getAction() == null) {
-                $page = $view->navigation($view->nav)->findOneBy('active', true)->findByAction($request->getActionName());
-            }
+            $page = $view->navigation($view->nav)->findActive($view->navigation($view->nav)->getContainer());
 
-            // Si la page correspond bien, on check l'ACL
-            if($page !== null) {
+            // Si on trouve une page active
+            if($page != null) {
 
-                // Récupération de la resource demandée par la page active
-                $resources = $this->getPageResources($page, $request);
+                $page = $page['page'];
 
-                // Récupération du privilège demandé par la page active
-                $privilege = $this->getPagePrivilege($page);
+                if($page->getAction() == null) {
+                    $page = $view->navigation($view->nav)->findOneBy('active', true)->findByAction($request->getActionName());
+                }
 
-                // Pour chaque ressources de la page, on check les permissions
-                $access_granted = false;
-                foreach($resources as $resource) {
-                    if($acl->has($resource)) {
-                        if($acl->isAllowed($role, $resource, $privilege)) {
+                // Si la page correspond bien, on check l'ACL
+                if($page !== null) {
+
+                    // Récupération de la resource demandée par la page active
+                    $resources = $this->getPageResources($page, $request);
+
+                    // Récupération du privilège demandé par la page active
+                    $privilege = $this->getPagePrivilege($page);
+
+                    // Pour chaque ressources de la page, on check les permissions
+                    $access_granted = false;
+                    foreach($resources as $resource) {
+                        if($acl->has($resource)) {
+                            if($acl->isAllowed($role, $resource, $privilege)) {
+                                $access_granted = true;
+                            }
+                        }
+                        elseif(!in_array($page->get('controller'), array('etablissement', 'dossier'))) {
                             $access_granted = true;
                         }
                     }
-                    elseif(!in_array($page->get('controller'), array('etablissement', 'dossier'))) {
-                        $access_granted = true;
+
+                    // Redirection vers la page d'erreur si l'accès est non autorisée
+                    if(!$access_granted) {
+                        $request->setControllerName('error');
+                        $request->setActionName('error');
+                        $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+                        $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER;
+                        $error->request = clone $request;
+                        $error->exception = new Zend_Controller_Dispatcher_Exception('Accès non autorisé', 401);
+                        $request->setParam('error_handler', $error);
                     }
                 }
 
-                // Redirection vers la page d'erreur si l'accès est non autorisée
-                if(!$access_granted) {
-                    $request->setControllerName('error');
-                    $request->setActionName('error');
-                    $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-                    $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER;
-                    $error->request = clone $request;
-                    $error->exception = new Zend_Controller_Dispatcher_Exception('Accès non autorisé', 401);
-                    $request->setParam('error_handler', $error);
-                }
             }
         }
     }
@@ -298,6 +306,11 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
         $resource = '';
 
         switch($etablissement['informations']['ID_GENRE']) {
+            case '1':
+
+
+                break;
+
             case '2':
                 $resource = 'etablissement_erp_';
                 $resource .= ($etablissement['informations']['ID_TYPEACTIVITE'] == null ? '0' : $etablissement['informations']['ID_TYPEACTIVITE'] . '-0') . '_';
@@ -335,7 +348,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 break;
         }
 
-        $list_resources_finale = array($resource);
+        $list_resources_finale = is_array($resource) ? $resource : array($resource);
         $this->develop_resources($list_resources_finale);
         return $list_resources_finale;
     }
