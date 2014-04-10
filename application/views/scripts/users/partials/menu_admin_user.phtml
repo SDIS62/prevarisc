@@ -13,7 +13,7 @@
     <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'add-group') echo "class='active'" ?>>
         <a href="/users/add-group">Créer un groupe</a>
     </li>
-    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'matrice-des-droits') echo "class='active'" ?>>
+    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'matrice-des-droits'  || Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'ressources-specialisees') echo "class='active'" ?>>
         <a href="/users/matrice-des-droits">Gérer les droits des groupes</a>
     </li>
 </ul>

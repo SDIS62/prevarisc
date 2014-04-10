@@ -75,7 +75,7 @@
         {
             $select = $this->select()
                 ->setIntegrityCheck(false)
-                ->from("utilisateurcommission")
+                ->from("utilisateurcommission", null)
                 ->join("commission", "commission.ID_COMMISSION = utilisateurcommission.ID_COMMISSION")
                 ->where("ID_UTILISATEUR = ?", $id);
 
@@ -108,7 +108,7 @@
         {
             $select = $this->select()
                 ->setIntegrityCheck(false)
-                ->from("utilisateurgroupement")
+                ->from("utilisateurgroupement", null)
                 ->join("groupement", "groupement.ID_GROUPEMENT = utilisateurgroupement.ID_GROUPEMENT")
                 ->where("ID_UTILISATEUR = ?", $id);
 
