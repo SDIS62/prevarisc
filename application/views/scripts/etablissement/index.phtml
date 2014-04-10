@@ -68,12 +68,10 @@
                         </li>
                         <?php foreach($this->etablissement['types_activites_secondaires'] as $type_activite) : ?>
                             <li>
-                                <strong>
-                                    <?php
-                                        echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' title='" . $type_activite['LIBELLE_TYPE'] . "' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;";
-                                    ?>
-                                    <?php echo $type_activite['LIBELLE_ACTIVITE'] ?>
-                                </strong>
+                                <?php
+                                    echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' title='" . $type_activite['LIBELLE_TYPE'] . "' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;";
+                                ?>
+                                <?php echo $type_activite['LIBELLE_ACTIVITE'] ?>
                             </li>
                        <?php endforeach ?>
                     </ul>
