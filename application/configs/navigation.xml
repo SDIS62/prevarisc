@@ -666,13 +666,13 @@
 				<index>
 					<controller>Index</controller>
 					<action>index</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</index>
 				<piece-jointe>
 					<label>Gestion des pieces jointes</label>
 					<controller>dossier</controller>
 					<action>piece-jointe</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</piece-jointe>
 				<add>
 					<resource>creations</resource> 
@@ -684,166 +684,166 @@
 				<general>
 					<controller>dossier</controller>
 					<action>general</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</general>
 				<fonction>
 					<label>Fonction</label>
 					<controller>dossier</controller>
 					<action>fonction</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</fonction>
 				<save-pj>
 					<controller>dossier</controller>
 					<action>save</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</save-pj>
 				<prescription>
 					<controller>dossier</controller>
 					<action>prescription</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</prescription>
 				<prescriptionloadajax>
 					<controller>dossier</controller>
 					<action>prescriptionloadajax</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</prescriptionloadajax>
 				<showprescription>
 					<label>Voir prescription</label>
 					<controller>dossier</controller>
 					<action>showprescription</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</showprescription>
 				<editprescription>
 					<label>Editer Prescription</label>
 					<controller>dossier</controller>
 					<action>editprescription</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</editprescription>
 				<editprescriptiontexte>
 					<controller>dossier</controller>
 					<action>editprescriptiontexte</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</editprescriptiontexte>
 				<editprescriptionarticle>
 					<controller>dossier</controller>
 					<action>editprescriptionarticle</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</editprescriptionarticle>
 				<editprescriptionvalidation>
 					<controller>dossier</controller>
 					<action>editprescriptionvalidation</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</editprescriptionvalidation>
 				<selectiontexte>
 					<controller>dossier</controller>
 					<action>selectiontexte</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</selectiontexte>
 				<selectionarticle>
 					<controller>dossier</controller>
 					<action>selectionarticle</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</selectionarticle>
 				<selectionabreviation>
 					<controller>dossier</controller>
 					<action>selectionabreviation</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</selectionabreviation>
 				<selectionetab>
 					<controller>dossier</controller>
 					<action>selectionetab</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</selectionetab>
 				<liees>
 					<controller>dossier</controller>
 					<action>liees</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</liees>
 				<contact>
 					<controller>dossier</controller>
 					<action>contact</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</contact>
 				<docconsulte>
 					<label>Consulter Doc</label>
 					<controller>dossier</controller>
 					<action>docconsulte</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</docconsulte>
 				<ajoutdoc>
 					<label>Ajouter Doc</label>
 					<controller>dossier</controller>
 					<action>ajoutdoc</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</ajoutdoc>
 				<validdoc>
 					<controller>dossier</controller>
 					<action>validdoc</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</validdoc>
 				<addetablissement>
 					<label>Ajouter Etablissement</label>
 					<controller>dossier</controller>
 					<action>addetablissement</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</addetablissement>
 				<deleteetablissement>
 					<label>Supprimer Etablissement</label>
 					<controller>dossier</controller>
 					<action>deleteetablissement</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</deleteetablissement>
 				<deleteliendossier>
 					<controller>dossier</controller>
 					<action>deleteliendossier</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</deleteliendossier>
 				<dialogcommshow>
 					<controller>dossier</controller>
 					<action>dialogcommshow</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</dialogcommshow>
 				<affectationodj>
 					<label>Affectation ordre du jour</label>
 					<controller>dossier</controller>
 					<action>affectationodj</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</affectationodj>
 				<descriptifs>
 					<controller>dossier</controller>
 					<action>descriptifs</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</descriptifs>
 				<dialoggenrapport>
 					<controller>dossier</controller>
 					<action>dialoggenrapport</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</dialoggenrapport>
 				<generationrapport>
 					<controller>dossier</controller>
 					<action>generationrapport</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</generationrapport>
 				<creationdoc>
 					<controller>dossier</controller>
 					<action>creationdoc</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</creationdoc>
 				<generationconvoc>
 					<label>Generation Convocation</label>
 					<controller>dossier</controller>
 					<action>generationconvoc</action>
-					<privilege>edit</privilege>
+					<privilege>edit_doss</privilege>
 				</generationconvoc>
 				<descriptif>
 					<controller>dossier</controller>
 					<action>descriptif</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</descriptif>
 				<textesapplicables>
 					<controller>dossier</controller>
 					<action>textesapplicables</action>
-					<privilege>view</privilege>
+					<privilege>view_doss</privilege>
 				</textesapplicables>
 			</pages>
 		</dossier>
@@ -864,13 +864,13 @@
 					<label>Fiche établissement</label>
 					<controller>etablissement</controller>
 					<action>index</action>
-					<privilege>view</privilege>
+					<privilege>view_ets</privilege>
 				</index>
 				<edit>
 					<label>Édition</label>
 					<controller>etablissement</controller>
 					<action>edit</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</edit>
 				<add>
 					<label>Ajout d'un établissement dans Prevarisc</label>
@@ -883,97 +883,97 @@
 					<label>Formulaire d'ajout d'une adresse</label>
 					<controller>etablissement</controller>
 					<action>build-adresse</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</build-adresse>
 				<descriptif>
 					<label>Descriptifs</label>
 					<controller>etablissement</controller>
 					<action>descriptif</action>
-					<privilege>view</privilege>
+					<privilege>view_ets</privilege>
 				</descriptif>
 				<edit-descriptif>
 					<label>Édition des descriptifs</label>
 					<controller>etablissement</controller>
 					<action>edit-descriptif</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</edit-descriptif>
 				<textes-applicables>
 					<label>Textes applicables</label>
 					<controller>etablissement</controller>
 					<action>textes-applicables</action>
-					<privilege>view</privilege>
+					<privilege>view_ets</privilege>
 				</textes-applicables>
 				<edit-textes-applicables>
 					<label>Édition des textes applicables</label>
 					<controller>etablissement</controller>
 					<action>edit-textes-applicables</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</edit-textes-applicables>
 				<pieces-jointes>
 					<label>Pièces jointes</label>
 					<controller>etablissement</controller>
 					<action>pieces-jointes</action>
-					<privilege>view</privilege>
+					<privilege>view_ets</privilege>
 				</pieces-jointes>
 				<edit-pieces-jointes>
 					<label>Édition des pièces jointes</label>
 					<controller>etablissement</controller>
 					<action>edit-pieces-jointes</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</edit-pieces-jointes>
 				<add-piece-jointe>
 					<label>Ajout d'une pièce jointe</label>
 					<controller>etablissement</controller>
 					<action>add-piece-jointe</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</add-piece-jointe>
 				<delete-piece-jointe>
 					<label>Suppression d'une pièce jointe</label>
 					<controller>etablissement</controller>
 					<action>delete-piece-jointe</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</delete-piece-jointe>
 				<contacts>
 					<label>Contacts</label>
 					<controller>etablissement</controller>
 					<action>contacts</action>
-					<privilege>view</privilege>
+					<privilege>view_ets</privilege>
 				</contacts>
 				<edit-contacts>
 					<label>Édition des contacts</label>
 					<controller>etablissement</controller>
 					<action>edit-contacts</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</edit-contacts>
 				<add-contact>
 					<label>Ajout d'un contact</label>
 					<controller>etablissement</controller>
 					<action>add-contacts</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</add-contact>
 				<add-contact-existant>
 					<label>Ajout d'un contact existant</label>
 					<controller>etablissement</controller>
 					<action>add-contact-existant</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</add-contact-existant>
 				<delete-contact>
 					<label>Suppression d'un contact</label>
 					<controller>etablissement</controller>
 					<action>delete-contact</action>
-					<privilege>edit</privilege>
+					<privilege>edit_ets</privilege>
 				</delete-contact>
 				<dossiers>
 					<label>Dossiers</label>
 					<controller>etablissement</controller>
 					<action>dossiers</action>
-					<privilege>view</privilege>
+					<privilege>view_ets</privilege>
 				</dossiers>
 				<historique>
 					<label>Historique</label>
 					<controller>etablissement</controller>
 					<action>historique</action>
-					<privilege>view</privilege>
+					<privilege>view_ets</privilege>
 				</historique>
 			</pages>
 		</etablissement>

@@ -356,6 +356,10 @@ class UsersController extends Zend_Controller_Action
                                 break;
                         }
 
+                        $id_resource = $model_resource->createRow(array('name' => $name, 'text' => $this->_request->text == '' ? $text : $this->_request->text))->save();
+                        $model_privilege->createRow(array('name' => 'view_ets', 'text' => 'Lecture', 'id_resource' => $id_resource))->save();
+                        $model_privilege->createRow(array('name' => 'edit_ets', 'text' => 'Modifier', 'id_resource' => $id_resource))->save();
+
                         break;
 
                     case 'dossier':
@@ -378,12 +382,12 @@ class UsersController extends Zend_Controller_Action
                         $text = 'Dossier (';
                         $text .= (is_array($this->_request->dossier_natures) ? 'Natures ' . implode($array, '-') : 'Toutes les natures');
                         $text .= ')';
+
+                        $id_resource = $model_resource->createRow(array('name' => $name, 'text' => $this->_request->text == '' ? $text : $this->_request->text))->save();
+                        $model_privilege->createRow(array('name' => 'view_doss', 'text' => 'Lecture', 'id_resource' => $id_resource))->save();
+                        $model_privilege->createRow(array('name' => 'edit_doss', 'text' => 'Modifier', 'id_resource' => $id_resource))->save();
                         break;
                 }
-
-                $id_resource = $model_resource->createRow(array('name' => $name, 'text' => $this->_request->text == '' ? $text : $this->_request->text))->save();
-                $model_privilege->createRow(array('name' => 'view', 'text' => 'Lecture', 'id_resource' => $id_resource))->save();
-                $model_privilege->createRow(array('name' => 'edit', 'text' => 'Modifier', 'id_resource' => $id_resource))->save();
 
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Ajout réussi !', 'message' => 'La ressource a bien été ajoutée.'));
             }

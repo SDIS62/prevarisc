@@ -38,7 +38,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                     foreach($resources_dbtable->fetchAll()->toArray() as $resource) {
 
-                        if(explode('_', $resource['name'])[0] == 'etablissement' || explode('_', $resource['name'])[0] == 'dossier') {
+                        if(explode('_', $resource['name'])[0] == 'etablissement') {
                             continue;
                         }
 
@@ -67,7 +67,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             }
 
             // On adapte les ressources en fonction de l'utilisateur pour la page établissement
-            if($request->getControllerName() == 'etablissement') {
+            if($request->getControllerName() == 'etablissement' || $request->getControllerName() == 'dossier') {
 
                 // Liste des ressources
                 $resources_dbtable = new Model_DbTable_Resource;
@@ -129,11 +129,11 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                     foreach($list_resources_finale as $resource_finale) {
                         foreach($privileges as $privilege) {
                             if(in_array($privilege['id_privilege'], $privileges_role)) {
-                                    $acl->allow(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
-                                }
-                                else {
-                                    $acl->deny(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
-                                }
+                                $acl->allow(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
+                            }
+                            else {
+                                $acl->deny(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
+                            }
                         }
                     }
                 }
@@ -167,14 +167,41 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                     // Pour chaque ressources de la page, on check les permissions
                     $access_granted = false;
-                    foreach($resources as $resource) {
-                        if($acl->has($resource)) {
-                            if($acl->isAllowed($role, $resource, $privilege)) {
+
+                    // Zend_Debug::DUmp($resources);
+
+                    if($page->get('controller') == 'etablissement') {
+                        foreach($resources as $resource) {
+                            if($acl->has($resource) && $acl->isAllowed($role, $resource,  $privilege)) {
                                 $access_granted = true;
                             }
                         }
-                        elseif(!in_array($page->get('controller'), array('etablissement', 'dossier'))) {
-                            $access_granted = true;
+                    }
+                    elseif($page->get('controller') == 'dossier') {
+                        $access_granted_ets = false;
+                        foreach($resources as $resource) {
+                            if(explode('_', $resource)[0] == 'etablissement' && $acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
+                                $access_granted_ets = true;
+                            }
+                        }
+                        if($access_granted_ets) {
+                            foreach($resources as $resource) {
+                                if(explode('_', $resource)[0] == 'dossier' && $acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
+                                    $access_granted = true;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        foreach($resources as $resource) {
+                            if($acl->has($resource)) {
+                                if($acl->isAllowed($role, $resource,  $privilege)) {
+                                    $access_granted = true;
+                                }
+                            }
+                            else {
+                                $access_granted = true;
+                            }
                         }
                     }
 
@@ -243,14 +270,23 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 if($page->getResource() === null && $request != null) {
                     $model_dossier = new Model_DbTable_Dossier;
                     $dossier_nature = $model_dossier->getNatureDossier($request->getParam('id'));
-                    return array('dossier_' . $dossier_nature['ID_NATURE'], 'dossier_0');
+                    $etablissements = $model_dossier->getEtablissementDossier($request->getParam('id'));
+                    $resources = array();
+                    if(count((array) $etablissements) > 0) {
+                        foreach($etablissements as $etablissement) {
+                            $resources = array_merge($resources, $this->getEtablissementPageResourses($etablissement['ID_ETABLISSEMENT']));
+                        }
+                    }
+                    $resources[] = 'dossier_' . $dossier_nature['ID_NATURE'];
+                    $resources[] = 'dossier_0';
+                    return $resources;
                 }
                 else {
                     return array($page->getResource());
                 }
             }
             else {
-                return $page->getResource() === null ? $page->getParent() instanceof Zend_Navigation_Page ? $this->getPageResources($page->getParent()) : array(null) : array($page->getResource());
+                return $page->getResource() === null ? $page->getParent() instanceof Zend_Navigation_Page ? $this->getPageResources($page->getParent(), $request) : array(null) : array($page->getResource());
             }
         }
         else {
