@@ -168,8 +168,6 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                     // Pour chaque ressources de la page, on check les permissions
                     $access_granted = false;
 
-                    // Zend_Debug::DUmp($resources);
-
                     if($page->get('controller') == 'etablissement') {
                         foreach($resources as $resource) {
                             if($acl->has($resource) && $acl->isAllowed($role, $resource,  $privilege)) {
@@ -178,17 +176,24 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                         }
                     }
                     elseif($page->get('controller') == 'dossier') {
-                        $access_granted_ets = false;
-                        foreach($resources as $resource) {
-                            if(explode('_', $resource)[0] == 'etablissement' && $acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
-                                $access_granted_ets = true;
+                        if($page->get('action') !== 'add') {
+                            $access_granted_ets = false;
+                            foreach($resources as $resource) {
+                                if(explode('_', $resource)[0] == 'etablissement' && $acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
+                                    $access_granted_ets = true;
+                                }
+                            }
+                            if($access_granted_ets) {
+                                foreach($resources as $resource) {
+                                    if((explode('_', $resource)[0] == 'dossier' || explode('_', $resource)[0] == 'creations') && $acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
+                                        $access_granted = true;
+                                    }
+                                }
                             }
                         }
-                        if($access_granted_ets) {
-                            foreach($resources as $resource) {
-                                if(explode('_', $resource)[0] == 'dossier' && $acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
-                                    $access_granted = true;
-                                }
+                        else {
+                            if($acl->isAllowed($role, 'creations', 'add_dossier')) {
+                                $access_granted = true;
                             }
                         }
                     }
