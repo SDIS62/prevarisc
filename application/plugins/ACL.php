@@ -165,63 +165,66 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                     // Récupération du privilège demandé par la page active
                     $privilege = $this->getPagePrivilege($page);
 
-                    // Pour chaque ressources de la page, on check les permissions
-                    $access_granted = false;
+                    // Si il n'y a pas de privilèges associés à la page, on skip la procédure de controle
+                    if($privilege != null) {
 
-                    if($page->get('controller') == 'etablissement') {
-                        foreach($resources as $resource) {
-                            if($acl->has($resource) && $acl->isAllowed($role, $resource,  $privilege)) {
-                                $access_granted = true;
-                            }
-                        }
-                    }
-                    elseif($page->get('controller') == 'dossier') {
-                        if($page->get('action') !== 'add') {
-                            $access_granted_ets = false;
+                        // Pour chaque ressources de la page, on check les permissions
+                        $access_granted = false;
+
+                        if($page->get('controller') == 'etablissement') {
                             foreach($resources as $resource) {
-                                if(explode('_', $resource)[0] == 'etablissement' && $acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
-                                    $access_granted_ets = true;
+                                if($acl->has($resource) && $acl->isAllowed($role, $resource,  $privilege)) {
+                                    $access_granted = true;
                                 }
                             }
-                            if($access_granted_ets) {
+                        }
+                        elseif($page->get('controller') == 'dossier') {
+                            if($page->get('action') !== 'add') {
+                                $access_granted_ets = false;
                                 foreach($resources as $resource) {
-                                    if((explode('_', $resource)[0] == 'dossier' || explode('_', $resource)[0] == 'creations') && $acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
-                                        $access_granted = true;
+                                    if(explode('_', $resource)[0] == 'etablissement' && $acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
+                                        $access_granted_ets = true;
                                     }
+                                }
+                                if($access_granted_ets) {
+                                    foreach($resources as $resource) {
+                                        if((explode('_', $resource)[0] == 'dossier' || explode('_', $resource)[0] == 'creations') && $acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
+                                            $access_granted = true;
+                                        }
+                                    }
+                                }
+                            }
+                            else {
+                                if($acl->isAllowed($role, 'creations', 'add_dossier')) {
+                                    $access_granted = true;
                                 }
                             }
                         }
                         else {
-                            if($acl->isAllowed($role, 'creations', 'add_dossier')) {
-                                $access_granted = true;
-                            }
-                        }
-                    }
-                    else {
-                        foreach($resources as $resource) {
-                            if($acl->has($resource)) {
-                                if($acl->isAllowed($role, $resource,  $privilege)) {
+                            foreach($resources as $resource) {
+                                if($acl->has($resource)) {
+                                    if($acl->isAllowed($role, $resource,  $privilege)) {
+                                        $access_granted = true;
+                                    }
+                                }
+                                else {
                                     $access_granted = true;
                                 }
                             }
-                            else {
-                                $access_granted = true;
-                            }
+                        }
+
+                        // Redirection vers la page d'erreur si l'accès est non autorisée
+                        if(!$access_granted) {
+                            $request->setControllerName('error');
+                            $request->setActionName('error');
+                            $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+                            $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER;
+                            $error->request = clone $request;
+                            $error->exception = new Zend_Controller_Dispatcher_Exception('Accès non autorisé', 401);
+                            $request->setParam('error_handler', $error);
                         }
                     }
-
-                    // Redirection vers la page d'erreur si l'accès est non autorisée
-                    if(!$access_granted) {
-                        $request->setControllerName('error');
-                        $request->setActionName('error');
-                        $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-                        $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER;
-                        $error->request = clone $request;
-                        $error->exception = new Zend_Controller_Dispatcher_Exception('Accès non autorisé', 401);
-                        $request->setParam('error_handler', $error);
-                    }
                 }
-
             }
         }
     }

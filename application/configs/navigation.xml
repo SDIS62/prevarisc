@@ -690,7 +690,6 @@
 					<label>Fonction</label>
 					<controller>dossier</controller>
 					<action>fonction</action>
-					<privilege>view_doss</privilege>
 				</fonction>
 				<save-pj>
 					<controller>dossier</controller>
