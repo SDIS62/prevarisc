@@ -179,7 +179,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                             }
                         }
                         elseif($page->get('controller') == 'dossier') {
-                            if($page->get('action') !== 'add') {
+                            if($page->get('action') !== 'add' && $page->get('action') !== 'savenew') {
                                 $access_granted_ets = false;
                                 foreach($resources as $resource) {
                                     if(explode('_', $resource)[0] == 'etablissement' && $acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {

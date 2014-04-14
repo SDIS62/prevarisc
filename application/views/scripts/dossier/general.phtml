@@ -884,7 +884,7 @@
 		}
 		
 		$.ajax({
-			url: "/dossier/save",
+			url: "/dossier/savenew",
 			data: data,
 			type:"POST",
 			//async: false,
@@ -1216,7 +1216,8 @@ echo "
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 				";
-				listeGroupementDossier($this->serviceInstructeurId);
+				//listeGroupementDossier($this->serviceInstructeurId);
+				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], null, 4);
 				echo "						
 					</div>
 				</li>
