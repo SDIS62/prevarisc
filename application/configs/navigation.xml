@@ -925,11 +925,6 @@
 					<resource>creations</resource> 
 					<privilege>add_etablissement</privilege>
 				</add>
-				<build-adresse>
-					<label>Formulaire d'ajout d'une adresse</label>
-					<controller>etablissement</controller>
-					<action>build-adresse</action>
-				</build-adresse>
 				<descriptif>
 					<label>Descriptifs</label>
 					<controller>etablissement</controller>
