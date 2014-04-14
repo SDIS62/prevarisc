@@ -478,8 +478,6 @@
     </div>
 </form>
 
-<div id="reponse-modal" class="modal hide fade" ></div>
-
 <script type="text/javascript">
     $(document).ready(function() {
         // Action à la sauvegarde de l'établissement
@@ -701,7 +699,7 @@
                     url: "/api/1.0/search/etablissements",
                     type: 'get',
                     data: {
-                        name: query
+                        label: query
                     },
                     success: function (result) {
                         etablissements = [];
@@ -750,7 +748,7 @@
                     url: "/api/1.0/search/etablissements",
                     type: 'get',
                     data: {
-                        name: query
+                        label: query
                     },
                     success: function (result) {
                         etablissements = [];
