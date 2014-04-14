@@ -929,7 +929,6 @@
 					<label>Formulaire d'ajout d'une adresse</label>
 					<controller>etablissement</controller>
 					<action>build-adresse</action>
-					<privilege>edit_ets</privilege>
 				</build-adresse>
 				<descriptif>
 					<label>Descriptifs</label>
