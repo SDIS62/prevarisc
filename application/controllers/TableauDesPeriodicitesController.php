@@ -2,10 +2,6 @@
 
 class TableauDesPeriodicitesController extends Zend_Controller_Action
 {
-    /**
-     * Tableau des périodicités
-     *
-     */
     public function indexAction()
     {
         // Définition du layout
@@ -42,10 +38,6 @@ class TableauDesPeriodicitesController extends Zend_Controller_Action
 
     }
 
-    /**
-     * Sauvegarde du tableau des périodicités
-     *
-     */
     public function saveAction()
     {
         try {
@@ -86,5 +78,4 @@ class TableauDesPeriodicitesController extends Zend_Controller_Action
         // Redirection
         $this->_helper->redirector('index');
     }
-
 }

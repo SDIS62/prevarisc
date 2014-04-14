@@ -19,8 +19,8 @@ class Service_User
         $user = array_merge($user, array('uid' => $user['ID_UTILISATEUR']));
         $user = array_merge($user, array('infos' => $model_userinformations->find($user['ID_UTILISATEURINFORMATIONS'])->current()->toArray()));
         $user = array_merge($user, array('group' => $model_groupe->find($user['ID_GROUPE'])->current()->toArray()));
-        $user = array_merge($user, array('groupements' => $model_user->getGroupements($user['ID_UTILISATEUR'])->current() == null ? null : $model_user->getGroupements($user['ID_UTILISATEUR'])->current()->toArray()));
-        $user = array_merge($user, array('commissions' => $model_user->getCommissions($user['ID_UTILISATEUR'])->current() == null ? null : $model_user->getCommissions($user['ID_UTILISATEUR'])->current()->toArray()));
+        $user = array_merge($user, array('groupements' => $model_user->getGroupements($user['ID_UTILISATEUR']) == null ? null : $model_user->getGroupements($user['ID_UTILISATEUR'])->toArray()));
+        $user = array_merge($user, array('commissions' => $model_user->getCommissions($user['ID_UTILISATEUR']) == null ? null : $model_user->getCommissions($user['ID_UTILISATEUR'])->toArray()));
         $user['infos'] = array_merge($user['infos'], array('LIBELLE_FONCTION' => $model_fonction->find($user['infos']['ID_FONCTION'])->current()->toArray()['LIBELLE_FONCTION']));
         return $user;
     }
@@ -42,7 +42,7 @@ class Service_User
         $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
         $search->setCriteria("etablissementinformations.ID_CATEGORIE", array("1","2","3","4"));
         $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
         // 5ème catégorie defavorable
         $search = new Model_DbTable_Search;
@@ -51,7 +51,7 @@ class Service_User
         $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
         $search->setCriteria("avis.ID_AVIS", 2);
         $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
         // 5ème catégorie avec local à sommeil
         $search = new Model_DbTable_Search;
@@ -60,16 +60,16 @@ class Service_User
         $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
         $search->setCriteria("etablissementinformations.ID_GENRE", 2);
         $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
-        $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
         // EIC - IGH - HAB
         $search = new Model_DbTable_Search;
         $search->setItem("etablissement");
         $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
         $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4"));
-        $etablissements = array_merge($search->run(null, null, false)->toArray(), $etablissements);
+        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
-        return $etablissements;
+        return array_unique($etablissements, SORT_REGULAR);
     }
 
     /**

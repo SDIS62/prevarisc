@@ -194,4 +194,228 @@ class UsersController extends Zend_Controller_Action
 
         $this->_helper->redirector('index', null, null);
     }
+
+    public function ressourcesSpecialiseesAction()
+    {
+        $this->_helper->layout->setLayout('menu_admin');
+
+        $service_categorie = new Service_Categorie;
+        $service_type = new Service_TypeActivite;
+        $service_dossier = new Service_Dossier;
+        $service_genre = new Service_Genre;                  
+        $service_famille = new Service_Famille;
+        $service_classe = new Service_Classe;                          
+
+        $model_resource = new Model_DbTable_Resource;
+
+        $this->view->categories = $service_categorie->getAll();
+        $this->view->types = $service_type->getAll();
+        $this->view->types_dossier = $service_dossier->getAllTypes();
+        $this->view->natures_dossier = $service_dossier->getAllNatures();
+        $this->view->genres = $service_genre->getAll();
+        unset($this->view->genres[0]);
+        $this->view->resources = $model_resource->fetchAll();
+        $this->view->familles = $service_famille->getAll();
+        $this->view->classes = $service_classe->getAll();
+    }
+
+    public function addRessourceSpecialiseeAction()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $model_resource = new Model_DbTable_Resource;
+        $model_privilege = new Model_DbTable_Privilege;
+
+        if($this->_request->isPost()) {
+            try {
+                
+                $name = $text = '';
+
+                switch($this->_request->type_ressource) {
+                    case 'etablissement':
+
+                        switch($this->_request->genre) {
+                            case '2':
+                                $name = 'etablissement_erp_';
+                                $name .= (is_array($this->_request->types) ? implode($this->_request->types, '-') : '0') . '_';
+                                $name .= (is_array($this->_request->categories) ? implode($this->_request->categories, '-') : '0') . '_';
+                                $name .= $this->_request->commissions . '_';
+                                $name .= $this->_request->groupements . '_';
+                                $name .= $this->_request->commune;
+
+                                if(is_array($this->_request->types)) {
+                                    $array = $this->_request->types;
+                                    array_walk($array, function(&$val, $key) use(&$array){
+                                        $service_type = new Service_TypeActivite;
+                                        $tmp_types = $service_type->getAll();
+                                        $types = array();
+                                        foreach($tmp_types as $t) {
+                                            $types[$t['ID_TYPEACTIVITE']] = $t['LIBELLE_ACTIVITE'];
+                                        }
+                                        $array[$key] = $types[$val];
+                                    });
+                                }
+
+                                $text = 'Établissement (';
+                                $text .= (is_array($this->_request->types) ? 'Types ' . implode($array, '-') : 'Tous les types') . ' - ';
+                                $text .= (is_array($this->_request->categories) ? 'Catégories ' . implode($this->_request->categories, '-') : 'Toutes les catégories') . ' - ';
+                                $text .= ($this->_request->commissions == 0 ? 'Ignorer les commissions' : 'Sur les commissions de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
+                                $text .= ')';
+                                break;
+
+                            case '3':
+                                $name = 'etablissement_cell_';
+                                $name .= (is_array($this->_request->types) ? implode($this->_request->types, '-') : '0') . '_';
+                                $name .= (is_array($this->_request->categories) ? implode($this->_request->categories, '-') : '0');
+
+                                if(is_array($this->_request->types)) {
+                                    $array = $this->_request->types;
+                                    array_walk($array, function(&$val, $key) use(&$array){
+                                        $service_type = new Service_TypeActivite;
+                                        $tmp_types = $service_type->getAll();
+                                        $types = array();
+                                        foreach($tmp_types as $t) {
+                                            $types[$t['ID_TYPEACTIVITE']] = $t['LIBELLE_ACTIVITE'];
+                                        }
+                                        $array[$key] = $types[$val];
+                                    });
+                                }
+
+                                $text = 'Cellule (';
+                                $text .= (is_array($this->_request->types) ? 'Types ' . implode($array, '-') : 'Tous les types') . ' - ';
+                                $text .= (is_array($this->_request->categories) ? 'Catégories ' . implode($this->_request->categories, '-') : 'Toutes les catégories');
+                                $text .= ')';
+                                break;
+
+                            case '4':
+                                $name = 'etablissement_hab_';
+                                $name .= (is_array($this->_request->familles) ? implode($this->_request->familles, '-') : '0') . '_';
+                                $name .= $this->_request->groupements . '_';
+                                $name .= $this->_request->commune;
+
+                                if(is_array($this->_request->familles)) {
+                                    $array = $this->_request->familles;
+                                    array_walk($array, function(&$val, $key) use(&$array){
+                                        $service_famille = new Service_Famille;
+                                        $tmp_familles = $service_famille->getAll();
+                                        $familles = array();
+                                        foreach($tmp_familles as $t) {
+                                            $types[$t['ID_FAMILLE']] = $t['LIBELLE_FAMILLE'];
+                                        }
+                                        $array[$key] = $familles[$val];
+                                    });
+                                }
+
+                                $text = 'Habitation (';
+                                $text .= (is_array($this->_request->types) ? 'Familles ' . implode($array, '-') : 'Toutes les familles') . ' - ';
+                                $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
+                                $text .= ')';
+                                break;
+
+                            case '5':
+                                $name = 'etablissement_igh_';
+                                $name .= (is_array($this->_request->classes) ? implode($this->_request->classes, '-') : '0') . '_';
+                                $name .= $this->_request->commissions . '_';
+                                $name .= $this->_request->groupements . '_';
+                                $name .= $this->_request->commune;
+
+                                if(is_array($this->_request->classes)) {
+                                    $array = $this->_request->classes;
+                                    array_walk($array, function(&$val, $key) use(&$array){
+                                        $service_classe = new Service_Classe;
+                                        $tmp_classes = $service_classe->getAll();
+                                        $classes = array();
+                                        foreach($tmp_classes as $t) {
+                                            $classes[$t['ID_TYPEACTIVITE']] = $t['LIBELLE_ACTIVITE'];
+                                        }
+                                        $array[$key] = $classes[$val];
+                                    });
+                                }
+
+                                $text = 'IGH (';
+                                $text .= (is_array($this->_request->classes) ? 'Classes ' . implode($array, '-') : 'Toutes les classes') . ' - ';
+                                $text .= ($this->_request->commissions == 0 ? 'Ignorer les commissions' : 'Sur les commissions de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
+                                $text .= ')';
+                                break;
+
+                            case '6':
+                                $name = 'etablissement_eic_';
+                                $name .= $this->_request->groupements . '_';
+                                $name .= $this->_request->commune;
+
+                                $text = 'EIC (';
+                                $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
+                                $text .= ')';
+                                break;
+                        }
+
+                        $id_resource = $model_resource->createRow(array('name' => $name, 'text' => $this->_request->text == '' ? $text : $this->_request->text))->save();
+                        $model_privilege->createRow(array('name' => 'view_ets', 'text' => 'Lecture', 'id_resource' => $id_resource))->save();
+                        $model_privilege->createRow(array('name' => 'edit_ets', 'text' => 'Modifier', 'id_resource' => $id_resource))->save();
+
+                        break;
+
+                    case 'dossier':
+                        $name = 'dossier_';
+                        $name .= (is_array($this->_request->dossier_natures) ? implode($this->_request->dossier_natures, '-') : '0');
+
+                        if(is_array($this->_request->dossier_natures)) {
+                            $array = $this->_request->dossier_natures;
+                            array_walk($array, function(&$val, $key) use(&$array){
+                                $service_dossier = new Service_Dossier;
+                                $tmp_natures = $service_dossier->getAllNatures();
+                                $natures = array();
+                                foreach($tmp_natures as $n) {
+                                    $natures[$n['ID_DOSSIERNATURE']] = $n['LIBELLE_DOSSIERNATURE'];
+                                }
+                                $array[$key] = $natures[$val];
+                            });
+                        }
+
+                        $text = 'Dossier (';
+                        $text .= (is_array($this->_request->dossier_natures) ? 'Natures ' . implode($array, '-') : 'Toutes les natures');
+                        $text .= ')';
+
+                        $id_resource = $model_resource->createRow(array('name' => $name, 'text' => $this->_request->text == '' ? $text : $this->_request->text))->save();
+                        $model_privilege->createRow(array('name' => 'view_doss', 'text' => 'Lecture', 'id_resource' => $id_resource))->save();
+                        $model_privilege->createRow(array('name' => 'edit_doss', 'text' => 'Modifier', 'id_resource' => $id_resource))->save();
+                        break;
+                }
+
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Ajout réussi !', 'message' => 'La ressource a bien été ajoutée.'));
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Ajout annulé', 'message' => 'La ressource n\'a été ajoutée. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+
+            $this->_helper->redirector('ressources-specialisees');
+        }
+    }
+
+    public function deleteRessourceSpecialiseeAction()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $model_resource = new Model_DbTable_Resource;
+
+        if($this->_request->isGet()) {
+            try {
+                $model_resource->find($this->_request->id)->current()->delete();
+                $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression réussie !', 'message' => 'La ressource a bien été supprimée.'));
+            }
+            catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Suppression annulée', 'message' => 'La ressource n\'a été supprimée. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+            }
+
+            $this->_helper->redirector('ressources-specialisees');
+        }
+    }
 }

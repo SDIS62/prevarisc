@@ -68,12 +68,10 @@
                         </li>
                         <?php foreach($this->etablissement['types_activites_secondaires'] as $type_activite) : ?>
                             <li>
-                                <strong>
-                                    <?php
-                                        echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' title='" . $type_activite['LIBELLE_TYPE'] . "' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;";
-                                    ?>
-                                    <?php echo $type_activite['LIBELLE_ACTIVITE'] ?>
-                                </strong>
+                                <?php
+                                    echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' title='" . $type_activite['LIBELLE_TYPE'] . "' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;";
+                                ?>
+                                <?php echo $type_activite['LIBELLE_ACTIVITE'] ?>
                             </li>
                        <?php endforeach ?>
                     </ul>
@@ -253,7 +251,7 @@
                     <div id='diaporama' class="carousel slide">
                         <ol class="carousel-indicators">
                             <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
-                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
+                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $item['ID_PIECEJOINTE'] ?>" data-slide-to="<?php echo $key ?>"></li>
                             <?php endforeach ?>
                         </ol>
                         <!-- Carousel items -->
@@ -280,7 +278,7 @@
                     <div id='plans' class="carousel slide">
                         <ol class="carousel-indicators">
                             <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
-                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $value ?>" data-slide-to="<?php echo $key ?>"></li>
+                            <li class="<?php if($key == 0 ) echo 'active' ?>" data-target="#<?php echo $item['ID_PIECEJOINTE'] ?>" data-slide-to="<?php echo $key ?>"></li>
                             <?php endforeach ?>
                         </ol>
                         <!-- Carousel items -->

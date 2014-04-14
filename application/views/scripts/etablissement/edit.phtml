@@ -278,6 +278,23 @@
 
         <!-- Carte de l'emplacement de l'établissement / informations  -->
         <div class='span6'>
+            <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
+                <div id='geoportail-container' class='hide' style="height: 350px; max-height: 350px;"></div>
+                <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
+                <script>
+                    /*
+                    $(document).ready(function() {
+                        viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
+                            lat: <?php echo $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] ?>,
+                            lon: <?php echo $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] ?>
+                        }, 17, OpenLayers.Util.extend({
+                            controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
+                            proxyUrl: '/proxy'
+                        }));
+                    });
+                    */
+                </script>
+            <?php endif ?>
             <h4 class="champ_adresse champs h4_subtitle">Adresse <a style='font-size: 0.85em; float: right; font-weight: normal;' data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" href="<?php echo $this->url(array('action' => 'build-adresse')) ?>">Ajouter une adresse</a></h4>
             <table id='adresses' class='table table-condensed champ_adresse champs'>
                 <thead>

@@ -24,7 +24,7 @@ body {
     background-color: white;
     margin: 0 auto;  /* zéro ou une autre valeur */
     width: 100%; 
-    min-width: 1100px;
+    min-width: 1368px;
 }
 
 tbody {
@@ -43,6 +43,11 @@ body.login .btn.btn-primary {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0242a', endColorstr='#b91e23',GradientType=0 );
 }
 
+body.login input[type='submit'] {
+    display: block;
+    margin: 0 auto;
+}
+
 /* On règle la navbar en mode "super sleek"
 -------------------------------------------------- */
 
@@ -55,19 +60,22 @@ body > .navbar {
 }
 
 .navbar-inner .container-fluid {
-	min-width: 1100px;
+	min-width: 1368px;
 }
 
 .navbar-inner .container-fluid,
 .navbar-inner .container-fluid .nav-collapse > ul > li,
 .navbar-inner .container-fluid .nav-collapse > ul > li > a {
-    height: 60px;
     line-height: 40px;
     font-size: 14px;
     text-transform: uppercase;
     color: #949494;
     text-shadow: 1px 1px 0 white;
     text-decoration: none;
+}
+
+.navbar-inner .container-fluid .nav-collapse > ul > li > a {
+    padding: 10px 10px 10px;
 }
 
 .navbar-inner .container-fluid .nav-collapse > ul > li > a:hover {
@@ -409,7 +417,7 @@ h4.h4_subtitle {
 .noTitleStuff .ui-dialog-titlebar { display:none }
 
 /* Auto complétion  */
-.ac_results{padding:0px;border:1px solid black;background-color:white;overflow:hidden;z-index:99999}.ac_results ul{width:100%;list-style-position:outside;list-style:none;padding:0;margin:0}.ac_results li{margin:0px;padding:2px 5px;cursor:default;display:block;font:menu;font-size:12px;line-height:16px;overflow:hidden}.ac_odd{background-color:#eee}.ac_over{background-color:#0A246A;color:white}.qtip-wrapper{z-index:10}.timeEntry_control{vertical-align:middle;margin-left:2px}* html .timeEntry_control{margin-top:-4px}
+.ac_results{padding:0px;border:1px solid black;background-color:white;overflow:hidden;z-index:99999}.ac_results ul{width:100%;list-style-position:outside;list-style:none;padding:0;margin:0}.ac_results li{margin:0px;padding:2px 5px;cursor:pointer;display:block;font:menu;font-size:12px;line-height:16px;overflow:hidden}.ac_odd{background-color:#eee}.ac_over{background-color:#0A246A;color:white}.qtip-wrapper{z-index:10}.timeEntry_control{vertical-align:middle;margin-left:2px}* html .timeEntry_control{margin-top:-4px}
 
 /* Formulaire spécial : box */
 
@@ -512,49 +520,6 @@ ul#gestionCommissionMenu li.active {
 
 .ui-tabs-panel, .ui-accordion, .ui-accordion-content {
 	padding: 0;
-}
-
-#geoportail {
-	font-size: 12px;
-}
-
-#geoportail .gpMainMapCell {
-	border: 1px solid #d2c8c8;
-}
-
-#geoportail div.gpControlLayerSwitcher {
-	background-color: white;
-	border: 1px solid black;
-	position: absolute;
-	width: 150px;
-}
-
-#geoportail div.gpControlLabelClass {
-	background-color: white;
-	color: black;
-	border-width:1px;
-	border-style:solid;
-	border-bottom-color :#B0B0B0;
-	border-left-color:white;
-	border-right-color:#B0B0B0;
-	border-top-color:white;
-	font-size: 12px;
-}
-
-#geoportail div.gpLayerDivClass {
-	background-color: white;
-}
-
-#geoportail div.gpLayerDivClassAlternate {
-	background-color: #eeeeee;
-}
-
-#geoportail div.gpLayerDivClass, div.gpLayerDivClassAlternate {
-	border: none;
-}
-
-#geoportail .gpControlBasicLayerToolbar {
-
 }
 
 .listePrescriptions li:hover {
