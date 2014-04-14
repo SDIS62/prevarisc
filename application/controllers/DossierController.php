@@ -863,6 +863,11 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+	public function savenewAction()
+    {
+		$this->_forward("save");
+	}
+	
     //Permet de faire les insertions de dossier en base de données et de rediriger vers le dossier/index/id/X => X = id du dossier qui vient d'être crée
     public function saveAction()
     {
@@ -1265,7 +1270,10 @@ class DossierController extends Zend_Controller_Action
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
 		//Zend_Debug::dump($this->view->listeEtablissement);
-
+		
+		
+		
+		
 		$service_etablissement = new Service_Etablissement;
 		$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
 		$this->view->etablissement = $etablissement;

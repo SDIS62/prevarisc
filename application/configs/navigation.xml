@@ -714,6 +714,12 @@
 					<controller>dossier</controller>
 					<action>fonction</action>
 				</fonction>
+				<savenew>
+					<controller>dossier</controller>
+					<action>savenew</action>
+					<resource>creations</resource> 
+					<privilege>add_dossier</privilege>
+				</savenew>
 				<save>
 					<controller>dossier</controller>
 					<action>save</action>
@@ -727,7 +733,6 @@
 				<selectionetab>
 					<controller>dossier</controller>
 					<action>selectionetab</action>
-					<privilege>view_doss</privilege>
 				</selectionetab>
 				<liees>
 					<controller>dossier</controller>
