@@ -230,7 +230,7 @@ $(document).ready(function() {
 	$("#createConvoc").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
-				url: "/dossier/generationconvoc",
+				url: "/calendrier-des-commissions/generationconvoc",
 				data: "dateCommId="+$("#dateCommId").val(),
 				type:"POST",
 				//async: false,
@@ -253,7 +253,7 @@ $(document).ready(function() {
 	$("#createOdj").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
-				url: "/dossier/generationodj",
+				url: "/calendrier-des-commissions/generationodj",
 				data: "dateCommId="+$("#dateCommId").val(),
 				type:"POST",
 				//async: false,
@@ -276,7 +276,7 @@ $(document).ready(function() {
 	$("#createPv").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
-				url: "/dossier/generationpv",
+				url: "/calendrier-des-commissions/generationpv",
 				data: "dateCommId="+$("#dateCommId").val(),
 				type:"POST",
 				//async: false,
@@ -299,7 +299,7 @@ $(document).ready(function() {
 	$("#creationCompteRendu").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
-				url: "/dossier/generationcompterendu",
+				url: "/calendrier-des-commissions/generationcompterendu",
 				data: "dateCommId="+$("#dateCommId").val(),
 				type:"POST",
 				//async: false,
@@ -504,12 +504,12 @@ $(document).ready(function() {
 		if( count($this->listeDossierNonAffect) != 0 ){
 			foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 				echo "
-					<li num='".$dossierNonAffect['NUM_DOSSIER']."'  >
+					<li num='".$dossierNonAffect['NUM_DOSSIER']."' >
 						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
 								".$dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")
 				";
-				if(isset($dossierNonAffect['infosEtab']['parents'])){
+				if(isset($dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
 					echo " - ".$dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 				}
 				echo "<br/>";

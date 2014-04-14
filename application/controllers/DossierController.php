@@ -1264,6 +1264,12 @@ class DossierController extends Zend_Controller_Action
     {
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
+		//Zend_Debug::dump($this->view->listeEtablissement);
+
+		$service_etablissement = new Service_Etablissement;
+		$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
+		$this->view->etablissement = $etablissement;
+		//Zend_Debug::dump($this->view->etablissement);
     }
 
     public function contactAction()
@@ -1900,6 +1906,7 @@ class DossierController extends Zend_Controller_Action
 		$this->render('creationdoc');
     }
 
+/*	
     public function generationconvocAction()
     {
         try {
@@ -2187,6 +2194,7 @@ class DossierController extends Zend_Controller_Action
 
 	public function generationcompterenduAction()
     {
+		//$this->_helper->viewRenderer->setNoRender();
 		$dateCommId = $this->_getParam("dateCommId");
 		$this->view->idComm = $dateCommId;
 		//Suivant si l'on prend en compte les heures ou non on choisi la requete à effectuer
@@ -2233,7 +2241,8 @@ class DossierController extends Zend_Controller_Action
 		$this->view->dossierComm = $listeDossiers;
 		//Zend_Debug::dump($listeDossiers);
     }
-	
+
+*/
     public function descriptifAction()
     {
         if ((int) $this->_getParam("id")) {
