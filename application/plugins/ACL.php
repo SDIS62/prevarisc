@@ -277,8 +277,9 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             elseif($page->get('controller') == 'dossier') {
                 if($page->getResource() === null && $request != null) {
                     $model_dossier = new Model_DbTable_Dossier;
-                    $dossier_nature = $model_dossier->getNatureDossier($request->getParam('id'));
-                    $etablissements = $model_dossier->getEtablissementDossier($request->getParam('id'));
+                    $id_dossier = $request->getParam('id');
+                    $dossier_nature = $model_dossier->getNatureDossier($id_dossier);
+                    $etablissements = $model_dossier->getEtablissementDossier($id_dossier);
                     $resources = array();
                     if(count((array) $etablissements) > 0) {
                         foreach($etablissements as $etablissement) {

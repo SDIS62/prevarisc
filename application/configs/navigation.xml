@@ -213,6 +213,158 @@
 							<controller>gestion-des-commissions</controller>
 							<action>add-commissions</action>
 						</add-commissions>
+						<commission>
+							<label>Gestion des commissions</label>
+							<controller>commission</controller>
+							<pages>
+								<delete>
+									<controller>commission</controller>
+									<action>delete</action>
+									<privilege>gestion_commissions</privilege>
+								</delete>
+								<competences>
+									<label>Gestion des compétences</label>
+									<controller>commission</controller>
+									<action>competences</action>
+									<privilege>gestion_commissions</privilege>
+								</competences>
+								<add-regle>
+									<controller>commission</controller>
+									<action>add-regle</action>
+									<privilege>gestion_commissions</privilege>
+								</add-regle>
+								<delete-regle>
+									<controller>commission</controller>
+									<action>delete-regle</action>
+									<privilege>gestion_commissions</privilege>
+								</delete-regle>
+								<save-regles>
+									<controller>commission</controller>
+									<action>save-regles</action>
+									<privilege>gestion_commissions</privilege>
+								</save-regles>
+								<apply-regles>
+									<controller>commission</controller>
+									<action>apply-regles</action>
+									<privilege>gestion_commissions</privilege>
+								</apply-regles>
+								<membres>
+									<label>Membres de la commission</label>
+									<controller>commission</controller>
+									<action>membres</action>
+									<privilege>gestion_commissions</privilege>
+								</membres>
+								<add-membre>
+									<label>Ajouter un membre</label>
+									<controller>commission</controller>
+									<action>addMembre</action>
+									<privilege>gestion_commissions</privilege>
+								</add-membre>
+								<delete-membre>
+									<label>Supprimer un membre</label>
+									<controller>commission</controller>
+									<action>delete-membre</action>
+									<privilege>gestion_commissions</privilege>
+								</delete-membre>
+								<save-membre>
+									<label>Sauvegarder un membre</label>
+									<controller>commission</controller>
+									<action>save-membres</action>
+									<privilege>gestion_commissions</privilege>
+								</save-membre>
+								<contact>
+									<label>Contact</label>
+									<controller>commission</controller>
+									<action>contacts</action>
+									<privilege>gestion_commissions</privilege>
+								</contact>
+								<courriers>
+									<label>Courriers</label>
+									<controller>commission</controller>
+									<action>courriers</action>
+									<privilege>gestion_commissions</privilege>
+								</courriers>
+								<documents>
+									<label>Documents</label>
+									<controller>commission</controller>
+									<action>documents</action>
+									<privilege>gestion_commissions</privilege>
+								</documents>
+								<add-documents>
+									<label>Documents</label>
+									<controller>commission</controller>
+									<action>add-document</action>
+									<privilege>gestion_commissions</privilege>
+								</add-documents>
+								<delete-documents>
+									<label>Documents</label>
+									<controller>commission</controller>
+									<action>delete-document</action>
+									<privilege>gestion_commissions</privilege>
+								</delete-documents>
+								<add-courrier>
+									<label>Ajouter Courrier</label>
+									<controller>commission</controller>
+									<action>add-courrier</action>
+									<privilege>gestion_commissions</privilege>
+								</add-courrier>
+								<delete-courrier>
+									<label>Supprimer Courrier</label>
+									<controller>commission</controller>
+									<action>delete-courrier</action>
+									<privilege>gestion_commissions</privilege>
+								</delete-courrier>
+				                <contacts>
+				                    <label>Contact</label>
+				                    <controller>contact</controller>
+				                    <params><item>commission</item></params>
+				                    <privilege>gestion_commissions</privilege>
+				                    <pages>
+				                        <index>
+				                            <label>Gestion des Contacts de la commission</label>
+				                            <controller>contact</controller>
+				                            <params><item>commission</item></params>
+				                            <action>index</action>
+				                            <privilege>gestion_commissions</privilege>
+				                        </index>		
+				                        <form>
+				                            <label>Ajouter un contact</label>
+				                            <controller>contact</controller>
+				                            <params><item>commission</item></params>
+				                            <action>form</action>
+				                            <privilege>gestion_commissions</privilege>
+				                        </form>
+				                        <add-contact>
+				                            <label>Ajouter un Contact</label>
+				                            <controller>contact</controller>
+				                            <params><item>commission</item></params>
+				                            <action>add</action>
+				                            <privilege>gestion_commissions</privilege>
+				                        </add-contact>
+				                        <edit-contact>
+				                            <label>Editer Contact</label>
+				                            <controller>contact></controller>
+				                            <params><item>commission</item></params>
+				                            <action>edit</action>
+				                            <privilege>gestion_commissions</privilege>
+				                        </edit-contact>
+				                        <delete-contact>
+				                            <label>Supprimer Contact</label>
+				                            <controller>contact</controller>
+				                            <params><item>commission</item></params>
+				                            <action>delete</action>
+				                            <privilege>gestion_commissions</privilege>
+				                        </delete-contact>
+				                        <get-contact>
+				                            <controller>contact</controller>
+				                            <params><item>commission</item></params>
+				                            <action>get</action>
+				                            <privilege>gestion_commissions</privilege>
+				                        </get-contact>
+				                    </pages>
+				                </contacts>
+							</pages>
+						</commission>
 					</pages>
 				</gestion-des-commissions>
 				<gestion-des-communes>
@@ -467,6 +619,30 @@
 					<action>changementordre</action>
 					<privilege>modification_odj</privilege>
 				</changementordre>
+				<generationconvoc>
+					<label>Generation Convocation</label>
+					<controller>calendrier-des-commissions</controller>
+					<action>generationconvoc</action>
+					<privilege>generation_doc_com</privilege>
+				</generationconvoc>
+				<generationodj>
+					<label>Generation Ordre du jour</label>
+					<controller>calendrier-des-commissions</controller>
+					<action>generationodj</action>
+					<privilege>generation_doc_com</privilege>
+				</generationodj>
+				<generationpv>
+					<label>Generation PV</label>
+					<controller>calendrier-des-commissions</controller>
+					<action>generationpv</action>
+					<privilege>generation_doc_com</privilege>
+				</generationpv>
+				<generationcompterendu>
+					<label>Generation CR</label>
+					<controller>calendrier-des-commissions</controller>
+					<action>generationcompterendu</action>
+					<privilege>generation_doc_com</privilege>
+				</generationcompterendu>
                 <piece-jointe>
                     <label>Piece Jointe</label>
                     <controller>piece-jointe</controller>
@@ -502,159 +678,6 @@
                         </check>
                     </pages>
                 </piece-jointe>
-                <commission>
-					<label>Gestion des commissions</label>
-					<controller>commission</controller>
-					<resource>commission</resource> 
-					<pages>
-						<delete>
-							<controller>commission</controller>
-							<action>delete</action>
-							<privilege>gestion_commissions</privilege>
-						</delete>
-						<competences>
-							<label>Gestion des compétences</label>
-							<controller>commission</controller>
-							<action>competences</action>
-							<privilege>gestion_commissions</privilege>
-						</competences>
-						<add-regle>
-							<controller>commission</controller>
-							<action>add-regle</action>
-							<privilege>gestion_commissions</privilege>
-						</add-regle>
-						<delete-regle>
-							<controller>commission</controller>
-							<action>delete-regle</action>
-							<privilege>gestion_commissions</privilege>
-						</delete-regle>
-						<save-regles>
-							<controller>commission</controller>
-							<action>save-regles</action>
-							<privilege>gestion_commissions</privilege>
-						</save-regles>
-						<apply-regles>
-							<controller>commission</controller>
-							<action>apply-regles</action>
-							<privilege>gestion_commissions</privilege>
-						</apply-regles>
-						<membres>
-							<label>Membres de la commission</label>
-							<controller>commission</controller>
-							<action>membres</action>
-							<privilege>gestion_commissions</privilege>
-						</membres>
-						<add-membre>
-							<label>Ajouter un membre</label>
-							<controller>commission</controller>
-							<action>addMembre</action>
-							<privilege>gestion_commissions</privilege>
-						</add-membre>
-						<delete-membre>
-							<label>Supprimer un membre</label>
-							<controller>commission</controller>
-							<action>delete-membre</action>
-							<privilege>gestion_commissions</privilege>
-						</delete-membre>
-						<save-membre>
-							<label>Sauvegarder un membre</label>
-							<controller>commission</controller>
-							<action>save-membres</action>
-							<privilege>gestion_commissions</privilege>
-						</save-membre>
-						<contact>
-							<label>Contact</label>
-							<controller>commission</controller>
-							<action>contacts</action>
-							<privilege>gestion_commissions</privilege>
-						</contact>
-						<courriers>
-							<label>Courriers</label>
-							<controller>commission</controller>
-							<action>courriers</action>
-							<privilege>gestion_commissions</privilege>
-						</courriers>
-						<documents>
-							<label>Documents</label>
-							<controller>commission</controller>
-							<action>documents</action>
-							<privilege>gestion_commissions</privilege>
-						</documents>
-						<add-documents>
-							<label>Documents</label>
-							<controller>commission</controller>
-							<action>add-document</action>
-							<privilege>gestion_commissions</privilege>
-						</add-documents>
-						<delete-documents>
-							<label>Documents</label>
-							<controller>commission</controller>
-							<action>delete-document</action>
-							<privilege>gestion_commissions</privilege>
-						</delete-documents>
-						<add-courrier>
-							<label>Ajouter Courrier</label>
-							<controller>commission</controller>
-							<action>add-courrier</action>
-							<privilege>gestion_commissions</privilege>
-						</add-courrier>
-						<delete-courrier>
-							<label>Supprimer Courrier</label>
-							<controller>commission</controller>
-							<action>delete-courrier</action>
-							<privilege>gestion_commissions</privilege>
-						</delete-courrier>
-		                <contacts>
-		                    <label>Contact</label>
-		                    <controller>contact</controller>
-		                    <params><item>commission</item></params>
-		                    <privilege>gestion_commissions</privilege>
-		                    <pages>
-		                        <index>
-		                            <label>Gestion des Contacts de la commission</label>
-		                            <controller>contact</controller>
-		                            <params><item>commission</item></params>
-		                            <action>index</action>
-		                            <privilege>gestion_commissions</privilege>
-		                        </index>		
-		                        <form>
-		                            <label>Ajouter un contact</label>
-		                            <controller>contact</controller>
-		                            <params><item>commission</item></params>
-		                            <action>form</action>
-		                            <privilege>gestion_commissions</privilege>
-		                        </form>
-		                        <add-contact>
-		                            <label>Ajouter un Contact</label>
-		                            <controller>contact</controller>
-		                            <params><item>commission</item></params>
-		                            <action>add</action>
-		                            <privilege>gestion_commissions</privilege>
-		                        </add-contact>
-		                        <edit-contact>
-		                            <label>Editer Contact</label>
-		                            <controller>contact></controller>
-		                            <params><item>commission</item></params>
-		                            <action>edit</action>
-		                            <privilege>gestion_commissions</privilege>
-		                        </edit-contact>
-		                        <delete-contact>
-		                            <label>Supprimer Contact</label>
-		                            <controller>contact</controller>
-		                            <params><item>commission</item></params>
-		                            <action>delete</action>
-		                            <privilege>gestion_commissions</privilege>
-		                        </delete-contact>
-		                        <get-contact>
-		                            <controller>contact</controller>
-		                            <params><item>commission</item></params>
-		                            <action>get</action>
-		                            <privilege>gestion_commissions</privilege>
-		                        </get-contact>
-		                    </pages>
-		                </contacts>
-					</pages>
-				</commission>
 			</pages>
 		</calendrier-des-commissions>
 
@@ -691,58 +714,11 @@
 					<controller>dossier</controller>
 					<action>fonction</action>
 				</fonction>
-				<save-pj>
+				<save>
 					<controller>dossier</controller>
 					<action>save</action>
 					<privilege>edit_doss</privilege>
-				</save-pj>
-				<prescription>
-					<controller>dossier</controller>
-					<action>prescription</action>
-					<privilege>view_doss</privilege>
-				</prescription>
-				<prescriptionloadajax>
-					<controller>dossier</controller>
-					<action>prescriptionloadajax</action>
-					<privilege>view_doss</privilege>
-				</prescriptionloadajax>
-				<showprescription>
-					<label>Voir prescription</label>
-					<controller>dossier</controller>
-					<action>showprescription</action>
-					<privilege>view_doss</privilege>
-				</showprescription>
-				<editprescription>
-					<label>Editer Prescription</label>
-					<controller>dossier</controller>
-					<action>editprescription</action>
-					<privilege>edit_doss</privilege>
-				</editprescription>
-				<editprescriptiontexte>
-					<controller>dossier</controller>
-					<action>editprescriptiontexte</action>
-					<privilege>edit_doss</privilege>
-				</editprescriptiontexte>
-				<editprescriptionarticle>
-					<controller>dossier</controller>
-					<action>editprescriptionarticle</action>
-					<privilege>edit_doss</privilege>
-				</editprescriptionarticle>
-				<editprescriptionvalidation>
-					<controller>dossier</controller>
-					<action>editprescriptionvalidation</action>
-					<privilege>edit_doss</privilege>
-				</editprescriptionvalidation>
-				<selectiontexte>
-					<controller>dossier</controller>
-					<action>selectiontexte</action>
-					<privilege>view_doss</privilege>
-				</selectiontexte>
-				<selectionarticle>
-					<controller>dossier</controller>
-					<action>selectionarticle</action>
-					<privilege>view_doss</privilege>
-				</selectionarticle>
+				</save>
 				<selectionabreviation>
 					<controller>dossier</controller>
 					<action>selectionabreviation</action>
@@ -828,12 +804,6 @@
 					<action>creationdoc</action>
 					<privilege>edit_doss</privilege>
 				</creationdoc>
-				<generationconvoc>
-					<label>Generation Convocation</label>
-					<controller>dossier</controller>
-					<action>generationconvoc</action>
-					<privilege>edit_doss</privilege>
-				</generationconvoc>
 				<descriptif>
 					<controller>dossier</controller>
 					<action>descriptif</action>
@@ -844,6 +814,78 @@
 					<action>textesapplicables</action>
 					<privilege>view_doss</privilege>
 				</textesapplicables>
+				<selectiontexte>
+					<controller>dossier</controller>
+					<action>selectiontexte</action>
+					<privilege>view_doss</privilege>
+				</selectiontexte>
+				<selectionarticle>
+					<controller>dossier</controller>
+					<action>selectionarticle</action>
+					<privilege>view_doss</privilege>
+				</selectionarticle>
+				<prescription>
+					<controller>dossier</controller>
+					<action>prescription</action>
+					<privilege>view_doss</privilege>
+				</prescription>
+				<prescriptionwordsearch>
+					<controller>dossier</controller>
+					<action>prescriptionwordsearch</action>
+					<privilege>view_doss</privilege>
+				</prescriptionwordsearch>
+				<prescriptiontypeform>
+					<controller>dossier</controller>
+					<action>prescriptiontypeform</action>
+					<privilege>edit_doss</privilege>
+				</prescriptiontypeform>
+				<prescriptionshowemplacement>
+					<controller>dossier</controller>
+					<action>prescriptionshowemplacement</action>
+					<privilege>view_doss</privilege>
+				</prescriptionshowemplacement>
+				<showprescription-type>
+					<label>Voir prescription</label>
+					<controller>dossier</controller>
+					<action>showprescription-type</action>
+					<privilege>view_doss</privilege>
+				</showprescription-type>
+				<prescriptionaddtype>
+					<label>Voir prescription</label>
+					<controller>dossier</controller>
+					<action>prescriptionaddtype</action>
+					<privilege>edit_doss</privilege>
+				</prescriptionaddtype>
+				<prescriptioneditsave>
+					<label>Voir prescription</label>
+					<controller>dossier</controller>
+					<action>prescriptioneditsave</action>
+					<privilege>edit_doss</privilege>
+				</prescriptioneditsave>
+				<prescriptionadd>
+					<label>Voir prescription</label>
+					<controller>dossier</controller>
+					<action>prescriptionadd</action>
+					<privilege>edit_doss</privilege>
+				</prescriptionadd>
+				<prescriptionedit>
+					<label>Voir prescription</label>
+					<controller>dossier</controller>
+					<action>prescriptionedit</action>
+					<privilege>edit_doss</privilege>
+				</prescriptionedit>
+				<prescriptiondelete>
+					<label>Voir prescription</label>
+					<controller>dossier</controller>
+					<action>prescriptiondelete</action>
+					<privilege>edit_doss</privilege>
+				</prescriptiondelete>
+				<prescriptionchangepos>
+					<label>Voir prescription</label>
+					<controller>dossier</controller>
+					<action>prescriptionchangepos</action>
+					<privilege>edit_doss</privilege>
+				</prescriptionchangepos>
 			</pages>
 		</dossier>
 
