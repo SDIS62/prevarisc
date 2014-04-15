@@ -113,11 +113,6 @@ class EtablissementController extends Zend_Controller_Action
         $this->render('edit');
     }
 
-    public function buildAdresseAction()
-    {
-        $this->_helper->layout->disableLayout();
-    }
-
     public function descriptifAction()
     {
         $this->_helper->layout->setLayout('etablissement');

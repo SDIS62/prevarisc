@@ -25,9 +25,11 @@ class ErrorController extends Zend_Controller_Action
                 break;
 
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER:
-                $this->getResponse()->setHttpResponseCode(401);
-                $priority = Zend_Log::NOTICE;
-                $this->render('not-allowed');
+                if($errors->exception->getCode() == 401) {
+                    $this->getResponse()->setHttpResponseCode(401);
+                    $priority = Zend_Log::NOTICE;
+                    $this->render('not-allowed');
+                }
                 break;
                 
             default:

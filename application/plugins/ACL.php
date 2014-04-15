@@ -179,14 +179,18 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                             }
                         }
                         elseif($page->get('controller') == 'dossier') {
-                            if($page->get('action') !== 'add') {
+                            if($page->get('action') !== 'add' && $page->get('action') !== 'savenew') {
                                 $access_granted_ets = false;
+                                $i = 0;
                                 foreach($resources as $resource) {
-                                    if(explode('_', $resource)[0] == 'etablissement' && $acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
-                                        $access_granted_ets = true;
+                                    if(explode('_', $resource)[0] == 'etablissement') {
+                                        if($acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
+                                            $access_granted_ets = true;
+                                        }
+                                        $i++;
                                     }
                                 }
-                                if($access_granted_ets) {
+                                if($access_granted_ets || $i == 0) {
                                     foreach($resources as $resource) {
                                         if((explode('_', $resource)[0] == 'dossier' || explode('_', $resource)[0] == 'creations') && $acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
                                             $access_granted = true;
@@ -277,8 +281,9 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             elseif($page->get('controller') == 'dossier') {
                 if($page->getResource() === null && $request != null) {
                     $model_dossier = new Model_DbTable_Dossier;
-                    $dossier_nature = $model_dossier->getNatureDossier($request->getParam('id'));
-                    $etablissements = $model_dossier->getEtablissementDossier($request->getParam('id'));
+                    $id_dossier = $request->getParam('id');
+                    $dossier_nature = $model_dossier->getNatureDossier($id_dossier);
+                    $etablissements = $model_dossier->getEtablissementDossier($id_dossier);
                     $resources = array();
                     if(count((array) $etablissements) > 0) {
                         foreach($etablissements as $etablissement) {
