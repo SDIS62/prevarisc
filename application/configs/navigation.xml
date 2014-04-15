@@ -692,11 +692,39 @@
 					<privilege>view_doss</privilege>
 				</index>
 				<piece-jointe>
-					<label>Gestion des pieces jointes</label>
-					<controller>dossier</controller>
-					<action>piece-jointe</action>
-					<privilege>view_doss</privilege>
-				</piece-jointe>
+                    <label>Piece Jointe</label>
+                    <controller>piece-jointe</controller>
+                    <params><type>dossier</type></params>
+                    <pages>
+                        <index>
+                            <label>Gestion des Piece Jointe</label>
+                            <controller>piece-jointe</controller>
+                            <action>index</action>
+                            <privilege>view_doss</privilege>
+                        </index>
+                        <form>
+                            <controller>piece-jointe</controller>
+                            <action>form</action>
+                            <privilege>edit_doss</privilege>
+                        </form>
+                        <add>
+                            <controller>piece-jointe</controller>
+                            <action>add</action>
+                            <privilege>edit_doss</privilege>
+                        </add>
+                        <delete>
+                            <controller>piece-jointe</controller>
+                            <action>delete</action>
+                            <privilege>edit_doss</privilege>
+                        </delete>
+                        <check>
+                            <label>Verifier</label>
+                            <controller>piece-jointe</controller>
+                            <action>check</action>
+                            <privilege>edit_doss</privilege>
+                        </check>
+                    </pages>
+                </piece-jointe>
 				<add>
 					<resource>creations</resource> 
 					<privilege>add_dossier</privilege>
