@@ -172,7 +172,7 @@ class Service_User
 
             if(array_key_exists('commissions', $data)) {
                 foreach($data["commissions"] as $id) {
-                    $row = $DB_groupementsUser->createRow();
+                    $row = $DB_commissionsUser->createRow();
                     $row->ID_UTILISATEUR = $user->ID_UTILISATEUR;
                     $row->ID_COMMISSION = $id;
                     $row->save();
