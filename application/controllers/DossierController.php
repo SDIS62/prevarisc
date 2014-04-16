@@ -1262,6 +1262,7 @@ class DossierController extends Zend_Controller_Action
 		
         // On balance le résultat sur la vue
         $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+		//Zend_Debug::dump($this->view->resultats);
     }
 
 //Action permettant de lister les établissements et les dossiers liés
@@ -1269,12 +1270,12 @@ class DossierController extends Zend_Controller_Action
     {
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
-		//Zend_Debug::dump($this->view->listeEtablissement);
 		
 		$service_etablissement = new Service_Etablissement;
-		$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
-		$this->view->etablissement = $etablissement;
-		//Zend_Debug::dump($this->view->etablissement);
+		if($this->view->listeEtablissement){
+			$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
+			$this->view->etablissement = $etablissement;
+		}		
     }
 
     public function contactAction()

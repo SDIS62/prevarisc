@@ -473,7 +473,12 @@ echo "
 			echo "
 				<form id='listeEnfantEtab' >
 				<ul class='recherche_liste unstyled'>
-					".$this->partialLoop('dossier/results/etablissement.phtml', $this->etablissement['etablissement_lies'])."
+			";
+			if(isset($this->etablissement))
+			{
+				echo $this->partialLoop('dossier/results/etablissement.phtml', $this->etablissement['etablissement_lies']);
+			}
+			echo "
 				</ul>
 				<button class='btn' id='save-liens' >Sauvegarder les liaisons</button>
 				</form>
