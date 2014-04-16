@@ -1,0 +1,91 @@
+<li class="etablissement <?php if($this->NB_ENFANTS > 0) echo "slide" ?>" id="<?php echo $this->ID_ETABLISSEMENT ?>">
+    <!-- Icone représentant le dropdown des fils -->
+    <?php if($this->NB_ENFANTS > 0) : ?>
+    <span class="icone_enfants" ><i class='ui-icon ui-icon-triangle-1-e' style='position: relative; left: -25px; float: left; margin-right: -25px;' ></i></span>
+    <?php endif ?>
+    
+    <!-- Affichage du libellé du type -->
+    <small style='display: inline-block; width: 65px'>
+        <strong>
+        <?php
+            if($this->ID_TYPE) {
+                echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->LIBELLE_TYPE . '.png') ? "<img src='/images/types/b/icone-type-" . $this->LIBELLE_TYPE . ".png' title='" . $this->LIBELLE_TYPE . "' />&nbsp;-&nbsp;" : $this->LIBELLE_TYPE . "&nbsp;-&nbsp;";
+            }
+            echo strtoupper(substr($this->LIBELLE_GENRE, 0 , 4));
+        ?>
+        </strong>
+    </small>
+    
+    <!-- nom de l'établissement -->
+    <span class="nom-etablissement">
+		<?php
+			echo "<input type='checkbox' name='etabId[]' value='".$this->ID_ETABLISSEMENT."' />";
+		?>
+        <a href='/etablissement/index/id/<?php echo $this->ID_ETABLISSEMENT ?>'>
+            <?php echo empty($this->LIBELLE_ETABLISSEMENTINFORMATIONS) ? "<em class='muted'>Libellé non renseigné</em>" : $this->LIBELLE_ETABLISSEMENTINFORMATIONS ?>
+            <small>
+				<?php
+                    switch($this->ID_GENRE)
+                    {
+                        case 1:
+                            if(!empty($this->LIBELLE_COMMUNE_ADRESSE_SITE)) {
+                               echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_SITE;
+                            }
+						break;
+                        case 3:
+                            if(!empty($this->LIBELLE_COMMUNE_ADRESSE_CELLULE)) {
+                               echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                            }
+						break;
+                        default:
+                            if(!empty($this->LIBELLE_COMMUNE_ADRESSE_DEFAULT))
+                                echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+						break;
+                    }
+                ?>
+            </small>
+        </a>
+    </span>
+    
+    <!-- Icone de chargement des enfants (si il y'en a, et si on est en mode niveau -->
+    <?php if($this->NB_ENFANTS > 0) : ?>
+        <span class='load ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement ...' /></span>
+    <?php endif ?>
+    
+    <?php
+        if($this->DATEVISITE_DOSSIER != null)
+        {
+            $date = substr($this->DATEVISITE_DOSSIER, 0, 10);
+            if($date != '0000-00-00'){
+                $date = new DateTime(substr($this->DATEVISITE_DOSSIER,0,10));
+                $date = date_format($date, 'd/m/Y');
+            }else{
+                $date = "00/00/0000";
+            }
+            $date = "Date de l'avis : " . $date . '&nbsp;';
+        }
+        elseif($this->DATECOMM_DOSSIER != null)
+        {
+            $date = substr($this->DATEINSERT_DOSSIER, 0, 10);
+            if($date != '0000-00-00'){
+                $date = new DateTime(substr($this->DATEINSERT_DOSSIER,0,10));
+                $date = date_format($date, 'd/m/Y');
+            }else{
+                $date = "00/00/0000";
+            }
+            $date = "Date de l'avis : " . $date . '&nbsp;';
+        }
+        else {
+            $date = "Pas de date";
+        }
+    ?>
+
+    <!-- Avis -->
+    <?php if($this->ID_AVIS == 1) : ?>
+    <span class="avis F">Favorable <small>(<?php echo $date ?>)</small></span>
+    <?php elseif($this->ID_AVIS == 2) : ?>
+    <span class="avis D">Défavorable <small>(<?php echo $date ?>)</small></span>
+    <?php else : ?>
+    <span class="avis">Avis d'exploitation indisponible</span>
+    <?php endif ?>
+</li>

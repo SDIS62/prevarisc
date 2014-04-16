@@ -1139,7 +1139,7 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Demandeur</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DEMANDEUR_DOSSIER']."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='DEMANDEUR_DOSSIER' name='DEMANDEUR_DOSSIER' value='".( ($this->infosDossier['DEMANDEUR_DOSSIER'])?$this->infosDossier['DEMANDEUR_DOSSIER']:"" )."' style='width:650px' /><br/>
+						<input type='text' id='DEMANDEUR_DOSSIER' name='DEMANDEUR_DOSSIER' value='".( ($this->infosDossier['DEMANDEUR_DOSSIER'])?htmlspecialchars($this->infosDossier['DEMANDEUR_DOSSIER'], ENT_QUOTES):"" )."' style='width:650px' /><br/>
 					</div>
 				</li>
 				
@@ -1217,7 +1217,7 @@ echo "
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 				";
 				//listeGroupementDossier($this->serviceInstructeurId);
-				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], null, 4);
+				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], null, 10);
 				echo "						
 					</div>
 				</li>
