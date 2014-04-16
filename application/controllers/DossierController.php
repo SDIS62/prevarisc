@@ -1259,7 +1259,7 @@ class DossierController extends Zend_Controller_Action
 
         // On recherche avec le libellé
         $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $this->_request->q, false);
-
+		
         // On balance le résultat sur la vue
         $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
     }
@@ -1270,9 +1270,6 @@ class DossierController extends Zend_Controller_Action
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
 		//Zend_Debug::dump($this->view->listeEtablissement);
-		
-		
-		
 		
 		$service_etablissement = new Service_Etablissement;
 		$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
@@ -2816,4 +2813,35 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+	public function lienmultipleAction()
+	{
+		$this->_helper->viewRenderer->setNoRender();
+		foreach($this->_getParam('etabId') as $val){
+			echo $val."<br/>";
+
+			try {
+				$DBetablissementDossier = new Model_DbTable_EtablissementDossier;
+				$newEtabDossier = $DBetablissementDossier->createRow();
+				$newEtabDossier->ID_ETABLISSEMENT = $val;
+				$newEtabDossier->ID_DOSSIER = $this->_getParam("idDossier");
+				$newEtabDossier->save();
+/*
+				$this->view->libelleEtab = $this->_getParam("libelleSelect");
+				$this->view->infosEtab = $newEtabDossier;
+*/
+				$this->_helper->flashMessenger(array(
+					'context' => 'success',
+					'title' => 'L\'établissement a bien été ajouté',
+					'message' => ''
+				));
+			} catch (Exception $e) {
+				$this->_helper->flashMessenger(array(
+					'context' => 'error',
+					'title' => 'Erreur lors de l\'ajout de l\'établissement',
+					'message' => $e->getMessage()
+				));
+			}
+		}
+	}
+	
 }
