@@ -208,8 +208,26 @@ class UsersController extends Zend_Controller_Action
 
         $model_resource = new Model_DbTable_Resource;
 
+        // On met le libellé du type dans le tableau des activités
+        $types = $service_type->getAllWithTypes();
+        $types_sort = array();
+
+        foreach ($types as $_type) {
+            $types_sort[$_type['ID_TYPE']] = $_type;
+        }
+    
+        $type_sort = array();
+
+        foreach ($types as $type) {
+            if (!array_key_exists($types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE'], $type_sort)) {
+                $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']] = array();
+            }
+
+            $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']][] = $type;
+        }
+        
         $this->view->categories = $service_categorie->getAll();
-        $this->view->types = $service_type->getAll();
+        $this->view->types = $type_sort;
         $this->view->types_dossier = $service_dossier->getAllTypes();
         $this->view->natures_dossier = $service_dossier->getAllNatures();
         $this->view->genres = $service_genre->getAll();
