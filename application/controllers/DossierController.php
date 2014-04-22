@@ -1206,7 +1206,11 @@ class DossierController extends Zend_Controller_Action
 						$nouveauDossier->save();
 						$dbDossierAffectation->deleteDateDossierModifDateAffect($idDossier,$this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'));
 					}
-                }
+                }else{
+					$dbDossierAffectation->deleteDateDossierAffect($idDossier);
+					$nouveauDossier->DATEVISITE_DOSSIER = NULL;
+					$nouveauDossier->save();
+				}
 
                 $affectation = $dbDossierAffectation->createRow();
                 if ($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') && $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') != '') {
@@ -1221,7 +1225,11 @@ class DossierController extends Zend_Controller_Action
 						$nouveauDossier->save();
 						$dbDossierAffectation->deleteDateDossierModifDateAffect($idDossier,$this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION'));
 					}
-                }
+                }else{
+					$dbDossierAffectation->deleteDateDossierAffect($idDossier);
+					$nouveauDossier->DATECOMM_DOSSIER = NULL;
+					$nouveauDossier->save();
+				}
             }
 
             //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
