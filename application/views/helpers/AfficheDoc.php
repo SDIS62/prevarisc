@@ -24,6 +24,9 @@
                 $styleValid = "display:none;";
                 $styleDate = "disabled='disabled'";
             }
+			
+			if($date == "00/00/0000")
+				$date = "";
 
             return "
                 <li class='divDoc row-fluid span12' name='divDoc' id='".$natureId."_".$id.$type."' style='display: block; height: 25px;margin: 15px;'>
