@@ -251,9 +251,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			}else{
 				unset($listeDossiersAffect[$val]);
 			}
-			//Zend_Debug::dump($etablissement);
 		}
-		//Zend_Debug::dump($listeDossiersAffect);
 
         foreach ($listeDossiersAffect as $dossierAffect) {
 			$affichage = "";
@@ -1047,7 +1045,12 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			$existe = 0;
 			foreach($tabCommune as $tabKey => $value){
 				//echo $value[0]."<br/>";
-				if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
+				if(isset($ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']))
+				{
+					if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
+						$existe = 1;
+					}
+				}else{
 					$existe = 1;
 				}
 			}
@@ -1183,5 +1186,56 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$this->view->dossierComm = $listeDossiers;
 		//Zend_Debug::dump($listeDossiers);
     }
+	
+	public function alertsuppressionAction()
+    {
+		$this->view->commissionId = $this->_getParam("commissionId");
+		$this->view->dateCommission = $this->_getParam("dateCommission");
+		
+	}
+	
+	public function validsuppressionAction()
+    {
+		$this->_helper->viewRenderer->setNoRender();
+		$this->view->commissionId = $this->_getParam("commissionId");
+		$this->view->dateCommission = $this->_getParam("dateCommission");
+		
+		$dbDossierAffect = new Model_DbTable_DossierAffectation;
+        $listeDossiersAffect = $dbDossierAffect->getDossierAffect($this->_getParam('dateCommission'));
+		$listeDossierNonAffect = $dbDossierAffect->getDossierNonAffect($this->_getParam('dateCommission'));
+		$listeDossiers = array_merge($listeDossiersAffect, $listeDossierNonAffect);
+		
+		//On supprime les dates de commission et de visite dans les dossiers
+		$dbDossier = new Model_DbTable_Dossier;
+		foreach($listeDossiers as $dossier){
+			$dossier = $dbDossier->find($dossier['ID_DOSSIER'])->current();
+			$dossier['DATECOMM_DOSSIER'] = NULL;
+			$dossier->save();
+		}
 
+		//On supprime ensuite les liens dans dossier affectation
+		$dbDossierAffectation = new Model_DbTable_DossierAffectation;
+		$whereDossAffect = $dbDossierAffectation->getAdapter()->quoteInto('ID_DATECOMMISSION_AFFECT = ?', $this->_getParam('dateCommission'));
+		$dbDossierAffectation->delete($whereDossAffect);
+
+		
+		//ICI effectuer un foreach sur les piejes jointes pour supprimer l'ensemble des pj directement sur le serveur
+		
+		//On supprime toute les pièces jointes physiquement et dans la base de données
+		$dbDateCommPj = new Model_DbTable_DateCommissionPj;
+		$listePj = $dbDateCommPj->getPjInfos($this->_getParam('dateCommission'));
+		$path = REAL_DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;
+		foreach($listePj as $pj)
+		{
+			if( file_exists($path . $pj['ID_PIECEJOINTE'].$pj['EXTENSION_PIECEJOINTE']) )
+				unlink($path . $pj['ID_PIECEJOINTE'].$pj['EXTENSION_PIECEJOINTE']);				
+		}
+		
+		$whereDateCommPj = $dbDateCommPj->getAdapter()->quoteInto('ID_DATECOMMISSION = ?', $this->_getParam('dateCommission'));
+		$dbDateCommPj->delete($whereDateCommPj);
+		
+		$dbDateComm = new Model_DbTable_DateCommission;
+		$dateComm = $dbDateComm->find($this->_getParam('dateCommission'))->current();
+		$dateComm->delete();
+	}
 }

@@ -108,5 +108,15 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 
         return $this->getAdapter()->fetchAll($select);
     }
+	
+	public function getPjInfos($idComm)
+	{
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from("piecejointe")
+			->join("datecommissionpj", "datecommissionpj.ID_PIECEJOINTE = piecejointe.ID_PIECEJOINTE")
+			->where("datecommissionpj.ID_DATECOMMISSION = ".$idComm);
 
+		return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
+	}
 }

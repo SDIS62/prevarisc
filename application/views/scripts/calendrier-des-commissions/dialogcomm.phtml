@@ -7,10 +7,7 @@
 		});
 	});
 
-	/**
-	***
-	***APPLIQUER DES CLASSES JQUERY SUR LES INPUT DATE ET HEURE
-	***
+	/**APPLIQUER DES CLASSES JQUERY SUR LES INPUT DATE ET HEURE
 	**/	
 	$('.time').live('focus', function() {
 		$(this).timeEntry($.timeEntry.regional['fr']);
@@ -19,10 +16,7 @@
 		$(this).datepicker({showOn:'focus', dateFormat: 'dd/mm/yy', firstDay: 1}).focus();
 	});
 
-	/**
-	***
-	***FAIT APPARAITRE LA DIV PERMETTANT D'AJOUTER UNE DATE A UNE COMMISSION
-	***
+	/**FAIT APPARAITRE LA DIV PERMETTANT D'AJOUTER UNE DATE A UNE COMMISSION
 	**/
 	$(".addDate").live('click', function(){
 		$("#divAddDate").show();
@@ -30,10 +24,7 @@
 		return false;
 	});
 
-	/**
-	***
-	***GESTION DE L'AJOUT DE DATE DANS LA BOITE DE DIALOGUE
-	***
+	/**GESTION DE L'AJOUT DE DATE DANS LA BOITE DE DIALOGUE
 	**/
 	$('.validAddDate').live('click',function(){
 		var dateSelect = $("#addDate").val();
@@ -84,8 +75,6 @@
 		$("#listeDates").countLigne('add','edit');
 		return false;
 	});
-
-
 
 	$(".cancelAddDate").live('click',function(){
 		//Annulation de l'ajout de date 
@@ -167,19 +156,9 @@
 </script>
 
 <?php
+
 if(isset($this->do) && $this->do == 'edit'){
-	/**
-	***
-	***CODE JAVASCRIPT ET PHP AFFICHE LORS DE L'EDITION D'UNE COMMISSION 
-	*** 
-	**/
-?>
-	<script type="text/javascript">
-		//$(document).ready(function() {
-			//INTEGRALITE DU CODE ENVOYé DANS INDEX.phtml de calendrier commission
-		//});
-	</script>
-<?php
+
 	echo "
 		<form name='formDateComm' id='formDateComm' methode='POST'>
 			<input type='hidden' name='dateCommission' id='dateCommission' value='".$this->dateCommission."' />
@@ -195,7 +174,7 @@ if(isset($this->do) && $this->do == 'edit'){
 			</div>
 			</p>
 				".afficheTabListeDates($this->listeDates)."	
-			<br/>				
+			<br/>
 				".divAddDate()."
 			<br/>
 	";

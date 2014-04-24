@@ -204,7 +204,7 @@ $(document).ready(function() {
 		width: 800,
 		height: 600,
 		buttons: {
-			"annuler": function() {
+			"Terminer": function() {
 				dialogDateCommission.dialog("close");
 				return false;
 			}
@@ -507,8 +507,12 @@ $(document).ready(function() {
 					<li num='".$dossierNonAffect['NUM_DOSSIER']."' >
 						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
-								".$dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")
-				";
+								".$dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
+
+
+				if(isset($dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']))
+					echo "(".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+
 				if(isset($dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
 					echo " - ".$dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 				}
