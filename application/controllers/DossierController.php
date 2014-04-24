@@ -1386,12 +1386,15 @@ class DossierController extends Zend_Controller_Action
             $datePost = $this->_getParam("date_".$idValid);
 
             if($id_dossier == '' || $idValid == '')
-
                 return false;
 
-            $dateTab = explode("/",$datePost);
-            $date = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
-            $ref = str_replace("\"","''",$_POST['ref_'.$idValid]);
+			if($datePost != ""){
+				$dateTab = explode("/",$datePost);
+				$date = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
+			}else{
+				$date = "0000-00-00";
+			}
+			$ref = str_replace("\"","''",$_POST['ref_'.$idValid]);
 
             //on définit s'il sagid d'un doc ajouté ou nom
             $tabNom = explode("_",$idValid);
@@ -1434,17 +1437,8 @@ class DossierController extends Zend_Controller_Action
                 $docAjout->save();
             }
 
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Les informations ont bien été enregistrées',
-                'message' => ''
-            ));
         } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors l\'enregistrement des informations',
-                'message' => $e->getMessage()
-            ));
+
         }
     }
 
