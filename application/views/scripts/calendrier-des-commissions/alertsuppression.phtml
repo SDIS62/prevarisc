@@ -1,0 +1,15 @@
+<form name='infosSuppDate' id='infosSuppDate' >
+<?php
+	echo "
+		<input type='hidden' name='commissionId' value='".$this->commissionId."' />
+		<input type='hidden' name='dateCommission' value='".$this->dateCommission."' />
+	";
+?>
+</form>
+Vous êtes sur le point de supprimer une date dans le calendrier.<br/>
+Cela entrainera la suppression de toutes les dates de commissions dans les dossiers qui y sont affectés.<br/>
+L'ensemble des pièces jointes liés à cette date sera supprimées.<br/>
+<br/>
+<button class='btn' id='validSupp' ><i class='icon-trash id='suppression'></i>Supprimer</button>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<button class='btn' id='cancelSupp' ><i class='icon-ban-circle'></i>Annuler</button>

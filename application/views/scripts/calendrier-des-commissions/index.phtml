@@ -243,22 +243,38 @@
 	// Dialogue standard
 	function my_dialog( url, data, callback ) {
 		// Récupération du contenu de la boite de dialogue
-		
 		$.ajax({
 			data: data,
 			url: url,
 			type:"POST",
 			success: function( result ) {
-			
 				$("#dialogComm").html( result );
 				
 				// On créé la boite de dialogue
 				$("#dialogComm").dialog({
 					resizable: false,
-					height: 'auto',
-					width: 'auto',
+					height: '500',
+					width: '800',
 					modal: true,
 					buttons: {
+						'Supprimer la date': function() {
+							$.ajax({
+								url: "/calendrier-des-commissions/alertsuppression",
+								data: "&dateCommission="+$("#dateCommission").val()+"&commissionId="+$("#commissionId").val(),
+								type:"POST",
+								beforeSend: function(){
+
+								},
+								success: function(affichageResultat){
+									$("#dialogComm").html(affichageResultat);
+									$(".ui-dialog-buttonset").children("button").remove();
+									return false;
+								},
+								error: function(){
+									return false;
+								}
+							});
+						},
 						'Afficher l\'ordre du jour': function() {
 							window.location.replace("./calendrier-des-commissions/gestionodj/dateCommId/"+$("#dateClick").val());								
 						},
@@ -543,6 +559,29 @@
 		}
 		//compter le nombre de ligne pour autoriser ou non la périodicité
 		return false;
+	});
+	
+	$("#validSupp").live('click',function(){
+		$.ajax({
+			url: "/calendrier-des-commissions/validsuppression",
+			data: $("#infosSuppDate").serialize(),
+			type:"POST",
+			beforeSend: function(){
+				
+			},
+			success: function(affichageResultat){
+				$("#calendar").fullCalendar('refetchEvents');
+				$("#dialogComm").dialog('close').html('');
+				return false;
+			},
+			error: function(){
+				return false;
+			}
+		});
+	});
+	
+	$("#cancelSupp").live('click',function(){
+		$("#dialogComm").dialog('close').html('');
 	});
 
 		
