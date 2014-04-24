@@ -225,7 +225,7 @@ foreach($this->listeNatures as $index => $nature){
 	if(count($this->listeDocs[$nature["ID_NATURE"]]) > 0)
 	{
 		foreach($this->listeDocs[$nature["ID_NATURE"]] as $document){
-			$exist = false;	
+			$exist = false;
 			foreach($this->dossierDocConsutle[$nature["ID_NATURE"]] as $docExistant){
 				if($docExistant['ID_DOC'] == $document['ID_DOC']){
 					$exist = true;
@@ -233,6 +233,7 @@ foreach($this->listeNatures as $index => $nature){
 					$date = $docExistant['DATE_CONSULTE'];
 				}
 			}
+			
 			if($exist){
 				echo $this->afficheDoc($nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC'],$ref,$date);
 			}else{

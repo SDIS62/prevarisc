@@ -404,11 +404,13 @@
 				// On empêche la selection d'un samedi ou d'un dimanche
 				if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
 					// Boite de dialogue en ajoutant en callback le traitement du formulaire
-					if(document.getElementById("infosEtabs")){
-						var nomEtab = $("#infosEtabs > a").html().trim();
-					}else{
-						var nomEtab = $("#infosEtablissement > a").html().trim();
+					var nomEtab = "";
+					if($("#infosEtabs").text() != ""){
+						nomEtab = $("#infosEtabs > a").html().trim();
+					}else if($("#infosEtablissement").text() != " "){
+						nomEtab = $("#infosEtablissement > a").html().trim();
 					}
+					
 					var nomNature = $("#selectNature option:selected").text().trim();
 					var nomCom = nomNature+" - "+nomEtab;
 					var type;
@@ -523,7 +525,7 @@
 										//Si une seule date on la renseinge aussi dans l'input date de passage en commission
 										var nbResultats = rez.length;
 										var nbResultatsTotal = nbResultats;
-										
+
 										var listeDates = "";
 										for( var i in rez ) {
 											if(nbResultats == nbResultatsTotal){
@@ -865,7 +867,6 @@
 		}
 		
 	}
-
 
 	//Action lorsque l'on crée le dossier on redirige vers la page de consultation
 	$("#creationDossier").live('click',function(){
