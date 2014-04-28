@@ -8,7 +8,7 @@ if(count($this->membresFiles) == 0){
 
 $nomFichier = $this->commissionInfos[0]['DOCUMENT_CR'];
 
-if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents_commission".DIRECTORY_SEPARATOR.$nomFichier)){
+if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents_commission".DIRECTORY_SEPARATOR.$nomFichier) && $nomFichier != ''){
 
 	$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents_commission".DIRECTORY_SEPARATOR.$nomFichier);
 	$dossInfos = $odf->setSegment('dossierInfos');
@@ -129,7 +129,7 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 	//$odf->mergeSegment($dossierLoop);
 	echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'>Le compte rendu a été généré avec succes</span><br/><br/><br/>";
 }else{
-	echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
+	echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier de compte rendu pour la commission n'existe pas</span><br/><br/><br/>";
 }
 
 

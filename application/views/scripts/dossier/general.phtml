@@ -772,6 +772,7 @@
 		if($("#do").val() != 'new'){
 			$("#validModification").show();
 			$("#annulModification").show();
+			$(".generation").hide();
 		}
 
 		$("#InfosDossier > li > .value").hide();
@@ -868,6 +869,7 @@
 	}
 
 	//Action lorsque l'on crée le dossier on redirige vers la page de consultation
+
 	$("#creationDossier").live('click',function(){
 		if(!verifDossier())
 			return false;
