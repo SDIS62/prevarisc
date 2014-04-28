@@ -47,6 +47,10 @@ class DossierController extends Zend_Controller_Action
         "19" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","AVIS_COMMISSION"),
         //Echéncier de travaux - OK
         "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION"),
+		//Déclaration préalable
+        "30" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION"),
+		//RVRMD diag sécu
+        "33" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION"),
     //VISITE DE COMMISSION
         //Réception de travaux - OK
         "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","NPSP","ABSQUORUM","AVIS_COMMISSION"),
@@ -74,14 +78,12 @@ class DossierController extends Zend_Controller_Action
         //Inopinéee - OK
         "29" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","PREVENTIONNISTE","DIFFEREAVIS","NPSP","ABSQUORUM","AVIS_COMMISSION"),
     //REUNION
-        //Visite ou sur site - OK"DATEVISITE",
-        //"30" => array("DATEINSERT","OBJET","PREVENTIONNISTE","DEMANDEUR"),
         //Locaux SDIS - OK
         "31" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
         //Exterieur SDIS - OK
         "32" => array("DATEINSERT","OBJET","LIEUREUNION","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
         //Téléphonique - OK
-        //"33" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
+        "43" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
     //COURRIER/COURRIEL
         //Arrivée - OK
         "34" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","DATEREP","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
@@ -103,8 +105,6 @@ class DossierController extends Zend_Controller_Action
         "41" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Mise en demeure - OK
         "42" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
-        //Mise en demeure de l'exploitant - OK
-        "43" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Utilisation exceptionnelle de locaux - OK
         "44" => array("DATEINSERT","OBJET","DATESIGN","PREVENTIONNISTE"),
         //Courrier - OK
@@ -1901,6 +1901,41 @@ class DossierController extends Zend_Controller_Action
 			$date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
 			$this->view->dateCommEntete = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 		}
+		
+		//Récupération de la (ou des) date(s) de visite
+		//VISITE OU GROUPE DE VISITE
+		$this->view->dateVisite = $this->view->infosDossier['DATEVISITE_DOSSIER'];
+		//on récupère les date liées si il en existe
+		//Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
+		$infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
+		$this->view->ID_AFFECTATION_DOSSIER_VISITE = $infosDateComm['ID_DATECOMMISSION'];
+		if (!$infosDateComm['DATECOMMISSION_LIEES']) {
+			$commPrincipale = $affectDossier['ID_DATECOMMISSION_AFFECT'];
+		} else {
+			$commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
+		}
+		//récupération de l'ensemble des dates liées
+		$recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
+		$nbDatesTotal = count($recupCommLiees);
+		$nbDateDecompte = $nbDatesTotal;
+
+		$listeDateInput = "";
+
+		foreach ($recupCommLiees as  $val => $ue) {
+			$date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
+			if ($nbDateDecompte == $nbDatesTotal) {
+				//premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
+				$this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
+			}
+			if ($nbDateDecompte > 1) {
+				$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR).", ";
+			} elseif ($nbDateDecompte == 1) {
+				$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			$this->view->dateVisiteInput = $listeDateInput;
+			$nbDateDecompte--;
+		}
+		$this->view->dateVisite = $this->view->dateVisiteInput;
 
 		//PARTIE DOC CONSULTE
 

@@ -80,9 +80,7 @@ try {
 
 try {
 	if($this->infosDossier['DATEVISITE_DOSSIER']){
-		$date = new Zend_Date($this->infosDossier['DATEVISITE_DOSSIER'], Zend_Date::DATES);
-		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-		$odf->setVars('dateVisite',verifInfos($date),true,'UTF8');
+			$odf->setVars('dateVisite',verifInfos($this->dateVisite),true,'UTF8');
 	}else{
 		$odf->setVars('dateVisite',verifInfos(""),true,'UTF8');
 	}
