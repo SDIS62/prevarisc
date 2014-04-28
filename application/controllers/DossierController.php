@@ -201,7 +201,6 @@ class DossierController extends Zend_Controller_Action
 
         }
 
-
         /******
             RECUPERATIONS INFOS ETABLISSEMENT (cellule ou etab pour generation des avis)
         ******/
@@ -337,7 +336,7 @@ class DossierController extends Zend_Controller_Action
 				$this->view->infosDossier['DATEPREF_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
 				$this->view->DATEPREF_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 			}
-
+/*
 			//Conversion de la date de visite
 			if ($this->view->infosDossier['DATEVISITE_DOSSIER'] != '') {
 				$date = new Zend_Date($this->view->infosDossier['DATEVISITE_DOSSIER'], Zend_Date::DATES);
@@ -350,7 +349,7 @@ class DossierController extends Zend_Controller_Action
 				$this->view->infosDossier['DATECOMM_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
 				$this->view->DATECOMM_INPUT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 			}
-
+*/
 			//Conversion de la date de réponse
 			if ($this->view->infosDossier['DATEREP_DOSSIER'] != '') {
 				$date = new Zend_Date($this->view->infosDossier['DATEREP_DOSSIER'], Zend_Date::DATES);
@@ -489,14 +488,50 @@ class DossierController extends Zend_Controller_Action
                 foreach ($listeDateAffectDossier as $val => $ue) {
                     if ($ue['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
                         //COMMISSION EN SALLE
-                         $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
+                        $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
                         $this->view->dateCommValue = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
                         $this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
                         $this->view->idDateCommissionAffect = $ue['ID_DATECOMMISSION'];
                     } else {
                         //VISITE OU GROUPE DE VISITE
-                        $nbDateExist = count($listeDateAffectDossier);
+                        $this->view->dateVisite = $this->view->infosDossier['DATEVISITE_DOSSIER'];
+						//on récupère les date liées si il en existe
+						//Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
+						$infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
+						$this->view->ID_AFFECTATION_DOSSIER_VISITE = $infosDateComm['ID_DATECOMMISSION'];
+						if (!$infosDateComm['DATECOMMISSION_LIEES']) {
+							$commPrincipale = $affectDossier['ID_DATECOMMISSION_AFFECT'];
+						} else {
+							$commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
+						}
+						//récupération de l'ensemble des dates liées
+						$recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
+						$nbDatesTotal = count($recupCommLiees);
+						$nbDateDecompte = $nbDatesTotal;
+						
+						$listeDateValue = "";
+						$listeDateInput = "";
 
+						foreach ($recupCommLiees as  $val => $ue) {
+							$date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
+							if ($nbDateDecompte == $nbDatesTotal) {
+								//premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
+								$this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
+							}
+							if ($nbDateDecompte > 1) {
+								$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR).", ";
+								$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR).", ";
+							} elseif ($nbDateDecompte == 1) {
+								$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+								$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+							}
+							$this->view->dateVisiteValue = $listeDateValue;
+							$this->view->dateVisiteInput = $listeDateInput;
+							$nbDateDecompte--;
+						}
+						
+/*
+						$nbDateExist = count($listeDateAffectDossier);
                         if ($nbDateExist == 1) {
                             //Si 1 seule date alors la date de viste et de commission est la même
                             $date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
@@ -542,7 +577,7 @@ class DossierController extends Zend_Controller_Action
                                 $nbDateDecompte--;
                             }
                         }
-
+*/
                     }
                 }
             }
@@ -1187,31 +1222,119 @@ class DossierController extends Zend_Controller_Action
                 }
             }
 
+			
             //Sauvegarde des informations concernant l'affectation d'un dossier à une commission
             $dbDossierAffectation = new Model_DbTable_DossierAffectation;
             $dbDateComm = new Model_DbTable_DateCommission;
             if ($this->_getParam('COMMISSION_DOSSIER') == '') {
                 $dbDossierAffectation->deleteDateDossierAffect($idDossier);
             } else {
-                $affectation = $dbDossierAffectation->createRow();
-                if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
-					$exist = $dbDossierAffectation->find($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'),$idDossier);
-					if(count($exist) == 0){
+				$listeDateDossAffect = $dbDossierAffectation->getDossierAffectAndType($idDossier);
+				//Zend_Debug::dump($listeDateDossAffect);
+				foreach($listeDateDossAffect as $dateAffect){
+					//echo $dateAffect['ID_COMMISSIONTYPEEVENEMENT'];
+					if($dateAffect['ID_COMMISSIONTYPEEVENEMENT'] == 1){
+						//Comm en salle
+						$infosDateSalle = $dateAffect;
+					}else if($dateAffect['ID_COMMISSIONTYPEEVENEMENT'] == 2){
+						//Visite
+						$infosDateVisite = $dateAffect;
+					}else if($dateAffect['ID_COMMISSIONTYPEEVENEMENT'] == 3){
+						//Groupe de visite
+						$infosDateVisite = $dateAffect;
+					}
+				}
+				
+				//Partie concernant la date de visite
+				if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
+					if(isset($infosDateVisite)){
+						//la date de visite existe déjà on vérifie si elle a changé
+						if( $infosDateVisite['ID_DATECOMMISSION_AFFECT'] != $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') ){
+							//Dans le cas ou la date commission est différente de celle passée en paramètre alors on la met à jour
+							$dateEdit = $dbDossierAffectation->find($infosDateVisite['ID_DATECOMMISSION_AFFECT'],$idDossier)->current();
+							$dateEdit->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE');
+							$dateEdit->save();
+						}
+					}else{
+						//la date de visite n'existe pas il faut donc la crééer.
+						$affectation = $dbDossierAffectation->createRow();
 						$affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE');
 						$affectation->ID_DOSSIER_AFFECT = $idDossier;
 						$affectation->save();
+					}
+					$dateCommDoss = $dbDateComm->find($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'))->current();
+					$nouveauDossier->DATEVISITE_DOSSIER = $dateCommDoss->DATE_COMMISSION;
+					$nouveauDossier->save();
+				}else{
+					$nouveauDossier->DATEVISITE_DOSSIER = NULL;
+					$nouveauDossier->save();
+					//Supprimer l'affectation si elle existe
+					if(isset($infosDateVisite)){
+						$dateDelete = $dbDossierAffectation->find($infosDateVisite['ID_DATECOMMISSION_AFFECT'],$idDossier)->current();
+						$dateDelete->delete();
+					}
+				}
+				
+				//Partie concernant la date de commission
+				if ($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') && $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') != '') {
+					if(isset($infosDateSalle)){
+						//la date de commission existe déjà on vérifie si elle a changé
+						if( $infosDateSalle['ID_DATECOMMISSION_AFFECT'] != $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') ){
+							//Dans le cas ou la date commission est différente de celle passée en paramètre alors on la met à jour
+							$dateEdit = $dbDossierAffectation->find($infosDateSalle['ID_DATECOMMISSION_AFFECT'],$idDossier)->current();
+							$dateEdit->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
+							$dateEdit->save();
+						}
+					}else{
+						//la date de commission n'existe pas il faut donc la crééer.
+						$affectation = $dbDossierAffectation->createRow();
+						$affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
+						$affectation->ID_DOSSIER_AFFECT = $idDossier;
+						$affectation->save();
+					}
+					$dateCommDoss = $dbDateComm->find($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION'))->current();
+					$nouveauDossier->DATECOMM_DOSSIER = $dateCommDoss->DATE_COMMISSION;
+					$nouveauDossier->save();
+				}else{
+					$nouveauDossier->DATECOMM_DOSSIER = NULL;
+					$nouveauDossier->save();
+					//Supprimer l'affectation si elle existe
+					if(isset($infosDateSalle)){
+						$dateDelete = $dbDossierAffectation->find($infosDateSalle['ID_DATECOMMISSION_AFFECT'],$idDossier)->current();
+						$dateDelete->delete();
+					}
+				}
+
+				/*
+                if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
+					$exist = $dbDossierAffectation->find($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'),$idDossier);
+					Zend_Debug::dump($exist);
+					if(count($exist) == 0){
+						$affectation = $dbDossierAffectation->createRow();
+						echo "ici 2 ".$this->_getParam('ID_AFFECTATION_DOSSIER_VISITE')." - ".$idDossier."<br/>";
+						$affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE');
+						$affectation->ID_DOSSIER_AFFECT = $idDossier;
+						$affectation->save();
+						//Zend_Debug::dump($affectation->toArray());
 						//On recupere l'affectation à une visite pour renseigner dans dossier car la date sera utilisée dans établissement
 						$dateCommDoss = $dbDateComm->find($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'))->current();
 						$nouveauDossier->DATEVISITE_DOSSIER = $dateCommDoss->DATE_COMMISSION;
 						$nouveauDossier->save();
 						$dbDossierAffectation->deleteDateDossierModifDateAffect($idDossier,$this->_getParam('ID_AFFECTATION_DOSSIER_VISITE'));
 					}
-                }
+                }else{
+					echo "ici 3";
+					//modifier pour supprimer
+					//$dbDossierAffectation->deleteDateDossierAffect($idDossier);
+					$nouveauDossier->DATEVISITE_DOSSIER = NULL;
+					$nouveauDossier->save();
+				}
 
-                $affectation = $dbDossierAffectation->createRow();
+                
                 if ($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') && $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION') != '') {
 					$exist = $dbDossierAffectation->find($this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION'),$idDossier);
 					if(count($exist) == 0){
+						$affectation = $dbDossierAffectation->createRow();
 						$affectation->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
 						$affectation->ID_DOSSIER_AFFECT = $idDossier;
 						$affectation->save();
@@ -1221,7 +1344,12 @@ class DossierController extends Zend_Controller_Action
 						$nouveauDossier->save();
 						$dbDossierAffectation->deleteDateDossierModifDateAffect($idDossier,$this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION'));
 					}
-                }
+                }else{
+					//$dbDossierAffectation->deleteDateDossierAffect($idDossier);
+					$nouveauDossier->DATECOMM_DOSSIER = NULL;
+					$nouveauDossier->save();
+				}
+				*/
             }
 
             //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
@@ -1259,9 +1387,10 @@ class DossierController extends Zend_Controller_Action
 
         // On recherche avec le libellé
         $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $this->_request->q, false);
-
+		
         // On balance le résultat sur la vue
         $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+		//Zend_Debug::dump($this->view->resultats);
     }
 
 //Action permettant de lister les établissements et les dossiers liés
@@ -1269,15 +1398,12 @@ class DossierController extends Zend_Controller_Action
     {
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
-		//Zend_Debug::dump($this->view->listeEtablissement);
-		
-		
-		
 		
 		$service_etablissement = new Service_Etablissement;
-		$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
-		$this->view->etablissement = $etablissement;
-		//Zend_Debug::dump($this->view->etablissement);
+		if($this->view->listeEtablissement){
+			$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
+			$this->view->etablissement = $etablissement;
+		}		
     }
 
     public function contactAction()
@@ -1380,12 +1506,15 @@ class DossierController extends Zend_Controller_Action
             $datePost = $this->_getParam("date_".$idValid);
 
             if($id_dossier == '' || $idValid == '')
-
                 return false;
 
-            $dateTab = explode("/",$datePost);
-            $date = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
-            $ref = str_replace("\"","''",$_POST['ref_'.$idValid]);
+			if($datePost != ""){
+				$dateTab = explode("/",$datePost);
+				$date = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
+			}else{
+				$date = "0000-00-00";
+			}
+			$ref = str_replace("\"","''",$_POST['ref_'.$idValid]);
 
             //on définit s'il sagid d'un doc ajouté ou nom
             $tabNom = explode("_",$idValid);
@@ -1428,17 +1557,8 @@ class DossierController extends Zend_Controller_Action
                 $docAjout->save();
             }
 
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'Les informations ont bien été enregistrées',
-                'message' => ''
-            ));
         } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors l\'enregistrement des informations',
-                'message' => $e->getMessage()
-            ));
+
         }
     }
 
@@ -2816,4 +2936,35 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+	public function lienmultipleAction()
+	{
+		$this->_helper->viewRenderer->setNoRender();
+		foreach($this->_getParam('etabId') as $val){
+			echo $val."<br/>";
+
+			try {
+				$DBetablissementDossier = new Model_DbTable_EtablissementDossier;
+				$newEtabDossier = $DBetablissementDossier->createRow();
+				$newEtabDossier->ID_ETABLISSEMENT = $val;
+				$newEtabDossier->ID_DOSSIER = $this->_getParam("idDossier");
+				$newEtabDossier->save();
+/*
+				$this->view->libelleEtab = $this->_getParam("libelleSelect");
+				$this->view->infosEtab = $newEtabDossier;
+*/
+				$this->_helper->flashMessenger(array(
+					'context' => 'success',
+					'title' => 'L\'établissement a bien été ajouté',
+					'message' => ''
+				));
+			} catch (Exception $e) {
+				$this->_helper->flashMessenger(array(
+					'context' => 'error',
+					'title' => 'Erreur lors de l\'ajout de l\'établissement',
+					'message' => $e->getMessage()
+				));
+			}
+		}
+	}
+	
 }

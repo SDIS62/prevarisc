@@ -464,27 +464,6 @@ input.date:hover {
 	background-color: white;
 }
 
-/* Matrice des droits */
-#form_matrice > table > tbody > tr.tr_head {
-    background-color: #eeeeee;
-    height: auto;
-    overflow: auto;
-}
-
-#form_matrice > table > tbody > tr {
-    height: 300px;
-    overflow-y:none;
-}
-
-#form_matrice > table > tbody > tr > td{
-    width: 12.5%;
-}
-
-#form_matrice > table > tbody > tr div.inner_scroll {
-    height: 300px;
-    overflow-y: auto;
-}
-
 /* Gestion des commissions */
 ul#gestionCommissionMenu {
 	text-align: center;

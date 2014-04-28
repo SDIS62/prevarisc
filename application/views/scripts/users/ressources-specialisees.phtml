@@ -94,13 +94,25 @@
 
             <dt class='champs champ_types'>Types d'activité</dt>
             <dd class='champs champ_types'>
-                <p>
-                    <select name='types[]' multiple>
-                        <?php foreach($this->types as $type) : ?>
-                            <option value='<?php echo $type['ID_TYPEACTIVITE'] ?>'><?php echo $type['LIBELLE_ACTIVITE'] ?></option>
+
+                <div style='height: 200px; overflow-y:none;'>
+                    <dl style='height: 150px; overflow-y: auto;'>
+                        <?php foreach( $this->types as $libelle_type => $_type ) : ?>
+                            <dt style='width: 50px;'><?php echo $libelle_type ?><dt>
+                            <dd style='margin-left: 70px;'>
+                                <ul class='unstyled'>
+                                <?php foreach( $_type as $type ) : ?>
+                                    <li>
+                                        <input name='types[]' type='checkbox' value='<?php echo $type["ID_TYPEACTIVITE"] ?>' />
+                                        <?php echo $type["LIBELLE_ACTIVITE"] ?>
+                                    </li>
+                                <?php endforeach ?>
+                                </ul>
+                            </dd>
                         <?php endforeach ?>
-                    </select>
-                </p>
+                    </dl>
+                </div>
+
             </dd>
 
             <dt class='champs champ_categorie'>Catégories</dt>

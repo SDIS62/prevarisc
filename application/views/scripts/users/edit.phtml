@@ -131,8 +131,8 @@
         <dd>
         	<p>
 	            <select name='commissions[]' multiple>
-	                <?php foreach($this->rowset_commissions as $commission) : ?>
-	                <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( in_array($commission, $this->user['commissions']) ) echo "selected" ?>><?php echo $commission['LIBELLE_COMMISSION'] ?></option>
+	                <?php foreach($this->commissions as $commission) : ?>
+	                <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( $this->user['commissions'] != null && in_array($commission, $this->user['commissions']) ) echo "selected" ?>><?php echo $commission['LIBELLE_COMMISSION'] ?></option>
 	                <?php endforeach ?>
 	            </select>
             </p>
@@ -143,7 +143,7 @@
         	<p>
 	            <select name='groupements[]' multiple>
 	                <?php foreach($this->groupements as $groupement) : ?>
-	                <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php if( in_array($groupement, $this->user['groupements']) ) echo "selected" ?>><?php echo $groupement['LIBELLE_GROUPEMENT'] ?></option>
+	                <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php if( $this->user['groupements'] != null && in_array($groupement, $this->user['groupements']) ) echo "selected" ?>><?php echo $groupement['LIBELLE_GROUPEMENT'] ?></option>
 	                <?php endforeach ?>
 	            </select>
             </p>
