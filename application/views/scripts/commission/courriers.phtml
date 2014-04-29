@@ -13,16 +13,16 @@
 	<table class='table table-condensed'>
 		<thead>
 			<tr>
-				<th>Convocation en visite</th>
-				<th>Convocation en salle</th>
-				<th>Ordre du jour</th>
-				<th>PV</th>
+				<th style='text-align:center;'>Convocation en visite</th>
+				<th style='text-align:center;'>Convocation en salle</th>
+				<th style='text-align:center;'>Ordre du jour</th>
+				<th style='text-align:center;'>
+					<?php if($row_membre["ID_GROUPEMENT"] == NULL)echo "PV"; ?>
+				</th>
 			</tr>
 		</thead>
-		
 		<tbody>
 			<tr>
-				
 				<?php
 					// Convocation visite
 					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
@@ -30,27 +30,25 @@
 						"name_courrier" => $row_membre->COURRIER_CONVOCATIONVISITE,
 						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
 					));
-					
 					// Convocation salle
 					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
 						"type" => "CONVOCATIONSALLE",
 						"name_courrier" => $row_membre->COURRIER_CONVOCATIONSALLE,
 						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
 					));
-                    
                     // ODJ
 					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
 						"type" => "ODJ",
 						"name_courrier" => $row_membre->COURRIER_ODJ,
 						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
 					));
-
-					// Convocation visite
-					echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
-						"type" => "PV",
-						"name_courrier" => $row_membre->COURRIER_PV,
-						"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
-					));
+					//PV
+					if($row_membre["ID_GROUPEMENT"] == NULL)
+						echo $this->partial("commission/partials/partial-ligne-regle-courrier.phtml", array(
+							"type" => "PV",
+							"name_courrier" => $row_membre->COURRIER_PV,
+							"id_membre" => $row_membre->ID_COMMISSIONMEMBRE
+						));
 				?>
 			
 			</tr>
