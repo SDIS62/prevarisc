@@ -389,6 +389,9 @@ $(document).ready(function() {
 			}else{
 				echo "<button class='heures btn' id='oui'  >Prendre en compte les heures</button>";
 			}
+			echo "
+				<div style='float:right'><span class='label' style='background-color:#e7e7e7;color:black;'>Validé</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class='label' style='background-color:#E2A420;color:black;'>En attente de Validation</span></div>
+			";
 	echo "	
 			<br/>
 			<input type='hidden' name='dateCommId' id='dateCommId' value='".$this->infosDateComm['ID_DATECOMMISSION']."' />
@@ -450,7 +453,7 @@ $(document).ready(function() {
 				if( count($this->listeDossierNonAffect) != 0 ){
 					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 						if($dossierNonAffect['VERROU_DOSSIER'] == 1){
-							$background = "#9FC6FF";
+							$background = "#e7e7e7";
 						}else{
 							$background = "#E2A420";
 						}
@@ -509,7 +512,7 @@ $(document).ready(function() {
 		if( count($this->listeDossierNonAffect) != 0 ){
 			foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 				if($dossierNonAffect['VERROU_DOSSIER'] == 1){
-					$background = "#9FC6FF";
+					$background = "#e7e7e7";
 				}else{
 					$background = "#E2A420";
 				}
