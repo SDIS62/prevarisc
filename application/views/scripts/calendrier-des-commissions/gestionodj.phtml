@@ -79,7 +79,7 @@ $(document).ready(function() {
 									end: result["items"][x]["end"],
 									allDay: result["items"][x]["allDay"],
 									url: result["items"][x]["url"],
-									backgroundColor: "#dcdcdc",
+									backgroundColor: result["items"][x]["backgroundColor"],
 									textColor : "black"
 								});
 							}
@@ -449,9 +449,14 @@ $(document).ready(function() {
 				echo "<h3>Liste des dossiers prévus</h3>";
 				if( count($this->listeDossierNonAffect) != 0 ){
 					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
+						if($dossierNonAffect['VERROU_DOSSIER'] == 1){
+							$background = "#9FC6FF";
+						}else{
+							$background = "#E2A420";
+						}
 						echo "
-							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
-								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER']."' >
+							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:".$background.";border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER']."' style='color:black;'>
 						";
 						if(isset($dossierNonAffect['infosEtab'])){
 							//si le dossier est attaché à un établissement
@@ -503,10 +508,15 @@ $(document).ready(function() {
 		//Zend_Debug::dump($this->listeDossierNonAffect);
 		if( count($this->listeDossierNonAffect) != 0 ){
 			foreach ($this->listeDossierNonAffect as $dossierNonAffect){
+				if($dossierNonAffect['VERROU_DOSSIER'] == 1){
+					$background = "#9FC6FF";
+				}else{
+					$background = "#E2A420";
+				}
 				echo "
 					<li num='".$dossierNonAffect['NUM_DOSSIER']."' >
-						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
-							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
+						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:".$background.";border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='color:black;' >
 								".$dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
 
 

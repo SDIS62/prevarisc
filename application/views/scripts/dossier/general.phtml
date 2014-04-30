@@ -773,6 +773,7 @@
 			$("#validModification").show();
 			$("#annulModification").show();
 			$(".generation").hide();
+			$("#VERROU").hide();
 		}
 
 		$("#InfosDossier > li > .value").hide();
@@ -1047,6 +1048,48 @@
 		}		
 		return false;
 	});
+	
+	$("#VERROU").live('click',function(){
+		$.ajax({
+			url: "/dossier/verrou",
+			data: "idDossier="+$("#idDossier").val(),
+			type:"POST",
+			//async: false,
+			beforeSend: function(){
+				$("#VERROU").attr("disabled", "disabled");
+				$("#rapport").attr("disabled", "disabled");
+				$("#modificationDossier").attr("disabled", "disabled");
+				$("#chargement").html("<img src='/images/load.gif' />");
+			},
+			success: function(affichageResultat){
+				window.location= affichageResultat;
+			},
+			error: function(){
+				return false;
+			}
+		});
+		return false;
+	});
+	
+	$("#DEVERROU").live('click',function(){
+		$.ajax({
+			url: "/dossier/deverrou",
+			data: "idDossier="+$("#idDossier").val(),
+			type:"POST",
+			//async: false,
+			beforeSend: function(){
+				$("#DEVERROU").attr("disabled", "disabled");
+				$("#chargement").html("<img src='/images/load.gif' />");
+			},
+			success: function(affichageResultat){
+				window.location= affichageResultat;
+			},
+			error: function(){
+				return false;
+			}
+		});
+		return false;
+	});
 </script>
 <?php
 echo $this->headScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
@@ -1069,8 +1112,10 @@ echo "
 			<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='".$this->idUser."' />	
 			".( ($action == 'edit')? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "" )."
 			<div id='boutons' style='float: right'>
-				<button class='generation btn btn-info' id='rapport' style='".( ($action == 'new')? "display:none;" : "" )."'><i class='icon-refresh'></i>&nbsp;Générer le(s) rapport(s)</button>
-				<button id='modificationDossier' class='btn' style='".( ($action == 'new')? "display:none;" : "" )."'><i class='icon-pencil'></i>&nbsp;Modifier le dossier</button>
+				<button id='VERROU' class='btn btn-warning' style='".( ($this->infosDossier['VERROU_DOSSIER'] == 1  || $action == 'new')? "display:none;" : "" )."'><i class='icon-lock'></i>&nbsp;Vérrouiller</button>
+				<button id='DEVERROU' class='btn btn-danger' style='".( ($this->infosDossier['VERROU_DOSSIER'] == 0)? "display:none;" : "" )."'><i class='icon-lock'></i>&nbsp;Déverrouiller</button>
+				<button class='generation btn btn-info' id='rapport' style='".( ($action == 'new' || $this->infosDossier['VERROU_DOSSIER'] == 1)? "display:none;" : "" )."'><i class='icon-refresh'></i>&nbsp;Générer le(s) rapport(s)</button>
+				<button id='modificationDossier' class='btn' style='".( ($action == 'new' || $this->infosDossier['VERROU_DOSSIER'] == 1)? "display:none;" : "" )."'><i class='icon-pencil'></i>&nbsp;Modifier le dossier</button>
 				<button id='annulModification' class='btn' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Annuler</button>
 				<button id='validModification' class='btn btn-success save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'><i class='icon-ok icon-white'></i>&nbsp;Sauvegarder le dossier</button>
 				<button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>

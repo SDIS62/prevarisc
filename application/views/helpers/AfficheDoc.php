@@ -2,7 +2,7 @@
 
     class View_Helper_AfficheDoc
     {
-        public function afficheDoc($natureId,$id,$libelle,$ref=null,$date=null,$type=null)
+        public function afficheDoc($verrou,$natureId,$id,$libelle,$ref=null,$date=null,$type=null)
         {
             if (!$date) {
                 //document n'ayant PAS d'enregistrement dans la BD
@@ -31,7 +31,7 @@
             return "
                 <li class='divDoc row-fluid span12' name='divDoc' id='".$natureId."_".$id.$type."' style='display: block; height: 25px;margin: 15px;'>
                     <div style='float:left;' class='span1'>
-                        <input type='checkbox' ".$styleChecked." ".$etatCheck." name='check_".$natureId."_".$id.$type."' id='check_".$natureId."_".$id.$type."' />
+                        <input type='checkbox' ".$styleChecked." ".$etatCheck." name='check_".$natureId."_".$id.$type."' id='check_".$natureId."_".$id.$type."' ".( ( $verrou == 1)?"disabled='disabled'":"" )." />
                     </div>
                     <div class='span4 libelle' >
                         <strong>".nl2br($libelle)."</strong>
@@ -44,7 +44,7 @@
                             <input type='text' readonly='true' ".$styleDate."  class='date' name='date_".$natureId."_".$id.$type."' id='date_".$natureId."_".$id.$type."' value='".$date."' />
                         </div>
                         <div class='span3'>
-                            <span class='modif' id='modif_".$natureId."_".$id.$type."' style='' >
+                            <span class='modif' id='modif_".$natureId."_".$id.$type."' style='".( ( $verrou == 1)?"display:none;":"")."' >
                                     <button class='editDoc btn'><i class='icon-pencil'></i>&nbsp;</button>
                             </span>
                             <span id='valid_".$natureId."_".$id.$type."' style='".$styleValid."'>
