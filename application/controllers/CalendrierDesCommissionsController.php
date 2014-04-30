@@ -277,6 +277,12 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 					$affichage .= $ue['NUM_DOCURBA']." . ";
 				}
 			}
+			
+			if($dossierAffect['VERROU_DOSSIER'] == 0){
+				$color = "#e7e7e7";
+			}else if($dossierAffect['VERROU_DOSSIER'] == 1){
+				$color = "#e2a420";
+			}
 
             $items[] = array(
                 "id" => $dossierAffect['ID_DOSSIER'],
@@ -284,6 +290,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 "title" => "   ".$affichage,
                 "start" => date($dateDebut." ".$dossierAffect['HEURE_DEB_AFFECT']),
                 "end" => date($dateDebut." ".$dossierAffect['HEURE_FIN_AFFECT']),
+				"backgroundColor" => $color,
                 "allDay" => false,
             );
 

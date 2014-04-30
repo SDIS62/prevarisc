@@ -1,26 +1,6 @@
 <script type="text/javascript">
 $(document).ready(function(){
-	$("#contact-content").load("/contact?item=dossier&id=<?php echo $this->idDossier; ?>");
-	/*
-	$.ajax({
-		url: "/contact",
-		data: "item=dossier&id=<?php echo $this->idDossier; ?>",
-		type:"POST",
-		async: false,
-		beforeSend: function(){
-			
-		},
-		success: function(affichageResultat){
-			//alert(affichageResultat);
-			$("#contact-content").html(affichageResultat);
-			//$("#listePieceJointe").showpiecejointe($("#typePJ").val(),$("#idLinkPJ").val());
-			return false;
-		},
-		error: function(){
-			return false;
-		}
-	});
-	*/
+	$("#contact-content").load("/contact?item=dossier&id=<?php echo $this->idDossier; ?>&verrou=<?php echo $this->infosDossier['VERROU_DOSSIER']; ?>");
 });
 </script>
 <?php
