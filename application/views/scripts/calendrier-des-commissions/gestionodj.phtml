@@ -122,17 +122,17 @@ $(document).ready(function() {
 				},
 				drop: function(date, allDay) {
 					var idDossier = $(this).attr('id');
-
-					//alert('drop');
+					var verrou = "";
 					$.ajax({
 						url: "/calendrier-des-commissions/affecteDossOdj?datadebut="+date,
+						async: false,
 						data: {
 							format: 'json',
 							dateCommId: $("#dateCommId").val(),
 							idDossier : idDossier,
 						},
 						success: function( result ) {
-							
+							verrou = result;
 						}
 					});
 					// retrieve the dropped element's stored Event Object
@@ -143,7 +143,11 @@ $(document).ready(function() {
 					copiedEventObject.start = date;
 					copiedEventObject.url = "/dossier/index/id/"+idDossier;
 					copiedEventObject.allDay = allDay;
-					copiedEventObject.backgroundColor = "#dcdcdc";
+					if(verrou == 1){
+						copiedEventObject.backgroundColor = "#83bff6";
+					}else{
+						copiedEventObject.backgroundColor = "#E2A420";
+					}					
 					copiedEventObject.textColor = "black";
 					
 					// render the event on the calendar
@@ -379,26 +383,24 @@ $(document).ready(function() {
 	border-width:1px;
 }
 </style>
-
-
 <?php
 
 	echo "
 		<div>
+			<input type='hidden' id='tempVerrou' value='' />
 			<input type='hidden' name='dateOdj' id='dateOdj' value='".$this->infosDateComm['DATE_COMMISSION']."' />
 			<input type='hidden' name='heureDeb' id='heureDeb' value='".$this->infosDateComm['HEUREDEB_COMMISSION']."' />
 			<input type='hidden' name='heureFin' id='heureFin' value='".$this->infosDateComm['HEUREFIN_COMMISSION']."' />
 			<h2>Ordre du jour de la <a href='/calendrier-des-commissions?idComm=".$this->infosDateComm["COMMISSION_CONCERNE"]."' >".$this->infosCommission['LIBELLE_COMMISSION']."</a> du ".$this->dateFr."</h2><br/>
-			<h3>".$this->infosDateComm['LIBELLE_DATECOMMISSION']."</h3>";
-				
+			<h3>".$this->infosDateComm['LIBELLE_DATECOMMISSION'];
+
+			echo "</h3>";
+			
 			if($this->infosDateComm['GESTION_HEURES'] == 1){
 				echo "<button class='heures btn' id='non'  >Ne pas prendre en compte les heures</button>";
 			}else{
 				echo "<button class='heures btn' id='oui'  >Prendre en compte les heures</button>";
 			}
-			echo "
-				<div style='float:right'><span class='label' style='background-color:#e7e7e7;color:black;'>Validé</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class='label' style='background-color:#E2A420;color:black;'>En attente de Validation</span></div>
-			";
 	echo "	
 			<br/>
 			<input type='hidden' name='dateCommId' id='dateCommId' value='".$this->infosDateComm['ID_DATECOMMISSION']."' />
@@ -453,14 +455,24 @@ $(document).ready(function() {
 			<div class='row-fluid'>
 				<div id='calendar' name='calendar' class='span9'>
 				</div>
-				<div id='external-events' class='span3' style='color:black;border:1px solid black;text-align:center;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+		";
+		echo "
+			<span style='margin-left:45px;color:black;font-size:15px;'>
+				<span style='font-weight:bold;'>Dossier :</span>
+				<span class='label' style='background-color:#83bff6;color:black;font-size:15px;'>Validé</span>
+				<span class='label' style='background-color:#E2A420;color:black;font-size:15px;'>En attente de Validation</span>
+			</span>
+		";
+		echo "
+				<div id='external-events' class='span3' style='margin-top:5px;color:black;border:1px solid black;text-align:center;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 					<div style='' >
 		";			
+
 				echo "<h3>Liste des dossiers prévus</h3>";
 				if( count($this->listeDossierNonAffect) != 0 ){
 					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 						if($dossierNonAffect['VERROU_DOSSIER'] == 1){
-							$background = "#e7e7e7";
+							$background = "#83bff6";
 						}else{
 							$background = "#E2A420";
 						}
@@ -512,14 +524,23 @@ $(document).ready(function() {
 	}else if($this->infosDateComm['GESTION_HEURES'] == 0){
 		//dans le cas ou on ne prend pas en compte les heures (cas par défaut)
 		echo "
-			<h3>Liste des dossiers prévus</h3>
+			<h3 style='display:inline;'>Liste des dossiers prévus</h3>
+		";
+		echo "
+			<span style='margin-left:50px;color:black;font-size:15px;'>
+				<span style='font-weight:bold;'>Dossier :</span>
+				<span class='label' style='background-color:#83bff6;color:black;font-size:15px;'>Validé</span>
+				<span class='label' style='background-color:#E2A420;color:black;font-size:15px;'>En attente de Validation</span>
+			</span>
+		";
+		echo "
 			<ul class='unstyled sortable' id='listeDossierNoHours'>
 		";
 		//Zend_Debug::dump($this->listeDossierNonAffect);
 		if( count($this->listeDossierNonAffect) != 0 ){
 			foreach ($this->listeDossierNonAffect as $dossierNonAffect){
 				if($dossierNonAffect['VERROU_DOSSIER'] == 1){
-					$background = "#e7e7e7";
+					$background = "#83bff6";
 				}else{
 					$background = "#E2A420";
 				}

@@ -279,9 +279,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			}
 			
 			if($dossierAffect['VERROU_DOSSIER'] == 0){
-				$color = "#e7e7e7";
-			}else if($dossierAffect['VERROU_DOSSIER'] == 1){
 				$color = "#e2a420";
+			}else if($dossierAffect['VERROU_DOSSIER'] == 1){				
+				$color = "#83bff6";
 			}
 
             $items[] = array(
@@ -313,6 +313,10 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             $dateAttribDoss->add("5", Zend_Date::MINUTE);
             $dossAffect->HEURE_FIN_AFFECT = $dateAttribDoss->get('HH:mm');
             $dossAffect->save();
+			
+			$DBdossier = new Model_DbTable_Dossier;
+            $dossier = $DBdossier->find($this->_getParam('idDossier'))->current();
+			echo $dossier['VERROU_DOSSIER'];
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
