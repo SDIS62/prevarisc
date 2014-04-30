@@ -1263,7 +1263,6 @@ echo "
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 				";
-				//listeGroupementDossier($this->serviceInstructeurId);
 				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], null, 10);
 				echo "						
 					</div>
