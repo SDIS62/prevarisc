@@ -856,7 +856,7 @@
                 return $.map(data["response"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
             },
             formatItem: function(item) {
-                return item.LIBELLE_RUE;
+                return item.LIBELLE_RUE + ' (code insee : ' + item.NUMINSEE_COMMUNE + ')';
             }
         }).result(function(e, item) {
             $("#adresse-modal input[name='voie']").val( item.ID_RUE );
