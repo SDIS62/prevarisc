@@ -9,7 +9,9 @@ class UsersController extends Zend_Controller_Action
         $service_user = new Service_User;
         $service_search = new Service_Search;
 
-        $this->view->users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, false, 100)['results'];
+        $this->view->users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, true, 100)['results'];
+        $this->view->inactives_users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, false, 100)['results'];
+
         $this->view->groupes = $service_user->getAllGroupes();
     }
 
@@ -202,9 +204,9 @@ class UsersController extends Zend_Controller_Action
         $service_categorie = new Service_Categorie;
         $service_type = new Service_TypeActivite;
         $service_dossier = new Service_Dossier;
-        $service_genre = new Service_Genre;                  
+        $service_genre = new Service_Genre;
         $service_famille = new Service_Famille;
-        $service_classe = new Service_Classe;                          
+        $service_classe = new Service_Classe;
 
         $model_resource = new Model_DbTable_Resource;
 
@@ -215,7 +217,7 @@ class UsersController extends Zend_Controller_Action
         foreach ($types as $_type) {
             $types_sort[$_type['ID_TYPE']] = $_type;
         }
-    
+
         $type_sort = array();
 
         foreach ($types as $type) {
@@ -225,7 +227,7 @@ class UsersController extends Zend_Controller_Action
 
             $type_sort[$types_sort[$type["ID_TYPE"]]['LIBELLE_TYPE']][] = $type;
         }
-        
+
         $this->view->categories = $service_categorie->getAll();
         $this->view->types = $type_sort;
         $this->view->types_dossier = $service_dossier->getAllTypes();
@@ -247,7 +249,7 @@ class UsersController extends Zend_Controller_Action
 
         if($this->_request->isPost()) {
             try {
-                
+
                 $name = $text = '';
 
                 switch($this->_request->type_ressource) {

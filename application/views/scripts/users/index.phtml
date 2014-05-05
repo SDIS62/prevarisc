@@ -18,6 +18,7 @@
         <a href='/users/edit-group?gid=<?php echo $_GET['gid'] ?>' class='btn pull-right' >Modifier le groupe</a>
         <?php endif ?>
 
+        <h4>Utilisateurs actifs <small>(<?php echo count($this->users)?> utilisateurs)</small></h4>
         <?php if($this->users == null) : ?>
             <p class='lead'><strong>Aucun résultat.</strong></p>
         <?php else : ?>
@@ -37,13 +38,35 @@
                         <td style='font-style: italic' ><?php echo $user["USERNAME_UTILISATEUR"] ?></td>
                         <td><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></td>
                         <td><?php echo $user["LIBELLE_FONCTION"] ?></td>
-                        <td>
-                            <?php if(!$user["ACTIF_UTILISATEUR"]) : ?>
-                                <span class='label'>Inactif</span>
-                            <?php else : ?>
-                            <?php echo ( time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime') ) ? "<span class='label label-success'>En ligne</span>" : "<span class='label label-inverse'>Hors ligne</span>" ?>
-                            <?php endif ?>
-                        </td>
+                        <td><?php echo ( time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime') ) ? "<span class='label label-success'>En ligne</span>" : "<span class='label label-inverse'>Hors ligne</span>" ?></td>
+                        <td><a href='/users/edit/uid/<?php echo $user["uid"] ?>'>Modifier</a></td>
+                    </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+        <?php endif ?>
+
+        <h4>Utilisateurs inactifs <small>(<?php echo count($this->inactives_users)?> utilisateurs)</small></h4>
+        <?php if($this->inactives_users == null) : ?>
+            <p class='lead'><strong>Aucun résultat.</strong></p>
+        <?php else : ?>
+            <table class='table table-condensed table-striped'>
+                <thead>
+                    <tr>
+                        <th>Identifiant</th>
+                        <th>Nom et prénom</th>
+                        <th>Fonction</th>
+                        <th>Etat</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach( $this->inactives_users as $user ) : ?>
+                    <tr <?php if(!$user["ACTIF_UTILISATEUR"]) echo "class='muted'" ?> >
+                        <td style='font-style: italic' ><?php echo $user["USERNAME_UTILISATEUR"] ?></td>
+                        <td><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></td>
+                        <td><?php echo $user["LIBELLE_FONCTION"] ?></td>
+                        <td><span class='label'>Inactif</span></td>
                         <td><a href='/users/edit/uid/<?php echo $user["uid"] ?>'>Modifier</a></td>
                     </tr>
                     <?php endforeach ?>
@@ -51,5 +74,5 @@
             </table>
         <?php endif ?>
     </div>
-    
+
 </div>
