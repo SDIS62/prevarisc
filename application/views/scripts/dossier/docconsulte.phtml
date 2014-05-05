@@ -244,7 +244,7 @@ foreach($this->listeNatures as $index => $nature){
 
 	//on boucle sur les documents ajoutés à afficher
 	foreach($this->listeDocsAjout[$nature["ID_NATURE"]] as $documentAjout)
-		echo $this->afficheDoc($nature["ID_NATURE"],$documentAjout['ID_DOCAJOUT'],$documentAjout['LIBELLE_DOCAJOUT'],$documentAjout['REF_DOCAJOUT'],$documentAjout['DATE_DOCAJOUT'],"_aj");
+		echo $this->afficheDoc($this->infosDossier['VERROU_DOSSIER'],$nature["ID_NATURE"],$documentAjout['ID_DOCAJOUT'],$documentAjout['LIBELLE_DOCAJOUT'],$documentAjout['REF_DOCAJOUT'],$documentAjout['DATE_DOCAJOUT'],"_aj");
 
 	if($this->infosDossier['VERROU_DOSSIER'] == 0){
 		echo "</ul>
