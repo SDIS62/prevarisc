@@ -16,7 +16,7 @@ foreach($this->listeTextesAppl as $val => $ue){
 	echo "
 		<div class='row-fluid'>
 			<div class='span1'>
-				<input type='checkbox' name='texte' id='".$ue['ID_TEXTESAPPL']."' ".( (in_array($ue['ID_TEXTESAPPL'],$this->listeIdTexte))? "checked" : "" )."/>
+				<input type='checkbox' name='texte' ".( ($this->infosDossier['VERROU_DOSSIER'] == 1)? "disabled='disabled'" : "")." id='".$ue['ID_TEXTESAPPL']."' ".( (in_array($ue['ID_TEXTESAPPL'],$this->listeIdTexte))? "checked" : "" )."/>
 			</div>
 			<div class='span11'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
 			<hr class='clear'>

@@ -1,12 +1,16 @@
 <input type='hidden' name='typePJ' id='typePJ' value='<?php echo $this->type ?>' />
 <input type='hidden' name='idLinkPJ' id='idLinkPJ' value='<?php echo $this->identifiant ?>' />
 
-<h3>Liste de pièces jointes<button id='addPJ' class='btn' style='float: right; margin-left: 1em;' >Ajouter une piece jointe</button></h3>
-
-
-<div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>		
-
-
+<h3>Liste de pièces jointes
+<?php 
+	if($this->verrou == 0){
+		echo "
+			<button id='addPJ' class='btn' style='float: right; margin-left: 1em;' >Ajouter une piece jointe</button>
+		";
+	}
+?>
+</h3>
+<div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>
 <div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
 	<table id='tabPieceJointe' class='table'> 
 		<thead> 
@@ -14,12 +18,13 @@
 				<th>Nom</th> 
 				<th>Description</th>
 				<th>Date d'ajout</th>
-                <?php if($this->type == 'dossier') echo "<th>Rapport validé</th>"?>
 				<th></th>
 			</tr> 
 		</thead> 
 		<tbody>
-			<?php echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant)) ?>
+		<?php 
+			echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou)) 
+		?>
 		</tbody>
 	</table>
 </div>

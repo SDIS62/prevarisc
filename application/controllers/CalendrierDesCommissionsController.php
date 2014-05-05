@@ -277,6 +277,12 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 					$affichage .= $ue['NUM_DOCURBA']." . ";
 				}
 			}
+			
+			if($dossierAffect['VERROU_DOSSIER'] == 0){
+				$color = "#e2a420";
+			}else if($dossierAffect['VERROU_DOSSIER'] == 1){				
+				$color = "#83bff6";
+			}
 
             $items[] = array(
                 "id" => $dossierAffect['ID_DOSSIER'],
@@ -284,6 +290,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 "title" => "   ".$affichage,
                 "start" => date($dateDebut." ".$dossierAffect['HEURE_DEB_AFFECT']),
                 "end" => date($dateDebut." ".$dossierAffect['HEURE_FIN_AFFECT']),
+				"backgroundColor" => $color,
                 "allDay" => false,
             );
 
@@ -306,6 +313,10 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             $dateAttribDoss->add("5", Zend_Date::MINUTE);
             $dossAffect->HEURE_FIN_AFFECT = $dateAttribDoss->get('HH:mm');
             $dossAffect->save();
+			
+			$DBdossier = new Model_DbTable_Dossier;
+            $dossier = $DBdossier->find($this->_getParam('idDossier'))->current();
+			echo $dossier['VERROU_DOSSIER'];
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',

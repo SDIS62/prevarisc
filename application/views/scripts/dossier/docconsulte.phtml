@@ -235,9 +235,9 @@ foreach($this->listeNatures as $index => $nature){
 			}
 			
 			if($exist){
-				echo $this->afficheDoc($nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC'],$ref,$date);
+				echo $this->afficheDoc($this->infosDossier['VERROU_DOSSIER'],$nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC'],$ref,$date);
 			}else{
-				echo $this->afficheDoc($nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC']);
+				echo $this->afficheDoc($this->infosDossier['VERROU_DOSSIER'],$nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC']);
 			}
 		}
 	}
@@ -246,12 +246,14 @@ foreach($this->listeNatures as $index => $nature){
 	foreach($this->listeDocsAjout[$nature["ID_NATURE"]] as $documentAjout)
 		echo $this->afficheDoc($nature["ID_NATURE"],$documentAjout['ID_DOCAJOUT'],$documentAjout['LIBELLE_DOCAJOUT'],$documentAjout['REF_DOCAJOUT'],$documentAjout['DATE_DOCAJOUT'],"_aj");
 
-	echo "</ul>
+	if($this->infosDossier['VERROU_DOSSIER'] == 0){
+		echo "</ul>
+				<hr class='clear' />
+				<p><a href='' id='docAjout_".$nature["ID_NATURE"]."' class='docAjout' >+ Ajouter un nouveau document</a></p>
+			</div>
 			<hr class='clear' />
-			<p><a href='' id='docAjout_".$nature["ID_NATURE"]."' class='docAjout' >+ Ajouter un nouveau document</a></p>
-		</div>
-		<hr class='clear' />
-	";
+		";
+	}
 }
 
 echo "

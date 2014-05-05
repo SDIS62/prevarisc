@@ -447,7 +447,13 @@ echo "
 								<input type='hidden' name='idEtablissement' value='".$etab['ID_ETABLISSEMENT']."' />
 								&nbsp;&nbsp;
 								<span>
-									<button class='deleteChoix btn' >Supprimer l'etablissement</button>
+						";
+						if($this->infosDossier['VERROU_DOSSIER'] == 0){
+							echo "
+								<button class='deleteChoix btn' >Supprimer l'etablissement</button>
+							";
+						}
+						echo "
 								</span>
 								<span style='display:none;' >
 									<button class='confirmDelete btn' >Supprimer l'etablissement</button>
@@ -457,34 +463,36 @@ echo "
 						";
 					}
 				}
-				
-			echo "
-				<hr class='clear'/>
-				<input type='radio' name='linkType' value='etablissement'>Etablissement&nbsp;&nbsp;
-				<input type='text' id='saisieEtab' value='' style='width:500px;display:none;' />
-				
-				<button class='add btn' id='add' style='display:none;' >Lier l'établissement au dossier</button>
-				<button class='cancelAdd btn' id='cancelAdd' style='display:none;' >Choisir un autre établissement</button>
-				<input type='hidden' name='idSelect' id='idSelect' value=''  />
-			</div>
-			";
-			
+			if($this->infosDossier['VERROU_DOSSIER'] == 0){
+				echo "
+					<hr class='clear'/>
+					<input type='radio' name='linkType' value='etablissement'>Etablissement&nbsp;&nbsp;
+					<input type='text' id='saisieEtab' value='' style='width:500px;display:none;' />
+					
+					<button class='add btn' id='add' style='display:none;' >Lier l'établissement au dossier</button>
+					<button class='cancelAdd btn' id='cancelAdd' style='display:none;' >Choisir un autre établissement</button>
+					<input type='hidden' name='idSelect' id='idSelect' value=''  />
+				</div>
+				";
+			}
 			echo "<br/><br/>";
 			echo "
 				<form id='listeEnfantEtab' >
 				<ul class='recherche_liste unstyled'>
 			";
-			if(isset($this->etablissement))
-			{
-				echo $this->partialLoop('dossier/results/etablissement.phtml', $this->etablissement['etablissement_lies']);
+			if($this->infosDossier['VERROU_DOSSIER'] == 0){
+				if(isset($this->etablissement))
+				{
+					echo $this->partialLoop('dossier/results/etablissement.phtml', $this->etablissement['etablissement_lies']);
+				}			
+				echo "
+					</ul>
+					<button class='btn' id='save-liens' >Sauvegarder les liaisons</button>
+					</form>
+					<br/><br/><br/><br/>
+				";
 			}
 			echo "
-				</ul>
-				<button class='btn' id='save-liens' >Sauvegarder les liaisons</button>
-				</form>
-			";
-			echo "
-				<br/><br/><br/><br/>
 		
 			<h2>Liste des dossiers liés au dossier</h2>
 			<div id='listeDossier'>
@@ -512,15 +520,27 @@ echo "
 			echo "	
 				</div>
 			<br/>
-			<div class='grid_14 alpha form'>
-				<button class='LinkToDossier btn' >Lier à un dossier</button>
-				<!--
-				<input type='radio' name='linkType' value='dossier'>Dossier<br/><br/>
-				<input type='text' id='saisieDossier' value='' style='width:250px;display:none;' />
-				-->
-			</div>
+			";
+			if($this->infosDossier['VERROU_DOSSIER'] == 0){
+				echo "
+					<div class='grid_14 alpha form'>
+						<button class='LinkToDossier btn' >Lier à un dossier</button>
+						<!--
+						<input type='radio' name='linkType' value='dossier'>Dossier<br/><br/>
+						<input type='text' id='saisieDossier' value='' style='width:250px;display:none;' />
+						-->
+					</div>
+				";
+			}
+			echo "
 			<hr class='clear'/>
 		</div>
 	</div>
 ";
 ?>
+
+<script>
+	$(document).ready(function(){
+		$('.icone_enfants').remove();
+	});
+</script>
