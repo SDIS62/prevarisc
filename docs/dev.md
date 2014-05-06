@@ -21,7 +21,7 @@
 		<td>GET etablissement</td>
 		<td>
 			Retourne un seul établissement identifié par le paramètre id.<br>
-			
+
 			<strong>URL </strong>/api/1.0/etablissement<br>
 
 			<strong>Paramètres</strong>
@@ -36,7 +36,7 @@
 		<td>GET etablissement/historique</td>
 		<td>
 			Retourne l'historique complet d'un établissement identifié par le paramètre id.<br>
-			
+
 			<strong>URL </strong>/api/1.0/etablissement/historique<br>
 
 			<strong>Paramètres</strong>
@@ -51,7 +51,7 @@
 		<td>GET etablissement/descriptifs</td>
 		<td>
 			Retourne les descriptifs de l'établissement identifié par le paramètre id.<br>
-			
+
 			<strong>URL </strong>/api/1.0/etablissement/descriptifs<br>
 
 			<strong>Paramètres</strong>
@@ -66,7 +66,7 @@
 		<td>GET etablissement/textes_applicables</td>
 		<td>
 			Retourne les textes applicables de l'établissement identifié par le paramètre id.<br>
-			
+
 			<strong>URL </strong>/api/1.0/etablissement/textes_applicables<br>
 
 			<strong>Paramètres</strong>
@@ -81,7 +81,7 @@
 		<td>GET etablissement/pieces_jointes</td>
 		<td>
 			Retourne les pièces jointes de l'établissement identifié par le paramètre id.<br>
-			
+
 			<strong>URL </strong>/api/1.0/etablissement/pieces_jointes<br>
 
 			<strong>Paramètres</strong>
@@ -96,7 +96,7 @@
 		<td>GET etablissement/contacts</td>
 		<td>
 			Retourne les contacts de l'établissement identifié par le paramètre id.<br>
-			
+
 			<strong>URL </strong>/api/1.0/etablissement/contacts<br>
 
 			<strong>Paramètres</strong>
@@ -111,7 +111,7 @@
 		<td>GET etablissement/dossiers</td>
 		<td>
 			Retourne une collection de dossiers appartenants à l'établissement identifié par le paramètre id.<br>
-			
+
 			<strong>URL </strong>/api/1.0/etablissement/dossiers<br>
 
 			<strong>Paramètres</strong>
@@ -126,7 +126,7 @@
 		<td>GET etablissement/defaults_values</td>
 		<td>
 			Retourne les valeurs par défauts (périodicité, commission, préventionnistes) pour un établissement en fonction des paramètres données.<br>
-			
+
 			<strong>URL </strong>/api/1.0/defaults_values<br>
 
 			<strong>Paramètres</strong>
@@ -161,7 +161,7 @@
 			<td>GET search/etablissements</td>
 			<td>
 				Retourne une collection d'établissements correspondants à la requête.<br>
-				
+
 				<strong>URL </strong>/api/1.0/search/etablissements<br>
 
 				<strong>Paramètres</strong>
@@ -189,11 +189,13 @@
 			<td>GET search/dossiers</td>
 			<td>
 				Retourne une collection de dossiers correspondants à la requête.<br>
-				
+
 				<strong>URL </strong>/api/1.0/search/dossiers<br>
 
 				<strong>Paramètres</strong>
 				<ul>
+					<li>types : Types des dossiers recherchés</li>
+					<li>objet : Objet du document.</li>
 					<li>num_doc_urba : Numéro de document d'urbanisme présent dans le dossier recherché.</li>
 					<li>count : Nombre maximum de dossiers dans le résultat. Défaut : 10, Maximum : 100.</li>
 					<li>page : Numéro de page à afficher.</li>
@@ -206,7 +208,7 @@
 			<td>GET search/users</td>
 			<td>
 				Retourne une collection d'utilisateurs correspondants à la requête.<br>
-				
+
 				<strong>URL </strong>/api/1.0/search/users<br>
 
 				<strong>Paramètres</strong>
@@ -238,7 +240,7 @@
 			<td>GET contacts</td>
 			<td>
 				Récupération de l'ensemble des contacts.<br>
-				
+
 				<strong>URL </strong>/api/1.0/contacts<br>
 
 				<strong>Paramètres</strong>
@@ -265,7 +267,7 @@
 			<td>GET adresse/get_communes</td>
 			<td>
 				Récupération des communes via le nom ou le code postal.
-				
+
 				<strong>URL </strong>/api/1.0/adresse/get_communes<br>
 
 				<strong>Paramètres</strong>
@@ -280,7 +282,7 @@
 			<td>GET adresse/get_types_voie_par_ville</td>
 			<td>
 				Retourne les types de voie d'une commune identifiée par son code insee.
-				
+
 				<strong>URL </strong>/api/1.0/adresse/get_types_voie_par_ville<br>
 
 				<strong>Paramètres</strong>
@@ -295,7 +297,7 @@
 			<td>GET adresse/get_voies</td>
 			<td>
 				Retourne les voies par rapport à une ville.
-				
+
 				<strong>URL </strong>/api/1.0/adresse/get_voies<br>
 
 				<strong>Paramètres</strong>
@@ -323,7 +325,7 @@
 			<td>GET test</td>
 			<td>
 				Retourne un résultat test.<br>
-				
+
 				<strong>URL </strong>/api/1.0/test<br>
 			</td>
 		</tr>
