@@ -52,7 +52,7 @@
             <dl class='dl-horizontal'>
                 <dt>Genre</dt>
                 <dd>
-                    <select name='ID_GENRE'> <!-- genre -->
+                    <select name='ID_GENRE'>
                         <?php foreach( $this->DB_genre as $genre ) : ?>
                             <option value='<?php echo $genre["ID_GENRE"] ?>' <?php if( $genre["ID_GENRE"] == $this->etablissement['informations']["ID_GENRE"] ) echo "selected" ?> >
                                 <?php echo $genre["LIBELLE_GENRE"] ?>
@@ -613,7 +613,7 @@
 
                 // Cellule
                 case '3':
-                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_donnees_pratiques').show();
+                    $('.champ_types, .champ_effectifs, .champ_plans, .champ_donnees_pratiques').show();
                     $('.etablissements_enfants').hide();
                     break;
 
