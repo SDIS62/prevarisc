@@ -109,6 +109,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $dossiers_avis_diff = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("DIFFEREAVIS_DOSSIER", 1)->run();
             $presence_avis_differe = count($dossiers_avis_diff) > 0;
 
+            // Y'a t'il un dossier avec avis différé sur l'établissement ?
+            $dossiers_echeancier = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("dossiernature.ID_NATURE", 46)->run();
+            $presence_echeancier = count($dossiers_echeancier) > 0;
+
             // Récupération des établissements liés
             $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray();
 
@@ -152,6 +156,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
                 )),
                 'presence_avis_differe' => $presence_avis_differe,
+                'presence_echeancier' => $presence_echeancier,
                 'facteur_dangerosite' => $facteur_dangerosite,
                 'donnees_pratiques' => $donnees_pratiques,
                 'parents' => $etablissement_parents,

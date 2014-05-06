@@ -15,7 +15,11 @@
     </h2>
 
     <!-- Avis -->
-    <?php if($this->etablissement['avis'] != null) : ?>
+    <?php if($this->etablissement['presence_avis_differe'] == true) : ?>
+        <p class='label label-info'>
+            Présence d'un dossier avec avis differé
+        </p>
+    <?php elseif($this->etablissement['avis'] != null) : ?>
         <p class='avis <?php echo $this->etablissement['avis'] == 1 ? 'F' : 'D' ?>'>
             <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') . ($this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation ") ?>
             <?php if($this->etablissement['avis'] != 1 && $this->etablissement['facteur_dangerosite'] > 0) : ?>
@@ -24,10 +28,10 @@
         </p>
     <?php endif ?>
 
-    <!-- Présence d'un dossier avec avis differé -->
-    <?php if($this->etablissement['presence_avis_differe'] == true) : ?>
+    <!-- Présence d'un dossier échéancier de travaux -->
+    <?php if($this->etablissement['presence_echeancier'] == true) : ?>
         <p class='label label-info'>
-            Présence d'un dossier avec avis differé
+            Présence d'un échéancier de travaux
         </p>
     <?php endif ?>
 
