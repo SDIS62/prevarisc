@@ -22,9 +22,8 @@ if($this->infosDossier['VERROU_DOSSIER'] == 0){
 	";
 }
 echo "
-	<ul class='".( ($this->infosDossier['VERROU_DOSSIER'] == 0)? "listePrescriptions" : "")."unstyled'>
+	<ul class='listePrescriptions unstyled'>
 ";
-
 
 $nbPrescDossier = count($this->prescriptionDossier);
 //echo $nbPrescDossier;
@@ -81,6 +80,8 @@ echo "
 <script type="text/javascript">
 
 $(document).ready(function(){
+
+<?php if($this->infosDossier['VERROU_DOSSIER'] == 0){ ?>
 	$(".listePrescriptions").sortable({
 		update: function(event, ui) {
 			var listePrescriptionUpdate = new Array();
@@ -117,10 +118,9 @@ $(document).ready(function(){
 					return false;
 				}
 			});
-			
 		}	
 	});
-
+<?php } ?>
 //Ajout prescription type
 	var dialogPrescType = $('<div style="display:none;"></div>').appendTo('body');
 	
