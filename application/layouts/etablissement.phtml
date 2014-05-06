@@ -13,26 +13,30 @@
         <?php echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' title='" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "' />" : ''; ?>
         <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." " ?>
     </h2>
-    
+
     <!-- Avis -->
-    <?php if($this->etablissement['avis'] != null) : ?>
+    <?php if($this->etablissement['presence_avis_differe'] == true) : ?>
+        <p class='label label-info'>
+            Présence d'un dossier avec avis differé
+        </p>
+    <?php elseif($this->etablissement['avis'] != null) : ?>
         <p class='avis <?php echo $this->etablissement['avis'] == 1 ? 'F' : 'D' ?>'>
-            <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') ." à l'exploitation " ?>
+            <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') . ($this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation ") ?>
             <?php if($this->etablissement['avis'] != 1 && $this->etablissement['facteur_dangerosite'] > 0) : ?>
             · Facteur de criticité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
             <?php endif ?>
         </p>
     <?php endif ?>
 
-    <!-- Présence d'un dossier avec avis differé -->
-    <?php if($this->etablissement['presence_avis_differe'] == true) : ?>
+    <!-- Présence d'un dossier échéancier de travaux -->
+    <?php if($this->etablissement['presence_echeancier'] == true) : ?>
         <p class='label label-info'>
-            Présence d'un dossier avec avis differé
+            Présence d'un échéancier de travaux
         </p>
     <?php endif ?>
-    
+
     &nbsp;
-    
+
     <!-- Statut -->
     <p>Statut : <?php echo $this->etablissement['informations']['LIBELLE_STATUT'] ?></p>
 

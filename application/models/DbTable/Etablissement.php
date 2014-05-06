@@ -3,7 +3,7 @@
     {
         protected $_name="etablissement";
         protected $_primary = "ID_ETABLISSEMENT";
-        
+
         public function getTypesActivitesSecondaires($id_ets_info)
         {
             $select = $this->select()
@@ -12,7 +12,7 @@
                     ->join("type", "ID_TYPE_SECONDAIRE = ID_TYPE", "LIBELLE_TYPE")
                     ->join("typeactivite", "ID_TYPEACTIVITE_SECONDAIRE = ID_TYPEACTIVITE", "LIBELLE_ACTIVITE")
                     ->where("ID_ETABLISSEMENTINFORMATIONS = ?", $id_ets_info);
-                    
+
             $result = $this->fetchAll($select);
             return $result == null ? null : $result->toArray();
         }
@@ -181,6 +181,7 @@
                 ->setIntegrityCheck(false)
                 ->from("etablissementlie", null)
                 ->joinLeft("etablissementinformations", "etablissementinformations.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT")
+                ->joinLeft("categorie", "categorie.ID_CATEGORIE = etablissementinformations.ID_CATEGORIE")
                 ->where("etablissementlie.ID_FILS_ETABLISSEMENT = '$id_etablissement'")
                 ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT ) ");
 
