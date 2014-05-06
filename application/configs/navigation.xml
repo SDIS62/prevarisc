@@ -687,17 +687,17 @@
 			<controller>dossier</controller>	
 			<pages>
 				<index>
-					<controller>Index</controller>
+					<controller>dossier</controller>
 					<action>index</action>
 					<privilege>view_doss</privilege>
 				</index>
 				<verrou>
-					<controller>Verrou</controller>
+					<controller>dossier</controller>
 					<action>verrou</action>
 					<privilege>verrouillage_dossier</privilege>
 				</verrou>
 				<deverrou>
-					<controller>Deverrou</controller>
+					<controller>dossier</controller>
 					<action>deverrou</action>
 					<privilege>verrouillage_dossier</privilege>
 				</deverrou>
