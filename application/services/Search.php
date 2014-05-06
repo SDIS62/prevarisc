@@ -122,7 +122,7 @@ class Service_Search
                 if($genres !== null && count($genres) > 0) {
                     foreach($genres as $genre) {
                         switch($genre) {
-                            case "1": 
+                            case "1":
                                 $this->setCriteria($select, "adressecommunesite.LIBELLE_COMMUNE", $city);
                                 if($street_id !== null) {
                                     $this->setCriteria($select, "etablissementadressesite.ID_RUE", $street_id);
@@ -134,7 +134,7 @@ class Service_Search
                                     $this->setCriteria($select, "etablissementadressecell.ID_RUE", $street_id);
                                 }
                                 break;
-                                
+
                             default:
                                 $this->setCriteria($select, "adressecommune.LIBELLE_COMMUNE", $city);
                                 if($street_id !== null) {
@@ -147,7 +147,7 @@ class Service_Search
                     $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_SITE", $city, true, "orHaving");
                     $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_CELLULE", $city, true, "orHaving");
                     $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_DEFAULT", $city, true, "orHaving");
-                    
+
                     if($street_id !== null) {
                         $this->setCriteria($select, "ID_RUE_SITE", $street_id, true, "orHaving");
                         $this->setCriteria($select, "ID_RUE_CELL", $street_id, true, "orHaving");
@@ -186,7 +186,7 @@ class Service_Search
 
         return $results;
     }
-    
+
     /**
      * Recherche des dossiers
      *
@@ -296,11 +296,15 @@ class Service_Search
                 ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_UTILISATEUR = u.ID_UTILISATEUR")
                 ->joinLeft("etablissementinformations", "etablissementinformations.ID_ETABLISSEMENTINFORMATIONS = etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS")
                 ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(infos.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations as infos WHERE etablissementinformations.ID_ETABLISSEMENT = infos.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL")
-                ->group("u.ID_UTILISATEUR");
+                ->group("u.ID_UTILISATEUR")
+                ->order("utilisateurinformations.NOM_UTILISATEURINFORMATIONS");
 
             // Critères : activité
             if($actif === true) {
                 $this->setCriteria($select, "u.ACTIF_UTILISATEUR", 1);
+            }
+            elseif($actif === false) {
+              $this->setCriteria($select, "u.ACTIF_UTILISATEUR", 0);
             }
 
             // Critères : groupe

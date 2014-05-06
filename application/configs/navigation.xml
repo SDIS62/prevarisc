@@ -691,6 +691,16 @@
 					<action>index</action>
 					<privilege>view_doss</privilege>
 				</index>
+				<verrou>
+					<controller>Verrou</controller>
+					<action>verrou</action>
+					<privilege>verrouillage_dossier</privilege>
+				</verrou>
+				<deverrou>
+					<controller>Deverrou</controller>
+					<action>deverrou</action>
+					<privilege>verrouillage_dossier</privilege>
+				</deverrou>
 				<piece-jointe>
                     <label>Piece Jointe</label>
                     <controller>piece-jointe</controller>

@@ -24,7 +24,7 @@
             <h4 class='h4_subtitle'>Général</h4>
             <div>
                 <input style='width: 100%; box-sizing: border-box; height: 2.5em;' type='text' placeholder="Libellé de l'établissement" name='LIBELLE_ETABLISSEMENTINFORMATIONS' value='<?php if ( $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"] ) echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' />
-                
+
                 <dl class='dl-horizontal'>
                     <!-- Numéro d'identification -->
                     <dt>Identifiant</dt>
@@ -44,7 +44,7 @@
                                 </option>
                             <?php endforeach ?>
                         </select>
-                    </dd> 
+                    </dd>
                 </dl>
             </div>
 
@@ -135,7 +135,7 @@
                                 <?php endforeach ?>
                             </select>
                         </li>
-                        
+
                         <!-- Types et activités secondaires -->
                         <?php echo $this->partial('etablissement/partials/partial-type-activites-secondaire.phtml', array('types' => $this->DB_type, 'activites' => $this->DB_activite)) ?>
                         <?php if($this->etablissement['types_activites_secondaires']) : ?>
@@ -155,15 +155,16 @@
                     </p>
                 </dd>
 
+                <!-- Local à sommeil -->
                 <dt class='champs champ_localsommeil'>Local à sommeil ?</dt>
                 <dd class='champs champ_localsommeil'>
                     <p>
-                        <input type='hidden' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='0' />
-                        <input type='checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+                        <input type='radio' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='0' <?php if( !$this->add ) echo "checked" ?> /> Non
+                        <input type='radio' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> /> Oui
                     </p>
                 </dd>
             </dl>
-            
+
             <!-- Rubriques -->
             <h4 class='champs_icpe champs rubrique h4_subtitle'>Rubriques ICPE <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_rubriques').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter une rubrique</a></h4>
             <table class='table table-condensed champs_icpe champs rubrique'>
@@ -187,7 +188,7 @@
                     <?php endif ?>
                 </tbody>
             </table>
- 
+
             <!-- Les effectifs -->
             <h4 class='champ_effectifs champs h4_subtitle'>Les effectifs</h4>
             <dl class='dl-horizontal champ_effectifs champs'>
@@ -215,7 +216,7 @@
                     <input type='text' name='EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"] ?>' />
                 </dd>
             </dl>
-            
+
             <!-- Plan -->
             <h4 class="champ_plans champs h4_subtitle">Plans d'intervention <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter un plan</a></h4>
             <table class='table table-condensed champ_plans champs'>
@@ -237,12 +238,12 @@
                     <?php endif ?>
                 </tbody>
             </table>
-            
+
             <!-- Etablissement lié -->
             <h4 class='h4_subtitle'>Établissements liés <?php if($this->etablissement['general']) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>&libelle=<?php echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
             <dl class='dl-horizontal' >
                 <dt class="etablissement_pere">Père de l'établissement</dt>
-                <dd class="etablissement_pere">	
+                <dd class="etablissement_pere">
                     Nom de l'établissement : <strong><?php if(count($this->etablissement['parents']) > 0) echo htmlspecialchars(end($this->etablissement['parents'])["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES); elseif( isset($_GET["libelle"]) ) echo htmlspecialchars($_GET["libelle"], ENT_QUOTES)  ?></strong><br/>
                     <input placeholder="Libellé de l'établissement père ..." type='text' style='width: 100%; box-sizing: border-box; height: 2.5em' />
                     <input type='hidden' name='ID_PERE' value='<?php if(count($this->etablissement['parents']) > 0) echo end($this->etablissement['parents'])["ID_ETABLISSEMENT"]; elseif( isset($_GET["pere"]) ) echo $_GET["pere"] ?>' />
@@ -321,13 +322,13 @@
                 <dd>
                     <input type='text' name='TELEPHONE_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["TELEPHONE_ETABLISSEMENT"] ?>' />
                 </dd>
-                
+
                 <!-- Fax -->
                 <dt>Fax</dt>
                 <dd>
                     <input type='text' name='FAX_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["FAX_ETABLISSEMENT"] ?>' />
                 </dd>
-                
+
                 <!-- Courriel -->
                 <dt>Courriel</dt>
                 <dd>
@@ -444,7 +445,7 @@
                 <input type='hidden' name='type_voie' />
                 <input type='hidden' name='voie' />
             </dd>
-            
+
             <dt>Numéro</dt>
             <dd>
                 <input class="input-small" type='text' name='numero' placeholder='Numéro ...' disabled />
@@ -490,7 +491,7 @@
                 numinsee: $("#adresses").find('tr.adresse').first().find('input[type="hidden"]').first().val(),
                 type: $("select[name='ID_TYPE']").find('option:selected').val(),
                 categorie: $("select[name='ID_CATEGORIE']").find('option:selected').val(),
-                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").is(':checked'),
+                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").is(':checked'),
                 classe: $("select[name='ID_CLASSE']").find('option:selected').val(),
                 id_etablissement_pere: $("input[name='ID_PERE']").val(),
                 ids_etablissements_enfants: etablissements_enfants
@@ -502,7 +503,7 @@
                     var date = new Date($('input[name="date"]').val());
                     $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text());
                     $('#confirm-modal-periodicite .confirm-modal-input').text($('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val());
-                    $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]').is(':checked') ? 'Oui' : 'Non' );
+                    $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"][value=1]').is(':checked') ? 'Oui' : 'Non' );
                     $('table#preventionnistes tbody tr.preventionniste').each(function(index) { preventionnistes[index] = $(this).find('td').first().find('span').text(); });
                     $('#confirm-modal-preventionnistes .confirm-modal-input').text(preventionnistes.toString() == '' ? 'Aucuns' : preventionnistes.toString());
                     $('#confirm-modal-date .confirm-modal-input').text(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
@@ -563,12 +564,12 @@
                             $('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val($(this).text());
                             break;
                         case 'confirm-modal-localsommeil':
-                            $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]').attr('checked', $(this).text() == 'Oui');
+                            $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"][value=1]').attr('checked', $(this).text() == 'Oui');
                             break;
                     }
                 }
             });
-            
+
             $("form#etablissement").submit();
         });
 
@@ -625,7 +626,7 @@
                 // IGH
                 case '5':
                     $('.champ_periodicite, .champ_classe, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_donnees_pratiques').show();
-                    $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").attr('checked', false).change();
+                    $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").attr('checked', false).change();
                     break;
 
                 // EIC
@@ -633,7 +634,7 @@
                     $('.champ_icpe, .champ_effectifs, .champ_plans, .champ_adresse').show();
                     $('.etablissements_enfants, .effectif_heberge, .effectif_public').hide();
                     $("input[name='ICPE_ETABLISSEMENTINFORMATIONS']").change();
-                    $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").attr('checked', false).change();
+                    $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").attr('checked', false).change();
                     break;
             }
         }).change();
@@ -667,7 +668,7 @@
 
         // Affichage ou non de l'effectif hebergé en fonction de la checkbox local sommeil
         $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").change(function() {
-            if( $(this).is(":checked") )
+            if( $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").is(":checked") )
                 $(".effectif_heberge").show();
             else
                 $(".effectif_heberge").hide();
@@ -709,11 +710,11 @@
                                 case 1:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_SITE;
                                     break;
-                                    
+
                                 case 3:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_CELLULE;
                                     break;
-                                    
+
                                 default:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_DEFAULT == null ? "non localisé" : etablissement.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
                             }
@@ -758,11 +759,11 @@
                                 case 1:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_SITE;
                                     break;
-                                    
+
                                 case 3:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_CELLULE;
                                     break;
-                                    
+
                                 default:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_DEFAULT == null ? "non localisé" : etablissement.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
                             }
@@ -855,7 +856,7 @@
                 return $.map(data["response"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
             },
             formatItem: function(item) {
-                return item.LIBELLE_RUE;
+                return item.LIBELLE_RUE + ' (code insee : ' + item.NUMINSEE_COMMUNE + ')';
             }
         }).result(function(e, item) {
             $("#adresse-modal input[name='voie']").val( item.ID_RUE );

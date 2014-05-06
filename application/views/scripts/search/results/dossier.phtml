@@ -4,11 +4,11 @@
     <?php if($this->NB_DOSS_LIES > 0) : ?>
     <span class="icone_enfants" ><i class='ui-icon ui-icon-triangle-1-e' style='position: relative; left: -25px; float: left; margin-right: -25px;' ></i></span>
     <?php endif ?>
-    
+
     <!-- Nom du dossier -->
     <span class="doss-nom">
         <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . $this->OBJET_DOSSIER : ""), ENT_QUOTES) ?>'>
-            <?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . substr($this->OBJET_DOSSIER, 0, 100) . ( strlen($this->OBJET_DOSSIER) > 100 ? "(...)" : "" ) : "") ?>
+            <?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . substr($this->OBJET_DOSSIER, 0, 70) . ( strlen($this->OBJET_DOSSIER) > 70 ? "(...)" : "" ) : "") ?>
         </a>
     </span>
 
@@ -67,7 +67,7 @@
     <?php else : ?>
     <span class="avis">Avis indisponible</span>
     <?php endif ?>
-    
+
     <!-- Alerte sur la reception de travaux -->
     <?php if($this->ALERTE_RECEPTION_TRAVAUX > 0) : ?>
     <span class='avis' style='background-color: #3a87ad'>Présence d'un dossier de reception de travaux</span>

@@ -22,8 +22,8 @@ class SessionController extends Zend_Controller_Action
                 }
 
                 // Identifiants
-                $username = $this->_request->username;
-                $password = $this->_request->passwd;
+                $username = $this->_request->prevarisc_login_username;
+                $password = $this->_request->prevarisc_login_passwd;
 
                 // Récupération de l'utilisateur
                 $user = $service_user->findByUsername($username);
@@ -71,7 +71,7 @@ class SessionController extends Zend_Controller_Action
                 // Stockage de l'utilisateur dans la session
                 $storage = Zend_Auth::getInstance()->getStorage()->write($user);
                 $this->_redirect(array("controller" => "index","action" => "index"));
-                
+
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array('context' => 'error','title' => 'Aie','message' => $e->getMessage()));
             }
@@ -86,7 +86,7 @@ class SessionController extends Zend_Controller_Action
 
         $service_user = new Service_User;
         $service_user->updateLastActionDate(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], null);
-        
+
         Zend_Auth::getInstance()->clearIdentity();
 
         $this->_helper->redirector->gotoUrl($this->view->url(array("controller" => null, "action" => null)));
