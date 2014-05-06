@@ -81,17 +81,17 @@
 
     <!-- Avis -->
     <?php if($this->DIFFEREAVIS_DOSSIER == 1) : ?>
-    <span class='avis' style='background-color: #3a87ad;'>Avis différé</span>
+    <span class='avis' style='background-color: #3a87ad; font-size: .7em;'>Avis différé</span>
     <?php elseif($this->ID_AVIS == 1) : ?>
-    <span class="avis F">Favorable <?php echo $this->ID_GENRE == 3 ? '' : " à l'exploitation " ?> <small>(<?php echo $date ?>)</small></span>
+    <span class="avis F" style="font-size: .7em">Favorable <?php echo $this->ID_GENRE == 3 ? '' : " à l'exploitation " ?> <small>(<?php echo $date ?>)</small></span>
     <?php elseif($this->ID_AVIS == 2) : ?>
-    <span class="avis D">Défavorable <?php echo $this->ID_GENRE == 3 ? '' : " à l'exploitation " ?> <small>(<?php echo $date ?>)</small></span>
+    <span class="avis D" style="font-size: .7em">Défavorable <?php echo $this->ID_GENRE == 3 ? '' : " à l'exploitation " ?> <small>(<?php echo $date ?>)</small></span>
     <?php else : ?>
-    <span class="avis">Avis d'exploitation indisponible</span>
+    <span class="avis" style="font-size: .7em">Avis d'exploitation indisponible</span>
     <?php endif ?>
 
     <!-- Alerte sur le fait que la visite fait partie d'un échéancier de travaux -->
     <?php if($this->PRESENCE_ECHEANCIER_TRAVAUX > 0) : ?>
-    <span class='avis' style='background-color: #3a87ad'>Présence d'un échéancier de travaux</span>
+    <span class='avis' style='background-color: #3a87ad; font-size: .7em;'>Présence d'un échéancier de travaux</span>
     <?php endif ?>
 </li>
