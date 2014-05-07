@@ -190,6 +190,7 @@ class DossierController extends Zend_Controller_Action
 
     public function generalAction()
     {
+	
         $this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
         //On récupère tous les types de dossier
         $DBdossierType = new Model_DbTable_DossierType;
@@ -645,6 +646,7 @@ class DossierController extends Zend_Controller_Action
                 }
                 echo json_encode($afficherChamps);
             break;
+			/*
             case "addNatureDossier":
                 //ajoute en BD une nature au dossier
                 $DBdossierNature = new Model_DbTable_DossierNature;
@@ -660,6 +662,7 @@ class DossierController extends Zend_Controller_Action
                 $idNatureSupp = $DBdossierNature->find($this->_getParam('idNatureSupp'))->current();
                 $idNatureSupp->delete();
             break;
+			*/
             case "addDocUrba":
                 //ajoute dans la base de données un document d'urbanisme au dossier (mode édition seulement)
                 if ( $this->_getParam('numDoc') && $this->_getParam('idDossier') ) {
@@ -963,7 +966,6 @@ class DossierController extends Zend_Controller_Action
                 //Sauvegarde des natures du dossier
 
                 $DBdossierNature = new Model_DbTable_DossierNature;
-
                 $saveNature = $DBdossierNature->createRow();
                 $saveNature->ID_DOSSIER = $idDossier;
                 $saveNature->ID_NATURE = $_POST['selectNature'];
@@ -987,7 +989,7 @@ class DossierController extends Zend_Controller_Action
                 $DBdossierNature = new Model_DbTable_DossierNature;
                 $natureCheck = $DBdossierNature->getDossierNaturesId($idDossier);
                 $nature = $DBdossierNature->find($natureCheck['ID_DOSSIERNATURE'])->current();
-               $nature->ID_NATURE = $this->_getParam("selectNature");
+				$nature->ID_NATURE = $this->_getParam("selectNature");
                 $nature->save();
             }
 
@@ -1269,6 +1271,7 @@ class DossierController extends Zend_Controller_Action
 //Autocomplétion pour selection ETABLISSEMENT
     public function selectionetabAction()
     {
+		//$this->_helper->viewRenderer->setNoRender();
         // Création de l'objet recherche
         $search = new Model_DbTable_Search;
 
@@ -1283,8 +1286,19 @@ class DossierController extends Zend_Controller_Action
         $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $this->_request->q, false);
 		
         // On balance le résultat sur la vue
-        $this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
-		//Zend_Debug::dump($this->view->resultats);
+        //$this->view->resultats = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+        $this->view->selectEtab = $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+		
+		$service_etablissement = new Service_Etablissement;
+		foreach($this->view->selectEtab as $etab => $val){
+			$etablissementInfos = $service_etablissement->get($val['ID_ETABLISSEMENT']);
+			//$this->view->selectEtab[$etab]['infosEtab'] = $etablissementInfos;
+			if(isset($etablissementInfos['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
+				$this->view->selectEtab[$etab]['libelleParent'] = $etablissementInfos['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+			}else{
+				$this->view->selectEtab[$etab]['libelleParent'] = "";
+			}
+		}
     }
 
 //Action permettant de lister les établissements et les dossiers liés
@@ -1295,10 +1309,16 @@ class DossierController extends Zend_Controller_Action
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
 		
 		$service_etablissement = new Service_Etablissement;
+		foreach($this->view->listeEtablissement	as $etab => $val){
+			$this->view->listeEtablissement[$etab]['pereInfos'] = $service_etablissement->get($val['ID_ETABLISSEMENT']);
+		}
+		/*
 		if($this->view->listeEtablissement){
 			$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
 			$this->view->etablissement = $etablissement;
-		}		
+		}
+		*/
+		//Zend_Debug::dump($this->view->listeEtablissement);
     }
 
     public function contactAction()
@@ -1308,7 +1328,7 @@ class DossierController extends Zend_Controller_Action
 		$this->view->infosDossier = $DBdossier->find((int) $this->_getParam("id"))->current();
     }
 
-//GESTION DOCUMENTS CONSULTES
+	//GESTION DOCUMENTS CONSULTES
     public function docconsulteAction()
     {
         //récupération du type de dossier (etude / visite)
@@ -1346,15 +1366,12 @@ class DossierController extends Zend_Controller_Action
             } else {
                 $listeDocConsulte = 0;
             }
-
             //ici on récupère tous les documents qui ont été renseigné dans la base par un utilisateur (avec id du dossier et de la nature)
             $listeDocRenseigne[$nature["ID_NATURE"]] = $dblistedoc->recupDocDossier($this->_getParam("id"),$nature["ID_NATURE"]);
 
             //ici on récupère tous les documents qui ont été ajoutés par l'utilisateur (document non proposé par défaut)
             $listeDocAjout[$nature["ID_NATURE"]] = $dblistedocAjout->getDocAjout((int) $this->_getParam("id"),$nature["ID_NATURE"]);
-
         }
-
         //On envoie à la vue la liste des documents consultés classés par nature (peux y avoir plusieurs fois la même liste)
         $this->view->listeDocs = $listeDocConsulte;
 

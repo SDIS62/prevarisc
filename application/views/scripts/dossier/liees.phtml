@@ -8,7 +8,7 @@
 		});
 	
 		function loadDossierLies(){
-			//permet de charcher les dossier lier dynamiquement
+			//permet de chercher les dossier lier dynamiquement
 			$.ajax({
 				url: "/dossier/fonction",
 				data: "do=showDossiersLies&idDossier="+$("#idDossier").val(),
@@ -345,16 +345,16 @@
 			minChars: 2,
 			max: 100,
 			parse: function(data) {
-				return $.map(data["resultats"], function(row) {
+				return $.map(data["selectEtab"], function(row) {
 					return {
 						data: row,
-						value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
-						result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+						value: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent,
+						result: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent
 					}
 				});
 			},
 			formatItem: function(item) {
-				return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+				return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+item.libelleParent;
 			}
 		}).result(function(e, item) {
 			//$("#texteId").val(item.ID_TEXTE);
@@ -442,8 +442,8 @@ echo "
 						$idEtabEnCour = $etab['ID_ETABLISSEMENTDOSSIER'];
 						echo "
 							<div class='grid_14 alpha'>
-								<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; (".$etab['LIBELLE_GENRE'].")</a>
 								<input type='hidden' name='idEtablissementDossier' value='".$etab['ID_ETABLISSEMENTDOSSIER']."' />
+								<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; (".$etab['LIBELLE_GENRE'].") ".( (isset($etab['pereInfos']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']))? " | ".$etab['pereInfos']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'] : "" )."</a>
 								<input type='hidden' name='idEtablissement' value='".$etab['ID_ETABLISSEMENT']."' />
 								&nbsp;&nbsp;
 								<span>

@@ -316,6 +316,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			
 			$DBdossier = new Model_DbTable_Dossier;
             $dossier = $DBdossier->find($this->_getParam('idDossier'))->current();
+			//On retourne la valeur du verrou pour pour savoir la couleur à afficher dans le calendrier
 			echo $dossier['VERROU_DOSSIER'];
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
