@@ -7,8 +7,11 @@ if(!$q)
 $items = array();
 foreach($this->selectEtab as $etab)
 {
-	$id = $etab['ID_ETABLISSEMENT'];
-	$libelleEtab= $etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." (".$etab['LIBELLE_GENRE'].") ";		
+	$libelleEtab = $etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." (".$etab['LIBELLE_GENRE'].") ";		
+	if(isset($etab['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
+		$libelleEtab .= " | ".$etab['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+	}
+	$id = $etab['ID_ETABLISSEMENT'];	
 	array_push($items, array(
 		"id" => $id,
 		"infos" => $libelleEtab

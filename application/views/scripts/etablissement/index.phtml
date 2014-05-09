@@ -24,7 +24,7 @@
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3))) : ?>
                 <dt>Catégorie</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['LIBELLE_CATEGORIE'] ?></p>
+                    <p><?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? end($this->etablissement['parents'])['LIBELLE_CATEGORIE'] : $this->etablissement['informations']['LIBELLE_CATEGORIE'] ?></p>
                 </dd>
                 <?php endif ?>
 
@@ -45,7 +45,7 @@
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5))) : ?>
                 <dt>Périodicité</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois</p>
+                    <p><?php echo $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] == 3 ? end($this->etablissement['parents'])['PERIODICITE_ETABLISSEMENTINFORMATIONS'] : $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois</p>
                 </dd>
                 <?php endif ?>
             </dl>
@@ -68,9 +68,7 @@
                         </li>
                         <?php foreach($this->etablissement['types_activites_secondaires'] as $type_activite) : ?>
                             <li>
-                                <?php
-                                    echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' title='" . $type_activite['LIBELLE_TYPE'] . "' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;";
-                                ?>
+                                <?php echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $type_activite['LIBELLE_TYPE'] . '.png') ? "<img src='/images/types/b/icone-type-" . $type_activite['LIBELLE_TYPE'] . ".png' title='" . $type_activite['LIBELLE_TYPE'] . "' />&nbsp;-&nbsp;" : $type_activite['LIBELLE_TYPE'] . "&nbsp;-&nbsp;"; ?>
                                 <?php echo $type_activite['LIBELLE_ACTIVITE'] ?>
                             </li>
                        <?php endforeach ?>
@@ -81,7 +79,7 @@
                 </dd>
             </dl>
             <?php endif ?>
-            
+
             <!-- Rubriques -->
             <?php if($this->etablissement['informations']["ICPE_ETABLISSEMENTINFORMATIONS"]) : ?>
             <h4 class='h4_subtitle'>Rubriques ICPE</h4>
@@ -112,7 +110,7 @@
             </table>
             <?php endif ?>
             <?php endif ?>
- 
+
             <!-- Les effectifs -->
             <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5, 6))) : ?>
             <h4 class='h4_subtitle'>Les effectifs</h4>
@@ -156,7 +154,7 @@
                 <?php endif ?>
             </dl>
             <?php endif ?>
-            
+
             <!-- Plan -->
             <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5, 6))) : ?>
             <h4 class='h4_subtitle'>Plans d'intervention</h4>
@@ -185,7 +183,7 @@
             </table>
             <?php endif ?>
             <?php endif ?>
-            
+
             <!-- Etablissement lié -->
             <?php if(count($this->etablissement['etablissement_lies']) > 0) : ?>
             <h4 class='h4_subtitle'>Établissements liés <small><?php echo count($this->etablissement['etablissement_lies']) > 0 ? "(" . count($this->etablissement['etablissement_lies']) . " établissements)" : "" ?></small></h4>
@@ -335,7 +333,7 @@
                         <?php endforeach ?>
                     </ul>
                 </dd>
-                <?php endif ?>  
+                <?php endif ?>
             </dl>
             <?php endif ?>
 
@@ -349,7 +347,7 @@
                     <p><?php echo $this->etablissement['general']['TELEPHONE_ETABLISSEMENT'] ?></p>
                 </dd>
                 <?php endif ?>
-                
+
                 <!-- Fax -->
                 <?php if(!empty($this->etablissement['general']['FAX_ETABLISSEMENT'])) : ?>
                 <dt>Fax</dt>
@@ -357,7 +355,7 @@
                     <p><?php echo $this->etablissement['general']['FAX_ETABLISSEMENT'] ?></p>
                 </dd>
                 <?php endif ?>
-                
+
                 <!-- Courriel -->
                 <?php if(!empty($this->etablissement['general']['COURRIEL_ETABLISSEMENT'])) : ?>
                 <dt>Courriel</dt>

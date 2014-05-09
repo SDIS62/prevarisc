@@ -28,20 +28,22 @@ class Api_Service_Search
         $results = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types, $avis_favorable, $statuts, $local_sommeil, $lon, $lat, $parent, null, null, $count, $page);
         return $results;
     }
-    
+
     /**
      * Recherche des dossiers
      *
+     * @param array $types
+     * @param string $objet
      * @param string $num_doc_urba
      * @param int $parent Id d'un dossier parent
      * @param int $count Par défaut 10, max 100
      * @param int $page par défaut = 1
      * @return array
      */
-    public function dossiers($num_doc_urba = null, $parent = null, $count = 10, $page = 1)
+    public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $count = 10, $page = 1)
     {
         $service_search = new Service_Search;
-        $results = $service_search->dossiers($num_doc_urba, $parent, $count, $page);
+        $results = $service_search->dossiers($types, $objet, $num_doc_urba, $parent, $count, $page);
         return $results;
     }
 

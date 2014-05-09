@@ -190,13 +190,15 @@ class Service_Search
     /**
      * Recherche des dossiers
      *
+     * @param array $types
+     * @param string $objet
      * @param string $num_doc_urba
      * @param int $parent Id d'un dossier parent
      * @param int $count Par défaut 10, max 100
      * @param int $page par défaut = 1
      * @return array
      */
-    public function dossiers($num_doc_urba = null, $parent = null, $count = 10, $page = 1)
+    public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
@@ -240,9 +242,19 @@ class Service_Search
                $this->setCriteria($select, "NUM_DOCURBA", $num_doc_urba);
             }
 
+            // Critères : objet
+            if($objet !== null) {
+               $this->setCriteria($select, "OBJET_DOSSIER", $objet, false);
+            }
+
             // Critères : parent
             if($parent !== null) {
                $select->where($parent == 0 ? "dossierlie.ID_DOSSIER1 IS NULL" : "dossierlie.ID_DOSSIER1 = ?", $parent);
+            }
+
+            // Critères : type
+            if($types !== null) {
+               $this->setCriteria($select, "dossiertype.ID_DOSSIERTYPE", $types);
             }
 
             // Gestion des pages et du count

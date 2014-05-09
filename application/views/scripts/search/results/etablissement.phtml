@@ -4,7 +4,7 @@
     <?php if($this->NB_ENFANTS > 0) : ?>
     <span class="icone_enfants" ><i class='ui-icon ui-icon-triangle-1-e' style='position: relative; left: -25px; float: left; margin-right: -25px;' ></i></span>
     <?php endif ?>
-    
+
     <!-- Affichage du libellé du type -->
     <small style='display: inline-block; width: 65px'>
         <strong>
@@ -16,7 +16,7 @@
         ?>
         </strong>
     </small>
-    
+
     <!-- nom de l'établissement -->
     <span class="nom-etablissement">
         <a href='/etablissement/index/id/<?php echo $this->ID_ETABLISSEMENT ?>'>
@@ -30,13 +30,13 @@
                                echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_SITE;
                             }
                             break;
-                            
+
                         case 3:
                             if(!empty($this->LIBELLE_COMMUNE_ADRESSE_CELLULE)) {
                                echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_CELLULE;
                             }
                             break;
-                            
+
                         default:
                             if(!empty($this->LIBELLE_COMMUNE_ADRESSE_DEFAULT))
                                 echo " - " . $this->LIBELLE_COMMUNE_ADRESSE_DEFAULT;
@@ -45,12 +45,12 @@
             </small>
         </a>
     </span>
-    
+
     <!-- Icone de chargement des enfants (si il y'en a, et si on est en mode niveau -->
     <?php if($this->NB_ENFANTS > 0) : ?>
         <span class='load ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement ...' /></span>
     <?php endif ?>
-    
+
     <?php
         if($this->DATEVISITE_DOSSIER != null)
         {
@@ -81,17 +81,17 @@
 
     <!-- Avis -->
     <?php if($this->DIFFEREAVIS_DOSSIER == 1) : ?>
-    <span class='avis' style='background-color: #3a87ad;'>Avis différé</span>
+    <span class='avis' style='background-color: #3a87ad; font-size: .7em;'>Avis différé</span>
     <?php elseif($this->ID_AVIS == 1) : ?>
-    <span class="avis F">Favorable <small>(<?php echo $date ?>)</small></span>
+    <span class="avis F" style="font-size: .7em">Favorable <?php echo $this->ID_GENRE == 3 ? '' : " à l'exploitation " ?> <small>(<?php echo $date ?>)</small></span>
     <?php elseif($this->ID_AVIS == 2) : ?>
-    <span class="avis D">Défavorable <small>(<?php echo $date ?>)</small></span>
+    <span class="avis D" style="font-size: .7em">Défavorable <?php echo $this->ID_GENRE == 3 ? '' : " à l'exploitation " ?> <small>(<?php echo $date ?>)</small></span>
     <?php else : ?>
-    <span class="avis">Avis d'exploitation indisponible</span>
+    <span class="avis" style="font-size: .7em">Avis d'exploitation indisponible</span>
     <?php endif ?>
 
     <!-- Alerte sur le fait que la visite fait partie d'un échéancier de travaux -->
     <?php if($this->PRESENCE_ECHEANCIER_TRAVAUX > 0) : ?>
-    <span class='avis' style='background-color: #3a87ad'>Présence d'un échéancier de travaux</span>
+    <span class='avis' style='background-color: #3a87ad; font-size: .7em;'>Présence d'un échéancier de travaux</span>
     <?php endif ?>
 </li>
