@@ -410,6 +410,7 @@
 					}else if($("#infosEtablissement").text() != " "){
 						nomEtab = $("#infosEtablissement > a").html().trim();
 					}
+					nomEtab = nomEtab.replace('&nbsp;',' ');
 					
 					var nomNature = $("#selectNature option:selected").text().trim();
 					var nomCom = nomNature+" - "+nomEtab;
@@ -431,6 +432,7 @@
 							type = 1;
 						}	
 					}
+					
 					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end+"&libelleCom="+nomCom+"&type="+type, function() {	
 						$("#dialogComm").dialog("option", "buttons", {
 							'Enregistrer dans le calendrier': function() {
@@ -974,7 +976,6 @@
 				}
 			});
 		}
-
 		return false;		
 	});
 	
@@ -1064,6 +1065,15 @@
 			success: function(affichageResultat){
 				window.location= affichageResultat;
 			},
+			statusCode: {
+				401:function(){
+					alert("Vous n'êtes pas autorisé à effectuer cette action");
+					$("#VERROU").removeAttr("disabled");
+					$("#rapport").removeAttr("disabled");
+					$("#modificationDossier").removeAttr("disabled");
+					$("#chargement").html("");
+				},
+			},
 			error: function(){
 				return false;
 			}
@@ -1083,6 +1093,13 @@
 			},
 			success: function(affichageResultat){
 				window.location= affichageResultat;
+			},
+			statusCode: {
+				401:function(){
+					alert("Vous n'êtes pas autorisé à effectuer cette action");
+					$("#DEVERROU").removeAttr("disabled");
+					$("#chargement").html("");
+				},
 			},
 			error: function(){
 				return false;
@@ -1263,7 +1280,10 @@ echo "
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 				";
+				echo "<input type='radio' name='servInst' value='servInstGrp' checked='checked'>&nbsp;&nbsp;";
 				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], null, 10);
+				echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='servInst' value='servInstCommune'>&nbsp;";
+				echo "<input type='text' name='servInstVille' id='servInstVille' value='' />";
 				echo "						
 					</div>
 				</li>
