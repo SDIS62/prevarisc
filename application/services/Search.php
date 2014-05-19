@@ -43,9 +43,15 @@ class Service_Search
                     "NB_ENFANTS" => "( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
                         FROM etablissement
                         INNER JOIN etablissementlie ON etablissement.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT
-                        WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"))
+                        WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)",
+                    "PRESENCE_ECHEANCIER_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER1)
+                        FROM dossier
+                        INNER JOIN etablissementdossier ON dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
+                        INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
+                        INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
+                        WHERE dossiernature.ID_NATURE = 46 AND etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"))
                 ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
-                ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER"))
+                ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER", "DIFFEREAVIS_DOSSIER"))
                 ->joinLeft("avis", "dossier.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
                 ->joinLeft("type", "etablissementinformations.ID_TYPE = type.ID_TYPE", "LIBELLE_TYPE")
                 ->join("genre", "etablissementinformations.ID_GENRE = genre.ID_GENRE", "LIBELLE_GENRE")
@@ -116,7 +122,7 @@ class Service_Search
                 if($genres !== null && count($genres) > 0) {
                     foreach($genres as $genre) {
                         switch($genre) {
-                            case "1": 
+                            case "1":
                                 $this->setCriteria($select, "adressecommunesite.LIBELLE_COMMUNE", $city);
                                 if($street_id !== null) {
                                     $this->setCriteria($select, "etablissementadressesite.ID_RUE", $street_id);
@@ -128,7 +134,7 @@ class Service_Search
                                     $this->setCriteria($select, "etablissementadressecell.ID_RUE", $street_id);
                                 }
                                 break;
-                                
+
                             default:
                                 $this->setCriteria($select, "adressecommune.LIBELLE_COMMUNE", $city);
                                 if($street_id !== null) {
@@ -141,7 +147,7 @@ class Service_Search
                     $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_SITE", $city, true, "orHaving");
                     $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_CELLULE", $city, true, "orHaving");
                     $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_DEFAULT", $city, true, "orHaving");
-                    
+
                     if($street_id !== null) {
                         $this->setCriteria($select, "ID_RUE_SITE", $street_id, true, "orHaving");
                         $this->setCriteria($select, "ID_RUE_CELL", $street_id, true, "orHaving");
@@ -180,17 +186,19 @@ class Service_Search
 
         return $results;
     }
-    
+
     /**
      * Recherche des dossiers
      *
+     * @param array $types
+     * @param string $objet
      * @param string $num_doc_urba
      * @param int $parent Id d'un dossier parent
      * @param int $count Par défaut 10, max 100
      * @param int $page par défaut = 1
      * @return array
      */
-    public function dossiers($num_doc_urba = null, $parent = null, $count = 10, $page = 1)
+    public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
@@ -234,9 +242,19 @@ class Service_Search
                $this->setCriteria($select, "NUM_DOCURBA", $num_doc_urba);
             }
 
+            // Critères : objet
+            if($objet !== null) {
+               $this->setCriteria($select, "OBJET_DOSSIER", $objet, false);
+            }
+
             // Critères : parent
             if($parent !== null) {
                $select->where($parent == 0 ? "dossierlie.ID_DOSSIER1 IS NULL" : "dossierlie.ID_DOSSIER1 = ?", $parent);
+            }
+
+            // Critères : type
+            if($types !== null) {
+               $this->setCriteria($select, "dossiertype.ID_DOSSIERTYPE", $types);
             }
 
             // Gestion des pages et du count
@@ -290,11 +308,15 @@ class Service_Search
                 ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_UTILISATEUR = u.ID_UTILISATEUR")
                 ->joinLeft("etablissementinformations", "etablissementinformations.ID_ETABLISSEMENTINFORMATIONS = etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS")
                 ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(infos.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations as infos WHERE etablissementinformations.ID_ETABLISSEMENT = infos.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL")
-                ->group("u.ID_UTILISATEUR");
+                ->group("u.ID_UTILISATEUR")
+                ->order("utilisateurinformations.NOM_UTILISATEURINFORMATIONS");
 
             // Critères : activité
             if($actif === true) {
                 $this->setCriteria($select, "u.ACTIF_UTILISATEUR", 1);
+            }
+            elseif($actif === false) {
+              $this->setCriteria($select, "u.ACTIF_UTILISATEUR", 0);
             }
 
             // Critères : groupe

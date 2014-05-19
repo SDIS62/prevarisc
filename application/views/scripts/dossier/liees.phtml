@@ -1,9 +1,14 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
+				
+		$('#listeEtab :input[name=idEtablissement]').each(function(){
+			//alert($(this).val());
+			$("#"+$(this).val()).remove();
+		});
 	
 		function loadDossierLies(){
-			//permet de charcher les dossier lier dynamiquement
+			//permet de chercher les dossier lier dynamiquement
 			$.ajax({
 				url: "/dossier/fonction",
 				data: "do=showDossiersLies&idDossier="+$("#idDossier").val(),
@@ -169,6 +174,7 @@
 					type:"POST",
 					beforeSend: function(){
 						//$("#sortable").html("<img src='/images/template/load/load.gif' />");
+						$(".btn").attr('disabled','disabled');
 					},
 					success: function(affichageResultat){
 						$("#listeEtab").prepend(affichageResultat);
@@ -261,6 +267,7 @@
 				type:"POST",
 				beforeSend: function(){
 					//$("#sortable").html("<img src='/images/template/load/load.gif' />");
+					$(".btn").attr('disabled','disabled');
 				},
 				success: function(affichageResultat){
 					$(divDelete).parent().parent().remove();
@@ -300,6 +307,26 @@
 
 		});
 		
+		$("#save-liens").live('click',function(){
+			$.ajax({
+				url: "/dossier/lienmultiple",
+				data: $("#listeEnfantEtab").serialize()+"&idDossier="+$("#idDossier").val(),
+				type:"POST",
+				beforeSend: function(){
+					//$("#sortable").html("<img src='/images/template/load/load.gif' />");
+					$(".btn").attr('disabled','disabled');
+				},
+				success: function(affichageResultat){
+					loadInfosEtabs();
+					return false;
+				},
+				error: function()	{
+					return false;
+				}
+			});
+			return false;
+		});
+		
 		$("[name=linkType]").live('click',function(){
 			var choix = $(this).val();
 			if($(this).val() == 'etablissement'){
@@ -310,7 +337,7 @@
 				$("#saisieDossier").show();
 			}			
 		});
-		
+
 	});
 	
 	$(function(){
@@ -318,16 +345,16 @@
 			minChars: 2,
 			max: 100,
 			parse: function(data) {
-				return $.map(data["resultats"], function(row) {
+				return $.map(data["selectEtab"], function(row) {
 					return {
 						data: row,
-						value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
-						result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+						value: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent,
+						result: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent
 					}
 				});
 			},
 			formatItem: function(item) {
-				return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+				return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+item.libelleParent;
 			}
 		}).result(function(e, item) {
 			//$("#texteId").val(item.ID_TEXTE);
@@ -415,42 +442,62 @@ echo "
 						$idEtabEnCour = $etab['ID_ETABLISSEMENTDOSSIER'];
 						echo "
 							<div class='grid_14 alpha'>
-								<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; (".$etab['LIBELLE_GENRE'].")</a>
 								<input type='hidden' name='idEtablissementDossier' value='".$etab['ID_ETABLISSEMENTDOSSIER']."' />
+								<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; (".$etab['LIBELLE_GENRE'].") ".( (isset($etab['pereInfos']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']))? " | ".$etab['pereInfos']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'] : "" )."</a>
 								<input type='hidden' name='idEtablissement' value='".$etab['ID_ETABLISSEMENT']."' />
 								&nbsp;&nbsp;
 								<span>
-									<button class='deleteChoix btn' >Supprimer l'etablissement</button>
+						";
+						if($this->infosDossier['VERROU_DOSSIER'] == 0){
+							echo "
+								<button class='deleteChoix btn' >Supprimer l'etablissement</button>
+							";
+						}
+						echo "
 								</span>
 								<span style='display:none;' >
 									<button class='confirmDelete btn' >Supprimer l'etablissement</button>
 									<button class='cancelDelete btn' >Annuler</button>
 								</span>
 							</div>
-							<!--
-							<hr class='clear'/>
-							-->
 						";
 					}
 				}
-				
+			if($this->infosDossier['VERROU_DOSSIER'] == 0){
+				echo "
+					<hr class='clear'/>
+					<input type='radio' name='linkType' value='etablissement'>Etablissement&nbsp;&nbsp;
+					<input type='text' id='saisieEtab' value='' style='width:500px;display:none;' />
+					
+					<button class='add btn' id='add' style='display:none;' >Lier l'établissement au dossier</button>
+					<button class='cancelAdd btn' id='cancelAdd' style='display:none;' >Choisir un autre établissement</button>
+					<input type='hidden' name='idSelect' id='idSelect' value=''  />
+				</div>
+				";
+			}
+			echo "<br/><br/>";
 			echo "
-				<hr class='clear'/>
-				<input type='radio' name='linkType' value='etablissement'>Etablissement&nbsp;&nbsp;
-				<input type='text' id='saisieEtab' value='' style='width:250px;display:none;' />
-				
-				<button class='add btn' id='add' style='display:none;' >Lier l'établissement au dossier</button>
-				<button class='cancelAdd btn' id='cancelAdd' style='display:none;' >Choisir un autre établissement</button>
-				<input type='hidden' name='idSelect' id='idSelect' value=''  />
-			</div>
-
-			<br/><br/><br/><br/>
+				<form id='listeEnfantEtab' >
+				<ul class='recherche_liste unstyled'>
+			";
+			if($this->infosDossier['VERROU_DOSSIER'] == 0){
+				if(isset($this->etablissement))
+				{
+					echo $this->partialLoop('dossier/results/etablissement.phtml', $this->etablissement['etablissement_lies']);
+				}			
+				echo "
+					</ul>
+					<button class='btn' id='save-liens' >Sauvegarder les liaisons</button>
+					</form>
+					<br/><br/><br/><br/>
+				";
+			}
+			echo "
 		
 			<h2>Liste des dossiers liés au dossier</h2>
 			<div id='listeDossier'>
 
 			";
-			
 			/*
 			foreach($this->listeDossier as $etab){
 				echo "
@@ -473,19 +520,27 @@ echo "
 			echo "	
 				</div>
 			<br/>
-			<div class='grid_14 alpha form'>
-
-				<button class='LinkToDossier btn' >Lier à un dossier</button>
-
-				
-				<!--
-				<input type='radio' name='linkType' value='dossier'>Dossier<br/><br/>
-				<input type='text' id='saisieDossier' value='' style='width:250px;display:none;' />
-				-->
-				
-			</div>
+			";
+			if($this->infosDossier['VERROU_DOSSIER'] == 0){
+				echo "
+					<div class='grid_14 alpha form'>
+						<button class='LinkToDossier btn' >Lier à un dossier</button>
+						<!--
+						<input type='radio' name='linkType' value='dossier'>Dossier<br/><br/>
+						<input type='text' id='saisieDossier' value='' style='width:250px;display:none;' />
+						-->
+					</div>
+				";
+			}
+			echo "
 			<hr class='clear'/>
 		</div>
 	</div>
 ";
 ?>
+
+<script>
+	$(document).ready(function(){
+		$('.icone_enfants').remove();
+	});
+</script>

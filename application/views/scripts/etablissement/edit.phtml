@@ -24,7 +24,7 @@
             <h4 class='h4_subtitle'>Général</h4>
             <div>
                 <input style='width: 100%; box-sizing: border-box; height: 2.5em;' type='text' placeholder="Libellé de l'établissement" name='LIBELLE_ETABLISSEMENTINFORMATIONS' value='<?php if ( $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"] ) echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' />
-                
+
                 <dl class='dl-horizontal'>
                     <!-- Numéro d'identification -->
                     <dt>Identifiant</dt>
@@ -44,7 +44,7 @@
                                 </option>
                             <?php endforeach ?>
                         </select>
-                    </dd> 
+                    </dd>
                 </dl>
             </div>
 
@@ -52,7 +52,7 @@
             <dl class='dl-horizontal'>
                 <dt>Genre</dt>
                 <dd>
-                    <select name='ID_GENRE'> <!-- genre -->
+                    <select name='ID_GENRE'>
                         <?php foreach( $this->DB_genre as $genre ) : ?>
                             <option value='<?php echo $genre["ID_GENRE"] ?>' <?php if( $genre["ID_GENRE"] == $this->etablissement['informations']["ID_GENRE"] ) echo "selected" ?> >
                                 <?php echo $genre["LIBELLE_GENRE"] ?>
@@ -135,7 +135,7 @@
                                 <?php endforeach ?>
                             </select>
                         </li>
-                        
+
                         <!-- Types et activités secondaires -->
                         <?php echo $this->partial('etablissement/partials/partial-type-activites-secondaire.phtml', array('types' => $this->DB_type, 'activites' => $this->DB_activite)) ?>
                         <?php if($this->etablissement['types_activites_secondaires']) : ?>
@@ -155,15 +155,16 @@
                     </p>
                 </dd>
 
+                <!-- Local à sommeil -->
                 <dt class='champs champ_localsommeil'>Local à sommeil ?</dt>
                 <dd class='champs champ_localsommeil'>
                     <p>
-                        <input type='hidden' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='0' />
-                        <input type='checkbox' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+                        <input type='radio' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='0' <?php if( !$this->add ) echo "checked" ?> /> Non
+                        <input type='radio' name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> /> Oui
                     </p>
                 </dd>
             </dl>
-            
+
             <!-- Rubriques -->
             <h4 class='champs_icpe champs rubrique h4_subtitle'>Rubriques ICPE <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_rubriques').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter une rubrique</a></h4>
             <table class='table table-condensed champs_icpe champs rubrique'>
@@ -187,7 +188,7 @@
                     <?php endif ?>
                 </tbody>
             </table>
- 
+
             <!-- Les effectifs -->
             <h4 class='champ_effectifs champs h4_subtitle'>Les effectifs</h4>
             <dl class='dl-horizontal champ_effectifs champs'>
@@ -215,7 +216,7 @@
                     <input type='text' name='EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS"] ?>' />
                 </dd>
             </dl>
-            
+
             <!-- Plan -->
             <h4 class="champ_plans champs h4_subtitle">Plans d'intervention <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter un plan</a></h4>
             <table class='table table-condensed champ_plans champs'>
@@ -237,12 +238,12 @@
                     <?php endif ?>
                 </tbody>
             </table>
-            
+
             <!-- Etablissement lié -->
             <h4 class='h4_subtitle'>Établissements liés <?php if($this->etablissement['general']) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>&libelle=<?php echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
             <dl class='dl-horizontal' >
                 <dt class="etablissement_pere">Père de l'établissement</dt>
-                <dd class="etablissement_pere">	
+                <dd class="etablissement_pere">
                     Nom de l'établissement : <strong><?php if(count($this->etablissement['parents']) > 0) echo htmlspecialchars(end($this->etablissement['parents'])["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES); elseif( isset($_GET["libelle"]) ) echo htmlspecialchars($_GET["libelle"], ENT_QUOTES)  ?></strong><br/>
                     <input placeholder="Libellé de l'établissement père ..." type='text' style='width: 100%; box-sizing: border-box; height: 2.5em' />
                     <input type='hidden' name='ID_PERE' value='<?php if(count($this->etablissement['parents']) > 0) echo end($this->etablissement['parents'])["ID_ETABLISSEMENT"]; elseif( isset($_GET["pere"]) ) echo $_GET["pere"] ?>' />
@@ -278,7 +279,24 @@
 
         <!-- Carte de l'emplacement de l'établissement / informations  -->
         <div class='span6'>
-            <h4 class="champ_adresse champs h4_subtitle">Adresse <a style='font-size: 0.85em; float: right; font-weight: normal;' data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" href="<?php echo $this->url(array('action' => 'build-adresse')) ?>">Ajouter une adresse</a></h4>
+            <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
+                <div id='geoportail-container' class='hide' style="height: 350px; max-height: 350px;"></div>
+                <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
+                <script>
+                    /*
+                    $(document).ready(function() {
+                        viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
+                            lat: <?php echo $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] ?>,
+                            lon: <?php echo $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] ?>
+                        }, 17, OpenLayers.Util.extend({
+                            controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
+                            proxyUrl: '/proxy'
+                        }));
+                    });
+                    */
+                </script>
+            <?php endif ?>
+            <h4 class="champ_adresse champs h4_subtitle">Adresse <a style='font-size: 0.85em; float: right; font-weight: normal;' data-toggle="modal" data-backdrop="false" href="#adresse-modal">Ajouter une adresse</a></h4>
             <table id='adresses' class='table table-condensed champ_adresse champs'>
                 <thead>
                     <tr>
@@ -304,13 +322,13 @@
                 <dd>
                     <input type='text' name='TELEPHONE_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["TELEPHONE_ETABLISSEMENT"] ?>' />
                 </dd>
-                
+
                 <!-- Fax -->
                 <dt>Fax</dt>
                 <dd>
                     <input type='text' name='FAX_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["FAX_ETABLISSEMENT"] ?>' />
                 </dd>
-                
+
                 <!-- Courriel -->
                 <dt>Courriel</dt>
                 <dd>
@@ -404,7 +422,62 @@
     </div>
 </div>
 
-<div id="reponse-modal" class="modal hide fade" ></div>
+<!-- Boite de construction d'adresse-->
+<form id="adresse-modal" class="modal hide adresse fase" action='<?php echo $this->url(array('action' => 'add')) ?>' method='post' >
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Ajouter une adresse</h3>
+    </div>
+
+    <div class="modal-body">
+        <dl class='dl-horizontal'>
+            <dt>Ville</dt>
+            <dd>
+                <input name='commune_ac' type='text' placeholder='Nom de la commune ou code postal ...' />
+                <input name='code_insee' type='hidden' />
+                <input name='code_postal' type='hidden' />
+            </dd>
+
+            <dt>Voie</dt>
+            <dd>
+                <input type='text' name='voie_ac' placeholder='Nom de la voie ...' disabled />
+                <input type='hidden' name='type_voie' />
+                <input type='hidden' name='voie' />
+            </dd>
+
+            <dt>Numéro</dt>
+            <dd>
+                <input class="input-small" type='text' name='numero' placeholder='Numéro ...' disabled />
+            </dd>
+
+            <dt>Complément d'adresse</dt>
+            <dd>
+                <input type='text' name='complement' placeholder="Complément d'adresse" disabled />
+            </dd>
+
+            <dt>Type de l'adresse</dt>
+            <dd>
+                <select>
+                    <option>Adresse postale</option>
+                </select>
+            </dd>
+
+            <dt>Géolocalisation</dt>
+            <dd>
+                Longitude: <span class='lon'>Inconnu</span>; Latitude: <span class='lat'>Inconnu</span>
+                <button id="geolocme" class='btn btn-small'>Géolocaliser cette adresse</button>
+                <input type='hidden' name='lon' />
+                <input type='hidden' name='lat' />
+            </dd>
+        </dl>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' />
+    </div>
+</form>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -418,7 +491,7 @@
                 numinsee: $("#adresses").find('tr.adresse').first().find('input[type="hidden"]').first().val(),
                 type: $("select[name='ID_TYPE']").find('option:selected').val(),
                 categorie: $("select[name='ID_CATEGORIE']").find('option:selected').val(),
-                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").is(':checked'),
+                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").is(':checked'),
                 classe: $("select[name='ID_CLASSE']").find('option:selected').val(),
                 id_etablissement_pere: $("input[name='ID_PERE']").val(),
                 ids_etablissements_enfants: etablissements_enfants
@@ -430,7 +503,7 @@
                     var date = new Date($('input[name="date"]').val());
                     $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text());
                     $('#confirm-modal-periodicite .confirm-modal-input').text($('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val());
-                    $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]').is(':checked') ? 'Oui' : 'Non' );
+                    $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"][value=1]').is(':checked') ? 'Oui' : 'Non' );
                     $('table#preventionnistes tbody tr.preventionniste').each(function(index) { preventionnistes[index] = $(this).find('td').first().find('span').text(); });
                     $('#confirm-modal-preventionnistes .confirm-modal-input').text(preventionnistes.toString() == '' ? 'Aucuns' : preventionnistes.toString());
                     $('#confirm-modal-date .confirm-modal-input').text(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
@@ -491,12 +564,12 @@
                             $('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val($(this).text());
                             break;
                         case 'confirm-modal-localsommeil':
-                            $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]').attr('checked', $(this).text() == 'Oui');
+                            $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"][value=1]').attr('checked', $(this).text() == 'Oui');
                             break;
                     }
                 }
             });
-            
+
             $("form#etablissement").submit();
         });
 
@@ -540,7 +613,7 @@
 
                 // Cellule
                 case '3':
-                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_donnees_pratiques').show();
+                    $('.champ_types, .champ_effectifs, .champ_plans, .champ_donnees_pratiques').show();
                     $('.etablissements_enfants').hide();
                     break;
 
@@ -553,7 +626,7 @@
                 // IGH
                 case '5':
                     $('.champ_periodicite, .champ_classe, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_donnees_pratiques').show();
-                    $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").attr('checked', false).change();
+                    $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").attr('checked', false).change();
                     break;
 
                 // EIC
@@ -561,7 +634,7 @@
                     $('.champ_icpe, .champ_effectifs, .champ_plans, .champ_adresse').show();
                     $('.etablissements_enfants, .effectif_heberge, .effectif_public').hide();
                     $("input[name='ICPE_ETABLISSEMENTINFORMATIONS']").change();
-                    $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").attr('checked', false).change();
+                    $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").attr('checked', false).change();
                     break;
             }
         }).change();
@@ -595,7 +668,7 @@
 
         // Affichage ou non de l'effectif hebergé en fonction de la checkbox local sommeil
         $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']").change(function() {
-            if( $(this).is(":checked") )
+            if( $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").is(":checked") )
                 $(".effectif_heberge").show();
             else
                 $(".effectif_heberge").hide();
@@ -627,7 +700,7 @@
                     url: "/api/1.0/search/etablissements",
                     type: 'get',
                     data: {
-                        name: query
+                        label: query
                     },
                     success: function (result) {
                         etablissements = [];
@@ -637,11 +710,11 @@
                                 case 1:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_SITE;
                                     break;
-                                    
+
                                 case 3:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_CELLULE;
                                     break;
-                                    
+
                                 default:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_DEFAULT == null ? "non localisé" : etablissement.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
                             }
@@ -676,7 +749,7 @@
                     url: "/api/1.0/search/etablissements",
                     type: 'get',
                     data: {
-                        name: query
+                        label: query
                     },
                     success: function (result) {
                         etablissements = [];
@@ -686,11 +759,11 @@
                                 case 1:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_SITE;
                                     break;
-                                    
+
                                 case 3:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_CELLULE;
                                     break;
-                                    
+
                                 default:
                                     LIBELLE_COMMUNE = etablissement.LIBELLE_COMMUNE_ADRESSE_DEFAULT == null ? "non localisé" : etablissement.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
                             }
@@ -754,6 +827,85 @@
                 node.find("input[type='hidden']").val($($.parseHTML(item)).last().data('id'));
                 return;
             }
+        });
+
+        // Auto complétion de la ville
+        $("input[name='commune_ac']").autocomplete("/api/1.0/adresse/get_communes", {
+            minChars: 3,
+            parse: function(data) {
+                return $.map(data["response"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
+            },
+            formatItem: function(item) {
+                return item.LIBELLE_COMMUNE + " (" + item.NUMINSEE_COMMUNE + ")";
+            }
+        }).result(function(e, item) {
+            $("#adresse-modal input[name='code_insee']").val( item.NUMINSEE_COMMUNE );
+            $("#adresse-modal input[name='code_postal']").val( item.CODEPOSTAL_COMMUNE );
+            $("#adresse-modal input[name='voie_ac']").removeAttr('disabled');
+        }).click(function() {
+            $(this).val("");
+            $("#adresse-modal input[name='voie_ac'], #adresse-modal input[name='numero'], #adresse-modal input[name='complement']").val("").attr("disabled", true).blur();
+            $("#adresse-modal input[name='voie']").val("").blur();
+        });
+
+        // Auto complétion de la rue
+        $("input[name='voie_ac']").autocomplete('/api/1.0/adresse/get_voies', {
+            minChars: 3,
+            extraParams: { code_insee: function(){ return $("#adresse-modal input[name='code_insee']").val() } },
+            parse: function(data) {
+                return $.map(data["response"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
+            },
+            formatItem: function(item) {
+                return item.LIBELLE_RUE + ' (code insee : ' + item.NUMINSEE_COMMUNE + ')';
+            }
+        }).result(function(e, item) {
+            $("#adresse-modal input[name='voie']").val( item.ID_RUE );
+            $("#adresse-modal input[name='type_voie']").val( item.ID_RUETYPE );
+            $("#adresse-modal input[name='numero'], #adresse-modal input[name='complement']").removeAttr("disabled");
+        }).click(function() {
+            $(this).val("");
+            $("#adresse-modal input[name='numero'], #adresse-modal input[name='complement']").val("").attr("disabled", true).blur();
+        });
+
+        // Géolocalisation de l'adresse
+        $('#adresse-modal #geolocme').click(function() {
+            element = $(this);
+            $.ajax({
+                url: "/proxy?url=http://nominatim.openstreetmap.org/search",
+                dataType: 'json',
+                timeout: 10000,
+                data: {
+                    format: "json",
+                    limit: 1,
+                    country: "France",
+                    street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
+                    city: $("input[name='commune_ac']").val(),
+                    postalcode: $("input[name='code_insee']").val().substring(0,2)
+                },
+                beforeSend: function() {
+                    element.text("Géolocalisation en cours ...");
+                },
+                success: function(geolocations) {
+                    element.text("Géolocaliser cette adresse");
+                    if(geolocations.length > 0) {
+                        $("input[name='lon']").val(geolocations[0].lon);
+                        $("span.lon").text(geolocations[0].lon);
+                        $("input[name='lat']").val(geolocations[0].lat);
+                        $("span.lat").text(geolocations[0].lat);
+                    }
+                    else {
+                        $("input[name='lon']").val(0);
+                        $("span.lon").text("Introuvable");
+                        $("input[name='lat']").val(0);
+                        $("span.lat").text("Introuvable");
+                    }
+                },
+                error: function() {
+                    element.text("Serveur de géolocalisation introuvable").attr('disabled', true);
+                }
+            });
+
+            return false;
         });
     });
 </script>

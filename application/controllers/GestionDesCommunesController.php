@@ -2,10 +2,6 @@
 
 class GestionDesCommunesController extends Zend_Controller_Action
 {
-    /**
-     * Affichage de la liste des villes
-     *
-     */
     public function indexAction()
     {
         // Définition du layout

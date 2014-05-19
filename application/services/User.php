@@ -19,8 +19,8 @@ class Service_User
         $user = array_merge($user, array('uid' => $user['ID_UTILISATEUR']));
         $user = array_merge($user, array('infos' => $model_userinformations->find($user['ID_UTILISATEURINFORMATIONS'])->current()->toArray()));
         $user = array_merge($user, array('group' => $model_groupe->find($user['ID_GROUPE'])->current()->toArray()));
-        $user = array_merge($user, array('groupements' => $model_user->getGroupements($user['ID_UTILISATEUR'])->current() == null ? null : $model_user->getGroupements($user['ID_UTILISATEUR'])->current()->toArray()));
-        $user = array_merge($user, array('commissions' => $model_user->getCommissions($user['ID_UTILISATEUR'])->current() == null ? null : $model_user->getCommissions($user['ID_UTILISATEUR'])->current()->toArray()));
+        $user = array_merge($user, array('groupements' => $model_user->getGroupements($user['ID_UTILISATEUR']) == null ? null : $model_user->getGroupements($user['ID_UTILISATEUR'])->toArray()));
+        $user = array_merge($user, array('commissions' => $model_user->getCommissions($user['ID_UTILISATEUR']) == null ? null : $model_user->getCommissions($user['ID_UTILISATEUR'])->toArray()));
         $user['infos'] = array_merge($user['infos'], array('LIBELLE_FONCTION' => $model_fonction->find($user['infos']['ID_FONCTION'])->current()->toArray()['LIBELLE_FONCTION']));
         return $user;
     }
@@ -172,7 +172,7 @@ class Service_User
 
             if(array_key_exists('commissions', $data)) {
                 foreach($data["commissions"] as $id) {
-                    $row = $DB_groupementsUser->createRow();
+                    $row = $DB_commissionsUser->createRow();
                     $row->ID_UTILISATEUR = $user->ID_UTILISATEUR;
                     $row->ID_COMMISSION = $id;
                     $row->save();

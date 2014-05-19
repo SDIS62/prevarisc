@@ -16,7 +16,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         if(($etablissement = unserialize($cache->load('etablissement_id_' . $id_etablissement))) === false) {
-            
+
             $model_etablissement = new Model_DbTable_Etablissement;
 
             $search = new Model_DbTable_Search;
@@ -109,6 +109,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $dossiers_avis_diff = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("DIFFEREAVIS_DOSSIER", 1)->run();
             $presence_avis_differe = count($dossiers_avis_diff) > 0;
 
+            // Y'a t'il un dossier avec avis différé sur l'établissement ?
+            $dossiers_echeancier = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("dossiernature.ID_NATURE", 46)->run();
+            $presence_echeancier = count($dossiers_echeancier) > 0;
+
             // Récupération des établissements liés
             $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray();
 
@@ -152,6 +156,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
                 )),
                 'presence_avis_differe' => $presence_avis_differe,
+                'presence_echeancier' => $presence_echeancier,
                 'facteur_dangerosite' => $facteur_dangerosite,
                 'donnees_pratiques' => $donnees_pratiques,
                 'parents' => $etablissement_parents,
@@ -187,10 +192,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $historique = array();
 
         $DB_information = new Model_DbTable_EtablissementInformations;
-        $DB_categorie = new Model_DbTable_Categorie;					
-        $DB_famille = new Model_DbTable_Famille;						
-        $DB_type = new Model_DbTable_Type;						        
-        $DB_classe = new Model_DbTable_Classe;							
+        $DB_categorie = new Model_DbTable_Categorie;
+        $DB_famille = new Model_DbTable_Famille;
+        $DB_type = new Model_DbTable_Type;
+        $DB_classe = new Model_DbTable_Classe;
         $DB_utilisateurs = new Model_DbTable_Utilisateur;
         $DB_utilisateursInfo = new Model_DbTable_UtilisateurInformations;
         $DB_statut = new Model_DbTable_Statut;
@@ -536,12 +541,12 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $etablissement->COURRIEL_ETABLISSEMENT = $data['COURRIEL_ETABLISSEMENT'];
 
             // Sauvegarde des champs de la fiche d'informations en fonction du genre
-            $informations->ICPE_ETABLISSEMENTINFORMATIONS = $informations->PERIODICITE_ETABLISSEMENTINFORMATIONS = 
-            $informations->R12320_ETABLISSEMENTINFORMATIONS = $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS = 
+            $informations->ICPE_ETABLISSEMENTINFORMATIONS = $informations->PERIODICITE_ETABLISSEMENTINFORMATIONS =
+            $informations->R12320_ETABLISSEMENTINFORMATIONS = $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS =
             $informations->ID_CLASSE = $informations->ID_FAMILLE =  $informations->ID_CATEGORIE = $informations->ID_TYPE =
-            $informations->ID_TYPEACTIVITE = $informations->ID_COMMISSION = $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = 
-            $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = $informations->EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS = 
-            $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = $etablissement->NBPREV_ETABLISSEMENT = 
+            $informations->ID_TYPEACTIVITE = $informations->ID_COMMISSION = $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS =
+            $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = $informations->EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS =
+            $informations->EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS = $etablissement->NBPREV_ETABLISSEMENT =
             $etablissement->DUREEVISITE_ETABLISSEMENT = null;
 
             switch($id_genre) {
@@ -704,7 +709,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                                 "ID_FILS_ETABLISSEMENT" => $id_etablissement_enfant
                             ))->save();
                             $cache->remove('etablissement_id_' . $id_etablissement_enfant);
-                        }   
+                        }
                     }
                 }
             }
@@ -712,7 +717,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             // Sauvegarde du père de l'établissement
             if(array_key_exists("ID_PERE", $data) && !empty($data['ID_PERE'])) {
                 $genre_pere = $DB_etablissement->getInformations($data['ID_PERE'])->ID_GENRE;
-                
+
                 if($id_genre == 2 && $genre_pere != 1) {
                     throw new Exception('Le père n\'est pas compatible (Un établissement a comme père un site)', 500);
                 }
@@ -796,7 +801,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                         $results['commission'] = $model_commission->find($etablissement['informations']['ID_COMMISSION'])->current()->toArray();
                     }
                 }
-                
+
                 if(!array_key_exists('commission', $results) && ($numinsee !== null && $categorie !== null && $type !== null && $local_sommeil !== null)) {
                     $commission = $model_commission->getCommission($numinsee, $categorie, $type, $local_sommeil == 'false' ? 0 : 1);
                     if($commission !== null) {
@@ -812,12 +817,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             // Cellule
             case 3:
-                // Périodicité du père
-                if($id_etablissement_pere !== null) {
-                    $pere = $this->get($id_etablissement_pere);
-                    $results['periodicite'] = $pere['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
-                }
-
                 // Préventionnistes de l'établissement parent
                 if($id_etablissement_pere !== null) {
                     $results['preventionnistes'] = $model_prev->getPrev('', $id_etablissement_pere);
@@ -838,7 +837,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 if($classe !== null) {
                     $results['periodicite'] = $DB_periodicite->gn4(0, $classe, false);
                 }
-                
+
                 // Commission en fonction des compétences des commissions
                 if($id_etablissement_pere !== null  && $id_etablissement_pere != '') {
                     $etablissement = $this->get($id_etablissement_pere);

@@ -79,7 +79,7 @@ $(document).ready(function() {
 									end: result["items"][x]["end"],
 									allDay: result["items"][x]["allDay"],
 									url: result["items"][x]["url"],
-									backgroundColor: "#dcdcdc",
+									backgroundColor: result["items"][x]["backgroundColor"],
 									textColor : "black"
 								});
 							}
@@ -122,17 +122,17 @@ $(document).ready(function() {
 				},
 				drop: function(date, allDay) {
 					var idDossier = $(this).attr('id');
-
-					//alert('drop');
+					var verrou = "";
 					$.ajax({
 						url: "/calendrier-des-commissions/affecteDossOdj?datadebut="+date,
+						async: false,
 						data: {
 							format: 'json',
 							dateCommId: $("#dateCommId").val(),
 							idDossier : idDossier,
 						},
 						success: function( result ) {
-							
+							verrou = result;
 						}
 					});
 					// retrieve the dropped element's stored Event Object
@@ -143,7 +143,11 @@ $(document).ready(function() {
 					copiedEventObject.start = date;
 					copiedEventObject.url = "/dossier/index/id/"+idDossier;
 					copiedEventObject.allDay = allDay;
-					copiedEventObject.backgroundColor = "#dcdcdc";
+					if(verrou == 1){
+						copiedEventObject.backgroundColor = "#83bff6";
+					}else{
+						copiedEventObject.backgroundColor = "#E2A420";
+					}					
 					copiedEventObject.textColor = "black";
 					
 					// render the event on the calendar
@@ -204,7 +208,7 @@ $(document).ready(function() {
 		width: 800,
 		height: 600,
 		buttons: {
-			"annuler": function() {
+			"Terminer": function() {
 				dialogDateCommission.dialog("close");
 				return false;
 			}
@@ -230,7 +234,7 @@ $(document).ready(function() {
 	$("#createConvoc").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
-				url: "/dossier/generationconvoc",
+				url: "/calendrier-des-commissions/generationconvoc",
 				data: "dateCommId="+$("#dateCommId").val(),
 				type:"POST",
 				//async: false,
@@ -253,7 +257,7 @@ $(document).ready(function() {
 	$("#createOdj").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
-				url: "/dossier/generationodj",
+				url: "/calendrier-des-commissions/generationodj",
 				data: "dateCommId="+$("#dateCommId").val(),
 				type:"POST",
 				//async: false,
@@ -276,7 +280,7 @@ $(document).ready(function() {
 	$("#createPv").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
-				url: "/dossier/generationpv",
+				url: "/calendrier-des-commissions/generationpv",
 				data: "dateCommId="+$("#dateCommId").val(),
 				type:"POST",
 				//async: false,
@@ -299,7 +303,7 @@ $(document).ready(function() {
 	$("#creationCompteRendu").click(function(){
 		if($("#external-events").children("div").children("div").length == 0){
 			$.ajax({
-				url: "/dossier/generationcompterendu",
+				url: "/calendrier-des-commissions/generationcompterendu",
 				data: "dateCommId="+$("#dateCommId").val(),
 				type:"POST",
 				//async: false,
@@ -374,16 +378,24 @@ $(document).ready(function() {
 });
 
 </script>
+<style>
+.fc-event-vert {
+	border-width:1px;
+}
+</style>
 <?php
 
 	echo "
 		<div>
+			<input type='hidden' id='tempVerrou' value='' />
 			<input type='hidden' name='dateOdj' id='dateOdj' value='".$this->infosDateComm['DATE_COMMISSION']."' />
 			<input type='hidden' name='heureDeb' id='heureDeb' value='".$this->infosDateComm['HEUREDEB_COMMISSION']."' />
 			<input type='hidden' name='heureFin' id='heureFin' value='".$this->infosDateComm['HEUREFIN_COMMISSION']."' />
 			<h2>Ordre du jour de la <a href='/calendrier-des-commissions?idComm=".$this->infosDateComm["COMMISSION_CONCERNE"]."' >".$this->infosCommission['LIBELLE_COMMISSION']."</a> du ".$this->dateFr."</h2><br/>
-			<h3>".$this->infosDateComm['LIBELLE_DATECOMMISSION']."</h3>";
-				
+			<h3>".$this->infosDateComm['LIBELLE_DATECOMMISSION'];
+
+			echo "</h3>";
+			
 			if($this->infosDateComm['GESTION_HEURES'] == 1){
 				echo "<button class='heures btn' id='non'  >Ne pas prendre en compte les heures</button>";
 			}else{
@@ -443,15 +455,30 @@ $(document).ready(function() {
 			<div class='row-fluid'>
 				<div id='calendar' name='calendar' class='span9'>
 				</div>
-				<div id='external-events' class='span3' style='color:black;border:1px solid black;text-align:center;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+		";
+		echo "
+			<span style='margin-left:45px;color:black;font-size:15px;'>
+				<span style='font-weight:bold;'>Dossier :</span>
+				<span class='label' style='background-color:#83bff6;color:black;font-size:15px;'>Validé</span>
+				<span class='label' style='background-color:#E2A420;color:black;font-size:15px;'>En attente de Validation</span>
+			</span>
+		";
+		echo "
+				<div id='external-events' class='span3' style='margin-top:5px;color:black;border:1px solid black;text-align:center;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 					<div style='' >
 		";			
+
 				echo "<h3>Liste des dossiers prévus</h3>";
 				if( count($this->listeDossierNonAffect) != 0 ){
 					foreach ($this->listeDossierNonAffect as $dossierNonAffect){
+						if($dossierNonAffect['VERROU_DOSSIER'] == 1){
+							$background = "#83bff6";
+						}else{
+							$background = "#E2A420";
+						}
 						echo "
-							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
-								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER']."' >
+							<div class='external-event eventExtODJ' id='".$dossierNonAffect['ID_DOSSIER']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:".$background.";border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+								<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER']."' style='color:black;'>
 						";
 						if(isset($dossierNonAffect['infosEtab'])){
 							//si le dossier est attaché à un établissement
@@ -497,19 +524,37 @@ $(document).ready(function() {
 	}else if($this->infosDateComm['GESTION_HEURES'] == 0){
 		//dans le cas ou on ne prend pas en compte les heures (cas par défaut)
 		echo "
-			<h3>Liste des dossiers prévus</h3>
+			<h3 style='display:inline;'>Liste des dossiers prévus</h3>
+		";
+		echo "
+			<span style='margin-left:50px;color:black;font-size:15px;'>
+				<span style='font-weight:bold;'>Dossier :</span>
+				<span class='label' style='background-color:#83bff6;color:black;font-size:15px;'>Validé</span>
+				<span class='label' style='background-color:#E2A420;color:black;font-size:15px;'>En attente de Validation</span>
+			</span>
+		";
+		echo "
 			<ul class='unstyled sortable' id='listeDossierNoHours'>
 		";
 		//Zend_Debug::dump($this->listeDossierNonAffect);
 		if( count($this->listeDossierNonAffect) != 0 ){
 			foreach ($this->listeDossierNonAffect as $dossierNonAffect){
+				if($dossierNonAffect['VERROU_DOSSIER'] == 1){
+					$background = "#83bff6";
+				}else{
+					$background = "#E2A420";
+				}
 				echo "
-					<li num='".$dossierNonAffect['NUM_DOSSIER']."'  >
-						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:#9FC6FF;border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
-							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' >
-								".$dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ]." (".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")
-				";
-				if(isset($dossierNonAffect['infosEtab']['parents'])){
+					<li num='".$dossierNonAffect['NUM_DOSSIER']."' >
+						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:".$background.";border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
+							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='color:black;' >
+								".$dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
+
+
+				if(isset($dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']))
+					echo "(".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+
+				if(isset($dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
 					echo " - ".$dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 				}
 				echo "<br/>";

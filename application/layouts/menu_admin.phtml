@@ -10,49 +10,50 @@
             
                 <li class="nav-header">Général</li>
 
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'admin') echo "class='active'" ?> >
-                    <a href='/admin' ><i class="icon-exclamation-sign"></i>Informations</a>
-                </li>
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'admin') echo "class='active'" ?> >
+                        <a href='/admin' ><i class="icon-exclamation-sign"></i>Informations</a>
+                    </li>
 
                 <li class="nav-header">Gestion des entités</li>
 
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'users') echo "class='active'" ?> >
-                    <a href='/users/index' ><i class="icon-cog"></i>Gestion des utilisateurs</a>
-                </li>
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'users') echo "class='active'" ?> >
+                        <a href='/users/index' ><i class="icon-cog"></i>Gestion des utilisateurs</a>
+                    </li>
 
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'couches-cartographiques') echo "class='active'" ?> >
-                    <a href='/couches-cartographiques/list' ><i class="icon-cog"></i>Gestion des couches cartographiques</a>
-                </li>
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-communes') echo "class='active'" ?> >
+                        <a href='/gestion-des-communes' ><i class="icon-th-list"></i>Gestion des communes</a>
+                    </li>
+
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'couches-cartographiques') echo "class='active'" ?> >
+                        <a href='/couches-cartographiques/list' ><i class="icon-cog"></i>Gestion des couches cartographiques</a>
+                    </li>
+
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-commission') echo "class='active'" ?> >
+                        <a href='/gestion-des-commissions' ><i class="icon-th-list"></i>Gestion des commissions</a>
+                    </li>
+
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-documents') echo "class='active'" ?> >
+                        <a href='/gestion-des-documents' ><i class="icon-th-list"></i>Gestion des documents</a>
+                    </li>
+
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-prescriptions') echo "class='active'" ?> >
+                        <a href='/gestion-prescriptions' ><i class="icon-th-list"></i>Gestion des prescriptions</a>
+                    </li>
+
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-textes-applicables') echo "class='active'" ?> >
+                        <a href='/gestion-textes-applicables' ><i class="icon-th-list"></i>Gestion des textes applicables</a>
+                    </li>
 
                 <li class="nav-header">Paramétrage du logiciel</li>
 
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'periodicite') echo "class='active'" ?> >
-                    <a href='/tableau-des-periodicites' ><i class="icon-th-list"></i>Tableau des périodicités</a>
-                </li>
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'periodicite') echo "class='active'" ?> >
+                        <a href='/tableau-des-periodicites' ><i class="icon-th-list"></i>Tableau des périodicités</a>
+                    </li>
 
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-communes') echo "class='active'" ?> >
-                    <a href='/gestion-des-communes' ><i class="icon-th-list"></i>Gestion des communes</a>
-                </li>
-
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'groupement') echo "class='active'" ?> >
-                    <a href='/groupement' ><i class="icon-th-list"></i>Groupements de communes</a>
-                </li>
-
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-commission') echo "class='active'" ?> >
-                    <a href='/gestion-des-commissions' ><i class="icon-th-list"></i>Gestion des commissions</a>
-                </li>
-
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-documents') echo "class='active'" ?> >
-                    <a href='/gestion-des-documents' ><i class="icon-th-list"></i>Gestion des documents</a>
-                </li>
-
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-prescriptions') echo "class='active'" ?> >
-                    <a href='/gestion-prescriptions' ><i class="icon-th-list"></i>Gestion des prescriptions</a>
-                </li>
-
-                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-textes-applicables') echo "class='active'" ?> >
-                    <a href='/gestion-textes-applicables' ><i class="icon-th-list"></i>Gestion des textes applicables</a>
-                </li>
+                    <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'groupement') echo "class='active'" ?> >
+                        <a href='/groupement' ><i class="icon-th-list"></i>Groupements de communes</a>
+                    </li>
+                    
             </ul>
         </div>
     </div>

@@ -13,12 +13,15 @@
             echo $date->get( Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR );
         ?>
     </td>
-    
-    <?php if($this->type == 'dossier') echo "<td><input type='checkbox' id='select_".$pj['ID_PIECEJOINTE']."' class='select' ".( ($pj['PJ_COMMISSION'] == '1')? "checked='checked'" : "" )." /></td>"; ?>	
-    
     <!-- Action-->
     <td>
-        <a id='delete' href='/piece-jointe/delete?id_pj=<?php echo $pj["ID_PIECEJOINTE"] ?>&type=<?php echo $this->type ?>&id=<?php echo $this->id ?>' style='text-decoration: none' >&times;</a>
+<?php
+	if($this->verrou != 1){
+?>
+		<a id='delete' href='/piece-jointe/delete?id_pj=<?php echo $pj["ID_PIECEJOINTE"] ?>&type=<?php echo $this->type ?>&id=<?php echo $this->id ?>' style='text-decoration: none' >&times;</a>
+<?php
+	}
+?>
     </td>
 </tr>
 <?php endforeach ?>

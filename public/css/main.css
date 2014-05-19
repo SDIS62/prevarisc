@@ -24,7 +24,7 @@ body {
     background-color: white;
     margin: 0 auto;  /* zéro ou une autre valeur */
     width: 100%; 
-    min-width: 1100px;
+    min-width: 1368px;
 }
 
 tbody {
@@ -43,6 +43,11 @@ body.login .btn.btn-primary {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0242a', endColorstr='#b91e23',GradientType=0 );
 }
 
+body.login input[type='submit'] {
+    display: block;
+    margin: 0 auto;
+}
+
 /* On règle la navbar en mode "super sleek"
 -------------------------------------------------- */
 
@@ -55,7 +60,7 @@ body > .navbar {
 }
 
 .navbar-inner .container-fluid {
-	min-width: 1100px;
+	min-width: 1368px;
 }
 
 .navbar-inner .container-fluid,
@@ -67,6 +72,10 @@ body > .navbar {
     color: #949494;
     text-shadow: 1px 1px 0 white;
     text-decoration: none;
+}
+
+.navbar-inner .container-fluid .nav-collapse > ul > li > a {
+    padding: 10px 10px 10px;
 }
 
 .navbar-inner .container-fluid .nav-collapse > ul > li > a:hover {
@@ -455,27 +464,6 @@ input.date:hover {
 	background-color: white;
 }
 
-/* Matrice des droits */
-#form_matrice > table > tbody > tr.tr_head {
-    background-color: #eeeeee;
-    height: auto;
-    overflow: auto;
-}
-
-#form_matrice > table > tbody > tr {
-    height: 300px;
-    overflow-y:none;
-}
-
-#form_matrice > table > tbody > tr > td{
-    width: 12.5%;
-}
-
-#form_matrice > table > tbody > tr div.inner_scroll {
-    height: 300px;
-    overflow-y: auto;
-}
-
 /* Gestion des commissions */
 ul#gestionCommissionMenu {
 	text-align: center;
@@ -511,49 +499,6 @@ ul#gestionCommissionMenu li.active {
 
 .ui-tabs-panel, .ui-accordion, .ui-accordion-content {
 	padding: 0;
-}
-
-#geoportail {
-	font-size: 12px;
-}
-
-#geoportail .gpMainMapCell {
-	border: 1px solid #d2c8c8;
-}
-
-#geoportail div.gpControlLayerSwitcher {
-	background-color: white;
-	border: 1px solid black;
-	position: absolute;
-	width: 150px;
-}
-
-#geoportail div.gpControlLabelClass {
-	background-color: white;
-	color: black;
-	border-width:1px;
-	border-style:solid;
-	border-bottom-color :#B0B0B0;
-	border-left-color:white;
-	border-right-color:#B0B0B0;
-	border-top-color:white;
-	font-size: 12px;
-}
-
-#geoportail div.gpLayerDivClass {
-	background-color: white;
-}
-
-#geoportail div.gpLayerDivClassAlternate {
-	background-color: #eeeeee;
-}
-
-#geoportail div.gpLayerDivClass, div.gpLayerDivClassAlternate {
-	border: none;
-}
-
-#geoportail .gpControlBasicLayerToolbar {
-
 }
 
 .listePrescriptions li:hover {

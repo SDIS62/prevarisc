@@ -225,7 +225,7 @@ foreach($this->listeNatures as $index => $nature){
 	if(count($this->listeDocs[$nature["ID_NATURE"]]) > 0)
 	{
 		foreach($this->listeDocs[$nature["ID_NATURE"]] as $document){
-			$exist = false;	
+			$exist = false;
 			foreach($this->dossierDocConsutle[$nature["ID_NATURE"]] as $docExistant){
 				if($docExistant['ID_DOC'] == $document['ID_DOC']){
 					$exist = true;
@@ -233,24 +233,27 @@ foreach($this->listeNatures as $index => $nature){
 					$date = $docExistant['DATE_CONSULTE'];
 				}
 			}
+			
 			if($exist){
-				echo $this->afficheDoc($nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC'],$ref,$date);
+				echo $this->afficheDoc($this->infosDossier['VERROU_DOSSIER'],$nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC'],$ref,$date);
 			}else{
-				echo $this->afficheDoc($nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC']);
+				echo $this->afficheDoc($this->infosDossier['VERROU_DOSSIER'],$nature["ID_NATURE"],$document['ID_DOC'],$document['LIBELLE_DOC']);
 			}
 		}
 	}
 
 	//on boucle sur les documents ajoutés à afficher
 	foreach($this->listeDocsAjout[$nature["ID_NATURE"]] as $documentAjout)
-		echo $this->afficheDoc($nature["ID_NATURE"],$documentAjout['ID_DOCAJOUT'],$documentAjout['LIBELLE_DOCAJOUT'],$documentAjout['REF_DOCAJOUT'],$documentAjout['DATE_DOCAJOUT'],"_aj");
+		echo $this->afficheDoc($this->infosDossier['VERROU_DOSSIER'],$nature["ID_NATURE"],$documentAjout['ID_DOCAJOUT'],$documentAjout['LIBELLE_DOCAJOUT'],$documentAjout['REF_DOCAJOUT'],$documentAjout['DATE_DOCAJOUT'],"_aj");
 
-	echo "</ul>
+	if($this->infosDossier['VERROU_DOSSIER'] == 0){
+		echo "</ul>
+				<hr class='clear' />
+				<p><a href='' id='docAjout_".$nature["ID_NATURE"]."' class='docAjout' >+ Ajouter un nouveau document</a></p>
+			</div>
 			<hr class='clear' />
-			<p><a href='' id='docAjout_".$nature["ID_NATURE"]."' class='docAjout' >+ Ajouter un nouveau document</a></p>
-		</div>
-		<hr class='clear' />
-	";
+		";
+	}
 }
 
 echo "

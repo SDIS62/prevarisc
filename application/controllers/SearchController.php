@@ -65,15 +65,17 @@ class SearchController extends Zend_Controller_Action
 
         $service_search = new Service_Search;
 
-        $DB_nature = new Model_DbTable_DossierNatureliste();
-        $this->view->DB_nature = $DB_nature->fetchAll()->toArray();
+        $DB_type = new Model_DbTable_DossierType();
+        $this->view->DB_type = $DB_type->fetchAll()->toArray();
 
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
                 $num_doc_urba = array_key_exists('num_doc_urba', $parameters) ? $parameters['num_doc_urba'] : null;
+                $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != '' ? $parameters['objet'] : null;
+                $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
 
-                $search = $service_search->dossiers($num_doc_urba, null, 50, $parameters['page']);
+                $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, 50, $parameters['page']);
 
                 require('helpers/SearchPaginatorAdapter.php');
                 $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));

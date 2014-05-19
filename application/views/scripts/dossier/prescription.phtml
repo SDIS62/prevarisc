@@ -12,15 +12,18 @@ TRUNCATE TABLE `prescriptiondossier`;
 TRUNCATE TABLE `prescriptiondossierassoc`;
 
 */
+if($this->infosDossier['VERROU_DOSSIER'] == 0){
+	echo "
+		<button class='addPresc btn' id='addPrescriptionType' >Ajouter une prescription type</button>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<button class='addPresc btn' id='addPrescription' >Ajouter une prescription</button>
+		<br/><br/>
+		<div>
+	";
+}
 echo "
-	<button class='addPresc btn' id='addPrescriptionType' >Ajouter une prescription type</button>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<button class='addPresc btn' id='addPrescription' >Ajouter une prescription</button>
-	<br/><br/>
-	<div>
-		<ul class='listePrescriptions unstyled'>
+	<ul class='listePrescriptions unstyled'>
 ";
-
 
 $nbPrescDossier = count($this->prescriptionDossier);
 //echo $nbPrescDossier;
@@ -54,7 +57,7 @@ for($i=0; $i < $nbPrescDossier; $i++)
 					echo nl2br($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
 				}
 				echo "</td>";
-				echo "<td class='span1' rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."'>Modifier</button></td>";
+				echo "<td class='span1' rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."' ".(( $this->infosDossier['VERROU_DOSSIER'] == 1)?"style='display:none;'":"").">Modifier</button></td>";
 				$cpt = false;
 			}
 			echo "
@@ -77,48 +80,47 @@ echo "
 <script type="text/javascript">
 
 $(document).ready(function(){
-	
+
+<?php if($this->infosDossier['VERROU_DOSSIER'] == 0){ ?>
 	$(".listePrescriptions").sortable({
 		update: function(event, ui) {
-				var listePrescriptionUpdate = new Array();
-				var num = 1;
-				$(".listePrescriptions > li").each(function(){
-					//on parcour les li pour récolter les changements et mettre à jour dans la base
-					//on change le num de li
-					$(this).attr('num',num);
-					//on change le num affiché
-					//alert($(this).children().children().children().html());
-					$(this).children().children().children().children(".numPresc").html(num);
-					
-					//on recupere id du li en cours "presc_x"
-					var liId = $(this).attr('id');
-					var liId = liId.split('_');
-					//alert(liId[1]);
-					listePrescriptionUpdate.push(liId[1]);
-					
-					num = num + 1;
-				});
+			var listePrescriptionUpdate = new Array();
+			var num = 1;
+			$(".listePrescriptions > li").each(function(){
+				//on parcour les li pour récolter les changements et mettre à jour dans la base
+				//on change le num de li
+				$(this).attr('num',num);
+				//on change le num affiché
+				//alert($(this).children().children().children().html());
+				$(this).children().children().children().children(".numPresc").html(num);
 				
-				$.ajax({
-					url: "/dossier/prescriptionchangepos",
-					data: "do=changePrescOrder&tableUpdate="+listePrescriptionUpdate+"&idDossier="+$("#idDossier").val(),
-					type:"POST",
-					beforeSend: function(){
+				//on recupere id du li en cours "presc_x"
+				var liId = $(this).attr('id');
+				var liId = liId.split('_');
+				//alert(liId[1]);
+				listePrescriptionUpdate.push(liId[1]);
+				
+				num = num + 1;
+			});
+			
+			$.ajax({
+				url: "/dossier/prescriptionchangepos",
+				data: "do=changePrescOrder&tableUpdate="+listePrescriptionUpdate+"&idDossier="+$("#idDossier").val(),
+				type:"POST",
+				beforeSend: function(){
 
-					},
-					success: function(affichageResultat){
-						//alert('succes');
-						return false;
-					},
-					error: function()	{
-						return false;
-					}
-				});
-				
-			}
-	
+				},
+				success: function(affichageResultat){
+					//alert('succes');
+					return false;
+				},
+				error: function()	{
+					return false;
+				}
+			});
+		}	
 	});
-
+<?php } ?>
 //Ajout prescription type
 	var dialogPrescType = $('<div style="display:none;"></div>').appendTo('body');
 	

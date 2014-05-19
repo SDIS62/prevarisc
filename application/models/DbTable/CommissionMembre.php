@@ -55,6 +55,9 @@
             // On initialise le tableau qui contiendra l'ensemble des crit�res
             $array_membres = array();
 
+            // On récupère les informations de la commission
+            $infos_commission = $model_commission->fetchRow("ID_COMMISSION = " . $id_commission);
+
             // Pour chaques r�gles, on va chercher les crit�res
             foreach ($rowset_membresDeLaCommission as $row_membreDeLaCommission) {
 
@@ -70,11 +73,10 @@
                     "types" => $this->fullJoinRegle("typeactivite", "commissionmembretypeactivite", "ID_TYPEACTIVITE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
                     "dossiertypes" => $this->fullJoinRegle("dossiertype", "commissionmembredossiertype", "ID_DOSSIERTYPE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
                     "dossiernatures" => $this->fullJoinRegle("dossiernatureliste", "commissionmembredossiernature", "ID_DOSSIERNATURE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
-                    "infos" => $model_commission->fetchRow("ID_COMMISSION = " . $id_commission)
+                    "infos" => $infos_commission
                 );
             }
 
-            // Zend_Debug::Dump($this->fetchAll($this->select()->setIntegrityCheck(false)->from("commissionreglelocalsommeil", "LOCALSOMMEIL")->where("ID_REGLE = " . $row_regleDeLaCommission["ID_REGLE"]))->toArray());
             return $array_membres;
         }
 

@@ -1,37 +1,59 @@
 <?php echo $this->partial('users/partials/menu_admin_user.phtml') ?>
 
+<ul class="nav nav-tabs">
+    <li class='<?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'matrice-des-droits') echo "active" ?>'>
+        <a href="/users/matrice-des-droits">Matrice des droits</a>
+    </li>
+    <li class='<?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'ressources-specialisees') echo "active" ?> pull-right'>
+        <a href="/users/ressources-specialisees">Gestion des ressources spécialisées</a>
+    </li>
+</ul>
+
 <form method='post' action='/users/matrice-des-droits'>
 
-    <?php foreach($this->rowset_groupes as $groupe) : ?>
+    <div class="accordion" id="accordion">
 
-    <h4><?php echo $groupe->LIBELLE_GROUPE ?></h4>
+        <?php foreach($this->rowset_groupes as $groupe) : ?>
 
-    <table class="table table-condensed" >
-        <thead>
-            <tr>
-                <th>Ressources</th>
-                <th>Privilèges</th>
-            </tr>
-        </thead>
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse<?php echo $groupe->ID_GROUPE ?>">
+                        <?php echo $groupe->LIBELLE_GROUPE ?>
+                    </a>
+                </div>
+                <div id="collapse<?php echo $groupe->ID_GROUPE ?>" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                        <table class="table table-condensed table-hover" >
+                            <thead>
+                                <tr>
+                                    <th>Ressources</th>
+                                    <th>Privilèges</th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody>
+
+                                <?php foreach($this->rowset_resources as $resource) : ?>
+                                <tr>
+                                    <td><?php echo $resource->text ?> <small>(<?php echo $resource->name ?>)</small></td>
+                                    <td>
+                                        <?php foreach($resource->findModel_DbTable_Privilege()->toArray() as $privilege) : ?>
+                                        <?php echo $this->partial('users/partials/partial-droit.phtml', array('text' => $privilege['text'], 'name' => $privilege['name'], 'name_input' => 'groupe[' . $groupe->ID_GROUPE . '][' . $privilege['id_privilege'] . ']', 'value' => (int) in_array(array('ID_GROUPE' => (string) $groupe->ID_GROUPE, 'id_privilege' => (string) $privilege['id_privilege']), $this->rowset_groupes_privilege))) ?>
+                                        <?php endforeach ?>
+                                    </td>
+                                <tr>
+                                <?php endforeach ?>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        <?php endforeach ?>
+
+    </div>
         
-        <tbody>
-
-            <?php foreach($this->rowset_resources as $resource) : ?>
-            <tr>
-                <td><?php echo $resource->text ?> <small>(<?php echo $resource->name ?>)</small></td>
-                <td>
-                <?php foreach($resource->findModel_DbTable_Privilege()->toArray() as $privilege) : ?>
-                <?php echo $this->partial('users/partials/partial-droit.phtml', array('text' => $privilege['text'], 'name' => $privilege['name'], 'name_input' => 'groupe[' . $groupe->ID_GROUPE . '][' . $privilege['id_privilege'] . ']', 'value' => (int) in_array(array('ID_GROUPE' => (string) $groupe->ID_GROUPE, 'id_privilege' => (string) $privilege['id_privilege']), $this->rowset_groupes_privilege))) ?>
-                <?php endforeach ?>
-                </td>
-            <tr>
-            <?php endforeach ?>
-            
-        </tbody>
-    </table>
-
-    <?php endforeach ?>
-    
     <input type='submit' value='Sauvegarder' class='btn btn-success' />
-    
+        
 </form>

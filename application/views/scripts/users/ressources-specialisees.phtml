@@ -1,0 +1,266 @@
+<?php echo $this->partial('users/partials/menu_admin_user.phtml') ?>
+
+<ul class="nav nav-tabs">
+    <li class='<?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'matrice-des-droits') echo "active" ?>'>
+        <a href="/users/matrice-des-droits">Matrice des droits</a>
+    </li>
+    <li class='<?php if(Zend_Controller_Front::getInstance()->getRequest()->getActionName() == 'ressources-specialisees') echo "active" ?> pull-right'>
+        <a href="/users/ressources-specialisees">Gestion des ressources spécialisées</a>
+    </li>
+</ul>
+
+<a href='#' onclick='$("#resource-ets-modal").modal({show: true});' class='btn btn-small pull-right'>Ajouter une ressource</a>
+
+<h4>Ressources liées aux établissements</h4>
+
+<table class='table table-condensed'>
+    <thead>
+        <tr>
+            <th>Nom de la ressource</th>
+            <th>Identifiant de la ressource</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach($this->resources as $resource) : ?>
+            <?php if(explode('_', $resource->name)[0] == 'etablissement') : ?>
+                <tr>
+                    <td><?php echo $resource->text ?></td>
+                    <td><?php echo $resource->name ?></td>
+                    <td><a href='<?php echo $this->url(array("action" => "delete-ressource-specialisee", "id" => $resource->id_resource)) ?>'>Supprimer</a></td>
+                </tr>
+                <?php endif ?>
+            <?php endforeach ?>
+    </tbody>
+</table>
+
+<a href='#' onclick='$("#resource-dossier-modal").modal({show: true});' class='btn btn-small pull-right'>Ajouter une ressource</a>
+
+<h4>Ressources liées aux dossiers</h4>
+
+<table class='table table-condensed'>
+    <thead>
+        <tr>
+            <th>Nom de la ressource</th>
+            <th>Identifiant de la ressource</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach($this->resources as $resource) : ?>
+            <?php if(explode('_', $resource->name)[0] == 'dossier') : ?>
+                <tr>
+                    <td><?php echo $resource->text ?></td>
+                    <td><?php echo $resource->name ?></td>
+                    <td><a href='<?php echo $this->url(array("action" => "delete-ressource-specialisee", "id" => $resource->id_resource)) ?>'>Supprimer</a></td>
+                </tr>
+                <?php endif ?>
+            <?php endforeach ?>
+    </tbody>
+</table>
+
+<!-- Boite d'ajout de ressource etablissement -->
+<form id="resource-ets-modal" class="modal hide fade" action="<?php echo $this->url(array('action' => 'add-ressource-specialisee')) ?>" method='post'>
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Ajout d'une ressource établissement</h3>
+    </div>
+
+    <div class="modal-body">
+
+        <dl class='dl-horizontal'>
+            <dt>Nom de la ressource</dt>
+            <dd>
+                <p>
+                    <input type='text' name='text' placeholder='Laisser vide pour donner un nom par défaut' />
+                </p>
+            </dd>
+        </dl>
+
+        <hr/>
+
+        <p class='text-center'><strong>Critères sur le genre
+            <select name='genre'> <!-- genre -->
+                <?php foreach( $this->genres as $genre ) : ?>
+                    <option value='<?php echo $genre["ID_GENRE"] ?>'>
+                        <?php echo $genre["LIBELLE_GENRE"] ?>
+                    </option>
+                <?php endforeach ?>
+            </select>
+        </strong></p>
+
+        <dl class='dl-horizontal'>
+
+            <dt class='champs champ_types'>Types d'activité</dt>
+            <dd class='champs champ_types'>
+
+                <div style='height: 200px; overflow-y:none;'>
+                    <dl style='height: 150px; overflow-y: auto;'>
+                        <?php foreach( $this->types as $libelle_type => $_type ) : ?>
+                            <dt style='width: 50px;'><?php echo $libelle_type ?><dt>
+                            <dd style='margin-left: 70px;'>
+                                <ul class='unstyled'>
+                                <?php foreach( $_type as $type ) : ?>
+                                    <li>
+                                        <input name='types[]' type='checkbox' value='<?php echo $type["ID_TYPEACTIVITE"] ?>' />
+                                        <?php echo $type["LIBELLE_ACTIVITE"] ?>
+                                    </li>
+                                <?php endforeach ?>
+                                </ul>
+                            </dd>
+                        <?php endforeach ?>
+                    </dl>
+                </div>
+
+            </dd>
+
+            <dt class='champs champ_categorie'>Catégories</dt>
+            <dd class='champs champ_categorie'>
+                <p>
+                    <select name='categories[]' multiple>
+                        <?php foreach($this->categories as $categorie) : ?>
+                            <option value='<?php echo $categorie['ID_CATEGORIE'] ?>'><?php echo $categorie['LIBELLE_CATEGORIE'] ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </p>
+            </dd>
+
+            <dt class="champ_famille champs">Famille</dt>
+            <dd class="champ_famille champs">
+                <select name='familles'>
+                    <?php foreach( $this->familles as $item ) : ?>
+                        <option value='<?php echo $item["ID_FAMILLE"] ?>' >
+                            <?php echo $item["LIBELLE_FAMILLE"] ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
+            </dd>
+
+            <dt class="champ_classe champs">Classe</dt>
+            <dd class="champ_classe champs">
+                <select name='classes'>
+                    <?php foreach( $this->classes as $item ) : ?>
+                        <option value='<?php echo $item["ID_CLASSE"] ?>' >
+                            <?php echo $item["LIBELLE_CLASSE"] ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
+            </dd>
+
+            <dt class='champs champ_commission'>Commissions</dt>
+            <dd class='champs champ_commission'>
+                <select name='commissions'>
+                    <option value='0'>Ignorer les commissions compétentes de l'utilisateur</option>
+                    <option value='1'>Des commissions compétentes de l'utilisateur</option>
+                </select>
+            </dd>
+
+            <dt class='champs champ_adresse'>Groupements</dt>
+            <dd class='champs champ_adresse'>
+                <select name='groupements'>
+                    <option value='0'>Ignorer les groupements de l'utilisateur</option>
+                    <option value='1'>Sur les groupements de l'utilisateur</option>
+                </select>
+            </dd>
+
+            <dt class='champs champ_adresse'>Commune</dt>
+            <dd class='champs champ_adresse'>
+                <select name='commune'>
+                    <option value='0'>Ignorer la commune de l'utilisateur</option>
+                    <option value='1'>Sur la commune de l'utilisateur</option>
+                </select>
+            </dd>
+
+        </dl>
+
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='hidden' name='type_ressource' value='etablissement' />
+        <input type='submit' value='Ajouter' class='btn btn-success' />
+    </div>
+
+</form>
+
+<!-- Boite d'ajout de ressource dossier -->
+<form id="resource-dossier-modal" class="modal hide fade" action="<?php echo $this->url(array('action' => 'add-ressource-specialisee')) ?>" method='post'>
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Ajout d'une ressource dossier</h3>
+    </div>
+
+    <div class="modal-body">
+
+        <dl class='dl-horizontal'>
+            <dt>Nom de la ressource</dt>
+            <dd>
+                <p>
+                    <input type='text' name='text' placeholder='Laisser vide pour donner un nom par défaut' />
+                </p>
+            </dd>
+
+            <dt>Nature</dt>
+            <dd>
+                <p>
+                    <select name='dossier_natures[]' multiple>
+                        <?php foreach($this->natures_dossier as $nature) : ?>
+                            <option data-type='<?php echo $nature['ID_DOSSIERTYPE'] ?>' value='<?php echo $nature['ID_DOSSIERNATURE'] ?>'><?php echo $nature['LIBELLE_DOSSIERNATURE'] ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </p>
+            </dd>
+        </dl>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' value='Ajouter' class='btn btn-success' />
+        <input type='hidden' name='type_ressource' value='dossier' />
+    </div>
+
+</form>
+
+<script>
+    $(document).ready(function() {
+
+        // Gestion des multiselects
+        $("select[name='types[]']").multiselect({header: false, noneSelectedText: "Tous les types"});
+        $("select[name='categories[]']").multiselect({header: false, noneSelectedText: "Toutes les catégories"});
+        $("select[name='dossier_natures[]']").multiselect({header: false, noneSelectedText: "Toutes les natures"});
+
+        // Action sur le changement du genre des ressources établissement (affichage des champs)
+        $("select[name='genre']").change(function() {
+            $('.champs').hide();
+            switch($(this).find('option:selected').val()) {
+                // Établissement
+                case '2':
+                    $('.champ_categorie, .champ_types, .champ_adresse, .champ_commission').show();
+                    break;
+
+                // Cellule
+                case '3':
+                    $('.champ_types').show();
+                    break;
+
+                // Habitation
+                case '4':
+                    $('.champ_famille, .champ_adresse').show();
+                    break;
+
+                // IGH
+                case '5':
+                    $('.champ_classe, .champ_adresse, .champ_commission').show();
+                    break;
+
+                // EIC
+                case '6':
+                    $('.champ_adresse').show();
+                    break;
+            }
+        }).change();
+
+    });
+</script>

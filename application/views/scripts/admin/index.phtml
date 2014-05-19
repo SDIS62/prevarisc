@@ -1,19 +1,30 @@
 <h3 class='page-header'>Panneau d'administration</h3>
 
-<h4>Informations sur la version courante de Prevarisc</h4>
 <dl class='dl-horizontal' >
-    <dt>Version</dt>
-    <dd>
-        <p><a href="https://github.com/SDIS62/prevarisc/issues/milestones">Prevarisc <?php echo $this->version_prevarisc ?></a></p>
-    </dd>
-    
+
     <dt>Serveur</dt>
     <dd>
         <p><span id="APPLICATION_ENV" class="label label_<?php echo strtoupper(APPLICATION_ENV) ?>"><?php echo strtoupper(APPLICATION_ENV) ?></span></p>
     </dd>
 
-    <dt>Site du projet</dt>
+    <dt>Version</dt>
     <dd>
-        <p><a href="http://prevarisc.sdis62.fr">Aller sur le site du Projet Prevarisc</p>
+        <p>Prevarisc <?php echo $this->version_prevarisc ?></p>
     </dd>
+
+    <dt>Clé IGN renseignée</dt>
+    <dd>
+        <p><?php echo $this->key_ign != null ? $this->key_ign : 'Aucune clé' ?></p>
+    </dd>
+
+    <dt>Auth. via LDAP</dt>
+    <dd>
+        <p><?php echo $this->ldap_enabled != 1 ? 'Désactivé' : 'Activé' ?></p>
+    </dd>
+
+    <dt>Base utilisée</dt>
+    <dd>
+        <p><em><?php echo $this->dbname ?></em> sur <em><?php echo $this->db_url ?></em></p>
+    </dd>
+
 </dl>

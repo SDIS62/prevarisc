@@ -1,10 +1,9 @@
-<?php if( !$this->ajax) : ?>
+<?php if( !$this->ajax && $this->verrou == 0) : ?>
 	<p style='float: right;' ><a id='add-contact' class='btn' href="/contact/form?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>">Ajouter un nouveau contact</a></p>
 	<p style='float: right; margin-right: 1em' ><a id='add-contact-existant' class='btn' href="/contact/form?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>">Ajouter un contact existant</a></p>
 <?php endif ?>
 
 <div style='clear: both'></div>
-
 <div id='contact-content-ajax'>
 	
 	<!-- Contacts parents pour les ets -->

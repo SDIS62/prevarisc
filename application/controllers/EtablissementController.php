@@ -24,6 +24,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->_helper->layout->setLayout('etablissement');
 
         $service_etablissement = new Service_Etablissement;
+        $service_carto = new Service_Carto;
 
         $etablissement = $service_etablissement->get($this->_request->id);
 
@@ -52,6 +53,8 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
+
+        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
 
         $this->view->add = false;
 
@@ -108,11 +111,6 @@ class EtablissementController extends Zend_Controller_Action
         }
 
         $this->render('edit');
-    }
-
-    public function buildAdresseAction()
-    {
-        $this->_helper->layout->disableLayout();
     }
 
     public function descriptifAction()
