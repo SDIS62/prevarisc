@@ -6,12 +6,15 @@
 <?php 
 	if($this->verrou == 0){
 		echo "
-			<button id='addPJ' class='btn' style='float: right; margin-left: 1em;' >Ajouter une piece jointe</button>
+			<button id='addPJ' class='btn' >Ajouter une piece jointe</button>
+			<button id='addPJQuick' class='btn' >Ajout rapide</button>
+			<div id='dropzone' class='dropzone' style='display:none'></div>
 		";
 	}
 ?>
 </h3>
 <div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>
+
 <div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
 	<table id='tabPieceJointe' class='table'> 
 		<thead> 
