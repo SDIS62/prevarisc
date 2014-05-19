@@ -190,7 +190,6 @@ class DossierController extends Zend_Controller_Action
 
     public function generalAction()
     {
-	
         $this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
         //On récupère tous les types de dossier
         $DBdossierType = new Model_DbTable_DossierType;
@@ -1029,7 +1028,8 @@ class DossierController extends Zend_Controller_Action
             //lorsque je crée un dossier visite ou groupe de visite VP (21-26), VC (22-27), VI (24-29),
             //il faut que les textes applicables à l’ERP se retrouvent de fait dans le dossier créé
             $idNature = $this->_getParam("selectNature");
-            if ( ($idNature == 21 ||  $idNature == 22 || $idNature == 24 || $idNature == 26 || $idNature == 27 || $idNature == 29) &&  $_POST['idEtablissement'] != "") {
+
+            if ( ($idNature == 21 ||  $idNature == 22 || $idNature == 24 || $idNature == 26 || $idNature == 27 || $idNature == 29) &&  $_POST['idEtablissement'] != "" && $_POST['do'] == 'new') {
                 $dbEtablissementTextAppl = new Model_DbTable_EtsTextesAppl;
                 $listeTexteApplEtab = $dbEtablissementTextAppl->recupTextes($_POST['idEtablissement']);
                 $dbDossierTexteAppl = new Model_DbTable_DossierTextesAppl;
@@ -1081,7 +1081,6 @@ class DossierController extends Zend_Controller_Action
                     }
                 }
             }
-
 
             if ( isset($_POST['docManquant']) ) {
 				//comparatif (combien en param et combien en bd pour mise à jour du dernier si besoin)
@@ -1136,6 +1135,7 @@ class DossierController extends Zend_Controller_Action
                 }
 
             }
+
             //lorsque je crée un nouveau dossier de VP pour un ERP qui a déjà été visité, il faudrait que les « éléments consultés » de base soient les mêmes
             //Sauvegarde des numéro de document d'urbanisme du dossier
             $DBdossierDocUrba = new Model_DbTable_DossierDocUrba;
@@ -1164,7 +1164,6 @@ class DossierController extends Zend_Controller_Action
                     $savePrev->save();
                 }
             }
-
 			
             //Sauvegarde des informations concernant l'affectation d'un dossier à une commission
             $dbDossierAffectation = new Model_DbTable_DossierAffectation;

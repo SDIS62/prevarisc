@@ -3,32 +3,52 @@
 	$(document).ready(function(){
 
 		// Texte de l'auto complete utilisateurs
-		$("#preventionnistes-autocomplete").toggleText("Saisissez le nom d'un préventionniste ...");
-		$("#preventionnistes-autocomplete").autocomplete("/api/1.0/search/users?fonctions=13", {
-			minChars: 3,
-			max: 100,
-			parse: function(data) {
-				return $.map(data["resultats"], function(row) {
-					return {
-						data: row,
-						value: row.NOM_UTILISATEURINFORMATIONS,
-						result: row.NOM_UTILISATEURINFORMATIONS
-					}
-				});
-			},
-			formatItem: function(item) {
-				return item.NOM_UTILISATEURINFORMATIONS + " " + item.PRENOM_UTILISATEURINFORMATIONS;
-			}
-		}).result(function(e, item) {
-			var prevAdd = "<span class='ui-state-highlight' style='float: left; padding: 2px; margin: 0pt 2px 1em 0pt; display: block;' >";
-			prevAdd += "<input type='hidden' name='preventionniste[]' value='"+item.uid+"' />";
-			prevAdd += "<span>";
-			prevAdd += item.NOM_UTILISATEURINFORMATIONS+" "+item.PRENOM_UTILISATEURINFORMATIONS;
-			prevAdd += "</span>";
-			prevAdd += "<a onclick='$(this).parent().remove(); return false;' style='text-decoration: none;' href=''>×</a>";
-			prevAdd += "</span>";
-			$("#liste_prev").append(prevAdd);
-		});	
+		//$("#preventionnistes-autocomplete").toggleText("Saisissez le nom d'un préventionniste ...");
+		// Auto-complétion des préventionnistes
+        $("#preventionnistes-autocomplete").typeahead({
+            minLength: 3,
+            source: function(query, process) {
+                return $.ajax({
+                    url: "/api/1.0/search/users",
+                    type: 'post',
+                    data: {
+                        name: query,
+                        fonctions: 13,
+                        limit: 100,
+                    },
+                    success: function (result) {
+                        preventionnistes = [];
+                        $.each(result.response.results, function (i, preventionniste) {
+                            preventionnistes.push("<span data-id='" + preventionniste.uid + "'>" + preventionniste.NOM_UTILISATEURINFORMATIONS + " " + preventionniste.PRENOM_UTILISATEURINFORMATIONS + "</span>");
+                        });
+
+                        process(preventionnistes);
+                    }
+                });
+            },
+            highlighter: function (item) {
+                libelle = $($.parseHTML(item)).last().text();
+                libelle = libelle.replace( new RegExp( '(' + this.query + ')', 'gi' ), "<strong>$1</strong>" );
+                html = $.parseHTML(item);
+                $(html).last().text(libelle);
+                html = $(html).text();
+                return item.replace( item, html );
+            },
+            updater: function (item) {
+                //node = $('#prototype_preventionniste').clone().prependTo( $('.preventionnistes table') ).removeClass('hide prototypes').addClass('preventionniste').attr('id', '');
+                //node.find('span').text($($.parseHTML(item)).last().text());
+                //node.find("input[type='hidden']").val($($.parseHTML(item)).last().data('id'));
+				var prevAdd = "<span class='ui-state-highlight' style='float: left; padding: 2px; margin: 0pt 2px 1em 0pt; display: block;' >";
+				prevAdd += "<input type='hidden' name='preventionniste[]' value='"+$($.parseHTML(item)).last().data('id')+"' />";
+				prevAdd += "<span>";
+				prevAdd += $($.parseHTML(item)).last().text();
+				prevAdd += "</span>";
+				prevAdd += "<a onclick='$(this).parent().remove(); return false;' style='text-decoration: none;' href=''>×</a>";
+				prevAdd += "</span>";
+				$("#liste_prev").append(prevAdd);
+                return;
+            }
+        });
 		//FIN gestion de l'autocomplession pour les préventionniste attachés au dossier
 
 		$("#commissionSelect").live('change',function(){
@@ -1274,14 +1294,16 @@ echo "
 						<input type='text' class='date' id='DATESDIS_INPUT' name='DATESDIS_DOSSIER' value='".( ($this->DATESDIS_INPUT)?$this->DATESDIS_INPUT:"" )."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
-				</li>	
+				</li>
 				<li class='row-fluid' id='SERVICEINSTRUC' style='".( ($action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && ( $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' || $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != NULL) )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Service instructeur</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
 				";
-				echo "<input type='radio' name='servInst' value='servInstGrp' checked='checked'>&nbsp;&nbsp;";
+				//echo "<input type='radio' name='servInst' value='servInstGrp' checked='checked'>&nbsp;&nbsp;";
 				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], null, 10);
+				//echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='servInst' value='servInstCommune'>&nbsp;";
+				//echo "<input type='text' name='servInstVille' id='servInstVille' value='' />";
 				echo "						
 					</div>
 				</li>
