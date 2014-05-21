@@ -128,6 +128,15 @@
 							$("#dialogComm").dialog("option", "buttons", {
 								'Enregistrer dans le calendrier': function() {
 									// Lors de la validation de la boite de dialogue
+									if($("#repeat").is(":checked") && $("#dateFin").val() == ''){
+										$("#erreurDateFin").html('Veuillez renseigner une date de fin');
+										return false;
+									}
+									
+									if($("#libelle_comm").val() == ''){
+										$("#libelle_comm").focus();
+										return false;
+									}
 									$.ajax({
 										data: $("#formDateComm").serialize() + "&idComm=" + idComm,
 										url: "/calendrier-des-commissions/adddates",
