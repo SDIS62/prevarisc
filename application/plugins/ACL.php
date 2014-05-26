@@ -173,9 +173,14 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         if($page->get('controller') == 'etablissement') {
                             foreach($resources as $resource) {
-                                if($acl->has($resource) && $acl->isAllowed($role, $resource,  $privilege)) {
+                                if($acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
                                     $access_granted = true;
                                 }
+                            }
+                            if(in_array('editsite', $resources) && $page->get('action') == 'edit') {
+                              if($acl->has("creations") && $acl->isAllowed($role, "creations", "add_etablissement")) {
+                                  $access_granted = true;
+                              }
                             }
                         }
                         elseif($page->get('controller') == 'dossier') {
@@ -358,7 +363,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
         switch($etablissement['informations']['ID_GENRE']) {
             case '1':
-                $resource = array();
+                $resource = array('editsite');
                 foreach($etablissement['etablissement_lies'] as $etablissements_enfant) {
                     $resource = array_merge($resource, $this->getEtablissementPageResourses($etablissements_enfant['ID_ETABLISSEMENT']));
                 }
