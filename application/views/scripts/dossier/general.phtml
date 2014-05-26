@@ -764,8 +764,15 @@
 					{
 						$("#FACTDANGE").show();
 						$("#ECHEANCIERTRAV").show();
+						$("#ANOMALIE").show();
+					}
+				}else if(type == 1){
+					if($("#selectNature").val() == 19)
+					{
+						$("#ANOMALIE").show();
 					}
 				}
+
 				
 				if($("#selectNature").val() == 1 || $("#selectNature").val() == 2){
 					$("#docurbaVal").html('');
@@ -1011,9 +1018,20 @@
 			if($(this).val() == 2){
 				$("#FACTDANGE").show();
 				$("#ECHEANCIERTRAV").show();
+				$("#ANOMALIE").show();
 			}else{
 				$("#FACTDANGE").hide();
 				$("#ECHEANCIERTRAV").hide();
+				$("#ANOMALIE").hide();
+			}
+		}else if(type == 1){
+			if($("#selectNature").val() == 19)
+			{
+				if($(this).val() == 2){
+					$("#ANOMALIE").show();
+				}else{
+					$("#ANOMALIE").hide();
+				}
 			}
 		}
 	});
@@ -1313,10 +1331,9 @@ echo "
 				<li class='row-fluid' id='SERVICEINSTRUC' style='".( ( $action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != NULL && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '0' )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Service instructeur</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['SERVICEINSTRUC_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 				";
-				echo "<input type='radio' name='servInst' value='servInstGrp' ".( ($action == 'new' || $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstGrp')? "checked='checked'" : "")."  />&nbsp;&nbsp;";
-				//echo $this->listeGroupement(0, ' name="servInstGrp" id="servInstGrp"', 10);
+				echo "<input type='radio' name='servInst' value='servInstGrp' ".( ($action == 'new' || $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstGrp' || $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == NULL)? "checked='checked'" : "")."  />&nbsp;&nbsp;";
 				echo listeGroupementServInstructeur($this->infosDossier['SERVICEINSTRUC_DOSSIER'], 10, $this->infosDossier['TYPESERVINSTRUC_DOSSIER']);
 				echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='servInst' value='servInstCommune' ".( ($this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstCommune')? "checked='checked'": "" )."/>&nbsp;";
 				echo "<input type='text' name='servInstVille' id='servInstVille' ".( ($this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstGrp' || $action == 'new')? "disabled='disabled'": "" )." value='".( ( $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstCommune' && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' )? $this->infosDossier['SERVICEINSTRUC_DOSSIER'] : "" )."' />";
