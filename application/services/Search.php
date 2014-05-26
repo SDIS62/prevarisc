@@ -218,6 +218,11 @@ class Service_Search
                         FROM dossier
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
                         WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)",
+                    "NB_URBA" => "( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
+                        FROM dossier
+                        INNER JOIN dossierdocurba ON dossierdocurba.ID_DOSSIER = dossier.ID_DOSSIER
+                        WHERE dossier.ID_DOSSIER = d.ID_DOSSIER
+                        LIMIT 1)",
                     "ALERTE_RECEPTION_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
                         FROM dossier
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
@@ -232,7 +237,6 @@ class Service_Search
                 ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
                 ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))
                 ->join("dossiertype", "dossiertype.ID_DOSSIERTYPE = dossiernatureliste.ID_DOSSIERTYPE", "LIBELLE_DOSSIERTYPE")
-                ->joinLeft("dossierdocurba", "d.ID_DOSSIER = dossierdocurba.ID_DOSSIER", "NUM_DOCURBA")
                 ->joinLeft(array("e" => "etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
                 ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
                 ->group("d.ID_DOSSIER");
