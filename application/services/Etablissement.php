@@ -571,7 +571,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
             }
 
             // Sauvegarde des champs d'établissement (non historisés) en fonction
-            $etablissement->NUMEROID_ETABLISSEMENT = $data['NUMEROID_ETABLISSEMENT'];
             $etablissement->TELEPHONE_ETABLISSEMENT = $data['TELEPHONE_ETABLISSEMENT'];
             $etablissement->FAX_ETABLISSEMENT = $data['FAX_ETABLISSEMENT'];
             $etablissement->COURRIEL_ETABLISSEMENT = $data['COURRIEL_ETABLISSEMENT'];
@@ -639,6 +638,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     break;
             }
+
+            $etablissement->save();
+
+            $etablissement->NUMEROID_ETABLISSEMENT = $data['NUMEROID_ETABLISSEMENT'] != null ? $data['NUMEROID_ETABLISSEMENT'] : $etablissement->ID_ETABLISSEMENT;
 
             $etablissement->save();
 
