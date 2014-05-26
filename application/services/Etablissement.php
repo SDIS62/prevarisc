@@ -736,7 +736,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                         if($id_genre == 1 && ($genre_enfant != 2 && $genre_enfant != 4 && $genre_enfant != 5 && $genre_enfant != 6)) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne ne peut contenir que des établissements)', 500);
                         }
-                        elseif($id_genre == 2 && ($genre_enfant != 3)) {
+                        elseif($id_genre == 2 && $genre_enfant != 3) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
                         }
                         elseif($genre_enfant == null) {
