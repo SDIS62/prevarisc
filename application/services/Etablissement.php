@@ -214,6 +214,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             foreach ($fiche as $key => $item) {
                 $tmp = ( array_key_exists($key, $historique) ) ? $historique[$key][ count($historique[$key])-1 ] : null;
                 $value = null;
+                $author = null;
                 switch ($key) {
                     case "LIBELLE_ETABLISSEMENTINFORMATIONS":
                         $value = $item;
@@ -246,6 +247,41 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     );
                 }
             }
+        }
+
+        // On traite le cas particulier des dossiers
+        $key = "avis";
+        $dossiers = $this->getDossiers($id_etablissement);
+        $dossiers_merged = $dossiers['etudes'];
+        $dossiers_merged = array_merge($dossiers_merged, $dossiers['visites']);
+        $dossiers_merged = array_merge($dossiers_merged, $dossiers['autres']);
+
+        foreach($dossiers_merged as $dossier) {
+          $dossier = (object) $dossier;
+          $tmp = ( array_key_exists($key, $historique) ) ? $historique[$key][ count($historique[$key])-1 ] : null;
+          $value = null;
+          $author = null;
+
+          if($dossier->AVIS_DOSSIER_COMMISSION && ($dossier->AVIS_DOSSIER_COMMISSION == 1 || $dossier->AVIS_DOSSIER_COMMISSION == 2)) {
+            if( ($dossier->TYPE_DOSSIER == 1 && in_array($dossier->ID_DOSSIERNATURE, array(19))) || ($dossier->TYPE_DOSSIER == 2 && in_array($dossier->ID_DOSSIERNATURE, array(21, 23, 24, 47))) || ($dossier->TYPE_DOSSIER == 3 && in_array($dossier->ID_DOSSIERNATURE, array(26, 28, 29, 48)))) {
+              $value = $dossier->AVIS_DOSSIER_COMMISSION == 1 ? "Favorable" : "Défavorable";
+            }
+          }
+
+          if ( $value != null && (!isset( $historique[$key] ) || $tmp["valeur"] != $value )) {
+            $date = new Zend_Date($dossier->DATEVISITE_DOSSIER != null ? $dossier->DATEVISITE_DOSSIER : $dossier->DATECOMM_DOSSIER, Zend_Date::DATES);
+            if ($tmp != null) {
+              $historique[$key][ count($historique[$key])-1 ]["fin"] = $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
+            }
+            if($dossier->CREATEUR_DOSSIER != null) {
+              $author = $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($dossier->CREATEUR_DOSSIER)->current()->ID_UTILISATEURINFORMATIONS)->toArray();
+            }
+            $historique[$key][] = array(
+              "valeur" => $value,
+              "debut" =>  $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ),
+              "author" => $dossier->CREATEUR_DOSSIER == 0 ? null : array('id' => $dossier->CREATEUR_DOSSIER, 'name' => $author['NOM_UTILISATEURINFORMATIONS'] . ' ' . $author['PRENOM_UTILISATEURINFORMATIONS'])
+            );
+          }
         }
 
         // On met ds le sens aujourd'hui -> passé
