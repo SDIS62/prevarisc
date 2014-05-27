@@ -10,6 +10,7 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
         //on commence par afficher tous les texte applicables regroupés par leurs type
         $dbTextesAppl = new Model_DbTable_TextesAppl;
         $this->view->listeTextesAppl = $dbTextesAppl->recupTextesAppl();
+		//Zend_Debug::dump($this->view->listeTextesAppl);
 
     }
 
@@ -36,6 +37,7 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
                 $rowEdit['LIBELLE_TEXTESAPPL'] = $this->_getParam("libelle");
                 $rowEdit['VISIBLE_TEXTESAPPL'] = $this->_getParam("visible");
                 $rowEdit['ID_TYPETEXTEAPPL'] = $this->_getParam("type");
+				$rowEdit['NUM_TEXTESAPPL'] = "99999";
                 $rowEdit->save();
             } else {
                 //cas d'une création
@@ -43,6 +45,7 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
                 $newRow['LIBELLE_TEXTESAPPL'] = $this->_getParam("libelle");
                 $newRow['VISIBLE_TEXTESAPPL'] = $this->_getParam("visible");
                 $newRow['ID_TYPETEXTEAPPL'] = $this->_getParam("type");
+				$newRow['NUM_TEXTESAPPL'] = "99999";
                 $newRow->save();
             }
 
@@ -64,4 +67,18 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
         $this->_helper->redirector('index');
 
     }
+
+	public function updateorderAction()
+	{
+		$this->_helper->viewRenderer->setNoRender();
+		$tabId = explode(",",$this->_getParam("tableUpdate"));
+		$dbTexteAppl = new Model_DbTable_TextesAppl;
+		$num = 0;
+		foreach($tabId as $id){
+			$updateTexteAppl = $dbTexteAppl->find($id)->current();
+            $updateTexteAppl->NUM_TEXTESAPPL = $num;
+            $updateTexteAppl->save();
+			$num++;
+		}
+	}
 }
