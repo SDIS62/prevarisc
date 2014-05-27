@@ -1308,4 +1308,67 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             
             echo $ics;
         }
+        
+         public function exportoutlookmoisAction() {
+            $idComm = $this->_getParam("CommId");
+            //$mois = $this->_getParam("Mois");  
+            
+            $this->view->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            header("Content-Type: text/Calendar");
+            header("Content-Disposition: inline; filename=calendar.ics");
+            
+            $ics = "";
+            
+            if ($idComm != null /*&& $mois !=null*/) {
+                
+                $dbDateCommission = new Model_DbTable_DateCommission;
+                $dbCommission = new Model_DbTable_Commission;
+                
+                $commissions=$dbDateCommission->getMonthCommission('5','2014',$idComm);
+                $commissionArray=$dbCommission->getLibelleCommissions($idComm);
+              
+
+                if ($commissions !=  null ) {
+                    
+                    
+                    $ics .= "BEGIN:VCALENDAR\n";
+                    $ics .= "VERSION:2.0\n";
+                    $ics .= "PRODID:SDIS62/Prevarisc\n";
+                                      
+                    foreach($commissions as $commissiondujour)
+                   {             
+                   
+                    $dateStart = str_replace("-", "", $commissiondujour['DATE_COMMISSION']); 
+                    $dateStart .= "T" . str_replace(":", "", $commissiondujour['HEUREDEB_COMMISSION']);
+                    $dateEnd = str_replace("-", "", $commissiondujour['DATE_COMMISSION']);
+                    $dateEnd .= "T" . str_replace(":", "", $commissiondujour['HEUREFIN_COMMISSION']);
+                    $descriptifAdd = "";
+
+                    $libellecommission = $commissionArray[0];
+
+                    $descriptifAdd .= " / Commission : " . $libellecommission['LIBELLE_COMMISSION'];
+                   
+                    $ics .= "BEGIN:VEVENT\n";
+                    $ics .= "ORGANIZER:prevarisc@atos.net\n";
+                    $ics .= "DTSTART:" . $dateStart . "\n";
+                    //$ics .= "DTEND:20160101T010000\n";
+                    $ics .= "DTEND:" . $dateEnd . "\n";
+                    $ics .= "SUMMARY:" . $commissiondujour['LIBELLE_DATECOMMISSION'] . "\n";
+                    //$ics .= "LOCATION:Unknown\n";
+                    $ics .= "DESCRIPTION:" . $commissiondujour['LIBELLE_DATECOMMISSION'] . $descriptifAdd . "\n";
+                    $ics .= "END:VEVENT\n";
+                   }
+                   
+                   $ics .="END:VCALENDAR\n";
+                 
+                    
+                }
+            }
+            
+            echo $ics;
+        }
+        
+        
 }

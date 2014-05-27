@@ -74,6 +74,17 @@
 
             return $this->getAdapter()->fetchAll($select);
         }
+        
+         public function getLibelleCommissions($id)
+        {
+            //Récupération de l'ensemble des commissions
+            $select = "SELECT LIBELLE_COMMISSION
+                FROM commission
+                WHERE ID_COMMISSION = '".$id."'";
+            return $this->getAdapter()->fetchAll($select);
+        }
+        
+          
 
         public function commissionPeriodicite($idCommission)
         {

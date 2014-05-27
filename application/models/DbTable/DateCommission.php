@@ -51,6 +51,15 @@
                 WHERE DATE_COMMISSION = '".$date."'";
             return $this->getAdapter()->fetchAll($select);
         }
+        
+         public function getMonthCommission($mois,$annee,$idcom)
+        {
+            $select = "SELECT *
+                FROM datecommission
+                WHERE MONTH(DATE_COMMISSION) = '".$mois."'  AND   YEAR(DATE_COMMISSION) = '".$annee."'
+                AND COMMISSION_CONCERNE = '".$idcom."'";
+            return $this->getAdapter()->fetchAll($select);
+        }
 
         public function getCommissionsLiees($idCommissionOrigine,$debut,$fin)
         {
