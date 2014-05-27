@@ -140,10 +140,10 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             }
 
             $role = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
-            
+
             // Récupération de la vue
             $view = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('view');
-            
+
             // Récupération de la page active
             $page = $view->navigation($view->nav)->findActive($view->navigation($view->nav)->getContainer());
 
@@ -173,9 +173,14 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         if($page->get('controller') == 'etablissement') {
                             foreach($resources as $resource) {
-                                if($acl->has($resource) && $acl->isAllowed($role, $resource,  $privilege)) {
+                                if($acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
                                     $access_granted = true;
                                 }
+                            }
+                            if(in_array('editsite', $resources) && $page->get('action') == 'edit') {
+                              if($acl->has("creations") && $acl->isAllowed($role, "creations", "add_etablissement")) {
+                                  $access_granted = true;
+                              }
                             }
                         }
                         elseif($page->get('controller') == 'dossier') {
@@ -238,7 +243,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
      *
      * @param  $list_resources_finale
      * @return null|Zend_Acl_Resource_Interface
-     */  
+     */
     private function develop_resources(&$list_resources_finale) {
         for($i = 0; $i < count($list_resources_finale); $i++) {
             $resource_exploded = explode('_', $list_resources_finale[$i]);
@@ -260,13 +265,13 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
         return array_unique($list_resources_finale);
     }
-    
+
     /**
      * getPageResources
      *
      * @param  $page
      * @return null|array
-     */  
+     */
     private function getPageResources($page, $request = null)
     {
         if($page !== null) {
@@ -292,6 +297,8 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                     }
                     $resources[] = 'dossier_' . $dossier_nature['ID_NATURE'];
                     $resources[] = 'dossier_0';
+
+
                     return $resources;
                 }
                 else {
@@ -306,13 +313,13 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             return array(null);
         }
     }
-    
+
     /**
      * getPagePrivilege
      *
      * @param  $page
      * @return null|string
-     */  
+     */
     private function getPagePrivilege($page)
     {
         if($page !== null) {
@@ -328,7 +335,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
      *
      * @param  $id_etablissement
      * @return null|array
-     */ 
+     */
     private function getEtablissementPageResourses($id_etablissement)
     {
         $service_etablissement = new Service_Etablissement;
@@ -356,7 +363,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
         switch($etablissement['informations']['ID_GENRE']) {
             case '1':
-                $resource = array();
+                $resource = array('editsite');
                 foreach($etablissement['etablissement_lies'] as $etablissements_enfant) {
                     $resource = array_merge($resource, $this->getEtablissementPageResourses($etablissements_enfant['ID_ETABLISSEMENT']));
                 }
