@@ -272,8 +272,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
           }
         });
 
-        Zend_Debug::Dump($dossiers_merged);
-
         foreach($dossiers_merged as $dossier) {
           $dossier = (object) $dossier;
           $tmp = ( array_key_exists($key, $historique) ) ? $historique[$key][ count($historique[$key])-1 ] : null;
