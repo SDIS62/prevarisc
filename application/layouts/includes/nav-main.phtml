@@ -10,17 +10,20 @@
             <div class="nav-collapse collapse">
                 <ul class='nav'>
                     <li><a href='/'>Accueil</a></li>
-                    <li><a href='/statistiques'>Extractions - Statistiques</a></li>
+                    <li><a href='/listing/etablissements'>Etablissements</a></li>
+                    <li><a href='/listing/dossiers'>Dossiers</a></li>
+                    <li><a href='/calendrier-des-commissions'>Calendrier</a></li>
+                    <li><a href='/statistiques'>Statistiques</a></li>
                     <li><a href='/admin'>Administration</a></li>
                 </ul>
                 <ul class='nav pull-right'>
-                    <li>
+                    <li class="li-searched">
                         <form class="navbar-search" action="/search/etablissement" method="get">
-                            <div class="input-append">
+                            <div class="input-append" id="research-input">
                                 <input name="label" class="input-large" id="nav-main-search-field" type="text" placeholder="Rechercher ..." style='margin-top: 10px' />
                                 <input name="page" type="hidden" value="1"  />
-                                <button class="btn" type="submit" style='margin-top: 10px'><i class="icon-search"></i></button>
-                                <a class="btn" href="/search" style='margin-top: 10px; text-transform: initial;'>Avancée »</a>
+                                <button class="btn btn_search" type="submit" style='margin-top: 10px'><i class="icon-search"></i></button>
+                                <a class="btn" href="/search" >Avancée »</a>
                             </div>
                         </form>
                     </li>
