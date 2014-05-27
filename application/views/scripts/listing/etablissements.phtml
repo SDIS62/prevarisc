@@ -1,0 +1,14 @@
+<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+
+<!-- Titre -->
+<h2>Recherche</h2>
+
+<!-- Onglets permettant de selectionner les entités à rechercher -->
+<ul id='onglets_horizontaux' >
+    <li><a href='<?php echo $this->url(array("action"=>"etablissement")) ?>'>Établissement</a></li>
+    <li><a href='<?php echo $this->url(array("action"=>"dossier")) ?>'>Dossier</a></li>
+</ul>
+
+<?php $this->placeholder('before_content')->captureEnd() ?>
+
+<?php echo $this->render('layout.phtml') // Rendu du layout par défaut avec les placeholders ?>
