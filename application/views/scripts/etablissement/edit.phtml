@@ -12,7 +12,6 @@
             <a class='btn' href="<?php echo $this->url(array('action' => 'index')) ?>">Annuler la modification</a>
             <input type='submit' class="btn btn-success" value='Sauvegarder'>
         </div>
-        <input type="date" name="date" class='input-medium' style="position: relative; top: 5px;" value='<?php echo $this->etablissement['informations']['DATE_ETABLISSEMENTINFORMATIONS']?>'>
     </div>
     <h3>Modification de l'établissement</h3>
     <?php endif ?>
@@ -30,7 +29,7 @@
                     <dt>Identifiant</dt>
                     <dd>
                         <div>
-                            <input type='text' name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"] ?>' placeholder="Par défaut, identifiant Prevarisc" />
+                             <input type='text' name='NUMEROID_ETABLISSEMENT' value='<?php if($this->etablissement['general']["NUMEROID_ETABLISSEMENT"]==NULL) {echo 'SDIS29-'; echo ''+rand(0, 1000);} else echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"]?>' />
                         </div>
                     </dd>
 

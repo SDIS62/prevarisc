@@ -9,7 +9,7 @@
         </p>
     </div>
 
-    <div class='span9'>
+    <div class='span6'>
         <a class='btn btn-small pull-right' style='margin-top: 30px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
         <h2 class='page-header'>Derniers messages</h2>
         <?php if( count($this->flux) == 0 ) : ?>
@@ -19,6 +19,55 @@
              <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
             </table>
         <?php endif ?>
+    </div>
+    
+    <div class='span3'>
+        <h2 class='page-header'>Aujourd'hui</h2>
+ 
+     <?php  
+        
+     
+     if($this->firstcommission!=NULL)
+     {   
+         foreach($this->commissionsListe as $commission)
+         {
+               foreach($this->firstcommission as $commissiondujour)
+             {             
+                if($commission['ID_COMMISSION']==$commissiondujour['COMMISSION_CONCERNE'])
+                {
+                ?>
+       <p class='well text-center notification'>   
+            <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['ID_DATECOMMISSION'];?>"
+            >
+                <?php
+                   echo ' '.$commission['LIBELLE_COMMISSION'];
+                   echo '-'.$commissiondujour['LIBELLE_DATECOMMISSION'];
+                   echo '  de '.$commissiondujour['HEUREDEB_COMMISSION'];
+                   echo '  à  '.$commissiondujour['HEUREFIN_COMMISSION'];
+                ?> 
+             
+            </a> 
+       </p>
+                    
+                <?php
+                }   
+             }  
+         }
+     }
+     else
+     {
+      ?>
+     <p class='well text-center pasnotification'>
+       <a>
+     <?php
+         echo 'Pas de commissions'; 
+     ?>
+       </a>
+     </p>
+     <?php
+     }    
+     ?>
+                    
     </div>
 
 </div>
