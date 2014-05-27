@@ -5,32 +5,66 @@ echo "
 ";
 
 $idTypeMarq = "";
+$marqueur = 1;
+
 foreach($this->listeTextesAppl as $val => $ue){
 	$idType = $ue['ID_TYPETEXTEAPPL'];
 	if($idTypeMarq != $idType){
 		//Pour l'affichage par catégorie
+		if($marqueur != 1){
+			echo "</ul>";
+		}
 		echo "
 			<div class='row-fluid'>
-			<div class='span12' style='font-weight:bold;font-size:25px;'>".$ue['LIBELLE_TYPETEXTEAPPL']."</div>
-			<hr class='clear'>
+			<div class='span12' style='font-weight:bold;font-size:25px;' >".$ue['LIBELLE_TYPETEXTEAPPL']."</div>
 			</div>
 		";
 		$idTypeMarq = $idType;
+		echo "<ul class='sortTexteAppl unstyled' id='liste_".$ue['ID_TYPETEXTEAPPL']."'>";
+		$marqueur = 0;
 	}
 	echo "
-		<div class='row-fluid' style='margin-top:10px;margin-bottom:10px;'>
-		<div class='span10'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
-		<div class='span1'><button class='editTexteAppl btn' id='".$ue['ID_TEXTESAPPL']."'><i class='icon-pencil'></i>&nbsp;Editer</button></div>
-		<div class='span1'>".( ($ue['VISIBLE_TEXTESAPPL'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."</div>
-		<hr class='clear'>
-		</div>
+		<li class='row-fluid' style='margin-top:15px;margin-bottom:10px;' id='".$ue['ID_TEXTESAPPL']."'>
+			<div class='span10'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
+			<div class='span1'><button class='editTexteAppl btn' id='".$ue['ID_TEXTESAPPL']."' ><i class='icon-pencil'></i>&nbsp;Editer</button></div>
+			<div class='span1'>".( ($ue['VISIBLE_TEXTESAPPL'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."</div>
+		</li>
 	";
-
 }
 
 ?>
 <script type='text/javascript' >
 $(document).ready(function() {
+	$(".sortTexteAppl").sortable({
+		update: function(event, ui) {
+			var id = $(this).attr('id');
+			var listeTexteApplUpdate = new Array();
+			var listeOrder = "";
+			$("#"+id+" > li").each(function(){
+				//on parcour les li pour récolter les changements et mettre à jour dans la base
+				//on recupere id du li en cours
+				var liId = $(this).attr('id');
+				listeOrder += liId+",";
+				listeTexteApplUpdate.push(liId);
+			});			
+			$.ajax({
+				url: "/gestion-textes-applicables/updateorder",
+				data: "tableUpdate="+listeTexteApplUpdate,
+				type:"POST",
+				beforeSend: function(){
+
+				},
+				success: function(affichageResultat){
+					//alert('succes');
+					return false;
+				},
+				error: function()	{
+					return false;
+				}
+			});
+		}
+	});
+
 	var dialogEditTexteAppl = $('<div style="display:none"></div>').appendTo('body');
 	
 	$(".editTexteAppl").click(function(){

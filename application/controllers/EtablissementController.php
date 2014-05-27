@@ -35,13 +35,13 @@ class EtablissementController extends Zend_Controller_Action
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
         $service_avis = new Service_Avis;
-        $service_categorie = new Service_Categorie;                    
-        $service_type = new Service_Type;                              
-        $service_typeactivite = new Service_TypeActivite;                  
-        $service_commission = new Service_Commission;                       
-        $service_typesplan = new Service_TypePlan;                     
+        $service_categorie = new Service_Categorie;
+        $service_type = new Service_Type;
+        $service_typeactivite = new Service_TypeActivite;
+        $service_commission = new Service_Commission;
+        $service_typesplan = new Service_TypePlan;
         $service_famille = new Service_Famille;
-        $service_classe = new Service_Classe;                          
+        $service_classe = new Service_Classe;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -77,13 +77,13 @@ class EtablissementController extends Zend_Controller_Action
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
         $service_avis = new Service_Avis;
-        $service_categorie = new Service_Categorie;                    
-        $service_type = new Service_Type;                              
-        $service_typeactivite = new Service_TypeActivite;                  
-        $service_commission = new Service_Commission;                       
-        $service_typesplan = new Service_TypePlan;                     
+        $service_categorie = new Service_Categorie;
+        $service_type = new Service_Type;
+        $service_typeactivite = new Service_TypeActivite;
+        $service_commission = new Service_Commission;
+        $service_typesplan = new Service_TypePlan;
         $service_famille = new Service_Famille;
-        $service_classe = new Service_Classe;                          
+        $service_classe = new Service_Classe;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -95,7 +95,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
-        
+
         $this->view->add = true;
 
         if($this->_request->isPost()) {
@@ -103,7 +103,14 @@ class EtablissementController extends Zend_Controller_Action
                 $post = $this->_request->getPost();
                 $id_etablissement = $service_etablissement->save($post['ID_GENRE'], $post);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Ajout réussi !', 'message' => 'L\'établissement a bien été ajouté.'));
-                $this->_helper->redirector('index', null, null, array('id' => $id_etablissement));
+
+                if($post['ID_GENRE'] == 1 && count($post['ID_FILS_ETABLISSEMENT']) == 1) {
+                  $this->_helper->flashMessenger(array('context' => 'warning', 'title' => 'Ajout des établissements enfants', 'message' => "Les droits d'accès au site sont déterminés par les droits d'accès aux établissements qui le compose. Veillez à ajouter des établissements afin de garantir l'accès au site dans Prevarisc."));
+                  $this->_helper->redirector('edit', null, null, array('id' => $id_etablissement));
+                }
+                else {
+                  $this->_helper->redirector('index', null, null, array('id' => $id_etablissement));
+                }
             }
             catch(Exception $e) {
                 $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'établissement n\'a pas été ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));

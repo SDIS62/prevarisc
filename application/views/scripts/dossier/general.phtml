@@ -3,7 +3,6 @@
 	$(document).ready(function(){
 
 		// Texte de l'auto complete utilisateurs
-		//$("#preventionnistes-autocomplete").toggleText("Saisissez le nom d'un préventionniste ...");
 		// Auto-complétion des préventionnistes
         $("#preventionnistes-autocomplete").typeahead({
             minLength: 3,
@@ -35,9 +34,6 @@
                 return item.replace( item, html );
             },
             updater: function (item) {
-                //node = $('#prototype_preventionniste').clone().prependTo( $('.preventionnistes table') ).removeClass('hide prototypes').addClass('preventionniste').attr('id', '');
-                //node.find('span').text($($.parseHTML(item)).last().text());
-                //node.find("input[type='hidden']").val($($.parseHTML(item)).last().data('id'));
 				var prevAdd = "<span class='ui-state-highlight' style='float: left; padding: 2px; margin: 0pt 2px 1em 0pt; display: block;' >";
 				prevAdd += "<input type='hidden' name='preventionniste[]' value='"+$($.parseHTML(item)).last().data('id')+"' />";
 				prevAdd += "<span>";
@@ -51,6 +47,23 @@
         });
 		//FIN gestion de l'autocomplession pour les préventionniste attachés au dossier
 
+		// Auto complétion de la ville pour le service instructeur
+        $("#servInstVille").autocomplete("/api/1.0/adresse/get_communes", {
+            minChars: 3,
+            parse: function(data) {
+                return $.map(data["response"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
+            },
+            formatItem: function(item) {
+                return item.LIBELLE_COMMUNE + " (" + item.NUMINSEE_COMMUNE + ")";
+            }
+        }).result(function(e, item) {
+
+        }).click(function() {
+
+        });
+		
+		
+		
 		$("#commissionSelect").live('change',function(){
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
@@ -751,8 +764,15 @@
 					{
 						$("#FACTDANGE").show();
 						$("#ECHEANCIERTRAV").show();
+						$("#ANOMALIE").show();
+					}
+				}else if(type == 1){
+					if($("#selectNature").val() == 19)
+					{
+						$("#ANOMALIE").show();
 					}
 				}
+
 				
 				if($("#selectNature").val() == 1 || $("#selectNature").val() == 2){
 					$("#docurbaVal").html('');
@@ -820,28 +840,22 @@
 
 	//Selection d'une nature et affichage des champs en fonction de la ou des natures
 	$("#selectNature").live('change',function(){
-	
 		var idNature = $("#selectNature").val();
 		var idNatureBd;
 		$(".docurba").remove();
-
 		if(idNature != 0)
 		{
 			if($("#do").val() == 'edit'){
-				
 				var listeNature = $("#listeNature").recupNatures();
 				
 				$("#InfosDossier").afficheChamps($(this).val());
 				$("#selectNature option[value='0']").remove();
-				
 			}else{
 				var listeNature = $("#listeNature").recupNatures();
 				
 				$("#InfosDossier").afficheChamps($(this).val());
 				$("#creationDossier").show();
 			}
-			
-
 			majAvisSelect();
 		}
 	});
@@ -888,11 +902,9 @@
 				return true;
 			}
 		}
-		
 	}
 
 	//Action lorsque l'on crée le dossier on redirige vers la page de consultation
-
 	$("#creationDossier").live('click',function(){
 		if(!verifDossier())
 			return false;
@@ -1006,9 +1018,20 @@
 			if($(this).val() == 2){
 				$("#FACTDANGE").show();
 				$("#ECHEANCIERTRAV").show();
+				$("#ANOMALIE").show();
 			}else{
 				$("#FACTDANGE").hide();
 				$("#ECHEANCIERTRAV").hide();
+				$("#ANOMALIE").hide();
+			}
+		}else if(type == 1){
+			if($("#selectNature").val() == 19)
+			{
+				if($(this).val() == 2){
+					$("#ANOMALIE").show();
+				}else{
+					$("#ANOMALIE").hide();
+				}
 			}
 		}
 	});
@@ -1126,6 +1149,16 @@
 			}
 		});
 		return false;
+	});
+	
+	$("input[name=servInst]:radio").live('click', function(){
+		if($(this).val() == 'servInstCommune'){
+			$("#servInstVille").removeAttr('disabled');
+			$("#servInstGrp").attr('disabled','disabled');
+		}else if($(this).val() == 'servInstGrp'){
+			$("#servInstGrp").removeAttr('disabled');
+			$("#servInstVille").attr('disabled','disabled');
+		}
 	});
 </script>
 <?php
@@ -1295,16 +1328,16 @@ echo "
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='SERVICEINSTRUC' style='".( ($action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && ( $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' || $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != NULL) )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='SERVICEINSTRUC' style='".( ( $action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != NULL && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '0' )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Service instructeur</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->serviceInstructeurLibelle."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['SERVICEINSTRUC_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 				";
-				//echo "<input type='radio' name='servInst' value='servInstGrp' checked='checked'>&nbsp;&nbsp;";
-				echo $this->listeGroupement($this->groupement["ID_GROUPEMENT"], null, 10);
-				//echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='servInst' value='servInstCommune'>&nbsp;";
-				//echo "<input type='text' name='servInstVille' id='servInstVille' value='' />";
-				echo "						
+				echo "<input type='radio' name='servInst' value='servInstGrp' ".( ($action == 'new' || $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstGrp' || $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == NULL)? "checked='checked'" : "")."  />&nbsp;&nbsp;";
+				echo listeGroupementServInstructeur($this->infosDossier['SERVICEINSTRUC_DOSSIER'], 10, $this->infosDossier['TYPESERVINSTRUC_DOSSIER']);
+				echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='servInst' value='servInstCommune' ".( ($this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstCommune')? "checked='checked'": "" )."/>&nbsp;";
+				echo "<input type='text' name='servInstVille' id='servInstVille' ".( ($this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstGrp' || $action == 'new')? "disabled='disabled'": "" )." value='".( ( $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstCommune' && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' )? $this->infosDossier['SERVICEINSTRUC_DOSSIER'] : "" )."' />";
+				echo "
 					</div>
 				</li>
 				<li class='row-fluid' id='COMMISSION' style='".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' && $this->infosDossier['COMMISSION_DOSSIER'] != 'null' && $this->infosDossier['COMMISSION_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
@@ -1774,9 +1807,8 @@ echo "
 	</div>
 ";
 
-function listeGroupementDossier($selected, $attribs = null)
+function listeGroupementServInstructeur($selected, $id_type_groupement = null, $type)
 {
-	echo $attribs;
 	// Modèles
 	$model_groupements = new Model_DbTable_Groupement;
 	$model_groupementstypes = new Model_DbTable_GroupementType;
@@ -1789,28 +1821,22 @@ function listeGroupementDossier($selected, $attribs = null)
 
 	// Pour chaque type, on retouve les model_groupements
 	foreach ($array_groupementstypes as $value) {
-
 		$array_groupements[ $value["ID_GROUPEMENTTYPE"] ] = array(
 			0 => $value["LIBELLE_GROUPEMENTTYPE"],
 			1 => $model_groupements->fetchAll("ID_GROUPEMENTTYPE = ".$value["ID_GROUPEMENTTYPE"])->toArray()
 		);
 	}
 
-	// Attributs
-	if ($attribs) {
-		$attribs = $this->_htmlAttribs($attribs);
-	} else {
-		$attribs = '';
-	}
-
 	// Affichage
-	echo "<select id='SERVICEINSTRUC_DOSSIER' name='SERVICEINSTRUC_DOSSIER' style='width:400px;'>";
-	echo "<option value='' >Selectionnez le service instructeur</option>";
+	echo "<select name='servInstGrp' id='servInstGrp' ".( ($type == 'servInstCommune')? "disabled='disabled'": "" ).">";
+	echo "<option value='0' >Selectionnez le service instructeur</option>";
 	foreach ($array_groupements as $key => $groupements) {
-		echo "<optgroup id='gpt_$key' label='".$groupements[0]."'>";
-		foreach( $groupements[1] as $groupement)
-			echo "<option value='".$groupement["ID_GROUPEMENT"]."' ". ( ($groupement["ID_GROUPEMENT"] == $selected) ? "selected" : "" ) .">".$groupement["LIBELLE_GROUPEMENT"]."</option>";
-		echo "</optgroup>";
+		if($id_type_groupement == null || ($id_type_groupement > 0 && $key == $id_type_groupement)) {
+			echo "<optgroup id='gpt_$key' label='".$groupements[0]."'>";
+			foreach( $groupements[1] as $groupement)
+				echo "<option value='".$groupement["LIBELLE_GROUPEMENT"]."' ". ( ($groupement["LIBELLE_GROUPEMENT"] == $selected) ? "selected" : "" ) .">".$groupement["LIBELLE_GROUPEMENT"]."</option>";
+			echo "</optgroup>";
+		}
 	}
 	echo "</select>";
 }

@@ -18,7 +18,7 @@
                 elseif($this->item == 'dossier')
                     $this->select->where($id_etablissement_parent === true || $id_etablissement_parent == 0 ? "dossierlie.ID_DOSSIER1 IS NULL" : "dossierlie.ID_DOSSIER1 = " . $id_etablissement_parent);
             }
-            
+
             if(!$paginator)
             {
                 return $this->fetchAll($this->select);
@@ -26,20 +26,20 @@
 
             // On construit l'objet de pagination
             $paginator = Zend_Paginator::factory($this->select);
-            
+
             // On set le nombre d'item par page
             $paginator->setItemCountPerPage($numero_de_page == null ? 999999999999999999 : $this->nb_items);
-            
+
             // On set le numéro de la page demandée
             $paginator->setCurrentPageNumber($numero_de_page == null ? 1 : $numero_de_page);
-            
+
             // On définit le style & la vue par défaut du choix de page
             $paginator->setDefaultScrollingStyle('Elastic');
-            
+
             Zend_View_Helper_PaginationControl::setDefaultViewPartial(
                 'search' . DIRECTORY_SEPARATOR . 'pagination_control.phtml'
             );
-            
+
             return $paginator;
         }
 
@@ -90,6 +90,11 @@
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
                                 WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)",
+                            "NB_URBA" => "( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
+                                FROM dossier
+                                INNER JOIN dossierdocurba ON dossierdocurba.ID_DOSSIER = dossier.ID_DOSSIER
+                                WHERE dossier.ID_DOSSIER = d.ID_DOSSIER
+                                LIMIT 1)",
                             "ALERTE_RECEPTION_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
@@ -163,7 +168,7 @@
 
             return $this;
         }
-        
+
         public function order( $value )
         {
             $this->select->order( $value );

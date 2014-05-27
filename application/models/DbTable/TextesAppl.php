@@ -12,7 +12,7 @@
 				->from(array('ta' => 'textesappl'))
 				->join(array('ty' => 'typetextesappl'),'ta.ID_TYPETEXTEAPPL = ty.ID_TYPETEXTEAPPL')
 				->order('ta.ID_TYPETEXTEAPPL')
-				->order('ta.ID_TEXTESAPPL');
+				->order('ta.NUM_TEXTESAPPL');
 				 
 			return $this->getAdapter()->fetchAll($select);
 		}
@@ -24,7 +24,7 @@
 				->join(array('ty' => 'typetextesappl'),'ta.ID_TYPETEXTEAPPL = ty.ID_TYPETEXTEAPPL')
 				->where('VISIBLE_TEXTESAPPL = 1')
 				->order('ta.ID_TYPETEXTEAPPL')
-				->order('ta.ID_TEXTESAPPL');
+				->order('ta.NUM_TEXTESAPPL');
 				 
 			return $this->getAdapter()->fetchAll($select);
 		}
