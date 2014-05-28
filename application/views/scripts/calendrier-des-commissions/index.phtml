@@ -18,6 +18,9 @@
 <span class="label  label-success">Visite de sécurité</span>
 <span class="label label-warning">Groupe de visite</span>
 
+<a id='exportCom' class='btn floating_right' href='/calendrier-des-commissions/exportoutlook/idComm/' >
+    <i class="icon-calendar"></i> Exporter pour Outlook
+</a>
 
 <div id='infosCom' style='display:none;'></div>
 
@@ -28,24 +31,31 @@
 <div id="dialogComm" title="Planification commission" class='ui-helper-hidden' ></div>
 <script type="text/javascript">
 	$(document).ready( function() {
+            $('#exportCom').hide();
 		if($("#idCommission").val() != '')
 		{
-			$('#aff_calendar').button( 'option', 'disabled', false );
-			$('#ordre_jour').button( 'option', 'disabled', false );
-			$('#commissionSelect').val($("#idCommission").val());
-			$('#calendar').html('').afficheCalendar($("#idCommission").val());
-			$('#selectComm').hide();
+                    $('#exportCom').show();
+                    $('#aff_calendar').button( 'option', 'disabled', false );
+                    $('#ordre_jour').button( 'option', 'disabled', false );
+                    $('#commissionSelect').val($("#idCommission").val());
+                    $('#calendar').html('').afficheCalendar($("#idCommission").val());
+                    $('#selectComm').hide();
 		}
 	});
 
 	// Selection de la commission
 	$("#commissionSelect").live('change',function() {
-		$("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + $(this).find("option:selected").val() + "' />");
-		$("#aff_calendar").button( "option", "disabled", false );
-		$("#ordre_jour").button( "option", "disabled", false );
-		$("#calendar").html('').afficheCalendar($("#commissionId").attr('value'),'calendrierComm');
+                
+            var hrefExport = $('#exportCom').attr('href');
+            if ($(this).val() != '') {
+                $('#exportCom').attr('href', hrefExport + $(this).val());
+            } 
+            $('#exportCom').show();    
+            $("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + $(this).find("option:selected").val() + "' />");
+            $("#aff_calendar").button( "option", "disabled", false );
+            $("#ordre_jour").button( "option", "disabled", false );
+            $("#calendar").html('').afficheCalendar($("#commissionId").attr('value'),'calendrierComm');
 	});
-
 	
 	( function($) {
 		$.fn.afficheCalendar = function(idComm,emplacement) {

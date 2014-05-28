@@ -1250,4 +1250,62 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$dateComm = $dbDateComm->find($this->_getParam('dateCommission'))->current();
 		$dateComm->delete();
 	}
+        
+        public function exportoutlookAction() {
+            $idDateComm = $this->_getParam("dateCommId");
+            
+            $this->view->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            header("Content-Type: text/Calendar");
+            header("Content-Disposition: inline; filename=calendar.ics");
+            
+            $ics = "";
+            
+            if (null != $idDateComm) {
+                
+                $dbDateCommission = new Model_DbTable_DateCommission;
+                $dbCommission = new Model_DbTable_Commission;
+
+                $commissionEvent = $dbDateCommission->find($idDateComm)->toArray();
+
+                if (null != $commissionEvent || count($commissionEvent) > 0) {
+                    $row = $commissionEvent[0];
+                    $dateStart = str_replace("-", "", $row['DATE_COMMISSION']);
+                    $dateStart .= "T" . str_replace(":", "", $row['HEUREDEB_COMMISSION']);
+                    $dateEnd = str_replace("-", "", $row['DATE_COMMISSION']);
+                    $dateEnd .= "T" . str_replace(":", "", $row['HEUREFIN_COMMISSION']);
+                    
+                    $descriptifAdd = "";
+                    $commissionArray = $dbCommission->find($row['COMMISSION_CONCERNE'])->toArray();
+                    if (null != $commissionArray) {
+                        $commission = $commissionArray[0];
+                        $descriptifAdd .= " / Commission : " . $commission['LIBELLE_COMMISSION'];
+                    }
+                
+                    $ics .= "BEGIN:VCALENDAR\n";
+                    
+                    $ics .= $idDateComm;
+                    $ics .= "VERSION:2.0\n";
+                    $ics .= "PRODID:SDIS62/Prevarisc\n";
+                    $ics .= "METHOD:REQUEST\n"; // required by Outlook
+                    $ics .= "BEGIN:VEVENT\n";
+                    $ics .= "ORGANIZER:prevarisc@atos.net\n";
+                    //$ics .= "DTSTART:20151231T230000\n";
+                    $ics .= "DTSTART:" . $dateStart . "\n";
+                    //$ics .= "DTEND:20160101T010000\n";
+                    $ics .= "DTEND:" . $dateEnd . "\n";
+                    $ics .= "SUMMARY:" . $row['LIBELLE_DATECOMMISSION'] . "\n";
+                    //$ics .= "LOCATION:Unknown\n";
+                    $ics .= "DESCRIPTION:" . $row['LIBELLE_DATECOMMISSION'] . $descriptifAdd . "\n";
+                    $ics .= "UID:" . date('Ymd') . "T" . date('His') . "-" . rand() . "prevarisc\n";
+                    $ics .= "SEQUENCE:0\n";
+                    $ics .= "DTSTAMP:" . date('Ymd') . "T" . date('His') ."\n";
+
+                    $ics .= "END:VEVENT\n";
+                }
+            }
+            
+            echo $ics;
+        }
 }

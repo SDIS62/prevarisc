@@ -434,18 +434,19 @@ $(document).ready(function() {
 	}
 	
 	echo "
-			<button id='commissionPj' class='btn' >Pièces jointes</button>
-			&nbsp;
-			<button id='createConvoc' class='btn' >Générer Convocations</button>
-			&nbsp;
-			<button id='createOdj' class='btn' >Génerer l'ordre du jour</button>
-			&nbsp;
-			<button id='createPv' class='btn' >Génerer PV</button>
-			&nbsp;
-			<button id='creationCompteRendu' class='btn' >Génerer le compte rendu</button>
-			<br/><br/>
-			<div id='infoGeneration'></div>
-			<br/>
+                <button id='commissionPj' class='btn' >Pièces jointes</button>
+                &nbsp;
+                <button id='createConvoc' class='btn' >Générer Convocations</button>
+                &nbsp;
+                <button id='createOdj' class='btn' >Génerer l'ordre du jour</button>
+                &nbsp;
+                <button id='createPv' class='btn' >Génerer PV</button>
+                &nbsp;
+                <button id='creationCompteRendu' class='btn' >Génerer le compte rendu</button>
+                <a id='exportCom' class='btn floating_right' href='/calendrier-des-commissions/exportoutlook/dateCommId/" . $this->infosDateComm['ID_DATECOMMISSION'] . "' ><i class='icon-calendar'></i> Exporter pour Outlook</a>
+                <br/><br/>
+                <div id='infoGeneration'></div>
+                <br/>
 	";
 	
 	if($this->infosDateComm['GESTION_HEURES'] == 1){

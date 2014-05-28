@@ -151,6 +151,10 @@ body.error .well {
     margin: 0 10px;
 }
 
+.floating_right {
+    float: right;
+}
+
 /* Style du pied de page
 -------------------------------------------------- */
 footer {

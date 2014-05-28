@@ -936,16 +936,19 @@ class DossierController extends Zend_Controller_Action
             } else {
                 $nouveauDossier->CNE_DOSSIER = 1;
             }
-			
-			if($this->_getParam("servInst") == "servInstGrp"){
-				//service instructeur groupement
-				$nouveauDossier->TYPESERVINSTRUC_DOSSIER = $this->_getParam("servInst");
-				$nouveauDossier->SERVICEINSTRUC_DOSSIER = $this->_getParam("servInstGrp");
-			}else if($this->_getParam("servInst") == "servInstCommune"){
-				//service instructeur commune
-				$nouveauDossier->TYPESERVINSTRUC_DOSSIER = $this->_getParam("servInst");
-				$nouveauDossier->SERVICEINSTRUC_DOSSIER = $this->_getParam("servInstVille");
-			}
+		
+            if(null != $this->_getParam('servInst')) {
+                if($this->_getParam("servInst") == "servInstGrp"){
+                    //service instructeur groupement
+                    $nouveauDossier->TYPESERVINSTRUC_DOSSIER = $this->_getParam("servInst");
+                    $nouveauDossier->SERVICEINSTRUC_DOSSIER = $this->_getParam("servInstGrp");
+                }else if($this->_getParam("servInst") == "servInstCommune"){
+                    //service instructeur commune
+                    $nouveauDossier->TYPESERVINSTRUC_DOSSIER = $this->_getParam("servInst");
+                    $nouveauDossier->SERVICEINSTRUC_DOSSIER = $this->_getParam("servInstVille");
+                }
+            }
+            
 
             $nouveauDossier->save();
 			
