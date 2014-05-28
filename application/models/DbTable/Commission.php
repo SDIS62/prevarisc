@@ -64,7 +64,7 @@
             return $this->getAdapter()->fetchAll($select);
         }
 		
-		public function getAllCommissions()
+           public function getAllCommissions()
         {
             //Récupération de l'ensemble des commissions
             $select = "SELECT ID_COMMISSION, LIBELLE_COMMISSION

@@ -2,7 +2,7 @@
     class Model_DbTable_DateCommission extends Zend_Db_Table_Abstract
     {
         protected $_name="datecommission"; // Nom de la base
-        protected $_primary = "ID_DATECOMMISSION"; // Clé primaire
+        protected $_primary = "ID_DATECOMMISSION"; // Clï¿½ primaire
 
         public function addDateComm($date,$heureD,$heureF,$idComm,$type,$libelle)
         {
@@ -42,6 +42,13 @@
             ";
             //echo $select;
 
+            return $this->getAdapter()->fetchAll($select);
+        }
+        public function getDayCommission($date)
+        {
+            $select = "SELECT *
+                FROM datecommission
+                WHERE DATE_COMMISSION = '".$date."'";
             return $this->getAdapter()->fetchAll($select);
         }
 
@@ -99,7 +106,7 @@
             return $this->getAdapter()->query($select);
         }
 
-        //pour la gestion des ordres du jour récup des date liées
+        //pour la gestion des ordres du jour rï¿½cup des date liï¿½es
         public function getCommissionsDateLieesMaster($idComm)
         {
             $select = "SELECT *

@@ -620,3 +620,21 @@ ul#gestionCommissionMenu li.active {
 .confirm-modal-hide {
 	display: none;
 }
+
+.notification{
+    padding: 2px 2px 2px 2px;
+    background-color: #f89406;
+}
+.notification a{
+color: #FFF;
+text-decoration: none;
+}
+
+.pasnotification{
+    padding: 2px 2px 2px 2px;
+    background-color: #A9A9A9;
+}
+.pasnotification a{
+    color: #FFF;
+    text-decoration: none;
+}
