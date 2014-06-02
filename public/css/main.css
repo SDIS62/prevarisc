@@ -648,3 +648,7 @@ text-decoration: none;
     opacity:1;
     filter:alpha(opacity=100);
 }
+
+.filter-p {
+    margin-top: 10px;
+}
