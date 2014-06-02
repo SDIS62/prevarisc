@@ -18,7 +18,7 @@
 <span class="label  label-success">Visite de sécurité</span>
 <span class="label label-warning">Groupe de visite</span>
 
-<a id='exportCom' class='btn floating_right' href='/calendrier-des-commissions/exportoutlook/idComm/' >
+<a id='exportCom' class='btn floating_right' href='/calendrier-des-commissions/exportoutlookmois/CommId/'>
     <i class="icon-calendar"></i> Exporter pour Outlook
 </a>
 
@@ -31,7 +31,8 @@
 <div id="dialogComm" title="Planification commission" class='ui-helper-hidden' ></div>
 <script type="text/javascript">
 	$(document).ready( function() {
-            $('#exportCom').hide();
+                $('#exportCom').hide();
+                
 		if($("#idCommission").val() != '')
 		{
                     $('#exportCom').show();
@@ -41,7 +42,8 @@
                     $('#calendar').html('').afficheCalendar($("#idCommission").val());
                     $('#selectComm').hide();
 		}
-	});
+    	});
+                   
 
 	// Selection de la commission
 	$("#commissionSelect").live('change',function() {
@@ -50,16 +52,18 @@
             if ($(this).val() != '') {
                 $('#exportCom').attr('href', hrefExport + $(this).val());
             } 
+            
             $('#exportCom').show();    
             $("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + $(this).find("option:selected").val() + "' />");
             $("#aff_calendar").button( "option", "disabled", false );
             $("#ordre_jour").button( "option", "disabled", false );
-            $("#calendar").html('').afficheCalendar($("#commissionId").attr('value'),'calendrierComm');
+            $("#calendar").html('').afficheCalendar($("#commissionId").attr('value'),'calendrierComm');         
+            
 	});
 	
 	( function($) {
 		$.fn.afficheCalendar = function(idComm,emplacement) {
-			//alert(emplacement);
+			
 			var calendar = $('#calendar').fullCalendar( {
 				header: {
 					left: 'prev,next today',
@@ -92,7 +96,8 @@
 				theme: true,
 				aspectRatio: 2,
 				events: function(start, end, callback) {
-					$.ajax({
+                                        
+                                    	$.ajax({
 						url: '/calendrier-des-commissions/recupevenement?start='+start.getTime()+"&end="+end.getTime(),
 						data: {
 							format: 'json',
@@ -100,6 +105,7 @@
 						},
 						success: function( result ) {
 							var events = [];
+                                                        
 							for( var x in result["items"] ) {
 								var colorCal;
 								switch(result["items"][x]["className"]){
@@ -256,9 +262,11 @@
 				
 			});	
 		};
+    
 	})(jQuery);
 
-
+        
+       
 	// Dialogue standard
 	function my_dialog( url, data, callback ) {
 		// Récupération du contenu de la boite de dialogue
@@ -549,6 +557,7 @@
 			if(tabDo[2] == $("#dateCommission").val()){
 				//alert($("#listeDates").first("ul[id^=ligne_]").attr('id'));
 				//alert($("#listeDates ul:first").next("ul").attr('id'));
+                               
 			}
 			$.ajax({
 				data: data,
