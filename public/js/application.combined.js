@@ -3,6 +3,7 @@
 <!--#include file="./jquery-1.10.2.min.js" -->
 <!--#include file="./jquery-migrate-1.2.1.min.js" -->
 <!--#include file="./jquery-ui.min.js" -->
+/*<!--#include file="./moment.min.js" -->*/
 <!--#include file="./jquery.fullcalendar.js" -->
 <!--#include file="./jquery.autocomplete.min.js" -->
 <!--#include file="./jquery.timeentry.js" -->
