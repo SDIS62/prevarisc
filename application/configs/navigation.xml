@@ -1089,6 +1089,11 @@
 					<controller>search</controller>
 					<action>etablissement</action>
 				</etablissement>
+                                <courriers>
+                                    <label>Courriers</label>
+                                    <controller>search</controller>
+                                    <action>courriers</action>
+                                </courriers>
 				<dossier>
                     <label>Dossiers</label>
 					<controller>search</controller>
