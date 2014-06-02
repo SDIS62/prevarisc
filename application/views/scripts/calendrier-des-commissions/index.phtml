@@ -238,22 +238,28 @@
                         },
                         eventResize: function( event, jsEvent, ui, view ) {
 
-                                //heure de fin change uniquement fonctionne uniquement sur la vue semaine et jour. Pas sur mois
-                                var view = $("#calendar").fullCalendar('getView');
-                                var vueInfo = view.title;
-                                vueInfo = vueInfo.split(" ");
-                                if(vueInfo.length == 2){
-                                        //permet d'empecher la modification en mode mois (Ajouter message d'indication si besoin)
-                                        $("#calendar").fullCalendar('refetchEvents');
-                                        return false;
-                                }
-                                $.ajax({
-                                        data: "idComm="+event.id+"&fin="+event.end,
-                                        url: "/calendrier-des-commissions/resizecommissiondate",
-                                        type:"POST",
-                                });
-                        }			
-				
+                            //heure de fin change uniquement fonctionne uniquement sur la vue semaine et jour. Pas sur mois
+                            var view = $("#calendar").fullCalendar('getView');
+                            var vueInfo = view.title;
+                            vueInfo = vueInfo.split(" ");
+                            if(vueInfo.length == 2){
+                                    //permet d'empecher la modification en mode mois (Ajouter message d'indication si besoin)
+                                    $("#calendar").fullCalendar('refetchEvents');
+                                    return false;
+                            }
+                            $.ajax({
+                                    data: "idComm="+event.id+"&fin="+event.end,
+                                    url: "/calendrier-des-commissions/resizecommissiondate",
+                                    type:"POST",
+                            });
+                        },
+                        viewRender: function( view, element ){
+                            var date = $("#calendar").fullCalendar('getDate');
+                            var month_int = date.getMonth()+1;
+                            var year_int = date.getFullYear();
+                            $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionSelect").val()+"/Mois/"+month_int+"/Annee/"+year_int);
+                            $('#exportCom').show(); 
+                        }	
                     });	
 		};
     
