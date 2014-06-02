@@ -1326,9 +1326,12 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 
                 $dbDateCommission = new Model_DbTable_DateCommission;
                 $dbCommission = new Model_DbTable_Commission;
+                $dossiersaff = new Model_DbTable_DossierAffectation;
+                
                 
                 $commissions=$dbDateCommission->getMonthCommission($mois,$annee,$idComm);
                 $commissionArray=$dbCommission->getLibelleCommissions($idComm);
+                
                 
                 $libellecommission = $commissionArray[0];
              
@@ -1342,7 +1345,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                                       
                     foreach($commissions as $commissiondujour)
                    {             
-                   
+                    
                     $dateStart = str_replace("-", "", $commissiondujour['DATE_COMMISSION']); 
                     $dateStart .= "T" . str_replace(":", "", $commissiondujour['HEUREDEB_COMMISSION']);
                     $dateEnd = str_replace("-", "", $commissiondujour['DATE_COMMISSION']);
@@ -1350,7 +1353,18 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                     $descriptifAdd = "";
 
                     $descriptifAdd .= " / Commission : " . $libellecommission['LIBELLE_COMMISSION'];
+                    
+                    $dossieraffecte=$dossiersaff->getListDossierAffect($commissiondujour['ID_DATECOMMISSION']);
                    
+                    if(!empty($dossieraffecte))
+                    {    
+                    $descriptifAdd  .= " / Ordre du jour : ";
+                    foreach($dossieraffecte as $dossier)
+                    {
+                     $descriptifAdd .=$dossier['OBJET_DOSSIER'].";";
+                    }
+                    }
+                
                     $ics .= "BEGIN:VEVENT\n";
                     $ics .= "ORGANIZER:prevarisc@atos.net\n";
                     $ics .= "DTSTART:" . $dateStart . "\n";
