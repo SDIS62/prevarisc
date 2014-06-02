@@ -200,8 +200,6 @@
                                 //Lorsque l'on clique sur une commission la date s'ajoute automatiquement dans l'input en dessous
                                 //alert(event.id);
                                 $("#ID_AFFECTATION_DOSSIER").val(event.id);
-
-<<<<<<< HEAD
                                 var date = new Date(event.end);
                                 dd = date.getUTCDate();
                                 mm = date.getUTCMonth()+1;
@@ -254,49 +252,7 @@
                                         url: "/calendrier-des-commissions/resizecommissiondate",
                                         type:"POST",
                                 });
-                        }
-=======
-					if(tabDateSplited[0] == "Sun" || tabDateSplited[0] == "Sat"){
-						$("#calendar").fullCalendar('refetchEvents');
-					}else{
-						//alert("idComm="+event.id+"&debut="+event.start+"&fin="+event.end);
-						$.ajax({
-							data: "idComm="+event.id+"&debut="+event.start+"&fin="+event.end,
-							url: "/calendrier-des-commissions/deplacecommissiondate",
-							type:"POST",
-							success: function(affichageResultat){
-								//$("#calendar").html(affichageResultat);
-							},
-						});
-						
-					}
-				},
-				eventResize: function( event, jsEvent, ui, view ) {
-				        
-					//heure de fin change uniquement fonctionne uniquement sur la vue semaine et jour. Pas sur mois
-					var view = $("#calendar").fullCalendar('getView');
-					var vueInfo = view.title;
-					vueInfo = vueInfo.split(" ");
-					if(vueInfo.length == 2){
-						//permet d'empecher la modification en mode mois (Ajouter message d'indication si besoin)
-						$("#calendar").fullCalendar('refetchEvents');
-						return false;
-					}
-					$.ajax({
-						data: "idComm="+event.id+"&fin="+event.end,
-						url: "/calendrier-des-commissions/resizecommissiondate",
-						type:"POST",
-					});
-				},
-                                viewRender: function( view, element ){
-                                        var date = $("#calendar").fullCalendar('getDate');
-                                        var month_int = date.getMonth()+1;
-                                        var year_int = date.getFullYear();
-                                        $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionSelect").val()+"/Mois/"+month_int+"/Annee/"+year_int);
-                                        $('#exportCom').show(); 
-                                }
->>>>>>> c7921967fad3cce0435ed3db5496bf1f32535612
-				
+                        }			
 				
                     });	
 		};
