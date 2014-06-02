@@ -65,22 +65,6 @@
                     </users>
                 </chains>
             </search>
-            
-            <!-- Listing -->
-            <search type="Zend_Controller_Router_Route">
-                <route>listing</route>
-                <defaults controller="listing" />
-                <chains>
-                    <etablissements type="Zend_Controller_Router_Route">
-                        <route>etablissements</route>
-                        <defaults method="etablissements" />
-                    </etablissements>
-                    <dossiers type="Zend_Controller_Router_Route">
-                        <route>dossiers</route>
-                        <defaults method="dossiers" />
-                    </dossiers>
-                </chains>
-            </search>
 
             <!-- Contacts -->
             <contacts type="Zend_Controller_Router_Route">
