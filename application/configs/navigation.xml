@@ -527,12 +527,17 @@
 			<controller>calendrierdescommissions</controller>
 			<resource>commission</resource> 
 			<pages>
-                <index>	
+                                <index>	
 					<label>Affichage</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>index</action>
 					<privilege>lecture</privilege>
-				</index>		
+				</index>
+                                <exportoutlook>	
+					<label>Export Outlook</label>
+					<controller>calendrier-des-commissions</controller>
+					<action>exportoutlook</action>
+				</exportoutlook>		
 				<recupdateliee>						
 					<label>Date liée</label>
 					<controller>calendrier-des-commissions</controller>
@@ -1056,6 +1061,7 @@
 			</pages>
 		</etablissement>
                 
+                <!-- Listing -->
                 <listing>
                     <label>Listes</label>
                     <controller>Listing</controller>

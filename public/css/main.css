@@ -638,3 +638,13 @@ text-decoration: none;
     color: #FFF;
     text-decoration: none;
 }
+
+#grey-icn-plus {
+    opacity:0.45;
+    filter:alpha(opacity=45);
+}
+
+#grey-icn-plus:hover {
+    opacity:1;
+    filter:alpha(opacity=100);
+}
