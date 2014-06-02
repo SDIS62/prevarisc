@@ -1311,27 +1311,29 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         
          public function exportoutlookmoisAction() {
             $idComm = $this->_getParam("CommId");
-            //$mois = $this->_getParam("Mois");  
+            $mois =   $this->_getParam("Mois");  
+            $annee =  $this->_getParam("Annee");
             
             $this->view->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
             
-            header("Content-Type: text/Calendar");
-            header("Content-Disposition: inline; filename=calendar.ics");
+           
             
             $ics = "";
             
-            if ($idComm != null /*&& $mois !=null*/) {
+            if ($idComm != null && $mois !=null && $annee !=null) {
                 
                 $dbDateCommission = new Model_DbTable_DateCommission;
                 $dbCommission = new Model_DbTable_Commission;
                 
-                $commissions=$dbDateCommission->getMonthCommission('5','2014',$idComm);
+                $commissions=$dbDateCommission->getMonthCommission($mois,$annee,$idComm);
                 $commissionArray=$dbCommission->getLibelleCommissions($idComm);
-              
-
-                if ($commissions !=  null ) {
-                    
+                
+                $libellecommission = $commissionArray[0];
+             
+                if (!empty($commissions)) {
+                    header("Content-Type: text/Calendar");
+                    header("Content-Disposition: inline; filename=calendar_".$mois."_".$annee."_".$libellecommission['LIBELLE_COMMISSION'].".ics"); 
                     
                     $ics .= "BEGIN:VCALENDAR\n";
                     $ics .= "VERSION:2.0\n";
@@ -1345,8 +1347,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                     $dateEnd = str_replace("-", "", $commissiondujour['DATE_COMMISSION']);
                     $dateEnd .= "T" . str_replace(":", "", $commissiondujour['HEUREFIN_COMMISSION']);
                     $descriptifAdd = "";
-
-                    $libellecommission = $commissionArray[0];
 
                     $descriptifAdd .= " / Commission : " . $libellecommission['LIBELLE_COMMISSION'];
                    
@@ -1362,9 +1362,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                    }
                    
                    $ics .="END:VCALENDAR\n";
-                 
-                    
+                                     
                 }
+                
             }
             
             echo $ics;

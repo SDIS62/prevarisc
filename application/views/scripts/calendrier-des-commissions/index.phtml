@@ -18,7 +18,7 @@
 <span class="label  label-success">Visite de sécurité</span>
 <span class="label label-warning">Groupe de visite</span>
 
-<a id='exportCom' class='btn floating_right' href='/calendrier-des-commissions/exportoutlookmois/CommId/'>
+<a id='exportCom'  class='btn floating_right' href='#' style="display:none">
     <i class="icon-calendar"></i> Exporter pour Outlook
 </a>
 
@@ -31,9 +31,7 @@
 <div id="dialogComm" title="Planification commission" class='ui-helper-hidden' ></div>
 <script type="text/javascript">
 	$(document).ready( function() {
-                $('#exportCom').hide();
-                
-		if($("#idCommission").val() != '')
+                if($("#idCommission").val() != '')
 		{
                     $('#exportCom').show();
                     $('#aff_calendar').button( 'option', 'disabled', false );
@@ -41,24 +39,16 @@
                     $('#commissionSelect').val($("#idCommission").val());
                     $('#calendar').html('').afficheCalendar($("#idCommission").val());
                     $('#selectComm').hide();
-		}
+                }
     	});
                    
 
 	// Selection de la commission
 	$("#commissionSelect").live('change',function() {
-                
-            var hrefExport = $('#exportCom').attr('href');
-            if ($(this).val() != '') {
-                $('#exportCom').attr('href', hrefExport + $(this).val());
-            } 
-            
-            $('#exportCom').show();    
             $("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + $(this).find("option:selected").val() + "' />");
             $("#aff_calendar").button( "option", "disabled", false );
             $("#ordre_jour").button( "option", "disabled", false );
-            $("#calendar").html('').afficheCalendar($("#commissionId").attr('value'),'calendrierComm');         
-            
+            $("#calendar").html('').afficheCalendar($("#commissionId").attr('value'),'calendrierComm');    
 	});
 	
 	( function($) {
@@ -81,7 +71,7 @@
 				slotMinutes: 5, //Permet d'afficher un interval de 10 minutes au lieu de 30 par défaut
 				selectHelper: true,
 				firstDay: 1,
-				weekends: false,
+				weekends: true,
 				monthNames : ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin','Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'],
 				monthAbbrevs : ['Jan','Fev','Mar','Avr','Mai','Juin','Juil','Aout','Sep','Oct','Nov','Dec'],
 				dayNames : ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
@@ -107,6 +97,7 @@
 							var events = [];
                                                         
 							for( var x in result["items"] ) {
+                                                                console.log(result["items"]);
 								var colorCal;
 								switch(result["items"][x]["className"]){
 									case "display-1":
@@ -242,7 +233,7 @@
 					}
 				},
 				eventResize: function( event, jsEvent, ui, view ) {
-				
+				        
 					//heure de fin change uniquement fonctionne uniquement sur la vue semaine et jour. Pas sur mois
 					var view = $("#calendar").fullCalendar('getView');
 					var vueInfo = view.title;
@@ -257,7 +248,14 @@
 						url: "/calendrier-des-commissions/resizecommissiondate",
 						type:"POST",
 					});
-				}
+				},
+                                viewRender: function( view, element ){
+                                        var date = $("#calendar").fullCalendar('getDate');
+                                        var month_int = date.getMonth()+1;
+                                        var year_int = date.getFullYear();
+                                        $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionSelect").val()+"/Mois/"+month_int+"/Annee/"+year_int);
+                                        $('#exportCom').show(); 
+                                }
 				
 				
 			});	
