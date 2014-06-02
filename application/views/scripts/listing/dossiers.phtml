@@ -6,8 +6,14 @@
 </a>
 
 
-<form method='get'>
-        <p>Filtrer par : </p>
+<form class="form-search" method='get'>
+        <div class="input-append">
+            <input type="text" name='objet' class="span6 search-query" placeholder="Objet du dossier ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
+            <input type='submit' class="btn" value="Rechercher dans Prevarisc"  />
+            <input type='hidden' name='page' value="1" />
+        </div>
+        
+        <p class="filter-p">Filtrer par : </p>
 	<select name='types[]' multiple>
             <?php foreach( $this->DB_type as $type ) : ?>
                 <option value='<?php echo $type["ID_DOSSIERTYPE"] ?>' <?php if(isset($_GET["types"]) && in_array($type["ID_DOSSIERTYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_DOSSIERTYPE"] ?></option>

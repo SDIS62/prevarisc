@@ -115,7 +115,7 @@ body > .navbar {
 }
 
 .navbar .nav .dropdown-toggle .caret {
-    margin-top: 18px;
+    margin-top: 13px;
 }
 
 
@@ -637,4 +637,18 @@ text-decoration: none;
 .pasnotification a{
     color: #FFF;
     text-decoration: none;
+}
+
+.grey-icn-plus {
+    opacity:0.45;
+    filter:alpha(opacity=45);
+}
+
+.grey-icn-plus:hover {
+    opacity:1;
+    filter:alpha(opacity=100);
+}
+
+.filter-p {
+    margin-top: 10px;
 }

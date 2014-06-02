@@ -1303,6 +1303,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                     $ics .= "DTSTAMP:" . date('Ymd') . "T" . date('His') ."\n";
 
                     $ics .= "END:VEVENT\n";
+                    $ics .= "END:VCALENDAR\n";
                 }
             }
             
