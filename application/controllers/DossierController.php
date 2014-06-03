@@ -2897,11 +2897,72 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+	public function formrecupprescriptionAction()
+    {
+		//récupération de l'établissement attaché au dossier
+		$dbEtabDossier = new Model_DbTable_EtablissementDossier;
+		$listeEtab = $dbEtabDossier->getEtablissementListe($this->_getParam('idDossier'));
+
+		$this->view->nbEtab = count($listeEtab);
+		$this->view->idDossier = $this->_getParam('idDossier');
+		
+		if($this->view->nbEtab == 1){
+			//si il n'y a qu'un établissement, on affiche la liste des dossiers qu'il contient
+			$service_etablissement = new Service_Etablissement;		
+			$dossiers = $service_etablissement->getDossiers($listeEtab['0']["ID_ETABLISSEMENT"]);
+			$this->view->etudes = $dossiers['etudes'];
+			$this->view->visites = $dossiers['visites'];
+			$this->view->autres = $dossiers['autres'];
+		}
+	}
+	
+	public function recupprescriptionAction()
+	{
+		$this->_helper->viewRenderer->setNoRender();
+		//On reprend les prescriptions du dossier ayant id : dossierSelect pui on les ajoute au dossier ayant id : idDossier
+		$DbDossier = new Model_DbTable_Dossier;
+		$this->view->infosDossier = $DbDossier->find((int) $this->_getParam("dossierSelect"))->current();
+        //on affiche les prescriptions du dossier
+        $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+        $listePrescDossier = $dbPrescDossier->recupPrescDossier($this->_getParam('dossierSelect'));
+
+        $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+
+        foreach ($listePrescDossier as $val => $ue) {
+            if ($ue['ID_PRESCRIPTION_TYPE']) {
+                //cas d'une prescription type
+                $assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
+            } else {
+                //cas d'une prescription particulière
+                $assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
+            }
+
+			$newPresc = $dbPrescDossier->createRow();
+			$newPresc->ID_DOSSIER = $this->_getParam("idDossier");
+			$newPresc->NUM_PRESCRIPTION_DOSSIER = $ue["NUM_PRESCRIPTION_DOSSIER"];
+			$newPresc->ID_PRESCRIPTION_TYPE = $ue["ID_PRESCRIPTION_TYPE"];
+			$newPresc->LIBELLE_PRESCRIPTION_DOSSIER = $ue["LIBELLE_PRESCRIPTION_DOSSIER"];
+			$newPresc->save();
+
+			foreach($assoc as $val){
+				if($val["ID_PRESCRIPTION_TYPE"] == NULL){
+					$newAssoc = $dbPrescDossierAssoc->createRow();
+					$newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $val["NUM_PRESCRIPTION_DOSSIERASSOC"];
+					$newAssoc->ID_PRESCRIPTION_DOSSIER = $newPresc->ID_PRESCRIPTION_DOSSIER;
+					$newAssoc->ID_TEXTE = $val["ID_TEXTE"];
+					$newAssoc->ID_ARTICLE = $val["ID_ARTICLE"];
+					$newAssoc->save();
+				}
+			}
+
+        }
+	}
+	
+	
 	public function lienmultipleAction()
 	{
 		$this->_helper->viewRenderer->setNoRender();
 		foreach($this->_getParam('etabId') as $val){
-			//echo $val."<br/>";
 			try {
 				$DBetablissementDossier = new Model_DbTable_EtablissementDossier;
 				$newEtabDossier = $DBetablissementDossier->createRow();

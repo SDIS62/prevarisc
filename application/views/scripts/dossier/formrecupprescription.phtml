@@ -1,0 +1,50 @@
+<?php 
+if($this->nbEtab != 1){
+	echo "Pour pouvoir utiliser cette fonctionnalité, le dossier ne doit concerner qu'un seul établissement";
+}else{
+?>
+	<form name='selectionDossier' id='selectionDossier' >
+	<input type='hidden' name='idDossier' id='idDossier' value='<?php echo $this->idDossier; ?>' />
+	<?php
+	echo "Selectionnez le dossier pour lequel vous souhaitez reprendre les prescriptions";
+
+	if(count($this->visites) == 0 && count($this->etudes) == 0 && count($this->autres) == 0) : ?>
+		<div class='well well-large text-center'>
+			<p class='lead'>Il n'y a pas de dossier.</p>
+			<p><a href='<?php echo $this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $this->etablissement['general']['ID_ETABLISSEMENT']), null, true) ?>' class='btn btn-large'>Ajouter un dossier</a></p>
+		</div>
+	<?php else : ?>
+
+	<div id="content_visites_ets">
+	<?php if( count($this->visites) > 0 ) : ?>
+		<h4>Visites</h4>
+		<ul class='recherche_liste'>
+		<?php echo $this->partialLoop('dossier/results/dossier.phtml', $this->visites); ?>
+		</ul>
+	<?php endif ?>
+	</div>
+
+	<div id="content_etudes_ets">
+	<?php if( count($this->etudes) > 0 ) : ?>
+		<?php if( count($this->visites) > 0 ) echo "<hr />"; ?>
+		<h4>Études</h4>
+		<ul class='recherche_liste'>
+		<?php echo $this->partialLoop('dossier/results/dossier.phtml', $this->etudes);  ?>
+		</ul>
+	<?php endif ?>
+	</div>
+
+	<div id="content_autres_ets">
+	<?php if( count($this->autres) > 0 ) : ?>
+		<?php if( count($this->visites) > 0 || count($this->etudes) > 0) echo "<hr />"; ?>
+		<h4>Autres</h4>
+		<ul class='recherche_liste'>
+		<?php echo $this->partialLoop('dossier/results/dossier.phtml', $this->autres);  ?>
+		</ul>
+	<?php endif ?>
+	</div>
+	<?php endif ?>
+	</form>
+<?php 
+}
+?>

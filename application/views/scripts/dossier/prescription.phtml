@@ -17,6 +17,14 @@ if($this->infosDossier['VERROU_DOSSIER'] == 0){
 		<button class='addPresc btn' id='addPrescriptionType' >Ajouter une prescription type</button>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<button class='addPresc btn' id='addPrescription' >Ajouter une prescription</button>
+	";
+	if(count($this->prescriptionDossier) == 0){
+		echo "
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<button class='recupPrescDossier btn' id='recupPrescDossier' >Reprendre les prescriptions d'un dossier précédent</button>
+		";
+	}
+	echo "
 		<br/><br/>
 		<div>
 	";
@@ -131,12 +139,6 @@ $(document).ready(function(){
 		width: 1000,
 		height: 'auto',
 		buttons: {
-			/*
-			"Sauvegarder": function() {
-				
-				return false;
-			},
-			*/
 			"Fermer": function() {
 				dialogPrescType.html("");
 				dialogPrescType.dialog("close");
@@ -243,7 +245,7 @@ $(document).ready(function(){
 		});
 		return false;	
 	});
-	
+
 //Ajout d'une prescription ordinaire
 	var dialogPresc = $('<div style="display:none;"></div>').appendTo('body');
 	
@@ -259,15 +261,8 @@ $(document).ready(function(){
 				$("input[name='texte[]']").each(function(){
 					compteurTA++;
 				});
-				//alert(compteurTA);
 				if(compteurTA > 0  && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
 				{
-					/*
-					var dataSave = $("#formPrescription").serialize();
-					//alert(dataSave);
-					dataSave = decodeURIComponent(dataSave);
-					//alert(dataSave);
-					*/
 					$.ajax({
 						type: "POST",
 						url: "/dossier/prescriptionadd",
@@ -329,6 +324,58 @@ $(document).ready(function(){
 		return false;
 	});
 	
+//Récupération des prescriptions d'un autre dossier
+	var dialogRecupPresc = $('<div style="display:none;"></div>').appendTo('body');
+
+	dialogRecupPresc.dialog({
+		title: "Reprise des prescriptions d'un dossier précédent",
+		modal: true,
+		autoOpen: false,
+		width: 1200,
+		height: 'auto',
+		buttons: {
+			"Reprendre les prescriptions": function() {
+				if($('input[type=radio][name=dossierSelect]:checked').length == 1){
+					$.ajax({
+						type: "POST",
+						url: "/dossier/recupprescription",
+						data: $("#selectionDossier").serialize(),
+						before: function(){
+							dialogRecupPresc.html("Veuillez patienter pendant la reprise des prescriptions <img src='/images/load.gif' />");
+						},
+						success: function(msg){							
+							window.location.reload();
+						}
+					});
+				}else{
+					return false;
+				}
+				return false;
+			},
+			"Annuler": function() {
+				$(this).html("");
+				$(this).dialog("close");
+			}
+		},
+		close: function(event, ui){
+
+		}
+	});
+	
+	$(".recupPrescDossier").live('click',function(){
+		//On ouvre la boite de dialogue
+		$.ajax({
+			type: "POST",
+			url: "/dossier/formrecupprescription",
+			data: "&idDossier="+$("#idDossier").val(),
+			success: function(msg){
+				dialogRecupPresc.html(msg);
+				dialogRecupPresc.dialog("open");
+			}
+		});
+		return false;
+	});
+	
 //Edition des prescriptions d'un dossier
 	var dialogPrescEdit = $('<div style="display:none;"></div>').appendTo('body');
 	
@@ -345,7 +392,6 @@ $(document).ready(function(){
 					url: "/dossier/prescriptioneditsave",
 					data: $("#formPrescriptionEdit").serialize(),
 					success: function(msg){
-						//alert($("#idPrescDossier").val());
 						$("#prescriptionDossier_"+$("#idPrescDossier").val()).html(msg);
 						dialogPrescEdit.html("");
 						dialogPrescEdit.dialog("close");
