@@ -243,7 +243,7 @@ class Service_Search
 
             // Critères : numéro de doc urba
             if($num_doc_urba !== null) {
-               $this->setCriteria($select, "NUM_DOCURBA", $num_doc_urba);
+               $select->having("NB_URBA like ?", "%$num_doc_urba%");
             }
 
             // Critères : objet
@@ -264,6 +264,96 @@ class Service_Search
             // Gestion des pages et du count
             $select->limitPage($page, $count > 100 ? 100 : $count);
 
+            // Construction du résultat
+            $rows_counter = new Zend_Paginator_Adapter_DbSelect($select);
+            $results = array(
+                'results' => $select->query()->fetchAll(),
+                'search_metadata' => array(
+                    'search_id' => $search_id,
+                    'current_page' => $page,
+                    'count' => count($rows_counter)
+                )
+            );
+
+            $cache->save(serialize($results));
+        }
+
+        return $results;
+    }
+    
+    /**
+     * Recherche des courriers
+     *
+     * @param array $types
+     * @param string $objet
+     * @param string $num_doc_urba
+     * @param int $parent Id d'un dossier parent
+     * @param int $count Par défaut 10, max 100
+     * @param int $page par défaut = 1
+     * @return array
+     */
+    public function courriers($objet = null, $num_doc_urba = null, $parent = null, $count = 10, $page = 1)
+    {
+        // Récupération de la ressource cache à partir du bootstrap
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+
+        // Identifiant de la recherche
+        $search_id = 'search_dossiers_' . md5(serialize(func_get_args()));
+
+        if(($results = unserialize($cache->load($search_id))) === false) {
+
+            // Création de l'objet recherche
+            $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
+
+            // Requête principale
+            $select->from(array("d" => "dossier"))
+                ->columns(array(
+                    "NB_DOSS_LIES" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                        FROM dossier
+                        INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
+                        WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)",
+                    "NB_URBA" => "( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
+                        FROM dossier
+                        INNER JOIN dossierdocurba ON dossierdocurba.ID_DOSSIER = dossier.ID_DOSSIER
+                        WHERE dossier.ID_DOSSIER = d.ID_DOSSIER
+                        LIMIT 1)",
+                    "ALERTE_RECEPTION_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                        FROM dossier
+                        INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
+                        INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
+                        WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)",
+                    "ECHEANCIER_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER1)
+                        FROM dossier
+                        INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
+                        INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
+                        WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)"))
+                ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
+                ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
+                ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))
+                ->join("dossiertype", "dossiertype.ID_DOSSIERTYPE = dossiernatureliste.ID_DOSSIERTYPE", "LIBELLE_DOSSIERTYPE")
+                ->joinLeft(array("e" => "etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
+                ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
+                ->group("d.ID_DOSSIER");
+
+            // Critères : numéro de doc urba
+            if($num_doc_urba !== null) {
+               $this->setCriteria($select, "NUM_DOCURBA", $num_doc_urba);
+            }
+            
+            if (null !== $objet) {
+                $select->where("DEMANDEUR_DOSSIER LIKE '%{$objet}%' OR OBJET_DOSSIER LIKE '%{$objet}%'");
+            }
+
+            // Critères : parent
+            if($parent !== null) {
+               $select->where($parent == 0 ? "dossierlie.ID_DOSSIER1 IS NULL" : "dossierlie.ID_DOSSIER1 = ?", $parent);
+            }
+
+            // Critères : type
+            $this->setCriteria($select, "dossiertype.ID_DOSSIERTYPE", 5);
+
+            // Gestion des pages et du count
+            $select->limitPage($page, $count > 100 ? 100 : $count);
             // Construction du résultat
             $rows_counter = new Zend_Paginator_Adapter_DbSelect($select);
             $results = array(
@@ -331,6 +421,7 @@ class Service_Search
             // Critères : nom
             if($name !== null) {
                $this->setCriteria($select, "NOM_UTILISATEURINFORMATIONS", $name, false);
+                $this->setCriteria($select, "PRENOM_UTILISATEURINFORMATIONS", $name, false, "orWhere");
             }
 
             // Critères : fonctions

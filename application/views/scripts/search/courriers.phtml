@@ -1,25 +1,19 @@
 <!-- Onglets permettant de selectionner les entités à rechercher -->
 <ul class="nav nav-tabs" >
     <li><a href='<?php echo $this->url(array("action"=>"etablissement")) ?>'>Établissements</a></li>
-    <li class="active"><a href='<?php echo $this->url(array("action"=>"dossier")) ?>'>Dossiers</a></li>
-    <li><a href='<?php echo $this->url(array("action"=>"courriers")) ?>'>Courriers</a></li>
+    <li><a href='<?php echo $this->url(array("action"=>"dossier")) ?>'>Dossiers</a></li>
+    <li class="active"><a href='<?php echo $this->url(array("action"=>"courriers")) ?>'>Courriers</a></li>
 </ul>
 
 <form method='get'>
 
 	<div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
 		<div class="input-append">
-			<input type="text" name='objet' class="span6 search-query" placeholder="Objet du dossier ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
+			<input type="text" name='objet' class="span6 search-query" placeholder="Objet du courrier, de l'expéditeur, ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
 			<input type='submit' class="btn" value="Rechercher dans Prevarisc"  />
 			<input type='hidden' name='page' value="1" />
 		</div>
 	</div>
-
-	<select name='types[]' multiple>
-			<?php foreach( $this->DB_type as $type ) : ?>
-				<option value='<?php echo $type["ID_DOSSIERTYPE"] ?>' <?php if(isset($_GET["types"]) && in_array($type["ID_DOSSIERTYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_DOSSIERTYPE"] ?></option>
-			<?php endforeach ?>
-	</select>
 
 </form>
 

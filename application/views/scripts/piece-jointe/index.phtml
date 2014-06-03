@@ -1,16 +1,20 @@
 <input type='hidden' name='typePJ' id='typePJ' value='<?php echo $this->type ?>' />
 <input type='hidden' name='idLinkPJ' id='idLinkPJ' value='<?php echo $this->identifiant ?>' />
 
+
 <h3>Liste de pièces jointes
 <?php 
 	if($this->verrou == 0){
 		echo "
-			<button id='addPJ' class='btn' style='float: right; margin-left: 1em;' >Ajouter une piece jointe</button>
+			<button id='addPJ' class='btn' >Ajouter une piece jointe</button>
+			<button id='addPJQuick' class='btn' >Ajout rapide</button>
+			<div id='dropzone' class='dropzone' style='display:none'></div>
 		";
 	}
 ?>
 </h3>
 <div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>
+
 <div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
 	<table id='tabPieceJointe' class='table'> 
 		<thead> 
@@ -30,7 +34,9 @@
 </div>
 
 <script type="text/javascript">
-
+        
+        Dropzone.autoDiscover = false;
+        
 	$(document).ready(function() {
 
 		$("body").append("<iframe name='hiddeniframe' id='hiddeniframe' src='about:blank' style='width:0px; height:0px' >");
@@ -80,6 +86,28 @@
 				}
 			});
 		});
+                
+                /* GESTION DU GLISSEZ DEPOSER */
+                $("#addPJQuick").click(function() {
+                    $('#dropzone').toggle();
+                });
+                
+                var myDropzone = new Dropzone("#dropzone", { 
+                    url: "/piece-jointe/add?id=" + $("#idLinkPJ").val() + "&type=" + $("#typePJ").val(),
+                    paramName: "fichier"
+                });
+                myDropzone.on("success", function(file, responseText) {
+                    if (responseText !== undefined) {
+                        $('body').append(responseText);
+                        if (file.previewElement !== undefined) {
+                            file.previewElement.remove();
+                        }
+                        $('#dropzone').hide();
+                    } else
+                    {
+                        document.location.reload();
+                    }
+                });
 
 		// Supp. d'une pièce jointe
 		$("a#delete").live("click", function() {

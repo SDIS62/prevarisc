@@ -44,7 +44,13 @@
 						";
 						if($i < $nbEtab-1 && $compteur > 1){
 							echo " | ";
-						}
+						} else 
+                                                {
+                                                    echo "
+                                                        <div class='pull-right' style='font-weight:normal' >
+                                                            <a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $value['ID_ETABLISSEMENT']), null, true)."'>Ajouter un autre dossier</a>
+                                                        </div>";
+                                                }
 						$i++;
 					}
 				}
@@ -65,6 +71,10 @@
 			echo "
 				</a>
 			";
+                        echo "
+                        <div class='pull-right' style='font-weight:normal' >
+                            <a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $this->etablissement['ID_ETABLISSEMENT']), null, true)."'>Ajouter un autre dossier</a>
+                        </div>";
 		}
 	break;
 	case "showNature":

@@ -527,12 +527,17 @@
 			<controller>calendrierdescommissions</controller>
 			<resource>commission</resource> 
 			<pages>
-                <index>	
+                                <index>	
 					<label>Affichage</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>index</action>
 					<privilege>lecture</privilege>
-				</index>		
+				</index>
+                                <exportoutlook>	
+					<label>Export Outlook</label>
+					<controller>calendrier-des-commissions</controller>
+					<action>exportoutlook</action>
+				</exportoutlook>		
 				<recupdateliee>						
 					<label>Date liée</label>
 					<controller>calendrier-des-commissions</controller>
@@ -1055,6 +1060,24 @@
 				</historique>
 			</pages>
 		</etablissement>
+                
+                <!-- Listing -->
+                <listing>
+                    <label>Listes</label>
+                    <controller>Listing</controller>
+                    <pages>
+                        <etablissements>
+                            <label>Établissements</label>
+                            <controller>Listing</controller>
+                            <action>etablissements</action>
+                        </etablissements>
+			<dossiers>
+                            <label>Dossiers</label>
+                            <controller>Listing</controller>
+                            <action>dossiers</action>
+                        </dossiers>
+                    </pages>
+                </listing>
 
 		<!-- Recherche -->
 		<search>
@@ -1066,6 +1089,11 @@
 					<controller>search</controller>
 					<action>etablissement</action>
 				</etablissement>
+                                <courriers>
+                                    <label>Courriers</label>
+                                    <controller>search</controller>
+                                    <action>courriers</action>
+                                </courriers>
 				<dossier>
                     <label>Dossiers</label>
 					<controller>search</controller>
