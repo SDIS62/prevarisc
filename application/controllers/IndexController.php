@@ -13,10 +13,6 @@ class IndexController extends Zend_Controller_Action
         
         /************************************************/
         
-               
-        $date = date("Y-m-d");
-             
-        
         $Commission = new Model_DbTable_Commission;
         
         $dbCommission = $Commission->getAllCommissions();
@@ -24,7 +20,7 @@ class IndexController extends Zend_Controller_Action
         $this->view->commissionsListe = $dbCommission;
         
         $Datecommission = new Model_DbTable_DateCommission;
-        $Firstcommission = $Datecommission->getDayCommission($date);
+        $Firstcommission = $Datecommission->getNextCommission(time(), time() + 3600 * 24 * 15);
         $this->view->firstcommission = $Firstcommission;
         
     

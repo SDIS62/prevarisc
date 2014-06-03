@@ -102,7 +102,6 @@ body > .navbar {
     font-size: 12px;
     text-transform: uppercase;
     color: #949494;
-    text-shadow: 1px 1px 0 white;
     text-decoration: none;
 }
 
@@ -623,7 +622,6 @@ ul#gestionCommissionMenu li.active {
 
 .notification{
     padding: 2px 2px 2px 2px;
-    background-color: #f89406;
 }
 .notification a{
 color: #FFF;

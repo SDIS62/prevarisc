@@ -22,7 +22,7 @@
     </div>
     
     <div class='span3'>
-        <h2 class='page-header'>Aujourd'hui</h2>
+        <h2 class='page-header'>Prochaines commissions</h2>
  
      <?php  
         
@@ -35,15 +35,23 @@
              {             
                 if($commission['ID_COMMISSION']==$commissiondujour['COMMISSION_CONCERNE'])
                 {
+                    if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
+                        $class="label-info";
+                    } else if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 2) {
+                        $class="label-success";
+                    } else {
+                        $class="label-warning";
+                    }
                 ?>
-       <p class='well text-center notification'>   
+       <p class='well text-center notification <?php echo $class ?>'>   
             <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['ID_DATECOMMISSION'];?>"
             >
                 <?php
-                   echo ' '.$commission['LIBELLE_COMMISSION'];
+                
+                   $date = new DateTime($commissiondujour['DATE_COMMISSION'].' '.$commissiondujour['HEUREDEB_COMMISSION']);
+                   echo "Le ".$date->format('d/m à H:i');
+                   echo " : ".$commission['LIBELLE_COMMISSION'];
                    echo '-'.$commissiondujour['LIBELLE_DATECOMMISSION'];
-                   echo '  de '.$commissiondujour['HEUREDEB_COMMISSION'];
-                   echo '  à  '.$commissiondujour['HEUREFIN_COMMISSION'];
                 ?> 
              
             </a> 

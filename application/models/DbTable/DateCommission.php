@@ -44,11 +44,12 @@
 
             return $this->getAdapter()->fetchAll($select);
         }
-        public function getDayCommission($date)
+        public function getNextCommission($date, $next_date)
         {
             $select = "SELECT *
                 FROM datecommission
-                WHERE DATE_COMMISSION = '".$date."'";
+                WHERE DATE_COMMISSION BETWEEN '".date('Y-m-d', $date)."' AND '".date('Y-m-d', $next_date)."'
+                ORDER BY DATE_COMMISSION, HEUREDEB_COMMISSION";
             return $this->getAdapter()->fetchAll($select);
         }
         
