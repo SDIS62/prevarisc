@@ -870,7 +870,7 @@
         $('#adresse-modal #geolocme').click(function() {
             element = $(this);
             $.ajax({
-                url: "/proxy?url=http://nominatim.openstreetmap.org/search",
+                url: "http://nominatim.openstreetmap.org/search",
                 dataType: 'json',
                 timeout: 10000,
                 data: {

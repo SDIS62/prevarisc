@@ -2357,10 +2357,11 @@ class DossierController extends Zend_Controller_Action
 
     public function textesapplicablesAction()
     {
+        
         //on commence par afficher tous les texte applicables qui sont visible regroupés par leurs type
         $dbTextesAppl = new Model_DbTable_TextesAppl;
         $this->view->listeTextesAppl = $dbTextesAppl->recupTextesApplVisible();
-
+        
         //on recupere tout les textes applicables qui ont été cochés dans le dossier
         $dbDossierTextesAppl = new Model_DbTable_DossierTextesAppl;
         $liste = $dbDossierTextesAppl->recupTextesDossier($this->_getParam("id"));
@@ -2383,6 +2384,7 @@ class DossierController extends Zend_Controller_Action
             $idEtablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
         }
         $this->view->idEtablissement = $idEtablissement;
+        
     }
 
 //GESTION DE LA PARTIE PRESCRIPTION

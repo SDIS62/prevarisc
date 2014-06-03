@@ -14,6 +14,7 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
+        $this->view->key_googlemap = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('googlemap')['key'];
 
         $this->view->etablissement = $etablissement;
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);

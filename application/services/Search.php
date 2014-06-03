@@ -243,7 +243,7 @@ class Service_Search
 
             // Critères : numéro de doc urba
             if($num_doc_urba !== null) {
-               $this->setCriteria($select, "NUM_DOCURBA", $num_doc_urba);
+               $select->having("NB_URBA like ?", "%$num_doc_urba%");
             }
 
             // Critères : objet
@@ -421,6 +421,7 @@ class Service_Search
             // Critères : nom
             if($name !== null) {
                $this->setCriteria($select, "NOM_UTILISATEURINFORMATIONS", $name, false);
+                $this->setCriteria($select, "PRENOM_UTILISATEURINFORMATIONS", $name, false, "orWhere");
             }
 
             // Critères : fonctions
