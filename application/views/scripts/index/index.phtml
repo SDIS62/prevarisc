@@ -1,16 +1,7 @@
 <div class='row-fluid'>
 
-    <div class='span3'>
-        <h2 class='page-header'>Actions disponibles</h2>
-        <p class='well text-center'>
-            <a class='btn actions-dispo' href='/calendrier-des-commissions' ><i class="icon-calendar"></i>Consulter le calendrier des commissions</a><br/><br/>
-            <a class='btn actions-dispo' href='/etablissement/add' ><i class="icon-plus"></i> Ajouter un établissement</a><br/><br/>
-            <a class='btn actions-dispo' href='/dossier/add' ><i class="icon-plus"></i> Ajouter un dossier</a>
-        </p>
-    </div>
-
     <div class='span6'>
-        <a class='btn btn-small pull-right' style='margin-top: 30px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
+        <a class='btn btn-small pull-right' style='margin-top: 5px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
         <h2 class='page-header'>Derniers messages</h2>
         <?php if( count($this->flux) == 0 ) : ?>
             <p class='muted'><small>Aucun message disponible.</small></p>

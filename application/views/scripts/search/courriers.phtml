@@ -6,15 +6,13 @@
 </ul>
 
 <form method='get'>
-
-	<div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
-		<div class="input-append">
-			<input type="text" name='objet' class="span6 search-query" placeholder="Objet du courrier, de l'expéditeur, ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
-			<input type='submit' class="btn" value="Rechercher dans Prevarisc"  />
-			<input type='hidden' name='page' value="1" />
-		</div>
-	</div>
-
+    <div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
+        <div class="input-append">
+            <input type="text" name='objet' class="span6 search-query" placeholder="Objet du courrier, de l'expéditeur, ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
+            <input type='submit' class="btn" value="Rechercher dans Prevarisc"  />
+            <input type='hidden' name='page' value="1" />
+        </div>
+    </div>
 </form>
 
 <hr/>

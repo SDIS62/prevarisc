@@ -159,7 +159,6 @@ class DossierController extends Zend_Controller_Action
         if ($this->_getParam("id")) {
             $this->view->do = "edit";
             $this->view->idDossier = ($this->_getParam("id"));
-
         }
 
         $this->view->idEtablissement = $this->_getParam("id_etablissement");

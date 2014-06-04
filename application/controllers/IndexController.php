@@ -4,6 +4,7 @@ class IndexController extends Zend_Controller_Action
 {
     public function indexAction()
     {
+        $this->_helper->layout->setLayout('index');
         $service_feed = new Service_Feed;
         $service_user = new Service_User;
 

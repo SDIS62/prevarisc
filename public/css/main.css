@@ -23,8 +23,10 @@ html {
 body {
     background-color: white;
     margin: 0 auto;  /* zéro ou une autre valeur */
+    padding: 0;
     width: 100%; 
     /*min-width: 1368px;*/
+    min-height: 100%;
 }
 
 tbody {
@@ -58,6 +60,10 @@ h3 {
 
 h2 small {
     font-size: 15px;
+}
+
+h2.page-header {
+    margin-top: 0px;
 }
 
 /* On règle la navbar en mode "super sleek"
@@ -705,4 +711,71 @@ text-decoration: none;
     border-bottom-right-radius: 4px;
     -webkit-border-top-right-radius: 4px;
     -webkit-border-bottom-right-radius: 4px;
+}
+
+.menu-trigger {
+    width: 30px;
+    height: 30px;
+    background: #dfe5eb;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.menu-trigger:hover {
+    background-color: #99a6b4;
+}
+
+.ios_menu_style {
+    background-color: rgba(53,61,70, 0.9);
+    width: 20%;
+    margin: 0;
+    padding: 95px 0;
+    display: table-cell;
+    vertical-align:top;
+    border-bottom: 2px solid #949494;
+}
+
+.ios_menu_style li, .ios_menu_style li a {
+    text-decoration: none;
+    list-style-type: none;
+    color: #ced4da;   
+}
+
+.ios_menu_style-ul {
+    padding: 0;
+    margin: 0;
+}
+
+.ios_menu_style li a, .ios_menu_style .nav-header {
+    display:block;
+    margin: 10px 25px 10px 20px;
+}
+
+.ios_menu_style li a:hover {
+    color: #ffffff;
+}
+
+.ios_menu_style .white_link {
+    color: #ffffff;
+}
+
+.ios_menu_style .sep, .ios_menu_style .nav-header {
+    border-top: 1px solid #6b7b8d;
+    padding: 10px 0 0 0;
+    text-shadow: none;
+}
+
+.main-container-fluid {
+    display: table-cell;
+    width: 80%;
+    vertical-align: top;
+    padding-top: 70px;
+}
+
+.navbar-fixed-top .navbar-inner {
+    box-shadow: none;
 }

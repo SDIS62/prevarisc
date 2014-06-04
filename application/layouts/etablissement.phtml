@@ -1,6 +1,24 @@
-<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
+
+<div class="ios_menu_style">
+    <ul class='ios_menu_style-ul' >
+        <li><a href='<?php echo $this->url(array("action"=>"index")) ?>'><i class="icon-info-sign icon-white"></i> Général</a></li>
+        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'><i class="icon-align-center icon-white"></i> Textes applicables</a></li><?php endif ?>
+        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "Site" ) : ?><li><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'><i class="icon-book icon-white"></i> Descriptif</a></li><?php endif ?>
+        <li><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'><i class="icon-share icon-white"></i> Pièces jointes</a></li>
+        <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'><i class="icon-user icon-white"></i> Contacts</a></li>
+        <li><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'><i class="icon-folder-open icon-white"></i> Dossiers</a></li>
+        <li><a class='sep' href='<?php echo $this->url(array("action"=>"historique")) ?>'><i class="icon-repeat icon-white"></i> Afficher l'historique</a></li>
+    </ul>
+</div>
+<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
+<?php $this->placeholder('before_content')->captureStart(); // Capture du 'before_content' ?>
+
+
+
 
 <!-- Contenu -->
+<div class="menu-trigger"><i class='icon-align-justify'></i></div>
 <div id='ligne_informations'>
 
     <!-- Libelle -->
@@ -45,17 +63,6 @@
     <?php endif ?>
 
 </div>
-
-<!-- Onglets horizontaux -->
-<ul id='onglets_horizontaux' >
-    <li><a href='<?php echo $this->url(array("action"=>"index")) ?>'>Général</a></li>
-    <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'>Textes applicables</a></li><?php endif ?>
-    <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "Site" ) : ?><li><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'>Descriptif</a></li><?php endif ?>
-    <li><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'>Pièces jointes</a></li>
-    <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'>Contacts</a></li>
-    <li><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'>Dossiers</a></li>
-    <li style='float: right;' ><a style='border-right: none; padding: 0' href='<?php echo $this->url(array("action"=>"historique")) ?>'>Afficher l'historique</a></li>
-</ul>
 
 <div id='fiche_etablissement'>
 
