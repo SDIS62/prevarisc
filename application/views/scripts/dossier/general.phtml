@@ -1175,10 +1175,8 @@ echo "
 			<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='".$this->idUser."' />	
 			".( ($action == 'edit')? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "" )."
 			<div id='boutons' style='float: right'>
-				<button id='annulModification' class='btn' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'>Annuler</button>
-				<button id='validModification' class='btn btn-success save' style='".( ($action == 'new' || $action == 'edit')? "display:none;" : "" )." z-index:150;'><i class='icon-ok icon-white'></i>&nbsp;Sauvegarder le dossier</button>
-				<button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>
-				<div id='chargement'></div>
+                        <button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>
+                        <div id='chargement'></div>
 			</div>
 			<h3>Informations générales</h3>
 			<!-- BEGIN UL Type/Nature -->

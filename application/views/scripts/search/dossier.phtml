@@ -17,7 +17,7 @@
 
 	<select name='types[]' multiple>
 			<?php foreach( $this->DB_type as $type ) : ?>
-				<option value='<?php echo $type["ID_DOSSIERTYPE"] ?>' <?php if(isset($_GET["types"]) && in_array($type["ID_DOSSIERTYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_DOSSIERTYPE"] ?></option>
+                            <option value='<?php echo $type["ID_DOSSIERTYPE"] ?>' <?php if(isset($_GET["types"]) && in_array($type["ID_DOSSIERTYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_DOSSIERTYPE"] ?></option>
 			<?php endforeach ?>
 	</select>
 

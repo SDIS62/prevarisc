@@ -88,6 +88,11 @@
                 <a href="" id="rapport"><i class="icon-refresh icon-white"></i> Générer le(s) rapport(s)</a>
             </li>
             <?php endif ?>
+            <?php if (!$verrou && ($this->idDateCommissionAffect != null)) : ?>
+            <li>
+                <a class="sep" href='/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $this->idDateCommissionAffect; ?>'><i class='icon-calendar icon-white'></i> Afficher ordre du jour</a>
+            </li>
+            <?php endif; ?>
            
         <?php endif ?>
         <?php if ( $this->action == "descriptif") : ?>

@@ -1,7 +1,83 @@
 <div class='row-fluid'>
+    
+    <div class='span3'>
+        <h2 class='page-header'>Alertes</h2>
+        
+          <?php 
+            //var_dump($this->etablissementsanspreventionniste);
+             foreach($this->etablissementsanspreventionniste as $erpsansprev)
+                { ?>
+                  <p class='well text-center notification label-warning'>
+                  <?php
+                       if($erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
+                       echo "<a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'> L'établissement : ".$erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']." est sans préventionnistes </a>";
+                        ?>      
+                  </p>   
+        
+                <?php 
+         
+                }
+                ?>
+            
+            <?php
+            foreach($this->courrier as $courrier)
+                { ?>
+                  <p class='well text-center notification label-warning'>
+                  <?php
+                       if($courrier['DATEREP_DOSSIER']==null)
+                       echo "Le courrier/courriel : ".$courrier['OBJET_DOSSIER']." sans réponse depuis plus de 5 jours ";
+                        ?>      
+                  </p>   
+        
+                <?php 
+         
+                }
+                ?>
+             
+            
+              <?php
+               foreach($this->dossiercommissionechu as $dossier)
+                { ?>
+                  <p class='well text-center notification label-warning'>
+                  <?php
+                       if($dossier['OBJET_DOSSIER']!=null)
+                       echo "Le dossier : ".$dossier['OBJET_DOSSIER']." de la commission échue : ".$dossier['LIBELLE_DATECOMMISSION']." est sans avis";
+                       else
+                       {
+                           $datecreation = new DateTime($dossier['DATEINSERT_DOSSIER']);
+                           echo "Le dossier du ".$datecreation->format('d/m/y')." (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue : ".$dossier['LIBELLE_DATECOMMISSION']." est sans avis";
+                          
+                           
+                       }
+                       ?>      
+                  </p>   
+        
+                <?php 
+         
+                }
+                ?>
+                
+          
+          
+               <?php
+                foreach($this->etablissementavisdefavorable as $avis)
+                { ?>
+                  <p class='well text-center notification label-info'>
+                  <?php 
+                       echo "L'établissement ".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']." est sous un avis défavorable depuis dix jours";
+                  ?>      
+                  </p>   
+        
+                <?php 
+         
+                }
+                ?>
+       
+    </div>
 
-    <div class='span6'>
+    <div class='span3'>
         <a class='btn btn-small pull-right' style='margin-top: 5px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
+
         <h2 class='page-header'>Derniers messages</h2>
         <?php if( count($this->flux) == 0 ) : ?>
             <p class='muted'><small>Aucun message disponible.</small></p>
