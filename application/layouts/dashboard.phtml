@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr" >
+
+    <head>
+
+        <style>body { padding-top: 80px; }</style>
+        <?php echo $this->render("includes/header.phtml"); ?>
+
+    </head>
+
+    <body>
+
+        <?php echo $this->render("includes/nav-main.phtml"); ?>
+
+        <div class='container-fluid' >
+
+            <?php echo $this->placeholder('before_content') ?>
+
+            <div class='row-fluid'>
+
+                <div class='span2 sidebar' style="margin-left: -20px; padding-left: 20px; margin-top: -20px; padding-top: 40px;">
+
+                    <?php echo $this->avatar(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], 'medium', array('style' => "float: left; width: 50px; border: 1px solid #dfdfdf; border-radius: 50%; margin-right: 15px;")) ?>
+
+                    <p>
+                      <strong>Bonjour, <?php echo Zend_Auth::getInstance()->getIdentity()['infos']['PRENOM_UTILISATEURINFORMATIONS'] ?></strong><br>
+                      <small class="label label-success" style="font-size: .8em">En ligne</small>
+                    </p>
+
+                    <hr class='clearfix' style="border: none;" />
+
+                    <ul class="nav nav-tabs nav-stacked menu_dashboard" >
+                      <li class="active" ><a href="#"><i class="icon-th-large"></i> Tableau de bord</a></li>
+                      <li><a href="/calendrier-des-commissions"><i class="icon-calendar"></i> Calendrier des commissions</a></li>
+                      <li><a href="etablissement/add"><i class="icon-plus"></i> Ajouter un établissement</a></li>
+                      <li><a href="dossier/add"><i class="icon-plus"></i> Ajouter un dossier</a></li>
+                    </ul>
+
+                </div>
+
+                <div class='span10'>
+
+                  <h2 class="page-header">
+                    Tableau de bord
+                    <small>Profil : <?php echo $this->user['infos']['LIBELLE_FONCTION'] ?></small>
+                  </h2>
+
+                  <?php echo $this->render("includes/notifications.phtml"); ?>
+
+                  <div class="dashboard">
+                    <?php echo $this->layout()->content; ?>
+                  </div>
+
+                  <?php echo $this->placeholder('after_content') ?>
+
+                </div>
+
+              </div>
+
+        </div>
+
+        <script type="text/javascript" src="/js/jquery.stickyfooter.js"></script>
+
+        <script>
+          $(document).ready(function() {
+              $(".sidebar").css('height', $(document).height() + 'px');
+          });
+        </script>
+
+    </body>
+
+</html>

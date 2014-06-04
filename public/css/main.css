@@ -3,7 +3,7 @@
  * Description: Règles générales
  * =========================================================== */
 
- 
+
 /* Body and structure
 -------------------------------------------------- */
 
@@ -23,7 +23,7 @@ html {
 body {
     background-color: white;
     margin: 0 auto;  /* zéro ou une autre valeur */
-    width: 100%; 
+    width: 100%;
     min-width: 1368px;
 }
 
@@ -472,7 +472,7 @@ ul#gestionCommissionMenu {
 }
 
 ul#gestionCommissionMenu li {
-	
+
 	display: inline-block;
 	padding: 20px;
 	margin: 0;
@@ -493,7 +493,7 @@ ul#gestionCommissionMenu li {
 }
 
 ul#gestionCommissionMenu li.active {
-	
+
 	background-color: #EEEEEE;
 }
 
@@ -519,4 +519,58 @@ ul#gestionCommissionMenu li.active {
 
 .confirm-modal-hide {
 	display: none;
+}
+
+.sidebar {
+  background-color: #f4f4f4;
+  display: inline-block;
+  height: 100%;
+  box-shadow: inset -3px 0px 8px -4px rgba(0, 0, 0, 0.07);
+  font-size: .85em;
+}
+
+.menu_dashboard {
+  margin-left: -20px;
+}
+
+.menu_dashboard a {
+  border-top: none;
+  border-bottom: none;
+}
+
+.menu_dashboard li {
+  margin-bottom: 0;
+}
+
+.menu_dashboard li.active a ,
+.menu_dashboard li:hover a
+{
+  background: #f9f9f9;
+}
+
+.nav-tabs.nav-stacked.menu_dashboard>li>a {
+  border-radius: 0px;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #dbdbdb;
+  border-right: none;
+  border-left: none;
+  padding: 12px 5px 12px 15px;
+  color: #555555;
+}
+
+.dashboard .grid-sizer {
+  width: 49%;
+}
+
+.dashboard .panel {
+  width:  49%;
+  float: left;
+}
+
+.dashboard .panel.w2 {
+  width:  100%;
+}
+
+.dashboard .grid-gutter {
+  width: 2%;
 }
