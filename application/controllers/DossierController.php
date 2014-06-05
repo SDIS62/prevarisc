@@ -873,7 +873,7 @@ class DossierController extends Zend_Controller_Action
             foreach ($_POST as $libelle => $value) {
                 //On exclu la lecture de selectNature => select avec les natures;
                 //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
-                if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "ABSQUORUM_DOSSIER" && $libelle != "servInst" && $libelle != "servInstVille" && $libelle != "servInstGrp") {
+                if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "ABSQUORUM_DOSSIER" && $libelle != "servInst" && $libelle != "servInstVille" && $libelle != "servInstGrp" && $libelle != "repercuterAvis") {
                     //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
                     if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER" || $libelle == "ECHEANCIERTRAV_DOSSIER" ) {
                         if ($value) {
@@ -1013,23 +1013,38 @@ class DossierController extends Zend_Controller_Action
                     //Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
                     $MAJEtab = 1;
                 }
-                //echo "VAL = ".$MAJEtab."<br/>";
 
                 $dbEtab = new Model_DbTable_Etablissement;
+				$service_etablissement = new Service_Etablissement;
 
                 if ($MAJEtab == 1 && $this->_getParam('do') == 'new') {
                     $etabToEdit = $dbEtab->find($this->_getParam('idEtablissement'))->current();
                     $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
                     $etabToEdit->save();
+					if($this->_getParam('repercuterAvis')){
+						$etablissementInfos = $service_etablissement->get($this->_getParam('idEtablissement'));
+						foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
+							$etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+							$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+							$etabToEdit->save();
+						}
+					}					
                 } elseif ($MAJEtab == 1) {
                     $listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
-
                     foreach ($listeEtab as $val => $ue) {
                         $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
                         $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
                         $etabToEdit->save();
+						$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+						foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
+							$etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+							$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+							$etabToEdit->save();
+						}
                     }
+					
                 }
+				
             }
 
             //GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
