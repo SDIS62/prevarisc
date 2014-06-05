@@ -1577,32 +1577,31 @@ echo "
 						</select>
 					</div>
 				</li>				
-				<!--
-				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1  && $this->afficheAvis)? "": "display:none;" )."margin-bottom:20px;'>
-				-->
 				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && $this->afficheAvis == 1)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
-					echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
-					if($this->infosDossier['TYPE_DOSSIER'] == 1){
-						//etude
-						if($this->natureConcerne[0]['ID_NATURE'] == 19){
-							echo " à l'exploitation";
-						}else{
-							echo " à l'étude";
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+						<span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
+						echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
+						if($this->infosDossier['TYPE_DOSSIER'] == 1){
+							//etude
+							if($this->natureConcerne[0]['ID_NATURE'] == 19){
+								echo " à l'exploitation";
+							}else{
+								echo " à l'étude";
+							}
+						}else if($this->infosDossier['TYPE_DOSSIER'] == 2 || $this->infosDossier['TYPE_DOSSIER'] == 3){
+							//visite et groupe de visite
+							if($this->natureConcerne[0]['ID_NATURE'] == 20  || $this->natureConcerne[0]['ID_NATURE'] == 25){
+								//Reception de travaux
+								echo " à la reception des travaux";
+							}else{
+								//Reste des visites
+								echo " à l'exploitation";
+							}
 						}
-					}else if($this->infosDossier['TYPE_DOSSIER'] == 2 || $this->infosDossier['TYPE_DOSSIER'] == 3){
-						//visite et groupe de visite
-						if($this->natureConcerne[0]['ID_NATURE'] == 20  || $this->natureConcerne[0]['ID_NATURE'] == 25){
-							//Reception de travaux
-							echo " à la reception des travaux";
-						}else{
-							//Reste des visites
-							echo " à l'exploitation";
-						}
-					}
-				echo 
-					"</span></div>
+					echo "
+						</span>
+					</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<select name='AVIS_DOSSIER_COMMISSION' id='AVIS_DOSSIER_COMMISSION' >
 							<option value='0' ></option>
@@ -1612,6 +1611,8 @@ echo "
 						}
 						echo "
 						</select>
+						&nbsp;&nbsp;&nbsp;
+						<input type='checkbox' name='repercuterAvis' id='repercuterAvis' /> Répercuter l'avis sur les établissements enfants
 					</div>
 				</li>
 				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL && $this->infosDossier['FACTDANGE_DOSSIER'] != 0)? "" : "display:none;")."'>
