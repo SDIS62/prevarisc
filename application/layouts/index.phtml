@@ -1,0 +1,21 @@
+<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
+<div class="ios_menu_style">
+    <ul class='ios_menu_style-ul' >
+        <li>
+            <a href='/calendrier-des-commissions' ><i class="icon-calendar icon-white"></i> Consulter le calendrier des commissions</a>
+        </li>
+        <li>
+            <a href='/etablissement/add' ><i class="icon-plus icon-white"></i> Ajouter un établissement</a>
+        </li>
+        <li>
+            <a href='/dossier/add' ><i class="icon-plus icon-white"></i> Ajouter un dossier</a>
+        </li>
+    </ul>
+</div>
+<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
+
+<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+<div class="menu-trigger"><i class='icon-align-justify'></i></div>
+<?php $this->placeholder('before_content')->captureEnd() ?>
+
+<?php echo $this->render('layout.phtml') // Rendu du layout par défaut avec les placeholders ?>
