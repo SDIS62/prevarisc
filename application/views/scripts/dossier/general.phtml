@@ -361,7 +361,7 @@
 			slotMinutes: 5, //Permet d'afficher un interval de 10 minutes au lieu de 30 par défaut
 			selectHelper: true,
 			firstDay: 1,
-			weekends: false,
+			weekends: true,
 			monthNames : ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin','Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'],
 			monthAbbrevs : ['Jan','Fev','Mar','Avr','Mai','Juin','Juil','Aout','Sep','Oct','Nov','Dec'],
 			dayNames : ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
@@ -435,7 +435,7 @@
 			select: function(start, end, allDay) {
 				var dateSelected = new Date(start);
 				// On empêche la selection d'un samedi ou d'un dimanche
-				if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
+				//if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
 					// Boite de dialogue en ajoutant en callback le traitement du formulaire
 					var nomEtab = "";
 					if($("#infosEtabs").text() != ""){
@@ -500,7 +500,7 @@
 							}
 						});
 					});
-				}
+				//}
 			},
 			eventClick: function( event, jsEvent, view ) {
 				// Boite de dialogue
