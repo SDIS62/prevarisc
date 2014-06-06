@@ -23,28 +23,30 @@ foreach($this->membresFiles as $val => $membre){
 					//Zend_Debug::dump($commune);
 					//LIBELLE COMMUNE = 0
 					//Array des infos de la commune = 1
-					$firstLetter = $commune[0]{0}; 
-					if(in_array($firstLetter, $consonne)){
-						$communeShow = "d'".$commune[0];
-					}else{
-						$communeShow = "de ".$commune[0];
-					}
-					
-					//Zend_Debug::dump($commune[1]);
-					if(count($commune[1]) == 1){
-						foreach($commune[1] as $comm => $info){	
-							//Zend_Debug::dump($info);
-							addChamp($membreLoop,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
-							addChamp($membreLoop,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
-							addChamp($membreLoop,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
-							addChamp($membreLoop,'communeMairie',$info["VILLEADRESSE_UTILISATEURINFORMATIONS"]);
+					if(isset($commune[0])){
+						$firstLetter = $commune[0]{0}; 
+						if(in_array($firstLetter, $consonne)){
+							$communeShow = "d'".$commune[0];
+						}else{
+							$communeShow = "de ".$commune[0];
 						}
-					}else{
-						addChamp($membreLoop,'numMairie','');
-						addChamp($membreLoop,'rueMairie','');
-						addChamp($membreLoop,'cpMairie','');
-						addChamp($membreLoop,'communeMairie','');
-						echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le contact de la commune ".$commune[0]." n'a pas été renseigné</span><br/><br/><br/>";
+						
+						//Zend_Debug::dump($commune[1]);
+						if(count($commune[1]) == 1){
+							foreach($commune[1] as $comm => $info){	
+								//Zend_Debug::dump($info);
+								addChamp($membreLoop,'numMairie',$info["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
+								addChamp($membreLoop,'rueMairie',$info["RUEADRESSE_UTILISATEURINFORMATIONS"]);
+								addChamp($membreLoop,'cpMairie',$info["CPADRESSE_UTILISATEURINFORMATIONS"]);
+								addChamp($membreLoop,'communeMairie',$info["VILLEADRESSE_UTILISATEURINFORMATIONS"]);
+							}
+						}else{
+							addChamp($membreLoop,'numMairie','');
+							addChamp($membreLoop,'rueMairie','');
+							addChamp($membreLoop,'cpMairie','');
+							addChamp($membreLoop,'communeMairie','');
+							echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le contact de la commune ".$commune[0]." n'a pas été renseigné</span><br/><br/><br/>";
+						}
 					}
 
 					//addChamp($villeODF,'communeEtab',$communeShow);
