@@ -15,18 +15,19 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 			->join(array('dateComm' => 'datecommission'),'dossAffect.ID_DATECOMMISSION_AFFECT = dateComm.ID_DATECOMMISSION')
 			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
 			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
+      ->join(array('dossType' => "dossiertype"), 'doss.TYPE_DOSSIER = dossType.ID_DOSSIERTYPE', 'LIBELLE_DOSSIERTYPE')
 			->where('dateComm.ID_DATECOMMISSION = ?',$idDateCom)
 			->where("dossAffect.HEURE_DEB_AFFECT IS NULL")
 			->where("dossAffect.HEURE_FIN_AFFECT IS NULL")
 			->group('doss.ID_DOSSIER');
-			
+
         return $this->getAdapter()->fetchAll($select);
     }
-	
+
 	public function getDossierAffect($idDateCom)
     {
         //retourne l'ensemble des dossiers programés à la date de comm passée en param et dont les horaires ONT été précisés
-		
+
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from(array('doss' => 'dossier'))
@@ -34,6 +35,7 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 			->join(array('dateComm' => 'datecommission'),'dossAffect.ID_DATECOMMISSION_AFFECT = dateComm.ID_DATECOMMISSION')
 			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
 			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
+      ->join(array('dossType' => "dossiertype"), 'doss.TYPE_DOSSIER = dossType.ID_DOSSIERTYPE', 'LIBELLE_DOSSIERTYPE')
 			->where("dateComm.ID_DATECOMMISSION = ?",$idDateCom)
 			->where("dossAffect.HEURE_DEB_AFFECT IS NOT NULL")
 			->where("dossAffect.HEURE_FIN_AFFECT IS NOT NULL")
@@ -83,7 +85,7 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 
         return $this->delete("ID_DOSSIER_AFFECT = '".$idDossier."'");
     }
-	
+
 	public function deleteDateDossierModifDateAffect($idDossier,$idDateComm)
     {
         $this->delete(array(
@@ -91,10 +93,10 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 			'ID_DATECOMMISSION_AFFECT <> ?' => $idDateComm
 		));
     }
-	
+
 	public function getDossierAffectAndType($idDossier)
     {
-        //récupèration des affectations du dossier ainsi que le type d'affectation (salle / visite / visite de comm)		
+        //récupèration des affectations du dossier ainsi que le type d'affectation (salle / visite / visite de comm)
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from(array('doss' => 'dossier'))

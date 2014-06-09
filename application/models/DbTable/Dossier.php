@@ -274,12 +274,12 @@
          public function listeDesDossierDateCommissionEchu()
         {
                       
-            $select= "select OBJET_DOSSIER,LIBELLE_DATECOMMISSION,DATE_COMMISSION,LIBELLE_DOSSIERTYPE,DATEINSERT_DOSSIER from dossiertype,dossier,dossieraffectation,datecommission 
+            $select= "select ID_DOSSIER,OBJET_DOSSIER,LIBELLE_DATECOMMISSION,DATE_COMMISSION,LIBELLE_DOSSIERTYPE,DATEINSERT_DOSSIER from dossiertype,dossier,dossieraffectation,datecommission 
                    WHERE dossier.AVIS_DOSSIER_COMMISSION = 0
                    AND dossiertype.ID_DOSSIERTYPE = dossier.TYPE_DOSSIER
                    AND dossieraffectation.ID_DOSSIER_AFFECT = dossier.ID_DOSSIER
                    AND dossieraffectation.ID_DATECOMMISSION_AFFECT = datecommission.ID_DATECOMMISSION 
-                   AND DATEDIFF(datecommission.DATE_COMMISSION,CURDATE()) <= -1
+                   AND DATEDIFF(datecommission.DATE_COMMISSION,CURDATE()) <= -10
                    ";
             
                  
@@ -288,7 +288,7 @@
          public function listeDesCourrier()
         {
                       
-            $select= "select OBJET_DOSSIER ,DATEREP_DOSSIER from dossier 
+            $select= "select OBJET_DOSSIER ,DATEREP_DOSSIER ,ID_DOSSIER from dossier 
                    WHERE TYPE_DOSSIER = 5
                    AND DATEDIFF(DATEINSERT_DOSSIER,CURDATE()) <= -5
                     ";

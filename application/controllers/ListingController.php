@@ -65,15 +65,15 @@ class ListingController extends Zend_Controller_Action {
 
         $DB_type = new Model_DbTable_DossierType();
         $this->view->DB_type = $DB_type->fetchAll()->toArray();
-
+        
         try {
             $parameters = $this->_request->getQuery();
             $num_doc_urba = array_key_exists('num_doc_urba', $parameters) ? $parameters['num_doc_urba'] : null;
             $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != '' ? $parameters['objet'] : null;
             $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
 
-            $page = isset($parameters['page']) ? $parameters['page'] : 1;
-            $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, 50, $page);
+            $page = isset($parameters['page']) ? $parameters['page'] : "1";
+            $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $page);
 
             require('helpers/SearchPaginatorAdapter.php');
             $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));

@@ -1,78 +1,62 @@
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
-<div class="ios_menu_style">
-    <ul class="ios_menu_style-ul">
+    <ul class="nav nav-tabs nav-stacked menu_dashboard">
 
         <li class="nav-header">Général</li>
-            <ul>
+            
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'admin') echo "class='active'" ?> >
-                    <a href='/admin' ><i class="icon-exclamation-sign icon-white"></i> Informations</a>
+                    <a href='/admin' ><i class="icon-exclamation-sign icon-black"></i> Informations</a>
                 </li>
-            </ul>
+            
         <li class="nav-header">Gestion des entités</li>
-            <ul>
+            
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'users') echo "class='active'" ?> >
-                    <a href='/users/index' ><i class="icon-cog icon-white"></i> Gestion des utilisateurs</a>
+                    <a href='/users/index' ><i class="icon-cog icon-black"></i> Gestion des utilisateurs</a>
                 </li>
 
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-communes') echo "class='active'" ?> >
-                    <a href='/gestion-des-communes' ><i class="icon-th-list icon-white"></i> Gestion des communes</a>
+                    <a href='/gestion-des-communes' ><i class="icon-th-list icon-black"></i> Gestion des communes</a>
                 </li>
 
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'couches-cartographiques') echo "class='active'" ?> >
-                    <a href='/couches-cartographiques/list' ><i class="icon-cog icon-white"></i> Gestion des couches cartographiques</a>
+                    <a href='/couches-cartographiques/list' ><i class="icon-cog icon-black"></i> Gestion des couches cartographiques</a>
                 </li>
 
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-commission') echo "class='active'" ?> >
-                    <a href='/gestion-des-commissions' ><i class="icon-th-list icon-white"></i> Gestion des commissions</a>
+                    <a href='/gestion-des-commissions' ><i class="icon-th-list icon-black"></i> Gestion des commissions</a>
                 </li>
 
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-des-documents') echo "class='active'" ?> >
-                    <a href='/gestion-des-documents' ><i class="icon-th-list icon-white"></i> Gestion des documents</a>
+                    <a href='/gestion-des-documents' ><i class="icon-th-list icon-black"></i> Gestion des documents</a>
                 </li>
 
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-prescriptions') echo "class='active'" ?> >
-                    <a href='/gestion-prescriptions' ><i class="icon-th-list icon-white"></i> Gestion des prescriptions</a>
+                    <a href='/gestion-prescriptions' ><i class="icon-th-list icon-black"></i> Gestion des prescriptions</a>
                 </li>
 
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'gestion-textes-applicables') echo "class='active'" ?> >
-                    <a href='/gestion-textes-applicables' ><i class="icon-th-list icon-white"></i> Gestion des textes applicables</a>
+                    <a href='/gestion-textes-applicables' ><i class="icon-th-list icon-black"></i> Gestion des textes applicables</a>
                 </li>
-            </ul>
+           
         <li class="nav-header">Paramétrage du logiciel</li>
-            <ul>
+          
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'periodicite') echo "class='active'" ?> >
-                    <a href='/tableau-des-periodicites' ><i class="icon-th-list icon-white"></i> Tableau des périodicités</a>
+                    <a href='/tableau-des-periodicites' ><i class="icon-th-list icon-black"></i> Tableau des périodicités</a>
                 </li>
 
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'groupement') echo "class='active'" ?> >
-                    <a href='/groupement' ><i class="icon-th-list icon-white"></i> Groupements de communes</a>
+                    <a href='/groupement' ><i class="icon-th-list icon-black"></i> Groupements de communes</a>
                 </li>
-            </ul>
+           
     </ul>
-</div>
-<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
-
-<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
-<div class="menu-trigger"><i class='icon-align-justify'></i></div>
-<h2 class='page-header'>Administration</h2>
+        <?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
+        <?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+     <h2 class='page-header'>Administration</h2>
 
 <div class='row-fluid'>
-    <div class='span2'>
-
-        
-    </div>
-
-    <div class='span10' >
-
-<?php $this->placeholder('before_content')->captureEnd() ?>
-
-
-<?php $this->placeholder('after_content')->captureStart() // Capture du 'after_content' ?>
-
-    </div>
+   <div class='span12' >
+    <?php $this->placeholder('before_content')->captureEnd() ?>
+    <?php $this->placeholder('after_content')->captureStart() // Capture du 'after_content' ?>
+   </div>
 </div>
-
-<?php $this->placeholder('after_content')->captureEnd() ?>
-
-
-<?php echo $this->render('layout.phtml') // Rendu du layout par défaut avec les placeholders ?>
+    <?php $this->placeholder('after_content')->captureEnd() ?>
+    <?php echo $this->render('dashboard.phtml') // Rendu du layout par défaut avec les placeholders ?>

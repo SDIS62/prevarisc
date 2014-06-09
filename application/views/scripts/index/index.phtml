@@ -1,18 +1,29 @@
-<div class='row-fluid'>
-    
-    <div class='span3'>
-        <h2 class='page-header'>Alertes</h2>
-        
-          <?php 
+    <div class="panel panel-default">
+       <div class="panel-heading">
+       Alertes
+       </div>
+        <ul class="list-group">
+          <?php
+          
             //var_dump($this->etablissementsanspreventionniste);
              foreach($this->etablissementsanspreventionniste as $erpsansprev)
                 { ?>
-                  <p class='well text-center notification label-warning'>
+                  <li class="list-group-item">
+                  <i class="icon-pencil icon-black" ></i>    
+                  <span class="badge badge-important">Important</span>
                   <?php
                        if($erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
-                       echo "<a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'> L'établissement : ".$erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']." est sans préventionnistes </a>";
-                        ?>      
-                  </p>   
+                       {
+                           echo "<a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>   L'établissement &quot; ".$erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']." &quot; est sans préventionnistes </a>";
+                       }
+                       
+                       else 
+                       {
+                       $datedemodif = new DateTime($erpsansprev['DATE_ETABLISSEMENTINFORMATIONS']);    
+                       echo "<a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>   L'établissement du &quot; ".$datedemodif->format('d/m/y')." &quot; est sans préventionnistes </a>";
+                       }
+                     ?>   
+                  </li>   
         
                 <?php 
          
@@ -22,12 +33,18 @@
             <?php
             foreach($this->courrier as $courrier)
                 { ?>
-                  <p class='well text-center notification label-warning'>
+                   <li class="list-group-item">
+                    
+                   <span class="badge badge-important">Important</span>
+                   <i class="icon-pencil icon-black" > </i>
                   <?php
                        if($courrier['DATEREP_DOSSIER']==null)
-                       echo "Le courrier/courriel : ".$courrier['OBJET_DOSSIER']." sans réponse depuis plus de 5 jours ";
-                        ?>      
-                  </p>   
+                       { 
+                           echo "<a href='/dossier/index/id/".$courrier['ID_DOSSIER']."'>  Le courrier/courriel  &quot; ".$courrier['OBJET_DOSSIER']." &quot; est sans réponse depuis plus de 5 jours </a>";
+                       }
+                        ?> 
+                   
+                  </li>   
         
                 <?php 
          
@@ -38,19 +55,23 @@
               <?php
                foreach($this->dossiercommissionechu as $dossier)
                 { ?>
-                  <p class='well text-center notification label-warning'>
+                  <li class="list-group-item">
+                      <i class="icon-pencil icon-black" ></i>   
+                  <span class="badge badge-info">Info</span>
                   <?php
                        if($dossier['OBJET_DOSSIER']!=null)
-                       echo "Le dossier : ".$dossier['OBJET_DOSSIER']." de la commission échue : ".$dossier['LIBELLE_DATECOMMISSION']." est sans avis";
+                       {
+                       echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier  &quot; ".$dossier['OBJET_DOSSIER']." &quot; de la commission échue &quot; ".$dossier['LIBELLE_DATECOMMISSION']." &quot; est sans avis d'exploitation</a>";
+                       
+                       }
                        else
                        {
                            $datecreation = new DateTime($dossier['DATEINSERT_DOSSIER']);
-                           echo "Le dossier du ".$datecreation->format('d/m/y')." (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue : ".$dossier['LIBELLE_DATECOMMISSION']." est sans avis";
+                           echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier du ".$datecreation->format('d/m/y')." (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue &quot; ".$dossier['LIBELLE_DATECOMMISSION']." &quot; est sans avis d'exploitation</a>";
                           
-                           
                        }
                        ?>      
-                  </p>   
+                  </li>   
         
                 <?php 
          
@@ -62,37 +83,39 @@
                <?php
                 foreach($this->etablissementavisdefavorable as $avis)
                 { ?>
-                  <p class='well text-center notification label-info'>
-                  <?php 
-                       echo "L'établissement ".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']." est sous un avis défavorable depuis dix jours";
-                  ?>      
-                  </p>   
-        
+                  
+                  <li class="list-group-item">
+                    
+                   <span class="badge badge-important">Important</span>
+                   <i class="icon-pencil icon-black" > </i>
+                    <?php 
+                       if($avis['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
+                       {
+                       echo "<a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'> L'établissement &quot; ".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']." &quot; est sous un avis défavorable depuis dix jours</a>";
+                       }
+                       else 
+                       {
+                       $datedemodif = new DateTime($avis['DATE_ETABLISSEMENTINFORMATIONS']);    
+                       echo "<a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'> L'établissement du &quot; ".$datedemodif->format('d/m/y')." &quot; est sous un avis défavorable depuis dix jours</a>";
+                       }
+                       ?>  
+                  
+                  </li>   
+                
                 <?php 
          
                 }
                 ?>
-       
+     </ul>  
     </div>
 
-    <div class='span3'>
-        <a class='btn btn-small pull-right' style='margin-top: 5px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
-
-        <h2 class='page-header'>Derniers messages</h2>
-        <?php if( count($this->flux) == 0 ) : ?>
-            <p class='muted'><small>Aucun message disponible.</small></p>
-        <?php else : ?>
-            <table class='table table-hover table-condensed'>
-             <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
-            </table>
-        <?php endif ?>
-    </div>
-    
-    <div class='span3'>
-        <h2 class='page-header'>Prochaines commissions</h2>
- 
+     <div class="panel panel-default">
+     <div class="panel-heading">
+     Prochaines commissions
+     </div>
+         <ul class="list-group">
      <?php  
-        
+     $nbrcommission=0;    
      
      if($this->firstcommission!=NULL)
      {   
@@ -102,15 +125,24 @@
              {             
                 if($commission['ID_COMMISSION']==$commissiondujour['COMMISSION_CONCERNE'])
                 {
+                    $nbrcommission++;
+                    $datec = new DateTime($commissiondujour['DATE_COMMISSION']);
                     if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
-                        $class="label-info";
+                        $class="badge-info";
+                        $message="En salle";
                     } else if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 2) {
-                        $class="label-success";
+                        $class="badge-success";
+                        $message="Visite de sécurité";
                     } else {
-                        $class="label-warning";
+                        $class="badge-warning";
+                        $message="Groupe de visite";
                     }
+                   
                 ?>
-       <p class='well text-center notification <?php echo $class ?>'>   
+        <li class='list-group-item'>
+        <i class="icon-pencil icon-black" ></i>     
+        <span class='badge <?php echo $class ?>'><?php echo $message ?></span>      
+         
             <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['ID_DATECOMMISSION'];?>"
             >
                 <?php
@@ -122,7 +154,8 @@
                 ?> 
              
             </a> 
-       </p>
+       
+       </li>
                     
                 <?php
                 }   
@@ -142,37 +175,107 @@
      <?php
      }    
      ?>
-                    
+    </ul>                
     </div>
 
+<div class="grid-sizer"></div>
+<div class="grid-gutter"></div>
+
+
+<!-- Messages -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Messages
+    <a class='btn btn-small pull-right' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
+  </div>
+  <div class="panel-body">
+    <?php if( count($this->flux) == 0 ) : ?>
+        <p class='muted'><small>Aucun message disponible.</small></p>
+    <?php else : ?>
+        <table class='table table-condensed'>
+         <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
+        </table>
+    <?php endif ?>
+  </div>
 </div>
 
-<h2 class='page-header'>
-    Tableau de bord
-    <small>Profil : <?php echo $this->user['infos']['LIBELLE_FONCTION'] ?></small>
-</h2>
+<!-- Etablissements suivis -->
+<?php if( count($this->etablissements) > 0 ) : ?>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Etablissements suivis
+  </div>
+  <div class="panel-body" style="font-size: .85em">
+      <ul class='recherche_liste unstyled no_slide'>
+      <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissements ) ?>
+      </ul>
+      <div style='clear: both'></div>
+      <?php echo $this->etablissements ?>
+  </div>
+</div>
+<?php endif ?>
 
-<h3>Vos établissements</h3>
-<?php if( count($this->etablissements) == 0 ) : ?>
-    <p class='muted'><small>Aucun établissement suivi.</small></p>
-<?php else : ?>
-    <ul class='recherche_liste unstyled no_slide'>
-    <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissements ) ?>
-    </ul>
-    <br/>
+<!-- Dossiers avec un avis différé -->
+<?php if( count($this->dossiers) > 0 ) : ?>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Dossiers avec un avis différé
+  </div>
+  <div class="panel-body" style="font-size: .85em">
+      <ul class='recherche_liste unstyled no_slide'>
+      <?php echo $this->partialLoop('search/results/dossier.phtml', $this->dossiers ) ?>
+      </ul>
+      <div style='clear: both'></div>
+      <?php echo $this->dossiers ?>
+  </div>
+</div>
+<?php endif ?>
+
+<!-- Ordre du jour -->
+<?php if( count($this->commissions) > 0 ) : ?>
+<div class="panel panel-default w2">
+  <div class="panel-heading">
+    Ordre du jour
+  </div>
+  <div class="panel-body" style="font-size: .85em">
+    <?php foreach($this->commissions as $commission) : ?>
+      <p class="lead" style="font-size:1.2em; margin-bottom: 0px;"><?php echo strtoupper($commission["name"]) . " du " . $commission["date"] . " (" . $commission["heure"] . ")" ?></p>
+      <?php if(count($commission["odj"]) == 0 ) : ?>
+        <p class="muted">Pas de dossier affecté.</p>
+      <?php else : ?>
+        <ul class='recherche_liste unstyled no_slide'>
+          <?php echo $this->partialLoop('search/results/dossier.phtml', $commission["odj"] ) ?>
+        </ul>
+      <?php endif ?>
+    <?php endforeach ?>
     <div style='clear: both'></div>
-    <?php echo $this->etablissements ?>
+</div>
 <?php endif ?>
 
 <div id="reponse-modal" class="modal hide fade" ></div>
 
 <script type="text/javascript">
     $(document).ready(function() {
+
         // Gestion des boites modales
         $("a[data-toggle='modal']").click(function() {
             var target = $(this).attr("data-target");
             var url = $(this).attr("href");
             $(target).load(url);
         });
+
+        // Grid !
+        var $container = $('.dashboard');
+
+        $container.packery({
+          itemSelector: '.panel',
+          columnWidth: '.grid-sizer',
+          gutter: '.grid-gutter'
+        });
+
+        var $itemElems = $( $container.packery('getItemElements') );
+        $itemElems.draggable();
+        $container.packery( 'bindUIDraggableEvents', $itemElems );
+
     });
 </script>

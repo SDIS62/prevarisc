@@ -2,18 +2,18 @@
 <html lang="fr" >
 
     <head>
-    
+
         <style>body { padding-top: 80px; }</style>
         <?php echo $this->render("includes/header.phtml"); ?>
-    
+
     </head>
 
     <body>
-    
+
         <?php echo $this->render("includes/nav-main.phtml"); ?>
         <?php echo $this->placeholder('lateral_navigation'); ?>
 
-        <div class='container-fluid main-container-fluid' >
+        <div class='container-fluid main-container-f' >
 
             <?php echo $this->render("includes/notifications.phtml"); ?>
 
@@ -24,10 +24,9 @@
             <?php echo $this->placeholder('after_content') ?>
 
         </div>
+
         <?php echo $this->render("includes/footer.phtml"); ?>
-
-        <script type="text/javascript" src="/js/jquery.stickyfooter.js"></script>
-
-    </body>
     
+    </body>
+
 </html>

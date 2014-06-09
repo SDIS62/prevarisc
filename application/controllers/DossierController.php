@@ -114,7 +114,8 @@ class DossierController extends Zend_Controller_Action
     public function init()
     {
         $this->_helper->layout->setLayout('dossier');
-
+        $this->view->inlineScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
+         
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
             $ajaxContext->addActionContext('selectiontexte', 'json')
@@ -872,7 +873,7 @@ class DossierController extends Zend_Controller_Action
             foreach ($_POST as $libelle => $value) {
                 //On exclu la lecture de selectNature => select avec les natures;
                 //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
-                if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "ABSQUORUM_DOSSIER" && $libelle != "servInst" && $libelle != "servInstVille" && $libelle != "servInstGrp") {
+                if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "ABSQUORUM_DOSSIER" && $libelle != "servInst" && $libelle != "servInstVille" && $libelle != "servInstGrp" && $libelle != "repercuterAvis") {
                     //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
                     if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER" || $libelle == "ECHEANCIERTRAV_DOSSIER" ) {
                         if ($value) {
@@ -1015,23 +1016,38 @@ class DossierController extends Zend_Controller_Action
                     //Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
                     $MAJEtab = 1;
                 }
-                //echo "VAL = ".$MAJEtab."<br/>";
 
                 $dbEtab = new Model_DbTable_Etablissement;
+				$service_etablissement = new Service_Etablissement;
 
                 if ($MAJEtab == 1 && $this->_getParam('do') == 'new') {
                     $etabToEdit = $dbEtab->find($this->_getParam('idEtablissement'))->current();
                     $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
                     $etabToEdit->save();
+					if($this->_getParam('repercuterAvis')){
+						$etablissementInfos = $service_etablissement->get($this->_getParam('idEtablissement'));
+						foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
+							$etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+							$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+							$etabToEdit->save();
+						}
+					}					
                 } elseif ($MAJEtab == 1) {
                     $listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
-
                     foreach ($listeEtab as $val => $ue) {
                         $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
                         $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
                         $etabToEdit->save();
+						$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+						foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
+							$etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+							$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+							$etabToEdit->save();
+						}
                     }
+					
                 }
+				
             }
 
             //GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
@@ -2901,11 +2917,72 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+	public function formrecupprescriptionAction()
+    {
+		//récupération de l'établissement attaché au dossier
+		$dbEtabDossier = new Model_DbTable_EtablissementDossier;
+		$listeEtab = $dbEtabDossier->getEtablissementListe($this->_getParam('idDossier'));
+
+		$this->view->nbEtab = count($listeEtab);
+		$this->view->idDossier = $this->_getParam('idDossier');
+		
+		if($this->view->nbEtab == 1){
+			//si il n'y a qu'un établissement, on affiche la liste des dossiers qu'il contient
+			$service_etablissement = new Service_Etablissement;		
+			$dossiers = $service_etablissement->getDossiers($listeEtab['0']["ID_ETABLISSEMENT"]);
+			$this->view->etudes = $dossiers['etudes'];
+			$this->view->visites = $dossiers['visites'];
+			$this->view->autres = $dossiers['autres'];
+		}
+	}
+	
+	public function recupprescriptionAction()
+	{
+		$this->_helper->viewRenderer->setNoRender();
+		//On reprend les prescriptions du dossier ayant id : dossierSelect pui on les ajoute au dossier ayant id : idDossier
+		$DbDossier = new Model_DbTable_Dossier;
+		$this->view->infosDossier = $DbDossier->find((int) $this->_getParam("dossierSelect"))->current();
+        //on affiche les prescriptions du dossier
+        $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+        $listePrescDossier = $dbPrescDossier->recupPrescDossier($this->_getParam('dossierSelect'));
+
+        $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+
+        foreach ($listePrescDossier as $val => $ue) {
+            if ($ue['ID_PRESCRIPTION_TYPE']) {
+                //cas d'une prescription type
+                $assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
+            } else {
+                //cas d'une prescription particulière
+                $assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
+            }
+
+			$newPresc = $dbPrescDossier->createRow();
+			$newPresc->ID_DOSSIER = $this->_getParam("idDossier");
+			$newPresc->NUM_PRESCRIPTION_DOSSIER = $ue["NUM_PRESCRIPTION_DOSSIER"];
+			$newPresc->ID_PRESCRIPTION_TYPE = $ue["ID_PRESCRIPTION_TYPE"];
+			$newPresc->LIBELLE_PRESCRIPTION_DOSSIER = $ue["LIBELLE_PRESCRIPTION_DOSSIER"];
+			$newPresc->save();
+
+			foreach($assoc as $val){
+				if($val["ID_PRESCRIPTION_TYPE"] == NULL){
+					$newAssoc = $dbPrescDossierAssoc->createRow();
+					$newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $val["NUM_PRESCRIPTION_DOSSIERASSOC"];
+					$newAssoc->ID_PRESCRIPTION_DOSSIER = $newPresc->ID_PRESCRIPTION_DOSSIER;
+					$newAssoc->ID_TEXTE = $val["ID_TEXTE"];
+					$newAssoc->ID_ARTICLE = $val["ID_ARTICLE"];
+					$newAssoc->save();
+				}
+			}
+
+        }
+	}
+	
+	
 	public function lienmultipleAction()
 	{
 		$this->_helper->viewRenderer->setNoRender();
 		foreach($this->_getParam('etabId') as $val){
-			//echo $val."<br/>";
 			try {
 				$DBetablissementDossier = new Model_DbTable_EtablissementDossier;
 				$newEtabDossier = $DBetablissementDossier->createRow();

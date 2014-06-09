@@ -77,6 +77,7 @@
                 ->setIntegrityCheck(false)
                 ->from("utilisateurcommission", null)
                 ->join("commission", "commission.ID_COMMISSION = utilisateurcommission.ID_COMMISSION")
+                ->join("commissiontype", "commission.ID_COMMISSIONTYPE = commissiontype.ID_COMMISSIONTYPE")
                 ->where("ID_UTILISATEUR = ?", $id);
 
             return $this->fetchAll($select);

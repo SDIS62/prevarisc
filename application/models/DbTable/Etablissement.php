@@ -280,14 +280,13 @@
         public function listeDesERPsousAvisDefavorable()
         {
                       
-            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS from  etablissementinformations,dossier,etablissement,etablissementdossier
+            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS from  etablissementinformations,dossier,etablissement,etablissementdossier
                    WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                    AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                    AND dossier.ID_DOSSIER  = etablissementdossier.ID_DOSSIER
                    AND dossier.AVIS_DOSSIER_COMMISSION = 2
                    AND DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) <= -10
-                   AND UNIX_TIMESTAMP(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) > UNIX_TIMESTAMP(CURDATE()) OR
-                        etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL
+                   AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
                    ";
                  
             return $this->getAdapter()->fetchAll($select);
@@ -295,11 +294,11 @@
          public function listeERPpaspreventionniste()
         {
                       
-            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT from  etablissementinformations,etablissement
+            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS from  etablissementinformations,etablissement
                    WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                    AND etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
-                   AND UNIX_TIMESTAMP(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) > UNIX_TIMESTAMP(CURDATE()) OR
-                        etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL
+                   AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
+                    GROUP BY ID_ETABLISSEMENT
                    ";
                  
             return $this->getAdapter()->fetchAll($select);

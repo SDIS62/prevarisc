@@ -15,7 +15,7 @@
 
         public function fetchAllPK()
         {
-            $all = $this->fetchAll()->toArray();
+            $all = $this->getCommissions();
             $result = array();
             foreach ($all as $row) {
                 $result[$row["ID_COMMISSION"]] = $row;
@@ -29,7 +29,8 @@
         {
             $select = $this->select()
                 ->setIntegrityCheck(false)
-                ->from("commission");
+                ->from("commission")
+                ->join("commissiontype", "commission.ID_COMMISSIONTYPE = commissiontype.ID_COMMISSIONTYPE");
 
             if ($id != null) {
                 $select->where("ID_COMMISSION = $id");

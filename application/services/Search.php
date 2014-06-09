@@ -194,11 +194,12 @@ class Service_Search
      * @param string $objet
      * @param string $num_doc_urba
      * @param int $parent Id d'un dossier parent
+     * @param bool $avis_differe Avis différé
      * @param int $count Par défaut 10, max 100
      * @param int $page par défaut = 1
      * @return array
      */
-    public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $count = 10, $page = 1)
+    public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $avis_differe = null, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
@@ -261,6 +262,11 @@ class Service_Search
                $this->setCriteria($select, "dossiertype.ID_DOSSIERTYPE", $types);
             }
 
+            // Critères : avis différé
+            if($avis_differe !== null) {
+               $this->setCriteria($select, "d.DIFFEREAVIS_DOSSIER", $avis_differe);
+            }
+
             // Gestion des pages et du count
             $select->limitPage($page, $count > 100 ? 100 : $count);
 
@@ -277,7 +283,7 @@ class Service_Search
 
             $cache->save(serialize($results));
         }
-
+        
         return $results;
     }
     

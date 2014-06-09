@@ -1,16 +1,13 @@
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
-
-<div class="ios_menu_style">
-    <ul class='ios_menu_style-ul' >
-        <li><a href='<?php echo $this->url(array("action"=>"index")) ?>'><i class="icon-info-sign icon-white"></i> Général</a></li>
-        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'><i class="icon-align-center icon-white"></i> Textes applicables</a></li><?php endif ?>
-        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "Site" ) : ?><li><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'><i class="icon-book icon-white"></i> Descriptif</a></li><?php endif ?>
-        <li><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'><i class="icon-share icon-white"></i> Pièces jointes</a></li>
-        <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'><i class="icon-user icon-white"></i> Contacts</a></li>
-        <li><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'><i class="icon-folder-open icon-white"></i> Dossiers</a></li>
-        <li><a class='sep' href='<?php echo $this->url(array("action"=>"historique")) ?>'><i class="icon-repeat icon-white"></i> Afficher l'historique</a></li>
+   <ul class='nav nav-tabs nav-stacked menu_dashboard' >
+        <li><a href='<?php echo $this->url(array("action"=>"index")) ?>'><i class="icon-info-sign icon-black"></i> Général</a></li>
+        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'><i class="icon-align-center icon-black"></i> Textes applicables</a></li><?php endif ?>
+        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "Site" ) : ?><li><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'><i class="icon-book icon-black"></i> Descriptif</a></li><?php endif ?>
+        <li><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a></li>
+        <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'><i class="icon-user icon-black"></i> Contacts</a></li>
+        <li><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'><i class="icon-folder-open icon-black"></i> Dossiers</a></li>
+        <li><a class='sep' href='<?php echo $this->url(array("action"=>"historique")) ?>'><i class="icon-repeat icon-black"></i> Afficher l'historique</a></li>
     </ul>
-</div>
 <?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
 <?php $this->placeholder('before_content')->captureStart(); // Capture du 'before_content' ?>
 
@@ -18,11 +15,10 @@
 
 
 <!-- Contenu -->
-<div class="menu-trigger"><i class='icon-align-justify'></i></div>
 <div id='ligne_informations'>
 
     <!-- Libelle -->
-    <h2 id='libelle'>
+    <h2 class="page-header">
         <?php if( $this->etablissement['parents'] > 0 ) : ?>
             <?php foreach($this->etablissement['parents'] as $etablissement) : ?>
                 <?php echo "<a href='/etablissement/index/id/" . $etablissement["ID_ETABLISSEMENT"] . "'>" . $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] . "</a> - "; ?>
@@ -76,4 +72,4 @@
 <?php $this->placeholder('after_content')->captureEnd() ?>
 
 
-<?php echo $this->render('layout.phtml') // Rendu du layout par défaut avec les placeholders ?>
+<?php echo $this->render('dashboard.phtml') // Rendu du layout par défaut avec les placeholders ?>
