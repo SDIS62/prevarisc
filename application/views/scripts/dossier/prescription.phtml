@@ -105,7 +105,6 @@ $(document).ready(function(){
 				//on recupere id du li en cours "presc_x"
 				var liId = $(this).attr('id');
 				var liId = liId.split('_');
-				//alert(liId[1]);
 				listePrescriptionUpdate.push(liId[1]);
 				
 				num = num + 1;
@@ -268,19 +267,17 @@ $(document).ready(function(){
 						url: "/dossier/prescriptionadd",
 						data: $("#formPrescription").serialize()+"&idDossier="+$("#idDossier").val(),
 						success: function(msg){
-							$(".listePrescriptions").append(msg);
+							window.location.reload();
 						}
 					});
 					dialogPresc.html("");
 					dialogPresc.dialog("close");
-					//dialogPresc.dialog("destroy");
 				}
 				return false;
 			},
 			"Annuler": function() {
 				dialogPresc.html("");
 				dialogPresc.dialog("close");
-				//dialogPresc.dialog("destroy");
 			}
 		},
 		close: function(event, ui){
@@ -293,9 +290,7 @@ $(document).ready(function(){
 		$.ajax({
 			type: "POST",
 			url: "/gestion-prescriptions/formprescription",
-			//data: "&action=dossier",
 			success: function(msg){
-				//alert(msg);
 				dialogPresc.html(msg);
 				dialogPresc.dialog("open");
 			}
@@ -392,9 +387,7 @@ $(document).ready(function(){
 					url: "/dossier/prescriptioneditsave",
 					data: $("#formPrescriptionEdit").serialize(),
 					success: function(msg){
-						$("#prescriptionDossier_"+$("#idPrescDossier").val()).html(msg);
-						dialogPrescEdit.html("");
-						dialogPrescEdit.dialog("close");
+						window.location.reload();
 					}
 				});
 				return false;
@@ -418,7 +411,6 @@ $(document).ready(function(){
 			url: "/dossier/prescriptionedit",
 			data: "&idPrescDossier="+idPrescDossier+"&idDossier="+$("#idDossier").val()+"&numPresc="+numPrecs,
 			success: function(msg){
-				//alert(msg);
 				dialogPrescEdit.html(msg);
 				dialogPrescEdit.dialog("open");
 			}

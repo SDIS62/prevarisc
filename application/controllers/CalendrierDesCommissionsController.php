@@ -389,14 +389,14 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             //Liste des dates selectionnées dans un tableau puis envoyées à la vue
             $listeDates = array();
             while ($dateD->compare($dateF) <= 0) {
-                if ($dateD->get(Zend_Date::WEEKDAY_DIGIT) != 6 && $dateD->get(Zend_Date::WEEKDAY_DIGIT) != 0) {
+                //if ($dateD->get(Zend_Date::WEEKDAY_DIGIT) != 6 && $dateD->get(Zend_Date::WEEKDAY_DIGIT) != 0) {
                     array_push($listeDates, array(
                         "date" => $dateD->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR,'fr'),
                         "inputH" => $dateD->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY),
                         "heureD" => $HeureD->get('HH:mm'),
                         "heureF" => $HeureF->get('HH:mm')
                     ));
-                }
+                //}
                 $dateD->addDay(1);
             }
             //Envoi à la vue la liste des dates selectionnées
@@ -1047,10 +1047,15 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		foreach($listeDossiers as $val => $ue)
 		{
 			if($numCommune == 0){
-				$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
-				$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
-				$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
-				$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
+				if(isset($ue['infosEtab']['adresses'][0])){
+					$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+					$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
+				}
+				if(isset($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"]))
+					$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();
+					
+				if(isset($libelleCommune) && isset($communeInfo))
+					$tabCommune[$numCommune] = array($libelleCommune,$communeInfo);
 				$numCommune++;
 			}
 			

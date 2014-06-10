@@ -25,7 +25,6 @@ body {
     margin: 0 auto;  /* zéro ou une autre valeur */
     padding: 0;
     width: 100%; 
-    /*min-width: 1368px;*/
     min-height: 100%;
 }
 
@@ -626,7 +625,6 @@ ul#gestionCommissionMenu li.active {
 	display: none;
 }
 
-
 .notification{
     padding: 2px 2px 2px 2px;
 }
@@ -786,6 +784,7 @@ text-decoration: none;
 .navbar-fixed-top .navbar-inner {
     box-shadow: none;
 }
+
 
 
 .nav-tabs.nav-stacked.menu_dashboard>li>a {
@@ -1004,3 +1003,4 @@ a.list-group-item-danger.active:focus {
   font-size:10px;  
   text-decoration: underline;   
  }
+

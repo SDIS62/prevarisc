@@ -105,7 +105,7 @@ class SearchController extends Zend_Controller_Action
                 $num_doc_urba = array_key_exists('num_doc_urba', $parameters) ? $parameters['num_doc_urba'] : null;
                 $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != '' ? $parameters['objet'] : null;
 
-                $search = $service_search->courriers($objet, $num_doc_urba, null, 50, $parameters['page']);
+                $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $parameters['page']);
 
                 require('helpers/SearchPaginatorAdapter.php');
                 $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));

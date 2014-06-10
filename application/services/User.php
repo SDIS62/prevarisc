@@ -74,6 +74,10 @@ class Service_User
             $etablissements = $search->run(false, null, false)->toArray();
 
             if(count($user['commissions']) > 0) {
+
+              $dbDossierAffectation = new Model_DbTable_DossierAffectation;
+              $dbDateCommission = new Model_DbTable_DateCommission;
+
               foreach($user['commissions'] as $commission) {
                 // Récupération de l'ordre du jour des 3 prochaines commissions
                 foreach($dbDateCommission->fetchAll("COMMISSION_CONCERNE = '" . $commission["ID_COMMISSION"] . "' AND DATE_COMMISSION >= NOW()", "DATE_COMMISSION ASC", 3, 0)->toArray() as $date) {

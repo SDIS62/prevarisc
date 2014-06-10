@@ -11,6 +11,7 @@
     <body>
 
         <?php echo $this->render("includes/nav-main.phtml"); ?>
+
         <?php echo $this->placeholder('lateral_navigation'); ?>
 
         <div class='container-fluid main-container-f' >
@@ -22,11 +23,12 @@
             <?php echo $this->layout()->content; ?>
 
             <?php echo $this->placeholder('after_content') ?>
-
+            
         </div>
 
+
         <?php echo $this->render("includes/footer.phtml"); ?>
-    
+
     </body>
 
 </html>

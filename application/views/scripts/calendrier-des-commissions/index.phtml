@@ -53,6 +53,7 @@
 	
 	( function($) {
 		$.fn.afficheCalendar = function(idComm,emplacement) {
+<<<<<<< HEAD
                     var calendar = $('#calendar').fullCalendar( {
                         buttonText: {
                             month: 'Mois',
@@ -136,7 +137,7 @@
                         select: function(start, end, allDay) {
                             var dateSelected = new Date(start);
                             // On empêche la selection d'un samedi ou d'un dimanche
-                            if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
+                            //if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
                                     // Boite de dialogue en ajoutant en callback le traitement du formulaire
                                     my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end, function() {	
                                         $("#dialogComm").dialog("option", "buttons", {
@@ -181,7 +182,6 @@
                                             }
                                         });
                                 });
-                            }
                         },
                         eventClick: function( event, jsEvent, view ) {
                             //Action qui se réalise lorsque l'on clique sur un évenement existant du calendrier
@@ -193,7 +193,6 @@
                             }else if($("#idCommission").val() != ''){
                                 var emplacement = 'calendrierComm';
                             }
-
                             if(emplacement == 'calendrierComm'){
                                 my_dialog("/calendrier-des-commissions/dialogcomm", "idComm="+idComm+"&idDateComm="+event.id+"&do=edit");
                             }else if(emplacement == 'dossier'){
