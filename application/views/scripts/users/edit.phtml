@@ -32,7 +32,7 @@
         		<input placeholder='Login de connexion ...' name='USERNAME_UTILISATEUR' value='<?php if(isset($this->user["USERNAME_UTILISATEUR"])) echo $this->user["USERNAME_UTILISATEUR"] ?>' type='text' />
 			</p>
     	</dd>
-        
+
         <dt>Mot de passe</dt>
         <dd>
         	<p>
@@ -101,7 +101,7 @@
 		<dd>
 			<input type='text' name='MAIL_UTILISATEURINFORMATIONS' value='<?php echo $this->user['infos']["MAIL_UTILISATEURINFORMATIONS"] ?>' />
 		</dd>
-		
+
 		<dt>Site Web</dt>
 		<dd>
 			<input type='text' name='WEB_UTILISATEURINFORMATIONS' value='<?php echo $this->user['infos']["WEB_UTILISATEURINFORMATIONS"] ?>' />
@@ -112,7 +112,7 @@
 			<textarea name='OBS_UTILISATEURINFORMATIONS' style="width: 100%"><?php if(isset($this->user['infos']["OBS_UTILISATEURINFORMATIONS"])) echo $this->user['infos']["OBS_UTILISATEURINFORMATIONS"] ?></textarea>
 		</dd>
 	</dl>
-    
+
     <h4>Domaines de compétences</h4>
     <dl class='dl-horizontal'>
         <dt>Commune</dt>
@@ -126,18 +126,18 @@
 	            </select>
             </p>
         </dd>
-        
+
         <dt>Commissions</dt>
         <dd>
         	<p>
 	            <select name='commissions[]' multiple>
 	                <?php foreach($this->commissions as $commission) : ?>
-	                <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( $this->user['commissions'] != null && in_array($commission, $this->user['commissions']) ) echo "selected" ?>><?php echo $commission['LIBELLE_COMMISSION'] ?></option>
+	                <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( $this->user['commissions'] != null && in_array($commission, $this->user['commissions']) ) echo "selected" ?>><?php echo $commission['LIBELLE_COMMISSIONTYPE'] . ' - ' . $commission['LIBELLE_COMMISSION'] ?></option>
 	                <?php endforeach ?>
 	            </select>
             </p>
         </dd>
-        
+
         <dt>Groupements</dt>
         <dd>
         	<p>
@@ -149,7 +149,7 @@
             </p>
         </dd>
     </dl>
-        
+
 </form>
 
 

@@ -1,11 +1,13 @@
 <h3>Historique</h3>
 
+<?php if(array_key_exists('avis', $this->historique)) : ?>
 <h4>Historique des avis d'exploitation</h4>
 <?php
     echo $this->partial("etablissement/partials/partial-historique.phtml", array(
         "array" => $this->historique["avis"]
     ));
 ?>
+<?php endif ?>
 
 <h4>Historique du libellé</h4>
 <?php

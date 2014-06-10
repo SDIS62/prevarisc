@@ -197,6 +197,8 @@
 					<li>types : Types des dossiers recherchés</li>
 					<li>objet : Objet du document.</li>
 					<li>num_doc_urba : Numéro de document d'urbanisme présent dans le dossier recherché.</li>
+					<li>parent : Parent des dossiers recherchés.</li>
+					<li>avis_differe : Dossiers ayant un avis différé.</li>
 					<li>count : Nombre maximum de dossiers dans le résultat. Défaut : 10, Maximum : 100.</li>
 					<li>page : Numéro de page à afficher.</li>
 				</ul>

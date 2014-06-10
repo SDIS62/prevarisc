@@ -256,6 +256,22 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $dossiers_merged = array_merge($dossiers_merged, $dossiers['visites']);
         $dossiers_merged = array_merge($dossiers_merged, $dossiers['autres']);
 
+        @usort($dossiers_merged, function($a, $b) {
+
+          $date_a = @new Zend_Date($a->DATEVISITE_DOSSIER != null ? $a->DATEVISITE_DOSSIER : $a->DATECOMM_DOSSIER, Zend_Date::DATES);
+          $date_b = @new Zend_Date($b->DATEVISITE_DOSSIER != null ? $b->DATEVISITE_DOSSIER : $b->DATECOMM_DOSSIER, Zend_Date::DATES);
+
+          if ($date_a == $date_b || $a === null || $b === null) {
+            return 0;
+          }
+          else if ($date_a > $date_b) {
+            return -1;
+          }
+          else {
+            return 1;
+          }
+        });
+
         foreach($dossiers_merged as $dossier) {
           $dossier = (object) $dossier;
           $tmp = ( array_key_exists($key, $historique) ) ? $historique[$key][ count($historique[$key])-1 ] : null;
@@ -282,11 +298,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
               "author" => $dossier->CREATEUR_DOSSIER == 0 ? null : array('id' => $dossier->CREATEUR_DOSSIER, 'name' => $author['NOM_UTILISATEURINFORMATIONS'] . ' ' . $author['PRENOM_UTILISATEURINFORMATIONS'])
             );
           }
-        }
-
-        // On met ds le sens aujourd'hui -> passé
-        foreach ($historique as $key => $item) {
-            $historique[$key] = array_reverse($item);
         }
 
         return $historique;

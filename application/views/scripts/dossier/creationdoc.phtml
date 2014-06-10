@@ -214,8 +214,14 @@ try {
 			$docAjout->setVars('refdoc', $documentAjout['REF_DOCAJOUT'], true, 'UTF-8');
 
 			if ($documentAjout['DATE_DOCAJOUT']) {
-				$date = new Zend_Date($documentAjout['DATE_DOCAJOUT'], Zend_Date::DATES);
-				$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				if ($date) {
+					if($date != "0000-00-00"){
+						$date = new Zend_Date($documentAjout['DATE_DOCAJOUT'], Zend_Date::DATES);
+						$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+					}else{
+						$date = "";
+					}
+				}
 			}
 			$docAjout->setVars('datedoc', $date, true, 'UTF-8');
 			$docAjout->merge();
@@ -738,8 +744,6 @@ if($this->GN == 2){
 	}
 }
 
-
-//echo $this->idPieceJointe;
 try{
 	$chemin = REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
 	$odf->saveToDisk($chemin);

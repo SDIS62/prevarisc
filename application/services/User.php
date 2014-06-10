@@ -26,50 +26,143 @@ class Service_User
     }
 
     /**
-     * Récupération d'un utilisateur
+     * Récupération des données du tableau de bord utilisateur
      *
      * @param int $id_user
      * @return array
      */
-    public function getEtablissements($id_user)
+    public function getDashboardData($id_user)
     {
-        // Etablissements liés
-        $etablissements = array();
+        // Récupération de l'utilisateur & son profil
+        $user = $this->find($id_user);
+        $profil = $user['infos']['LIBELLE_FONCTION'];
 
-        // Ets 1 - 4ème catégorie
-        $search = new Model_DbTable_Search;
-        $search->setItem("etablissement");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("etablissementinformations.ID_CATEGORIE", array("1","2","3","4"));
-        $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+        $etablissements = $commissions = $dossiers = array();
 
-        // 5ème catégorie defavorable
-        $search = new Model_DbTable_Search;
-        $search->setItem("etablissement");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
-        $search->setCriteria("avis.ID_AVIS", 2);
-        $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+        // Définition des données types par profil
+        switch($profil) {
+          case 'Secrétariat':
+            if(count($user['commissions']) > 0) {
+              $dbDossierAffectation = new Model_DbTable_DossierAffectation;
+              $dbDateCommission = new Model_DbTable_DateCommission;
 
-        // 5ème catégorie avec local à sommeil
-        $search = new Model_DbTable_Search;
-        $search->setItem("etablissement");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
-        $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
-        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+              foreach($user['commissions'] as $commission) {
+                // Dossiers avec avis différé
+                $search = new Model_DbTable_Search;
+                $search->setItem("dossier");
+                $search->setCriteria("d.COMMISSION_DOSSIER", $commission["ID_COMMISSION"]);
+                $search->setCriteria("d.DIFFEREAVIS_DOSSIER", 1);
+                $dossiers = array_merge($search->run(false, null, false)->toArray(), $dossiers);
 
-        // EIC - IGH - HAB
-        $search = new Model_DbTable_Search;
-        $search->setItem("etablissement");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4"));
-        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+                // Récupération de l'ordre du jour des 3 prochaines commissions
+                foreach($dbDateCommission->fetchAll("COMMISSION_CONCERNE = '" . $commission["ID_COMMISSION"] . "' AND DATE_COMMISSION >= NOW()", "DATE_COMMISSION ASC", 3, 0)->toArray() as $date) {
+                  $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($date["ID_DATECOMMISSION"]);
+                  $listeDossiersAffect = $dbDossierAffectation->getDossierAffect($date["ID_DATECOMMISSION"]);
+                  $odj = array_merge($listeDossiersNonAffect, $listeDossiersAffect);
+                  $odj = array_unique($odj, SORT_REGULAR);
+                  $commissions[] = array("name" => $commission["LIBELLE_COMMISSION"] . ' - ' . $date['LIBELLE_DATECOMMISSION'], "date" => $date["DATE_COMMISSION"], "heure" => $date["HEUREDEB_COMMISSION"] . ' - ' . $date["HEUREFIN_COMMISSION"], "odj" => $odj);
+                }
+              }
+            }
 
-        return array_unique($etablissements, SORT_REGULAR);
+            break;
+
+          case 'Préfet':
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("avis.ID_AVIS", 2);
+            $etablissements = $search->run(false, null, false)->toArray();
+
+            if(count($user['commissions']) > 0) {
+              $dbDossierAffectation = new Model_DbTable_DossierAffectation;
+              $dbDateCommission = new Model_DbTable_DateCommission;
+              
+              foreach($user['commissions'] as $commission) {
+                // Récupération de l'ordre du jour des 3 prochaines commissions
+                foreach($dbDateCommission->fetchAll("COMMISSION_CONCERNE = '" . $commission["ID_COMMISSION"] . "' AND DATE_COMMISSION >= NOW()", "DATE_COMMISSION ASC", 3, 0)->toArray() as $date) {
+                  $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($date["ID_DATECOMMISSION"]);
+                  $listeDossiersAffect = $dbDossierAffectation->getDossierAffect($date["ID_DATECOMMISSION"]);
+                  $odj = array_merge($listeDossiersNonAffect, $listeDossiersAffect);
+                  $odj = array_unique($odj, SORT_REGULAR);
+                  $commissions[] = array("name" => $commission["LIBELLE_COMMISSION"] . ' - ' . $date['LIBELLE_DATECOMMISSION'], "date" => $date["DATE_COMMISSION"], "heure" => $date["HEUREDEB_COMMISSION"] . ' - ' . $date["HEUREFIN_COMMISSION"], "odj" => $odj);
+                }
+              }
+            }
+
+            break;
+
+          case 'Maire':
+            if($user["NUMINSEE_COMMUNE"] != null) {
+              $search = new Model_DbTable_Search;
+              $search->setItem("etablissement");
+              $search->setCriteria("etablissementadresse.NUMINSEE_COMMUNE", $user["NUMINSEE_COMMUNE"]);
+              $search->setCriteria("avis.ID_AVIS", 2);
+              $etablissements = $search->run(false, null, false)->toArray();
+            }
+
+            break;
+
+          case 'Préventionniste':
+            // Etablissements liés
+
+            // Ets 1 - 4ème catégorie
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", array("1","2","3","4"));
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+
+            // 5ème catégorie defavorable
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
+            $search->setCriteria("avis.ID_AVIS", 2);
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+
+            // 5ème catégorie avec local à sommeil
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
+            $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+
+            // EIC - IGH - HAB
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4"));
+            $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+
+            $etablissements = array_unique($etablissements, SORT_REGULAR);
+
+            // Dossiers avec avis différé
+            $service_etablissement = new Service_Etablissement;
+            $dossiers = array();
+            foreach($etablissements as $etablissement) {
+              $dossiers_ets = $service_etablissement->getDossiers($etablissement['ID_ETABLISSEMENT']);
+              $dossiers_merged = $dossiers_ets['etudes'];
+              $dossiers_merged = array_merge($dossiers_merged, $dossiers_ets['visites']);
+              $dossiers_merged = array_merge($dossiers_merged, $dossiers_ets['autres']);
+              foreach($dossiers_merged as $dossier_ets) {
+                if($dossier_ets['DIFFEREAVIS_DOSSIER'] == 1) {
+                  $dossiers[] = $dossier_ets;
+                }
+              }
+            }
+
+            break;
+        }
+
+        return array(
+          'etablissements' => $etablissements,
+          'dossiers' => $dossiers,
+          'commissions' => $commissions
+        );
     }
 
     /**

@@ -1,54 +1,100 @@
-<div class='row-fluid'>
+<div class="grid-sizer"></div>
+<div class="grid-gutter"></div>
 
-    <div class='span3'>
-        <h2 class='page-header'>Actions disponibles</h2>
-        <p class='well text-center'>
-            <a class='btn' href='/calendrier-des-commissions' ><i class="icon-calendar"></i>Consulter le calendrier des commissions</a><br/><br/>
-            <a class='btn' href='/etablissement/add' ><i class="icon-plus"></i> Ajouter un établissement</a><br/><br/>
-            <a class='btn' href='/dossier/add' ><i class="icon-plus"></i> Ajouter un dossier</a>
-        </p>
-    </div>
-
-    <div class='span9'>
-        <a class='btn btn-small pull-right' style='margin-top: 30px' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
-        <h2 class='page-header'>Derniers messages</h2>
-        <?php if( count($this->flux) == 0 ) : ?>
-            <p class='muted'><small>Aucun message disponible.</small></p>
-        <?php else : ?>
-            <table class='table table-hover table-condensed'>
-             <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
-            </table>
-        <?php endif ?>
-    </div>
-
+<!-- Messages -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Messages
+    <a class='btn btn-small pull-right' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
+  </div>
+  <div class="panel-body">
+    <?php if( count($this->flux) == 0 ) : ?>
+        <p class='muted'><small>Aucun message disponible.</small></p>
+    <?php else : ?>
+        <table class='table table-condensed'>
+         <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
+        </table>
+    <?php endif ?>
+  </div>
 </div>
 
-<h2 class='page-header'>
-    Tableau de bord
-    <small>Profil : <?php echo $this->user['infos']['LIBELLE_FONCTION'] ?></small>
-</h2>
+<!-- Etablissements suivis -->
+<?php if( count($this->etablissements) > 0 ) : ?>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Etablissements suivis
+  </div>
+  <div class="panel-body" style="font-size: .85em">
+      <ul class='recherche_liste unstyled no_slide'>
+      <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissements ) ?>
+      </ul>
+      <div style='clear: both'></div>
+      <?php echo $this->etablissements ?>
+  </div>
+</div>
+<?php endif ?>
 
-<h3>Vos établissements</h3>
-<?php if( count($this->etablissements) == 0 ) : ?>
-    <p class='muted'><small>Aucun établissement suivi.</small></p>
-<?php else : ?>
-    <ul class='recherche_liste unstyled no_slide'>
-    <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissements ) ?>
-    </ul>
-    <br/>
+<!-- Dossiers avec un avis différé -->
+<?php if( count($this->dossiers) > 0 ) : ?>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Dossiers avec un avis différé
+  </div>
+  <div class="panel-body" style="font-size: .85em">
+      <ul class='recherche_liste unstyled no_slide'>
+      <?php echo $this->partialLoop('search/results/dossier.phtml', $this->dossiers ) ?>
+      </ul>
+      <div style='clear: both'></div>
+      <?php echo $this->dossiers ?>
+  </div>
+</div>
+<?php endif ?>
+
+<!-- Ordre du jour -->
+<?php if( count($this->commissions) > 0 ) : ?>
+<div class="panel panel-default w2">
+  <div class="panel-heading">
+    Ordre du jour
+  </div>
+  <div class="panel-body" style="font-size: .85em">
+    <?php foreach($this->commissions as $commission) : ?>
+      <p class="lead" style="font-size:1.2em; margin-bottom: 0px;"><?php echo strtoupper($commission["name"]) . " du " . $commission["date"] . " (" . $commission["heure"] . ")" ?></p>
+      <?php if(count($commission["odj"]) == 0 ) : ?>
+        <p class="muted">Pas de dossier affecté.</p>
+      <?php else : ?>
+        <ul class='recherche_liste unstyled no_slide'>
+          <?php echo $this->partialLoop('search/results/dossier.phtml', $commission["odj"] ) ?>
+        </ul>
+      <?php endif ?>
+    <?php endforeach ?>
     <div style='clear: both'></div>
-    <?php echo $this->etablissements ?>
+</div>
 <?php endif ?>
 
 <div id="reponse-modal" class="modal hide fade" ></div>
 
 <script type="text/javascript">
     $(document).ready(function() {
+
         // Gestion des boites modales
         $("a[data-toggle='modal']").click(function() {
             var target = $(this).attr("data-target");
             var url = $(this).attr("href");
             $(target).load(url);
         });
+
+        // Grid !
+        var $container = $('.dashboard');
+
+        $container.packery({
+          itemSelector: '.panel',
+          columnWidth: '.grid-sizer',
+          gutter: '.grid-gutter'
+        });
+
+        var $itemElems = $( $container.packery('getItemElements') );
+        $itemElems.draggable();
+        $container.packery( 'bindUIDraggableEvents', $itemElems );
+
     });
 </script>
