@@ -61,13 +61,13 @@
                   <?php
                        if($dossier['OBJET_DOSSIER']!=null)
                        {
-                       echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier  &quot; ".$dossier['OBJET_DOSSIER']." &quot; de la commission échue &quot; ".$dossier['LIBELLE_DATECOMMISSION']." &quot; est sans avis d'exploitation</a>";
+                       echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier  &quot; ".$dossier['OBJET_DOSSIER']." &quot; de la commission échue &quot; ".$dossier['LIBELLE_DATECOMMISSION']." &quot; est sans avis de la commission</a>";
                        
                        }
                        else
                        {
                            $datecreation = new DateTime($dossier['DATEINSERT_DOSSIER']);
-                           echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier du ".$datecreation->format('d/m/y')." (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue &quot; ".$dossier['LIBELLE_DATECOMMISSION']." &quot; est sans avis d'exploitation</a>";
+                           echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier du ".$datecreation->format('d/m/y')." (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue &quot; ".$dossier['LIBELLE_DATECOMMISSION']." &quot; est sans avis de la commission</a>";
                           
                        }
                        ?>      

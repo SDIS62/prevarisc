@@ -37,8 +37,19 @@ class Service_User
         $user = $this->find($id_user);
         $profil = $user['infos']['LIBELLE_FONCTION'];
 
-        $etablissements = $commissions = $dossiers = array();
-
+        $etablissements = $commissions = $dossiers = $erpsanspreventionniste = $etablissementavisdefavorable = $listdossier = $listcourrier = $dbCommission =  $Firstcommission = array();
+       
+        $Commission = new Model_DbTable_Commission;
+        $dbCommission = $Commission->getAllCommissions();
+        $Datecommission = new Model_DbTable_DateCommission;
+        $Firstcommission = $Datecommission->getNextCommission(time(), time() + 3600 * 24 * 15);
+        $etablissement = new Model_DbTable_Etablissement;
+        $etablissementavisdefavorable = $etablissement->listeDesERPSousAvisDefavorable(); 
+        $erpsanspreventionniste = $etablissement->listeERPSansPreventionniste();
+        $dossier = new Model_DbTable_Dossier ;
+        $listdossier = $dossier->listeDesDossierDateCommissionEchu();
+        $listcourrier = $dossier->listeDesCourrierSansReponse(5);
+       
         // Définition des données types par profil
         switch($profil) {
           case 'Secrétariat':
@@ -162,7 +173,13 @@ class Service_User
         return array(
           'etablissements' => $etablissements,
           'dossiers' => $dossiers,
-          'commissions' => $commissions
+          'commissions' => $commissions,
+          'erpsanspreventionniste' => $erpsanspreventionniste,
+          'etablissementavisdefavorable' => $etablissementavisdefavorable,
+          'dossiercommissionechu' => $listdossier,
+          'courrier' => $listcourrier,  
+          'commissionsListe' => $dbCommission, 
+          'firstcommission' => $Firstcommission      
         );
     }
 

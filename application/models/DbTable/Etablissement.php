@@ -277,7 +277,7 @@
             }
         }
         
-        public function listeDesERPsousAvisDefavorable()
+        public function listeDesERPSousAvisDefavorable()
         {
                       
             $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS from  etablissementinformations,dossier,etablissement,etablissementdossier
@@ -291,7 +291,7 @@
                  
             return $this->getAdapter()->fetchAll($select);
         }
-         public function listeERPpaspreventionniste()
+         public function listeERPSansPreventionniste()
         {
                       
             $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS from  etablissementinformations,etablissement

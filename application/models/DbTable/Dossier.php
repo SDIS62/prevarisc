@@ -204,41 +204,41 @@
             return $this->getAdapter()->fetchAll($select);
         }
 		
-		public function findLastVp($idEtab)
-		{
-			$select = $this->select()
-				->setIntegrityCheck(false)
-				->from(array('d' => 'dossier'),"max(d.DATEVISITE_DOSSIER) as maxdate")
-				->join(array('ed' => 'etablissementdossier') , "ed.ID_DOSSIER = d.ID_DOSSIER")
-				->join(array("dn" => "dossiernature") , "d.ID_DOSSIER = dn.ID_DOSSIER")
-				->where("ed.ID_ETABLISSEMENT = ?",$idEtab)
-				->where("dn.ID_NATURE = 21 OR dn.ID_NATURE = 26")
-				->where("d.DATEVISITE_DOSSIER IS NOT NULL");
-				
-			//echo $select->__toString();
-			return $this->getAdapter()->fetchRow($select);	
+        public function findLastVp($idEtab)
+        {
+            $select = $this->select()
+                    ->setIntegrityCheck(false)
+                    ->from(array('d' => 'dossier'),"max(d.DATEVISITE_DOSSIER) as maxdate")
+                    ->join(array('ed' => 'etablissementdossier') , "ed.ID_DOSSIER = d.ID_DOSSIER")
+                    ->join(array("dn" => "dossiernature") , "d.ID_DOSSIER = dn.ID_DOSSIER")
+                    ->where("ed.ID_ETABLISSEMENT = ?",$idEtab)
+                    ->where("dn.ID_NATURE = 21 OR dn.ID_NATURE = 26")
+                    ->where("d.DATEVISITE_DOSSIER IS NOT NULL");
 
-		}
+            //echo $select->__toString();
+            return $this->getAdapter()->fetchRow($select);	
 
-		public function findLastVpCreationDoc($idEtab,$idDossier,$dateVisite)
-		{
-			$select = $this->select()
-				->setIntegrityCheck(false)
-				->from(array('d' => 'dossier'),"max(d.DATEVISITE_DOSSIER) as maxdate")
-				->join(array('ed' => 'etablissementdossier') , "ed.ID_DOSSIER = d.ID_DOSSIER")
-				->join(array("dn" => "dossiernature") , "d.ID_DOSSIER = dn.ID_DOSSIER")
-				->where("ed.ID_ETABLISSEMENT = ?",$idEtab)
-				->where("ed.ID_DOSSIER <> ?",$idDossier)
-				->where("dn.ID_NATURE = 21 OR dn.ID_NATURE = 26")
-				->where("d.DATEVISITE_DOSSIER IS NOT NULL")
-				->where("d.DATEVISITE_DOSSIER < ?",$dateVisite);
-				
-			//echo $select->__toString();
-			return $this->getAdapter()->fetchRow($select);	
+        }
 
-		}
+        public function findLastVpCreationDoc($idEtab,$idDossier,$dateVisite)
+        {
+            $select = $this->select()
+                    ->setIntegrityCheck(false)
+                    ->from(array('d' => 'dossier'),"max(d.DATEVISITE_DOSSIER) as maxdate")
+                    ->join(array('ed' => 'etablissementdossier') , "ed.ID_DOSSIER = d.ID_DOSSIER")
+                    ->join(array("dn" => "dossiernature") , "d.ID_DOSSIER = dn.ID_DOSSIER")
+                    ->where("ed.ID_ETABLISSEMENT = ?",$idEtab)
+                    ->where("ed.ID_DOSSIER <> ?",$idDossier)
+                    ->where("dn.ID_NATURE = 21 OR dn.ID_NATURE = 26")
+                    ->where("d.DATEVISITE_DOSSIER IS NOT NULL")
+                    ->where("d.DATEVISITE_DOSSIER < ?",$dateVisite);
+
+            //echo $select->__toString();
+            return $this->getAdapter()->fetchRow($select);	
+
+        }
 		
-		public function getAvisDossier($id_dossier)
+        public function getAvisDossier($id_dossier)
         {
            $select = $this->select()
 				->setIntegrityCheck(false)
@@ -249,7 +249,7 @@
             return $this->getAdapter()->fetchRow($select);
         }
 		
-		public function getEtablissementDossierGenConvoc($id_dossier)
+        public function getEtablissementDossierGenConvoc($id_dossier)
         {
             $select = "
                 SELECT etablissementdossier.ID_ETABLISSEMENTDOSSIER ,t1.ID_ETABLISSEMENT, LIBELLE_ETABLISSEMENTINFORMATIONS, LIBELLE_GENRE
@@ -271,7 +271,7 @@
             return $this->getAdapter()->fetchAll($select);
         }
         
-         public function listeDesDossierDateCommissionEchu()
+        public function listeDesDossierDateCommissionEchu()
         {
                       
             $select= "select ID_DOSSIER,OBJET_DOSSIER,LIBELLE_DATECOMMISSION,DATE_COMMISSION,LIBELLE_DOSSIERTYPE,DATEINSERT_DOSSIER from dossiertype,dossier,dossieraffectation,datecommission 
@@ -285,13 +285,13 @@
                  
             return $this->getAdapter()->fetchAll($select);
         }
-         public function listeDesCourrier()
+        
+        public function listeDesCourrierSansReponse($duree_en_jour = 5)
         {
                       
             $select= "select OBJET_DOSSIER ,DATEREP_DOSSIER ,ID_DOSSIER from dossier 
                    WHERE TYPE_DOSSIER = 5
-                   AND DATEDIFF(DATEINSERT_DOSSIER,CURDATE()) <= -5
-                    ";
+                   AND DATEDIFF(DATEINSERT_DOSSIER,CURDATE()) <= ".((int) $duree_en_jour * -1);
             
                  
             return $this->getAdapter()->fetchAll($select);

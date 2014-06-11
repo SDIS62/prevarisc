@@ -15,7 +15,7 @@ class IndexController extends Zend_Controller_Action
         $this->view->flux = $service_feed->get(Zend_Auth::getInstance()->getIdentity()['group']['ID_GROUPE']);
 
    
-        $Commission = new Model_DbTable_Commission;
+        /*$Commission = new Model_DbTable_Commission;
         
         $dbCommission = $Commission->getAllCommissions();
        
@@ -23,30 +23,8 @@ class IndexController extends Zend_Controller_Action
         
         $Datecommission = new Model_DbTable_DateCommission;
         $Firstcommission = $Datecommission->getNextCommission(time(), time() + 3600 * 24 * 15);
-        $this->view->firstcommission = $Firstcommission;
-        /*************************************************************************/
-        
-        $etablissement = new Model_DbTable_Etablissement;
-        $etablissementavisdefavorable= $etablissement->listeDesERPsousAvisDefavorable(); 
-        $this->view->etablissementavisdefavorable = $etablissementavisdefavorable;
-        
-        $erpsanspreventionniste=$etablissement->listeERPpaspreventionniste();
-        $this->view->etablissementsanspreventionniste = $erpsanspreventionniste;
-        /**************************************************************************/
-        
-        $doosier = new Model_DbTable_Dossier ;
-        $listdossier = $doosier->listeDesDossierDateCommissionEchu();
-        $this->view->dossiercommissionechu = $listdossier;
-        
-        $listcourrier = $doosier->listeDesCourrier();
-        $this->view->courrier = $listcourrier;
-        /**************************************************************************/
-        
-        /*$paginator = Zend_Paginator::factory($service_user->getEtablissements(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR']));
-        $paginator->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
-        $this->view->etablissements = $paginator;*/
-
-
+        $this->view->firstcommission = $Firstcommission;*/
+       
         $data = $service_user->getDashboardData(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR']);
 
         $etablissements = Zend_Paginator::factory($data['etablissements']);
@@ -60,6 +38,29 @@ class IndexController extends Zend_Controller_Action
         $commissions = Zend_Paginator::factory($data['commissions']);
         $commissions->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
         $this->view->commissions = $commissions;
+        
+        $erpsanspreventionniste = Zend_Paginator::factory($data['erpsanspreventionniste']);
+        $erpsanspreventionniste->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->etablissementsanspreventionniste =  $erpsanspreventionniste;
+        
+        $etablissementavisdefavorable = Zend_Paginator::factory($data['etablissementavisdefavorable']);
+        $etablissementavisdefavorable->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->etablissementavisdefavorable =  $etablissementavisdefavorable;
 
+        $listdossier = Zend_Paginator::factory($data['dossiercommissionechu']);
+        $listdossier->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->dossiercommissionechu =  $listdossier;
+        
+        $listcourrier= Zend_Paginator::factory($data['courrier']);
+        $listcourrier->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->courrier =  $listcourrier;
+        
+        $dbCommission= Zend_Paginator::factory($data['commissionsListe']);
+        $dbCommission->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->commissionsListe =  $dbCommission;
+        
+        $Firstcommission= Zend_Paginator::factory($data['firstcommission']);
+        $Firstcommission->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->firstcommission =  $Firstcommission;
     }
 }

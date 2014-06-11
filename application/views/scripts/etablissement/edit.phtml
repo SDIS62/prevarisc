@@ -29,7 +29,7 @@
                     <dt>Identifiant</dt>
                     <dd>
                         <div>
-                             <input type='text' name='NUMEROID_ETABLISSEMENT' value='<?php if($this->etablissement['general']["NUMEROID_ETABLISSEMENT"]==NULL) {echo 'SDIS29-'; echo ''+rand(0, 1000);} else echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"]?>' />
+                             <input type='text' name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"]?>' />
                         </div>
                     </dd>
 
