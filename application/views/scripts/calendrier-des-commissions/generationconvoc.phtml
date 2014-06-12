@@ -130,13 +130,13 @@ foreach($this->informationsMembre as $val => $membre){
 									$heureFin = $heureFinTab[0].":".$heureFinTab[1];
 									try{
 										$villeODF->infosDoss->setVars('heureFinDossier', $heureFin, true, 'UTF-8');
-									}catch (OdfException $e) {
+									}catch (Exception $e) {
 		
 									}
 								}else{
 									try{
 										$villeODF->infosDoss->setVars('heureFinDossier', '', true, 'UTF-8');
-									}catch (OdfException $e) {
+									}catch (Exception $e) {
 		
 									}
 								}
@@ -262,7 +262,7 @@ function addChamp($segment,$nomOdf, $variable){
 		if($variable == "")
 			$variable = "";
 		$segment->$nomOdf(utf8_decode($variable));
-	}catch (OdfException $e) {
+	}catch (Exception $e) {
 	
 	}
 }

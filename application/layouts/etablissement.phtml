@@ -7,6 +7,8 @@
         <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'><i class="icon-user icon-black"></i> Contacts</a></li>
         <li><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'><i class="icon-folder-open icon-black"></i> Dossiers</a></li>
         <li><a class='sep' href='<?php echo $this->url(array("action"=>"historique")) ?>'><i class="icon-repeat icon-black"></i> Afficher l'historique</a></li>
+        <li class="nav-header">Actions</li>
+        <li><a href='<?php echo $this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $this->etablissement['general']['ID_ETABLISSEMENT']), null, true)?> '><i class="icon-plus icon-black"></i> Ajouter un dossier</a></li>
     </ul>
 <?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
 <?php $this->placeholder('before_content')->captureStart(); // Capture du 'before_content' ?>

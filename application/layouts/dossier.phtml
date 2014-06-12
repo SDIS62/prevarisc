@@ -51,11 +51,13 @@
                     </li>";
             }
 	?>
-		
+        
         <li>
             <a class='<?php echo ( $this->action == "piece-jointe" ) ? "white_link" : "read" ?>' 
                href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
         </li> 
+        
+        <li class="nav-header">Actions</li>
         
         <?php if ( $this->action == "index" ) :
             $verrou = true;
@@ -92,7 +94,6 @@
                 <a class="sep" href='/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $this->idDateCommissionAffect; ?>'><i class='icon-calendar icon-black'></i> Afficher ordre du jour</a>
             </li>
             <?php endif; ?>
-           
         <?php endif ?>
         <?php if ( $this->action == "descriptif") : ?>
             <li>

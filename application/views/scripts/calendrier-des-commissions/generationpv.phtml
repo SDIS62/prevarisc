@@ -129,7 +129,7 @@ foreach($this->membresFiles as $val => $membre){
 					
 					$dossInfos->merge(); 
 					//echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'><a href='/data/uploads/pieces-jointes/".$idPj.".odt' >Le PV : ".$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." (".$dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"].")  a été généré</a></span><br/><br/>";
-				} catch (OdfException $e){
+				} catch (Exception $e){
 
 				}
 				
