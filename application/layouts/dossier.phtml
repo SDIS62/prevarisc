@@ -1,87 +1,163 @@
-<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+<?php if($this->action != "add" && $this->do != "new" ) : ?>
+<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
 
-<?php if($this->action == "add" || $this->do == "new" ) : ?>
-    <h2 class='grid_16'>Création d'un nouveau dossier</h2>
-    <h3 class='grid_16' ><div style='margin:10px;' id='infosEtablissement'></div></h3>
-<?php else : ?>
-    <h3 class='grid_16' >
-        <span style="color: #333333"><?php echo $this->libelleType; ?></span>
-        <small><br/><?php echo nl2br($this->objetDossier) ?></small>
-        <div style='margin:10px;' id='infosEtabs'></div>
-    </h3>
-    
-    <ul id='onglets_horizontaux' class='grid_16' >
-    
-        <li class='<?php echo ( $this->action == "index" ) ? "selection_onglets_hor" : "read" ?>'>
-            <a href='<?php echo $this->url(array("action"=>"index")) ?>'>Informations générales</a>
+<ul class="nav nav-tabs nav-stacked menu_dashboard" >
+        
+        <li >
+            <a class="<?php echo ( $this->action == "index" ) ? "white_link" : "read" ?>" 
+               href='<?php echo $this->url(array("action"=>"index")) ?>'><i class="icon-info-sign icon-black"></i> Informations générales</a>
         </li>
         
 	<?php		
-		if($this->idTypeDossier == 1 && $this->natureDossier != 3 && $this->natureDossier != 9 && $this->natureDossier != 19)
-		{
-			echo "
-				<li class='".(( $this->action == "descriptif") ? "selection_onglets_hor" : "read" )."'>
-					<a href='".$this->url(array("action"=>"descriptif"))."'>Descriptif ".(( $this->natureDossier == 1 || $this->natureDossier == 2 ) ? " des travaux" : "")."</a>
-				</li>
-			";
-		}
+            if($this->idTypeDossier == 1 && $this->natureDossier != 3 && $this->natureDossier != 9 && $this->natureDossier != 19) {
+                echo "<li>
+                        <a class='".(( $this->action == "descriptif") ? "white_link" : "read" )."' "
+                        . "href='".$this->url(array("action"=>"descriptif"))."'><i class=\"icon-book icon-black\"></i> Descriptif ".(( $this->natureDossier == 1 || $this->natureDossier == 2 ) ? " des travaux" : "")."</a>
+                    </li>";
+            }
 
-        if( $this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 )
-		{
-            echo "
-                <li class='".( ( $this->action == "textesapplicables" ) ? "selection_onglets_hor" : "read" )."'>
-                    <a href='".$this->url(array("action"=>"textesapplicables"))."'>Textes applicables</a>
-                </li>
-            ";
-        }
+            if( $this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ) {
+                echo "<li>
+                        <a class='".( ( $this->action == "textesapplicables" ) ? "white_link" : "read" )."' "
+                        . "href='".$this->url(array("action"=>"textesapplicables"))."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
+                    </li>";
+            }
 
-		if($this->natureDossier != 35 && $this->natureDossier != 36)
-		{
-			echo "
-				<li class='".( ( $this->action == "docconsulte" ) ? "selection_onglets_hor" : "read" )."'>
-					<a href='".$this->url(array("action"=>"docconsulte"))."'>Documents consultés</a>
-				</li>
-			";
-		}
+            if($this->natureDossier != 35 && $this->natureDossier != 36) {
+                echo "<li>
+                        <a class='".( ( $this->action == "docconsulte" ) ? "white_link" : "read" )."' "
+                            . "href='".$this->url(array("action"=>"docconsulte"))."'><i class=\"icon-file icon-black\"></i> Documents consultés</a>
+                    </li>";
+            }
 
-		if($this->natureDossier != 3 && $this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 31 && $this->natureDossier != 32 && $this->natureDossier != 34 && $this->natureDossier != 35 && $this->natureDossier != 36)
-		{
-			echo "
-				<li class='".( ( $this->action == "prescription" ) ? "selection_onglets_hor" : "read" )."'>
-					<a href='".$this->url(array("action"=>"prescription"))."'>Prescriptions</a>
-				</li>
-			";
-		}
+            if($this->natureDossier != 3 && $this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 31 && $this->natureDossier != 32 && $this->natureDossier != 34 && $this->natureDossier != 35 && $this->natureDossier != 36) {
+                echo "<li>
+                        <a class='".( ( $this->action == "prescription" ) ? "white_link" : "read" )."' "
+                        . "href='".$this->url(array("action"=>"prescription"))."'><i class=\"icon-flag icon-black\"></i> Prescriptions</a>
+                    </li>";
+            }
 	?>
 		
-        <li class='<?php echo ( $this->action == "liees" ) ? "selection_onglets_hor" : "read" ?>'>
-            <a href='<?php echo $this->url(array("action"=>"liees")) ?>'>Établissements et dossiers liés</a>
+        <li>
+            <a class='<?php echo ( $this->action == "liees" ) ? "white_link" : "read" ?>' 
+                href='<?php echo $this->url(array("action"=>"liees")) ?>'><i class="icon-folder-open icon-black"></i> Établissements et dossiers liés</a>
         </li>
 		
 	<?php
-		if($this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 34 && $this->natureDossier != 35 && $this->natureDossier != 36)
-		{
-			echo "
-				<li class='".( ( $this->action == "contact" ) ? "selection_onglets_hor" : "read" )."'>
-					<a href='".$this->url(array("action"=>"contact"))."'>Contacts</a>
-				</li>
-			";
-		}
+            if($this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 34 && $this->natureDossier != 35 && $this->natureDossier != 36) {
+                echo "<li>
+                        <a class='".( ( $this->action == "contact" ) ? "white_link" : "read" )."' "
+                        . "href='".$this->url(array("action"=>"contact"))."'><i class=\"icon-user icon-black\"></i> Contacts</a>
+                    </li>";
+            }
 	?>
 		
-        <li class='<?php echo ( $this->action == "piece-jointe" ) ? "selection_onglets_hor" : "read" ?>' >
-            <a style='border-right: none' href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'>Pièces jointes</a>
-        </li>
+        <li>
+            <a class='<?php echo ( $this->action == "piece-jointe" ) ? "white_link" : "read" ?>' 
+               href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
+        </li> 
         
+        <?php if ( $this->action == "index" ) :
+            $verrou = true;
+            if ($this->infosDossier['VERROU_DOSSIER'] == 1  || (isset($action) && $action == 'new')) {
+                $label = "Dévérouiller";
+                $idLink = "DEVERROU";
+            }
+            else { 
+                $label = "Vérouiller";
+                $idLink = "VERROU";
+                $verrou = false;
+            } ?>
+            <?php if (!$verrou) : ?>
+            <li>
+                <a class="sep" href="" id="modificationDossier"><i class="icon-pencil icon-black"></i> Modifier le dossier</a>
+            </li>
+            <li> 
+                <a href="" class="sep" id='validModification' style="display:none;"><i class='icon-ok icon-black'></i> Sauvegarder le dossier</a>
+            </li>
+            <li>
+                <a href="" id='annulModification' style="display:none;"><i class="icon-remove icon-black"></i> Annuler</a>
+            </li>
+            <?php endif ?>
+            <li>
+                <a class="sep" href="" id="<?php echo $idLink; ?>"><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
+            </li>
+            <?php if (!$verrou) : ?>
+            <li>
+                <a href="" id="rapport"><i class="icon-refresh icon-black"></i> Générer le(s) rapport(s)</a>
+            </li>
+            <?php endif ?>
+            <?php if (!$verrou && ($this->idDateCommissionAffect != null)) : ?>
+            <li>
+                <a class="sep" href='/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $this->idDateCommissionAffect; ?>'><i class='icon-calendar icon-black'></i> Afficher ordre du jour</a>
+            </li>
+            <?php endif; ?>
+           
+        <?php endif ?>
+        <?php if ( $this->action == "descriptif") : ?>
+            <li>
+                <a class="sep" href=""><i class="icon-pencil icon-black"></i> Modifier</a>
+            </li>
+        <?php endif ?>
+        <?php if ( $this->action == "docconsulte" ) : ?>
+            <li>
+                <a class="sep" href=""><i class="icon-plus icon-black"></i> Ajouter un nouveau document</a>
+            </li>
+        <?php endif ?>
+        <?php if ( $this->action == "prescription" ) : ?>
+            <li>
+                <a class="sep" href=""><i class="icon-plus icon-black"></i> Ajouter une prescription type</a>
+            </li>
+            <li>
+                <a href=""><i class="icon-plus icon-black"></i> Ajouter une prescription</a>
+            </li>
+        <?php endif ?>
+            <?php if ( $this->action == "liees" ) : ?>
+            <li>
+                <a class="sep" href=""><i class="icon-hdd icon-black"></i> Sauvegarder les liaisons</a>
+            </li>
+            <li>
+                <a href=""><i class="icon-retweet icon-black"></i> Lier à un dossier</a>
+            </li>
+        <?php endif ?>
+        <?php if ( $this->action == "contact" ) : ?>
+            <li>
+                <a class="sep" href=""><i class="icon-plus icon-black"></i> Ajouter un contact extistant</a>
+            </li>
+            <li>
+                <a href=""><i class="icon-plus icon-black"></i> Ajouter un nouveau contact</a>
+            </li>
+        <?php endif ?>
+        <?php if ( $this->action == "piece-jointe" ) : ?>
+            <li>
+                <a class="sep" href=""><i class="icon-plus icon-black"></i> Ajouter une pièce-jointe</a>
+            </li>
+            <li>
+                <a href=""><i class="icon-plus icon-black"></i> Ajout rapide</a>
+            </li>
+        <?php endif ?>
     </ul>
-    
+<?php $this->placeholder('lateral_navigation')->captureEnd();
+endif; ?>
+
+<?php $this->placeholder('page_header')->captureStart();  //$this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+
+<?php if($this->action == "add" || $this->do == "new" ) : ?>
+    <h2 class="page-header">Création d'un nouveau dossier</h2>
+    <h3 class="page-header"><div style='margin:10px;' id='infosEtablissement'></div></h3>
+<?php else : ?>
+    <h2 class="page-header">
+        <span style="color: #333333"><?php echo $this->libelleType; ?></span>
+        <small><br/><?php echo nl2br($this->objetDossier) ?></small>
+        <div style='margin:10px;' id='infosEtabs'></div>
+    </h2>
 <?php endif ?>
 
 <div class='grid_16' >
 
 <?php echo "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />"; ?>
 
-<?php $this->placeholder('before_content')->captureEnd() ?>
+<?php $this->placeholder('page_header')->captureEnd(); //$this->placeholder('before_content')->captureEnd() ?>
 
 
 <?php $this->placeholder('after_content')->captureStart() // Capture du 'after_content' ?>
@@ -127,4 +203,4 @@
 <?php $this->placeholder('after_content')->captureEnd() ?>
 
 
-<?php echo $this->render('layout.phtml') // Rendu du layout par défaut avec les placeholders ?>
+<?php echo $this->render('dashboard.phtml') // Rendu du layout par défaut avec les placeholders ?>

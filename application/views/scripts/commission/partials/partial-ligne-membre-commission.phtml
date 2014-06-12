@@ -26,7 +26,7 @@
                 </select>
 
                 <!-- Groupement de commune -->
-                <span class='<?php echo $this->id_membre ?>_type-membre <?php echo $this->id_membre ?>_type-membre-groupement <?php if(array_key_exists('ID_GROUPEMENT', $this->groupement) && $this->groupement["ID_GROUPEMENT"] == null) echo "ui-helper-hidden" ?>' >
+                <span class='<?php echo $this->id_membre ?>_type-membre <?php echo $this->id_membre ?>_type-membre-groupement <?php if (null != $this->groupement && is_array($this->groupement)) { if(array_key_exists('ID_GROUPEMENT', $this->groupement) && $this->groupement["ID_GROUPEMENT"] == null) { echo "ui-helper-hidden"; } } ?>' >
                     <?php echo $this->listeGroupement($this->groupement, array("name" => $this->id_membre . "_ID_GROUPEMENT")); ?>
                 </span>
 

@@ -12,7 +12,9 @@
 
         <?php echo $this->render("includes/nav-main.phtml"); ?>
 
-        <div class='container-fluid' >
+        <?php echo $this->placeholder('lateral_navigation'); ?>
+
+        <div class='container-fluid main-container-f' >
 
             <?php echo $this->render("includes/notifications.phtml"); ?>
 
@@ -21,12 +23,11 @@
             <?php echo $this->layout()->content; ?>
 
             <?php echo $this->placeholder('after_content') ?>
-
+            
         </div>
 
-        <?php echo $this->render("includes/footer.phtml"); ?>
 
-        <script type="text/javascript" src="/js/jquery.stickyfooter.js"></script>
+        <?php echo $this->render("includes/footer.phtml"); ?>
 
     </body>
 

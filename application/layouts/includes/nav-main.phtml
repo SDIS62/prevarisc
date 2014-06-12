@@ -9,29 +9,46 @@
             <a class="brand" href="/"><img src='/images/layout-header-logo.png' alt='Prevarisc'  /></a>
             <div class="nav-collapse collapse">
                 <ul class='nav'>
-                    <li><a href='/'>Accueil</a></li>
-                    <li><a href='/statistiques'>Extractions - Statistiques</a></li>
-                    <li><a href='/admin'>Administration</a></li>
-                </ul>
-                <ul class='nav pull-right'>
-                    <li>
-                        <form class="navbar-search" action="/search/etablissement" method="get">
-                            <div class="input-append">
-                                <input name="label"id="nav-main-search-field" type="text" placeholder="Rechercher ..." style='margin-top: 10px' />
-                                <input name="page" type="hidden" value="1"  />
-                                <button class="btn" type="submit" style='margin-top: 10px'><i class="icon-search"></i></button>
-                                <a class="btn" href="/search" style='margin-top: 10px; text-transform: initial;'>Recherche avancée »</a>
-                            </div>
-                        </form>
+                    <li><a href='/'><i class="icon-home grey-icn-plus" title="Accueil"></i></a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Établissements
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href='/listing/etablissements'><i class="icon-th-list"></i> Lister</a></li>
+                            <li><a href='/etablissement/add'><i class="icon-plus"></i> Ajouter</a></li>
+                        </ul>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <?php echo $this->avatar(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], 'small') ?>
-                            <?php echo Zend_Auth::getInstance()->getIdentity()['infos']['NOM_UTILISATEURINFORMATIONS'] . ' ' . Zend_Auth::getInstance()->getIdentity()['infos']['PRENOM_UTILISATEURINFORMATIONS'] ?> <b class="caret"></b>
+                            Dossiers
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?php echo $this->url(array('controller' => 'session', 'action' => 'logout'), null, true) ?>">Déconnexion</a></li>
+                            <li><a href='/listing/dossiers'><i class="icon-th-list"></i> Lister</a></li>
+                            <li><a href='/dossier/add'><i class="icon-plus"></i> Ajouter</a></li>
                         </ul>
+                    </li>
+                    <li><a href='/calendrier-des-commissions'>Calendrier</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-plus grey-icn-plus" title="Plus"></i> 
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href='/statistiques'>Statistiques</a></li>
+                            <li><a href='/admin'>Administration</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class='nav pull-right'>
+                    <li class="li-searched">
+                        <form class="navbar-search" action="/search/etablissement" method="get">
+                            <div class="input-append" id="research-input">
+                                <input name="label" class="input-large" id="nav-main-search-field" type="text" placeholder="Rechercher ..." style='margin-top: 10px' />
+                                <input name="page" type="hidden" value="1"  />
+                                <button class="btn btn_search" type="submit" style='margin-top: 10px'><i class="icon-search"></i></button>
+                                <a class="btn" href="/search" >Avancée »</a>
+                            </div>
+                        </form>
                     </li>
                 </ul>
             </div>
@@ -40,37 +57,45 @@
 </div>
 
 <script>
-    $("#nav-main-search-field").autocomplete("/api/1.0/search/etablissements?format=json", {
-        minChars: 3,
-        max: 100,
-        width: 500,
-        parse: function(data) {
-            return $.map(data["response"]["results"], function(row) {
-                return {
-                    data: row,
-                    value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
-                    result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+    $(document).ready(function() {
+        $("#nav-main-search-field").autocomplete("/api/1.0/search/etablissements?format=json", {
+            extraParams: {
+                label: function() {
+                    return $("#nav-main-search-field").val();
                 }
-            });
-        },
-        formatItem: function(item) {
-            var LIBELLE_COMMUNE = "non localisée";
-            switch(item.ID_GENRE) {
-                case "1":
-                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
-                    break;
+            },
+            minChars: 3,
+            width: 500,
+            parse: function(data) {
+                return $.map(data["response"]["results"], function(row) {
+                    return {
+                        data: row,
+                        value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
+                        result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+                    }
+                });
+            },
+            formatItem: function(item) {
+                var LIBELLE_COMMUNE = "non localisée";
+                switch(item.ID_GENRE) {
+                    case "1":
+                        LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
+                        break;
 
-                case "3":
-                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
-                    break;
+                    case "3":
+                        LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                        break;
 
-                default:
-                    LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+                    default:
+                        LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+                }
+
+
+
+                return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
             }
-
-            return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
-        }
-    }).result(function(e, item) {
-        window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
-    });
+        }).result(function(e, item) {
+            window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
+        }); 
+    });    
 </script>

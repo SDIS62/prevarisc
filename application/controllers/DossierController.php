@@ -114,7 +114,8 @@ class DossierController extends Zend_Controller_Action
     public function init()
     {
         $this->_helper->layout->setLayout('dossier');
-
+        $this->view->inlineScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
+         
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
             $ajaxContext->addActionContext('selectiontexte', 'json')
@@ -159,7 +160,6 @@ class DossierController extends Zend_Controller_Action
         if ($this->_getParam("id")) {
             $this->view->do = "edit";
             $this->view->idDossier = ($this->_getParam("id"));
-
         }
 
         $this->view->idEtablissement = $this->_getParam("id_etablissement");
@@ -936,16 +936,19 @@ class DossierController extends Zend_Controller_Action
             } else {
                 $nouveauDossier->CNE_DOSSIER = 1;
             }
-			
-			if($this->_getParam("servInst") == "servInstGrp"){
-				//service instructeur groupement
-				$nouveauDossier->TYPESERVINSTRUC_DOSSIER = $this->_getParam("servInst");
-				$nouveauDossier->SERVICEINSTRUC_DOSSIER = $this->_getParam("servInstGrp");
-			}else if($this->_getParam("servInst") == "servInstCommune"){
-				//service instructeur commune
-				$nouveauDossier->TYPESERVINSTRUC_DOSSIER = $this->_getParam("servInst");
-				$nouveauDossier->SERVICEINSTRUC_DOSSIER = $this->_getParam("servInstVille");
-			}
+		
+            if(null != $this->_getParam('servInst')) {
+                if($this->_getParam("servInst") == "servInstGrp"){
+                    //service instructeur groupement
+                    $nouveauDossier->TYPESERVINSTRUC_DOSSIER = $this->_getParam("servInst");
+                    $nouveauDossier->SERVICEINSTRUC_DOSSIER = $this->_getParam("servInstGrp");
+                }else if($this->_getParam("servInst") == "servInstCommune"){
+                    //service instructeur commune
+                    $nouveauDossier->TYPESERVINSTRUC_DOSSIER = $this->_getParam("servInst");
+                    $nouveauDossier->SERVICEINSTRUC_DOSSIER = $this->_getParam("servInstVille");
+                }
+            }
+            
 
             $nouveauDossier->save();
 			
@@ -2369,10 +2372,11 @@ class DossierController extends Zend_Controller_Action
 
     public function textesapplicablesAction()
     {
+        
         //on commence par afficher tous les texte applicables qui sont visible regroupés par leurs type
         $dbTextesAppl = new Model_DbTable_TextesAppl;
         $this->view->listeTextesAppl = $dbTextesAppl->recupTextesApplVisible();
-
+        
         //on recupere tout les textes applicables qui ont été cochés dans le dossier
         $dbDossierTextesAppl = new Model_DbTable_DossierTextesAppl;
         $liste = $dbDossierTextesAppl->recupTextesDossier($this->_getParam("id"));
@@ -2395,6 +2399,7 @@ class DossierController extends Zend_Controller_Action
             $idEtablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
         }
         $this->view->idEtablissement = $idEtablissement;
+        
     }
 
 //GESTION DE LA PARTIE PRESCRIPTION
