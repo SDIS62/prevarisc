@@ -47,13 +47,14 @@
         public function getNextCommission($date, $next_date)
         {
             $select = "SELECT *
-                FROM datecommission
+                FROM datecommission d
+                LEFT JOIN commission c ON d.COMMISSION_CONCERNE = c.ID_COMMISSION
                 WHERE DATE_COMMISSION BETWEEN '".date('Y-m-d', $date)."' AND '".date('Y-m-d', $next_date)."'
                 ORDER BY DATE_COMMISSION, HEUREDEB_COMMISSION";
             return $this->getAdapter()->fetchAll($select);
         }
         
-         public function getMonthCommission($mois,$annee,$idcom)
+        public function getMonthCommission($mois,$annee,$idcom)
         {
             $select = "SELECT *
                 FROM datecommission

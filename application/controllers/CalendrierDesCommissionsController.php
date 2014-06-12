@@ -4,6 +4,8 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 {
     public function init()
     {
+        
+        $this->_helper->layout->setLayout('dashboard');
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('commissionselection', 'json')
                     ->addActionContext('recupevenement', 'json')
@@ -16,10 +18,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
     {
         // Titre de la page
         $this->view->title = "Calendrier des commissions";
-
-        if ($this->_getParam('idComm')) {
-            $this->view->idComm = $this->_getParam('idComm');
-        }
 
         // Modèle de données
         $model_typesDesCommissions = new Model_DbTable_CommissionType;
@@ -38,6 +36,21 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 "ARRAY" => $model_commission->fetchAll("ID_COMMISSIONTYPE = " . $row_typeDeCommission->ID_COMMISSIONTYPE )->toArray()
             );
         }
+        
+        // idCom en paramètre
+        if ($this->_getParam('idComm')) {
+            $this->view->idComm = $this->_getParam('idComm');
+        }
+        // sinon on prend le 1er idCom trouvé
+        else {
+            foreach ($array_commissions as $commissionTypes) {
+                if (isset($commissionTypes["ARRAY"]) && count($commissionTypes["ARRAY"]) > 0) {
+                    $this->view->idComm = $commissionTypes["ARRAY"][0]['ID_COMMISSION'];
+                    break;
+                }
+            }
+        }
+        
         $this->view->array_commissions = $array_commissions;
     }
 

@@ -291,6 +291,7 @@
                  
             return $this->getAdapter()->fetchAll($select);
         }
+        
          public function listeERPSansPreventionniste()
         {
                       
@@ -299,6 +300,20 @@
                    AND etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
                    AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
                     GROUP BY ID_ETABLISSEMENT
+                   ";
+                 
+            return $this->getAdapter()->fetchAll($select);
+        }
+        
+        public function listeErpOuvertSansProchainesVisitePeriodiques()
+        {
+                      
+            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,ei.ID_ETABLISSEMENT ,ed.ID_DOSSIER from  etablissementinformations ei,etablissementdossier ed,etablissement e
+                   WHERE ID_STATUT = 2
+                   AND ed.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT
+                   AND ed.ID_DOSSIER not in (SELECT dossier.id_dossier FROM dossier, dossiernature WHERE (dossier.TYPE_DOSSIER = 2 OR dossier.TYPE_DOSSIER = 3) AND dossier.ID_DOSSIER = dossiernature.ID_DOSSIER AND dossiernature.ID_NATURE = 26  AND dossier.ID_DOSSIER in (select ID_DOSSIER_AFFECT from datecommission,dossieraffectation where ID_DATECOMMISSION_AFFECT = ID_DATECOMMISSION AND DATEDIFF( DATE_COMMISSION ,CURDATE()) > 0) GROUP BY dossier.id_dossier)
+                   AND ei.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations eii WHERE eii.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )
+				   GROUP BY ei.ID_ETABLISSEMENT    
                    ";
                  
             return $this->getAdapter()->fetchAll($select);

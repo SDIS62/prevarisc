@@ -1,11 +1,5 @@
 <!-- Titre -->
-<h2>Établissements</h2>
-
-<a id="ets-ajout-ets" class='btn actions-dispo' href='/etablissement/add' >
-    <i class="icon-plus"></i> 
-    Ajouter un établissement
-</a>
-
+<h2 class="page-header">Établissements</h2>
 <form class="form-search" method='get'>
         <div class="input-append">
                 <input type="text" name='label' class="span6 search-query" placeholder="Libellé de l'établissement ou son #ID ..." value='<?php if(isset($_GET["label"])) echo $_GET["label"] ?>' />
