@@ -229,7 +229,7 @@ function addChamp($odfName, $nomOdf, $variable){
 	try{
 		$odfName->setVars($nomOdf,$variable,true,'UTF8');
 		//$segment->$nomOdf(utf8_decode($variable));
-	}catch (OdfException $e) {
+	}catch (Exception $e) {
 
 	}
 }
