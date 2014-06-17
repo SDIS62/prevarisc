@@ -48,5 +48,13 @@ class IndexController extends Zend_Controller_Action
         $prochainesCommission->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
         $this->view->prochainesCommission =  $prochainesCommission;
         
+        $NbrDossiersAffect= Zend_Paginator::factory($data['NbrDossiersAffect']);
+        $NbrDossiersAffect->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->NbrDossiersAffect =  $NbrDossiersAffect;
+        
+        $ErpSansProchaineVisitePeriodeOuvert= Zend_Paginator::factory($data['ErpSansProchaineVisitePeriodeOuvert']);
+        $ErpSansProchaineVisitePeriodeOuvert->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->ErpSansProchaineVisitePeriodeOuvert =  $ErpSansProchaineVisitePeriodeOuvert;
+        
     }
 }
