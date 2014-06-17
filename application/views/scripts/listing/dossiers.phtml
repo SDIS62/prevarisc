@@ -1,19 +1,19 @@
-<!-- Onglets permettant de selectionner les entités à rechercher -->
+<!-- Titre -->
 <h2 class="page-header">Dossiers</h2>
-<form method='get'>
-
-	<div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
-		<div class="input-append">
-			<input type="text" name='objet' class="span6 search-query" placeholder="Objet du dossier ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
-			<input type='submit' class="btn" value="Rechercher dans Prevarisc"  />
-			<input type='hidden' name='page' value="1" />
-		</div>
-	</div>
-
+<form class="form-search" method='get'>
+        <div class="input-append">
+            <input type="text" name='objet' class="span6 search-query" placeholder="Objet du dossier ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
+            <input type='submit' class="btn" value="Rechercher dans Prevarisc"  />
+            <input type='hidden' name='page' value="1" />
+        </div>
+        
+        <p class="filter-p">Filtrer par : </p>
 	<select name='types[]' multiple>
-			<?php foreach( $this->DB_type as $type ) : ?>
-                            <option value='<?php echo $type["ID_DOSSIERTYPE"] ?>' <?php if(isset($_GET["types"]) && in_array($type["ID_DOSSIERTYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_DOSSIERTYPE"] ?></option>
-			<?php endforeach ?>
+            <?php foreach( $this->DB_type as $type ) : ?>
+                <option value='<?php echo $type["ID_DOSSIERTYPE"] ?>' <?php if(isset($_GET["types"]) && in_array($type["ID_DOSSIERTYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_DOSSIERTYPE"] ?></option>
+            <?php endforeach ?>
+            <input type='submit' id="dossiers-filtrer" class="btn" value="Filtrer"  />
+            <input type='hidden' name='page' value="1" />
 	</select>
 
 </form>

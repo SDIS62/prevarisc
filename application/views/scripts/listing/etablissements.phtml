@@ -1,35 +1,12 @@
-<!-- Onglets permettant de selectionner les entités à rechercher -->
-<h2 class="page-header">Etablissements</h2>
-<form method='get'>
-
-	<div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
-		<div class="input-append pull-left">
-			<input type="text" name='label' class="span6 search-query" placeholder="Libellé de l'établissement ou son #ID ..." value='<?php if(isset($_GET["label"])) echo $_GET["label"] ?>' />
-			<input type='submit' class="btn" value="Rechercher dans Prevarisc" disabled />
-			<input type='hidden' name='page' value="1" />
-		</div>
-
-		<p id='criteres_plus_choix' class='pull-left hide' style='margin: 8px 0 0 5px'>
-			<small>
-	        	<input type='radio' name='par' value='niveau' checked /> Recherche simple
-	        	<input type='radio' name='par' value='criteres' /> Recherche avancée
-	        </small>
-	    </p>
-
-	    <p class='pull-right' style='margin: 8px 0 0 5px'>
-			<small>
-	        	Zone de recherche : 
-	        	<strong class='zone_de_recherche_text'>
-	        		<?php echo array_key_exists('zone_de_recherche_text', $_GET) && $_GET['zone_de_recherche_text'] != '' ? $_GET['zone_de_recherche_text'] : 'Département' ?>
-        		</strong>
-        		<a href='#' onclick="$('#zone_de_recherche_modal').modal(); return false; ">(Modifier la zone de recherche)</a>
-        		<input type='hidden' name='zone_de_recherche_text' value="<?php if(array_key_exists('zone_de_recherche_text', $_GET)) echo $_GET['zone_de_recherche_text'] ?>" />
-				<input type='hidden' name='city' value="<?php if(array_key_exists('city', $_GET)) echo $_GET['city'] ?>" />
-				<input type='hidden' name='street' value="<?php if(array_key_exists('street', $_GET)) echo $_GET['street'] ?>" />
-	        </small>
-	    </p>
-	</div>
-
+<!-- Titre -->
+<h2 class="page-header">Établissements</h2>
+<form class="form-search" method='get'>
+        <div class="input-append">
+                <input type="text" name='label' class="span6 search-query" placeholder="Libellé de l'établissement ou son #ID ..." value='<?php if(isset($_GET["label"])) echo $_GET["label"] ?>' />
+                <input type='submit' class="btn" value="Rechercher dans Prevarisc" disabled />
+                <input type='hidden' name='page' value="1" />
+        </div>
+        <p class="filter-p">Filtrer par : </p>
 	<div>
 	    <select name='statuts[]' multiple>
 	        <?php foreach( $this->DB_statut as $statut ) : ?>
@@ -87,6 +64,9 @@
 	        </select>
 	  </span>
     </div>
+    
+    <input type='submit' id="ets-filtrer" class="btn" value="Filtrer" disabled />
+    <input type='hidden' name='page' value="1" />
 
 </form>
 

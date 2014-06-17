@@ -204,7 +204,10 @@
                     <li class='tabs-right' ><a href='#diaporama-tab-pane' data-toggle="tab">Diaporama</a></li>
                 <?php endif ?>
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
-                    <li class='tabs-right' ><a href='#geoportail' data-toggle="tab">Carte</a></li>
+                    <li class='tabs-right' ><a href='#geoportail' data-toggle="tab">Carte IGN</a></li>
+                <?php endif ?>
+                <?php if( count($this->etablissement['adresses']) > 0 && $this->key_googlemap != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
+                    <li class='tabs-right' ><a href='#googlemap' data-toggle="tab">Carte Google</a></li>
                 <?php endif ?>
             </ul>
             <div class="tab-content">
@@ -244,6 +247,40 @@
                 </div>
                 <?php endif ?>
 
+                <?php if( count($this->etablissement['adresses']) > 0 && $this->key_googlemap != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
+                <div id='googlemap' class="tab-pane in" style="height: 350px; max-height: 350px;">
+                    <div id='googlemap-container'  style="height: 100%; max-height: 100%;"></div>
+                    <script type="text/javascript"
+                        src="https://maps.googleapis.com/maps/api/js?key=<?php echo $this->key_googlemap ?>&sensor=false">
+                      </script>
+                      <script type="text/javascript">
+                        function initialize() {
+                          var point = new google.maps.LatLng(<?php echo $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] ?>, <?php echo $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] ?>);
+                          var map = new google.maps.Map(document.getElementById("googlemap-container"), {
+                            center: point,
+                            zoom: 12
+                          });
+                          var marker = new google.maps.Marker({
+                                position: point,
+                                map: map,
+                                title: "<?php echo $this->etablissement['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS'] ?>"
+                            });
+
+                           var infowindow = new google.maps.InfoWindow({
+                                content:
+                                "<?php echo $this->etablissement['adresses'][0]['NUMERO_ADRESSE'] ?>, "+
+                                "<?php echo $this->etablissement['adresses'][0]['LIBELLE_RUE'] ?> <br />"+
+                                "<?php echo $this->etablissement['adresses'][0]['CODEPOSTAL_COMMUNE'] ?> "+
+                                "<?php echo $this->etablissement['adresses'][0]['LIBELLE_COMMUNE'] ?> "
+                            });
+                            infowindow.open(map,marker);
+                          };
+
+                          google.maps.event.addDomListener(window, 'load', initialize);
+                      </script>
+                </div>
+                <?php endif ?>
+                
                 <?php if( count($this->etablissement['diapo']) > 0 ) : ?>
                 <div id='diaporama-tab-pane' class='tab-pane'>
                     <div id='diaporama' class="carousel slide">

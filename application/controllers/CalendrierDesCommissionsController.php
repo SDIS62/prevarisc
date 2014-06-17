@@ -4,6 +4,8 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 {
     public function init()
     {
+        
+        $this->_helper->layout->setLayout('dashboard');
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('commissionselection', 'json')
                     ->addActionContext('recupevenement', 'json')
@@ -16,10 +18,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
     {
         // Titre de la page
         $this->view->title = "Calendrier des commissions";
-
-        if ($this->_getParam('idComm')) {
-            $this->view->idComm = $this->_getParam('idComm');
-        }
 
         // Modèle de données
         $model_typesDesCommissions = new Model_DbTable_CommissionType;
@@ -38,6 +36,21 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 "ARRAY" => $model_commission->fetchAll("ID_COMMISSIONTYPE = " . $row_typeDeCommission->ID_COMMISSIONTYPE )->toArray()
             );
         }
+        
+        // idCom en paramètre
+        if ($this->_getParam('idComm')) {
+            $this->view->idComm = $this->_getParam('idComm');
+        }
+        // sinon on prend le 1er idCom trouvé
+        else {
+            foreach ($array_commissions as $commissionTypes) {
+                if (isset($commissionTypes["ARRAY"]) && count($commissionTypes["ARRAY"]) > 0) {
+                    $this->view->idComm = $commissionTypes["ARRAY"][0]['ID_COMMISSION'];
+                    break;
+                }
+            }
+        }
+        
         $this->view->array_commissions = $array_commissions;
     }
 
@@ -1255,4 +1268,140 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$dateComm = $dbDateComm->find($this->_getParam('dateCommission'))->current();
 		$dateComm->delete();
 	}
+        
+        public function exportoutlookAction() {
+            $idDateComm = $this->_getParam("dateCommId");
+            
+            $this->view->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+            header("Content-Type: text/Calendar");
+            header("Content-Disposition: inline; filename=calendar.ics");
+            
+            $ics = "";
+            
+            if (null != $idDateComm) {
+                
+                $dbDateCommission = new Model_DbTable_DateCommission;
+                $dbCommission = new Model_DbTable_Commission;
+
+                $commissionEvent = $dbDateCommission->find($idDateComm)->toArray();
+
+                if (null != $commissionEvent || count($commissionEvent) > 0) {
+                    $row = $commissionEvent[0];
+                    $dateStart = str_replace("-", "", $row['DATE_COMMISSION']);
+                    $dateStart .= "T" . str_replace(":", "", $row['HEUREDEB_COMMISSION']);
+                    $dateEnd = str_replace("-", "", $row['DATE_COMMISSION']);
+                    $dateEnd .= "T" . str_replace(":", "", $row['HEUREFIN_COMMISSION']);
+                    
+                    $descriptifAdd = "";
+                    $commissionArray = $dbCommission->find($row['COMMISSION_CONCERNE'])->toArray();
+                    if (null != $commissionArray) {
+                        $commission = $commissionArray[0];
+                        $descriptifAdd .= " / Commission : " . $commission['LIBELLE_COMMISSION'];
+                    }
+                
+                    $ics .= "BEGIN:VCALENDAR\n";
+                    
+                    $ics .= $idDateComm;
+                    $ics .= "VERSION:2.0\n";
+                    $ics .= "PRODID:SDIS62/Prevarisc\n";
+                    $ics .= "METHOD:REQUEST\n"; // required by Outlook
+                    $ics .= "BEGIN:VEVENT\n";
+                    $ics .= "ORGANIZER:prevarisc@atos.net\n";
+                    //$ics .= "DTSTART:20151231T230000\n";
+                    $ics .= "DTSTART:" . $dateStart . "\n";
+                    //$ics .= "DTEND:20160101T010000\n";
+                    $ics .= "DTEND:" . $dateEnd . "\n";
+                    $ics .= "SUMMARY:" . $row['LIBELLE_DATECOMMISSION'] . "\n";
+                    //$ics .= "LOCATION:Unknown\n";
+                    $ics .= "DESCRIPTION:" . $row['LIBELLE_DATECOMMISSION'] . $descriptifAdd . "\n";
+                    $ics .= "UID:" . date('Ymd') . "T" . date('His') . "-" . rand() . "prevarisc\n";
+                    $ics .= "SEQUENCE:0\n";
+                    $ics .= "DTSTAMP:" . date('Ymd') . "T" . date('His') ."\n";
+
+                    $ics .= "END:VEVENT\n";
+                    $ics .= "END:VCALENDAR\n";
+                }
+            }
+            
+            echo $ics;
+        }
+        
+         public function exportoutlookmoisAction() {
+            $idComm = $this->_getParam("CommId");
+            $mois =   $this->_getParam("Mois");  
+            $annee =  $this->_getParam("Annee");
+            
+            $this->view->layout()->disableLayout();
+            $this->_helper->viewRenderer->setNoRender(true);
+            
+           
+            
+            $ics = "";
+            
+            if ($idComm != null && $mois !=null && $annee !=null) {
+                
+                $dbDateCommission = new Model_DbTable_DateCommission;
+                $dbCommission = new Model_DbTable_Commission;
+                $dossiersaff = new Model_DbTable_DossierAffectation;
+                
+                
+                $commissions=$dbDateCommission->getMonthCommission($mois,$annee,$idComm);
+                $commissionArray=$dbCommission->getLibelleCommissions($idComm);
+                
+                
+                $libellecommission = $commissionArray[0];
+             
+                if (!empty($commissions)) {
+                    header("Content-Type: text/Calendar");
+                    header("Content-Disposition: inline; filename=calendar_".$mois."_".$annee."_".$libellecommission['LIBELLE_COMMISSION'].".ics"); 
+                    
+                    $ics .= "BEGIN:VCALENDAR\n";
+                    $ics .= "VERSION:2.0\n";
+                    $ics .= "PRODID:SDIS62/Prevarisc\n";
+                                      
+                    foreach($commissions as $commissiondujour)
+                   {             
+                    
+                    $dateStart = str_replace("-", "", $commissiondujour['DATE_COMMISSION']); 
+                    $dateStart .= "T" . str_replace(":", "", $commissiondujour['HEUREDEB_COMMISSION']);
+                    $dateEnd = str_replace("-", "", $commissiondujour['DATE_COMMISSION']);
+                    $dateEnd .= "T" . str_replace(":", "", $commissiondujour['HEUREFIN_COMMISSION']);
+                    $descriptifAdd = "";
+
+                    $descriptifAdd .= " / Commission : " . $libellecommission['LIBELLE_COMMISSION'];
+                    
+                    $dossieraffecte=$dossiersaff->getListDossierAffect($commissiondujour['ID_DATECOMMISSION']);
+                   
+                    if(!empty($dossieraffecte))
+                    {    
+                    $descriptifAdd  .= " / Ordre du jour : ";
+                    foreach($dossieraffecte as $dossier)
+                    {
+                     $descriptifAdd .=$dossier['OBJET_DOSSIER'].";";
+                    }
+                    }
+                
+                    $ics .= "BEGIN:VEVENT\n";
+                    $ics .= "ORGANIZER:prevarisc@atos.net\n";
+                    $ics .= "DTSTART:" . $dateStart . "\n";
+                    //$ics .= "DTEND:20160101T010000\n";
+                    $ics .= "DTEND:" . $dateEnd . "\n";
+                    $ics .= "SUMMARY:" . $commissiondujour['LIBELLE_DATECOMMISSION'] . "\n";
+                    //$ics .= "LOCATION:Unknown\n";
+                    $ics .= "DESCRIPTION:" . $commissiondujour['LIBELLE_DATECOMMISSION'] . $descriptifAdd . "\n";
+                    $ics .= "END:VEVENT\n";
+                   }
+                   
+                   $ics .="END:VCALENDAR\n";
+                                     
+                }
+                
+            }
+            
+            echo $ics;
+        }
+        
+        
 }

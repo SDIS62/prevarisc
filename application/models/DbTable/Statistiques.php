@@ -9,7 +9,7 @@
 
         private $ets_date;
 
-        // Début : liste des ERP
+        // Dï¿½but : liste des ERP
         public function listeDesERP($date)
         {
             if($date == null) $date = date("d/m/Y", time());
@@ -39,6 +39,7 @@
                     "DATE_ETABLISSEMENTINFORMATIONS"
                 ))
                 ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("ID_AVIS" => "AVIS_DOSSIER_COMMISSION"))
+                ->joinLeft("avis", "dossier.AVIS_DOSSIER = avis.ID_AVIS", array("LIBELLE_AVIS" => "LIBELLE_AVIS"))
                 ->joinLeft("commission", "commission.ID_COMMISSION = etablissementinformations.ID_COMMISSION", "LIBELLE_COMMISSION")
                 ->joinLeft("categorie", "etablissementinformations.ID_CATEGORIE = categorie.ID_CATEGORIE", "LIBELLE_CATEGORIE")
                 ->joinLeft("etablissementadresse", "e.ID_ETABLISSEMENT = etablissementadresse.ID_ETABLISSEMENT", array("NUMERO_ADRESSE", "COMPLEMENT_ADRESSE"))

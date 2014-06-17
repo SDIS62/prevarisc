@@ -2,7 +2,7 @@
     class Model_DbTable_DateCommission extends Zend_Db_Table_Abstract
     {
         protected $_name="datecommission"; // Nom de la base
-        protected $_primary = "ID_DATECOMMISSION"; // Clé primaire
+        protected $_primary = "ID_DATECOMMISSION"; // Clï¿½ primaire
 
         public function addDateComm($date,$heureD,$heureF,$idComm,$type,$libelle)
         {
@@ -42,6 +42,24 @@
             ";
             //echo $select;
 
+            return $this->getAdapter()->fetchAll($select);
+        }
+        public function getNextCommission($date, $next_date)
+        {
+            $select = "SELECT *
+                FROM datecommission d
+                LEFT JOIN commission c ON d.COMMISSION_CONCERNE = c.ID_COMMISSION
+                WHERE DATE_COMMISSION BETWEEN '".date('Y-m-d', $date)."' AND '".date('Y-m-d', $next_date)."'
+                ORDER BY DATE_COMMISSION, HEUREDEB_COMMISSION";
+            return $this->getAdapter()->fetchAll($select);
+        }
+        
+        public function getMonthCommission($mois,$annee,$idcom)
+        {
+            $select = "SELECT *
+                FROM datecommission
+                WHERE MONTH(DATE_COMMISSION) = '".$mois."'  AND   YEAR(DATE_COMMISSION) = '".$annee."'
+                AND COMMISSION_CONCERNE = '".$idcom."'";
             return $this->getAdapter()->fetchAll($select);
         }
 
@@ -99,7 +117,7 @@
             return $this->getAdapter()->query($select);
         }
 
-        //pour la gestion des ordres du jour récup des date liées
+        //pour la gestion des ordres du jour rï¿½cup des date liï¿½es
         public function getCommissionsDateLieesMaster($idComm)
         {
             $select = "SELECT *

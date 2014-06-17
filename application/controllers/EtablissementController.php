@@ -14,6 +14,7 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
+        $this->view->key_googlemap = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('googlemap')['key'];
 
         $this->view->etablissement = $etablissement;
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
@@ -61,7 +62,8 @@ class EtablissementController extends Zend_Controller_Action
         if($this->_request->isPost()) {
             try {
                 $post = $this->_request->getPost();
-                $service_etablissement->save($post['ID_GENRE'], $post, $this->_request->id, $post['date']);
+                $date = date("Y-m-d H:i:s");
+                $service_etablissement->save($post['ID_GENRE'], $post, $this->_request->id, $date);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement a bien été mis à jour.'));
                 $this->_helper->redirector('index', null, null, array('id' => $this->_request->id));
             }
