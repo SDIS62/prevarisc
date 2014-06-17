@@ -62,7 +62,7 @@ h2 small {
 }
 
 h2.page-header {
-    margin-top: 70px;
+    margin-top: 0px;
 }
 
 /* On règle la navbar en mode "super sleek"
@@ -164,7 +164,7 @@ body.error .well {
 footer {
     color: #999999;
     font-size: .9em;
-    background-color: #BCBCBC;
+    background-color: #f4f4f4;
     padding: 10px 20px;
     margin-left:-20px;
     margin-right:-20px; 
@@ -1003,4 +1003,13 @@ a.list-group-item-danger.active:focus {
   font-size:10px;  
   text-decoration: underline;   
  }
-
+ 
+ .listcom{
+  margin-left: 15px;   
+  margin-top:0px;
+  margin-bottom: 0px;
+ }
+ .heurcom{
+  color:#08c;     
+ }
+ 

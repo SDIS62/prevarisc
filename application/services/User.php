@@ -37,11 +37,20 @@ class Service_User
         $user = $this->find($id_user);
         $profil = $user['infos']['LIBELLE_FONCTION'];
 
-        $etablissements = $commissions = $dossiers = array();
-
+        $etablissements = $commissions = $dossiers = $erpSansPreventionniste = $etablissementAvisDefavorable = $listeDesDossierDateCommissionEchu = $listeDesCourrierSansReponse = $prochainesCommission = array();
+       
+        $dateCommission = new Model_DbTable_DateCommission;
+        $prochainesCommission = $dateCommission->getNextCommission(time(), time() + 3600 * 24 * 15);
+        $dbEtablissement = new Model_DbTable_Etablissement;
+        $etablissementAvisDefavorable = $dbEtablissement->listeDesERPSousAvisDefavorable(); 
+        $dbDossier = new Model_DbTable_Dossier ;
+        $listeDesDossierDateCommissionEchu = $dbDossier->listeDesDossierDateCommissionEchu();
+        
+       
         // Définition des données types par profil
         switch($profil) {
           case 'Secrétariat':
+            $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse(5);  
             if(count($user['commissions']) > 0) {
               $dbDossierAffectation = new Model_DbTable_DossierAffectation;
               $dbDateCommission = new Model_DbTable_DateCommission;
@@ -104,8 +113,8 @@ class Service_User
             break;
 
           case 'Préventionniste':
-            // Etablissements liés
-
+            // Etablissements Sans Preventionniste
+            $erpSansPreventionniste = $dbEtablissement->listeERPSansPreventionniste();
             // Ets 1 - 4ème catégorie
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
@@ -162,7 +171,12 @@ class Service_User
         return array(
           'etablissements' => $etablissements,
           'dossiers' => $dossiers,
-          'commissions' => $commissions
+          'commissions' => $commissions,
+          'erpSansPreventionniste' => $erpSansPreventionniste,
+          'etablissementAvisDefavorable' => $etablissementAvisDefavorable,
+          'dossierCommissionEchu' => $listeDesDossierDateCommissionEchu,
+          'CourrierSansReponse' => $listeDesCourrierSansReponse,  
+          'prochainesCommission' => $prochainesCommission      
         );
     }
 

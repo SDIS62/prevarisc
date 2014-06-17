@@ -1,3 +1,42 @@
+<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
+<input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>'/>
+<ul class="nav nav-tabs nav-stacked menu_dashboard" >
+    <li>
+        <a href="#" id='commissionPj'><i class="icon-share icon-black"></i> Pièces jointes</a>        
+    </li>
+    <li class="nav-header">Actions</li>
+    <li>
+        <a id='exportCom'  href='/calendrier-des-commissions/exportoutlook/dateCommId/<?php echo $this->infosDateComm['ID_DATECOMMISSION']; ?>' ><i class='icon-calendar'></i> Exporter pour Outlook</a>       
+    </li>
+    <li>
+        <a href="#" id='createConvoc'><i class="icon-file"></i> Générer Convocations</a>        
+    </li>
+    <li>
+        <a href="#" id='createOdj'><i class="icon-list-alt"></i> Génerer l'ordre du jour</a>        
+    </li>
+    <li>
+        <a href="#" id='createPv'><i class="icon-file"></i> Génerer PV</a>        
+    </li>
+    <li>
+        <a href="#" id='creationCompteRendu'><i class="icon-book"></i> Génerer le compte rendu</a>        
+    </li>
+    <li>
+        <?php if($this->infosDateComm['GESTION_HEURES'] == 1): ?>
+                <a href="#" class="heures" id='non'><i class="icon-time"></i> Ne pas prendre en compte les heures</a> 
+        <?php else : ?>        
+                <a href="#" class="heures" id='oui'><i class="icon-time"></i> Prendre en compte les heures</a> 
+        <?php endif ?>        
+    </li>
+</ul>
+<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
+<?php $this->placeholder('page_header')->captureStart();  ?>
+    <h2 class="page-header">
+    Ordre du jour de la <a href='/calendrier-des-commissions?idComm=<?php echo $this->infosDateComm["COMMISSION_CONCERNE"] ?>' > <?php echo $this->infosCommission['LIBELLE_COMMISSION'] ?> </a> du <?php echo $this->dateFr ?>
+    </h2>
+<?php $this->placeholder('page_header')->captureEnd(); ?>
+<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+<?php $this->placeholder('before_content')->captureEnd() ?>
+
 <script type="text/javascript">
 $(document).ready(function() {
 
@@ -391,21 +430,12 @@ $(document).ready(function() {
 			<input type='hidden' name='dateOdj' id='dateOdj' value='".$this->infosDateComm['DATE_COMMISSION']."' />
 			<input type='hidden' name='heureDeb' id='heureDeb' value='".$this->infosDateComm['HEUREDEB_COMMISSION']."' />
 			<input type='hidden' name='heureFin' id='heureFin' value='".$this->infosDateComm['HEUREFIN_COMMISSION']."' />
-			<h2>Ordre du jour de la <a href='/calendrier-des-commissions?idComm=".$this->infosDateComm["COMMISSION_CONCERNE"]."' >".$this->infosCommission['LIBELLE_COMMISSION']."</a> du ".$this->dateFr."</h2><br/>
 			<h3>".$this->infosDateComm['LIBELLE_DATECOMMISSION'];
 
 			echo "</h3>";
-			
-			if($this->infosDateComm['GESTION_HEURES'] == 1){
-				echo "<button class='heures btn' id='non'  >Ne pas prendre en compte les heures</button>";
-			}else{
-				echo "<button class='heures btn' id='oui'  >Prendre en compte les heures</button>";
-			}
-	echo "	
-			<br/>
-			<input type='hidden' name='dateCommId' id='dateCommId' value='".$this->infosDateComm['ID_DATECOMMISSION']."' />
-			<br/>
-	";
+
+	echo "	<input type='hidden' name='dateCommId' id='dateCommId' value='".$this->infosDateComm['ID_DATECOMMISSION']."' />
+		";
 
 	
 	if(count($this->recupCommLiees) > 1){	
@@ -434,17 +464,6 @@ $(document).ready(function() {
 	}
 	
 	echo "
-                <button id='commissionPj' class='btn' >Pièces jointes</button>
-                &nbsp;
-                <button id='createConvoc' class='btn' >Générer Convocations</button>
-                &nbsp;
-                <button id='createOdj' class='btn' >Génerer l'ordre du jour</button>
-                &nbsp;
-                <button id='createPv' class='btn' >Génerer PV</button>
-                &nbsp;
-                <button id='creationCompteRendu' class='btn' >Génerer le compte rendu</button>
-                <a id='exportCom' class='btn floating_right' href='/calendrier-des-commissions/exportoutlook/dateCommId/" . $this->infosDateComm['ID_DATECOMMISSION'] . "' ><i class='icon-calendar'></i> Exporter pour Outlook</a>
-                <br/><br/>
                 <div id='infoGeneration'></div>
                 <br/>
 	";
