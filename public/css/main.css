@@ -1004,12 +1004,22 @@ a.list-group-item-danger.active:focus {
   text-decoration: underline;   
  }
  
- .listcom{
-  margin-left: 15px;   
-  margin-top:0px;
-  margin-bottom: 0px;
+ .listcom{  
+  margin-top: 10px;
  }
  .heurcom{
   color:#08c;     
  }
- 
+ .proch-com{
+    padding: 10px 10px 10px 10px;
+    border-width:1px;
+    border-style:solid;
+    border-color:#ddd;
+    margin-top: 3px;
+    border-radius: 5px;
+    background-color:#FCFCFC;
+ }
+ .jourcom{
+   font-size:12px;
+   color: #6E6D6D;
+ }

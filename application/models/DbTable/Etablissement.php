@@ -280,7 +280,7 @@
         public function listeDesERPSousAvisDefavorable()
         {
                       
-            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS from  etablissementinformations,dossier,etablissement,etablissementdossier
+            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS,DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) as PERIODE from  etablissementinformations,dossier,etablissement,etablissementdossier
                    WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                    AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                    AND dossier.ID_DOSSIER  = etablissementdossier.ID_DOSSIER
@@ -307,16 +307,24 @@
         
         public function listeErpOuvertSansProchainesVisitePeriodiques()
         {
-                      
-            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,ei.ID_ETABLISSEMENT ,ed.ID_DOSSIER from  etablissementinformations ei,etablissementdossier ed,etablissement e
-                   WHERE ID_STATUT = 2
-                   AND ed.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT
-                   AND ed.ID_DOSSIER not in (SELECT dossier.id_dossier FROM dossier, dossiernature WHERE (dossier.TYPE_DOSSIER = 2 OR dossier.TYPE_DOSSIER = 3) AND dossier.ID_DOSSIER = dossiernature.ID_DOSSIER AND dossiernature.ID_NATURE = 26  AND dossier.ID_DOSSIER in (select ID_DOSSIER_AFFECT from datecommission,dossieraffectation where ID_DATECOMMISSION_AFFECT = ID_DATECOMMISSION AND DATEDIFF( DATE_COMMISSION ,CURDATE()) > 0) GROUP BY dossier.id_dossier)
-                   AND ei.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations eii WHERE eii.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )
-				   GROUP BY ei.ID_ETABLISSEMENT    
-                   ";
-                 
-            return $this->getAdapter()->fetchAll($select);
+            $select = "SELECT LIBELLE_ETABLISSEMENTINFORMATIONS,ei.ID_ETABLISSEMENT ,ed.ID_DOSSIER, MAX(DATE_ADD(c.DATE_COMMISSION, INTERVAL ei.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH)) AS DATECOM
+                      FROM etablissementinformations ei
+                      LEFT JOIN etablissementdossier ed ON ed.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT
+                      LEFT JOIN dossier d ON ed.ID_DOSSIER = d.ID_DOSSIER 
+                      LEFT JOIN dossiernature nd ON d.ID_DOSSIER = nd.ID_DOSSIER 
+                      LEFT JOIN dossieraffectation da ON da.ID_DOSSIER_AFFECT = d.ID_DOSSIER 
+                      LEFT JOIN datecommission c ON da.ID_DATECOMMISSION_AFFECT = c.ID_DATECOMMISSION
+                      WHERE d.TYPE_DOSSIER IN (2,3)
+                      AND nd.ID_NATURE IN (21,26) 
+                      AND ei.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations eii WHERE eii.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT )  
+                      AND ei.ID_STATUT = 2
+                      GROUP BY ei.ID_ETABLISSEMENT 
+                      ";
+             return $this->getAdapter()->fetchAll($select);
         }
+        
+        
+        
+          
 
     }
