@@ -62,11 +62,11 @@
         <?php if ( $this->action == "index" ) :
             $verrou = true;
             if ($this->infosDossier['VERROU_DOSSIER'] == 1  || (isset($action) && $action == 'new')) {
-                $label = "Dévérouiller";
+                $label = "Déverrouiller";
                 $idLink = "DEVERROU";
             }
             else { 
-                $label = "Vérouiller";
+                $label = "Verrouiller";
                 $idLink = "VERROU";
                 $verrou = false;
             } ?>
