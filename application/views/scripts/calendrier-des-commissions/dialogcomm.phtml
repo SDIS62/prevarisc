@@ -178,7 +178,6 @@ if(isset($this->do) && $this->do == 'edit'){
 				".divAddDate()."
 			<br/>
 	";
-	echo afficheDivPeriodicite(count($this->listeDates),$this->do);
 	//Pour la planification elle n'es possible que l'orsque l'on choisi une seule date
 	echo "
 			</form>
@@ -257,32 +256,7 @@ if(isset($this->do) && $this->do == 'edit'){
 			<br/>
 	";
 	echo afficheDivPeriodicite(count($this->listeDates),$this->do);
-		/*
-			//Pour la planification elle n'es possible que l'orsque l'on choisi une seule date
-			if(count($this->listeDates) > 1)
-				$disp = "none";
-			else
-				$disp = "block";
-			echo "
-					<p id='addReapeat' style='display:".$disp."'; >
-						Souhaitez vous planifier cette commission sur une période donnée ?<input type='checkbox' name='repeat' id='repeat'/>
-					</p>
-					<br/>
-					<p id='planification' style='display:none;'>
-						Saisissez la date jusqu'à laquelle vous souhaitez planifier cette commission :
-						<input type='text' class='date' name='dateFin' id='dateFin' />
-						<br/>
-						La commission a lieu toute les
-							<select name='periodicite' id='periodicite'>
-			";
-			foreach($periodicite as $num => $jour){
-					echo "<option value='".$jour."' >".$jour."</option>";
-			}
-			echo "
-						</select>&nbsp;semaines
-				</p>
-			";
-		*/
+
 	echo "
 			</form>
 	";
