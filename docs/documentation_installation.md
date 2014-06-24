@@ -1,5 +1,3 @@
-Title: Installation de Prevarisc
-
 # Documentation d'installation #
 
 ## Etape 1 : installation d'un serveur web Debian ##
