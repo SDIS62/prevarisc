@@ -1,5 +1,0 @@
-<phpunit bootstrap="Bootstrap.php">
-    <testsuite name="Application Test Suite">
-        <directory>.</directory>
-    </testsuite>
-</phpunit>
