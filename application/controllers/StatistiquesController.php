@@ -6,12 +6,14 @@
         private $liste = array (
             "ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle" => "Extraction 1 : CCDSA Liste ERP en exploitation connus soumis à contrôle",
             "liste-des-erp-sous-avis-defavorable" => "Extraction 2 : Liste des ERP sous avis défavorable",
-            "prochaines-visites-de-controle-periodique-a-faire-sur-une-commune" => "Extraction 3 : Prochaines visites de contrôle périodique à faire sur une commune"
+            "prochaines-visites-de-controle-periodique-a-faire-sur-une-commune" => "Extraction 3 : Prochaines visites de contrôle périodique à faire sur une commune",
+            "liste-erp-avec-visite-periodique-sur-un-an" => "Extraction 4 : Liste ERP avec des visites périodiques sur 1 an"
         );
 
         public function init()
         {
-
+            ob_end_clean();
+            $this->_helper->layout->setLayout('dashboard');
             // On prépare me XML pour l'extraction et la génération
             while (list($key, $val) = each($this->liste)) {
                 $this->_helper->contextSwitch()->addActionContext($key, array('json', 'xml'));
@@ -30,21 +32,19 @@
 
         public function extractionProcess($champs_supplementaires, $noms_des_colonnes_a_afficher, Model_DbTable_Statistiques $requete)
         {
-
+          
             // Si on interroge l'action en json, on demande les champs supplémentaires
             if ($this->_getParam("format") == "json" ) {
                 $this->view->result = $champs_supplementaires;
             } else {
-
-                $model_stat = new Model_DbTable_Statistiques;
-
+               $model_stat = new Model_DbTable_Statistiques;
                 $this->view->columns = $noms_des_colonnes_a_afficher;
                 $this->view->results = $requete->go();
                 $this->view->titre = array(
                     "normalize" => $this->_request->getActionName(),
                     "full" => $this->liste[$this->_request->getActionName()]
                 );
-
+                
                 $this->render("extraction");
             }
         }
@@ -57,7 +57,8 @@
             if ($this->_getParam("format") != "json") {
                 $date = new Zend_Date($this->_getParam("date"), Zend_Date::DATES);
                 $this->view->resume = "Liste ERP en exploitation connus soumis à contrôle à la date du " . $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
-            }
+               
+                }
 
             $this->extractionProcess(
                 array (
@@ -66,10 +67,9 @@
                     )
                 ), array(
                     "Libellé" => "LIBELLE_ETABLISSEMENTINFORMATIONS",
-                    "Adresse" => array("NUMERO_ADRESSE", "LIBELLE_RUE", "CODEPOSTAL_COMMUNE", "LIBELLE_COMMUNE"),
                     "Commune" => "LIBELLE_COMMUNE",
                     "Arrondissement" => "ARRONDISSEMENT",
-                    "Type" => "ID_TYPE",
+                    "Type" => "LIBELLE_TYPE",
                     "Catégorie" => "LIBELLE_CATEGORIE",
                     "Date dernière visite de contrôle" => "DATEVISITE_DOSSIER",
                     //"Date prochaine visite de contrôle" => "DATEVISITE_DOSSIER",
@@ -77,7 +77,6 @@
                 ), $model_stat->listeDesERP($this->_getParam("date"))->enExploitation()->sousmisAControle()
             );
         }
-
         // Extraction 2 : Liste des ERP sous avis défavorable
         public function listeDesErpSousAvisDefavorableAction()
         {
@@ -110,7 +109,6 @@
                     )
                 ), array(
                     "Libellé" => "LIBELLE_ETABLISSEMENTINFORMATIONS",
-                    "Adresse" => array("NUMERO_ADRESSE", "LIBELLE_RUE", "CODEPOSTAL_COMMUNE", "LIBELLE_COMMUNE"),
                     "Commune" => "LIBELLE_COMMUNE",
                     "Arrondissement" => "ARRONDISSEMENT",
                     "Type" => "ID_TYPE",
@@ -165,7 +163,6 @@
                     ),
                 ), array(
                     "Libellé" => "LIBELLE_ETABLISSEMENTINFORMATIONS",
-                    "Adresse" => array("NUMERO_ADRESSE", "LIBELLE_RUE", "CODEPOSTAL_COMMUNE", "LIBELLE_COMMUNE"),
                     "Commune" => "LIBELLE_COMMUNE",
                     "Type" => "ID_TYPE",
                     "Catégorie" => "LIBELLE_CATEGORIE",
@@ -176,4 +173,44 @@
             );
 
         }
+        
+         // Extraction 4 : Liste ERP liées au commission de visite periodique dans une année
+        public function listeErpAvecVisitePeriodiqueSurUnAnAction()
+        {  
+            $model_stat = new Model_DbTable_Statistiques;
+            $dateDebut = date("01/01/".date("Y"), time());
+            $dateFin = date("31/12/".date("Y"), time());
+                      
+            if ($this->_getParam("format") != "json") {
+                $date = new Zend_Date($this->_getParam("date"), Zend_Date::DATES);
+                $this->view->resume = "Liste ERP avec des visites periodiques à partir du " . $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
+            }
+
+            $this->extractionProcess(
+                array (
+                    "date" => array (
+                        "label" => "visite périodique du", "type" => "date", "data" => $dateDebut
+                    ),
+                    "datefin" => array (
+                        "label" => "au", "type" => "date", "data" => $dateFin
+                    ),
+                    "iderp" => array ( "label" => "", "type" => "id","data" => "ID_ETABLISSEMENT"
+                    )    
+                ), array(
+                    "Commune" => "LIBELLE_COMMUNE",
+                    "Libellé" => "LIBELLE_ETABLISSEMENTINFORMATIONS",
+                    "Prevenstionniste" => "PRENOM_UTILISATEURINFORMATIONS",
+                    "Type" => "LIBELLE_TYPE",
+                    "Catégorie" => "LIBELLE_CATEGORIE",
+                    "Date de prochaine visite" => "DATEVISITE_DOSSIER",
+                    "Date limite de prochaine visite" => "PERIODICITE_ETABLISSEMENTINFORMATIONS",
+                    "Commission" => "LIBELLE_COMMISSION"
+                ), $model_stat->listeDesERPVisitePeriodique($this->_getParam("date"),$this->_getParam("datefin"))
+                    
+            );
+            
+            
+            
+        }
+ 
     }
