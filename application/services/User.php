@@ -37,22 +37,48 @@ class Service_User
         $user = $this->find($id_user);
         $profil = $user['infos']['LIBELLE_FONCTION'];
 
-        $etablissements = $commissions = $dossiers = $erpsanspreventionniste = $etablissementavisdefavorable = $listdossier = $listcourrier = $dbCommission =  $Firstcommission = array();
+        $etablissements = $commissions = $dossiers = $erpSansPreventionniste = $etablissementAvisDefavorable = $listeDesDossierDateCommissionEchu = $listeDesCourrierSansReponse = $prochainesCommission = $NbrDossiersAffect = $listeErpOuvertSansProchainesVisitePeriodiques = array();
        
-        $Commission = new Model_DbTable_Commission;
-        $dbCommission = $Commission->getAllCommissions();
-        $Datecommission = new Model_DbTable_DateCommission;
-        $Firstcommission = $Datecommission->getNextCommission(time(), time() + 3600 * 24 * 15);
-        $etablissement = new Model_DbTable_Etablissement;
-        $etablissementavisdefavorable = $etablissement->listeDesERPSousAvisDefavorable(); 
-        $erpsanspreventionniste = $etablissement->listeERPSansPreventionniste();
-        $dossier = new Model_DbTable_Dossier ;
-        $listdossier = $dossier->listeDesDossierDateCommissionEchu();
-        $listcourrier = $dossier->listeDesCourrierSansReponse(5);
-       
+        $dateCommission = new Model_DbTable_DateCommission;
+        $prochainesCommission = $dateCommission->getNextCommission(time(), time() + 3600 * 24 * 15);
+        $dbEtablissement = new Model_DbTable_Etablissement;
+        $etablissementAvisDefavorable = $dbEtablissement->listeDesERPSousAvisDefavorable(); 
+        $dbDossier = new Model_DbTable_Dossier ;
+        $listeDesDossierDateCommissionEchu = $dbDossier->listeDesDossierDateCommissionEchu();
+        $dbDossierAffectation = new Model_DbTable_DossierAffectation;
+        foreach($prochainesCommission as $commissiondujour)
+        { 
+            //Si on prend en compte les heures on récupère uniquement les dossiers n'ayant pas d'heure de passage
+            $listeDossiersAffect = $dbDossierAffectation->getListDossierAffect($commissiondujour['ID_DATECOMMISSION']);
+            $dbDossier = new Model_DbTable_Dossier;
+            $service_etablissement = new Service_Etablissement;
+            $nbrdossier=0;
+            $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = 0;
+                foreach($listeDossiersAffect as $val => $ue)
+                {
+                    //On recupere la liste des établissements qui concernent le dossier
+                    $listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+                     //on recupere la liste des infos des établissement
+                    if($nbrdossier == 0)
+                    {
+                       $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = 0; 
+                    }                    
+                    if(count($listeEtab) > 0)
+                    {  $nbrdossier++;
+                       $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = $nbrdossier ;
+                    }
+               }            
+        }
+        
+        //Liste des Erp sans commission périodique alors que c'est ouvert 
+         $listeErpOuvertSansProchainesVisitePeriodiques = $dbEtablissement->listeErpOuvertSansProchainesVisitePeriodiques();
+        
+        
+        
         // Définition des données types par profil
         switch($profil) {
           case 'Secrétariat':
+            $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse(5);  
             if(count($user['commissions']) > 0) {
               $dbDossierAffectation = new Model_DbTable_DossierAffectation;
               $dbDateCommission = new Model_DbTable_DateCommission;
@@ -115,8 +141,8 @@ class Service_User
             break;
 
           case 'Préventionniste':
-            // Etablissements liés
-
+            // Etablissements Sans Preventionniste
+            $erpSansPreventionniste = $dbEtablissement->listeERPSansPreventionniste();
             // Ets 1 - 4ème catégorie
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
@@ -174,12 +200,13 @@ class Service_User
           'etablissements' => $etablissements,
           'dossiers' => $dossiers,
           'commissions' => $commissions,
-          'erpsanspreventionniste' => $erpsanspreventionniste,
-          'etablissementavisdefavorable' => $etablissementavisdefavorable,
-          'dossiercommissionechu' => $listdossier,
-          'courrier' => $listcourrier,  
-          'commissionsListe' => $dbCommission, 
-          'firstcommission' => $Firstcommission      
+          'erpSansPreventionniste' => $erpSansPreventionniste,
+          'etablissementAvisDefavorable' => $etablissementAvisDefavorable,
+          'dossierCommissionEchu' => $listeDesDossierDateCommissionEchu,
+          'CourrierSansReponse' => $listeDesCourrierSansReponse,  
+          'prochainesCommission' => $prochainesCommission,   
+          'NbrDossiersAffect' =>  $NbrDossiersAffect, 
+          'ErpSansProchaineVisitePeriodeOuvert'=>$listeErpOuvertSansProchainesVisitePeriodiques      
         );
     }
 

@@ -2,49 +2,81 @@
        <div class="panel-heading">
        Alertes
        </div>
-        <ul class="list-group">
-          <?php
-          
-            //var_dump($this->etablissementsanspreventionniste);
-             foreach($this->etablissementsanspreventionniste as $erpsansprev)
+       <ul class="list-group">
+           <?php
+           $nbrAlert=0;
+                foreach($this->etablissementAvisDefavorable as $avis)
                 { ?>
+
                   <li class="list-group-item">
-                  <i class="icon-pencil icon-black" ></i>    
-                  <span class="badge badge-important">Important</span>
-                  <?php
-                       if($erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
+
+                   <span class="badge badge-important">Urgent</span>
+                   <a href='etablissement/index/id/<?php echo $avis['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>  
+                    <?php 
+                       if($avis['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
                        {
-                           echo "<a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>   L'établissement &quot; ".$erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']." &quot; est sans préventionnistes </a>";
+                        echo "L'établissement <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
+                        $nbrAlert++;   
                        }
-                       
                        else 
                        {
-                       $datedemodif = new DateTime($erpsansprev['DATE_ETABLISSEMENTINFORMATIONS']);    
-                       echo "<a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>   L'établissement du &quot; ".$datedemodif->format('d/m/y')." &quot; est sans préventionnistes </a>";
+                         $datedemodif = new DateTime($avis['DATE_ETABLISSEMENTINFORMATIONS']);    
+                         echo "L'établissement du <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
+                         $nbrAlert++;  
                        }
-                     ?>   
+                       ?>  
+
                   </li>   
-        
+
                 <?php 
-         
+
                 }
-                ?>
+            ?>
             
             <?php
-            foreach($this->courrier as $courrier)
-                { ?>
+            foreach($this->erpSansPreventionniste as $erpsansprev)
+                { 
+                 ?>
                    <li class="list-group-item">
+                   <a href='etablissement/index/id/<?php echo $erpsansprev['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>   
+                   <span class="badge badge-warning">Important</span>
+                   <?php
+                        if($erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
+                        {
+                            echo "L'établissement <a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'> &quot;".$erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sans préventionnistes";
+                            $nbrAlert++;  
+                        }
+
+                        else 
+                        {
+                            $datedemodif = new DateTime($erpsansprev['DATE_ETABLISSEMENTINFORMATIONS']);    
+                            echo "L'établissement du <a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sans préventionnistes";
+                            $nbrAlert++;  
+                        }
+                      ?>   
+                   </li>   
+
+                   <?php 
+
+                }
+            ?>
+            
+            <?php
+            foreach($this->CourrierSansReponse as $courrier)
+                { ?>
+                <li class="list-group-item">
                     
-                   <span class="badge badge-important">Important</span>
-                   <i class="icon-pencil icon-black" > </i>
+                   <span class="badge badge-warning">Important</span>
+                    <a href='/dossier/index/id/<?php echo $courrier['ID_DOSSIER'] ?>'><i class="icon-pencil icon-black" ></i></a>   
                   <?php
                        if($courrier['DATEREP_DOSSIER']==null)
                        { 
-                           echo "<a href='/dossier/index/id/".$courrier['ID_DOSSIER']."'>  Le courrier/courriel  &quot; ".$courrier['OBJET_DOSSIER']." &quot; est sans réponse depuis plus de 5 jours </a>";
+                           echo "Le courrier/courriel  &quot;<a href='/dossier/index/id/".$courrier['ID_DOSSIER']."'>".$courrier['OBJET_DOSSIER']."</a>&quot; est sans réponse depuis plus de 5 jours ";
+                           $nbrAlert++;                          
                        }
                         ?> 
                    
-                  </li>   
+                </li>   
         
                 <?php 
          
@@ -53,79 +85,75 @@
              
             
               <?php
-               foreach($this->dossiercommissionechu as $dossier)
+                foreach($this->dossierCommissionEchu as $dossier)
                 { ?>
                   <li class="list-group-item">
-                      <i class="icon-pencil icon-black" ></i>   
+                  <a href='/dossier/index/id/<?php echo $dossier['ID_DOSSIER'] ?>'><i class="icon-pencil icon-black" ></i></a>   
                   <span class="badge badge-info">Info</span>
                   <?php
                        if($dossier['OBJET_DOSSIER']!=null)
                        {
-                       echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier  &quot; ".$dossier['OBJET_DOSSIER']." &quot; de la commission échue &quot; ".$dossier['LIBELLE_DATECOMMISSION']." &quot; est sans avis de la commission</a>";
-                       
+                       echo "Le dossier <a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>&quot;".$dossier['OBJET_DOSSIER']."&quot;</a> de la commission échue <a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>&quot;".$dossier['LIBELLE_DATECOMMISSION']."&quot;</a> est sans avis de la commission";
+                       $nbrAlert++;
                        }
                        else
                        {
-                           $datecreation = new DateTime($dossier['DATEINSERT_DOSSIER']);
-                           echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier du ".$datecreation->format('d/m/y')." (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue &quot; ".$dossier['LIBELLE_DATECOMMISSION']." &quot; est sans avis de la commission</a>";
-                          
+                        $datecreation = new DateTime($dossier['DATEINSERT_DOSSIER']);
+                        echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier du ".$datecreation->format('d/m/y')." (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue &quot;".$dossier['LIBELLE_DATECOMMISSION']."&quot; est sans avis de la commission</a>";
+                        $nbrAlert++;
                        }
                        ?>      
                   </li>   
         
                 <?php 
-         
+                }
+                if($nbrAlert==0)
+                {?>
+                 <li>Aucune alerte</li>   
+               <?php 
+                }
+                
+                foreach($this->ErpSansProchaineVisitePeriodeOuvert as $esp)
+                {?>
+                    <li class="list-group-item">
+                    <a href='<?php echo $this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $esp['ID_ETABLISSEMENT']), null, true) ?>'><i class="icon-pencil icon-black" ></i></a>   
+                    <span class="badge badge-info">Info</span>
+                <?php
+                    if($esp['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
+                    {
+                    $datecom = new DateTime($esp['DATECOM']); 
+                    echo "La prochaine visite périodique l'établissement &quot;<a href='etablissement/index/id/".$esp['ID_ETABLISSEMENT']."'>".$esp['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> doit etre programmée avant le ".$datecom->format('d/m/y').":";
+                    echo "<a href='".$this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $esp['ID_ETABLISSEMENT']), null, true)."'> programmer une visite </a>";
+                    $nbrAlert++;  
+                    }   
                 }
                 ?>
-                
-          
-          
-               <?php
-                foreach($this->etablissementavisdefavorable as $avis)
-                { ?>
-                  
-                  <li class="list-group-item">
-                    
-                   <span class="badge badge-important">Important</span>
-                   <i class="icon-pencil icon-black" > </i>
-                    <?php 
-                       if($avis['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
-                       {
-                       echo "<a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'> L'établissement &quot; ".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']." &quot; est sous un avis défavorable depuis dix jours</a>";
-                       }
-                       else 
-                       {
-                       $datedemodif = new DateTime($avis['DATE_ETABLISSEMENTINFORMATIONS']);    
-                       echo "<a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'> L'établissement du &quot; ".$datedemodif->format('d/m/y')." &quot; est sous un avis défavorable depuis dix jours</a>";
-                       }
-                       ?>  
-                  
-                  </li>   
-                
-                <?php 
-         
-                }
-                ?>
+                    </li>
+        
      </ul>  
     </div>
 
-     <div class="panel panel-default">
-     <div class="panel-heading">
-     Prochaines commissions
-     </div>
-         <ul class="list-group">
-     <?php  
-     $nbrcommission=0;    
-     
-     if($this->firstcommission!=NULL)
-     {   
-         foreach($this->commissionsListe as $commission)
-         {
-               foreach($this->firstcommission as $commissiondujour)
-             {             
-                if($commission['ID_COMMISSION']==$commissiondujour['COMMISSION_CONCERNE'])
-                {
-                    $nbrcommission++;
+    <div class="panel panel-default">
+    <div class="panel-heading">
+    Prochaines commissions
+    </div>
+    <?php
+      $commissionsDossier = array();
+      foreach($this->NbrDossiersAffect as $nbrDossier)
+      {
+           $commissionsDossier[] = $nbrDossier;
+      }
+      ?>    
+    <?php  
+    if($this->prochainesCommission!=NULL)
+    { 
+            $jours = array ('Dimanche', 'Lundi', 'Mardi','Mercredi','Jeudi','Vendredi','Samedi');
+            $gardeAujourdhui = 0; 
+            $gardeDemain = 0; 
+            $numCommission = 0;
+            foreach($this->prochainesCommission as $commissiondujour)
+            {             
+                               
                     $datec = new DateTime($commissiondujour['DATE_COMMISSION']);
                     if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
                         $class="badge-info";
@@ -139,29 +167,69 @@
                     }
                    
                 ?>
-        <li class='list-group-item'>
-        <i class="icon-pencil icon-black" ></i>     
-        <span class='badge <?php echo $class ?>'><?php echo $message ?></span>      
-         
-            <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['ID_DATECOMMISSION'];?>"
-            >
+                <div class="listcom">        
+                    <strong class="jourcom">       
+                    <?php
+
+                        $date = new DateTime($commissiondujour['DATE_COMMISSION']);
+                        $aujourdhui = date('d/m/y');
+                        $demain = date('d/m/y', strtotime('+1 day')); 
+                        if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui == 0)
+                        {    
+                            echo "Aujourd'hui";
+                            $gardeAujourdhui++;
+                        }
+                        else if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui != 0)
+                        {
+                             $gardeAujourdhui++;
+                        }
+                        else if($demain == $date->format('d/m/y') && $gardeDemain == 0)
+                        {
+                            echo "Demain";
+                            $gardeDemain++;
+                        } 
+                        else if($demain == $date->format('d/m/y') && $gardeDemain != 0)
+                        {
+                            $gardeDemain++;
+                        }
+                        else
+                        {   
+                            $passe = date ('w', mktime (0,0,0,$date->format('m'),$date->format('d'),$date->format('y')));
+                            echo "".$jours[$passe]." ".$date->format('d/m/y');  
+                        }    
+                    ?>
+                    </strong>   
+
+                    <div class='proch-com'>
+                        <span class='badge <?php echo $class ?>' style="margin-left:3px; float: right;"><?php  echo $commissionsDossier[$numCommission];  ?></span>
+                        <span class='badge <?php echo $class ?>' style="float: right;"><?php echo $message ?></span>      
+
+                        <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['ID_DATECOMMISSION'];?>">
+                            <strong> 
+                            <?php
+
+                               echo "".$commissiondujour['LIBELLE_COMMISSION'];
+                               echo '-'.$commissiondujour['LIBELLE_DATECOMMISSION'];
+                            ?> 
+                            </strong>       
+
+                         </a>
+                       
+                        <p class="heurcom">    
+                            <?php
+                              $HeureDebut = new DateTime($commissiondujour['HEUREDEB_COMMISSION']);
+                              $HeureFin = new DateTime($commissiondujour['HEUREFIN_COMMISSION']);
+                              echo "".$HeureDebut->format('H:i')." - ".$HeureFin->format('H:i');
+
+                             ?> 
+                        </p>
+
+                    </div>
+                </div>             
                 <?php
-                
-                   $date = new DateTime($commissiondujour['DATE_COMMISSION'].' '.$commissiondujour['HEUREDEB_COMMISSION']);
-                   echo "Le ".$date->format('d/m à H:i');
-                   echo " : ".$commission['LIBELLE_COMMISSION'];
-                   echo '-'.$commissiondujour['LIBELLE_DATECOMMISSION'];
-                ?> 
-             
-            </a> 
-       
-       </li>
-                    
-                <?php
-                }   
-             }  
-         }
-     }
+                $numCommission++;
+            }  
+    }
      else
      {
       ?>
@@ -175,7 +243,7 @@
      <?php
      }    
      ?>
-    </ul>                
+                   
     </div>
 
 <div class="grid-sizer"></div>

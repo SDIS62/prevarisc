@@ -1,26 +1,41 @@
-<!-- Titre -->
-<h2>Calendrier des commissions</h2>
+<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
+<input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>'/>
+<ul class="nav nav-tabs nav-stacked menu_dashboard" >
+    <li>
+        <a id='exportCom'  href='#' style="display:none">
+            <i class="icon-calendar"></i> Exporter pour Outlook
+        </a>
+    </li>
+    <?php if($this->array_commissions): ?>
+        <?php foreach($this->array_commissions as $array_commission): ?>
+            <?php if (isset($array_commission["ARRAY"]) && count($array_commission["ARRAY"]) > 0): ?>
+                <li class="nav-header">
+                <?php echo htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES) ?>
+                <?php foreach($array_commission["ARRAY"] as $item) : ?>
+                    <li active><a href="#" class="commissionLink" data-value='<?php echo $item["ID_COMMISSION"] ?>'><?php echo htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES) ?></a></li>
+                <?php endforeach ?>
+                </li>
+            <?php endif ?>
+        <?php endforeach ?>
+    <?php endif ?>
+
+    <li class="nav-header">Légende</li>
+    <li><a><span class="label label-info">En salle</span></a></li>
+    <li><a><span class="label label-warning">Groupe de visite</span></a></li>
+    <li><a><span class="label label-success">Visite de sécurité</span></a></li>
+</ul>
+<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
+<?php $this->placeholder('page_header')->captureStart();  ?>
+    <h2 class="page-header">
+        Calendrier des commissions 
+    </h2>
+<?php $this->placeholder('page_header')->captureEnd(); ?>
+<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+<?php $this->placeholder('before_content')->captureEnd() ?>
 <input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>' />
-<select id='commissionSelect' class='bigger' >
-	<option value='0'>Choix d'une commission ...</option>
-	<?php foreach($this->array_commissions as $array_commission) : ?>
-	<optgroup label='<?php echo htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES) ?>' >
-		<?php foreach($array_commission["ARRAY"] as $item) : ?>
-		<option value='<?php echo $item["ID_COMMISSION"] ?>' ><?php echo htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES) ?></option>
-		<?php endforeach ?>
-	</optgroup>
-	<?php endforeach ?>
-</select>
+
 
 &nbsp;
-
-<span class="label label-info">En salle</span>
-<span class="label  label-success">Visite de sécurité</span>
-<span class="label label-warning">Groupe de visite</span>
-
-<a id='exportCom'  class='btn floating_right' href='#' style="display:none">
-    <i class="icon-calendar"></i> Exporter pour Outlook
-</a>
 
 <div id='infosCom' style='display:none;'></div>
 
@@ -33,23 +48,20 @@
 	$(document).ready( function() {
                 if($("#idCommission").val() != '')
 		{
-                    $('#exportCom').show();
-                    $('#aff_calendar').button( 'option', 'disabled', false );
-                    $('#ordre_jour').button( 'option', 'disabled', false );
-                    $('#commissionSelect').val($("#idCommission").val());
-                    $('#calendar').html('').afficheCalendar($("#idCommission").val());
-                    $('#selectComm').hide();
+                    $(".commissionLink[data-value='"+$("#idCommission").val()+"'").click();
                 }
     	});
                    
 
 	// Selection de la commission
-	$("#commissionSelect").live('change',function() {
-            $("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + $(this).find("option:selected").val() + "' />");
+        $(".commissionLink").live('click',function() {
+            var idCommission = $(this).attr('data-value');
+            $("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + idCommission + "' />");
             $("#aff_calendar").button( "option", "disabled", false );
             $("#ordre_jour").button( "option", "disabled", false );
-            $("#calendar").html('').afficheCalendar($("#commissionId").attr('value'),'calendrierComm');    
-	});
+            $("h2.page-header").html('Calendrier de la commission "'+$(this).html()+'"');
+            $("#calendar").html('').afficheCalendar(idCommission,'calendrierComm');    
+        });
 	
 	( function($) {
 		$.fn.afficheCalendar = function(idComm,emplacement) {
@@ -81,7 +93,7 @@
                         slotMinutes: 5, //Permet d'afficher un interval de 10 minutes au lieu de 30 par défaut
                         selectHelper: true,
                         firstDay: 1,
-                        weekends: false,
+                        weekends: true,
                         monthNames : ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin','Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'],
                         monthAbbrevs : ['Jan','Fev','Mar','Avr','Mai','Juin','Juil','Aout','Sep','Oct','Nov','Dec'],
                         dayNames : ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
@@ -255,7 +267,7 @@
                             var date = $("#calendar").fullCalendar('getDate');
                             var month_int = date.getMonth()+1;
                             var year_int = date.getFullYear();
-                            $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionSelect").val()+"/Mois/"+month_int+"/Annee/"+year_int);
+                            $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionId").val()+"/Mois/"+month_int+"/Annee/"+year_int);
                             $('#exportCom').show(); 
                         }	
                     });	
