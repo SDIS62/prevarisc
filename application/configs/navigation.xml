@@ -1124,7 +1124,11 @@
 				<ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
 					<controller>statistiques</controller>
 					<action>ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle</action>
-				</ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>	
+				</ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
+                                <liste-erp-avec-visite-periodique-sur-un-an>
+					<controller>statistiques</controller>
+					<action>liste-erp-avec-visite-periodique-sur-un-an</action>
+				</liste-erp-avec-visite-periodique-sur-un-an>	
 				<liste-des-erp-sous-avis-defavorable>
 					<controller>statistiques</controller>
 					<action>liste-des-erp-sous-avis-defavorable</action>

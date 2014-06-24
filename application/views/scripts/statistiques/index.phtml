@@ -1,4 +1,21 @@
-<h2 class='page-header'>Statistiques et extractions</h2>
+<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
+<ul class="nav nav-tabs nav-stacked menu_dashboard" >
+    <li class="nav-header">Actions</li>
+    <li>
+    <a href="#" id="voir" style="display: none;"><i class="icon-search"></i>  Générer</a>
+    </li>
+    <li>
+    <a href="#" id="export" style="display: none;"><i class="icon-align-center"></i>  Exporter vers XML</a>
+    </li>
+</ul>
+<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
+<?php $this->placeholder('page_header')->captureStart();  ?>
+    <h2 class="page-header">
+    Statistiques et extractions
+    </h2>
+<?php $this->placeholder('page_header')->captureEnd(); ?>
+<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
+<?php $this->placeholder('before_content')->captureEnd() ?>
 
 <form id="formulaire_stats" class="form-inline well">
 
@@ -11,8 +28,7 @@
 	
 	<span id="champssupps"></span>
 	
-	<button id="voir" class='btn btn-small' disabled>Voir</button>
-	<button id="export" class='btn btn-small' disabled>Exporter vers XML</button>
+	
 	
 </form>
 
@@ -25,14 +41,14 @@
 	$("#demande").change(function() {
 	
 		$("#champssupps").html(""); // on vide les champs supplémentaires
-		$("#voir, #export").attr("disabled", true); // On disable les boutons
+		$("#voir, #export").show(); // On disable les boutons
 		
 		var href = $(this).find("option:selected").attr("href");
 	
-		// On charge les champs supplémentaires
+                // On charge les champs supplémentaires
 		if(href != "") {
 			$.getJSON(href + "?format=json", function(data) {
-			
+			        
 				// Si il n'y a pas de champs supplémentaire, on annule
 				if(data.result == undefined)
 					return;
@@ -41,7 +57,7 @@
 				
 					// Création du label
 					var label = "<label>" + val.label + "</label>";
-					
+				
 					// Création du champ en fonction du type
 					var champ = "";
 					switch(val.type) {
@@ -56,8 +72,12 @@
 						case "date" :
 							champ = "<input type='text' class='date' name='" + key + "' value='" + val.data + "' size=7 style='text-align: center' />";
 							break;
-							
-						default :
+                                                case "datefin" :
+                                                        champ = "<input type='text' class='date' name='" + key + "' value='" + val.data + "' size=7 style='text-align: center' />";
+							break;
+                                                case "id" :
+                                                        break;
+                                                default :
 							alert("Type inconnu : " + val.type);
 							return;
 							break;
@@ -68,10 +88,12 @@
 					$("#champssupps").html( oldhtml + label + champ);
 				});
 			});
-			
-			// On enable les boutons
-			$("#voir, #export").attr("disabled", false); // On disable les boutons
 		}
+                else
+                {
+                
+			$("#voir, #export").hide(); // On disable les liens
+                }
 	});
 	
 	$("#voir").click(function() {
