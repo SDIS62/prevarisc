@@ -7,7 +7,7 @@
 	<thead>
 		<tr>
 			<?php foreach($this->columns as $column => $db) : ?>
-			<th><?php echo $column; $nbcolumn=0; $date=null; ?></th>
+			<th><?php echo $column ?></th>
 			<?php endforeach ?>
 		</tr>
 	</thead>
@@ -17,11 +17,6 @@
 			<?php foreach($this->columns as $column => $db) : ?>
 			<td>
 				<?php
-                                $nbcolumn++;
-                                if($nbcolumn==8)
-                                {
-                                  $nbcolumn=0;  
-                                }    
 				if(is_array($db)) {
 					while (list($key, $val) = each($db)) {
 						
@@ -31,33 +26,9 @@
 				else if(preg_match('/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/', $row[$db])) {
 					$date = new Zend_Date($row[$db], Zend_Date::DATES);
 					echo $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
-				
-                                }
-				else if($row[$db] != null && $db!='PERIODICITE_ETABLISSEMENTINFORMATIONS')
-                                {
-                                    echo $row[$db];
-                                }
-                                else if($row[$db]==null && $nbcolumn==6 && $db=='DATEVISITE_DOSSIER')
-                                {
-                                    echo "<a href='/dossier/add/id_etablissement/".$row['ID_ETABLISSEMENT']."'>Programmer une visite </a>"; 
-                                }
-                                 else if($row[$db]==null && $nbcolumn==3 && $db=='PRENOM_UTILISATEURINFORMATIONS')
-                                {
-                                    echo "<a href='/etablissement/edit/id/".$row['ID_ETABLISSEMENT']."'>Ajouter un préventionniste </a>"; 
-                                }
-                                if($nbcolumn==7)
-                                {
-                                    if($date != null) {
-                                            if( $row[$db] != 0) {
-                                                $date = new Zend_Date($date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
-                                                $date->add($row[$db], Zend_Date::MONTH);
-                                                $next_visite =  $date->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT."  ".Zend_Date::YEAR );
-                                                echo  $next_visite;
-                                            }  
-                                    } 
-                                    $date=null;
-                                }
-                                ?>
+				}
+				else echo $row[$db];
+				?>
 			</td>
 			<?php endforeach ?>
 		</tr>
