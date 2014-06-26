@@ -71,7 +71,7 @@
                   <?php
                        if($courrier['DATEREP_DOSSIER']==null)
                        { 
-                           echo "Le courrier/courriel  &quot;<a href='/dossier/index/id/".$courrier['ID_DOSSIER']."'>".$courrier['OBJET_DOSSIER']."</a>&quot; est sans réponse depuis plus de 5 jours ";
+                           echo "Le courrier/courriel  &quot;<a href='/dossier/index/id/".$courrier['ID_DOSSIER']."'>".$courrier['OBJET_DOSSIER']."</a>&quot; est sans réponse depuis ".($courrier['DATERETARDREPONSE'] * -1)." jours ";
                            $nbrAlert++;                          
                        }
                         ?> 
@@ -99,7 +99,7 @@
                        else
                        {
                         $datecreation = new DateTime($dossier['DATEINSERT_DOSSIER']);
-                        echo "<a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>  Le dossier du ".$datecreation->format('d/m/y')." (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue &quot;".$dossier['LIBELLE_DATECOMMISSION']."&quot; est sans avis de la commission</a>";
+                        echo "Le dossier du <a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>   ".$datecreation->format('d/m/y')."</a> (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue &quot;".$dossier['LIBELLE_DATECOMMISSION']."&quot; est sans avis de la commission";
                         $nbrAlert++;
                        }
                        ?>      

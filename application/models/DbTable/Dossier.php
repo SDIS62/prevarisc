@@ -289,7 +289,7 @@
         public function listeDesCourrierSansReponse($duree_en_jour = 5)
         {
                       
-            $select= "select OBJET_DOSSIER ,DATEREP_DOSSIER ,ID_DOSSIER from dossier 
+            $select= "select OBJET_DOSSIER ,DATEREP_DOSSIER , DATEDIFF(DATEINSERT_DOSSIER,CURDATE()) as DATERETARDREPONSE, ID_DOSSIER from dossier 
                    WHERE TYPE_DOSSIER = 5
                    AND DATEDIFF(DATEINSERT_DOSSIER,CURDATE()) <= ".((int) $duree_en_jour * -1);
             
