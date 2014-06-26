@@ -45,7 +45,6 @@
                     "full" => $this->liste[$this->_request->getActionName()]
                 );
                 
-                $this->render("extraction");
             }
         }
 
@@ -54,11 +53,11 @@
         {
             $model_stat = new Model_DbTable_Statistiques;
 
-            if ($this->_getParam("format") != "json") {
+            if ($this->_getParam("format") != "json") 
+            {
                 $date = new Zend_Date($this->_getParam("date"), Zend_Date::DATES);
                 $this->view->resume = "Liste ERP en exploitation connus soumis à contrôle à la date du " . $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
-               
-                }
+            }
 
             $this->extractionProcess(
                 array (
@@ -76,13 +75,18 @@
                     "Commission"=> "LIBELLE_COMMISSION"
                 ), $model_stat->listeDesERP($this->_getParam("date"))->enExploitation()->sousmisAControle()
             );
+            if ($this->_getParam("format") != "json") 
+            {
+                $this->render("extraction");
+            }
         }
         // Extraction 2 : Liste des ERP sous avis défavorable
         public function listeDesErpSousAvisDefavorableAction()
         {
             $model_stat = new Model_DbTable_Statistiques;
 
-            if ($this->_getParam("format") != "json") {
+            if ($this->_getParam("format") != "json") 
+            {
                 $date = new Zend_Date($this->_getParam("date"), Zend_Date::DATES);
                 $this->view->resume = "Liste ERP en exploitation sous avis défavorable à la date du " . $date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
             }
@@ -118,6 +122,9 @@
                     "Nombre de jours écoulés sous avis défavorable par rapport à la date renseignée"=> "NBJOURS_DEFAVORABLE"
                 ), $model_stat->listeDesERP($this->_getParam("date"))->enExploitation()->sousAvisDefavorable()->trierPar($this->_getParam("tri"))
             );
+           if ($this->_getParam("format") != "json") {
+            $this->render("extraction");
+            }
         }
 
         // Extraction 3 : Prochaines visites de contrôle périodique à faire sur une commune
@@ -171,7 +178,9 @@
                     "Commission"=> "LIBELLE_COMMISSION"
                 ), $model_stat->listeDesERP($this->_getParam("date"))->enExploitation()->sousmisAControle()->surLaCommune($this->_getParam("commune"))->trierPar($this->_getParam("tri"))
             );
-
+            if ($this->_getParam("format") != "json") {
+            $this->render("extraction");
+            }
         }
         
          // Extraction 4 : Liste ERP liées au commission de visite periodique dans une année
@@ -194,23 +203,75 @@
                     "datefin" => array (
                         "label" => "au", "type" => "date", "data" => $dateFin
                     ),
-                    "iderp" => array ( "label" => "", "type" => "id","data" => "ID_ETABLISSEMENT"
-                    )    
-                ), array(
+                    "tri" => array (
+                        "label" => "Tri sur une colonne",
+                        "type" => "select",
+                        "data" => array (
+                            "Commune" => "LIBELLE_COMMUNE",
+                            "Commission" => "ID_COMMISSION",
+                            "Etablissement" => "LIBELLE_ETABLISSEMENTINFORMATIONS",
+                            "Type" => "ID_TYPE",
+                            "Catégorie" => "ID_CATEGORIE",
+                            "Date de prochaine visite" => "DATEVISITE_DOSSIER",
+                        )
+                    ),
+                    "iderp" => array ( 
+                        "label" => "", "type" => "id","data" => "ID_ETABLISSEMENT"
+                    )
+                ),
+                array(
                     "Commune" => "LIBELLE_COMMUNE",
-                    "Libellé" => "LIBELLE_ETABLISSEMENTINFORMATIONS",
-                    "Prevenstionniste" => "PRENOM_UTILISATEURINFORMATIONS",
+                    "Etablissement" => "LIBELLE_ETABLISSEMENTINFORMATIONS",
+                    "Prevenstionniste" => "NOM_UTILISATEURINFORMATIONS",
                     "Type" => "LIBELLE_TYPE",
                     "Catégorie" => "LIBELLE_CATEGORIE",
                     "Date de prochaine visite" => "DATEVISITE_DOSSIER",
                     "Date limite de prochaine visite" => "PERIODICITE_ETABLISSEMENTINFORMATIONS",
                     "Commission" => "LIBELLE_COMMISSION"
-                ), $model_stat->listeDesERPVisitePeriodique($this->_getParam("date"),$this->_getParam("datefin"))
+                ), 
+                $model_stat->listeDesERPVisitePeriodique($this->_getParam("date"),$this->_getParam("datefin"))->trierPar($this->_getParam("tri"))
                     
-            );
+            ); 
             
-            
-            
+            if ($this->_getParam("format") != "json") 
+            {
+                $results = $this->view->results;
+                foreach($results as $key => $row) 
+                {
+                    if($row['DATEVISITE_DOSSIER'] == null)
+                    {
+                        $results[$key]['DATEVISITE_DOSSIER'] = "<a href='/dossier/add/id_etablissement/".$row['ID_ETABLISSEMENT']."'>Programmer une visite</a>";
+                    }
+                    if($row['NOM_UTILISATEURINFORMATIONS'] == null)
+                    {
+                        $results[$key]['NOM_UTILISATEURINFORMATIONS'] =  "<a href='/etablissement/edit/id/".$row['ID_ETABLISSEMENT']."'>Ajouter un préventionniste</a>"; 
+                    }
+
+                    if($row['PERIODICITE_ETABLISSEMENTINFORMATIONS']!=0)
+                    {
+
+                        if($row['DATEVISITE_DOSSIER'] != null) 
+                        {
+                            $date = $row['DATEVISITE_DOSSIER'];
+                            $d = new DateTime($date);
+                            $i=new DateInterval('P'.$row['PERIODICITE_ETABLISSEMENTINFORMATIONS'].'M');
+                            $d->add($i);
+                            $results[$key]['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $d->format('Y-m-d');                      
+                        } 
+                        else
+                        {
+                            $results[$key]['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = "";    
+                        }    
+
+                    }
+                    else 
+                    {
+                       $results[$key]['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = "<a href='/etablissement/edit/id/".$row['ID_ETABLISSEMENT']."'>Modifier la periodicité</a>"; 
+                    }
+                }
+                $this->view->results = $results;
+                $this->render("extraction");
+            }
         }
  
     }
