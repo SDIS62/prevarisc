@@ -185,7 +185,7 @@
 				<gestion-des-commissions>
 					<label>Gestion des Commissions</label>
 					<controller>gestion-des-commssions</controller>
-					<resource>commission</resource>
+					<resource>gestion_parametrages</resource>
 					<privilege>gestion_commissions</privilege>
 					<pages>
 						<index>
