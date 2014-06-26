@@ -72,7 +72,7 @@ resources.db.params.username = root
 resources.db.params.password = root
 resources.db.params.dbname = prevarisc
 ```
-* Taper : ```chown –R wwwh-data:www-data *```
+* Taper : ```chown –R www-data:www-data *```
 * Taper : ```chmod –R 555 *```
 * Taper : ```chmod –R 755 public/```
 
