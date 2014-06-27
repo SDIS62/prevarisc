@@ -4,12 +4,6 @@
     </ul>
 </noscript>
 
-<?php if(APPLICATION_ENV == "testing") : ?>
-    <ul class="unstyled" >
-        <li class="alert alert-warning"><strong class="alert-warning">Environnement TESTING</strong> Vous êtes sur une version de test, des bugs ou ralentissements peuvent apparaître.</li>
-    </ul>
-<?php endif ?>
-
 <?php if( $this->flashMessenger()->hasMessages()) : ?>
     <ul class="unstyled" >
         <?php echo $this->flashMessenger()->output(); ?>
