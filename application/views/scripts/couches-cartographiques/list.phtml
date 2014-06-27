@@ -20,7 +20,7 @@
     <p class='text-right'><a class='btn' href='<?php echo $this->url(array('controller' => 'couches-cartographiques', 'action' => 'add'), null, true) ?>'>Ajouter une couche</a></p>
 
     <div id='geoportail-container'  style="height: 250px; max-height: 250px;"></div>
-    <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
+    <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/2.0.3/GeoportalExtended.js"></script>
     <script>
         $(document).ready(function() {
             viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {

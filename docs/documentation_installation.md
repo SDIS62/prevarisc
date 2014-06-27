@@ -2,7 +2,7 @@
 
 ## Etape 1 : installation d'un serveur web Debian ##
 
-Deux options s'offre à vous :
+Deux options s'offrent à vous :
 * soit une installation définitive sur un serveur dédié (voir étape 1a)
 * soit une installation de test sur un poste de travail (ordinateur de bureau ou portable) (voir étape 1b)
 
@@ -13,7 +13,7 @@ Deux options s'offre à vous :
 
 ### Etape 1b : installation d'un serveur Debian sur Oracle VM VirtualBox ###
 
-* Télécharger Oracle VM VirtualBox et son pack d'extension (https://www.virtualbox.org/wiki/Downloads)
+* Télécharger Oracle VM VirtualBox et son pack d'extensions (https://www.virtualbox.org/wiki/Downloads)
 * Télécharger la version stable de Debian (classiquement version i386 avec interface xfce)
 * Installer Oracle VM VirtualBox et exécuter le programme
 * Aller dans le menu Fichiers->Paramètres puis Extension et ajouter l’Extension Pack
@@ -49,7 +49,7 @@ où ?? est le numéro de département et enregistrer
 ## Etape 3 : installation de Prevarisc ##
 
 * Depuis le navigateur Iceweasel, télécharger le fichier compressé de prevarisc depuis “https://github.com/SDIS62/prevarisc” dans votre dossier “Downloads”
-* Taper : ```mv /home/$USER/Downloads/prevarisc-master.zip /var/www/``` ou $USER est votre nom d’utilisateurde la session
+* Taper : ```mv /home/$USER/Downloads/prevarisc-master.zip /var/www/``` ou $USER est votre nom d’utilisateur de la session
 * Taper : ```7z x prevarisc-master.zip```
 * Taper : ```mv prevarisc-master prevarisc```
 * Taper : ```chmod 755 prevarisc```
@@ -72,8 +72,7 @@ resources.db.params.username = root
 resources.db.params.password = root
 resources.db.params.dbname = prevarisc
 ```
-* Taper : ```mv ./docs/db/MCD\ Prevarisc\ avec\ Mysql\ Workbench.mwb /home/$USER/Downloads``` où $USER est le nom d’utilisateur de la session
-* Taper : ```chown –R wwwh-data:www-data *```
+* Taper : ```chown –R www-data:www-data *```
 * Taper : ```chmod –R 555 *```
 * Taper : ```chmod –R 755 public/```
 
