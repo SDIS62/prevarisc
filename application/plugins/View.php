@@ -10,15 +10,15 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('view');
 
             // Chargement de la navigation par défaut
-            $view->navigation(new Zend_Navigation(new Zend_Config_Xml(APPLICATION_PATH . DS . 'configs' . DS . 'navigation.xml', 'nav')));
+            $view->navigation(new Zend_Navigation(new Zend_Config_Xml(APPLICATION_PATH . DS . 'navigation.xml', 'nav')));
 
             // On définie le titre de l'application
             $view->headTitle(strip_tags($view->navigation()->breadcrumbs()->setMinDepth(0)->setSeparator(" / ")));
-                
+
             // Liens vers les fichiers combinés CSS / JS
             $view->inlineScript()->appendFile("/js/application.combined.js")->appendFile("/js/jquery.dateentry.js");
             $view->headLink()->appendStylesheet('/css/application.combined.css', 'all');
-            
+
             // Envoi de la version en cours sur la vue
             $view->version_prevarisc = '1.2.1';
 
@@ -41,7 +41,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
 
             // On charge la vue correctement configurée dans le viewRenderer
             $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-            $viewRenderer->setView($view); 
+            $viewRenderer->setView($view);
         }
     }
 }
