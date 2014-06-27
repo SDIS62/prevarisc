@@ -62,7 +62,7 @@ class EtablissementController extends Zend_Controller_Action
         if($this->_request->isPost()) {
             try {
                 $post = $this->_request->getPost();
-                $date = date("Y-m-d H:i:s");
+                $date = date("Y-m-d");
                 $service_etablissement->save($post['ID_GENRE'], $post, $this->_request->id, $date);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement a bien été mis à jour.'));
                 $this->_helper->redirector('index', null, null, array('id' => $this->_request->id));
