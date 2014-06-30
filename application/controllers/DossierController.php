@@ -2593,7 +2593,7 @@ class DossierController extends Zend_Controller_Action
                 for ($i = 0; $i < count($articleArray); $i++) {
                     //pour chacun des articles et des textes on verifie leurs existance ou non
                     if ($articleArray[$i] != '') {
-                        $article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".$articleArray[$i]."'")->toArray();
+                        $article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".addslashes($articleArray[$i])."'")->toArray();
                         if (count($article) == 0) {
                             //l'article n'existe pas donc on l'enregistre
                             $article = $dbArticle->createRow();
@@ -2609,7 +2609,7 @@ class DossierController extends Zend_Controller_Action
                     }
 
                     if ($texteArray[$i] != '') {
-                        $texte = $dbTexte->fetchAll("LIBELLE_TEXTE LIKE '".$texteArray[$i]."'")->toArray();
+                        $texte = $dbTexte->fetchAll("LIBELLE_TEXTE LIKE '".addslashes($texteArray[$i])."'")->toArray();
                         if (count($texte) == 0) {
                             //le texte n'existe pas donc on l'enregistre
                             $texte = $dbTexte->createRow();
@@ -2673,7 +2673,7 @@ class DossierController extends Zend_Controller_Action
                 for ($i = 0; $i < count($articleArray); $i++) {
                     //pour chacun des articles et des textes on verifie leurs existance ou non
                     if ($articleArray[$i] != '') {
-                        $article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.$articleArray[$i].'"')->toArray();
+                        $article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.addslashes($articleArray[$i]).'"')->toArray();
                         if (count($article) == 0) {
                             //l'article n'existe pas donc on l'enregistre
                             $article = $dbArticle->createRow();
@@ -2689,7 +2689,7 @@ class DossierController extends Zend_Controller_Action
                     }
 
                     if ($texteArray[$i] != '') {
-                        $texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.$texteArray[$i].'"')->toArray();
+                        $texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.addslashes($texteArray[$i]).'"')->toArray();
                         if (count($texte) == 0) {
                             //le texte n'existe pas donc on l'enregistre
                             $texte = $dbTexte->createRow();
