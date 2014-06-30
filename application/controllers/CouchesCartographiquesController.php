@@ -8,7 +8,7 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 
         $service_carto = new Service_Carto;
         $this->view->couches_cartographiques = $service_carto->getAll();
-        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
+        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
     }
 
     public function addAction()

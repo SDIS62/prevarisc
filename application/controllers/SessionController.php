@@ -37,17 +37,17 @@ class SessionController extends Zend_Controller_Action
                     // Création de l'adapter d'authentification via LDAP
                     $adapter = new Zend_Auth_Adapter_Ldap();
 
-                    // Récupération des paramètres LDAP
-                    $ldap_options = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ldap');
-
-                    if ($ldap_options['enabled'] != 1) {
+                    if (getenv('PREVARISC_LDAP_ENABLED') != 1) {
                         throw new Zend_Auth_Exception('Authentification LDAP non activée');
                     }
 
-                    unset($ldap_options['enabled']);
-
                     // On associe notre ldap à l'adapter
-                    $ldap = new Zend_Ldap($ldap_options);
+                    $ldap = new Zend_Ldap(array(
+                      'host' => getenv('PREVARISC_LDAP_HOST'),
+                      'username' => getenv('PREVARISC_LDAP_USERNAME'),
+                      'password' => getenv('PREVARISC_LDAP_PASSWORD'),
+                      'baseDn' => getenv('PREVARISC_LDAP_BASEDN')
+                    ));
                     $adapter->setLdap($ldap);
 
                     // On envoie les identifiants de connexion à l'adapter
@@ -59,11 +59,8 @@ class SessionController extends Zend_Controller_Action
                         throw new Zend_Auth_Exception('Les identifiants LDAP ne correspondent pas.');
                     }
                 } catch (Exception $ee) {
-                    // Si l'utilisateur est stocké en base, on analyse la correspondance du mot de passe entre celui en base et celui fourni
-                    $config_security = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('security');
-
                     // Si l'identification s'est bien passée, on envoie l'objet Model_user correspondant à l'utilisateur courant
-                    if (md5($username . $config_security['salt'] . $password) != $user['PASSWD_UTILISATEUR']) {
+                    if (md5($username . getenv('PREVARISC_SECURITY_SALT') . $password) != $user['PASSWD_UTILISATEUR']) {
                         throw new Zend_Auth_Exception('Les identifiants ne correspondent pas.');
                     }
                 }
