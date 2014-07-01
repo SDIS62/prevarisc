@@ -33,9 +33,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->registerHelper(new View_Helper_DateJqueryToBd, 'dateJqueryToBd');
             $view->registerHelper(new View_Helper_ListeGroupement, 'listeGroupement');
             $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
-            $view->registerHelper(new SDIS62_View_Helper_Navigation_BootstrapBreadcrumbs, 'bootstrapBreadcrumbs');
-            $view->registerHelper(new ZFBootstrap\View\Helper\Navigation\Menu, 'menu');
-
+            
             // Définition du partial de vue à utiliser pour le rendu d'une recherche
             Zend_View_Helper_PaginationControl::setDefaultViewPartial('search' . DIRECTORY_SEPARATOR . 'pagination_control.phtml');
 
