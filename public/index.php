@@ -31,7 +31,7 @@ $application = new Zend_Application('production', array(
       'controllerDirectory' => APPLICATION_PATH . '/controllers',
       'moduleDirectory' => APPLICATION_PATH . '/modules',
       'params' => array(
-        'displayExceptions' => getenv(PREVARISC_DEBUG_ENABLED)
+        'displayExceptions' => getenv('PREVARISC_DEBUG_ENABLED')
       )
     ),
     'db' => array(
