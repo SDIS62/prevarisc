@@ -23,18 +23,21 @@ Deux options s'offrent à vous :
 ## Etape 2 : installation du serveur web ##
 
 * Ouvrir une invite de commande et taper “su” puis le mot de passe administrateur
-* Taper : ```aptitude install apache2 mysql-server php5 php5-gd php5-ldap php5-mysql php-apc mysql-workbench curl git p7zip-full zendframework zendframework-bin```
+* Taper : ```aptitude install apache2 mysql-server php5 php5-gd php5-ldap php5-mysql php-apc mysql-workbench curl git p7zip-full```
 * A la demande, faire un clic droit sur le CD en bas pour remonter l’image debian-X.X.X-i386-xfce-CD-1.iso et appuyer sur “Enter”
 * Saisir le mot de passe “root” pour MySQL
 * Taper : ```a2enmod rewrite```
 * Taper : ```a2enmod expires```
 * Taper : ```a2enmod include```
-* Taper : ```vi /etc/apache2/apache2.conf```, insérer à la fin le code suivant :
+
+Votre serveur web est prêt à accueillir Prevarisc. Il faut maintenant configurer un VirtualHost afin de pouvoir d'une part y accéder via une URL bien définie, et d'autre part pour spécifier les valeurs de configuration.
+
+* Taper : ```nano /etc/apache2/apache2.conf```, insérer à la fin le code suivant :
 ```
 <VirtualHost *:80>
-    ServerName prevarisc.sdis??.fr
+    ServerName prevarisc.sdisxx.fr
     DocumentRoot /var/www/prevarisc/public
-    SetEnv APPLICATION_ENV “production”
+    SetEnv [CLE DE CONFIGURATION] [VALEUR]
     <Directory /var/www/prevarisc/public>
         DirectoryIndex index.php
         AllowOverride all
@@ -43,7 +46,32 @@ Deux options s'offrent à vous :
     </Directory>
 </VirtualHost>
 ```
-où ?? est le numéro de département et enregistrer
+
+Où xx est le numéro de département.
+
+Vous pouvez ajouter autant de clés de configuration associées à votre domaine que nécessaire.
+
+La liste complète des clés de configuration et des valeurs spécifiques associées :
+
+Clé de configuration | Description | Valeur possible
+-------------------- | ----------- | ---------------
+PREVARISC_DB_ADAPTER | Adaptateur à utiliser lors de la connexion à la base de données | Pdo_Mysql (recommandé) Pdo_Ibm Pdo_Mssql Pdo_Oci Pdo_Pgsql Pdo_Sqlite
+PREVARISC_DB_CHARSET | Encodage de la base de données | utf8
+PREVARISC_DB_HOST | Adresse de la base de données | Adresse IP
+PREVARISC_DB_USERNAME | Nom d'utilisateur à utiliser lors de la connexion à la base de données | Chaine de caractères
+PREVARISC_DB_PASSWORD | Mot de passe de connexion à la base de données | Chaine de caractères
+PREVARISC_DB_DBNAME | Nom de la base de données | Chaine de caractères
+PREVARISC_CACHE_LIFETIME | Durée de vie du cache APC | Valeur numérique (secondes)
+PREVARISC_SECURITY_SALT | Chaine utilisée pour le cryptage des mots de passe utilisateur | Chaine alphanumérique de longueur 32 (exemple : 7aec3ab8e8d025c19e8fc8b6e0d75227 salt utilisé par défaut)
+PREVARISC_LDAP_ENABLED | [FACULTATIF] Activation de la connexion des utilisateurs via LDAP | 1 ou 0
+PREVARISC_LDAP_HOST | [FACULTATIF] Adresse du serveur LDAP | Adresse IP
+PREVARISC_LDAP_USERNAME | [FACULTATIF] Nom d'utilisateur à utiliser lors de la connexion au LDAP | Chaine de caractères
+PREVARISC_LDAP_PASSWORD | [FACULTATIF] Mot de passe de connexion au LDAP | Chaine de caractères
+PREVARISC_LDAP_BASEDN | [FACULTATIF] Chaine de selection afin de trouver les utilisateurs dans le LDAP | Chaine de caractères (exemple : DC=sdisxx,DC=fr)
+PREVARISC_DEBUG_ENABLED | [FACULTATIF] Activation du mode debug | 1 ou 0
+PREVARISC_PLUGIN_IGNKEY | [FACULTATIF] Clé IGN pour afficher la carte | Valeur alphanumérique
+PREVARISC_PLUGIN_GOOGLEMAPKEY | [FACULTATIF] Clé Google Map pour afficher la carte (non recommandé) | Valeur alphanumérique
+
 * Taper :```/etc/init.d/apache2 restart```
 
 ## Etape 3 : installation de Prevarisc ##
@@ -55,23 +83,7 @@ où ?? est le numéro de département et enregistrer
 * Taper : ```chmod 755 prevarisc```
 * Taper : ```cd prevarisc```
 * Taper : ```curl https://getcomposer.org/installer | php```
-* Taper : ```php composer.phar install```
-* Taper : ```vi ./application/configs/secret.ini``` et insérer les lignes suivantes :
-```
-[general]
-ldap.host =
-ldap.port =
-ldap.username =
-ldap.password =
-ldap.baseDn =
-security.salt = [7aec3ab8e8d025c19e8fc8b6e0d75227]
-
-[production]
-resources.db.params.host = localhost
-resources.db.params.username = root
-resources.db.params.password = root
-resources.db.params.dbname = prevarisc
-```
+* Taper : ```php composer.phar install --prefer-source```
 * Taper : ```chown –R www-data:www-data *```
 * Taper : ```chmod –R 555 *```
 * Taper : ```chmod –R 755 public/```
@@ -93,7 +105,7 @@ resources.db.params.dbname = prevarisc
 * Cliquer sur Réseau et choisir un mode d’accès réseau “Accès par pont”
 * Ouvrir une invite de commande sur Debian, taper : ```su``` et le mot de passe, puis ```ifconfig``` et noter l’adresse IP eth0 (inet addr)
 * Fermer l’invite de commande
-* Sur le poste Windows, ouvrir le fichier C:\windows\system32\drivers\etc\hosts et ajouter la ligne avec l’adresse IP du serveur Debian suivi de “prevarisc.sdis??.fr”
+* Sur le poste Windows, ouvrir le fichier C:\windows\system32\drivers\etc\hosts et ajouter la ligne avec l’adresse IP du serveur Debian suivi de “prevarisc.sdis??.fr” (ou sinon, faire un enregistrement DNS)
 * Ouvrir Firefox et saisir http://prevarisc.sdis??.fr
 * A ce point vous devez être capable d'accéder à Prevarisc ! Le premier compte utilisateur est ```root```, mot de passe ```root``` (à désactiver le plus rapidement possible pour des raisons de sécurité).
 
@@ -103,7 +115,7 @@ Depuis un PC windows, installer le logiciel [MySQL WorkBench](http://www.mysql.f
 Vous pouvez maintenant ouvrir le fichier "docs/MCD Prevarisc avec Mysql Workbench.mwb".
 
 > Pourquoi utiliser ce logiciel ?
-> Cela nous permettra de simplifier les mises à jour de la base via une simple synchonisation.
+> Cela nous permettra de simplifier les mises à jour de la base via une simple synchronisation.
 
 Ce fichier représente le MCD complet de Prevarisc. Pour synchoniser votre serveur de base de données avec ce MCD, vous devez :
 * Menu Database > Synchronize model

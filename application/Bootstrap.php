@@ -14,9 +14,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         // Ajout des aides d'action
         Zend_Controller_Action_HelperBroker::addPath(
-			APPLICATION_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR . "helpers",
-			"Application_Controller_Helper_"
-		);
+            APPLICATION_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR . "helpers",
+            "Application_Controller_Helper_"
+        );
 
         return parent::run();
     }
@@ -26,11 +26,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initCache()
     {
-        // Import des paramètres de connexion à la base de données
-        $config_cache = $this->getOption('cache');
-
         return Zend_Cache::factory('Core', 'APC', array(
-            'lifetime' => $config_cache['lifetime'],
+            'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
             'cache_id_prefix' => 'prevarisc'
         ));
     }
@@ -40,11 +37,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initCacheSearch()
     {
-        // Import des paramètres de connexion à la base de données
-        $config_cache = $this->getOption('cache');
-
         return Zend_Cache::factory('Core', 'APC', array(
-            'lifetime' => $config_cache['lifetime'],
+            'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
             'cache_id_prefix' => 'prevarisc_search'
         ));
     }
@@ -93,6 +87,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initSession()
     {
-        Zend_Session::setOptions($this->getOption('session') ? $this->getOption('session') : array());
+        Zend_Session::setOptions(array());
     }
 }
