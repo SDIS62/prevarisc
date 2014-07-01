@@ -1,17 +1,16 @@
 {
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/kdubuc/odtphp"
-        }
-    ],
-    "require": {
-        "zendframework/zendframework1": "1.*",
-        "cybermonde/odtphp": "dev-master",
-        "michelf/php-markdown": "1.*",
-        "kdubuc/gd_resize": "dev-master",
-        "emagister/zend-form-decorators-bootstrap": "dev-master",
-        "kdubuc/zf1-navigation-view-helper-bootstrap": "dev-master",
-        "sdis62/toolbox": "dev-master"
+  "name": "SDIS62/prevarisc",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/kdubuc/odtphp"
     }
+  ],
+  "require": {
+    "zendframework/zendframework1": "1.*",
+    "cybermonde/odtphp": "1.*",
+    "michelf/php-markdown": "1.*",
+    "kdubuc/gd_resize": "1.*",
+    "SDIS62/toolbox": "1.*"
+  }
 }
