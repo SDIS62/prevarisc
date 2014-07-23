@@ -1,2608 +1,3414 @@
-CREATE DATABASE  IF NOT EXISTS `prevarisc` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `prevarisc`;
--- MySQL dump 10.13  Distrib 5.5.37, for debian-linux-gnu (i686)
---
--- Host: localhost    Database: prevarisc
--- ------------------------------------------------------
--- Server version	5.5.37-0+wheezy1
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `prescriptiontype`
---
-
-DROP TABLE IF EXISTS `prescriptiontype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptiontype` (
-  `ID_PRESCRIPTIONTYPE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `PRESCRIPTIONTYPE_CATEGORIE` bigint(20) DEFAULT NULL,
-  `PRESCRIPTIONTYPE_TEXTE` bigint(20) DEFAULT NULL,
-  `PRESCRIPTIONTYPE_ARTICLE` bigint(20) DEFAULT NULL,
-  `PRESCRIPTIONTYPE_LIBELLE` text,
-  PRIMARY KEY (`ID_PRESCRIPTIONTYPE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptiontype`
---
-
-LOCK TABLES `prescriptiontype` WRITE;
-/*!40000 ALTER TABLE `prescriptiontype` DISABLE KEYS */;
-/*!40000 ALTER TABLE `prescriptiontype` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `prescriptionarticle`
---
-
-DROP TABLE IF EXISTS `prescriptionarticle`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptionarticle` (
-  `ID_PRESCRIPTIONARTICLE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_PRESCRIPTIONARTICLE` varchar(255) DEFAULT NULL,
-  `NUM_PRESCRIPTIONARTICLE` int(11) DEFAULT NULL,
-  `ID_PRESCRIPTIONTEXTE` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_PRESCRIPTIONARTICLE`),
-  KEY `fk_prescriptionarticle_prescriptiontexte1_idx` (`ID_PRESCRIPTIONTEXTE`),
-  CONSTRAINT `fk_prescriptionarticle_prescriptiontexte1` FOREIGN KEY (`ID_PRESCRIPTIONTEXTE`) REFERENCES `prescriptiontexte` (`ID_PRESCRIPTIONTEXTE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptionarticle`
---
-
-LOCK TABLES `prescriptionarticle` WRITE;
-/*!40000 ALTER TABLE `prescriptionarticle` DISABLE KEYS */;
-/*!40000 ALTER TABLE `prescriptionarticle` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionmembretypeactivite`
---
-
-DROP TABLE IF EXISTS `commissionmembretypeactivite`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionmembretypeactivite` (
-  `ID_COMMISSIONMEMBRE` bigint(20) unsigned NOT NULL,
-  `ID_TYPEACTIVITE` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`ID_COMMISSIONMEMBRE`,`ID_TYPEACTIVITE`),
-  KEY `fk_commissionmembre-typeactivite_typeactivite1_idx` (`ID_TYPEACTIVITE`),
-  KEY `fk_commissionmembre-typeactivite_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE`),
-  CONSTRAINT `fk_commissionmembre-typeactivite_commissionmembre1` FOREIGN KEY (`ID_COMMISSIONMEMBRE`) REFERENCES `commissionmembre` (`ID_COMMISSIONMEMBRE`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_commissionmembre-typeactivite_typeactivite1` FOREIGN KEY (`ID_TYPEACTIVITE`) REFERENCES `typeactivite` (`ID_TYPEACTIVITE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionmembretypeactivite`
---
-
-LOCK TABLES `commissionmembretypeactivite` WRITE;
-/*!40000 ALTER TABLE `commissionmembretypeactivite` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionmembretypeactivite` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `prescriptiontexteliste`
---
-
-DROP TABLE IF EXISTS `prescriptiontexteliste`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptiontexteliste` (
-  `ID_TEXTE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_TEXTE` varchar(255) NOT NULL,
-  PRIMARY KEY (`ID_TEXTE`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptiontexteliste`
---
-
-LOCK TABLES `prescriptiontexteliste` WRITE;
-/*!40000 ALTER TABLE `prescriptiontexteliste` DISABLE KEYS */;
-INSERT INTO `prescriptiontexteliste` VALUES (1,'');
-/*!40000 ALTER TABLE `prescriptiontexteliste` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `groupement`
---
-
-DROP TABLE IF EXISTS `groupement`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groupement` (
-  `ID_GROUPEMENT` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_GROUPEMENT` varchar(255) NOT NULL,
-  `ID_GROUPEMENTTYPE` bigint(20) unsigned NOT NULL,
-  `ID_UTILISATEURINFORMATIONS` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`ID_GROUPEMENT`),
-  KEY `fk_groupement_groupementtype1_idx` (`ID_GROUPEMENTTYPE`),
-  KEY `fk_groupement_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS`),
-  CONSTRAINT `fk_groupement_groupementtype1` FOREIGN KEY (`ID_GROUPEMENTTYPE`) REFERENCES `groupementtype` (`ID_GROUPEMENTTYPE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_groupement_utilisateurinformations1` FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`) REFERENCES `utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `groupement`
---
-
-LOCK TABLES `groupement` WRITE;
-/*!40000 ALTER TABLE `groupement` DISABLE KEYS */;
-/*!40000 ALTER TABLE `groupement` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `groupementcontact`
---
-
-DROP TABLE IF EXISTS `groupementcontact`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groupementcontact` (
-  `ID_GROUPEMENT` bigint(20) unsigned NOT NULL,
-  `ID_UTILISATEURINFORMATIONS` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_GROUPEMENT`,`ID_UTILISATEURINFORMATIONS`),
-  KEY `fk_groupementcontact_groupement1_idx` (`ID_GROUPEMENT`),
-  KEY `fk_groupementcontact_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS`),
-  CONSTRAINT `fk_groupementcontact_groupement1` FOREIGN KEY (`ID_GROUPEMENT`) REFERENCES `groupement` (`ID_GROUPEMENT`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_groupementcontact_utilisateurinformations1` FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`) REFERENCES `utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `groupementcontact`
---
-
-LOCK TABLES `groupementcontact` WRITE;
-/*!40000 ALTER TABLE `groupementcontact` DISABLE KEYS */;
-/*!40000 ALTER TABLE `groupementcontact` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `groupementtype`
---
-
-DROP TABLE IF EXISTS `groupementtype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groupementtype` (
-  `ID_GROUPEMENTTYPE` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_GROUPEMENTTYPE` varchar(255) NOT NULL,
-  PRIMARY KEY (`ID_GROUPEMENTTYPE`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `groupementtype`
---
-
-LOCK TABLES `groupementtype` WRITE;
-/*!40000 ALTER TABLE `groupementtype` DISABLE KEYS */;
-INSERT INTO `groupementtype` VALUES (1,'Département'),(2,'Arrondissement'),(3,'Canton'),(4,'Intercommunalité'),(5,'Groupement territorial'),(6,'Centre de secours'),(7,'Secrétariat prévention SDIS'),(8,'Secteur de prévention'),(9,'Secrétariat prévision'),(10,'Service instructeur'),(11,'DDSP'),(12,'Gendarmerie'),(13,'Autre service');
-/*!40000 ALTER TABLE `groupementtype` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossierdocurba`
---
-
-DROP TABLE IF EXISTS `dossierdocurba`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossierdocurba` (
-  `ID_DOCURBA` bigint(20) NOT NULL AUTO_INCREMENT,
-  `NUM_DOCURBA` varchar(100) NOT NULL,
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_DOCURBA`),
-  KEY `fk_dossierdocurba_dossier1_idx` (`ID_DOSSIER`),
-  CONSTRAINT `fk_dossierdocurba_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossierdocurba`
---
-
-LOCK TABLES `dossierdocurba` WRITE;
-/*!40000 ALTER TABLE `dossierdocurba` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossierdocurba` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissiontype`
---
-
-DROP TABLE IF EXISTS `commissiontype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissiontype` (
-  `ID_COMMISSIONTYPE` int(2) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_COMMISSIONTYPE` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`ID_COMMISSIONTYPE`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissiontype`
---
-
-LOCK TABLES `commissiontype` WRITE;
-/*!40000 ALTER TABLE `commissiontype` DISABLE KEYS */;
-INSERT INTO `commissiontype` VALUES (1,'Sous-commission départementale'),(2,'Commission communale'),(3,'Commission intercommunale'),(4,'Commission d\'arrondissement'),(5,'Divers');
-/*!40000 ALTER TABLE `commissiontype` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `utilisateur`
---
-
-DROP TABLE IF EXISTS `utilisateur`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `utilisateur` (
-  `ID_UTILISATEUR` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `USERNAME_UTILISATEUR` varchar(100) NOT NULL,
-  `PASSWD_UTILISATEUR` varchar(32) DEFAULT NULL,
-  `LASTACTION_UTILISATEUR` timestamp NULL DEFAULT NULL,
-  `ACTIF_UTILISATEUR` tinyint(1) NOT NULL DEFAULT '1',
-  `NUMINSEE_COMMUNE` varchar(5) DEFAULT NULL,
-  `ID_UTILISATEURINFORMATIONS` bigint(20) unsigned NOT NULL,
-  `ID_GROUPE` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_UTILISATEUR`),
-  KEY `fk_utilisateur_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS`),
-  KEY `fk_utilisateur_groupe1_idx` (`ID_GROUPE`),
-  CONSTRAINT `fk_utilisateur_utilisateurinformations1` FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`) REFERENCES `utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_utilisateur_groupe1` FOREIGN KEY (`ID_GROUPE`) REFERENCES `groupe` (`ID_GROUPE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `utilisateur`
---
-
-LOCK TABLES `utilisateur` WRITE;
-/*!40000 ALTER TABLE `utilisateur` DISABLE KEYS */;
-INSERT INTO `utilisateur` VALUES (1,'root','b4b8daf4b8ea9d39568719e1e320076f',NULL,1,NULL,1,1);
-/*!40000 ALTER TABLE `utilisateur` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commission`
---
-
-DROP TABLE IF EXISTS `commission`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commission` (
-  `ID_COMMISSION` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_COMMISSION` varchar(50) NOT NULL DEFAULT 'Nom de la commission',
-  `DOCUMENT_CR` varchar(255) DEFAULT NULL,
-  `ID_COMMISSIONTYPE` int(2) unsigned NOT NULL,
-  PRIMARY KEY (`ID_COMMISSION`),
-  KEY `fk_commission_commissiontype1_idx` (`ID_COMMISSIONTYPE`),
-  CONSTRAINT `fk_commission_commissiontype1` FOREIGN KEY (`ID_COMMISSIONTYPE`) REFERENCES `commissiontype` (`ID_COMMISSIONTYPE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commission`
---
-
-LOCK TABLES `commission` WRITE;
-/*!40000 ALTER TABLE `commission` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commission` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementinformationspreventionniste`
---
-
-DROP TABLE IF EXISTS `etablissementinformationspreventionniste`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementinformationspreventionniste` (
-  `ID_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned NOT NULL,
-  `ID_UTILISATEUR` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONS`,`ID_UTILISATEUR`),
-  KEY `fk_etablissementinformationspreventionniste_etablissementin_idx` (`ID_ETABLISSEMENTINFORMATIONS`),
-  KEY `fk_etablissementinformationspreventionniste_utilisateur1_idx` (`ID_UTILISATEUR`),
-  CONSTRAINT `fk_etablissementinformationspreventionniste_etablissementinfo1` FOREIGN KEY (`ID_ETABLISSEMENTINFORMATIONS`) REFERENCES `etablissementinformations` (`ID_ETABLISSEMENTINFORMATIONS`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementinformationspreventionniste_utilisateur1` FOREIGN KEY (`ID_UTILISATEUR`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementinformationspreventionniste`
---
-
-LOCK TABLES `etablissementinformationspreventionniste` WRITE;
-/*!40000 ALTER TABLE `etablissementinformationspreventionniste` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementinformationspreventionniste` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementinformationsplan`
---
-
-DROP TABLE IF EXISTS `etablissementinformationsplan`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementinformationsplan` (
-  `ID_ETABLISSEMENTINFORMATIONSPLAN` bigint(20) NOT NULL AUTO_INCREMENT,
-  `NUMERO_ETABLISSEMENTPLAN` varchar(50) DEFAULT NULL,
-  `DATE_ETABLISSEMENTPLAN` date NOT NULL,
-  `MISEAJOUR_ETABLISSEMENTPLAN` tinyint(1) DEFAULT NULL,
-  `ID_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned NOT NULL,
-  `ID_TYPEPLAN` int(11) NOT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONSPLAN`),
-  KEY `fk_etablissementinformationsplan_etablissementinformations1_idx` (`ID_ETABLISSEMENTINFORMATIONS`),
-  KEY `fk_etablissementinformationsplan_typeplan1_idx` (`ID_TYPEPLAN`),
-  CONSTRAINT `fk_etablissementinformationsplan_etablissementinformations1` FOREIGN KEY (`ID_ETABLISSEMENTINFORMATIONS`) REFERENCES `etablissementinformations` (`ID_ETABLISSEMENTINFORMATIONS`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementinformationsplan_typeplan1` FOREIGN KEY (`ID_TYPEPLAN`) REFERENCES `typeplan` (`ID_TYPEPLAN`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementinformationsplan`
---
-
-LOCK TABLES `etablissementinformationsplan` WRITE;
-/*!40000 ALTER TABLE `etablissementinformationsplan` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementinformationsplan` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `newsgroupe`
---
-
-DROP TABLE IF EXISTS `newsgroupe`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `newsgroupe` (
-  `ID_NEWS` bigint(20) unsigned NOT NULL,
-  `ID_GROUPE` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_NEWS`,`ID_GROUPE`),
-  KEY `fk_newsgroupe_groupe1_idx` (`ID_GROUPE`),
-  CONSTRAINT `fk_newsgroupe_news1` FOREIGN KEY (`ID_NEWS`) REFERENCES `news` (`ID_NEWS`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_newsgroupe_groupe1` FOREIGN KEY (`ID_GROUPE`) REFERENCES `groupe` (`ID_GROUPE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `newsgroupe`
---
-
-LOCK TABLES `newsgroupe` WRITE;
-/*!40000 ALTER TABLE `newsgroupe` DISABLE KEYS */;
-/*!40000 ALTER TABLE `newsgroupe` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossierdocconsulte`
---
-
-DROP TABLE IF EXISTS `dossierdocconsulte`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossierdocconsulte` (
-  `ID_DOSSIERDOCCONSULTE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `REF_CONSULTE` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `DATE_CONSULTE` date NOT NULL,
-  `DOC_CONSULTE` tinyint(1) NOT NULL DEFAULT '0',
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  `ID_DOC` bigint(20) NOT NULL,
-  `ID_NATURE` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_DOSSIERDOCCONSULTE`),
-  KEY `fk_dossierdocconsulte_dossier1_idx` (`ID_DOSSIER`),
-  KEY `fk_dossierdocconsulte_dossiernatureliste1_idx` (`ID_NATURE`),
-  CONSTRAINT `fk_dossierdocconsulte_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_dossierdocconsulte_dossiernatureliste1` FOREIGN KEY (`ID_NATURE`) REFERENCES `dossiernatureliste` (`ID_DOSSIERNATURE`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossierdocconsulte`
---
-
-LOCK TABLES `dossierdocconsulte` WRITE;
-/*!40000 ALTER TABLE `dossierdocconsulte` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossierdocconsulte` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionmembrecategorie`
---
-
-DROP TABLE IF EXISTS `commissionmembrecategorie`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionmembrecategorie` (
-  `ID_COMMISSIONMEMBRE` bigint(20) unsigned NOT NULL,
-  `ID_CATEGORIE` int(1) unsigned NOT NULL,
-  PRIMARY KEY (`ID_COMMISSIONMEMBRE`,`ID_CATEGORIE`),
-  KEY `fk_commissionmembrecategorie_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE`),
-  KEY `fk_commissionmembrecategorie_categorie1_idx` (`ID_CATEGORIE`),
-  CONSTRAINT `fk_commissionmembrecategorie_commissionmembre1` FOREIGN KEY (`ID_COMMISSIONMEMBRE`) REFERENCES `commissionmembre` (`ID_COMMISSIONMEMBRE`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_commissionmembrecategorie_categorie1` FOREIGN KEY (`ID_CATEGORIE`) REFERENCES `categorie` (`ID_CATEGORIE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionmembrecategorie`
---
-
-LOCK TABLES `commissionmembrecategorie` WRITE;
-/*!40000 ALTER TABLE `commissionmembrecategorie` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionmembrecategorie` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `groupementpreventionniste`
---
-
-DROP TABLE IF EXISTS `groupementpreventionniste`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groupementpreventionniste` (
-  `ID_GROUPEMENT` bigint(20) unsigned NOT NULL,
-  `ID_UTILISATEUR` bigint(20) unsigned NOT NULL,
-  `DATEDEBUT_GROUPEMENTPREVENTIONNISTE` datetime NOT NULL,
-  `DATEFIN_GROUPEMENTPREVENTIONNISTE` datetime DEFAULT NULL,
-  PRIMARY KEY (`ID_GROUPEMENT`,`ID_UTILISATEUR`),
-  KEY `fk_groupementpreventionniste_groupement1_idx` (`ID_GROUPEMENT`),
-  KEY `fk_groupementpreventionniste_utilisateur1_idx` (`ID_UTILISATEUR`),
-  CONSTRAINT `fk_groupementpreventionniste_groupement1` FOREIGN KEY (`ID_GROUPEMENT`) REFERENCES `groupement` (`ID_GROUPEMENT`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_groupementpreventionniste_utilisateur1` FOREIGN KEY (`ID_UTILISATEUR`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `groupementpreventionniste`
---
-
-LOCK TABLES `groupementpreventionniste` WRITE;
-/*!40000 ALTER TABLE `groupementpreventionniste` DISABLE KEYS */;
-/*!40000 ALTER TABLE `groupementpreventionniste` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `avis`
---
-
-DROP TABLE IF EXISTS `avis`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `avis` (
-  `ID_AVIS` int(1) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_AVIS` varchar(30) NOT NULL,
-  PRIMARY KEY (`ID_AVIS`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `avis`
---
-
-LOCK TABLES `avis` WRITE;
-/*!40000 ALTER TABLE `avis` DISABLE KEYS */;
-INSERT INTO `avis` VALUES (1,'Favorable'),(2,'Défavorable');
-/*!40000 ALTER TABLE `avis` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionregletype`
---
-
-DROP TABLE IF EXISTS `commissionregletype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionregletype` (
-  `ID_REGLE` bigint(20) unsigned NOT NULL,
-  `ID_TYPE` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`ID_REGLE`,`ID_TYPE`),
-  KEY `fk_commissionregletype_commissionregle1_idx` (`ID_REGLE`),
-  KEY `fk_commissionregletype_type1_idx` (`ID_TYPE`),
-  CONSTRAINT `fk_commissionregletype_commissionregle1` FOREIGN KEY (`ID_REGLE`) REFERENCES `commissionregle` (`ID_REGLE`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_commissionregletype_type1` FOREIGN KEY (`ID_TYPE`) REFERENCES `type` (`ID_TYPE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionregletype`
---
-
-LOCK TABLES `commissionregletype` WRITE;
-/*!40000 ALTER TABLE `commissionregletype` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionregletype` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `couchecarto`
---
-
-DROP TABLE IF EXISTS `couchecarto`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `couchecarto` (
-  `ID_COUCHECARTO` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `NOM_COUCHECARTO` varchar(255) DEFAULT NULL,
-  `URL_COUCHECARTO` varchar(255) DEFAULT NULL,
-  `ISBASELAYER_COUCHECARTO` tinyint(1) DEFAULT NULL,
-  `LAYERS_COUCHECARTO` varchar(255) DEFAULT NULL,
-  `FORMAT_COUCHECARTO` varchar(255) DEFAULT NULL,
-  `TRANSPARENT_COUCHECARTO` tinyint(1) DEFAULT NULL,
-  `TYPE_COUCHECARTO` varchar(50) NOT NULL,
-  PRIMARY KEY (`ID_COUCHECARTO`),
-  UNIQUE KEY `ID_COUCHECARTO` (`ID_COUCHECARTO`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `couchecarto`
---
-
-LOCK TABLES `couchecarto` WRITE;
-/*!40000 ALTER TABLE `couchecarto` DISABLE KEYS */;
-/*!40000 ALTER TABLE `couchecarto` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `type`
---
-
-DROP TABLE IF EXISTS `type`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `type` (
-  `ID_TYPE` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_TYPE` varchar(45) NOT NULL,
-  PRIMARY KEY (`ID_TYPE`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `type`
---
-
-LOCK TABLES `type` WRITE;
-/*!40000 ALTER TABLE `type` DISABLE KEYS */;
-INSERT INTO `type` VALUES (1,'CTS'),(2,'EF'),(3,'EM'),(4,'EP'),(5,'GA'),(6,'GEEM'),(7,'J'),(8,'L'),(9,'M'),(10,'N'),(11,'O'),(12,'OA'),(13,'P'),(14,'PA'),(15,'PE2§2'),(16,'PS'),(17,'R'),(18,'REF'),(19,'S'),(20,'SG'),(21,'T'),(22,'U'),(23,'V'),(24,'W'),(25,'X'),(26,'Y'),(27,'Z');
-/*!40000 ALTER TABLE `type` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `prescriptiondossier`
---
-
-DROP TABLE IF EXISTS `prescriptiondossier`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptiondossier` (
-  `ID_PRESCRIPTION_DOSSIER` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  `NUM_PRESCRIPTION_DOSSIER` int(11) NOT NULL,
-  `ID_PRESCRIPTION_TYPE` bigint(20) DEFAULT NULL,
-  `LIBELLE_PRESCRIPTION_DOSSIER` text,
-  PRIMARY KEY (`ID_PRESCRIPTION_DOSSIER`),
-  UNIQUE KEY `ID_PRESCRIPTION_DOSSIER_UNIQUE` (`ID_PRESCRIPTION_DOSSIER`),
-  KEY `fk_prescriptiondossier_dossier1_idx` (`ID_DOSSIER`),
-  CONSTRAINT `fk_prescriptiondossier_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptiondossier`
---
-
-LOCK TABLES `prescriptiondossier` WRITE;
-/*!40000 ALTER TABLE `prescriptiondossier` DISABLE KEYS */;
-/*!40000 ALTER TABLE `prescriptiondossier` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `resources`
---
-
-DROP TABLE IF EXISTS `resources`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `resources` (
-  `id_resource` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `text` text,
-  PRIMARY KEY (`id_resource`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `resources`
---
-
-LOCK TABLES `resources` WRITE;
-/*!40000 ALTER TABLE `resources` DISABLE KEYS */;
-INSERT INTO `resources` VALUES (1,'gestion_parametrages','Gestion et Paramétrages'),(2,'commission','Gestion des calendriers des commissions'),(3,'creations','Gestion des droits de création');
-/*!40000 ALTER TABLE `resources` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `datecommission`
---
-
-DROP TABLE IF EXISTS `datecommission`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `datecommission` (
-  `ID_DATECOMMISSION` bigint(20) NOT NULL AUTO_INCREMENT,
-  `DATE_COMMISSION` date NOT NULL,
-  `HEUREDEB_COMMISSION` time NOT NULL DEFAULT '09:00:00',
-  `HEUREFIN_COMMISSION` time NOT NULL DEFAULT '18:00:00',
-  `LIBELLE_DATECOMMISSION` varchar(255) DEFAULT NULL,
-  `GESTION_HEURES` tinyint(1) NOT NULL DEFAULT '1',
-  `DATECOMMISSION_LIEES` bigint(20) DEFAULT NULL,
-  `ID_COMMISSIONTYPEEVENEMENT` int(11) unsigned NOT NULL,
-  `COMMISSION_CONCERNE` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_DATECOMMISSION`),
-  KEY `fk_datecommission_commissiontypeevenement1_idx` (`ID_COMMISSIONTYPEEVENEMENT`),
-  KEY `fk_datecommission_commission1_idx` (`COMMISSION_CONCERNE`),
-  CONSTRAINT `fk_datecommission_commissiontypeevenement1` FOREIGN KEY (`ID_COMMISSIONTYPEEVENEMENT`) REFERENCES `commissiontypeevenement` (`ID_COMMISSIONTYPEEVENEMENT`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_datecommission_commission1` FOREIGN KEY (`COMMISSION_CONCERNE`) REFERENCES `commission` (`ID_COMMISSION`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `datecommission`
---
-
-LOCK TABLES `datecommission` WRITE;
-/*!40000 ALTER TABLE `datecommission` DISABLE KEYS */;
-/*!40000 ALTER TABLE `datecommission` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `categorie`
---
-
-DROP TABLE IF EXISTS `categorie`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `categorie` (
-  `ID_CATEGORIE` int(1) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_CATEGORIE` varchar(15) DEFAULT NULL,
-  `COMMENTAIRE_CATEGORIE` varchar(35) DEFAULT NULL,
-  PRIMARY KEY (`ID_CATEGORIE`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `categorie`
---
-
-LOCK TABLES `categorie` WRITE;
-/*!40000 ALTER TABLE `categorie` DISABLE KEYS */;
-INSERT INTO `categorie` VALUES (1,'1ère catégorie','Plus de 1500 personnes'),(2,'2ème catégorie','De 701 à 1500 personnes'),(3,'3ème catégorie','De 301 à 700 personnes'),(4,'4ème catégorie','300 personnes et moins'),(5,'5ème catégorie','Nombre très réduit de personnes');
-/*!40000 ALTER TABLE `categorie` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossieraffectation`
---
-
-DROP TABLE IF EXISTS `dossieraffectation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossieraffectation` (
-  `HEURE_DEB_AFFECT` time DEFAULT NULL,
-  `HEURE_FIN_AFFECT` time DEFAULT NULL,
-  `NUM_DOSSIER` int(11) NOT NULL DEFAULT '0',
-  `ID_DATECOMMISSION_AFFECT` bigint(20) NOT NULL,
-  `ID_DOSSIER_AFFECT` bigint(20) NOT NULL,
-  KEY `fk_dossieraffectation_datecommission1_idx` (`ID_DATECOMMISSION_AFFECT`),
-  KEY `fk_dossieraffectation_dossier2_idx` (`ID_DOSSIER_AFFECT`),
-  CONSTRAINT `fk_dossieraffectation_datecommission1` FOREIGN KEY (`ID_DATECOMMISSION_AFFECT`) REFERENCES `datecommission` (`ID_DATECOMMISSION`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_dossieraffectation_dossier1` FOREIGN KEY (`ID_DOSSIER_AFFECT`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossieraffectation`
---
-
-LOCK TABLES `dossieraffectation` WRITE;
-/*!40000 ALTER TABLE `dossieraffectation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossieraffectation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossierpreventionniste`
---
-
-DROP TABLE IF EXISTS `dossierpreventionniste`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossierpreventionniste` (
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  `ID_PREVENTIONNISTE` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_DOSSIER`,`ID_PREVENTIONNISTE`),
-  KEY `fk_dossierpreventionniste_dossier1_idx` (`ID_DOSSIER`),
-  KEY `fk_dossierpreventionniste_utilisateur1_idx` (`ID_PREVENTIONNISTE`),
-  CONSTRAINT `fk_dossierpreventionniste_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_dossierpreventionniste_utilisateur1` FOREIGN KEY (`ID_PREVENTIONNISTE`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossierpreventionniste`
---
-
-LOCK TABLES `dossierpreventionniste` WRITE;
-/*!40000 ALTER TABLE `dossierpreventionniste` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossierpreventionniste` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossierdocmanquant`
---
-
-DROP TABLE IF EXISTS `dossierdocmanquant`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossierdocmanquant` (
-  `ID_DOCMANQUANT` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  `NUM_DOCSMANQUANT` varchar(45) NOT NULL,
-  `DOCMANQUANT` text,
-  `DATE_DOCSMANQUANT` date DEFAULT NULL,
-  PRIMARY KEY (`ID_DOCMANQUANT`),
-  UNIQUE KEY `ID_DOCMANQUANT_UNIQUE` (`ID_DOCMANQUANT`),
-  KEY `fk_dossierdocmanquant_dossier1_idx` (`ID_DOSSIER`),
-  CONSTRAINT `fk_dossierdocmanquant_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossierdocmanquant`
---
-
-LOCK TABLES `dossierdocmanquant` WRITE;
-/*!40000 ALTER TABLE `dossierdocmanquant` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossierdocmanquant` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `utilisateurcommission`
---
-
-DROP TABLE IF EXISTS `utilisateurcommission`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `utilisateurcommission` (
-  `ID_UTILISATEUR` bigint(20) unsigned NOT NULL,
-  `ID_COMMISSION` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_UTILISATEUR`,`ID_COMMISSION`),
-  KEY `fk_utilisateurcommission_utilisateur1_idx` (`ID_UTILISATEUR`),
-  KEY `fk_utilisateurcommission_commission1_idx` (`ID_COMMISSION`),
-  CONSTRAINT `fk_utilisateurcommission_utilisateur1` FOREIGN KEY (`ID_UTILISATEUR`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_utilisateurcommission_commission1` FOREIGN KEY (`ID_COMMISSION`) REFERENCES `commission` (`ID_COMMISSION`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `utilisateurcommission`
---
-
-LOCK TABLES `utilisateurcommission` WRITE;
-/*!40000 ALTER TABLE `utilisateurcommission` DISABLE KEYS */;
-/*!40000 ALTER TABLE `utilisateurcommission` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `utilisateurcivilite`
---
-
-DROP TABLE IF EXISTS `utilisateurcivilite`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `utilisateurcivilite` (
-  `ID_UTILISATEURCIVILITE` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_UTILISATEURCIVILITE` varchar(255) NOT NULL,
-  PRIMARY KEY (`ID_UTILISATEURCIVILITE`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `utilisateurcivilite`
---
-
-LOCK TABLES `utilisateurcivilite` WRITE;
-/*!40000 ALTER TABLE `utilisateurcivilite` DISABLE KEYS */;
-INSERT INTO `utilisateurcivilite` VALUES (1,'Monsieur'),(2,'Madame');
-/*!40000 ALTER TABLE `utilisateurcivilite` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `prescriptiontexte`
---
-
-DROP TABLE IF EXISTS `prescriptiontexte`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptiontexte` (
-  `ID_PRESCRIPTIONTEXTE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_PRESCRIPTIONTEXTE` varchar(255) DEFAULT NULL,
-  `NUM_PRESCRIPTIONTEXTE` int(11) DEFAULT NULL,
-  `ID_PRESCRIPTIONCAT` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_PRESCRIPTIONTEXTE`),
-  KEY `fk_prescriptiontexte_prescriptioncat1_idx` (`ID_PRESCRIPTIONCAT`),
-  CONSTRAINT `fk_prescriptiontexte_prescriptioncat1` FOREIGN KEY (`ID_PRESCRIPTIONCAT`) REFERENCES `prescriptioncat` (`ID_PRESCRIPTION_CAT`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptiontexte`
---
-
-LOCK TABLES `prescriptiontexte` WRITE;
-/*!40000 ALTER TABLE `prescriptiontexte` DISABLE KEYS */;
-/*!40000 ALTER TABLE `prescriptiontexte` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossier`
---
-
-DROP TABLE IF EXISTS `dossier`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossier` (
-  `ID_DOSSIER` bigint(20) NOT NULL AUTO_INCREMENT,
-  `OBJET_DOSSIER` text,
-  `COMMUNE_DOSSIER` text,
-  `DATEMAIRIE_DOSSIER` datetime DEFAULT NULL,
-  `DATESECRETARIAT_DOSSIER` datetime DEFAULT NULL,
-  `TYPESERVINSTRUC_DOSSIER` varchar(15) DEFAULT NULL,
-  `SERVICEINSTRUC_DOSSIER` varchar(255) DEFAULT NULL,
-  `COMMISSION_DOSSIER` bigint(20) DEFAULT NULL,
-  `DESCGEN_DOSSIER` text,
-  `ANOMALIE_DOSSIER` text,
-  `DESCANAL_DOSSIER` text,
-  `JUSTIFDEROG_DOSSIER` text,
-  `MESURESCOMPENS_DOSSIER` text,
-  `MESURESCOMPLE_DOSSIER` text,
-  `DESCEFF_DOSSIER` text,
-  `DATEVISITE_DOSSIER` date DEFAULT NULL,
-  `DATECOMM_DOSSIER` text,
-  `AVIS_DOSSIER` int(1) unsigned DEFAULT NULL,
-  `AVIS_DOSSIER_COMMISSION` int(1) unsigned DEFAULT NULL,
-  `COORDSSI_DOSSIER` text,
-  `DATESDIS_DOSSIER` datetime DEFAULT NULL,
-  `DATEPREF_DOSSIER` datetime DEFAULT NULL,
-  `DATEREP_DOSSIER` datetime DEFAULT NULL,
-  `DATEREUN_DOSSIER` datetime DEFAULT NULL,
-  `OPERSDIS_DOSSIER` tinyint(4) DEFAULT NULL,
-  `RCCI_DOSSIER` tinyint(4) DEFAULT NULL,
-  `REX_DOSSIER` text,
-  `CHARGESEC_DOSSIER` text,
-  `DUREEDEPL_DOSSIER` int(11) DEFAULT NULL,
-  `GRAVPRESC_DOSSIER` text,
-  `NUMINTERV_DOSSIER` int(11) DEFAULT NULL,
-  `DATEINTERV_DOSSIER` datetime DEFAULT NULL,
-  `DUREEINTERV_DOSSIER` time DEFAULT NULL,
-  `DATESIGN_DOSSIER` date DEFAULT NULL,
-  `DATEINSERT_DOSSIER` datetime NOT NULL,
-  `TYPE_DOSSIER` bigint(20) unsigned NOT NULL,
-  `DESCRIPTIF_DOSSIER` text CHARACTER SET utf8 COLLATE utf8_bin,
-  `DEMANDEUR_DOSSIER` text,
-  `DATEENVTRANSIT_DOSSIER` date DEFAULT NULL,
-  `REGLEDEROG_DOSSIER` text,
-  `INCOMPLET_DOSSIER` tinyint(1) DEFAULT '0',
-  `DATEINCOMPLET_DOSSIER` date DEFAULT NULL,
-  `CREATEUR_DOSSIER` bigint(20) DEFAULT NULL,
-  `HORSDELAI_DOSSIER` tinyint(1) DEFAULT '0',
-  `DIFFEREAVIS_DOSSIER` tinyint(4) DEFAULT NULL,
-  `NPSP_DOSSIER` tinyint(4) DEFAULT NULL,
-  `CNE_DOSSIER` tinyint(4) DEFAULT NULL,
-  `FACTDANGE_DOSSIER` tinyint(4) DEFAULT NULL,
-  `LIEUREUNION_DOSSIER` text,
-  `ABSQUORUM_DOSSIER` tinyint(4) DEFAULT NULL,
-  `ECHEANCIERTRAV_DOSSIER` date DEFAULT NULL,
-  `VERROU_DOSSIER` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`ID_DOSSIER`),
-  KEY `fk_dossier_dossiertype1_idx` (`TYPE_DOSSIER`),
-  KEY `fk_dossier_avis1_idx` (`AVIS_DOSSIER`),
-  CONSTRAINT `fk_dossier_dossiertype1` FOREIGN KEY (`TYPE_DOSSIER`) REFERENCES `dossiertype` (`ID_DOSSIERTYPE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_dossier_avis1` FOREIGN KEY (`AVIS_DOSSIER`) REFERENCES `avis` (`ID_AVIS`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossier`
---
-
-LOCK TABLES `dossier` WRITE;
-/*!40000 ALTER TABLE `dossier` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossier` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissement`
---
-
-DROP TABLE IF EXISTS `etablissement`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissement` (
-  `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `NUMEROID_ETABLISSEMENT` varchar(50) DEFAULT NULL,
-  `TELEPHONE_ETABLISSEMENT` varchar(20) DEFAULT NULL,
-  `FAX_ETABLISSEMENT` varchar(20) DEFAULT NULL,
-  `COURRIEL_ETABLISSEMENT` varchar(75) DEFAULT NULL,
-  `DATEENREGISTREMENT_ETABLISSEMENT` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `DESCRIPTIF_ETABLISSEMENT` text,
-  `NBPREV_ETABLISSEMENT` tinyint(4) DEFAULT NULL,
-  `DUREEVISITE_ETABLISSEMENT` time DEFAULT NULL,
-  `ID_DOSSIER_DONNANT_AVIS` bigint(20) DEFAULT NULL,
-  `DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DESSERTE_ESPACELIBRE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DISTRIBUTION_CLOISONNEMENTTRAD_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_LOCAUXARISQUE_NBRISQUESMOYENS_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_LOCAUXARISQUE_NBRISQUESIMPORTANTS_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_ESPACES_NOMBRE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_ESPACES_NIVEAUCONCERNE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DESENFUMAGE_NATUREL_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_DESENFUMAGE_MECANIQUE_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_DESENFUMAGE_COMMENTAIRE_ETABLISSEMENT` text,
-  `DESCTECH_CHAUFFERIES_NB_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_CHAUFFERIES_PUISSMAX_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_COUPURENRJ_GAZ_ETABLISSEMENT` text,
-  `DESCTECH_COUPURENRJ_ELEC_ETABLISSEMENT` text,
-  `DESCTECH_COUPURENRJ_PHOTOVOLTAIQUE_ETABLISSEMENT` text,
-  `DESCTECH_COUPURENRJ_AUTRE_ETABLISSEMENT` text,
-  `DESCTECH_ASCENSEURS_NBTOTAL_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_ASCENSEURS_NBAS4_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_MOYENSSECOURS_COLONNESSECHES_ETABLISSEMENT` tinyint(45) DEFAULT NULL,
-  `DESCTECH_MOYENSSECOURS_COLONNESHUMIDES_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_MOYENSSECOURS_RIA_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_MOYENSSECOURS_SPRINKLEUR_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_MOYENSSECOURS_BROUILLARDEAU_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_PCSECU_PRESENCE_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_PCSECU_LOCALISATION_ETABLISSEMENT` text,
-  `DESCTECH_SSI_PRESENCE_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_SSI_CATEGORIE_ETABLISSEMENT` char(1) DEFAULT NULL,
-  `DESCTECH_SSI_ALARME_TYPE_ETABLISSEMENT` char(2) DEFAULT NULL,
-  `DESCTECH_SERVICESECU_EL18_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_SERVICESECU_PERSONNELSDESIGNES_ETABLISSEMENT` tinyint(1) DEFAULT NULL,
-  `DESCTECH_SERVICESECU_AGENTDESECU_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_SERVICESECU_CHEFEQUIPE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_SERVICESECU_CHEFDESERVICESECU_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_SERVICESECU_SP_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_SERVICESECU_COMMENTAIRESP_ETABLISSEMENT` text,
-  `DESCTECH_DEFENSE_PTEAU_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DEFENSE_VOLUMEPTEAU_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DEFENSE_PTEAUCOMMENTAIRE_ETABLISSEMENT` text,
-  `DESCTECH_DEFENSE_PI_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DEFENSE_BI_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_CHAUFFERIES_NB30KW` int(11) DEFAULT NULL,
-  `DESCTECH_CHAUFFERIES_NB70KW` int(11) DEFAULT NULL,
-  `DESCTECH_CHAUFFERIES_NB2MW` int(11) DEFAULT NULL,
-  `DESCTECH_CHAUFFERIES_PUISSANCETOTALE` int(11) DEFAULT NULL,
-  `DESCRIPTIF_HISTORIQUE_ETABLISSEMENT` text,
-  `DESCRIPTIF_DEROGATIONS_ETABLISSEMENT` text,
-  `DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT` int(11) DEFAULT NULL,
-  `DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENT`),
-  KEY `fk_etablissement_dossier1_idx` (`ID_DOSSIER_DONNANT_AVIS`),
-  CONSTRAINT `fk_etablissement_dossier1` FOREIGN KEY (`ID_DOSSIER_DONNANT_AVIS`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissement`
---
-
-LOCK TABLES `etablissement` WRITE;
-/*!40000 ALTER TABLE `etablissement` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissement` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementlie`
---
-
-DROP TABLE IF EXISTS `etablissementlie`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementlie` (
-  `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
-  `ID_FILS_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENT`,`ID_FILS_ETABLISSEMENT`),
-  KEY `fk_etablissementlie_etablissement2_idx` (`ID_FILS_ETABLISSEMENT`),
-  CONSTRAINT `fk_etablissementlie_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementlie_etablissement2` FOREIGN KEY (`ID_FILS_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementlie`
---
-
-LOCK TABLES `etablissementlie` WRITE;
-/*!40000 ALTER TABLE `etablissementlie` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementlie` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementpj`
---
-
-DROP TABLE IF EXISTS `etablissementpj`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementpj` (
-  `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
-  `ID_PIECEJOINTE` bigint(20) NOT NULL,
-  `PLACEMENT_ETABLISSEMENTPJ` int(11) DEFAULT '0',
-  PRIMARY KEY (`ID_ETABLISSEMENT`,`ID_PIECEJOINTE`),
-  KEY `fk_etablissementpj_etablissement1_idx` (`ID_ETABLISSEMENT`),
-  KEY `fk_etablissementpj_piecejointe1_idx` (`ID_PIECEJOINTE`),
-  CONSTRAINT `fk_etablissementpj_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementpj_piecejointe1` FOREIGN KEY (`ID_PIECEJOINTE`) REFERENCES `piecejointe` (`ID_PIECEJOINTE`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementpj`
---
-
-LOCK TABLES `etablissementpj` WRITE;
-/*!40000 ALTER TABLE `etablissementpj` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementpj` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionmembredossiernature`
---
-
-DROP TABLE IF EXISTS `commissionmembredossiernature`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionmembredossiernature` (
-  `ID_COMMISSIONMEMBRE` bigint(20) unsigned NOT NULL,
-  `ID_DOSSIERNATURE` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_COMMISSIONMEMBRE`,`ID_DOSSIERNATURE`),
-  KEY `fk_commissionmembredossiernature_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE`),
-  KEY `fk_commissionmembredossiernature_dossiernatureliste1_idx` (`ID_DOSSIERNATURE`),
-  CONSTRAINT `fk_commissionmembredossiernature_commissionmembre1` FOREIGN KEY (`ID_COMMISSIONMEMBRE`) REFERENCES `commissionmembre` (`ID_COMMISSIONMEMBRE`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_commissionmembredossiernature_dossiernatureliste1` FOREIGN KEY (`ID_DOSSIERNATURE`) REFERENCES `dossiernatureliste` (`ID_DOSSIERNATURE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionmembredossiernature`
---
-
-LOCK TABLES `commissionmembredossiernature` WRITE;
-/*!40000 ALTER TABLE `commissionmembredossiernature` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionmembredossiernature` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `typeactivite`
---
-
-DROP TABLE IF EXISTS `typeactivite`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `typeactivite` (
-  `ID_TYPEACTIVITE` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_ACTIVITE` varchar(255) NOT NULL,
-  `ID_TYPE` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`ID_TYPEACTIVITE`),
-  KEY `fk_typeactivite_type1_idx` (`ID_TYPE`),
-  CONSTRAINT `fk_typeactivite_type1` FOREIGN KEY (`ID_TYPE`) REFERENCES `type` (`ID_TYPE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `typeactivite`
---
-
-LOCK TABLES `typeactivite` WRITE;
-/*!40000 ALTER TABLE `typeactivite` DISABLE KEYS */;
-INSERT INTO `typeactivite` VALUES (1,'Châpiteau',1),(2,'Structures',1),(3,'Tentes',1),(4,'Bateaux en stationnement sur les eaux intérieures',2),(5,'Bateaux stationnaires',2),(6,'Etablissements flottants',2),(7,'Gares',5),(8,'Etablissements d’enseignement avec internat pour jeunes handicapés ou inadaptés',7),(9,'Etablissements d’hébergement pour adultes handicapés',7),(10,'Etablissements médico-éducatifs avec internat pour jeunes handicapés ou inadaptés',7),(11,'Structures d’accueil pour personnes âgées',7),(12,'Structures d’accueil pour personnes handicapées',7),(13,'Cabarets',8),(14,'Cinéma',8),(15,'Cirques non forains',8),(16,'Salles d\'audition',8),(17,'Salle de conférences',8),(18,'Salles de pari',8),(19,'Salles de projection',8),(20,'Salles de quartier (ou assimilée)',8),(21,'Salles de réunions',8),(22,'Salles de spectacles',8),(23,'Salles multimédia',8),(24,'Salles polyvalentes à dominante sportive, dont la superficie unitaire est supérieure ou égale à 1 200 m2',8),(25,'Salles polyvalentes non visée par le Type X (salle polyvalente qui n’a pas une destination unique)',8),(26,'Salles réservées aux associations',8),(27,'Aires de vente',9),(28,'Boutiques',9),(29,'Centres commerciaux',9),(30,'Locaux de vente',9),(31,'Magasin de vente',9),(32,'Bars',10),(33,'Brasseries',10),(34,'Cafétaria',10),(35,'Cafés',10),(36,'Cantines',10),(37,'Débits de boissons',10),(38,'Restaurants',10),(39,'Hôtels',11),(40,'Motels',11),(41,'Pensions de famille',11),(42,'Hôtels-restaurants d’altitude',12),(43,'Bals',13),(46,'Salles de danse',13),(47,'Salles de jeux',13),(48,'Arènes',14),(49,'Hippodromes',14),(50,'Piscines',14),(51,'Pistes de patinage',14),(52,'Stades',14),(53,'Terrains de sport',14),(54,'Parcs de stationnement couverts',16),(55,'Auberges de jeunesse (comprenant au moins un local collectif à sommeil)',17),(56,'Auto-écoles',17),(57,'Centres aérés',17),(58,'Centres de loisirs (sans hébergement)',17),(59,'Centres de vacances',17),(60,'Colonies de vacances',17),(61,'Crèches',17),(62,'Ecoles maternelles',17),(63,'Etablissements d’enseignement',17),(64,'Etablissements de formation',17),(65,'Haltes-garderies',17),(66,'Internats des établissements de l\'enseignement primaire et secondaire',17),(67,'Jardins d\'enfant',17),(68,'Lycee public',17),(69,'Refuges de montagne',18),(70,'Bibliothèques',19),(71,'Centres de documentation et de consultation d’archives',19),(72,'Structures gonflables',20),(73,'Etablissements à vocation commerciale destinés à des expositions',21),(74,'Foires-expositions',21),(75,'Salles d’exposition à caractère permanent n’ayant pas une vocation de foire ou de salons ',21),(76,'Salles d’expositions de véhicules automobiles, bateaux, machines et autres volumineux biens d’équipements assimilables',21),(77,'Salons à caractère temporaire',21),(78,'Etablissements de cure thermale ou de thalassothérapie',22),(79,'Etablissements de santé publics ou privés dispensant des soins de courte durée en médecine, chirurgie, obstétrique',22),(80,'Etablissements de santé publics ou privés dispensant des soins de psychiatrie, de suite ou de réadaptation, des soins de longue durée, à des personnes n\'ayant pas leur autonomie de vie dont l\'état nécessite une surveillance médicale constante',22),(81,'Etablissements de thalassothérapie',22),(82,'Pouponnières',22),(83,'Eglises',23),(84,'Mosquées',23),(85,'Synagogues',23),(86,'Temples',23),(87,'Administrations',24),(88,'Banques',24),(89,'Bureaux',24),(90,'Hôtels de ville',24),(91,'Manèges',25),(92,'Patinoires',25),(93,'Piscines couvertes, transformables et mixtes',25),(94,'Salles d\'éducation physique et sportive',25),(95,'Salles omnisports',25),(96,'Salles polyvalentes à dominante sportive, dont l\'aire d\'activité est inférieure à 1200 2 et la hauteur sous plafond supérieure ou égale à 6,50 mètres, etc',25),(97,'Salles sportives spécialisées',25),(98,'Musées',26),(99,'Salles destinées à recevoir des expositions à vocation culturelle, scientifique, technique, artistique, etc. ayant un caractère temporaire',26),(101,'Collège public',17),(103,'En attente de classement',27),(104,'Parc d\'attraction',14),(105,'Locaux à usage collectif d\'une surface unitaire supérieure à 50 mètres carrés des logements-foyers et de l\'habitat de loisirs à gestion collective',15),(106,'Bâtiments ou locaux à usage d\'hébergement qui ne relèvent d\'aucun type défini à l\'article GN 1 et qui permettent d\'accueillir plus de 15 et moins de 100 personnes n\'y élisant pas domicile',15),(107,'Hébergement de mineurs en dehors de leurs familles, le seuil de l\'effectif est fixé à 7 mineurs',15),(108,'Maisons d\'assistants maternels (MAM) dont les locaux accessibles au public sont strictement limités à un seul étage sur rez-de-chaussée et dont l\'effectif ne dépasse pas 16 enfants',15),(109,'Ecoles primaires',17),(110,'Lycee privé',17),(111,'Collège privé',17),(112,'Lycée agricole',17),(113,'Lycée maritime',17);
-/*!40000 ALTER TABLE `typeactivite` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `adressecommune`
---
-
-DROP TABLE IF EXISTS `adressecommune`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `adressecommune` (
-  `NUMINSEE_COMMUNE` char(5) NOT NULL,
-  `LIBELLE_COMMUNE` varchar(60) NOT NULL,
-  `CODEPOSTAL_COMMUNE` varchar(5) NOT NULL,
-  `ID_UTILISATEURINFORMATIONS` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`NUMINSEE_COMMUNE`),
-  KEY `fk_adressecommune_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS`),
-  CONSTRAINT `fk_adressecommune_utilisateurinformations1` FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`) REFERENCES `utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `adressecommune`
---
-
-LOCK TABLES `adressecommune` WRITE;
-/*!40000 ALTER TABLE `adressecommune` DISABLE KEYS */;
-/*!40000 ALTER TABLE `adressecommune` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossiertype`
---
-
-DROP TABLE IF EXISTS `dossiertype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossiertype` (
-  `ID_DOSSIERTYPE` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_DOSSIERTYPE` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID_DOSSIERTYPE`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossiertype`
---
-
-LOCK TABLES `dossiertype` WRITE;
-/*!40000 ALTER TABLE `dossiertype` DISABLE KEYS */;
-INSERT INTO `dossiertype` VALUES (1,'Étude'),(2,'Visite de commission'),(3,'Groupe de visite'),(4,'Réunion'),(5,'Courrier / Courriel'),(6,'Intervention'),(7,'Arrêté');
-/*!40000 ALTER TABLE `dossiertype` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementinformations`
---
-
-DROP TABLE IF EXISTS `etablissementinformations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementinformations` (
-  `ID_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_ETABLISSEMENTINFORMATIONS` varchar(255) NOT NULL,
-  `ICPE_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
-  `PERIODICITE_ETABLISSEMENTINFORMATIONS` tinyint(4) DEFAULT NULL,
-  `R12320_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
-  `LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
-  `EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS` int(11) DEFAULT NULL,
-  `EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS` int(11) DEFAULT NULL,
-  `EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS` int(11) DEFAULT NULL,
-  `EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS` int(11) DEFAULT NULL,
-  `COMPLEMENT_ETABLISSEMENTINFORMATIONS` varchar(255) DEFAULT NULL,
-  `DATE_ETABLISSEMENTINFORMATIONS` datetime NOT NULL,
-  `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
-  `ID_GENRE` int(2) unsigned NOT NULL,
-  `ID_CLASSE` int(11) unsigned DEFAULT NULL,
-  `ID_FAMILLE` int(11) DEFAULT NULL,
-  `ID_CATEGORIE` int(1) unsigned DEFAULT NULL,
-  `ID_TYPE` int(10) unsigned DEFAULT NULL,
-  `ID_TYPEACTIVITE` int(11) unsigned DEFAULT NULL,
-  `ID_COMMISSION` bigint(20) unsigned DEFAULT NULL,
-  `ID_STATUT` int(1) unsigned NOT NULL,
-  `UTILISATEUR_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONS`),
-  KEY `fk_etablissementinformations_etablissement1_idx` (`ID_ETABLISSEMENT`),
-  KEY `fk_etablissementinformations_genre1_idx` (`ID_GENRE`),
-  KEY `fk_etablissementinformations_classe1_idx` (`ID_CLASSE`),
-  KEY `fk_etablissementinformations_famille1_idx` (`ID_FAMILLE`),
-  KEY `fk_etablissementinformations_categorie1_idx` (`ID_CATEGORIE`),
-  KEY `fk_etablissementinformations_type1_idx` (`ID_TYPE`),
-  KEY `fk_etablissementinformations_typeactivite1_idx` (`ID_TYPEACTIVITE`),
-  KEY `fk_etablissementinformations_commission1_idx` (`ID_COMMISSION`),
-  KEY `fk_etablissementinformations_statut1_idx` (`ID_STATUT`),
-  KEY `fk_etablissementinformations_utilisateur1_idx` (`UTILISATEUR_ETABLISSEMENTINFORMATIONS`),
-  CONSTRAINT `fk_etablissementinformations_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementinformations_genre1` FOREIGN KEY (`ID_GENRE`) REFERENCES `genre` (`ID_GENRE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformations_classe1` FOREIGN KEY (`ID_CLASSE`) REFERENCES `classe` (`ID_CLASSE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformations_famille1` FOREIGN KEY (`ID_FAMILLE`) REFERENCES `famille` (`ID_FAMILLE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformations_categorie1` FOREIGN KEY (`ID_CATEGORIE`) REFERENCES `categorie` (`ID_CATEGORIE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformations_type1` FOREIGN KEY (`ID_TYPE`) REFERENCES `type` (`ID_TYPE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformations_typeactivite1` FOREIGN KEY (`ID_TYPEACTIVITE`) REFERENCES `typeactivite` (`ID_TYPEACTIVITE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformations_commission1` FOREIGN KEY (`ID_COMMISSION`) REFERENCES `commission` (`ID_COMMISSION`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformations_statut1` FOREIGN KEY (`ID_STATUT`) REFERENCES `statut` (`ID_STATUT`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformations_utilisateur1` FOREIGN KEY (`UTILISATEUR_ETABLISSEMENTINFORMATIONS`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementinformations`
---
-
-LOCK TABLES `etablissementinformations` WRITE;
-/*!40000 ALTER TABLE `etablissementinformations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementinformations` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `prescriptioncat`
---
-
-DROP TABLE IF EXISTS `prescriptioncat`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptioncat` (
-  `ID_PRESCRIPTION_CAT` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_PRESCRIPTION_CAT` varchar(255) DEFAULT NULL,
-  `NUM_PRESCRIPTION_CAT` int(11) NOT NULL,
-  PRIMARY KEY (`ID_PRESCRIPTION_CAT`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptioncat`
---
-
-LOCK TABLES `prescriptioncat` WRITE;
-/*!40000 ALTER TABLE `prescriptioncat` DISABLE KEYS */;
-/*!40000 ALTER TABLE `prescriptioncat` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `adresseruetype`
---
-
-DROP TABLE IF EXISTS `adresseruetype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `adresseruetype` (
-  `ID_RUETYPE` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_RUETYPE` varchar(32) NOT NULL COMMENT 'Exemple : BOULEVARD',
-  `ABREVIATION_RUETYPE` varchar(16) NOT NULL COMMENT 'Exemple : BLVD',
-  PRIMARY KEY (`ID_RUETYPE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `adresseruetype`
---
-
-LOCK TABLES `adresseruetype` WRITE;
-/*!40000 ALTER TABLE `adresseruetype` DISABLE KEYS */;
-/*!40000 ALTER TABLE `adresseruetype` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `piecejointe`
---
-
-DROP TABLE IF EXISTS `piecejointe`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `piecejointe` (
-  `ID_PIECEJOINTE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `NOM_PIECEJOINTE` varchar(255) NOT NULL,
-  `EXTENSION_PIECEJOINTE` varchar(10) NOT NULL,
-  `DESCRIPTION_PIECEJOINTE` text,
-  `DATE_PIECEJOINTE` date DEFAULT NULL,
-  PRIMARY KEY (`ID_PIECEJOINTE`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `piecejointe`
---
-
-LOCK TABLES `piecejointe` WRITE;
-/*!40000 ALTER TABLE `piecejointe` DISABLE KEYS */;
-/*!40000 ALTER TABLE `piecejointe` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossiernatureliste`
---
-
-DROP TABLE IF EXISTS `dossiernatureliste`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossiernatureliste` (
-  `ID_DOSSIERNATURE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_DOSSIERNATURE` varchar(100) NOT NULL,
-  `ID_DOSSIERTYPE` bigint(20) unsigned NOT NULL,
-  `ORDRE` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ID_DOSSIERNATURE`),
-  KEY `fk_dossiernatureliste_dossiertype1_idx` (`ID_DOSSIERTYPE`),
-  CONSTRAINT `fk_dossiernatureliste_dossiertype1` FOREIGN KEY (`ID_DOSSIERTYPE`) REFERENCES `dossiertype` (`ID_DOSSIERTYPE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossiernatureliste`
---
-
-LOCK TABLES `dossiernatureliste` WRITE;
-/*!40000 ALTER TABLE `dossiernatureliste` DISABLE KEYS */;
-INSERT INTO `dossiernatureliste` VALUES (1,'Permis de construire (PC)',1,2),(2,'Autorisation de travaux (AT)',1,1),(3,'Dérogation',1,11),(4,'Cahier des charges fonctionnel du SSI',1,12),(5,'Cahier des charges de type T',1,16),(6,'Salon type T',1,7),(7,'Levée de prescriptions',1,5),(8,'Documents divers',1,22),(9,'Changement de DUS (Directeur unique de sécurité)',1,8),(10,'Suivi organisme formation SSIAP',1,9),(11,'Demande de registre de sécurité CTS',1,15),(12,'Demande d\'implantation CTS < 6mois',1,6),(13,'Demande d\'implantation CTS > 6mois',1,14),(14,'Permis d\'aménager',1,18),(15,'Permis de démolir',1,19),(16,'CR de visite des organismes d\'inspection de sécurité incendie (GA)',1,17),(17,'Etude suite à un avis \"différé\"',1,13),(18,'Utilisation exceptionnelle de locaux',1,4),(19,'Levée de réserves suite à un avis défavorable',1,3),(20,'Réception de travaux',2,2),(21,'Périodique',2,1),(22,'Chantier',2,6),(23,'Contrôle',2,4),(24,'Inopinée',2,5),(25,'Réception de travaux',3,2),(26,'Périodique',3,1),(27,'Chantier',3,6),(28,'Contrôle',3,4),(29,'Inopinée',3,5),(30,'Déclaration préalable',1,20),(31,'Locaux SDIS',4,1),(32,'Extérieur SDIS',4,2),(33,'RVRMD (diag sécu)',1,21),(34,'Arrivée',5,1),(35,'Départ',5,2),(36,'En transit (gestion des dossiers en interne vers d\'autres structures, ect, ...)',5,3),(37,'Incendie',6,1),(38,'SAP',6,2),(39,'Inter. div.',6,3),(40,'Ouverture',7,1),(41,'Fermeture',7,2),(42,'Mise en demeure',7,3),(43,'Téléphonique',4,3),(44,'Utilisation exceptionnelle de locaux',7,4),(45,'Courrier',7,NULL),(46,'Echéancier de travaux',1,10),(47,'Avant ouverture',2,3),(48,'Avant ouverture',3,3);
-/*!40000 ALTER TABLE `dossiernatureliste` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `adresserue`
---
-
-DROP TABLE IF EXISTS `adresserue`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `adresserue` (
-  `ID_RUE` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_RUE` varchar(255) NOT NULL COMMENT 'Pour le moment, le nom du type de la rue doit être cité dans le nom de la rue. (RUE DES ACACIAS)',
-  `ID_RUETYPE` bigint(20) unsigned NOT NULL,
-  `NUMINSEE_COMMUNE` char(5) NOT NULL,
-  PRIMARY KEY (`ID_RUE`),
-  KEY `fk_adresserue_adresseruetype_idx` (`ID_RUETYPE`),
-  KEY `fk_adresserue_adressecommune1_idx` (`NUMINSEE_COMMUNE`),
-  CONSTRAINT `fk_adresserue_adresseruetype` FOREIGN KEY (`ID_RUETYPE`) REFERENCES `adresseruetype` (`ID_RUETYPE`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_adresserue_adressecommune1` FOREIGN KEY (`NUMINSEE_COMMUNE`) REFERENCES `adressecommune` (`NUMINSEE_COMMUNE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `adresserue`
---
-
-LOCK TABLES `adresserue` WRITE;
-/*!40000 ALTER TABLE `adresserue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `adresserue` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `docmanquant`
---
-
-DROP TABLE IF EXISTS `docmanquant`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `docmanquant` (
-  `ID_DOCMANQUANT` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_DOCMANQUANT` text NOT NULL,
-  PRIMARY KEY (`ID_DOCMANQUANT`),
-  UNIQUE KEY `ID_DOCMANQUANT_UNIQUE` (`ID_DOCMANQUANT`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `docmanquant`
---
-
-LOCK TABLES `docmanquant` WRITE;
-/*!40000 ALTER TABLE `docmanquant` DISABLE KEYS */;
-INSERT INTO `docmanquant` VALUES (1,'Absence du plan masse – général – niveaux – coupe'),(2,'Absence de la notice descriptive des matériaux utilisés (gros œuvre ou aménagements intérieurs).'),(3,'Absence de la notice de sécurité.'),(4,'Notice de sécurité incomplète (ne pas omettre de préciser les puissances des installations techniques : électricité, chauffage, appareils de cuisson, etc.).'),(5,'Absence de transmission par la mairie'),(6,'Absence de transmission par le directeur unique de sécurité'),(7,'Absence du CERFA'),(8,'CERFA non signé');
-/*!40000 ALTER TABLE `docmanquant` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `periodicite`
---
-
-DROP TABLE IF EXISTS `periodicite`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `periodicite` (
-  `ID_CATEGORIE` int(2) unsigned NOT NULL,
-  `ID_TYPE` varchar(10) NOT NULL,
-  `LOCALSOMMEIL_PERIODICITE` tinyint(4) NOT NULL DEFAULT '0',
-  `PERIODICITE_PERIODICITE` int(2) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID_CATEGORIE`,`ID_TYPE`,`LOCALSOMMEIL_PERIODICITE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `periodicite`
---
-
-LOCK TABLES `periodicite` WRITE;
-/*!40000 ALTER TABLE `periodicite` DISABLE KEYS */;
-INSERT INTO `periodicite` VALUES (0,'1',0,0),(0,'10',0,0),(0,'11',0,0),(0,'2',0,0),(0,'3',0,0),(0,'4',0,0),(0,'5',0,0),(0,'6',0,0),(0,'7',0,0),(0,'8',0,0),(0,'9',0,0),(1,'1',0,0),(1,'1',1,0),(1,'10',0,24),(1,'10',1,0),(1,'11',0,24),(1,'11',1,0),(1,'12',0,0),(1,'12',1,0),(1,'13',0,24),(1,'13',1,0),(1,'14',0,0),(1,'14',1,0),(1,'15',0,0),(1,'15',1,0),(1,'16',0,0),(1,'16',1,0),(1,'17',0,24),(1,'17',1,24),(1,'18',0,0),(1,'18',1,0),(1,'19',0,36),(1,'19',1,0),(1,'2',0,0),(1,'2',1,0),(1,'20',0,0),(1,'20',1,0),(1,'21',0,24),(1,'21',1,0),(1,'22',0,24),(1,'22',1,0),(1,'23',0,60),(1,'23',1,0),(1,'24',0,36),(1,'24',1,0),(1,'25',0,36),(1,'25',1,0),(1,'26',0,36),(1,'26',1,0),(1,'27',0,0),(1,'27',1,0),(1,'3',0,0),(1,'3',1,0),(1,'4',0,0),(1,'4',1,0),(1,'5',0,0),(1,'5',1,0),(1,'6',0,0),(1,'6',1,0),(1,'7',0,24),(1,'7',1,0),(1,'8',0,24),(1,'8',1,0),(1,'9',0,24),(1,'9',1,0),(2,'1',0,0),(2,'1',1,0),(2,'10',0,36),(2,'10',1,0),(2,'11',0,24),(2,'11',1,0),(2,'12',0,0),(2,'12',1,0),(2,'13',0,24),(2,'13',1,0),(2,'14',0,0),(2,'14',1,0),(2,'15',0,0),(2,'15',1,0),(2,'16',0,0),(2,'16',1,0),(2,'17',0,36),(2,'17',1,24),(2,'18',0,0),(2,'18',1,0),(2,'19',0,36),(2,'19',1,0),(2,'2',0,0),(2,'2',1,0),(2,'20',0,0),(2,'20',1,0),(2,'21',0,36),(2,'21',1,0),(2,'22',0,24),(2,'22',1,0),(2,'23',0,60),(2,'23',1,0),(2,'24',0,36),(2,'24',1,0),(2,'25',0,36),(2,'25',1,0),(2,'26',0,36),(2,'26',1,0),(2,'27',0,0),(2,'27',1,0),(2,'3',0,0),(2,'3',1,0),(2,'4',0,0),(2,'4',1,0),(2,'5',0,0),(2,'5',1,0),(2,'6',0,0),(2,'6',1,0),(2,'7',0,24),(2,'7',1,0),(2,'8',0,36),(2,'8',1,0),(2,'9',0,36),(2,'9',1,0),(3,'1',0,0),(3,'1',1,0),(3,'10',0,60),(3,'10',1,0),(3,'11',0,36),(3,'11',1,0),(3,'12',0,0),(3,'12',1,0),(3,'13',0,36),(3,'13',1,0),(3,'14',0,0),(3,'14',1,0),(3,'15',0,0),(3,'15',1,0),(3,'16',0,0),(3,'16',1,0),(3,'17',0,36),(3,'17',1,36),(3,'18',0,0),(3,'18',1,0),(3,'19',0,60),(3,'19',1,0),(3,'2',0,0),(3,'2',1,0),(3,'20',0,0),(3,'20',1,0),(3,'21',0,60),(3,'21',1,0),(3,'22',0,36),(3,'22',1,0),(3,'23',0,60),(3,'23',1,0),(3,'24',0,60),(3,'24',1,0),(3,'25',0,60),(3,'25',1,0),(3,'26',0,60),(3,'26',1,0),(3,'27',0,0),(3,'27',1,0),(3,'3',0,0),(3,'3',1,0),(3,'4',0,0),(3,'4',1,0),(3,'5',0,0),(3,'5',1,0),(3,'6',0,0),(3,'6',1,0),(3,'7',0,36),(3,'7',1,0),(3,'8',0,36),(3,'8',1,0),(3,'9',0,60),(3,'9',1,0),(4,'1',0,0),(4,'1',1,0),(4,'10',0,60),(4,'10',1,0),(4,'11',0,36),(4,'11',1,0),(4,'12',0,0),(4,'12',1,0),(4,'13',0,60),(4,'13',1,0),(4,'14',0,0),(4,'14',1,0),(4,'15',0,0),(4,'15',1,0),(4,'16',0,0),(4,'16',1,0),(4,'17',0,60),(4,'17',1,36),(4,'18',0,0),(4,'18',1,0),(4,'19',0,60),(4,'19',1,0),(4,'2',0,0),(4,'2',1,0),(4,'20',0,0),(4,'20',1,0),(4,'21',0,60),(4,'21',1,0),(4,'22',0,36),(4,'22',1,0),(4,'23',0,60),(4,'23',1,0),(4,'24',0,60),(4,'24',1,0),(4,'25',0,60),(4,'25',1,0),(4,'26',0,60),(4,'26',1,0),(4,'27',0,0),(4,'27',1,0),(4,'3',0,0),(4,'3',1,0),(4,'4',0,0),(4,'4',1,0),(4,'5',0,0),(4,'5',1,0),(4,'6',0,0),(4,'6',1,0),(4,'7',0,36),(4,'7',1,0),(4,'8',0,60),(4,'8',1,0),(4,'9',0,60),(4,'9',1,0),(5,'1',0,0),(5,'1',1,0),(5,'10',0,0),(5,'10',1,0),(5,'11',0,0),(5,'11',1,60),(5,'12',0,0),(5,'12',1,0),(5,'13',0,0),(5,'13',1,0),(5,'14',0,0),(5,'14',1,0),(5,'15',0,0),(5,'15',1,0),(5,'16',0,0),(5,'16',1,0),(5,'17',0,0),(5,'17',1,60),(5,'18',0,0),(5,'18',1,0),(5,'19',0,0),(5,'19',1,0),(5,'2',0,0),(5,'2',1,0),(5,'20',0,0),(5,'20',1,0),(5,'21',0,0),(5,'21',1,0),(5,'22',0,0),(5,'22',1,60),(5,'23',0,0),(5,'23',1,0),(5,'24',0,0),(5,'24',1,0),(5,'25',0,0),(5,'25',1,0),(5,'26',0,0),(5,'26',1,0),(5,'27',0,0),(5,'27',1,0),(5,'3',0,0),(5,'3',1,0),(5,'4',0,0),(5,'4',1,0),(5,'5',0,0),(5,'5',1,0),(5,'6',0,0),(5,'6',1,0),(5,'7',0,0),(5,'7',1,60),(5,'8',0,0),(5,'8',1,0),(5,'9',0,0),(5,'9',1,0);
-/*!40000 ALTER TABLE `periodicite` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `utilisateurgroupement`
---
-
-DROP TABLE IF EXISTS `utilisateurgroupement`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `utilisateurgroupement` (
-  `ID_UTILISATEUR` bigint(20) unsigned NOT NULL,
-  `ID_GROUPEMENT` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_UTILISATEUR`,`ID_GROUPEMENT`),
-  KEY `fk_utilisateurgroupement_utilisateur1_idx` (`ID_UTILISATEUR`),
-  KEY `fk_utilisateurgroupement_groupement1_idx` (`ID_GROUPEMENT`),
-  CONSTRAINT `fk_utilisateurgroupement_utilisateur1` FOREIGN KEY (`ID_UTILISATEUR`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_utilisateurgroupement_groupement1` FOREIGN KEY (`ID_GROUPEMENT`) REFERENCES `groupement` (`ID_GROUPEMENT`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `utilisateurgroupement`
---
-
-LOCK TABLES `utilisateurgroupement` WRITE;
-/*!40000 ALTER TABLE `utilisateurgroupement` DISABLE KEYS */;
-/*!40000 ALTER TABLE `utilisateurgroupement` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `fonction`
---
-
-DROP TABLE IF EXISTS `fonction`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `fonction` (
-  `ID_FONCTION` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_FONCTION` varchar(50) CHARACTER SET latin1 NOT NULL,
-  PRIMARY KEY (`ID_FONCTION`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `fonction`
---
-
-LOCK TABLES `fonction` WRITE;
-/*!40000 ALTER TABLE `fonction` DISABLE KEYS */;
-INSERT INTO `fonction` VALUES (1,'Préfet'),(2,'Maire'),(3,'Maitre d\'ouvrage'),(4,'Maitre d\'oeuvre'),(5,'Pétitionnaire demandeur'),(6,'Controleur technique (organisme agréé)'),(7,'Exploitant'),(8,'Directeur unique de sécurité'),(9,'Responsable de sécurité'),(10,'Participant'),(11,'Demandeur'),(12,'Simple utilisateur'),(13,'Préventionniste'),(15,'Secrétariat'),(16,'Service informatique'),(17,'Propriétaire'),(99,'Utilisateur spécial');
-/*!40000 ALTER TABLE `fonction` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `groupementcommune`
---
-
-DROP TABLE IF EXISTS `groupementcommune`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groupementcommune` (
-  `ID_GROUPEMENT` bigint(20) unsigned NOT NULL,
-  `NUMINSEE_COMMUNE` char(5) NOT NULL,
-  PRIMARY KEY (`ID_GROUPEMENT`,`NUMINSEE_COMMUNE`),
-  KEY `fk_groupementcommune_groupement1_idx` (`ID_GROUPEMENT`),
-  KEY `fk_groupementcommune_adressecommune1_idx` (`NUMINSEE_COMMUNE`),
-  CONSTRAINT `fk_groupementcommune_groupement1` FOREIGN KEY (`ID_GROUPEMENT`) REFERENCES `groupement` (`ID_GROUPEMENT`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_groupementcommune_adressecommune1` FOREIGN KEY (`NUMINSEE_COMMUNE`) REFERENCES `adressecommune` (`NUMINSEE_COMMUNE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `groupementcommune`
---
-
-LOCK TABLES `groupementcommune` WRITE;
-/*!40000 ALTER TABLE `groupementcommune` DISABLE KEYS */;
-/*!40000 ALTER TABLE `groupementcommune` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionmembre`
---
-
-DROP TABLE IF EXISTS `commissionmembre`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionmembre` (
-  `ID_COMMISSIONMEMBRE` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_COMMISSIONMEMBRE` varchar(255) NOT NULL,
-  `PRESENCE_COMMISSIONMEMBRE` int(11) NOT NULL,
-  `COURRIER_CONVOCATIONVISITE` varchar(255) DEFAULT NULL,
-  `COURRIER_CONVOCATIONSALLE` varchar(255) DEFAULT NULL,
-  `COURRIER_ODJ` varchar(255) DEFAULT NULL,
-  `COURRIER_PV` varchar(255) DEFAULT NULL,
-  `ID_COMMISSION` bigint(20) unsigned NOT NULL,
-  `ID_GROUPEMENT` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`ID_COMMISSIONMEMBRE`),
-  KEY `ID_COURRIER_BE` (`COURRIER_CONVOCATIONVISITE`,`COURRIER_CONVOCATIONSALLE`),
-  KEY `fk_commissionmembre_commission1_idx` (`ID_COMMISSION`),
-  KEY `fk_commissionmembre_groupement1_idx` (`ID_GROUPEMENT`),
-  CONSTRAINT `fk_commissionmembre_commission1` FOREIGN KEY (`ID_COMMISSION`) REFERENCES `commission` (`ID_COMMISSION`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_commissionmembre_groupement1` FOREIGN KEY (`ID_GROUPEMENT`) REFERENCES `groupement` (`ID_GROUPEMENT`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionmembre`
---
-
-LOCK TABLES `commissionmembre` WRITE;
-/*!40000 ALTER TABLE `commissionmembre` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionmembre` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionregle`
---
-
-DROP TABLE IF EXISTS `commissionregle`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionregle` (
-  `ID_REGLE` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `ID_COMMISSION` bigint(20) unsigned NOT NULL,
-  `NUMINSEE_COMMUNE` char(5) DEFAULT NULL,
-  `ID_GROUPEMENT` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`ID_REGLE`),
-  KEY `fk_commissionregle_commission1_idx` (`ID_COMMISSION`),
-  KEY `fk_commissionregle_adressecommune1_idx` (`NUMINSEE_COMMUNE`),
-  KEY `fk_commissionregle_groupement1_idx` (`ID_GROUPEMENT`),
-  CONSTRAINT `fk_commissionregle_commission1` FOREIGN KEY (`ID_COMMISSION`) REFERENCES `commission` (`ID_COMMISSION`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_commissionregle_adressecommune1` FOREIGN KEY (`NUMINSEE_COMMUNE`) REFERENCES `adressecommune` (`NUMINSEE_COMMUNE`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_commissionregle_groupement1` FOREIGN KEY (`ID_GROUPEMENT`) REFERENCES `groupement` (`ID_GROUPEMENT`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionregle`
---
-
-LOCK TABLES `commissionregle` WRITE;
-/*!40000 ALTER TABLE `commissionregle` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionregle` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `privileges`
---
-
-DROP TABLE IF EXISTS `privileges`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `privileges` (
-  `id_privilege` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) DEFAULT NULL,
-  `text` varchar(45) DEFAULT NULL,
-  `id_resource` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`id_privilege`),
-  KEY `fk_privileges_resources1_idx` (`id_resource`),
-  CONSTRAINT `fk_privileges_resources1` FOREIGN KEY (`id_resource`) REFERENCES `resources` (`id_resource`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `privileges`
---
-
-LOCK TABLES `privileges` WRITE;
-/*!40000 ALTER TABLE `privileges` DISABLE KEYS */;
-INSERT INTO `privileges` VALUES (1,'docs','Gestion des documents',1),(2,'groupement_communes','Gestion des groupements de communes',1),(3,'gestion_prescriptions','Gestion des prescriptions',1),(4,'gestion_textes_applicables','Gestion des textes applicables',1),(5,'fil_actus','Écriture dans le fil d\'actualités',1),(6,'gestion_commissions','Gestion des commissions',1),(7,'lecture_comission','Lecture',2),(8,'ecriture_comission','Écriture',2),(9,'creation_comission','Création',2),(10,'modification_odj','Modification de l\'Ordre du Jour',2),(11,'admin','Accès à l\'administration',1),(12,'communes','Gestion des communes',1),(13,'periodicites','Gestion des périodicités',1),(14,'add_etablissement','Création d\'un établissement',3),(15,'add_dossier','Création d\'un dossier',3),(16,'generation_doc_com','Génération des documents de la commission',2);
-/*!40000 ALTER TABLE `privileges` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `textesappl`
---
-
-DROP TABLE IF EXISTS `textesappl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `textesappl` (
-  `ID_TEXTESAPPL` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_TEXTESAPPL` text,
-  `VISIBLE_TEXTESAPPL` tinyint(4) DEFAULT NULL,
-  `ID_TYPETEXTEAPPL` bigint(20) NOT NULL,
-  `NUM_TEXTESAPPL` int(11) NOT NULL DEFAULT '99999',
-  PRIMARY KEY (`ID_TEXTESAPPL`),
-  KEY `fk_textesappl_typetextesappl1_idx` (`ID_TYPETEXTEAPPL`),
-  CONSTRAINT `fk_textesappl_typetextesappl1` FOREIGN KEY (`ID_TYPETEXTEAPPL`) REFERENCES `typetextesappl` (`ID_TYPETEXTEAPPL`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `textesappl`
---
-
-LOCK TABLES `textesappl` WRITE;
-/*!40000 ALTER TABLE `textesappl` DISABLE KEYS */;
-INSERT INTO `textesappl` VALUES (2,'Décret n°95-260 du 8 mars 1995 modifié relatif à la Commission Consultative Départementale de Sécurité et d’Accessibilté',1,1,99999),(3,'Règlement de sécurité contre l’incendie du 23 mars 1965 modifié, relatif aux établissements recevant du public',1,1,99999),(4,'Arrêté du 25 juin 1980 modifié, relatif aux dispositions générales applicables aux établissements recevant du public et instructions techniques annexées',1,1,99999),(5,'Arrêté du 22 Juin 1990 modifié (dispositions particulières applicables aux établissements de 5ième catégorie PE)',1,3,99999),(6,'Arrêté du 26 octobre 2011 modifié (dispositions particulières applicables aux petits hôtels PO)',1,3,99999),(7,'Arrêté du 10 décembre 2004 (dispositions particulières applicables aux petits établissements de soins PU)',1,3,99999),(8,'Arrêté du 20 novembre 2000 (dispositions particulières applicables aux établissements sportifs PX)',1,3,99999),(9,'Arrêté du 19 novembre 2001 modifié (dispositions particulières applicables aux établissements du type J)',1,2,99999),(10,'Arrêté du 5 février 2007 modifié (dispositions particulières applicables aux établissements du type L)',1,2,99999),(11,'Arrêté du 22 décembre 1981 modifié (dispositions particulières applicables aux établissements du type M)',1,2,99999),(12,'Arrêté du 21 juin 1982 modifié (dispositions particulières applicables aux établissements du type N)',1,2,99999),(13,'Arrêté du 21 juin 1982 modifié (dispositions particulières applicables aux établissements du type O)',1,2,99999),(14,'Arrêté du 7 juillet 1983 modifié (dispositions particulières applicables aux établissements du type P)',1,2,99999),(15,'Arrêté du 4 juin 1982 modifié (dispositions particulières applicables aux établissements du type R)',1,2,99999),(16,'Arrêté du 12 juin 1995 modifié (dispositions particulières applicables aux établissements du type S)',1,2,99999),(17,'Arrêté du 18 novembre 1987 modifié (dispositions particulières applicables aux établissements du type T)',1,2,99999),(18,'Arrêté du 10 décembre 2004 modifié (dispositions particulières applicables aux établissements du type U)',1,2,99999),(19,'Arrêté du 21 avril 1983 modifié (dispositions particulières applicables aux établissements du type V)',1,2,99999),(20,'Arrêté du 21 avril 1983 modifié (dispositions particulières applicables aux établissements du type W)',1,2,99999),(21,'Arrêté du 4 juin 1982 modifié (dispositions particulières applicables aux établissements du type X)',1,2,99999),(22,'Arrêté du 12 juin 1995 modifié (dispositions particulières applicables aux établissements du type Y)',1,2,99999),(23,'Arrêté du 23 janvier 1985 modifié (dispositions particulières applicables aux établissements du type CTS)',1,4,99999),(24,'Arrêté du 6 janvier 1983 modifié (dispositions particulières applicables aux établissements du type PA)',1,4,99999),(25,'Arrêté du 6 janvier 1983 modifié (dispositions particulières applicables aux établissements du type SG)',1,4,99999),(26,'Arrêté du 9 janvier 1990 modifié (dispositions particulières applicables aux établissements du type EF)',1,4,99999),(27,'Arrêté du 24 décembre 2007 (dispositions particulières applicables aux établissements du type GA)',1,4,99999),(28,'Arrêté du 9 mai 2006 (dispositions particulières applicables aux établissements du type PS)',1,4,99999),(29,'Arrêté du 23 octobre 1986 modifié (dispositions particulières applicables aux établissements du type OA)',1,4,99999),(30,'Arrêté du 10 novrembre 1994 modifié (dispositions particulières applicables aux établissements du type REF)',1,4,99999),(31,'Arrêté du 18 juillet 2006 (règles de sécurité contre les risques d’incendie et de panique dans les établissements pénitentiaires)',1,4,99999),(32,'Arrêté du 31 janvier 1986 modifié (Habitations)',1,5,99999),(33,'Code de la Construction et de l’Habitation - Articles R 123.1 à R 123.55 (ERP)',1,1,99999),(34,'Code de la Construction et de l’Habitation - Articles R 122.1 à R 122.29 (IGH)',1,1,99999),(35,'Arrêté du 18 octobre 1977 modifié portant règlement de sécurité pour la construction des immeubles de grande hauteur et leur protection contre les risques d\'incendie et de panique',1,6,99999),(36,'Arrêté du 30 décembre 2011 portant règlement de sécurité pour la construction des immeubles de grande hauteur et leur protection contre les risques d\'incendie et de panique',1,6,99999);
-/*!40000 ALTER TABLE `textesappl` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `datecommissionpj`
---
-
-DROP TABLE IF EXISTS `datecommissionpj`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `datecommissionpj` (
-  `ID_DATECOMMISSION` bigint(20) NOT NULL,
-  `ID_PIECEJOINTE` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_DATECOMMISSION`,`ID_PIECEJOINTE`),
-  KEY `fk_datecommissionpj_datecommission1_idx` (`ID_DATECOMMISSION`),
-  KEY `fk_datecommissionpj_piecejointe1_idx` (`ID_PIECEJOINTE`),
-  CONSTRAINT `fk_datecommissionpj_datecommission1` FOREIGN KEY (`ID_DATECOMMISSION`) REFERENCES `datecommission` (`ID_DATECOMMISSION`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_datecommissionpj_piecejointe1` FOREIGN KEY (`ID_PIECEJOINTE`) REFERENCES `piecejointe` (`ID_PIECEJOINTE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `datecommissionpj`
---
-
-LOCK TABLES `datecommissionpj` WRITE;
-/*!40000 ALTER TABLE `datecommissionpj` DISABLE KEYS */;
-/*!40000 ALTER TABLE `datecommissionpj` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `famille`
---
-
-DROP TABLE IF EXISTS `famille`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `famille` (
-  `ID_FAMILLE` int(11) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_FAMILLE` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID_FAMILLE`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `famille`
---
-
-LOCK TABLES `famille` WRITE;
-/*!40000 ALTER TABLE `famille` DISABLE KEYS */;
-INSERT INTO `famille` VALUES (1,'Aucune'),(2,'1ère famille'),(3,'2ème famille'),(4,'2ème famille collective'),(5,'3ème famille A'),(6,'3ème famille B'),(7,'4ème famille');
-/*!40000 ALTER TABLE `famille` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `typetextesappl`
---
-
-DROP TABLE IF EXISTS `typetextesappl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `typetextesappl` (
-  `ID_TYPETEXTEAPPL` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_TYPETEXTEAPPL` text,
-  PRIMARY KEY (`ID_TYPETEXTEAPPL`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `typetextesappl`
---
-
-LOCK TABLES `typetextesappl` WRITE;
-/*!40000 ALTER TABLE `typetextesappl` DISABLE KEYS */;
-INSERT INTO `typetextesappl` VALUES (1,'Dispositions générales'),(2,'Dispositions particulières'),(3,'Dispositions établissement de 5ème Cat'),(4,'Dispositions spéciales'),(5,'Textes relatifs aux bâtiments d’habitation'),(6,'Textes relatifs aux immeubles de grande hauteur');
-/*!40000 ALTER TABLE `typetextesappl` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossiercontact`
---
-
-DROP TABLE IF EXISTS `dossiercontact`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossiercontact` (
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  `ID_UTILISATEURINFORMATIONS` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_DOSSIER`,`ID_UTILISATEURINFORMATIONS`),
-  KEY `fk_dossiercontact_dossier1_idx` (`ID_DOSSIER`),
-  KEY `fk_dossiercontact_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS`),
-  CONSTRAINT `fk_dossiercontact_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_dossiercontact_utilisateurinformations1` FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`) REFERENCES `utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossiercontact`
---
-
-LOCK TABLES `dossiercontact` WRITE;
-/*!40000 ALTER TABLE `dossiercontact` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossiercontact` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionmembredossiertype`
---
-
-DROP TABLE IF EXISTS `commissionmembredossiertype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionmembredossiertype` (
-  `ID_COMMISSIONMEMBRE` bigint(20) unsigned NOT NULL,
-  `ID_DOSSIERTYPE` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_DOSSIERTYPE`,`ID_COMMISSIONMEMBRE`),
-  KEY `fk_commissionmembredossiertype_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE`),
-  KEY `fk_commissionmembredossiertype_dossiertype1_idx` (`ID_DOSSIERTYPE`),
-  CONSTRAINT `fk_commissionmembredossiertype_commissionmembre1` FOREIGN KEY (`ID_COMMISSIONMEMBRE`) REFERENCES `commissionmembre` (`ID_COMMISSIONMEMBRE`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_commissionmembredossiertype_dossiertype1` FOREIGN KEY (`ID_DOSSIERTYPE`) REFERENCES `dossiertype` (`ID_DOSSIERTYPE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionmembredossiertype`
---
-
-LOCK TABLES `commissionmembredossiertype` WRITE;
-/*!40000 ALTER TABLE `commissionmembredossiertype` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionmembredossiertype` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionreglecategorie`
---
-
-DROP TABLE IF EXISTS `commissionreglecategorie`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionreglecategorie` (
-  `ID_REGLE` bigint(20) unsigned NOT NULL,
-  `ID_CATEGORIE` int(1) unsigned NOT NULL,
-  PRIMARY KEY (`ID_REGLE`,`ID_CATEGORIE`),
-  KEY `fk_commissionreglecategorie_commissionregle1_idx` (`ID_REGLE`),
-  KEY `fk_commissionreglecategorie_categorie1_idx` (`ID_CATEGORIE`),
-  CONSTRAINT `fk_commissionreglecategorie_commissionregle1` FOREIGN KEY (`ID_REGLE`) REFERENCES `commissionregle` (`ID_REGLE`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_commissionreglecategorie_categorie1` FOREIGN KEY (`ID_CATEGORIE`) REFERENCES `categorie` (`ID_CATEGORIE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionreglecategorie`
---
-
-LOCK TABLES `commissionreglecategorie` WRITE;
-/*!40000 ALTER TABLE `commissionreglecategorie` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionreglecategorie` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementdossier`
---
-
-DROP TABLE IF EXISTS `etablissementdossier`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementdossier` (
-  `ID_ETABLISSEMENTDOSSIER` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENTDOSSIER`),
-  KEY `fk_etablissementdossier_etablissement1_idx` (`ID_ETABLISSEMENT`),
-  KEY `fk_etablissementdossier_dossier1_idx` (`ID_DOSSIER`),
-  CONSTRAINT `fk_etablissementdossier_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementdossier_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementdossier`
---
-
-LOCK TABLES `etablissementdossier` WRITE;
-/*!40000 ALTER TABLE `etablissementdossier` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementdossier` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `groupe`
---
-
-DROP TABLE IF EXISTS `groupe`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groupe` (
-  `ID_GROUPE` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_GROUPE` varchar(255) NOT NULL,
-  `DESC_GROUPE` text NOT NULL,
-  PRIMARY KEY (`ID_GROUPE`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `groupe`
---
-
-LOCK TABLES `groupe` WRITE;
-/*!40000 ALTER TABLE `groupe` DISABLE KEYS */;
-INSERT INTO `groupe` VALUES (1,'Groupe par défaut','Ceci est le groupe qui contient les nouveaux utilisateurs et les utilisateurs dont les groupes ont été supprimés.');
-/*!40000 ALTER TABLE `groupe` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `typeplan`
---
-
-DROP TABLE IF EXISTS `typeplan`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `typeplan` (
-  `ID_TYPEPLAN` int(11) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_TYPEPLAN` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID_TYPEPLAN`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `typeplan`
---
-
-LOCK TABLES `typeplan` WRITE;
-/*!40000 ALTER TABLE `typeplan` DISABLE KEYS */;
-INSERT INTO `typeplan` VALUES (1,'Plan ER'),(2,'PPI'),(3,'POI'),(4,'PPMS'),(5,'Plan de sauvegarde des oeuvres');
-/*!40000 ALTER TABLE `typeplan` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossiernature`
---
-
-DROP TABLE IF EXISTS `dossiernature`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossiernature` (
-  `ID_DOSSIERNATURE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_NATURE` bigint(20) NOT NULL,
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_DOSSIERNATURE`),
-  KEY `fk_dossiernature_dossiernatureliste1_idx` (`ID_NATURE`),
-  KEY `fk_dossiernature_dossier1_idx` (`ID_DOSSIER`),
-  CONSTRAINT `fk_dossiernature_dossiernatureliste1` FOREIGN KEY (`ID_NATURE`) REFERENCES `dossiernatureliste` (`ID_DOSSIERNATURE`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_dossiernature_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossiernature`
---
-
-LOCK TABLES `dossiernature` WRITE;
-/*!40000 ALTER TABLE `dossiernature` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossiernature` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `listedocajout`
---
-
-DROP TABLE IF EXISTS `listedocajout`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `listedocajout` (
-  `ID_DOCAJOUT` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_DOCAJOUT` text CHARACTER SET latin1 NOT NULL,
-  `REF_DOCAJOUT` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `DATE_DOCAJOUT` date DEFAULT NULL,
-  `ID_NATURE` bigint(20) NOT NULL,
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_DOCAJOUT`),
-  KEY `fk_listedocajout_dossier1_idx` (`ID_DOSSIER`),
-  CONSTRAINT `fk_listedocajout_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `listedocajout`
---
-
-LOCK TABLES `listedocajout` WRITE;
-/*!40000 ALTER TABLE `listedocajout` DISABLE KEYS */;
-/*!40000 ALTER TABLE `listedocajout` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `statut`
---
-
-DROP TABLE IF EXISTS `statut`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `statut` (
-  `ID_STATUT` int(1) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_STATUT` varchar(30) NOT NULL,
-  PRIMARY KEY (`ID_STATUT`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `statut`
---
-
-LOCK TABLES `statut` WRITE;
-/*!40000 ALTER TABLE `statut` DISABLE KEYS */;
-INSERT INTO `statut` VALUES (1,'Projet'),(2,'Ouvert'),(3,'Fermé'),(4,'Itinérant / Périodique');
-/*!40000 ALTER TABLE `statut` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissiontypeevenement`
---
-
-DROP TABLE IF EXISTS `commissiontypeevenement`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissiontypeevenement` (
-  `ID_COMMISSIONTYPEEVENEMENT` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_COMMISSIONTYPEEVENEMENT` varchar(255) NOT NULL,
-  PRIMARY KEY (`ID_COMMISSIONTYPEEVENEMENT`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissiontypeevenement`
---
-
-LOCK TABLES `commissiontypeevenement` WRITE;
-/*!40000 ALTER TABLE `commissiontypeevenement` DISABLE KEYS */;
-INSERT INTO `commissiontypeevenement` VALUES (1,'Salle'),(2,'Visite de sécurité'),(3,'Groupe de visite');
-/*!40000 ALTER TABLE `commissiontypeevenement` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionreglelocalsommeil`
---
-
-DROP TABLE IF EXISTS `commissionreglelocalsommeil`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionreglelocalsommeil` (
-  `ID_REGLE` bigint(20) unsigned NOT NULL,
-  `LOCALSOMMEIL` tinyint(1) NOT NULL,
-  KEY `TYPE_ACTIVITE` (`LOCALSOMMEIL`),
-  KEY `fk_commissionreglelocalsommeil_commissionregle1_idx` (`ID_REGLE`),
-  CONSTRAINT `fk_commissionreglelocalsommeil_commissionregle1` FOREIGN KEY (`ID_REGLE`) REFERENCES `commissionregle` (`ID_REGLE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionreglelocalsommeil`
---
-
-LOCK TABLES `commissionreglelocalsommeil` WRITE;
-/*!40000 ALTER TABLE `commissionreglelocalsommeil` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionreglelocalsommeil` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `prescriptionarticleliste`
---
-
-DROP TABLE IF EXISTS `prescriptionarticleliste`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptionarticleliste` (
-  `ID_ARTICLE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_ARTICLE` varchar(255) NOT NULL,
-  PRIMARY KEY (`ID_ARTICLE`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptionarticleliste`
---
-
-LOCK TABLES `prescriptionarticleliste` WRITE;
-/*!40000 ALTER TABLE `prescriptionarticleliste` DISABLE KEYS */;
-INSERT INTO `prescriptionarticleliste` VALUES (1,'');
-/*!40000 ALTER TABLE `prescriptionarticleliste` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `prescriptiontypeassoc`
---
-
-DROP TABLE IF EXISTS `prescriptiontypeassoc`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptiontypeassoc` (
-  `ID_PRESCRIPTIONTYPE` bigint(20) NOT NULL,
-  `NUM_PRESCRIPTIONASSOC` int(11) NOT NULL,
-  `ID_TEXTE` bigint(20) NOT NULL,
-  `ID_ARTICLE` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_PRESCRIPTIONTYPE`,`NUM_PRESCRIPTIONASSOC`),
-  KEY `fk_prescriptiontypeassoc_prescriptiontype1_idx` (`ID_PRESCRIPTIONTYPE`),
-  CONSTRAINT `fk_prescriptiontypeassoc_prescriptiontype1` FOREIGN KEY (`ID_PRESCRIPTIONTYPE`) REFERENCES `prescriptiontype` (`ID_PRESCRIPTIONTYPE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptiontypeassoc`
---
-
-LOCK TABLES `prescriptiontypeassoc` WRITE;
-/*!40000 ALTER TABLE `prescriptiontypeassoc` DISABLE KEYS */;
-/*!40000 ALTER TABLE `prescriptiontypeassoc` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementinformationsrubrique`
---
-
-DROP TABLE IF EXISTS `etablissementinformationsrubrique`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementinformationsrubrique` (
-  `ID_ETABLISSEMENTINFORMATIONSRUBRIQUE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_RUBRIQUE` tinyint(4) NOT NULL,
-  `NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE` int(11) NOT NULL,
-  `VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE` float NOT NULL,
-  `NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE` varchar(150) NOT NULL,
-  `CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE` varchar(50) DEFAULT NULL,
-  `ID_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONSRUBRIQUE`),
-  KEY `ID_ETABLISSEMENTINFORMATIONS` (`ID_RUBRIQUE`),
-  KEY `fk_etablissementinformationsrubrique_etablissementinformati_idx` (`ID_ETABLISSEMENTINFORMATIONS`),
-  CONSTRAINT `fk_etablissementinformationsrubrique_etablissementinformations1` FOREIGN KEY (`ID_ETABLISSEMENTINFORMATIONS`) REFERENCES `etablissementinformations` (`ID_ETABLISSEMENTINFORMATIONS`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementinformationsrubrique`
---
-
-LOCK TABLES `etablissementinformationsrubrique` WRITE;
-/*!40000 ALTER TABLE `etablissementinformationsrubrique` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementinformationsrubrique` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `genre`
---
-
-DROP TABLE IF EXISTS `genre`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `genre` (
-  `ID_GENRE` int(2) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_GENRE` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`ID_GENRE`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `genre`
---
-
-LOCK TABLES `genre` WRITE;
-/*!40000 ALTER TABLE `genre` DISABLE KEYS */;
-INSERT INTO `genre` VALUES (1,'Site'),(2,'Établissement'),(3,'Cellule'),(4,'Habitation'),(5,'IGH'),(6,'EIC');
-/*!40000 ALTER TABLE `genre` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `news`
---
-
-DROP TABLE IF EXISTS `news`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `news` (
-  `ID_NEWS` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `TYPE_NEWS` varchar(100) NOT NULL,
-  `TEXTE_NEWS` text NOT NULL,
-  `ID_UTILISATEUR` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_NEWS`),
-  KEY `fk_news_utilisateur1_idx` (`ID_UTILISATEUR`),
-  CONSTRAINT `fk_news_utilisateur1` FOREIGN KEY (`ID_UTILISATEUR`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `news`
---
-
-LOCK TABLES `news` WRITE;
-/*!40000 ALTER TABLE `news` DISABLE KEYS */;
-/*!40000 ALTER TABLE `news` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementtextapp`
---
-
-DROP TABLE IF EXISTS `etablissementtextapp`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementtextapp` (
-  `ID_TEXTESAPPL` bigint(20) NOT NULL,
-  `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_TEXTESAPPL`,`ID_ETABLISSEMENT`),
-  KEY `fk_etablissementtextapp_etablissement1_idx` (`ID_ETABLISSEMENT`),
-  CONSTRAINT `fk_etablissementtextapp_textesappl1` FOREIGN KEY (`ID_TEXTESAPPL`) REFERENCES `textesappl` (`ID_TEXTESAPPL`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementtextapp_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementtextapp`
---
-
-LOCK TABLES `etablissementtextapp` WRITE;
-/*!40000 ALTER TABLE `etablissementtextapp` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementtextapp` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionregleclasse`
---
-
-DROP TABLE IF EXISTS `commissionregleclasse`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionregleclasse` (
-  `ID_REGLE` bigint(20) unsigned NOT NULL,
-  `ID_CLASSE` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`ID_REGLE`,`ID_CLASSE`),
-  KEY `fk_commissionregleclasse_commissionregle1_idx` (`ID_REGLE`),
-  KEY `fk_commissionregleclasse_classe1_idx` (`ID_CLASSE`),
-  CONSTRAINT `fk_commissionregleclasse_commissionregle1` FOREIGN KEY (`ID_REGLE`) REFERENCES `commissionregle` (`ID_REGLE`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_commissionregleclasse_classe1` FOREIGN KEY (`ID_CLASSE`) REFERENCES `classe` (`ID_CLASSE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionregleclasse`
---
-
-LOCK TABLES `commissionregleclasse` WRITE;
-/*!40000 ALTER TABLE `commissionregleclasse` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionregleclasse` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionregleetudevisite`
---
-
-DROP TABLE IF EXISTS `commissionregleetudevisite`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionregleetudevisite` (
-  `ID_REGLE` bigint(20) unsigned NOT NULL,
-  `ETUDEVISITE` tinyint(1) NOT NULL,
-  KEY `ETUDEVISITE` (`ETUDEVISITE`),
-  KEY `fk_commissionregleetudevisite_commissionregle1_idx` (`ID_REGLE`),
-  CONSTRAINT `fk_commissionregleetudevisite_commissionregle1` FOREIGN KEY (`ID_REGLE`) REFERENCES `commissionregle` (`ID_REGLE`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionregleetudevisite`
---
-
-LOCK TABLES `commissionregleetudevisite` WRITE;
-/*!40000 ALTER TABLE `commissionregleetudevisite` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionregleetudevisite` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `prescriptiondossierassoc`
---
-
-DROP TABLE IF EXISTS `prescriptiondossierassoc`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `prescriptiondossierassoc` (
-  `NUM_PRESCRIPTION_DOSSIERASSOC` int(11) NOT NULL,
-  `ID_PRESCRIPTION_DOSSIER` bigint(20) NOT NULL,
-  `ID_TEXTE` bigint(20) DEFAULT NULL,
-  `ID_ARTICLE` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`NUM_PRESCRIPTION_DOSSIERASSOC`,`ID_PRESCRIPTION_DOSSIER`),
-  KEY `fk_prescriptiondossierassoc_prescriptiondossier1_idx` (`ID_PRESCRIPTION_DOSSIER`),
-  CONSTRAINT `fk_prescriptiondossierassoc_prescriptiondossier1` FOREIGN KEY (`ID_PRESCRIPTION_DOSSIER`) REFERENCES `prescriptiondossier` (`ID_PRESCRIPTION_DOSSIER`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `prescriptiondossierassoc`
---
-
-LOCK TABLES `prescriptiondossierassoc` WRITE;
-/*!40000 ALTER TABLE `prescriptiondossierassoc` DISABLE KEYS */;
-/*!40000 ALTER TABLE `prescriptiondossierassoc` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementinformationstypesactivitessecondaires`
---
-
-DROP TABLE IF EXISTS `etablissementinformationstypesactivitessecondaires`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementinformationstypesactivitessecondaires` (
-  `ID_ETABLISSEMENTINFORMATIONSTYPESACTIVITESSECONDAIRES` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `ID_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned NOT NULL,
-  `ID_TYPE_SECONDAIRE` int(10) unsigned NOT NULL,
-  `ID_TYPEACTIVITE_SECONDAIRE` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONSTYPESACTIVITESSECONDAIRES`),
-  KEY `fk_etablissementinformationstypesactivitessecondaires_etabl_idx` (`ID_ETABLISSEMENTINFORMATIONS`),
-  KEY `fk_etablissementinformationstypesactivitessecondaires_type1_idx` (`ID_TYPE_SECONDAIRE`),
-  KEY `fk_etablissementinformationstypesactivitessecondaires_typea_idx` (`ID_TYPEACTIVITE_SECONDAIRE`),
-  CONSTRAINT `fk_etablissementinformationstypesactivitessecondaires_etablis1` FOREIGN KEY (`ID_ETABLISSEMENTINFORMATIONS`) REFERENCES `etablissementinformations` (`ID_ETABLISSEMENTINFORMATIONS`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementinformationstypesactivitessecondaires_type1` FOREIGN KEY (`ID_TYPE_SECONDAIRE`) REFERENCES `type` (`ID_TYPE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementinformationstypesactivitessecondaires_typeact1` FOREIGN KEY (`ID_TYPEACTIVITE_SECONDAIRE`) REFERENCES `typeactivite` (`ID_TYPEACTIVITE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementinformationstypesactivitessecondaires`
---
-
-LOCK TABLES `etablissementinformationstypesactivitessecondaires` WRITE;
-/*!40000 ALTER TABLE `etablissementinformationstypesactivitessecondaires` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementinformationstypesactivitessecondaires` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossiertextesappl`
---
-
-DROP TABLE IF EXISTS `dossiertextesappl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossiertextesappl` (
-  `ID_TEXTESAPPL` bigint(20) NOT NULL,
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_TEXTESAPPL`,`ID_DOSSIER`),
-  KEY `fk_table1_dossier1_idx` (`ID_DOSSIER`),
-  CONSTRAINT `fk_table1_textesappl1` FOREIGN KEY (`ID_TEXTESAPPL`) REFERENCES `textesappl` (`ID_TEXTESAPPL`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_table1_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossiertextesappl`
---
-
-LOCK TABLES `dossiertextesappl` WRITE;
-/*!40000 ALTER TABLE `dossiertextesappl` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossiertextesappl` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissioncontact`
---
-
-DROP TABLE IF EXISTS `commissioncontact`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissioncontact` (
-  `ID_COMMISSION` bigint(20) unsigned NOT NULL,
-  `ID_UTILISATEURINFORMATIONS` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_COMMISSION`,`ID_UTILISATEURINFORMATIONS`),
-  KEY `fk_commissioncontact_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS`),
-  CONSTRAINT `fk_commissioncontact_utilisateurinformations1` FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`) REFERENCES `utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_commissioncontact_commission1` FOREIGN KEY (`ID_COMMISSION`) REFERENCES `commission` (`ID_COMMISSION`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissioncontact`
---
-
-LOCK TABLES `commissioncontact` WRITE;
-/*!40000 ALTER TABLE `commissioncontact` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissioncontact` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementcontact`
---
-
-DROP TABLE IF EXISTS `etablissementcontact`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementcontact` (
-  `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
-  `ID_UTILISATEURINFORMATIONS` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_ETABLISSEMENT`,`ID_UTILISATEURINFORMATIONS`),
-  KEY `fk_etablissementcontact_etablissement1_idx` (`ID_ETABLISSEMENT`),
-  KEY `fk_etablissementcontact_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS`),
-  CONSTRAINT `fk_etablissementcontact_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementcontact_utilisateurinformations1` FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`) REFERENCES `utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementcontact`
---
-
-LOCK TABLES `etablissementcontact` WRITE;
-/*!40000 ALTER TABLE `etablissementcontact` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementcontact` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `classe`
---
-
-DROP TABLE IF EXISTS `classe`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `classe` (
-  `ID_CLASSE` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `LIBELLE_CLASSE` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID_CLASSE`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `classe`
---
-
-LOCK TABLES `classe` WRITE;
-/*!40000 ALTER TABLE `classe` DISABLE KEYS */;
-INSERT INTO `classe` VALUES (1,'GHA'),(2,'GHO'),(3,'GHR'),(4,'GHS'),(5,'GHTC'),(6,'GHU'),(7,'GHW1'),(8,'GHW2'),(9,'GHZ'),(10,'ITGH');
-/*!40000 ALTER TABLE `classe` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `etablissementadresse`
---
-
-DROP TABLE IF EXISTS `etablissementadresse`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `etablissementadresse` (
-  `ID_ADRESSE` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `NUMERO_ADRESSE` varchar(255) DEFAULT NULL,
-  `COMPLEMENT_ADRESSE` varchar(255) DEFAULT NULL,
-  `LON_ETABLISSEMENTADRESSE` float DEFAULT NULL,
-  `LAT_ETABLISSEMENTADRESSE` float DEFAULT NULL,
-  `ID_RUE` bigint(20) unsigned NOT NULL,
-  `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
-  `NUMINSEE_COMMUNE` char(5) NOT NULL,
-  PRIMARY KEY (`ID_ADRESSE`),
-  KEY `fk_etablissementadresse_etablissement1_idx` (`ID_ETABLISSEMENT`),
-  KEY `fk_etablissementadresse_adresserue1_idx` (`ID_RUE`),
-  KEY `fk_etablissementadresse_adressecommune1_idx` (`NUMINSEE_COMMUNE`),
-  CONSTRAINT `fk_etablissementadresse_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_etablissementadresse_adresserue1` FOREIGN KEY (`ID_RUE`) REFERENCES `adresserue` (`ID_RUE`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_etablissementadresse_adressecommune1` FOREIGN KEY (`NUMINSEE_COMMUNE`) REFERENCES `adressecommune` (`NUMINSEE_COMMUNE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `etablissementadresse`
---
-
-LOCK TABLES `etablissementadresse` WRITE;
-/*!40000 ALTER TABLE `etablissementadresse` DISABLE KEYS */;
-/*!40000 ALTER TABLE `etablissementadresse` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossierlie`
---
-
-DROP TABLE IF EXISTS `dossierlie`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossierlie` (
-  `ID_DOSSIERLIE` bigint(20) NOT NULL AUTO_INCREMENT,
-  `ID_DOSSIER1` bigint(20) NOT NULL,
-  `ID_DOSSIER2` bigint(20) NOT NULL,
-  PRIMARY KEY (`ID_DOSSIERLIE`),
-  KEY `fk_dossierlie_dossier1_idx` (`ID_DOSSIER1`),
-  KEY `fk_dossierlie_dossier2_idx` (`ID_DOSSIER2`),
-  CONSTRAINT `fk_dossierlie_dossier1` FOREIGN KEY (`ID_DOSSIER1`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_dossierlie_dossier2` FOREIGN KEY (`ID_DOSSIER2`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossierlie`
---
-
-LOCK TABLES `dossierlie` WRITE;
-/*!40000 ALTER TABLE `dossierlie` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossierlie` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `commissionmembreclasse`
---
-
-DROP TABLE IF EXISTS `commissionmembreclasse`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commissionmembreclasse` (
-  `ID_COMMISSIONMEMBRE` bigint(20) unsigned NOT NULL,
-  `ID_CLASSE` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`ID_COMMISSIONMEMBRE`,`ID_CLASSE`),
-  KEY `fk_commissionmembreclasse_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE`),
-  KEY `fk_commissionmembreclasse_classe1_idx` (`ID_CLASSE`),
-  CONSTRAINT `fk_commissionmembreclasse_commissionmembre1` FOREIGN KEY (`ID_COMMISSIONMEMBRE`) REFERENCES `commissionmembre` (`ID_COMMISSIONMEMBRE`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_commissionmembreclasse_classe1` FOREIGN KEY (`ID_CLASSE`) REFERENCES `classe` (`ID_CLASSE`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commissionmembreclasse`
---
-
-LOCK TABLES `commissionmembreclasse` WRITE;
-/*!40000 ALTER TABLE `commissionmembreclasse` DISABLE KEYS */;
-/*!40000 ALTER TABLE `commissionmembreclasse` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `groupe-privileges`
---
-
-DROP TABLE IF EXISTS `groupe-privileges`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groupe-privileges` (
-  `ID_GROUPE` bigint(20) unsigned NOT NULL,
-  `id_privilege` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`ID_GROUPE`,`id_privilege`),
-  KEY `fk_groupe-privileges_privileges1_idx` (`id_privilege`),
-  KEY `fk_groupe-privileges_groupe1_idx` (`ID_GROUPE`),
-  CONSTRAINT `fk_groupe-privileges_groupe1` FOREIGN KEY (`ID_GROUPE`) REFERENCES `groupe` (`ID_GROUPE`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_groupe-privileges_privileges1` FOREIGN KEY (`id_privilege`) REFERENCES `privileges` (`id_privilege`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `groupe-privileges`
---
-
-LOCK TABLES `groupe-privileges` WRITE;
-/*!40000 ALTER TABLE `groupe-privileges` DISABLE KEYS */;
-INSERT INTO `groupe-privileges` VALUES (1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13);
-/*!40000 ALTER TABLE `groupe-privileges` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dossierpj`
---
-
-DROP TABLE IF EXISTS `dossierpj`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dossierpj` (
-  `ID_PIECEJOINTE` bigint(20) NOT NULL,
-  `ID_DOSSIER` bigint(20) NOT NULL,
-  `PJ_COMMISSION` tinyint(4) NOT NULL DEFAULT '0',
-  KEY `fk_dossierpj_piecejointe1_idx` (`ID_PIECEJOINTE`),
-  KEY `fk_dossierpj_dossier1_idx` (`ID_DOSSIER`),
-  CONSTRAINT `fk_dossierpj_piecejointe1` FOREIGN KEY (`ID_PIECEJOINTE`) REFERENCES `piecejointe` (`ID_PIECEJOINTE`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_dossierpj_dossier1` FOREIGN KEY (`ID_DOSSIER`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dossierpj`
---
-
-LOCK TABLES `dossierpj` WRITE;
-/*!40000 ALTER TABLE `dossierpj` DISABLE KEYS */;
-/*!40000 ALTER TABLE `dossierpj` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `utilisateurinformations`
---
-
-DROP TABLE IF EXISTS `utilisateurinformations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `utilisateurinformations` (
-  `ID_UTILISATEURINFORMATIONS` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `NOM_UTILISATEURINFORMATIONS` varchar(50) DEFAULT NULL,
-  `PRENOM_UTILISATEURINFORMATIONS` varchar(50) DEFAULT NULL,
-  `TELFIXE_UTILISATEURINFORMATIONS` varchar(20) DEFAULT NULL,
-  `TELPORTABLE_UTILISATEURINFORMATIONS` varchar(20) DEFAULT NULL,
-  `TELFAX_UTILISATEURINFORMATIONS` varchar(20) DEFAULT NULL,
-  `MAIL_UTILISATEURINFORMATIONS` varchar(50) DEFAULT NULL,
-  `SOCIETE_UTILISATEURINFORMATIONS` varchar(100) DEFAULT NULL,
-  `NUMEROADRESSE_UTILISATEURINFORMATIONS` varchar(10) DEFAULT NULL,
-  `RUEADRESSE_UTILISATEURINFORMATIONS` varchar(255) DEFAULT NULL,
-  `CPADRESSE_UTILISATEURINFORMATIONS` varchar(5) DEFAULT NULL,
-  `VILLEADRESSE_UTILISATEURINFORMATIONS` varchar(255) DEFAULT NULL,
-  `WEB_UTILISATEURINFORMATIONS` varchar(100) DEFAULT NULL,
-  `OBS_UTILISATEURINFORMATIONS` text,
-  `DATE_PRV2` timestamp NULL DEFAULT NULL,
-  `DATE_RECYCLAGE` timestamp NULL DEFAULT NULL,
-  `DATE_SID` timestamp NULL DEFAULT NULL,
-  `ID_UTILISATEURCIVILITE` int(11) unsigned DEFAULT NULL,
-  `ID_FONCTION` bigint(20) unsigned DEFAULT NULL,
+-- MySQL Script generated by MySQL Workbench
+-- 07/23/14 11:02:05
+-- Model: New Model    Version: 1.0
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema prevarisc
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `prevarisc` ;
+CREATE SCHEMA IF NOT EXISTS `prevarisc` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `prevarisc` ;
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`utilisateurcivilite`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`utilisateurcivilite` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`utilisateurcivilite` (
+  `ID_UTILISATEURCIVILITE` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_UTILISATEURCIVILITE` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`ID_UTILISATEURCIVILITE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`fonction`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`fonction` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`fonction` (
+  `ID_FONCTION` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_FONCTION` VARCHAR(50) CHARACTER SET 'latin1' NOT NULL,
+  PRIMARY KEY (`ID_FONCTION`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 100
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`utilisateurinformations`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`utilisateurinformations` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`utilisateurinformations` (
+  `ID_UTILISATEURINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `NOM_UTILISATEURINFORMATIONS` VARCHAR(50) NULL,
+  `PRENOM_UTILISATEURINFORMATIONS` VARCHAR(50) NULL,
+  `TELFIXE_UTILISATEURINFORMATIONS` VARCHAR(20) NULL DEFAULT NULL,
+  `TELPORTABLE_UTILISATEURINFORMATIONS` VARCHAR(20) NULL,
+  `TELFAX_UTILISATEURINFORMATIONS` VARCHAR(20) NULL,
+  `MAIL_UTILISATEURINFORMATIONS` VARCHAR(50) NULL DEFAULT NULL,
+  `SOCIETE_UTILISATEURINFORMATIONS` VARCHAR(100) NULL,
+  `NUMEROADRESSE_UTILISATEURINFORMATIONS` VARCHAR(10) NULL DEFAULT NULL,
+  `RUEADRESSE_UTILISATEURINFORMATIONS` VARCHAR(255) NULL,
+  `CPADRESSE_UTILISATEURINFORMATIONS` VARCHAR(5) NULL DEFAULT NULL,
+  `VILLEADRESSE_UTILISATEURINFORMATIONS` VARCHAR(255) NULL DEFAULT NULL,
+  `WEB_UTILISATEURINFORMATIONS` VARCHAR(100) NULL,
+  `OBS_UTILISATEURINFORMATIONS` TEXT NULL,
+  `DATE_PRV2` TIMESTAMP NULL,
+  `DATE_RECYCLAGE` TIMESTAMP NULL,
+  `DATE_SID` TIMESTAMP NULL,
+  `ID_UTILISATEURCIVILITE` INT(11) UNSIGNED NULL,
+  `ID_FONCTION` BIGINT(20) UNSIGNED NULL,
   PRIMARY KEY (`ID_UTILISATEURINFORMATIONS`),
-  KEY `fk_utilisateurinformations_utilisateurcivilite1_idx` (`ID_UTILISATEURCIVILITE`),
-  KEY `fk_utilisateurinformations_fonction1_idx` (`ID_FONCTION`),
-  CONSTRAINT `fk_utilisateurinformations_utilisateurcivilite1` FOREIGN KEY (`ID_UTILISATEURCIVILITE`) REFERENCES `utilisateurcivilite` (`ID_UTILISATEURCIVILITE`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_utilisateurinformations_fonction1` FOREIGN KEY (`ID_FONCTION`) REFERENCES `fonction` (`ID_FONCTION`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  INDEX `fk_utilisateurinformations_utilisateurcivilite1_idx` (`ID_UTILISATEURCIVILITE` ASC),
+  INDEX `fk_utilisateurinformations_fonction1_idx` (`ID_FONCTION` ASC),
+  CONSTRAINT `fk_utilisateurinformations_utilisateurcivilite1`
+    FOREIGN KEY (`ID_UTILISATEURCIVILITE`)
+    REFERENCES `prevarisc`.`utilisateurcivilite` (`ID_UTILISATEURCIVILITE`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_utilisateurinformations_fonction1`
+    FOREIGN KEY (`ID_FONCTION`)
+    REFERENCES `prevarisc`.`fonction` (`ID_FONCTION`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8;
 
---
--- Dumping data for table `utilisateurinformations`
---
 
-LOCK TABLES `utilisateurinformations` WRITE;
-/*!40000 ALTER TABLE `utilisateurinformations` DISABLE KEYS */;
-INSERT INTO `utilisateurinformations` VALUES (1,'ROOT','ROOT',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,99);
-/*!40000 ALTER TABLE `utilisateurinformations` ENABLE KEYS */;
-UNLOCK TABLES;
+-- -----------------------------------------------------
+-- Table `prevarisc`.`adressecommune`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`adressecommune` ;
 
---
--- Table structure for table `listedocconsulte`
---
+CREATE TABLE IF NOT EXISTS `prevarisc`.`adressecommune` (
+  `NUMINSEE_COMMUNE` CHAR(5) NOT NULL,
+  `LIBELLE_COMMUNE` VARCHAR(60) NOT NULL,
+  `CODEPOSTAL_COMMUNE` VARCHAR(5) NOT NULL,
+  `ID_UTILISATEURINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`NUMINSEE_COMMUNE`),
+  INDEX `fk_adressecommune_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS` ASC),
+  CONSTRAINT `fk_adressecommune_utilisateurinformations1`
+    FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`)
+    REFERENCES `prevarisc`.`utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS `listedocconsulte`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `listedocconsulte` (
-  `ID_DOC` bigint(20) NOT NULL AUTO_INCREMENT,
-  `LIBELLE_DOC` text CHARACTER SET latin1,
-  `VISITE_DOC` tinyint(1) NOT NULL DEFAULT '0',
-  `ETUDE_DOC` tinyint(1) NOT NULL DEFAULT '0',
-  `VISITERT_DOC` tinyint(1) NOT NULL DEFAULT '0',
-  `VISITEVAO_DOC` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID_DOC`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `listedocconsulte`
---
+-- -----------------------------------------------------
+-- Table `prevarisc`.`adresseruetype`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`adresseruetype` ;
 
-LOCK TABLES `listedocconsulte` WRITE;
-/*!40000 ALTER TABLE `listedocconsulte` DISABLE KEYS */;
-INSERT INTO `listedocconsulte` VALUES (1,'Un courrier de',0,1,0,0),(2,'Un jeu de plans',0,1,0,0),(3,'Une notice de sécurité',0,1,0,0),(4,'Une notice descriptive',0,1,0,0),(5,'Un engagement solidité',0,1,0,0),(6,'Un rapport initial de contrôle technique',0,1,0,0),(7,'Une attestation du directeur unique de sécurité',0,1,0,0),(8,'Relevé de vérification du désenfumage (Art. DF 10)',1,0,0,0),(9,'RVRE triennal du désenfumage mécanique associé à un SSI A ou B',1,0,0,0),(10,'Relevé de vérification du chauffage-ventilation (Art. CH 58)',1,0,0,0),(11,'Attestation de ramonage ou visite des conduits (Art. CH 57)',1,0,0,0),(12,'Relevé de vérification du gaz (Art. GZ 30)',1,0,0,0),(13,'Relevé de vérification des fluides médicaux (Art. U 64 ou J 33)',1,0,0,0),(14,'Relevé ou RVRE des installations électriques et/ou des paratonnerres ou protection contre la foudre (Art. EL 19)',1,0,0,0),(15,'RVRE quinquennal des ascenseurs (Art. AS 9)',1,0,0,0),(16,'Relevé de vérification des ascenseurs (Art. AS 9) et/ou escaliers mécaniques et trottoirs roulants (Art. AS 10)',1,0,0,0),(17,'Contrat d’entretien des ascenseurs, escaliers mécaniques et trottoirs roulants (Art. AS 8)',1,0,0,0),(18,'Attestation de nettoyage du circuit d’extraction (Art. GC 21)',1,0,0,0),(19,'Relevé de vérification des appareils de cuisson (Art. GC 22)',1,0,0,0),(20,'Relevé de vérification des extincteurs (Art. MS 38)',1,0,0,0),(21,'Révision décennal des extincteurs (Art. MS 38)',1,0,0,0),(22,'Relevé de vérification des colonnes sèches (Art. MS 73)',1,0,0,0),(23,'Relevé de vérification des R.I.A. (Art. MS 73)',1,0,0,0),(24,'Relevé de vérification du système d’extinction automatique du type sprinkleur (Art. MS 29/73) ou déversoirs et rideaux d’eau (L 57)',1,0,0,0),(25,'RVRE triennal du sprinkleur (Art. MS 73)',1,0,0,0),(26,'RVRE triennal du SSI A ou B (Art. MS 73)',1,0,0,0),(27,'Relevé de vérification du SSI  ou  d’équipement  d’alarme,  détection,  portes, clapets coupe-feu (Art. MS 73)',1,0,0,0),(28,'Contrat d’entretien du Système de Sécurité Incendie (Art. MS 58)',1,0,0,0),(29,'Dossier d’identité du Système de Sécurité Incendie (Art. MS 73)',1,0,0,0),(30,'Attestation de vérification des communications radioélectriques (Art. MS 71)',1,0,0,0),(31,'RVRE triennal des moyens de communications radioélectriques mode relayés (Art. MS 71)',1,0,0,0),(32,'Relevé de vérification des poteaux d’incendie privés',1,0,0,0),(33,'Relevé de vérification des portes automatiques en façade (Art. GE 6)',1,0,0,0),(34,'Contrat d’entretien des portes automatiques en façade (Art. CO 48)',1,0,0,0),(35,'RVRE des équipements de levage des salles avec espace scénique (L 57)',1,0,0,0),(36,'RVRE triennal des salles de spectacles avec espace scénique (L 57)',1,0,0,0),(37,'Dossier technique amiante',1,0,0,0),(38,'Exercice d’évacuation réalisé',1,0,0,0),(39,'Formation des personnels à l’utilisation des moyens de secours',1,0,0,0),(40,'Cahier des charges fonctionnelles du SSI',0,1,0,0),(41,'Attestation de solidité',0,0,1,1),(42,'Attestation du maître d\'ouvrage',0,0,1,1),(43,'RVRAT',0,0,1,1),(44,'Attestation de réception des hydrants',0,0,1,1),(45,'Dossier d\'identité SSI',0,0,1,1),(46,'PV de réception du SSI',0,0,1,1),(47,'Mise à jour du dossier d\'identité du SSI',0,0,1,0),(48,'Attestation de réception de modification sprinkleur',0,0,1,0),(49,'Attestation de réception de modification de détection incendie',0,0,1,0);
-/*!40000 ALTER TABLE `listedocconsulte` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+CREATE TABLE IF NOT EXISTS `prevarisc`.`adresseruetype` (
+  `ID_RUETYPE` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_RUETYPE` VARCHAR(32) NOT NULL COMMENT 'Exemple : BOULEVARD',
+  `ABREVIATION_RUETYPE` VARCHAR(16) NOT NULL COMMENT 'Exemple : BLVD',
+  PRIMARY KEY (`ID_RUETYPE`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-06-29 19:28:39
+-- -----------------------------------------------------
+-- Table `prevarisc`.`adresserue`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`adresserue` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`adresserue` (
+  `ID_RUE` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_RUE` VARCHAR(255) NOT NULL COMMENT 'Pour le moment, le nom du type de la rue doit être cité dans le nom de la rue. (RUE DES ACACIAS)',
+  `ID_RUETYPE` BIGINT(20) UNSIGNED NOT NULL,
+  `NUMINSEE_COMMUNE` CHAR(5) NOT NULL,
+  PRIMARY KEY (`ID_RUE`),
+  INDEX `fk_adresserue_adresseruetype_idx` (`ID_RUETYPE` ASC),
+  INDEX `fk_adresserue_adressecommune1_idx` (`NUMINSEE_COMMUNE` ASC),
+  CONSTRAINT `fk_adresserue_adresseruetype`
+    FOREIGN KEY (`ID_RUETYPE`)
+    REFERENCES `prevarisc`.`adresseruetype` (`ID_RUETYPE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_adresserue_adressecommune1`
+    FOREIGN KEY (`NUMINSEE_COMMUNE`)
+    REFERENCES `prevarisc`.`adressecommune` (`NUMINSEE_COMMUNE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`avis`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`avis` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`avis` (
+  `ID_AVIS` INT(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_AVIS` VARCHAR(30) NOT NULL,
+  PRIMARY KEY (`ID_AVIS`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`categorie`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`categorie` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`categorie` (
+  `ID_CATEGORIE` INT(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_CATEGORIE` VARCHAR(15) NULL DEFAULT NULL,
+  `COMMENTAIRE_CATEGORIE` VARCHAR(35) NULL DEFAULT NULL,
+  PRIMARY KEY (`ID_CATEGORIE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`classe`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`classe` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`classe` (
+  `ID_CLASSE` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_CLASSE` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`ID_CLASSE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 12
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissiontype`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissiontype` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissiontype` (
+  `ID_COMMISSIONTYPE` INT(2) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_COMMISSIONTYPE` VARCHAR(50) NULL,
+  PRIMARY KEY (`ID_COMMISSIONTYPE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commission`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commission` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commission` (
+  `ID_COMMISSION` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_COMMISSION` VARCHAR(50) NOT NULL DEFAULT 'Nom de la commission',
+  `DOCUMENT_CR` VARCHAR(255) NULL,
+  `ID_COMMISSIONTYPE` INT(2) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_COMMISSION`),
+  INDEX `fk_commission_commissiontype1_idx` (`ID_COMMISSIONTYPE` ASC),
+  CONSTRAINT `fk_commission_commissiontype1`
+    FOREIGN KEY (`ID_COMMISSIONTYPE`)
+    REFERENCES `prevarisc`.`commissiontype` (`ID_COMMISSIONTYPE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissioncontact`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissioncontact` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissioncontact` (
+  `ID_COMMISSION` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_UTILISATEURINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_COMMISSION`, `ID_UTILISATEURINFORMATIONS`),
+  INDEX `fk_commissioncontact_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS` ASC),
+  CONSTRAINT `fk_commissioncontact_utilisateurinformations1`
+    FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`)
+    REFERENCES `prevarisc`.`utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_commissioncontact_commission1`
+    FOREIGN KEY (`ID_COMMISSION`)
+    REFERENCES `prevarisc`.`commission` (`ID_COMMISSION`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`groupementtype`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`groupementtype` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`groupementtype` (
+  `ID_GROUPEMENTTYPE` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_GROUPEMENTTYPE` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`ID_GROUPEMENTTYPE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 14
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`groupement`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`groupement` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`groupement` (
+  `ID_GROUPEMENT` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_GROUPEMENT` VARCHAR(255) NOT NULL,
+  `ID_GROUPEMENTTYPE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_UTILISATEURINFORMATIONS` BIGINT(20) UNSIGNED NULL,
+  PRIMARY KEY (`ID_GROUPEMENT`),
+  INDEX `fk_groupement_groupementtype1_idx` (`ID_GROUPEMENTTYPE` ASC),
+  INDEX `fk_groupement_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS` ASC),
+  CONSTRAINT `fk_groupement_groupementtype1`
+    FOREIGN KEY (`ID_GROUPEMENTTYPE`)
+    REFERENCES `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_groupement_utilisateurinformations1`
+    FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`)
+    REFERENCES `prevarisc`.`utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 3;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionmembre`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionmembre` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionmembre` (
+  `ID_COMMISSIONMEMBRE` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_COMMISSIONMEMBRE` VARCHAR(255) NOT NULL,
+  `PRESENCE_COMMISSIONMEMBRE` INT(11) NOT NULL,
+  `COURRIER_CONVOCATIONVISITE` VARCHAR(255) NULL DEFAULT NULL,
+  `COURRIER_CONVOCATIONSALLE` VARCHAR(255) NULL,
+  `COURRIER_ODJ` VARCHAR(255) NULL,
+  `COURRIER_PV` VARCHAR(255) NULL,
+  `ID_COMMISSION` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_GROUPEMENT` BIGINT(20) UNSIGNED NULL,
+  PRIMARY KEY (`ID_COMMISSIONMEMBRE`),
+  INDEX `ID_COURRIER_BE` (`COURRIER_CONVOCATIONVISITE` ASC, `COURRIER_CONVOCATIONSALLE` ASC),
+  INDEX `fk_commissionmembre_commission1_idx` (`ID_COMMISSION` ASC),
+  INDEX `fk_commissionmembre_groupement1_idx` (`ID_GROUPEMENT` ASC),
+  CONSTRAINT `fk_commissionmembre_commission1`
+    FOREIGN KEY (`ID_COMMISSION`)
+    REFERENCES `prevarisc`.`commission` (`ID_COMMISSION`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_commissionmembre_groupement1`
+    FOREIGN KEY (`ID_GROUPEMENT`)
+    REFERENCES `prevarisc`.`groupement` (`ID_GROUPEMENT`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 2;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionmembrecategorie`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionmembrecategorie` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionmembrecategorie` (
+  `ID_COMMISSIONMEMBRE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_CATEGORIE` INT(1) UNSIGNED NOT NULL,
+  INDEX `fk_commissionmembrecategorie_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE` ASC),
+  INDEX `fk_commissionmembrecategorie_categorie1_idx` (`ID_CATEGORIE` ASC),
+  PRIMARY KEY (`ID_COMMISSIONMEMBRE`, `ID_CATEGORIE`),
+  CONSTRAINT `fk_commissionmembrecategorie_commissionmembre1`
+    FOREIGN KEY (`ID_COMMISSIONMEMBRE`)
+    REFERENCES `prevarisc`.`commissionmembre` (`ID_COMMISSIONMEMBRE`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_commissionmembrecategorie_categorie1`
+    FOREIGN KEY (`ID_CATEGORIE`)
+    REFERENCES `prevarisc`.`categorie` (`ID_CATEGORIE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionmembreclasse`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionmembreclasse` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionmembreclasse` (
+  `ID_COMMISSIONMEMBRE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_CLASSE` INT(11) UNSIGNED NOT NULL,
+  INDEX `fk_commissionmembreclasse_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE` ASC),
+  INDEX `fk_commissionmembreclasse_classe1_idx` (`ID_CLASSE` ASC),
+  PRIMARY KEY (`ID_COMMISSIONMEMBRE`, `ID_CLASSE`),
+  CONSTRAINT `fk_commissionmembreclasse_commissionmembre1`
+    FOREIGN KEY (`ID_COMMISSIONMEMBRE`)
+    REFERENCES `prevarisc`.`commissionmembre` (`ID_COMMISSIONMEMBRE`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_commissionmembreclasse_classe1`
+    FOREIGN KEY (`ID_CLASSE`)
+    REFERENCES `prevarisc`.`classe` (`ID_CLASSE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossiertype`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossiertype` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossiertype` (
+  `ID_DOSSIERTYPE` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_DOSSIERTYPE` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`ID_DOSSIERTYPE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 8
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossiernatureliste`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossiernatureliste` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossiernatureliste` (
+  `ID_DOSSIERNATURE` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `LIBELLE_DOSSIERNATURE` VARCHAR(100) NOT NULL,
+  `ID_DOSSIERTYPE` BIGINT(20) UNSIGNED NOT NULL,
+  `ORDRE` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`ID_DOSSIERNATURE`),
+  INDEX `fk_dossiernatureliste_dossiertype1_idx` (`ID_DOSSIERTYPE` ASC),
+  CONSTRAINT `fk_dossiernatureliste_dossiertype1`
+    FOREIGN KEY (`ID_DOSSIERTYPE`)
+    REFERENCES `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 47;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionmembredossiernature`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionmembredossiernature` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionmembredossiernature` (
+  `ID_COMMISSIONMEMBRE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_DOSSIERNATURE` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`ID_COMMISSIONMEMBRE`, `ID_DOSSIERNATURE`),
+  INDEX `fk_commissionmembredossiernature_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE` ASC),
+  INDEX `fk_commissionmembredossiernature_dossiernatureliste1_idx` (`ID_DOSSIERNATURE` ASC),
+  CONSTRAINT `fk_commissionmembredossiernature_commissionmembre1`
+    FOREIGN KEY (`ID_COMMISSIONMEMBRE`)
+    REFERENCES `prevarisc`.`commissionmembre` (`ID_COMMISSIONMEMBRE`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_commissionmembredossiernature_dossiernatureliste1`
+    FOREIGN KEY (`ID_DOSSIERNATURE`)
+    REFERENCES `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionmembredossiertype`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionmembredossiertype` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionmembredossiertype` (
+  `ID_COMMISSIONMEMBRE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_DOSSIERTYPE` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_DOSSIERTYPE`, `ID_COMMISSIONMEMBRE`),
+  INDEX `fk_commissionmembredossiertype_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE` ASC),
+  INDEX `fk_commissionmembredossiertype_dossiertype1_idx` (`ID_DOSSIERTYPE` ASC),
+  CONSTRAINT `fk_commissionmembredossiertype_commissionmembre1`
+    FOREIGN KEY (`ID_COMMISSIONMEMBRE`)
+    REFERENCES `prevarisc`.`commissionmembre` (`ID_COMMISSIONMEMBRE`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_commissionmembredossiertype_dossiertype1`
+    FOREIGN KEY (`ID_DOSSIERTYPE`)
+    REFERENCES `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionregle`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionregle` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionregle` (
+  `ID_REGLE` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_COMMISSION` BIGINT(20) UNSIGNED NOT NULL,
+  `NUMINSEE_COMMUNE` CHAR(5) NULL,
+  `ID_GROUPEMENT` BIGINT(20) UNSIGNED NULL,
+  PRIMARY KEY (`ID_REGLE`),
+  INDEX `fk_commissionregle_commission1_idx` (`ID_COMMISSION` ASC),
+  INDEX `fk_commissionregle_adressecommune1_idx` (`NUMINSEE_COMMUNE` ASC),
+  INDEX `fk_commissionregle_groupement1_idx` (`ID_GROUPEMENT` ASC),
+  CONSTRAINT `fk_commissionregle_commission1`
+    FOREIGN KEY (`ID_COMMISSION`)
+    REFERENCES `prevarisc`.`commission` (`ID_COMMISSION`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_commissionregle_adressecommune1`
+    FOREIGN KEY (`NUMINSEE_COMMUNE`)
+    REFERENCES `prevarisc`.`adressecommune` (`NUMINSEE_COMMUNE`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_commissionregle_groupement1`
+    FOREIGN KEY (`ID_GROUPEMENT`)
+    REFERENCES `prevarisc`.`groupement` (`ID_GROUPEMENT`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 4;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionreglecategorie`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionreglecategorie` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionreglecategorie` (
+  `ID_REGLE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_CATEGORIE` INT(1) UNSIGNED NOT NULL,
+  INDEX `fk_commissionreglecategorie_commissionregle1_idx` (`ID_REGLE` ASC),
+  INDEX `fk_commissionreglecategorie_categorie1_idx` (`ID_CATEGORIE` ASC),
+  PRIMARY KEY (`ID_REGLE`, `ID_CATEGORIE`),
+  CONSTRAINT `fk_commissionreglecategorie_commissionregle1`
+    FOREIGN KEY (`ID_REGLE`)
+    REFERENCES `prevarisc`.`commissionregle` (`ID_REGLE`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_commissionreglecategorie_categorie1`
+    FOREIGN KEY (`ID_CATEGORIE`)
+    REFERENCES `prevarisc`.`categorie` (`ID_CATEGORIE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionregleclasse`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionregleclasse` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionregleclasse` (
+  `ID_REGLE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_CLASSE` INT(11) UNSIGNED NOT NULL,
+  INDEX `fk_commissionregleclasse_commissionregle1_idx` (`ID_REGLE` ASC),
+  INDEX `fk_commissionregleclasse_classe1_idx` (`ID_CLASSE` ASC),
+  PRIMARY KEY (`ID_REGLE`, `ID_CLASSE`),
+  CONSTRAINT `fk_commissionregleclasse_commissionregle1`
+    FOREIGN KEY (`ID_REGLE`)
+    REFERENCES `prevarisc`.`commissionregle` (`ID_REGLE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_commissionregleclasse_classe1`
+    FOREIGN KEY (`ID_CLASSE`)
+    REFERENCES `prevarisc`.`classe` (`ID_CLASSE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionregleetudevisite`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionregleetudevisite` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionregleetudevisite` (
+  `ID_REGLE` BIGINT(20) UNSIGNED NOT NULL,
+  `ETUDEVISITE` TINYINT(1) NOT NULL,
+  INDEX `ETUDEVISITE` (`ETUDEVISITE` ASC),
+  INDEX `fk_commissionregleetudevisite_commissionregle1_idx` (`ID_REGLE` ASC),
+  CONSTRAINT `fk_commissionregleetudevisite_commissionregle1`
+    FOREIGN KEY (`ID_REGLE`)
+    REFERENCES `prevarisc`.`commissionregle` (`ID_REGLE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionreglelocalsommeil`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionreglelocalsommeil` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionreglelocalsommeil` (
+  `ID_REGLE` BIGINT(20) UNSIGNED NOT NULL,
+  `LOCALSOMMEIL` TINYINT(1) NOT NULL,
+  INDEX `TYPE_ACTIVITE` (`LOCALSOMMEIL` ASC),
+  INDEX `fk_commissionreglelocalsommeil_commissionregle1_idx` (`ID_REGLE` ASC),
+  CONSTRAINT `fk_commissionreglelocalsommeil_commissionregle1`
+    FOREIGN KEY (`ID_REGLE`)
+    REFERENCES `prevarisc`.`commissionregle` (`ID_REGLE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`type`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`type` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`type` (
+  `ID_TYPE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_TYPE` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`ID_TYPE`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionregletype`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionregletype` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionregletype` (
+  `ID_REGLE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_TYPE` INT UNSIGNED NOT NULL,
+  INDEX `fk_commissionregletype_commissionregle1_idx` (`ID_REGLE` ASC),
+  INDEX `fk_commissionregletype_type1_idx` (`ID_TYPE` ASC),
+  PRIMARY KEY (`ID_REGLE`, `ID_TYPE`),
+  CONSTRAINT `fk_commissionregletype_commissionregle1`
+    FOREIGN KEY (`ID_REGLE`)
+    REFERENCES `prevarisc`.`commissionregle` (`ID_REGLE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_commissionregletype_type1`
+    FOREIGN KEY (`ID_TYPE`)
+    REFERENCES `prevarisc`.`type` (`ID_TYPE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissiontypeevenement`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissiontypeevenement` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissiontypeevenement` (
+  `ID_COMMISSIONTYPEEVENEMENT` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_COMMISSIONTYPEEVENEMENT` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`ID_COMMISSIONTYPEEVENEMENT`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`couchecarto`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`couchecarto` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`couchecarto` (
+  `ID_COUCHECARTO` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `NOM_COUCHECARTO` VARCHAR(255) NULL,
+  `URL_COUCHECARTO` VARCHAR(255) NULL,
+  `ISBASELAYER_COUCHECARTO` TINYINT(1) NULL,
+  `LAYERS_COUCHECARTO` VARCHAR(255) NULL,
+  `FORMAT_COUCHECARTO` VARCHAR(255) NULL,
+  `TRANSPARENT_COUCHECARTO` TINYINT(1) NULL,
+  `TYPE_COUCHECARTO` VARCHAR(50) NOT NULL,
+  UNIQUE INDEX `ID_COUCHECARTO` (`ID_COUCHECARTO` ASC),
+  PRIMARY KEY (`ID_COUCHECARTO`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 2;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`datecommission`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`datecommission` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`datecommission` (
+  `ID_DATECOMMISSION` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `DATE_COMMISSION` DATE NOT NULL,
+  `HEUREDEB_COMMISSION` TIME NOT NULL DEFAULT '09:00:00',
+  `HEUREFIN_COMMISSION` TIME NOT NULL DEFAULT '18:00:00',
+  `LIBELLE_DATECOMMISSION` VARCHAR(255) NULL DEFAULT NULL,
+  `GESTION_HEURES` TINYINT(1) NOT NULL DEFAULT '1',
+  `DATECOMMISSION_LIEES` BIGINT NULL,
+  `ID_COMMISSIONTYPEEVENEMENT` INT(11) UNSIGNED NOT NULL,
+  `COMMISSION_CONCERNE` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_DATECOMMISSION`),
+  INDEX `fk_datecommission_commissiontypeevenement1_idx` (`ID_COMMISSIONTYPEEVENEMENT` ASC),
+  INDEX `fk_datecommission_commission1_idx` (`COMMISSION_CONCERNE` ASC),
+  CONSTRAINT `fk_datecommission_commissiontypeevenement1`
+    FOREIGN KEY (`ID_COMMISSIONTYPEEVENEMENT`)
+    REFERENCES `prevarisc`.`commissiontypeevenement` (`ID_COMMISSIONTYPEEVENEMENT`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_datecommission_commission1`
+    FOREIGN KEY (`COMMISSION_CONCERNE`)
+    REFERENCES `prevarisc`.`commission` (`ID_COMMISSION`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 8
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`piecejointe`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`piecejointe` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`piecejointe` (
+  `ID_PIECEJOINTE` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `NOM_PIECEJOINTE` VARCHAR(255) NOT NULL,
+  `EXTENSION_PIECEJOINTE` VARCHAR(10) NOT NULL,
+  `DESCRIPTION_PIECEJOINTE` TEXT NULL DEFAULT NULL,
+  `DATE_PIECEJOINTE` DATE NULL,
+  PRIMARY KEY (`ID_PIECEJOINTE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`datecommissionpj`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`datecommissionpj` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`datecommissionpj` (
+  `ID_DATECOMMISSION` BIGINT(20) NOT NULL,
+  `ID_PIECEJOINTE` BIGINT(20) NOT NULL,
+  INDEX `fk_datecommissionpj_datecommission1_idx` (`ID_DATECOMMISSION` ASC),
+  INDEX `fk_datecommissionpj_piecejointe1_idx` (`ID_PIECEJOINTE` ASC),
+  PRIMARY KEY (`ID_DATECOMMISSION`, `ID_PIECEJOINTE`),
+  CONSTRAINT `fk_datecommissionpj_datecommission1`
+    FOREIGN KEY (`ID_DATECOMMISSION`)
+    REFERENCES `prevarisc`.`datecommission` (`ID_DATECOMMISSION`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_datecommissionpj_piecejointe1`
+    FOREIGN KEY (`ID_PIECEJOINTE`)
+    REFERENCES `prevarisc`.`piecejointe` (`ID_PIECEJOINTE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossier`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossier` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossier` (
+  `ID_DOSSIER` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `OBJET_DOSSIER` TEXT NULL DEFAULT NULL,
+  `COMMUNE_DOSSIER` TEXT NULL DEFAULT NULL,
+  `DATEMAIRIE_DOSSIER` DATETIME NULL DEFAULT NULL,
+  `DATESECRETARIAT_DOSSIER` DATETIME NULL DEFAULT NULL,
+  `TYPESERVINSTRUC_DOSSIER` VARCHAR(15) NULL DEFAULT NULL,
+  `SERVICEINSTRUC_DOSSIER` VARCHAR(255) NULL DEFAULT NULL,
+  `COMMISSION_DOSSIER` BIGINT(20) NULL,
+  `DESCGEN_DOSSIER` TEXT NULL DEFAULT NULL,
+  `ANOMALIE_DOSSIER` TEXT NULL DEFAULT NULL,
+  `DESCANAL_DOSSIER` TEXT NULL DEFAULT NULL,
+  `JUSTIFDEROG_DOSSIER` TEXT NULL DEFAULT NULL,
+  `MESURESCOMPENS_DOSSIER` TEXT NULL DEFAULT NULL,
+  `MESURESCOMPLE_DOSSIER` TEXT NULL DEFAULT NULL,
+  `DESCEFF_DOSSIER` TEXT NULL DEFAULT NULL,
+  `DATEVISITE_DOSSIER` DATE NULL DEFAULT NULL,
+  `DATECOMM_DOSSIER` TEXT NULL DEFAULT NULL,
+  `AVIS_DOSSIER` INT(1) UNSIGNED NULL,
+  `AVIS_DOSSIER_COMMISSION` INT(1) UNSIGNED NULL,
+  `COORDSSI_DOSSIER` TEXT NULL DEFAULT NULL,
+  `DATESDIS_DOSSIER` DATETIME NULL DEFAULT NULL,
+  `DATEPREF_DOSSIER` DATETIME NULL DEFAULT NULL,
+  `DATEREP_DOSSIER` DATETIME NULL DEFAULT NULL,
+  `DATEREUN_DOSSIER` DATETIME NULL DEFAULT NULL,
+  `OPERSDIS_DOSSIER` TINYINT(4) NULL DEFAULT NULL,
+  `RCCI_DOSSIER` TINYINT(4) NULL DEFAULT NULL,
+  `REX_DOSSIER` TEXT NULL DEFAULT NULL,
+  `CHARGESEC_DOSSIER` TEXT NULL DEFAULT NULL,
+  `DUREEDEPL_DOSSIER` INT(11) NULL DEFAULT NULL,
+  `GRAVPRESC_DOSSIER` TEXT NULL DEFAULT NULL,
+  `NUMINTERV_DOSSIER` INT(11) NULL DEFAULT NULL,
+  `DATEINTERV_DOSSIER` DATETIME NULL DEFAULT NULL,
+  `DUREEINTERV_DOSSIER` TIME NULL DEFAULT NULL,
+  `DATESIGN_DOSSIER` DATE NULL DEFAULT NULL,
+  `DATEINSERT_DOSSIER` DATETIME NOT NULL,
+  `TYPE_DOSSIER` BIGINT(20) UNSIGNED NOT NULL,
+  `DESCRIPTIF_DOSSIER` TEXT BINARY NULL,
+  `DEMANDEUR_DOSSIER` TEXT NULL,
+  `DATEENVTRANSIT_DOSSIER` DATE NULL,
+  `REGLEDEROG_DOSSIER` TEXT NULL DEFAULT NULL,
+  `INCOMPLET_DOSSIER` TINYINT(1) NULL DEFAULT 0,
+  `DATEINCOMPLET_DOSSIER` DATE NULL,
+  `CREATEUR_DOSSIER` BIGINT NULL,
+  `HORSDELAI_DOSSIER` TINYINT(1) NULL DEFAULT 0,
+  `DIFFEREAVIS_DOSSIER` TINYINT NULL,
+  `NPSP_DOSSIER` TINYINT NULL,
+  `CNE_DOSSIER` TINYINT NULL,
+  `FACTDANGE_DOSSIER` TINYINT NULL,
+  `LIEUREUNION_DOSSIER` TEXT NULL,
+  `ABSQUORUM_DOSSIER` TINYINT NULL,
+  `ECHEANCIERTRAV_DOSSIER` DATE NULL DEFAULT NULL,
+  `VERROU_DOSSIER` TINYINT(1) NULL DEFAULT 0,
+  PRIMARY KEY (`ID_DOSSIER`),
+  INDEX `fk_dossier_dossiertype1_idx` (`TYPE_DOSSIER` ASC),
+  INDEX `fk_dossier_avis1_idx` (`AVIS_DOSSIER` ASC),
+  CONSTRAINT `fk_dossier_dossiertype1`
+    FOREIGN KEY (`TYPE_DOSSIER`)
+    REFERENCES `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_dossier_avis1`
+    FOREIGN KEY (`AVIS_DOSSIER`)
+    REFERENCES `prevarisc`.`avis` (`ID_AVIS`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossieraffectation`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossieraffectation` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossieraffectation` (
+  `HEURE_DEB_AFFECT` TIME NULL DEFAULT NULL,
+  `HEURE_FIN_AFFECT` TIME NULL DEFAULT NULL,
+  `NUM_DOSSIER` INT(11) NOT NULL DEFAULT '0',
+  `ID_DATECOMMISSION_AFFECT` BIGINT(20) NOT NULL,
+  `ID_DOSSIER_AFFECT` BIGINT(20) NOT NULL,
+  INDEX `fk_dossieraffectation_datecommission1_idx` (`ID_DATECOMMISSION_AFFECT` ASC),
+  INDEX `fk_dossieraffectation_dossier2_idx` (`ID_DOSSIER_AFFECT` ASC),
+  CONSTRAINT `fk_dossieraffectation_datecommission1`
+    FOREIGN KEY (`ID_DATECOMMISSION_AFFECT`)
+    REFERENCES `prevarisc`.`datecommission` (`ID_DATECOMMISSION`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_dossieraffectation_dossier1`
+    FOREIGN KEY (`ID_DOSSIER_AFFECT`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossiercontact`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossiercontact` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossiercontact` (
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  `ID_UTILISATEURINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_DOSSIER`, `ID_UTILISATEURINFORMATIONS`),
+  INDEX `fk_dossiercontact_dossier1_idx` (`ID_DOSSIER` ASC),
+  INDEX `fk_dossiercontact_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS` ASC),
+  CONSTRAINT `fk_dossiercontact_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_dossiercontact_utilisateurinformations1`
+    FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`)
+    REFERENCES `prevarisc`.`utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossierdocconsulte`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossierdocconsulte` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossierdocconsulte` (
+  `ID_DOSSIERDOCCONSULTE` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `REF_CONSULTE` VARCHAR(255) CHARACTER SET 'latin1' NOT NULL,
+  `DATE_CONSULTE` DATE NOT NULL,
+  `DOC_CONSULTE` TINYINT(1) NOT NULL DEFAULT '0',
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  `ID_DOC` BIGINT(20) NOT NULL,
+  `ID_NATURE` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`ID_DOSSIERDOCCONSULTE`),
+  INDEX `fk_dossierdocconsulte_dossier1_idx` (`ID_DOSSIER` ASC),
+  INDEX `fk_dossierdocconsulte_dossiernatureliste1_idx` (`ID_NATURE` ASC),
+  CONSTRAINT `fk_dossierdocconsulte_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_dossierdocconsulte_dossiernatureliste1`
+    FOREIGN KEY (`ID_NATURE`)
+    REFERENCES `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossierdocurba`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossierdocurba` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossierdocurba` (
+  `ID_DOCURBA` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `NUM_DOCURBA` VARCHAR(100) NOT NULL,
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`ID_DOCURBA`),
+  INDEX `fk_dossierdocurba_dossier1_idx` (`ID_DOSSIER` ASC),
+  CONSTRAINT `fk_dossierdocurba_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossierlie`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossierlie` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossierlie` (
+  `ID_DOSSIERLIE` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `ID_DOSSIER1` BIGINT(20) NOT NULL,
+  `ID_DOSSIER2` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`ID_DOSSIERLIE`),
+  INDEX `fk_dossierlie_dossier1_idx` (`ID_DOSSIER1` ASC),
+  INDEX `fk_dossierlie_dossier2_idx` (`ID_DOSSIER2` ASC),
+  CONSTRAINT `fk_dossierlie_dossier1`
+    FOREIGN KEY (`ID_DOSSIER1`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_dossierlie_dossier2`
+    FOREIGN KEY (`ID_DOSSIER2`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossiernature`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossiernature` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossiernature` (
+  `ID_DOSSIERNATURE` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `ID_NATURE` BIGINT(20) NOT NULL,
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`ID_DOSSIERNATURE`),
+  INDEX `fk_dossiernature_dossiernatureliste1_idx` (`ID_NATURE` ASC),
+  INDEX `fk_dossiernature_dossier1_idx` (`ID_DOSSIER` ASC),
+  CONSTRAINT `fk_dossiernature_dossiernatureliste1`
+    FOREIGN KEY (`ID_NATURE`)
+    REFERENCES `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_dossiernature_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossierpj`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossierpj` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossierpj` (
+  `ID_PIECEJOINTE` BIGINT(20) NOT NULL,
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  `PJ_COMMISSION` TINYINT NOT NULL DEFAULT 0,
+  INDEX `fk_dossierpj_piecejointe1_idx` (`ID_PIECEJOINTE` ASC),
+  INDEX `fk_dossierpj_dossier1_idx` (`ID_DOSSIER` ASC),
+  CONSTRAINT `fk_dossierpj_piecejointe1`
+    FOREIGN KEY (`ID_PIECEJOINTE`)
+    REFERENCES `prevarisc`.`piecejointe` (`ID_PIECEJOINTE`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_dossierpj_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`groupe`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`groupe` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`groupe` (
+  `ID_GROUPE` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_GROUPE` VARCHAR(255) NOT NULL,
+  `DESC_GROUPE` TEXT NOT NULL,
+  PRIMARY KEY (`ID_GROUPE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`utilisateur`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`utilisateur` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`utilisateur` (
+  `ID_UTILISATEUR` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `USERNAME_UTILISATEUR` VARCHAR(100) NOT NULL,
+  `PASSWD_UTILISATEUR` VARCHAR(32) NULL,
+  `LASTACTION_UTILISATEUR` TIMESTAMP NULL,
+  `ACTIF_UTILISATEUR` TINYINT(1) NOT NULL DEFAULT '1',
+  `NUMINSEE_COMMUNE` VARCHAR(5) NULL,
+  `ID_UTILISATEURINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_GROUPE` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_UTILISATEUR`),
+  INDEX `fk_utilisateur_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS` ASC),
+  INDEX `fk_utilisateur_groupe1_idx` (`ID_GROUPE` ASC),
+  CONSTRAINT `fk_utilisateur_utilisateurinformations1`
+    FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`)
+    REFERENCES `prevarisc`.`utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_utilisateur_groupe1`
+    FOREIGN KEY (`ID_GROUPE`)
+    REFERENCES `prevarisc`.`groupe` (`ID_GROUPE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossierpreventionniste`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossierpreventionniste` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossierpreventionniste` (
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  `ID_PREVENTIONNISTE` BIGINT(20) UNSIGNED NOT NULL,
+  INDEX `fk_dossierpreventionniste_dossier1_idx` (`ID_DOSSIER` ASC),
+  INDEX `fk_dossierpreventionniste_utilisateur1_idx` (`ID_PREVENTIONNISTE` ASC),
+  PRIMARY KEY (`ID_DOSSIER`, `ID_PREVENTIONNISTE`),
+  CONSTRAINT `fk_dossierpreventionniste_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_dossierpreventionniste_utilisateur1`
+    FOREIGN KEY (`ID_PREVENTIONNISTE`)
+    REFERENCES `prevarisc`.`utilisateur` (`ID_UTILISATEUR`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissement`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissement` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissement` (
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `NUMEROID_ETABLISSEMENT` VARCHAR(50) NULL,
+  `TELEPHONE_ETABLISSEMENT` VARCHAR(20) NULL,
+  `FAX_ETABLISSEMENT` VARCHAR(20) NULL,
+  `COURRIEL_ETABLISSEMENT` VARCHAR(75) NULL,
+  `DATEENREGISTREMENT_ETABLISSEMENT` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `DESCRIPTIF_ETABLISSEMENT` TEXT NULL,
+  `NBPREV_ETABLISSEMENT` TINYINT NULL,
+  `DUREEVISITE_ETABLISSEMENT` TIME NULL,
+  `ID_DOSSIER_DONNANT_AVIS` BIGINT(20) NULL,
+  `DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT` INT NULL,
+  `DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT` INT NULL,
+  `DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT` INT NULL,
+  `DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DESSERTE_ESPACELIBRE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT` INT NULL,
+  `DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT` INT NULL,
+  `DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT` INT NULL,
+  `DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT` INT NULL,
+  `DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DISTRIBUTION_CLOISONNEMENTTRAD_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_LOCAUXARISQUE_NBRISQUESMOYENS_ETABLISSEMENT` INT NULL,
+  `DESCTECH_LOCAUXARISQUE_NBRISQUESIMPORTANTS_ETABLISSEMENT` INT NULL,
+  `DESCTECH_ESPACES_NOMBRE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_ESPACES_NIVEAUCONCERNE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DESENFUMAGE_NATUREL_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_DESENFUMAGE_MECANIQUE_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_DESENFUMAGE_COMMENTAIRE_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_CHAUFFERIES_NB_ETABLISSEMENT` INT NULL,
+  `DESCTECH_CHAUFFERIES_PUISSMAX_ETABLISSEMENT` INT NULL,
+  `DESCTECH_COUPURENRJ_GAZ_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_COUPURENRJ_ELEC_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_COUPURENRJ_PHOTOVOLTAIQUE_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_COUPURENRJ_AUTRE_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_ASCENSEURS_NBTOTAL_ETABLISSEMENT` INT NULL,
+  `DESCTECH_ASCENSEURS_NBAS4_ETABLISSEMENT` INT NULL,
+  `DESCTECH_MOYENSSECOURS_COLONNESSECHES_ETABLISSEMENT` TINYINT(45) NULL,
+  `DESCTECH_MOYENSSECOURS_COLONNESHUMIDES_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_MOYENSSECOURS_RIA_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_MOYENSSECOURS_SPRINKLEUR_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_MOYENSSECOURS_BROUILLARDEAU_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_PCSECU_PRESENCE_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_PCSECU_LOCALISATION_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_SSI_PRESENCE_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_SSI_CATEGORIE_ETABLISSEMENT` CHAR(1) NULL,
+  `DESCTECH_SSI_ALARME_TYPE_ETABLISSEMENT` CHAR(2) NULL,
+  `DESCTECH_SERVICESECU_EL18_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_SERVICESECU_PERSONNELSDESIGNES_ETABLISSEMENT` TINYINT(1) NULL,
+  `DESCTECH_SERVICESECU_AGENTDESECU_ETABLISSEMENT` INT NULL,
+  `DESCTECH_SERVICESECU_CHEFEQUIPE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_SERVICESECU_CHEFDESERVICESECU_ETABLISSEMENT` INT NULL,
+  `DESCTECH_SERVICESECU_SP_ETABLISSEMENT` INT NULL,
+  `DESCTECH_SERVICESECU_COMMENTAIRESP_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_DEFENSE_PTEAU_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DEFENSE_VOLUMEPTEAU_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DEFENSE_PTEAUCOMMENTAIRE_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_DEFENSE_PI_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DEFENSE_BI_ETABLISSEMENT` INT NULL,
+  `DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_CHAUFFERIES_NB30KW` INT NULL,
+  `DESCTECH_CHAUFFERIES_NB70KW` INT NULL,
+  `DESCTECH_CHAUFFERIES_NB2MW` INT NULL,
+  `DESCTECH_CHAUFFERIES_PUISSANCETOTALE` INT NULL,
+  `DESCRIPTIF_HISTORIQUE_ETABLISSEMENT` TEXT NULL,
+  `DESCRIPTIF_DEROGATIONS_ETABLISSEMENT` TEXT NULL,
+  `DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT` INT NULL,
+  `DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT` INT NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENT`),
+  INDEX `fk_etablissement_dossier1_idx` (`ID_DOSSIER_DONNANT_AVIS` ASC),
+  CONSTRAINT `fk_etablissement_dossier1`
+    FOREIGN KEY (`ID_DOSSIER_DONNANT_AVIS`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementadresse`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementadresse` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementadresse` (
+  `ID_ADRESSE` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `NUMERO_ADRESSE` VARCHAR(255) NULL,
+  `COMPLEMENT_ADRESSE` VARCHAR(255) NULL,
+  `LON_ETABLISSEMENTADRESSE` FLOAT NULL,
+  `LAT_ETABLISSEMENTADRESSE` FLOAT NULL,
+  `ID_RUE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `NUMINSEE_COMMUNE` CHAR(5) NOT NULL,
+  PRIMARY KEY (`ID_ADRESSE`),
+  INDEX `fk_etablissementadresse_etablissement1_idx` (`ID_ETABLISSEMENT` ASC),
+  INDEX `fk_etablissementadresse_adresserue1_idx` (`ID_RUE` ASC),
+  INDEX `fk_etablissementadresse_adressecommune1_idx` (`NUMINSEE_COMMUNE` ASC),
+  CONSTRAINT `fk_etablissementadresse_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES `prevarisc`.`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementadresse_adresserue1`
+    FOREIGN KEY (`ID_RUE`)
+    REFERENCES `prevarisc`.`adresserue` (`ID_RUE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementadresse_adressecommune1`
+    FOREIGN KEY (`NUMINSEE_COMMUNE`)
+    REFERENCES `prevarisc`.`adressecommune` (`NUMINSEE_COMMUNE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 2;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementcontact`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementcontact` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementcontact` (
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_UTILISATEURINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENT`, `ID_UTILISATEURINFORMATIONS`),
+  INDEX `fk_etablissementcontact_etablissement1_idx` (`ID_ETABLISSEMENT` ASC),
+  INDEX `fk_etablissementcontact_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS` ASC),
+  CONSTRAINT `fk_etablissementcontact_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES `prevarisc`.`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementcontact_utilisateurinformations1`
+    FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`)
+    REFERENCES `prevarisc`.`utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementdossier`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementdossier` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementdossier` (
+  `ID_ETABLISSEMENTDOSSIER` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENTDOSSIER`),
+  INDEX `fk_etablissementdossier_etablissement1_idx` (`ID_ETABLISSEMENT` ASC),
+  INDEX `fk_etablissementdossier_dossier1_idx` (`ID_DOSSIER` ASC),
+  CONSTRAINT `fk_etablissementdossier_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES `prevarisc`.`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementdossier_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`genre`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`genre` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`genre` (
+  `ID_GENRE` INT(2) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_GENRE` VARCHAR(50) NULL DEFAULT NULL,
+  PRIMARY KEY (`ID_GENRE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`famille`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`famille` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`famille` (
+  `ID_FAMILLE` INT(11) NOT NULL AUTO_INCREMENT,
+  `LIBELLE_FAMILLE` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`ID_FAMILLE`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 8
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`typeactivite`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`typeactivite` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`typeactivite` (
+  `ID_TYPEACTIVITE` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_ACTIVITE` VARCHAR(255) NOT NULL,
+  `ID_TYPE` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_TYPEACTIVITE`),
+  INDEX `fk_typeactivite_type1_idx` (`ID_TYPE` ASC),
+  CONSTRAINT `fk_typeactivite_type1`
+    FOREIGN KEY (`ID_TYPE`)
+    REFERENCES `prevarisc`.`type` (`ID_TYPE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 102
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`statut`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`statut` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`statut` (
+  `ID_STATUT` INT(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_STATUT` VARCHAR(30) NOT NULL,
+  PRIMARY KEY (`ID_STATUT`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementinformations`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementinformations` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementinformations` (
+  `ID_ETABLISSEMENTINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_ETABLISSEMENTINFORMATIONS` VARCHAR(255) NOT NULL,
+  `ICPE_ETABLISSEMENTINFORMATIONS` TINYINT(1) NULL DEFAULT NULL,
+  `PERIODICITE_ETABLISSEMENTINFORMATIONS` TINYINT NULL,
+  `R12320_ETABLISSEMENTINFORMATIONS` TINYINT(1) NULL DEFAULT NULL,
+  `LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS` TINYINT(1) NULL,
+  `EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS` INT(11) NULL DEFAULT NULL,
+  `EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS` INT(11) NULL DEFAULT NULL,
+  `EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS` INT(11) NULL DEFAULT NULL,
+  `EFFECTIFJUSTIFIANTCLASSEMENT_ETABLISSEMENTINFORMATIONS` INT(11) NULL DEFAULT NULL,
+  `COMPLEMENT_ETABLISSEMENTINFORMATIONS` VARCHAR(255) NULL,
+  `DATE_ETABLISSEMENTINFORMATIONS` DATETIME NOT NULL,
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_GENRE` INT(2) UNSIGNED NOT NULL,
+  `ID_CLASSE` INT(11) UNSIGNED NULL,
+  `ID_FAMILLE` INT(11) NULL,
+  `ID_CATEGORIE` INT(1) UNSIGNED NULL,
+  `ID_TYPE` INT UNSIGNED NULL,
+  `ID_TYPEACTIVITE` INT(11) UNSIGNED NULL,
+  `ID_COMMISSION` BIGINT(20) UNSIGNED NULL,
+  `ID_STATUT` INT(1) UNSIGNED NOT NULL,
+  `UTILISATEUR_ETABLISSEMENTINFORMATIONS` BIGINT(20) UNSIGNED NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONS`),
+  INDEX `fk_etablissementinformations_etablissement1_idx` (`ID_ETABLISSEMENT` ASC),
+  INDEX `fk_etablissementinformations_genre1_idx` (`ID_GENRE` ASC),
+  INDEX `fk_etablissementinformations_classe1_idx` (`ID_CLASSE` ASC),
+  INDEX `fk_etablissementinformations_famille1_idx` (`ID_FAMILLE` ASC),
+  INDEX `fk_etablissementinformations_categorie1_idx` (`ID_CATEGORIE` ASC),
+  INDEX `fk_etablissementinformations_type1_idx` (`ID_TYPE` ASC),
+  INDEX `fk_etablissementinformations_typeactivite1_idx` (`ID_TYPEACTIVITE` ASC),
+  INDEX `fk_etablissementinformations_commission1_idx` (`ID_COMMISSION` ASC),
+  INDEX `fk_etablissementinformations_statut1_idx` (`ID_STATUT` ASC),
+  INDEX `fk_etablissementinformations_utilisateur1_idx` (`UTILISATEUR_ETABLISSEMENTINFORMATIONS` ASC),
+  CONSTRAINT `fk_etablissementinformations_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES `prevarisc`.`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementinformations_genre1`
+    FOREIGN KEY (`ID_GENRE`)
+    REFERENCES `prevarisc`.`genre` (`ID_GENRE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_classe1`
+    FOREIGN KEY (`ID_CLASSE`)
+    REFERENCES `prevarisc`.`classe` (`ID_CLASSE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_famille1`
+    FOREIGN KEY (`ID_FAMILLE`)
+    REFERENCES `prevarisc`.`famille` (`ID_FAMILLE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_categorie1`
+    FOREIGN KEY (`ID_CATEGORIE`)
+    REFERENCES `prevarisc`.`categorie` (`ID_CATEGORIE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_type1`
+    FOREIGN KEY (`ID_TYPE`)
+    REFERENCES `prevarisc`.`type` (`ID_TYPE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_typeactivite1`
+    FOREIGN KEY (`ID_TYPEACTIVITE`)
+    REFERENCES `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_commission1`
+    FOREIGN KEY (`ID_COMMISSION`)
+    REFERENCES `prevarisc`.`commission` (`ID_COMMISSION`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_statut1`
+    FOREIGN KEY (`ID_STATUT`)
+    REFERENCES `prevarisc`.`statut` (`ID_STATUT`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_utilisateur1`
+    FOREIGN KEY (`UTILISATEUR_ETABLISSEMENTINFORMATIONS`)
+    REFERENCES `prevarisc`.`utilisateur` (`ID_UTILISATEUR`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 41;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`typeplan`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`typeplan` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`typeplan` (
+  `ID_TYPEPLAN` INT(11) NOT NULL AUTO_INCREMENT,
+  `LIBELLE_TYPEPLAN` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`ID_TYPEPLAN`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementinformationsplan`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementinformationsplan` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementinformationsplan` (
+  `ID_ETABLISSEMENTINFORMATIONSPLAN` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `NUMERO_ETABLISSEMENTPLAN` VARCHAR(50) NULL,
+  `DATE_ETABLISSEMENTPLAN` DATE NOT NULL,
+  `MISEAJOUR_ETABLISSEMENTPLAN` TINYINT(1) NULL,
+  `ID_ETABLISSEMENTINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_TYPEPLAN` INT(11) NOT NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONSPLAN`),
+  INDEX `fk_etablissementinformationsplan_etablissementinformations1_idx` (`ID_ETABLISSEMENTINFORMATIONS` ASC),
+  INDEX `fk_etablissementinformationsplan_typeplan1_idx` (`ID_TYPEPLAN` ASC),
+  CONSTRAINT `fk_etablissementinformationsplan_etablissementinformations1`
+    FOREIGN KEY (`ID_ETABLISSEMENTINFORMATIONS`)
+    REFERENCES `prevarisc`.`etablissementinformations` (`ID_ETABLISSEMENTINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementinformationsplan_typeplan1`
+    FOREIGN KEY (`ID_TYPEPLAN`)
+    REFERENCES `prevarisc`.`typeplan` (`ID_TYPEPLAN`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementinformationspreventionniste`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementinformationspreventionniste` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementinformationspreventionniste` (
+  `ID_ETABLISSEMENTINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_UTILISATEUR` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONS`, `ID_UTILISATEUR`),
+  INDEX `fk_etablissementinformationspreventionniste_etablissementin_idx` (`ID_ETABLISSEMENTINFORMATIONS` ASC),
+  INDEX `fk_etablissementinformationspreventionniste_utilisateur1_idx` (`ID_UTILISATEUR` ASC),
+  CONSTRAINT `fk_etablissementinformationspreventionniste_etablissementinfo1`
+    FOREIGN KEY (`ID_ETABLISSEMENTINFORMATIONS`)
+    REFERENCES `prevarisc`.`etablissementinformations` (`ID_ETABLISSEMENTINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementinformationspreventionniste_utilisateur1`
+    FOREIGN KEY (`ID_UTILISATEUR`)
+    REFERENCES `prevarisc`.`utilisateur` (`ID_UTILISATEUR`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementinformationsrubrique`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementinformationsrubrique` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementinformationsrubrique` (
+  `ID_ETABLISSEMENTINFORMATIONSRUBRIQUE` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `ID_RUBRIQUE` TINYINT(4) NOT NULL,
+  `NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE` INT(11) NOT NULL,
+  `VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE` FLOAT NOT NULL,
+  `NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE` VARCHAR(150) NOT NULL,
+  `CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE` VARCHAR(50) NULL,
+  `ID_ETABLISSEMENTINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONSRUBRIQUE`),
+  INDEX `ID_ETABLISSEMENTINFORMATIONS` (`ID_RUBRIQUE` ASC),
+  INDEX `fk_etablissementinformationsrubrique_etablissementinformati_idx` (`ID_ETABLISSEMENTINFORMATIONS` ASC),
+  CONSTRAINT `fk_etablissementinformationsrubrique_etablissementinformations1`
+    FOREIGN KEY (`ID_ETABLISSEMENTINFORMATIONS`)
+    REFERENCES `prevarisc`.`etablissementinformations` (`ID_ETABLISSEMENTINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementinformationstypesactivitessecondaires`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementinformationstypesactivitessecondaires` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementinformationstypesactivitessecondaires` (
+  `ID_ETABLISSEMENTINFORMATIONSTYPESACTIVITESSECONDAIRES` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ID_ETABLISSEMENTINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_TYPE_SECONDAIRE` INT UNSIGNED NOT NULL,
+  `ID_TYPEACTIVITE_SECONDAIRE` INT(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONSTYPESACTIVITESSECONDAIRES`),
+  INDEX `fk_etablissementinformationstypesactivitessecondaires_etabl_idx` (`ID_ETABLISSEMENTINFORMATIONS` ASC),
+  INDEX `fk_etablissementinformationstypesactivitessecondaires_type1_idx` (`ID_TYPE_SECONDAIRE` ASC),
+  INDEX `fk_etablissementinformationstypesactivitessecondaires_typea_idx` (`ID_TYPEACTIVITE_SECONDAIRE` ASC),
+  CONSTRAINT `fk_etablissementinformationstypesactivitessecondaires_etablis1`
+    FOREIGN KEY (`ID_ETABLISSEMENTINFORMATIONS`)
+    REFERENCES `prevarisc`.`etablissementinformations` (`ID_ETABLISSEMENTINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementinformationstypesactivitessecondaires_type1`
+    FOREIGN KEY (`ID_TYPE_SECONDAIRE`)
+    REFERENCES `prevarisc`.`type` (`ID_TYPE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformationstypesactivitessecondaires_typeact1`
+    FOREIGN KEY (`ID_TYPEACTIVITE_SECONDAIRE`)
+    REFERENCES `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementlie`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementlie` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementlie` (
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_FILS_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_ETABLISSEMENT`, `ID_FILS_ETABLISSEMENT`),
+  INDEX `fk_etablissementlie_etablissement2_idx` (`ID_FILS_ETABLISSEMENT` ASC),
+  CONSTRAINT `fk_etablissementlie_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES `prevarisc`.`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementlie_etablissement2`
+    FOREIGN KEY (`ID_FILS_ETABLISSEMENT`)
+    REFERENCES `prevarisc`.`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementpj`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementpj` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementpj` (
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_PIECEJOINTE` BIGINT(20) NOT NULL,
+  `PLACEMENT_ETABLISSEMENTPJ` INT NULL DEFAULT 0,
+  PRIMARY KEY (`ID_ETABLISSEMENT`, `ID_PIECEJOINTE`),
+  INDEX `fk_etablissementpj_etablissement1_idx` (`ID_ETABLISSEMENT` ASC),
+  INDEX `fk_etablissementpj_piecejointe1_idx` (`ID_PIECEJOINTE` ASC),
+  CONSTRAINT `fk_etablissementpj_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES `prevarisc`.`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementpj_piecejointe1`
+    FOREIGN KEY (`ID_PIECEJOINTE`)
+    REFERENCES `prevarisc`.`piecejointe` (`ID_PIECEJOINTE`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`groupementcommune`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`groupementcommune` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`groupementcommune` (
+  `ID_GROUPEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `NUMINSEE_COMMUNE` CHAR(5) NOT NULL,
+  INDEX `fk_groupementcommune_groupement1_idx` (`ID_GROUPEMENT` ASC),
+  INDEX `fk_groupementcommune_adressecommune1_idx` (`NUMINSEE_COMMUNE` ASC),
+  PRIMARY KEY (`ID_GROUPEMENT`, `NUMINSEE_COMMUNE`),
+  CONSTRAINT `fk_groupementcommune_groupement1`
+    FOREIGN KEY (`ID_GROUPEMENT`)
+    REFERENCES `prevarisc`.`groupement` (`ID_GROUPEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_groupementcommune_adressecommune1`
+    FOREIGN KEY (`NUMINSEE_COMMUNE`)
+    REFERENCES `prevarisc`.`adressecommune` (`NUMINSEE_COMMUNE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`groupementcontact`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`groupementcontact` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`groupementcontact` (
+  `ID_GROUPEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_UTILISATEURINFORMATIONS` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_GROUPEMENT`, `ID_UTILISATEURINFORMATIONS`),
+  INDEX `fk_groupementcontact_groupement1_idx` (`ID_GROUPEMENT` ASC),
+  INDEX `fk_groupementcontact_utilisateurinformations1_idx` (`ID_UTILISATEURINFORMATIONS` ASC),
+  CONSTRAINT `fk_groupementcontact_groupement1`
+    FOREIGN KEY (`ID_GROUPEMENT`)
+    REFERENCES `prevarisc`.`groupement` (`ID_GROUPEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_groupementcontact_utilisateurinformations1`
+    FOREIGN KEY (`ID_UTILISATEURINFORMATIONS`)
+    REFERENCES `prevarisc`.`utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`groupementpreventionniste`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`groupementpreventionniste` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`groupementpreventionniste` (
+  `ID_GROUPEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_UTILISATEUR` BIGINT(20) UNSIGNED NOT NULL,
+  `DATEDEBUT_GROUPEMENTPREVENTIONNISTE` DATETIME NOT NULL,
+  `DATEFIN_GROUPEMENTPREVENTIONNISTE` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`ID_GROUPEMENT`, `ID_UTILISATEUR`),
+  INDEX `fk_groupementpreventionniste_groupement1_idx` (`ID_GROUPEMENT` ASC),
+  INDEX `fk_groupementpreventionniste_utilisateur1_idx` (`ID_UTILISATEUR` ASC),
+  CONSTRAINT `fk_groupementpreventionniste_groupement1`
+    FOREIGN KEY (`ID_GROUPEMENT`)
+    REFERENCES `prevarisc`.`groupement` (`ID_GROUPEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_groupementpreventionniste_utilisateur1`
+    FOREIGN KEY (`ID_UTILISATEUR`)
+    REFERENCES `prevarisc`.`utilisateur` (`ID_UTILISATEUR`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`listedocajout`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`listedocajout` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`listedocajout` (
+  `ID_DOCAJOUT` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `LIBELLE_DOCAJOUT` TEXT CHARACTER SET 'latin1' NOT NULL,
+  `REF_DOCAJOUT` VARCHAR(255) CHARACTER SET 'latin1' NULL DEFAULT NULL,
+  `DATE_DOCAJOUT` DATE NULL DEFAULT NULL,
+  `ID_NATURE` BIGINT(20) NOT NULL,
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`ID_DOCAJOUT`),
+  INDEX `fk_listedocajout_dossier1_idx` (`ID_DOSSIER` ASC),
+  CONSTRAINT `fk_listedocajout_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`listedocconsulte`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`listedocconsulte` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`listedocconsulte` (
+  `ID_DOC` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `LIBELLE_DOC` TEXT CHARACTER SET 'latin1' NULL DEFAULT NULL,
+  `VISITE_DOC` TINYINT(1) NOT NULL DEFAULT 0,
+  `ETUDE_DOC` TINYINT(1) NOT NULL DEFAULT 0,
+  `VISITERT_DOC` TINYINT(1) NOT NULL DEFAULT 0,
+  `VISITEVAO_DOC` TINYINT(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`ID_DOC`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 49;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`news`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`news` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`news` (
+  `ID_NEWS` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `TYPE_NEWS` VARCHAR(100) NOT NULL,
+  `TEXTE_NEWS` TEXT NOT NULL,
+  `ID_UTILISATEUR` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_NEWS`),
+  INDEX `fk_news_utilisateur1_idx` (`ID_UTILISATEUR` ASC),
+  CONSTRAINT `fk_news_utilisateur1`
+    FOREIGN KEY (`ID_UTILISATEUR`)
+    REFERENCES `prevarisc`.`utilisateur` (`ID_UTILISATEUR`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`newsgroupe`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`newsgroupe` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`newsgroupe` (
+  `ID_NEWS` BIGINT UNSIGNED NOT NULL,
+  `ID_GROUPE` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_NEWS`, `ID_GROUPE`),
+  INDEX `fk_newsgroupe_groupe1_idx` (`ID_GROUPE` ASC),
+  CONSTRAINT `fk_newsgroupe_news1`
+    FOREIGN KEY (`ID_NEWS`)
+    REFERENCES `prevarisc`.`news` (`ID_NEWS`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_newsgroupe_groupe1`
+    FOREIGN KEY (`ID_GROUPE`)
+    REFERENCES `prevarisc`.`groupe` (`ID_GROUPE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`periodicite`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`periodicite` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`periodicite` (
+  `ID_CATEGORIE` INT(2) UNSIGNED NOT NULL,
+  `ID_TYPE` VARCHAR(10) NOT NULL,
+  `LOCALSOMMEIL_PERIODICITE` TINYINT(4) NOT NULL DEFAULT '0',
+  `PERIODICITE_PERIODICITE` INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`utilisateurcommission`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`utilisateurcommission` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`utilisateurcommission` (
+  `ID_UTILISATEUR` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_COMMISSION` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_UTILISATEUR`, `ID_COMMISSION`),
+  INDEX `fk_utilisateurcommission_utilisateur1_idx` (`ID_UTILISATEUR` ASC),
+  INDEX `fk_utilisateurcommission_commission1_idx` (`ID_COMMISSION` ASC),
+  CONSTRAINT `fk_utilisateurcommission_utilisateur1`
+    FOREIGN KEY (`ID_UTILISATEUR`)
+    REFERENCES `prevarisc`.`utilisateur` (`ID_UTILISATEUR`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_utilisateurcommission_commission1`
+    FOREIGN KEY (`ID_COMMISSION`)
+    REFERENCES `prevarisc`.`commission` (`ID_COMMISSION`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`utilisateurgroupement`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`utilisateurgroupement` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`utilisateurgroupement` (
+  `ID_UTILISATEUR` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_GROUPEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_UTILISATEUR`, `ID_GROUPEMENT`),
+  INDEX `fk_utilisateurgroupement_utilisateur1_idx` (`ID_UTILISATEUR` ASC),
+  INDEX `fk_utilisateurgroupement_groupement1_idx` (`ID_GROUPEMENT` ASC),
+  CONSTRAINT `fk_utilisateurgroupement_utilisateur1`
+    FOREIGN KEY (`ID_UTILISATEUR`)
+    REFERENCES `prevarisc`.`utilisateur` (`ID_UTILISATEUR`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_utilisateurgroupement_groupement1`
+    FOREIGN KEY (`ID_GROUPEMENT`)
+    REFERENCES `prevarisc`.`groupement` (`ID_GROUPEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`typetextesappl`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`typetextesappl` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`typetextesappl` (
+  `ID_TYPETEXTEAPPL` BIGINT NOT NULL AUTO_INCREMENT,
+  `LIBELLE_TYPETEXTEAPPL` TEXT NULL,
+  PRIMARY KEY (`ID_TYPETEXTEAPPL`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`textesappl`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`textesappl` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`textesappl` (
+  `ID_TEXTESAPPL` BIGINT NOT NULL AUTO_INCREMENT,
+  `LIBELLE_TEXTESAPPL` TEXT NULL,
+  `VISIBLE_TEXTESAPPL` TINYINT NULL,
+  `ID_TYPETEXTEAPPL` BIGINT NOT NULL,
+  `NUM_TEXTESAPPL` INT NOT NULL DEFAULT 99999,
+  PRIMARY KEY (`ID_TEXTESAPPL`),
+  INDEX `fk_textesappl_typetextesappl1_idx` (`ID_TYPETEXTEAPPL` ASC),
+  CONSTRAINT `fk_textesappl_typetextesappl1`
+    FOREIGN KEY (`ID_TYPETEXTEAPPL`)
+    REFERENCES `prevarisc`.`typetextesappl` (`ID_TYPETEXTEAPPL`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossiertextesappl`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossiertextesappl` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossiertextesappl` (
+  `ID_TEXTESAPPL` BIGINT NOT NULL,
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`ID_TEXTESAPPL`, `ID_DOSSIER`),
+  INDEX `fk_table1_dossier1_idx` (`ID_DOSSIER` ASC),
+  CONSTRAINT `fk_table1_textesappl1`
+    FOREIGN KEY (`ID_TEXTESAPPL`)
+    REFERENCES `prevarisc`.`textesappl` (`ID_TEXTESAPPL`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_table1_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`etablissementtextapp`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`etablissementtextapp` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`etablissementtextapp` (
+  `ID_TEXTESAPPL` BIGINT NOT NULL,
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_TEXTESAPPL`, `ID_ETABLISSEMENT`),
+  INDEX `fk_etablissementtextapp_etablissement1_idx` (`ID_ETABLISSEMENT` ASC),
+  CONSTRAINT `fk_etablissementtextapp_textesappl1`
+    FOREIGN KEY (`ID_TEXTESAPPL`)
+    REFERENCES `prevarisc`.`textesappl` (`ID_TEXTESAPPL`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_etablissementtextapp_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES `prevarisc`.`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptioncat`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptioncat` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptioncat` (
+  `ID_PRESCRIPTION_CAT` BIGINT NOT NULL AUTO_INCREMENT,
+  `LIBELLE_PRESCRIPTION_CAT` VARCHAR(255) NULL,
+  `NUM_PRESCRIPTION_CAT` INT NOT NULL,
+  PRIMARY KEY (`ID_PRESCRIPTION_CAT`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptiontexte`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptiontexte` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptiontexte` (
+  `ID_PRESCRIPTIONTEXTE` BIGINT NOT NULL AUTO_INCREMENT,
+  `LIBELLE_PRESCRIPTIONTEXTE` VARCHAR(255) NULL,
+  `NUM_PRESCRIPTIONTEXTE` INT NULL,
+  `ID_PRESCRIPTIONCAT` BIGINT NOT NULL,
+  PRIMARY KEY (`ID_PRESCRIPTIONTEXTE`),
+  INDEX `fk_prescriptiontexte_prescriptioncat1_idx` (`ID_PRESCRIPTIONCAT` ASC),
+  CONSTRAINT `fk_prescriptiontexte_prescriptioncat1`
+    FOREIGN KEY (`ID_PRESCRIPTIONCAT`)
+    REFERENCES `prevarisc`.`prescriptioncat` (`ID_PRESCRIPTION_CAT`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptionarticle`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptionarticle` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptionarticle` (
+  `ID_PRESCRIPTIONARTICLE` BIGINT NOT NULL AUTO_INCREMENT,
+  `LIBELLE_PRESCRIPTIONARTICLE` VARCHAR(255) NULL,
+  `NUM_PRESCRIPTIONARTICLE` INT NULL,
+  `ID_PRESCRIPTIONTEXTE` BIGINT NOT NULL,
+  PRIMARY KEY (`ID_PRESCRIPTIONARTICLE`),
+  INDEX `fk_prescriptionarticle_prescriptiontexte1_idx` (`ID_PRESCRIPTIONTEXTE` ASC),
+  CONSTRAINT `fk_prescriptionarticle_prescriptiontexte1`
+    FOREIGN KEY (`ID_PRESCRIPTIONTEXTE`)
+    REFERENCES `prevarisc`.`prescriptiontexte` (`ID_PRESCRIPTIONTEXTE`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptiontexteliste`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptiontexteliste` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptiontexteliste` (
+  `ID_TEXTE` BIGINT NOT NULL AUTO_INCREMENT,
+  `LIBELLE_TEXTE` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`ID_TEXTE`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptionarticleliste`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptionarticleliste` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptionarticleliste` (
+  `ID_ARTICLE` BIGINT NOT NULL AUTO_INCREMENT,
+  `LIBELLE_ARTICLE` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`ID_ARTICLE`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptiontype`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptiontype` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptiontype` (
+  `ID_PRESCRIPTIONTYPE` BIGINT NOT NULL AUTO_INCREMENT,
+  `PRESCRIPTIONTYPE_CATEGORIE` BIGINT NULL,
+  `PRESCRIPTIONTYPE_TEXTE` BIGINT NULL,
+  `PRESCRIPTIONTYPE_ARTICLE` BIGINT NULL,
+  `PRESCRIPTIONTYPE_LIBELLE` TEXT NULL,
+  PRIMARY KEY (`ID_PRESCRIPTIONTYPE`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptiontypeassoc`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptiontypeassoc` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptiontypeassoc` (
+  `ID_PRESCRIPTIONTYPE` BIGINT NOT NULL,
+  `NUM_PRESCRIPTIONASSOC` INT NOT NULL,
+  `ID_TEXTE` BIGINT NOT NULL,
+  `ID_ARTICLE` BIGINT NOT NULL,
+  INDEX `fk_prescriptiontypeassoc_prescriptiontype1_idx` (`ID_PRESCRIPTIONTYPE` ASC),
+  PRIMARY KEY (`ID_PRESCRIPTIONTYPE`, `NUM_PRESCRIPTIONASSOC`),
+  CONSTRAINT `fk_prescriptiontypeassoc_prescriptiontype1`
+    FOREIGN KEY (`ID_PRESCRIPTIONTYPE`)
+    REFERENCES `prevarisc`.`prescriptiontype` (`ID_PRESCRIPTIONTYPE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptiondossier`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptiondossier` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptiondossier` (
+  `ID_PRESCRIPTION_DOSSIER` BIGINT NOT NULL AUTO_INCREMENT,
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  `NUM_PRESCRIPTION_DOSSIER` INT NOT NULL,
+  `ID_PRESCRIPTION_TYPE` BIGINT NULL,
+  `LIBELLE_PRESCRIPTION_DOSSIER` TEXT NULL,
+  PRIMARY KEY (`ID_PRESCRIPTION_DOSSIER`),
+  UNIQUE INDEX `ID_PRESCRIPTION_DOSSIER_UNIQUE` (`ID_PRESCRIPTION_DOSSIER` ASC),
+  INDEX `fk_prescriptiondossier_dossier1_idx` (`ID_DOSSIER` ASC),
+  CONSTRAINT `fk_prescriptiondossier_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`prescriptiondossierassoc`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`prescriptiondossierassoc` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`prescriptiondossierassoc` (
+  `NUM_PRESCRIPTION_DOSSIERASSOC` INT NOT NULL,
+  `ID_PRESCRIPTION_DOSSIER` BIGINT NOT NULL,
+  `ID_TEXTE` BIGINT NULL,
+  `ID_ARTICLE` BIGINT NULL,
+  PRIMARY KEY (`NUM_PRESCRIPTION_DOSSIERASSOC`, `ID_PRESCRIPTION_DOSSIER`),
+  INDEX `fk_prescriptiondossierassoc_prescriptiondossier1_idx` (`ID_PRESCRIPTION_DOSSIER` ASC),
+  CONSTRAINT `fk_prescriptiondossierassoc_prescriptiondossier1`
+    FOREIGN KEY (`ID_PRESCRIPTION_DOSSIER`)
+    REFERENCES `prevarisc`.`prescriptiondossier` (`ID_PRESCRIPTION_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`resources`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`resources` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`resources` (
+  `id_resource` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NULL,
+  `text` TEXT NULL,
+  PRIMARY KEY (`id_resource`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`privileges`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`privileges` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`privileges` (
+  `id_privilege` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `text` VARCHAR(45) NULL,
+  `id_resource` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id_privilege`),
+  INDEX `fk_privileges_resources1_idx` (`id_resource` ASC),
+  CONSTRAINT `fk_privileges_resources1`
+    FOREIGN KEY (`id_resource`)
+    REFERENCES `prevarisc`.`resources` (`id_resource`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`groupe-privileges`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`groupe-privileges` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`groupe-privileges` (
+  `ID_GROUPE` BIGINT(20) UNSIGNED NOT NULL,
+  `id_privilege` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_GROUPE`, `id_privilege`),
+  INDEX `fk_groupe-privileges_privileges1_idx` (`id_privilege` ASC),
+  INDEX `fk_groupe-privileges_groupe1_idx` (`ID_GROUPE` ASC),
+  CONSTRAINT `fk_groupe-privileges_groupe1`
+    FOREIGN KEY (`ID_GROUPE`)
+    REFERENCES `prevarisc`.`groupe` (`ID_GROUPE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_groupe-privileges_privileges1`
+    FOREIGN KEY (`id_privilege`)
+    REFERENCES `prevarisc`.`privileges` (`id_privilege`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`docmanquant`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`docmanquant` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`docmanquant` (
+  `ID_DOCMANQUANT` BIGINT NOT NULL AUTO_INCREMENT,
+  `LIBELLE_DOCMANQUANT` TEXT NOT NULL,
+  PRIMARY KEY (`ID_DOCMANQUANT`),
+  UNIQUE INDEX `ID_DOCMANQUANT_UNIQUE` (`ID_DOCMANQUANT` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`dossierdocmanquant`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`dossierdocmanquant` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`dossierdocmanquant` (
+  `ID_DOCMANQUANT` BIGINT NOT NULL AUTO_INCREMENT,
+  `ID_DOSSIER` BIGINT(20) NOT NULL,
+  `NUM_DOCSMANQUANT` VARCHAR(45) NOT NULL,
+  `DOCMANQUANT` TEXT NULL,
+  `DATE_DOCSMANQUANT` DATE NULL,
+  PRIMARY KEY (`ID_DOCMANQUANT`),
+  INDEX `fk_dossierdocmanquant_dossier1_idx` (`ID_DOSSIER` ASC),
+  UNIQUE INDEX `ID_DOCMANQUANT_UNIQUE` (`ID_DOCMANQUANT` ASC),
+  CONSTRAINT `fk_dossierdocmanquant_dossier1`
+    FOREIGN KEY (`ID_DOSSIER`)
+    REFERENCES `prevarisc`.`dossier` (`ID_DOSSIER`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `prevarisc`.`commissionmembretypeactivite`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prevarisc`.`commissionmembretypeactivite` ;
+
+CREATE TABLE IF NOT EXISTS `prevarisc`.`commissionmembretypeactivite` (
+  `ID_COMMISSIONMEMBRE` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_TYPEACTIVITE` INT(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID_COMMISSIONMEMBRE`, `ID_TYPEACTIVITE`),
+  INDEX `fk_commissionmembre-typeactivite_typeactivite1_idx` (`ID_TYPEACTIVITE` ASC),
+  INDEX `fk_commissionmembre-typeactivite_commissionmembre1_idx` (`ID_COMMISSIONMEMBRE` ASC),
+  CONSTRAINT `fk_commissionmembre-typeactivite_commissionmembre1`
+    FOREIGN KEY (`ID_COMMISSIONMEMBRE`)
+    REFERENCES `prevarisc`.`commissionmembre` (`ID_COMMISSIONMEMBRE`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_commissionmembre-typeactivite_typeactivite1`
+    FOREIGN KEY (`ID_TYPEACTIVITE`)
+    REFERENCES `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`utilisateurcivilite`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`utilisateurcivilite` (`ID_UTILISATEURCIVILITE`, `LIBELLE_UTILISATEURCIVILITE`) VALUES (1, 'Monsieur');
+INSERT INTO `prevarisc`.`utilisateurcivilite` (`ID_UTILISATEURCIVILITE`, `LIBELLE_UTILISATEURCIVILITE`) VALUES (2, 'Madame');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`fonction`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (1, 'Préfet');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (2, 'Maire');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (5, 'Pétitionnaire demandeur');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (3, 'Maitre d\'ouvrage');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (4, 'Maitre d\'oeuvre');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (6, 'Controleur technique (organisme agréé)');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (7, 'Exploitant');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (8, 'Directeur unique de sécurité');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (9, 'Responsable de sécurité');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (10, 'Participant');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (11, 'Demandeur');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (12, 'Simple utilisateur');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (13, 'Préventionniste');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (15, 'Secrétariat');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (16, 'Service informatique');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (99, 'Utilisateur spécial');
+INSERT INTO `prevarisc`.`fonction` (`ID_FONCTION`, `LIBELLE_FONCTION`) VALUES (17, 'Propriétaire');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`utilisateurinformations`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`utilisateurinformations` (`ID_UTILISATEURINFORMATIONS`, `NOM_UTILISATEURINFORMATIONS`, `PRENOM_UTILISATEURINFORMATIONS`, `TELFIXE_UTILISATEURINFORMATIONS`, `TELPORTABLE_UTILISATEURINFORMATIONS`, `TELFAX_UTILISATEURINFORMATIONS`, `MAIL_UTILISATEURINFORMATIONS`, `SOCIETE_UTILISATEURINFORMATIONS`, `NUMEROADRESSE_UTILISATEURINFORMATIONS`, `RUEADRESSE_UTILISATEURINFORMATIONS`, `CPADRESSE_UTILISATEURINFORMATIONS`, `VILLEADRESSE_UTILISATEURINFORMATIONS`, `WEB_UTILISATEURINFORMATIONS`, `OBS_UTILISATEURINFORMATIONS`, `DATE_PRV2`, `DATE_RECYCLAGE`, `DATE_SID`, `ID_UTILISATEURCIVILITE`, `ID_FONCTION`) VALUES (1, 'ROOT', 'ROOT', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 99);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`adresseruetype`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (1, 'ABBAYE', 'ABE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (2, 'AGGLOMERATION', 'AGL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (3, 'AIRE', 'AIRE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (4, 'AIRES', 'AIRE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (5, 'ALLEE', 'ALL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (6, 'ALLEES', 'ALL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (7, 'ANCIEN CHEMIN', 'ACH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (8, 'ANCIEN-CHEMIN', 'ACH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (9, 'ANCIENNE MONTEE', 'AMT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (10, 'ANCIENNE ROUTE', 'ART');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (11, 'ANCIENNE-MONTEE', 'AMT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (12, 'ANCIENNE-ROUTE', 'ART');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (13, 'ANCIENNESROUTES', 'ART');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (14, 'ANCIENNES-ROUTES', 'ART');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (15, 'ANCIENS CHEMINS', 'ACH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (16, 'ANCIENS-CHEMINS', 'ACH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (17, 'ANSE', 'ANSE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (18, 'ARCADE', 'ARC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (19, 'ARCADES', 'ARC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (20, 'AUTOROUTE', 'AUT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (21, 'AVENUE', 'AV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (22, 'BARRIERE', 'BRE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (23, 'BARRIERES', 'BRE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (24, 'BAS CHEMIN', 'BCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (25, 'BAS-CHEMIN', 'BCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (26, 'BASTIDE', 'BSTD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (27, 'BASTION', 'BAST');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (28, 'BEGUINAGE', 'BEGI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (29, 'BEGUINAGES', 'BEGI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (30, 'BERGE', 'BER');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (31, 'BERGES', 'BER');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (32, 'BOIS', 'BOIS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (33, 'BOUCLE', 'BCLE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (34, 'BOULEVARD', 'BD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (35, 'BOURG', 'BRG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (36, 'BUTTE', 'BUT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (37, 'BVD', 'BD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (38, 'CALE', 'CALE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (39, 'CAMP', 'CAMP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (40, 'CAMPAGNE', 'CGNE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (41, 'CAMPING', 'CPG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (42, 'CARRE', 'CARR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (43, 'CARREAU', 'CAU');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (44, 'CARREFOUR', 'CAR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (45, 'CARRIERE', 'CARE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (46, 'CARRIERES', 'CARE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (47, 'CASTEL', 'CST');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (48, 'CAVEE', 'CAV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (49, 'CENTRAL', 'CTRE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (50, 'CENTRE', 'CTRE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (51, 'CENTRE CIAL', 'CCAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (52, 'CENTRE COM', 'CCAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (53, 'CENTRE COMM', 'CCAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (54, 'CENTRE COMMERCIAL', 'CCAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (55, 'CHALET', 'CHL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (56, 'CHAPELLE', 'CHP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (57, 'CHARMILLE', 'CHI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (58, 'CHATEAU', 'CHT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (59, 'CHAUSSEE', 'CHS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (60, 'CHAUSSEES', 'CHS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (61, 'CHEM', 'CHE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (62, 'CHEMIN', 'CHE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (63, 'CHEMIN VICINAL', 'CHV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (64, 'CHEMINEMENT', 'CHEM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (65, 'CHEMINEMENTS', 'CHEM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (66, 'CHEMINS', 'CHE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (67, 'CHEMINS VICINAUX', 'CHV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (68, 'CHEMINS-VICINAUX', 'CHV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (69, 'CHEMIN-VICINAL', 'CHV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (70, 'CHEZ', 'CHEZ');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (71, 'CITE', 'CITE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (72, 'CITES', 'CITE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (73, 'CLOITRE', 'CLOI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (74, 'CLOS', 'CLOS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (75, 'COL', 'COL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (76, 'COLLINE', 'COLI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (77, 'COLLINES', 'COLI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (78, 'CONTOUR', 'CTR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (79, 'CORNICHE', 'COR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (80, 'CORNICHES', 'COR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (81, 'COTE', 'COTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (82, 'COTEAU', 'COTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (83, 'COTEAUX', 'COTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (84, 'COTTAGE', 'COTT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (85, 'COTTAGES', 'COTT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (86, 'COUR', 'COUR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (87, 'COURS', 'CRS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (88, 'CTRE CIAL', 'CCAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (89, 'CTRE COM', 'CCAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (90, 'CTRE COMM', 'CCAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (91, 'CTRE COMMERCIAL', 'CCAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (92, 'DARSE', 'DARS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (93, 'DEGRE', 'DEG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (94, 'DEGRES', 'DEG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (95, 'DESCENTE', 'DSC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (96, 'DESCENTES', 'DSC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (97, 'DIGUE', 'DIG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (98, 'DIGUES', 'DIG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (99, 'DOMAINE', 'DOM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (100, 'DOMAINES', 'DOM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (101, 'ECLUSE', 'ECL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (102, 'ECLUSES', 'ECL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (103, 'EGLISE', 'EGL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (104, 'ENCEINTE', 'EN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (105, 'ENCLAVE', 'ENV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (106, 'ENCLOS', 'ENC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (107, 'ESCALIER', 'ESC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (108, 'ESCALIERS', 'ESC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (109, 'ESPACE', 'ESPA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (110, 'ESPLANADE', 'ESP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (111, 'ESPLANADES', 'ESP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (112, 'ETANG', 'ETNG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (113, 'FBG', 'FG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (114, 'FAUBOURG', 'FG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (115, 'FERME', 'FRM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (116, 'FERMES', 'FRM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (117, 'FONTAINE', 'FON');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (118, 'FORT', 'FORT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (119, 'FORUM', 'FORM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (120, 'FOSSE', 'FOS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (121, 'FOSSES', 'FOS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (122, 'FOYER', 'FOYR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (123, 'GALERIE', 'GAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (124, 'GALERIES', 'GAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (125, 'GARE', 'GARE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (126, 'GARENNE', 'GARN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (127, 'GRAND BOULEVARD', 'GBD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (128, 'GRAND ENSEMBLE', 'GDEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (129, 'GRANDRUE', 'GR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (130, 'GRAND-BOULEVARD', 'GBD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (131, 'GRANDE RUE', 'GR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (132, 'GRAND-ENSEMBLE', 'GDEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (133, 'GRANDE-RUE', 'GR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (134, 'GRANDES RUES', 'GR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (135, 'GRANDES-RUES', 'GR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (136, 'GRAND-RUE', 'GR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (137, 'GRANDS ENSEMBLES', 'GDEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (138, 'GRANDS-ENSEMBLES', 'GDEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (139, 'GRILLE', 'GRI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (140, 'GRIMPETTE', 'GRIM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (141, 'GROUPE', 'GPE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (142, 'GROUPEMENT', 'GPT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (143, 'GROUPES', 'GPE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (144, 'HALLE', 'HLE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (145, 'HALLES', 'HLE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (146, 'HAMEAU', 'HAM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (147, 'HAMEAUX', 'HAM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (148, 'HAUT CHEMIN', 'HCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (149, 'HAUT-CHEMIN', 'HCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (150, 'HAUTS CHEMINS', 'HCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (151, 'HAUTS-CHEMINS', 'HCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (152, 'HIPPODROME', 'HIP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (153, 'HLM', 'HLM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (154, 'ILE', 'ILE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (155, 'IMMEUBLE', 'IMM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (156, 'IMMEUBLES', 'IMM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (157, 'IMPASSE', 'IMP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (158, 'IMPASSES', 'IMP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (159, 'JARDIN', 'JARD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (160, 'JARDINS', 'JARD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (161, 'JETEE', 'JTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (162, 'JETEES', 'JTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (163, 'LEVEE', 'LEVE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (164, 'LIEUDIT', 'LD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (165, 'LIEU-DIT', 'LD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (166, 'LOTISSEMENT', 'LOT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (167, 'LOTISSEMENTS', 'LOT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (168, 'MAIL', 'MAIL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (169, 'MAISON FORESTIERE', 'MF');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (170, 'MAISON-FORESTIERE', 'MF');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (171, 'MANOIR', 'MAN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (172, 'MARCHE', 'MAR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (173, 'MARCHES', 'MAR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (174, 'MAS', 'MAS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (175, 'METRO', 'MET');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (176, 'MONTEE', 'MTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (177, 'MONTEES', 'MTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (178, 'MOULIN', 'MLN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (179, 'MOULINS', 'MLN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (180, 'MUSEE', 'MUS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (181, 'NOUVELLE ROUTE', 'NTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (182, 'NOUVELLE-ROUTE', 'NTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (183, 'PALAIS', 'PAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (184, 'PARC', 'PARC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (185, 'PARCS', 'PARC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (186, 'PARKING', 'PKG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (187, 'PARVIS', 'PRV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (188, 'PASSAGE', 'PAS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (189, 'PASSAGE A NIVEAU', 'PN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (190, 'PASSAGE-A-NIVEAU', 'PN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (191, 'PASSE', 'PASS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (192, 'PASSERELLE', 'PLE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (193, 'PASSERELLES', 'PLE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (194, 'PASSES', 'PASS');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (195, 'PATIO', 'PAT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (196, 'PAVILLON', 'PAV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (197, 'PAVILLONS', 'PAV');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (198, 'PERIPHERIQUE', 'PERI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (199, 'PERISTYLE', 'PSTY');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (200, 'PETIT CHEMIN', 'PCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (201, 'PETIT DEGRE', 'PDEG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (202, 'PETIT-CHEMIN', 'PCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (203, 'PETIT-DEGRE', 'PDEG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (204, 'PETITE ALLEE', 'PTA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (205, 'PETITE AVENUE', 'PAE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (206, 'PETITE IMPASSE', 'PIM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (207, 'PETITE ROUTE', 'PRT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (208, 'PETITE RUE', 'PTR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (209, 'PETITE-ALLEE', 'PTA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (210, 'PETITE-AVENUE', 'PAE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (211, 'PETITE-IMPASSE', 'PIM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (212, 'PETITE-ROUTE', 'PRT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (213, 'PETITE-RUE', 'PTR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (214, 'PETITES ALLEES', 'PTA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (215, 'PETITES-ALLEES', 'PTA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (216, 'PETITS DEGRES', 'PDEG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (217, 'PETITS-DEGRES', 'PDEG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (218, 'PLACE', 'PL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (219, 'PLACIS', 'PLCI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (220, 'PLAGE', 'PLAG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (221, 'PLAGES', 'PLAG');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (222, 'PLAINE', 'PLN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (223, 'PLAN', 'PLAN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (224, 'PLATEAU', 'PLT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (225, 'PLATEAUX', 'PLT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (226, 'POINTE', 'PNT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (227, 'PONT', 'PONT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (228, 'PONTS', 'PONT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (229, 'PORCHE', 'PCH');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (230, 'PORT', 'PORT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (231, 'PORTE', 'PTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (232, 'PORTIQUE', 'PORQ');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (233, 'PORTIQUES', 'PORQ');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (234, 'POTERNE', 'POT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (235, 'POURTOUR', 'POUR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (236, 'PRE', 'PRE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (237, 'PRESQU ILE', 'PRQ');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (238, 'PRESQU\'ILE', 'PRQ');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (239, 'PRESQU-ILE', 'PRQ');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (240, 'PROMENADE', 'PROM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (241, 'QRT', 'QUA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (242, 'QUAI', 'QU');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (243, 'QUARTIER', 'QUA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (244, 'RACCOURCI', 'RAC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (245, 'RAIDILLON', 'RAID');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (246, 'RAMPE', 'RPE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (247, 'REMPART', 'REM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (248, 'RPR', 'REM');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (249, 'RESIDENCE', 'RES');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (250, 'RESIDENCES', 'RES');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (251, 'ROC', 'ROC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (252, 'ROCADE', 'ROC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (253, 'ROND POINT', 'RPT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (254, 'ROND-POINT', 'RPT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (255, 'ROQUET', 'ROQT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (256, 'ROTONDE', 'RTD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (257, 'ROUTE', 'RTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (258, 'ROUTES', 'RTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (259, 'RUE', 'R');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (260, 'RUELLE', 'RLE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (261, 'RUELLES', 'RLE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (262, 'RUES', 'R');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (263, 'SENTE', 'SEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (264, 'SENTES', 'SEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (265, 'SENTIER', 'SEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (266, 'SENTIERS', 'SEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (267, 'SQUARE', 'SQ');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (268, 'STADE', 'STDE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (269, 'STATION', 'STA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (270, 'STR', 'SEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (271, 'TERRAIN', 'TRN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (272, 'TERRASSE', 'TSSE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (273, 'TERRASSES', 'TSSE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (274, 'TERRE PLEIN', 'TPL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (275, 'TERRE-PLEIN', 'TPL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (276, 'TERTRE', 'TRT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (277, 'TERTRES', 'TRT');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (278, 'TOUR', 'TOUR');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (279, 'TRAVERSE', 'TRA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (280, 'VAL', 'VAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (281, 'VALLEE', 'VAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (282, 'VALLON', 'VAL');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (283, 'VENELLE', 'VEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (284, 'VENELLES', 'VEN');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (285, 'VIA', 'VIA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (286, 'VIEILLE ROUTE', 'VTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (287, 'VIEILLE-ROUTE', 'VTE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (288, 'VIEUX CHEMIN', 'VCHE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (289, 'VIEUX-CHEMIN', 'VCHE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (290, 'VILLA', 'VLA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (291, 'VILLAGE', 'VGE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (292, 'VILLAGES', 'VGE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (293, 'VILLAS', 'VLA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (294, 'VOIE', 'VOI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (295, 'VOIE COMMUNALE', 'VC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (296, 'VOIE-COMMUNALE', 'VC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (297, 'VOIES', 'VOI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (298, 'ZONE', 'ZONE');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (299, 'ZONE A URBANISER EN PRIORITE', 'ZUP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (300, 'ZONE ARTISANALE', 'ZA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (301, 'ZONE D AMENAGEMENT CONCERTE', 'ZAC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (302, 'ZONE D AMENAGEMENT DIFFERE', 'ZAD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (303, 'ZONE D\'AMENAGEMENT CONCERTE', 'ZAC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (304, 'ZONE D\'AMENAGEMENT DIFFERE', 'ZAD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (305, 'ZONE INDUS', 'ZI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (306, 'ZONE INDUSTRIELLE', 'ZI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (307, 'ZONE-ARTISANALE', 'ZA');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (308, 'ZONE-A-URBANISER-ENPRIORITE', 'ZUP');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (309, 'ZONE-DAMENAGEMENTCONCERTE', 'ZAC');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (310, 'ZONE-DAMENAGEMENTDIFFERE', 'ZAD');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (311, 'ZONE-INDUS', 'ZI');
+INSERT INTO `prevarisc`.`adresseruetype` (`ID_RUETYPE`, `LIBELLE_RUETYPE`, `ABREVIATION_RUETYPE`) VALUES (312, 'ZONE-INDUSTRIELLE', 'ZI');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`avis`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`avis` (`ID_AVIS`, `LIBELLE_AVIS`) VALUES (1, 'Favorable');
+INSERT INTO `prevarisc`.`avis` (`ID_AVIS`, `LIBELLE_AVIS`) VALUES (2, 'Défavorable');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`categorie`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`categorie` (`ID_CATEGORIE`, `LIBELLE_CATEGORIE`, `COMMENTAIRE_CATEGORIE`) VALUES (1, '1ère catégorie', 'Plus de 1500 personnes');
+INSERT INTO `prevarisc`.`categorie` (`ID_CATEGORIE`, `LIBELLE_CATEGORIE`, `COMMENTAIRE_CATEGORIE`) VALUES (2, '2ème catégorie', 'De 701 à 1500 personnes');
+INSERT INTO `prevarisc`.`categorie` (`ID_CATEGORIE`, `LIBELLE_CATEGORIE`, `COMMENTAIRE_CATEGORIE`) VALUES (3, '3ème catégorie', 'De 301 à 700 personnes');
+INSERT INTO `prevarisc`.`categorie` (`ID_CATEGORIE`, `LIBELLE_CATEGORIE`, `COMMENTAIRE_CATEGORIE`) VALUES (4, '4ème catégorie', '300 personnes et moins');
+INSERT INTO `prevarisc`.`categorie` (`ID_CATEGORIE`, `LIBELLE_CATEGORIE`, `COMMENTAIRE_CATEGORIE`) VALUES (5, '5ème catégorie', 'Nombre très réduit de personnes');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`classe`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (1, 'GHA');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (2, 'GHO');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (3, 'GHR');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (4, 'GHS');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (5, 'GHTC');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (6, 'GHU');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (7, 'GHW1');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (8, 'GHW2');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (9, 'GHZ');
+INSERT INTO `prevarisc`.`classe` (`ID_CLASSE`, `LIBELLE_CLASSE`) VALUES (10, 'ITGH');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`commissiontype`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`commissiontype` (`ID_COMMISSIONTYPE`, `LIBELLE_COMMISSIONTYPE`) VALUES (1, 'Sous-commission départementale');
+INSERT INTO `prevarisc`.`commissiontype` (`ID_COMMISSIONTYPE`, `LIBELLE_COMMISSIONTYPE`) VALUES (2, 'Commission communale');
+INSERT INTO `prevarisc`.`commissiontype` (`ID_COMMISSIONTYPE`, `LIBELLE_COMMISSIONTYPE`) VALUES (3, 'Commission intercommunale');
+INSERT INTO `prevarisc`.`commissiontype` (`ID_COMMISSIONTYPE`, `LIBELLE_COMMISSIONTYPE`) VALUES (4, 'Commission d\'arrondissement');
+INSERT INTO `prevarisc`.`commissiontype` (`ID_COMMISSIONTYPE`, `LIBELLE_COMMISSIONTYPE`) VALUES (5, 'Divers');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`groupementtype`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (1, 'Département');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (2, 'Arrondissement');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (3, 'Canton');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (4, 'Intercommunalité');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (5, 'Groupement territorial');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (6, 'Centre de secours');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (7, 'Secrétariat prévention SDIS');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (8, 'Secteur de prévention');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (9, 'Secrétariat prévision');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (10, 'Service instructeur');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (11, 'DDSP');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (12, 'Gendarmerie');
+INSERT INTO `prevarisc`.`groupementtype` (`ID_GROUPEMENTTYPE`, `LIBELLE_GROUPEMENTTYPE`) VALUES (13, 'Autre service');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`dossiertype`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`, `LIBELLE_DOSSIERTYPE`) VALUES (1, 'Étude');
+INSERT INTO `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`, `LIBELLE_DOSSIERTYPE`) VALUES (2, 'Visite de commission');
+INSERT INTO `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`, `LIBELLE_DOSSIERTYPE`) VALUES (3, 'Groupe de visite');
+INSERT INTO `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`, `LIBELLE_DOSSIERTYPE`) VALUES (4, 'Réunion');
+INSERT INTO `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`, `LIBELLE_DOSSIERTYPE`) VALUES (5, 'Courrier / Courriel');
+INSERT INTO `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`, `LIBELLE_DOSSIERTYPE`) VALUES (6, 'Intervention');
+INSERT INTO `prevarisc`.`dossiertype` (`ID_DOSSIERTYPE`, `LIBELLE_DOSSIERTYPE`) VALUES (7, 'Arrêté');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`dossiernatureliste`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (1, 'Permis de construire (PC)', 1, 2);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (2, 'Autorisation de travaux (AT)', 1, 1);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (3, 'Dérogation', 1, 11);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (4, 'Cahier des charges fonctionnel du SSI', 1, 12);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (5, 'Cahier des charges de type T', 1, 16);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (6, 'Salon type T', 1, 7);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (7, 'Levée de prescriptions', 1, 5);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (8, 'Documents divers', 1, 22);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (9, 'Changement de DUS (Directeur unique de sécurité)', 1, 8);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (10, 'Suivi organisme formation SSIAP', 1, 9);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (11, 'Demande de registre de sécurité CTS', 1, 15);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (12, 'Demande d\'implantation CTS < 6mois', 1, 6);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (13, 'Demande d\'implantation CTS > 6mois', 1, 14);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (14, 'Permis d\'aménager', 1, 18);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (15, 'Permis de démolir', 1, 19);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (16, 'CR de visite des organismes d\'inspection de sécurité incendie (GA)', 1, 17);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (17, 'Etude suite à un avis \"différé\"', 1, 13);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (18, 'Utilisation exceptionnelle de locaux', 1, 4);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (19, 'Levée de réserves suite à un avis défavorable', 1, 3);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (20, 'Réception de travaux', 2, 2);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (21, 'Périodique', 2, 1);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (22, 'Chantier', 2, 6);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (23, 'Contrôle', 2, 4);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (24, 'Inopinée', 2, 5);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (25, 'Réception de travaux', 3, 2);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (26, 'Périodique', 3, 1);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (27, 'Chantier', 3, 6);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (28, 'Contrôle', 3, 4);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (29, 'Inopinée', 3, 5);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (30, 'Déclaration préalable', 1, 20);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (31, 'Locaux SDIS', 4, 1);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (32, 'Extérieur SDIS', 4, 2);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (33, 'RVRMD (diag sécu)', 1, 21);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (34, 'Arrivée', 5, 1);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (35, 'Départ', 5, 2);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (36, 'En transit (gestion des dossiers en interne vers d\'autres structures, ect, ...)', 5, 3);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (37, 'Incendie', 6, 1);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (38, 'SAP', 6, 2);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (39, 'Inter. div.', 6, 3);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (40, 'Ouverture', 7, 1);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (41, 'Fermeture', 7, 2);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (42, 'Mise en demeure', 7, 3);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (43, 'Téléphonique', 4, 3);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (44, 'Utilisation exceptionnelle de locaux', 7, 4);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (45, 'Courrier', 7, NULL);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (46, 'Echéancier de travaux', 1, 10);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (47, 'Avant ouverture', 2, 3);
+INSERT INTO `prevarisc`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (48, 'Avant ouverture', 3, 3);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`type`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (1, 'CTS');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (2, 'EF');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (3, 'EM');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (4, 'EP');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (5, 'GA');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (6, 'GEEM');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (7, 'J');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (8, 'L');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (9, 'M');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (10, 'N');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (11, 'O');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (12, 'OA');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (13, 'P');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (14, 'PA');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (15, 'PE2§2');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (16, 'PS');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (17, 'R');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (18, 'REF');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (19, 'S');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (20, 'SG');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (21, 'T');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (22, 'U');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (23, 'V');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (24, 'W');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (25, 'X');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (26, 'Y');
+INSERT INTO `prevarisc`.`type` (`ID_TYPE`, `LIBELLE_TYPE`) VALUES (27, 'Z');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`commissiontypeevenement`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`commissiontypeevenement` (`ID_COMMISSIONTYPEEVENEMENT`, `LIBELLE_COMMISSIONTYPEEVENEMENT`) VALUES (1, 'Salle');
+INSERT INTO `prevarisc`.`commissiontypeevenement` (`ID_COMMISSIONTYPEEVENEMENT`, `LIBELLE_COMMISSIONTYPEEVENEMENT`) VALUES (2, 'Visite de sécurité');
+INSERT INTO `prevarisc`.`commissiontypeevenement` (`ID_COMMISSIONTYPEEVENEMENT`, `LIBELLE_COMMISSIONTYPEEVENEMENT`) VALUES (3, 'Groupe de visite');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`groupe`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`groupe` (`ID_GROUPE`, `LIBELLE_GROUPE`, `DESC_GROUPE`) VALUES (1, 'Groupe par défaut', 'Ceci est le groupe qui contient les nouveaux utilisateurs et les utilisateurs dont les groupes ont été supprimés.');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`utilisateur`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`utilisateur` (`ID_UTILISATEUR`, `USERNAME_UTILISATEUR`, `PASSWD_UTILISATEUR`, `LASTACTION_UTILISATEUR`, `ACTIF_UTILISATEUR`, `NUMINSEE_COMMUNE`, `ID_UTILISATEURINFORMATIONS`, `ID_GROUPE`) VALUES (1, 'root', '0ab182b5717693a278cd986898742e76', NULL, 1, NULL, 1, 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`genre`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (1, 'Site');
+INSERT INTO `prevarisc`.`genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (2, 'Établissement');
+INSERT INTO `prevarisc`.`genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (3, 'Cellule');
+INSERT INTO `prevarisc`.`genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (4, 'Habitation');
+INSERT INTO `prevarisc`.`genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (5, 'IGH');
+INSERT INTO `prevarisc`.`genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (6, 'EIC');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`famille`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`famille` (`ID_FAMILLE`, `LIBELLE_FAMILLE`) VALUES (2, '1ère famille');
+INSERT INTO `prevarisc`.`famille` (`ID_FAMILLE`, `LIBELLE_FAMILLE`) VALUES (3, '2ème famille');
+INSERT INTO `prevarisc`.`famille` (`ID_FAMILLE`, `LIBELLE_FAMILLE`) VALUES (4, '2ème famille collective');
+INSERT INTO `prevarisc`.`famille` (`ID_FAMILLE`, `LIBELLE_FAMILLE`) VALUES (5, '3ème famille A');
+INSERT INTO `prevarisc`.`famille` (`ID_FAMILLE`, `LIBELLE_FAMILLE`) VALUES (6, '3ème famille B');
+INSERT INTO `prevarisc`.`famille` (`ID_FAMILLE`, `LIBELLE_FAMILLE`) VALUES (7, '4ème famille');
+INSERT INTO `prevarisc`.`famille` (`ID_FAMILLE`, `LIBELLE_FAMILLE`) VALUES (1, 'Aucune');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`typeactivite`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (1, 'Châpiteau', 1);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (2, 'Structures', 1);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (3, 'Tentes', 1);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (4, 'Bateaux en stationnement sur les eaux intérieures', 2);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (5, 'Bateaux stationnaires', 2);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (6, 'Etablissements flottants', 2);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (7, 'Gares', 5);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (8, 'Etablissements d’enseignement avec internat pour jeunes handicapés ou inadaptés', 7);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (9, 'Etablissements d’hébergement pour adultes handicapés', 7);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (10, 'Etablissements médico-éducatifs avec internat pour jeunes handicapés ou inadaptés', 7);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (11, 'Structures d’accueil pour personnes âgées', 7);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (12, 'Structures d’accueil pour personnes handicapées', 7);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (13, 'Cabarets', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (14, 'Cinéma', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (15, 'Cirques non forains', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (16, 'Salles d\'audition', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (17, 'Salle de conférences', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (18, 'Salles de pari', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (19, 'Salles de projection', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (20, 'Salles de quartier (ou assimilée)', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (21, 'Salles de réunions', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (22, 'Salles de spectacles', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (23, 'Salles multimédia', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (24, 'Salles polyvalentes à dominante sportive, dont la superficie unitaire est supérieure ou égale à 1 200 m2', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (25, 'Salles polyvalentes non visée par le Type X (salle polyvalente qui n’a pas une destination unique)', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (26, 'Salles réservées aux associations', 8);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (27, 'Aires de vente', 9);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (28, 'Boutiques', 9);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (29, 'Centres commerciaux', 9);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (30, 'Locaux de vente', 9);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (31, 'Magasin de vente', 9);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (32, 'Bars', 10);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (33, 'Brasseries', 10);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (34, 'Cafétaria', 10);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (35, 'Cafés', 10);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (36, 'Cantines', 10);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (37, 'Débits de boissons', 10);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (38, 'Restaurants', 10);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (39, 'Hôtels', 11);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (40, 'Motels', 11);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (41, 'Pensions de famille', 11);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (42, 'Hôtels-restaurants d’altitude', 12);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (43, 'Bals', 13);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (46, 'Salles de danse', 13);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (47, 'Salles de jeux', 13);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (48, 'Arènes', 14);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (49, 'Hippodromes', 14);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (50, 'Piscines', 14);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (51, 'Pistes de patinage', 14);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (52, 'Stades', 14);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (53, 'Terrains de sport', 14);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (54, 'Parcs de stationnement couverts', 16);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (55, 'Auberges de jeunesse (comprenant au moins un local collectif à sommeil)', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (56, 'Auto-écoles', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (57, 'Centres aérés', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (58, 'Centres de loisirs (sans hébergement)', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (59, 'Centres de vacances', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (60, 'Colonies de vacances', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (61, 'Crèches', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (62, 'Ecoles maternelles', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (63, 'Etablissements d’enseignement', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (64, 'Etablissements de formation', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (65, 'Haltes-garderies', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (66, 'Internats des établissements de l\'enseignement primaire et secondaire', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (67, 'Jardins d\'enfant', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (68, 'Lycee public', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (69, 'Refuges de montagne', 18);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (70, 'Bibliothèques', 19);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (71, 'Centres de documentation et de consultation d’archives', 19);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (72, 'Structures gonflables', 20);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (73, 'Etablissements à vocation commerciale destinés à des expositions', 21);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (74, 'Foires-expositions', 21);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (75, 'Salles d’exposition à caractère permanent n’ayant pas une vocation de foire ou de salons ', 21);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (76, 'Salles d’expositions de véhicules automobiles, bateaux, machines et autres volumineux biens d’équipements assimilables', 21);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (77, 'Salons à caractère temporaire', 21);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (78, 'Etablissements de cure thermale ou de thalassothérapie', 22);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (79, 'Etablissements de santé publics ou privés dispensant des soins de courte durée en médecine, chirurgie, obstétrique', 22);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (80, 'Etablissements de santé publics ou privés dispensant des soins de psychiatrie, de suite ou de réadaptation, des soins de longue durée, à des personnes n\'ayant pas leur autonomie de vie dont l\'état nécessite une surveillance médicale constante', 22);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (81, 'Etablissements de thalassothérapie', 22);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (82, 'Pouponnières', 22);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (83, 'Eglises', 23);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (84, 'Mosquées', 23);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (85, 'Synagogues', 23);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (86, 'Temples', 23);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (87, 'Administrations', 24);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (88, 'Banques', 24);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (89, 'Bureaux', 24);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (90, 'Hôtels de ville', 24);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (91, 'Manèges', 25);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (92, 'Patinoires', 25);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (93, 'Piscines couvertes, transformables et mixtes', 25);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (94, 'Salles d\'éducation physique et sportive', 25);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (95, 'Salles omnisports', 25);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (96, 'Salles polyvalentes à dominante sportive, dont l\'aire d\'activité est inférieure à 1200 2 et la hauteur sous plafond supérieure ou égale à 6,50 mètres, etc', 25);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (97, 'Salles sportives spécialisées', 25);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (98, 'Musées', 26);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (99, 'Salles destinées à recevoir des expositions à vocation culturelle, scientifique, technique, artistique, etc. ayant un caractère temporaire', 26);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (101, 'Collège public', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (103, 'En attente de classement', 27);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (104, 'Parc d\'attraction', 14);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (105, 'Locaux à usage collectif d\'une surface unitaire supérieure à 50 mètres carrés des logements-foyers et de l\'habitat de loisirs à gestion collective', 15);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (106, 'Bâtiments ou locaux à usage d\'hébergement qui ne relèvent d\'aucun type défini à l\'article GN 1 et qui permettent d\'accueillir plus de 15 et moins de 100 personnes n\'y élisant pas domicile', 15);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (107, 'Hébergement de mineurs en dehors de leurs familles, le seuil de l\'effectif est fixé à 7 mineurs', 15);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (108, 'Maisons d\'assistants maternels (MAM) dont les locaux accessibles au public sont strictement limités à un seul étage sur rez-de-chaussée et dont l\'effectif ne dépasse pas 16 enfants', 15);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (109, 'Ecoles primaires', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (110, 'Lycee privé', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (111, 'Collège privé', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (112, 'Lycée agricole', 17);
+INSERT INTO `prevarisc`.`typeactivite` (`ID_TYPEACTIVITE`, `LIBELLE_ACTIVITE`, `ID_TYPE`) VALUES (113, 'Lycée maritime', 17);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`statut`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`statut` (`ID_STATUT`, `LIBELLE_STATUT`) VALUES (1, 'Projet');
+INSERT INTO `prevarisc`.`statut` (`ID_STATUT`, `LIBELLE_STATUT`) VALUES (2, 'Ouvert');
+INSERT INTO `prevarisc`.`statut` (`ID_STATUT`, `LIBELLE_STATUT`) VALUES (3, 'Fermé');
+INSERT INTO `prevarisc`.`statut` (`ID_STATUT`, `LIBELLE_STATUT`) VALUES (4, 'Itinérant / Périodique');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`typeplan`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`typeplan` (`ID_TYPEPLAN`, `LIBELLE_TYPEPLAN`) VALUES (1, 'Plan ER');
+INSERT INTO `prevarisc`.`typeplan` (`ID_TYPEPLAN`, `LIBELLE_TYPEPLAN`) VALUES (2, 'PPI');
+INSERT INTO `prevarisc`.`typeplan` (`ID_TYPEPLAN`, `LIBELLE_TYPEPLAN`) VALUES (3, 'POI');
+INSERT INTO `prevarisc`.`typeplan` (`ID_TYPEPLAN`, `LIBELLE_TYPEPLAN`) VALUES (4, 'PPMS');
+INSERT INTO `prevarisc`.`typeplan` (`ID_TYPEPLAN`, `LIBELLE_TYPEPLAN`) VALUES (5, 'Plan de sauvegarde des oeuvres');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`listedocconsulte`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (1, 'Un courrier de', 0, 1, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (2, 'Un jeu de plans', 0, 1, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (3, 'Une notice de sécurité', 0, 1, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (4, 'Une notice descriptive', 0, 1, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (5, 'Un engagement solidité', 0, 1, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (6, 'Un rapport initial de contrôle technique', 0, 1, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (7, 'Une attestation du directeur unique de sécurité', 0, 1, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (8, 'Relevé de vérification du désenfumage (Art. DF 10)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (9, 'RVRE triennal du désenfumage mécanique associé à un SSI A ou B', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (10, 'Relevé de vérification du chauffage-ventilation (Art. CH 58)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (11, 'Attestation de ramonage ou visite des conduits (Art. CH 57)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (12, 'Relevé de vérification du gaz (Art. GZ 30)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (13, 'Relevé de vérification des fluides médicaux (Art. U 64 ou J 33)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (14, 'Relevé ou RVRE des installations électriques et/ou des paratonnerres ou protection contre la foudre (Art. EL 19)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (15, 'RVRE quinquennal des ascenseurs (Art. AS 9)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (16, 'Relevé de vérification des ascenseurs (Art. AS 9) et/ou escaliers mécaniques et trottoirs roulants (Art. AS 10)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (17, 'Contrat d’entretien des ascenseurs, escaliers mécaniques et trottoirs roulants (Art. AS 8)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (18, 'Attestation de nettoyage du circuit d’extraction (Art. GC 21)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (19, 'Relevé de vérification des appareils de cuisson (Art. GC 22)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (20, 'Relevé de vérification des extincteurs (Art. MS 38)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (21, 'Révision décennal des extincteurs (Art. MS 38)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (22, 'Relevé de vérification des colonnes sèches (Art. MS 73)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (23, 'Relevé de vérification des R.I.A. (Art. MS 73)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (24, 'Relevé de vérification du système d’extinction automatique du type sprinkleur (Art. MS 29/73) ou déversoirs et rideaux d’eau (L 57)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (25, 'RVRE triennal du sprinkleur (Art. MS 73)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (26, 'RVRE triennal du SSI A ou B (Art. MS 73)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (27, 'Relevé de vérification du SSI  ou  d’équipement  d’alarme,  détection,  portes, clapets coupe-feu (Art. MS 73)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (28, 'Contrat d’entretien du Système de Sécurité Incendie (Art. MS 58)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (29, 'Dossier d’identité du Système de Sécurité Incendie (Art. MS 73)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (30, 'Attestation de vérification des communications radioélectriques (Art. MS 71)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (31, 'RVRE triennal des moyens de communications radioélectriques mode relayés (Art. MS 71)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (32, 'Relevé de vérification des poteaux d’incendie privés', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (33, 'Relevé de vérification des portes automatiques en façade (Art. GE 6)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (34, 'Contrat d’entretien des portes automatiques en façade (Art. CO 48)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (35, 'RVRE des équipements de levage des salles avec espace scénique (L 57)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (36, 'RVRE triennal des salles de spectacles avec espace scénique (L 57)', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (37, 'Dossier technique amiante', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (38, 'Exercice d’évacuation réalisé', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (39, 'Formation des personnels à l’utilisation des moyens de secours', 1, 0, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (40, 'Cahier des charges fonctionnelles du SSI', 0, 1, 0, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (41, 'Attestation de solidité', 0, 0, 1, 1);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (42, 'Attestation du maître d\'ouvrage', 0, 0, 1, 1);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (43, 'RVRAT', 0, 0, 1, 1);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (44, 'Attestation de réception des hydrants', 0, 0, 1, 1);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (45, 'Dossier d\'identité SSI', 0, 0, 1, 1);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (46, 'Rapport de réception technique du SSI', 0, 0, 1, 1);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (47, 'Mise à jour du dossier d\'identité du SSI', 0, 0, 1, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (48, 'Attestation de réception de modification sprinkleur', 0, 0, 1, 0);
+INSERT INTO `prevarisc`.`listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`) VALUES (49, 'Attestation de réception de modification de détection incendie', 0, 0, 1, 0);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`periodicite`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '1', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '10', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '11', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '2', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '3', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '4', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '5', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '6', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '7', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '8', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (0, '9', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '1', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '1', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '10', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '10', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '11', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '11', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '12', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '12', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '13', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '13', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '14', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '14', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '15', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '15', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '16', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '16', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '17', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '17', 1, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '18', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '18', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '19', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '19', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '2', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '2', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '20', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '20', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '21', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '21', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '22', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '22', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '23', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '23', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '24', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '24', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '25', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '25', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '26', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '26', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '27', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '27', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '3', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '3', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '4', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '4', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '5', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '5', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '6', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '6', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '7', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '7', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '8', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '8', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '9', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (1, '9', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '1', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '1', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '10', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '10', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '11', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '11', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '12', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '12', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '13', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '13', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '14', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '14', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '15', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '15', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '16', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '16', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '17', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '17', 1, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '18', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '18', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '19', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '19', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '2', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '2', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '20', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '20', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '21', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '21', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '22', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '22', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '23', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '23', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '24', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '24', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '25', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '25', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '26', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '26', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '27', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '27', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '3', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '3', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '4', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '4', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '5', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '5', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '6', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '6', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '7', 0, 24);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '7', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '8', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '8', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '9', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (2, '9', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '1', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '1', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '10', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '10', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '11', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '11', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '12', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '12', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '13', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '13', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '14', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '14', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '15', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '15', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '16', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '16', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '17', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '17', 1, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '18', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '18', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '19', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '19', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '2', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '2', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '20', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '20', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '21', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '21', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '22', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '22', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '23', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '23', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '24', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '24', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '25', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '25', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '26', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '26', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '27', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '27', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '3', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '3', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '4', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '4', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '5', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '5', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '6', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '6', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '7', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '7', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '8', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '8', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '9', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (3, '9', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '1', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '1', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '10', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '10', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '11', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '11', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '12', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '12', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '13', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '13', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '14', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '14', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '15', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '15', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '16', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '16', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '17', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '17', 1, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '18', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '18', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '19', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '19', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '2', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '2', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '20', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '20', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '21', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '21', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '22', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '22', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '23', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '23', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '24', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '24', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '25', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '25', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '26', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '26', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '27', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '27', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '3', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '3', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '4', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '4', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '5', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '5', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '6', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '6', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '7', 0, 36);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '7', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '8', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '8', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '9', 0, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (4, '9', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '1', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '1', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '10', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '10', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '11', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '11', 1, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '12', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '12', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '13', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '13', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '14', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '14', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '15', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '15', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '16', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '16', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '17', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '17', 1, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '18', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '18', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '19', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '19', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '2', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '2', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '20', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '20', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '21', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '21', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '22', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '22', 1, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '23', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '23', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '24', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '24', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '25', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '25', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '26', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '26', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '27', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '27', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '3', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '3', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '4', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '4', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '5', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '5', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '6', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '6', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '7', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '7', 1, 60);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '8', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '8', 1, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '9', 0, 0);
+INSERT INTO `prevarisc`.`periodicite` (`ID_CATEGORIE`, `ID_TYPE`, `LOCALSOMMEIL_PERIODICITE`, `PERIODICITE_PERIODICITE`) VALUES (5, '9', 1, 0);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`typetextesappl`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`typetextesappl` (`ID_TYPETEXTEAPPL`, `LIBELLE_TYPETEXTEAPPL`) VALUES (1, 'Dispositions générales');
+INSERT INTO `prevarisc`.`typetextesappl` (`ID_TYPETEXTEAPPL`, `LIBELLE_TYPETEXTEAPPL`) VALUES (2, 'Dispositions particulières');
+INSERT INTO `prevarisc`.`typetextesappl` (`ID_TYPETEXTEAPPL`, `LIBELLE_TYPETEXTEAPPL`) VALUES (3, 'Dispositions établissement de 5ème Cat');
+INSERT INTO `prevarisc`.`typetextesappl` (`ID_TYPETEXTEAPPL`, `LIBELLE_TYPETEXTEAPPL`) VALUES (4, 'Dispositions spéciales');
+INSERT INTO `prevarisc`.`typetextesappl` (`ID_TYPETEXTEAPPL`, `LIBELLE_TYPETEXTEAPPL`) VALUES (5, 'Textes relatifs aux bâtiments d’habitation');
+INSERT INTO `prevarisc`.`typetextesappl` (`ID_TYPETEXTEAPPL`, `LIBELLE_TYPETEXTEAPPL`) VALUES (6, 'Textes relatifs aux immeubles de grande hauteur');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`textesappl`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (2, 'Décret n°95-260 du 8 mars 1995 modifié relatif à la Commission Consultative Départementale de Sécurité et d’Accessibilté', 1, 1, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (3, 'Règlement de sécurité contre l’incendie du 23 mars 1965 modifié, relatif aux établissements recevant du public', 1, 1, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (4, 'Arrêté du 25 juin 1980 modifié, relatif aux dispositions générales applicables aux établissements recevant du public et instructions techniques annexées', 1, 1, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (5, 'Arrêté du 22 Juin 1990 modifié (dispositions particulières applicables aux établissements de 5ième catégorie PE)', 1, 3, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (6, 'Arrêté du 26 octobre 2011 modifié (dispositions particulières applicables aux petits hôtels PO)', 1, 3, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (7, 'Arrêté du 10 décembre 2004 (dispositions particulières applicables aux petits établissements de soins PU)', 1, 3, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (8, 'Arrêté du 20 novembre 2000 (dispositions particulières applicables aux établissements sportifs PX)', 1, 3, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (9, 'Arrêté du 19 novembre 2001 modifié (dispositions particulières applicables aux établissements du type J)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (10, 'Arrêté du 5 février 2007 modifié (dispositions particulières applicables aux établissements du type L)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (11, 'Arrêté du 22 décembre 1981 modifié (dispositions particulières applicables aux établissements du type M)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (12, 'Arrêté du 21 juin 1982 modifié (dispositions particulières applicables aux établissements du type N)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (13, 'Arrêté du 21 juin 1982 modifié (dispositions particulières applicables aux établissements du type O)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (14, 'Arrêté du 7 juillet 1983 modifié (dispositions particulières applicables aux établissements du type P)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (15, 'Arrêté du 4 juin 1982 modifié (dispositions particulières applicables aux établissements du type R)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (16, 'Arrêté du 12 juin 1995 modifié (dispositions particulières applicables aux établissements du type S)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (17, 'Arrêté du 18 novembre 1987 modifié (dispositions particulières applicables aux établissements du type T)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (18, 'Arrêté du 10 décembre 2004 modifié (dispositions particulières applicables aux établissements du type U)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (19, 'Arrêté du 21 avril 1983 modifié (dispositions particulières applicables aux établissements du type V)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (20, 'Arrêté du 21 avril 1983 modifié (dispositions particulières applicables aux établissements du type W)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (21, 'Arrêté du 4 juin 1982 modifié (dispositions particulières applicables aux établissements du type X)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (22, 'Arrêté du 12 juin 1995 modifié (dispositions particulières applicables aux établissements du type Y)', 1, 2, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (23, 'Arrêté du 23 janvier 1985 modifié (dispositions particulières applicables aux établissements du type CTS)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (24, 'Arrêté du 6 janvier 1983 modifié (dispositions particulières applicables aux établissements du type PA)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (25, 'Arrêté du 6 janvier 1983 modifié (dispositions particulières applicables aux établissements du type SG)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (26, 'Arrêté du 9 janvier 1990 modifié (dispositions particulières applicables aux établissements du type EF)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (27, 'Arrêté du 24 décembre 2007 (dispositions particulières applicables aux établissements du type GA)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (28, 'Arrêté du 9 mai 2006 (dispositions particulières applicables aux établissements du type PS)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (29, 'Arrêté du 23 octobre 1986 modifié (dispositions particulières applicables aux établissements du type OA)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (30, 'Arrêté du 10 novrembre 1994 modifié (dispositions particulières applicables aux établissements du type REF)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (31, 'Arrêté du 18 juillet 2006 (règles de sécurité contre les risques d’incendie et de panique dans les établissements pénitentiaires)', 1, 4, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (32, 'Arrêté du 31 janvier 1986 modifié (Habitations)', 1, 5, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (33, 'Code de la Construction et de l’Habitation - Articles R 123.1 à R 123.55 (ERP)', 1, 1, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (34, 'Code de la Construction et de l’Habitation - Articles R 122.1 à R 122.29 (IGH)', 1, 1, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (35, 'Arrêté du 18 octobre 1977 modifié portant règlement de sécurité pour la construction des immeubles de grande hauteur et leur protection contre les risques d\'incendie et de panique', 1, 6, 99999);
+INSERT INTO `prevarisc`.`textesappl` (`ID_TEXTESAPPL`, `LIBELLE_TEXTESAPPL`, `VISIBLE_TEXTESAPPL`, `ID_TYPETEXTEAPPL`, `NUM_TEXTESAPPL`) VALUES (36, 'Arrêté du 30 décembre 2011 portant règlement de sécurité pour la construction des immeubles de grande hauteur et leur protection contre les risques d\'incendie et de panique', 1, 6, 99999);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`prescriptiontexteliste`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`prescriptiontexteliste` (`ID_TEXTE`, `LIBELLE_TEXTE`) VALUES (1, '');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`prescriptionarticleliste`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`prescriptionarticleliste` (`ID_ARTICLE`, `LIBELLE_ARTICLE`) VALUES (1, '');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`resources`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`resources` (`id_resource`, `name`, `text`) VALUES (1, 'gestion_parametrages', 'Gestion et Paramétrages');
+INSERT INTO `prevarisc`.`resources` (`id_resource`, `name`, `text`) VALUES (2, 'commission', 'Gestion des calendriers des commissions');
+INSERT INTO `prevarisc`.`resources` (`id_resource`, `name`, `text`) VALUES (3, 'creations', 'Gestion des droits de création');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`privileges`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (1, 'docs', 'Gestion des documents', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (2, 'groupement_communes', 'Gestion des groupements de communes', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (3, 'gestion_prescriptions', 'Gestion des prescriptions', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (4, 'gestion_textes_applicables', 'Gestion des textes applicables', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (5, 'fil_actus', 'Écriture dans le fil d\'actualités', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (6, 'gestion_commissions', 'Gestion des commissions', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (7, 'lecture_comission', 'Lecture', 2);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (8, 'ecriture_comission', 'Écriture', 2);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (9, 'creation_comission', 'Création', 2);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (10, 'modification_odj', 'Modification de l\'Ordre du Jour', 2);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (11, 'admin', 'Accès à l\'administration', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (12, 'communes', 'Gestion des communes', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (13, 'periodicites', 'Gestion des périodicités', 1);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (14, 'add_etablissement', 'Création d\'un établissement', 3);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (15, 'add_dossier', 'Création d\'un dossier', 3);
+INSERT INTO `prevarisc`.`privileges` (`id_privilege`, `name`, `text`, `id_resource`) VALUES (16, 'generation_doc_com', 'Génération des documents de la commission', 2);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`groupe-privileges`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 1);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 2);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 3);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 4);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 5);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 6);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 7);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 8);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 9);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 10);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 11);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 12);
+INSERT INTO `prevarisc`.`groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES (1, 13);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `prevarisc`.`docmanquant`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `prevarisc`;
+INSERT INTO `prevarisc`.`docmanquant` (`ID_DOCMANQUANT`, `LIBELLE_DOCMANQUANT`) VALUES (1, 'Absence du plan masse – général – niveaux – coupe');
+INSERT INTO `prevarisc`.`docmanquant` (`ID_DOCMANQUANT`, `LIBELLE_DOCMANQUANT`) VALUES (2, 'Absence de la notice descriptive des matériaux utilisés (gros œuvre ou aménagements intérieurs).');
+INSERT INTO `prevarisc`.`docmanquant` (`ID_DOCMANQUANT`, `LIBELLE_DOCMANQUANT`) VALUES (3, 'Absence de la notice de sécurité.');
+INSERT INTO `prevarisc`.`docmanquant` (`ID_DOCMANQUANT`, `LIBELLE_DOCMANQUANT`) VALUES (4, 'Notice de sécurité incomplète (ne pas omettre de préciser les puissances des installations techniques : électricité, chauffage, appareils de cuisson, etc.).');
+INSERT INTO `prevarisc`.`docmanquant` (`ID_DOCMANQUANT`, `LIBELLE_DOCMANQUANT`) VALUES (5, 'Absence de transmission par la mairie');
+INSERT INTO `prevarisc`.`docmanquant` (`ID_DOCMANQUANT`, `LIBELLE_DOCMANQUANT`) VALUES (6, 'Absence de transmission par le directeur unique de sécurité');
+INSERT INTO `prevarisc`.`docmanquant` (`ID_DOCMANQUANT`, `LIBELLE_DOCMANQUANT`) VALUES (7, 'Absence du CERFA');
+INSERT INTO `prevarisc`.`docmanquant` (`ID_DOCMANQUANT`, `LIBELLE_DOCMANQUANT`) VALUES (8, 'CERFA non signé');
+
+COMMIT;
+
