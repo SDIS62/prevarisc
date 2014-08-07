@@ -38,13 +38,13 @@
 					<label>Informations générales</label>
 					<controller>admin</controller>
 					<action>index</action>
-                    <resource>gestion_parametrages</resource> 
+                    <resource>gestion_parametrages</resource>
 					<privilege>admin</privilege>
 				</index>
                 <users>
                     <label>Gestion des utilisateurs</label>
                     <controller>users</controller>
-                    <resource>gestion_parametrages</resource> 
+                    <resource>gestion_parametrages</resource>
 					<privilege>admin</privilege>
                     <pages>
                         <index>
@@ -102,7 +102,7 @@
                 <groupement>
 					<label>Groupements de communes</label>
 					<controller>groupement</controller>
-					<resource>gestion_parametrages</resource> 
+					<resource>gestion_parametrages</resource>
 					<privilege>groupement_communes</privilege>
 					<pages>
 						<index>
@@ -139,7 +139,7 @@
                 <couches-cartographiques>
                     <label>Gestion des couches cartographiques</label>
                     <controller>couches-cartographiques</controller>
-                    <resource>gestion_parametrages</resource> 
+                    <resource>gestion_parametrages</resource>
 					<privilege>admin</privilege>
                     <pages>
                         <index>
@@ -167,7 +167,7 @@
                 <tableau-des-periodicites>
 					<label>Tableau des Periodicités</label>
 					<controller>tableau-des-periodicites</controller>
-					<resource>gestion_parametrages</resource> 
+					<resource>gestion_parametrages</resource>
 					<privilege>periodicites</privilege>
 					<pages>
 						<index>
@@ -185,7 +185,7 @@
 				<gestion-des-commissions>
 					<label>Gestion des Commissions</label>
 					<controller>gestion-des-commssions</controller>
-					<resource>commission</resource> 
+					<resource>gestion_parametrages</resource>
 					<privilege>gestion_commissions</privilege>
 					<pages>
 						<index>
@@ -326,7 +326,7 @@
 				                            <params><item>commission</item></params>
 				                            <action>index</action>
 				                            <privilege>gestion_commissions</privilege>
-				                        </index>		
+				                        </index>
 				                        <form>
 				                            <label>Ajouter un contact</label>
 				                            <controller>contact</controller>
@@ -370,7 +370,7 @@
 				<gestion-des-communes>
 					<label>Gestions des Communes</label>
 					<controller>gestion-des-communes</controller>
-					<resource>gestion_parametrages</resource> 
+					<resource>gestion_parametrages</resource>
 					<privilege>communes</privilege>
 					<pages>
 						<index>
@@ -387,13 +387,13 @@
 							<label>Sauvegarde</label>
 							<controller>gestion-des-communes</controller>
 							<action>save</action>
-						</save>		
+						</save>
 					</pages>
 				</gestion-des-communes>
 				<gestion-des-documents>
 					<label>Gestion des Documents</label>
 					<controller>gestion-des-documents</controller>
-					<resource>gestion_parametrages</resource> 
+					<resource>gestion_parametrages</resource>
 					<privilege>docs</privilege>
 					<pages>
 						<index>
@@ -419,13 +419,13 @@
 							<label>Suppression d'un document</label>
 							<controller>gestion-des-documents</controller>
 							<action>suppdoc</action>
-						</suppdoc>		
+						</suppdoc>
 					</pages>
 				</gestion-des-documents>
 				<gestion-prescriptions>
 					<label>Gestion des Prescriptions</label>
 					<controller>gestion-prescriptions</controller>
-					<resource>gestion_parametrages</resource> 
+					<resource>gestion_parametrages</resource>
 					<privilege>gestion_prescriptions</privilege>
 					<pages>
 						<index>
@@ -492,13 +492,13 @@
 						<saveprescriptiontype>
 							<controller>gestion-prescriptions</controller>
 							<action>saveprescriptiontype</action>
-						</saveprescriptiontype>		
+						</saveprescriptiontype>
 					</pages>
 				</gestion-prescriptions>
 				<gestion-textes-applicables>
 					<label>Gestion des Textes Applicables</label>
 					<controller>gestion-textes-applicables</controller>
-					<resource>gestion_parametrages</resource> 
+					<resource>gestion_parametrages</resource>
 					<privilege>gestion_textes_applicables</privilege>
 					<pages>
 						<index>
@@ -518,64 +518,64 @@
 						</save>
 					</pages>
 				</gestion-textes-applicables>
-			</pages>	
+			</pages>
 		</admin>
 
 		<!-- Calendrier des commissions -->
 		<calendrier-des-commissions>
 			<label>Calendrier des  Commissions</label>
 			<controller>calendrierdescommissions</controller>
-			<resource>commission</resource> 
+			<resource>commission</resource>
 			<pages>
-                                <index>	
+                                <index>
 					<label>Affichage</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>index</action>
-					<privilege>lecture</privilege>
+					<privilege>lecture_commission</privilege>
 				</index>
-                                <exportoutlook>	
+                                <exportoutlook>
 					<label>Export Outlook</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>exportoutlook</action>
-				</exportoutlook>		
-				<recupdateliee>						
+				</exportoutlook>
+				<recupdateliee>
 					<label>Date liée</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>recupdateliee</action>
-					<privilege>lecture</privilege>	
-				</recupdateliee>		
+					<privilege>lecture_commission</privilege>
+				</recupdateliee>
 				<gestionodj>
 					<label>Gestion ordre du jour</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>gestionodj</action>
-					<privilege>modification_odj</privilege>		
-				</gestionodj>			
-				<resizeodj>	
+					<privilege>modification_odj</privilege>
+				</gestionodj>
+				<resizeodj>
 					<controller>calendrier-des-commissions</controller>
 					<action>resizeodj</action>
-					<privilege>lecture</privilege>
-				</resizeodj>				
+					<privilege>lecture_commission</privilege>
+				</resizeodj>
 				<dropodj>
 					<controller>calendrier-des-commissins</controller>
 					<action>dropodj</action>
-					<privilege>modification_odj</privilege>	
-				</dropodj>		
-				<commissionselection>	
+					<privilege>modification_odj</privilege>
+				</dropodj>
+				<commissionselection>
 					<label>Selection commissions</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>commissionselection</action>
-					<privilege>lecture</privilege>
-				</commissionselection>		
-				<recupevenement>	
+					<privilege>lecture_commission</privilege>
+				</commissionselection>
+				<recupevenement>
 					<controller>calenderier-des-commissions</controller>
 					<action>recupevenement</action>
-					<privilege>lecture</privilege>
-				</recupevenement>					
+					<privilege>lecture_commission</privilege>
+				</recupevenement>
 				<recupevenementodj>
 					<controller>calendrier-des-commissions</controller>
 					<action>recupevenementodj</action>
 					<privilege>modification_odj</privilege>
-				</recupevenementodj>					
+				</recupevenementodj>
 				<affectedossodj>
 					<controller>calendrier-des-commissions</controller>
 					<action>affectedossodj</action>
@@ -584,34 +584,34 @@
 				<dialogcomm>
 					<controller>calendrier-des-commissions</controller>
 					<action>dialogcomm</action>
-					<privilege>ecriture</privilege>
-				</dialogcomm>				
+					<privilege>ecriture_commission</privilege>
+				</dialogcomm>
 				<adddatecomm>
 					<label>Ajouter une date de commission</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>adddatecomm</action>
-					<privilege>ecriture</privilege>
+					<privilege>ecriture_commission</privilege>
 				</adddatecomm>
 				<adddatedialogcomm>
 					<controller>calendrier-des-commissions</controller>
 					<action>adddatedialogcomm</action>
-					<privilege>ecriture</privilege>
+					<privilege>ecriture_commission</privilege>
 				</adddatedialogcomm>
 				<adddates>
 					<controller>calendrier-des-commisions</controller>
 					<action>adddates</action>
-					<privilege>creation</privilege>
+					<privilege>creation_commission</privilege>
 				</adddates>
 				<deplacecommissiondate>
 					<label>Deplacer la date de la commission</label>
 					<controller>calendrier-des-commissions</controller>
 					<action>deplacecommissiondate</action>
-					<privilege>ecriture</privilege>
+					<privilege>ecriture_commission</privilege>
 				</deplacecommissiondate>
 				<resizecommissiondate>
 					<controller>calendrier-des-commissions</controller>
 					<action>resizecommissiondate</action>
-					<privilege>lecture</privilege>
+					<privilege>lecture_commission</privilege>
 				</resizecommissiondate>
 				<gestionheures>
 					<label>Gestion des heures</label>
@@ -689,7 +689,7 @@
 		<!-- Dossier -->
 		<dossier>
 			<label>Dossiers</label>
-			<controller>dossier</controller>	
+			<controller>dossier</controller>
 			<pages>
 				<index>
 					<controller>dossier</controller>
@@ -741,7 +741,7 @@
                     </pages>
                 </piece-jointe>
 				<add>
-					<resource>creations</resource> 
+					<resource>creations</resource>
 					<privilege>add_dossier</privilege>
 					<label>Ajouter un dossier</label>
 					<controller>dossier</controller>
@@ -760,7 +760,7 @@
 				<savenew>
 					<controller>dossier</controller>
 					<action>savenew</action>
-					<resource>creations</resource> 
+					<resource>creations</resource>
 					<privilege>add_dossier</privilege>
 				</savenew>
 				<save>
@@ -965,7 +965,7 @@
 					<label>Ajout d'un établissement dans Prevarisc</label>
 					<controller>etablissement</controller>
 					<action>add</action>
-					<resource>creations</resource> 
+					<resource>creations</resource>
 					<privilege>add_etablissement</privilege>
 				</add>
 				<descriptif>
@@ -1060,24 +1060,24 @@
 				</historique>
 			</pages>
 		</etablissement>
-                
-                <!-- Listing -->
-                <listing>
-                    <label>Listes</label>
-                    <controller>Listing</controller>
-                    <pages>
-                        <etablissements>
-                            <label>Établissements</label>
-                            <controller>Listing</controller>
-                            <action>etablissements</action>
-                        </etablissements>
-			<dossiers>
-                            <label>Dossiers</label>
-                            <controller>Listing</controller>
-                            <action>dossiers</action>
-                        </dossiers>
-                    </pages>
-                </listing>
+
+		<!-- Listing -->
+		<listing>
+			<label>Listes</label>
+			<controller>Listing</controller>
+			<pages>
+				<etablissements>
+					<label>Établissements</label>
+					<controller>Listing</controller>
+					<action>etablissements</action>
+				</etablissements>
+				<dossiers>
+					<label>Dossiers</label>
+					<controller>Listing</controller>
+					<action>dossiers</action>
+				</dossiers>
+			</pages>
+		</listing>
 
 		<!-- Recherche -->
 		<search>
@@ -1085,22 +1085,22 @@
 			<controller>search</controller>
 			<pages>
 				<etablissement>
-                    <label>Établissements</label>
+          <label>Établissements</label>
 					<controller>search</controller>
 					<action>etablissement</action>
 				</etablissement>
-                                <courriers>
-                                    <label>Courriers</label>
-                                    <controller>search</controller>
-                                    <action>courriers</action>
-                                </courriers>
+        <courriers>
+            <label>Courriers</label>
+            <controller>search</controller>
+            <action>courriers</action>
+        </courriers>
 				<dossier>
-                    <label>Dossiers</label>
+          <label>Dossiers</label>
 					<controller>search</controller>
 					<action>dossier</action>
 				</dossier>
 				<utilisateur>
-                    <label>Utilisateurs</label>
+          <label>Utilisateurs</label>
 					<controller>search</controller>
 					<action>utilisateur</action>
 				</utilisateur>
@@ -1124,11 +1124,15 @@
 				<ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
 					<controller>statistiques</controller>
 					<action>ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle</action>
-				</ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>	
+				</ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
+        <liste-erp-avec-visite-periodique-sur-un-an>
+					<controller>statistiques</controller>
+					<action>liste-erp-avec-visite-periodique-sur-un-an</action>
+				</liste-erp-avec-visite-periodique-sur-un-an>
 				<liste-des-erp-sous-avis-defavorable>
 					<controller>statistiques</controller>
 					<action>liste-des-erp-sous-avis-defavorable</action>
-				</liste-des-erp-sous-avis-defavorable>			
+				</liste-des-erp-sous-avis-defavorable>
 				<prochaines-visites-de-controle-periodique-a-faire-sur-une-commune>
 					<label>Prochaine visite de controle periodique a faire sur une commmune</label>
 					<controller>statistiques</controller>
@@ -1139,9 +1143,9 @@
 
 		<!-- Contrôle de la session -->
 		<session>
-            <controller>session</controller>
-            <label>Prevarisc</label>
-            <pages>
+      <controller>session</controller>
+      <label>Prevarisc</label>
+      <pages>
 				<login>
 					<label>Se connecter</label>
 					<controller>session</controller>
@@ -1157,9 +1161,9 @@
 
 		<!-- A propos -->
 		<about>
-            <controller>about</controller>
-            <label>Prevarisc</label>
-            <pages>
+      <controller>about</controller>
+      <label>Prevarisc</label>
+      <pages>
 				<index>
 					<label>A propos</label>
 					<controller>about</controller>

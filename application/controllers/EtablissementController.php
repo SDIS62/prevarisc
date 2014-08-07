@@ -13,8 +13,8 @@ class EtablissementController extends Zend_Controller_Action
         $etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->couches_cartographiques = $service_carto->getAll();
-        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
-        $this->view->key_googlemap = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('googlemap')['key'];
+        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
 
         $this->view->etablissement = $etablissement;
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
@@ -31,7 +31,7 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $etablissement;
 
-        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
+        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
@@ -55,14 +55,14 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
 
-        $this->view->key_ign = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('ign')['key'];
+        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $this->view->add = false;
 
         if($this->_request->isPost()) {
             try {
                 $post = $this->_request->getPost();
-                $date = date("Y-m-d H:i:s");
+                $date = date("Y-m-d");
                 $service_etablissement->save($post['ID_GENRE'], $post, $this->_request->id, $date);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement a bien été mis à jour.'));
                 $this->_helper->redirector('index', null, null, array('id' => $this->_request->id));

@@ -1,6 +1,6 @@
 <?php
 
-class Form_Login extends Twitter_Bootstrap_Form_Horizontal
+class Form_Login extends Zend_Form
 {
     /**
      * @inheritdoc
@@ -25,10 +25,12 @@ class Form_Login extends Twitter_Bootstrap_Form_Horizontal
             'validators' => array(new Zend_Validate_StringLength(1,255))
         ));
 
-        $this->addElement(new Twitter_Bootstrap_Form_Element_Submit("Connexion", array(
-                "buttonType" => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY
-        )), 'submit');
+        $this->addElement(new Zend_Form_Element_Submit("Connexion", array("class" => "btn btn-primary")), 'submit');
 
+        $this->setDecorators(array(
+            'FormElements',
+            'Form'
+        ));
 
         $this->setElementDecorators(array(
             'ViewHelper',

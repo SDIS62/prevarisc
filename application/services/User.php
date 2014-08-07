@@ -38,16 +38,16 @@ class Service_User
         $profil = $user['infos']['LIBELLE_FONCTION'];
 
         $etablissements = $commissions = $dossiers = $erpSansPreventionniste = $etablissementAvisDefavorable = $listeDesDossierDateCommissionEchu = $listeDesCourrierSansReponse = $prochainesCommission = $NbrDossiersAffect = $listeErpOuvertSansProchainesVisitePeriodiques = array();
-       
+
         $dateCommission = new Model_DbTable_DateCommission;
         $prochainesCommission = $dateCommission->getNextCommission(time(), time() + 3600 * 24 * 15);
         $dbEtablissement = new Model_DbTable_Etablissement;
-        $etablissementAvisDefavorable = $dbEtablissement->listeDesERPSousAvisDefavorable(); 
+        $etablissementAvisDefavorable = $dbEtablissement->listeDesERPSousAvisDefavorable();
         $dbDossier = new Model_DbTable_Dossier ;
         $listeDesDossierDateCommissionEchu = $dbDossier->listeDesDossierDateCommissionEchu();
         $dbDossierAffectation = new Model_DbTable_DossierAffectation;
         foreach($prochainesCommission as $commissiondujour)
-        { 
+        {
             //Si on prend en compte les heures on récupère uniquement les dossiers n'ayant pas d'heure de passage
             $listeDossiersAffect = $dbDossierAffectation->getListDossierAffect($commissiondujour['ID_DATECOMMISSION']);
             $dbDossier = new Model_DbTable_Dossier;
@@ -61,24 +61,24 @@ class Service_User
                      //on recupere la liste des infos des établissement
                     if($nbrdossier == 0)
                     {
-                       $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = 0; 
-                    }                    
+                       $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = 0;
+                    }
                     if(count($listeEtab) > 0)
                     {  $nbrdossier++;
                        $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = $nbrdossier ;
                     }
-               }            
+               }
         }
-        
-        //Liste des Erp sans commission périodique alors que c'est ouvert 
+
+        //Liste des Erp sans commission périodique alors que c'est ouvert
          $listeErpOuvertSansProchainesVisitePeriodiques = $dbEtablissement->listeErpOuvertSansProchainesVisitePeriodiques();
-        
-        
-        
+
+
+
         // Définition des données types par profil
         switch($profil) {
           case 'Secrétariat':
-            $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse(5);  
+            $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse(5);
             if(count($user['commissions']) > 0) {
               $dbDossierAffectation = new Model_DbTable_DossierAffectation;
               $dbDateCommission = new Model_DbTable_DateCommission;
@@ -203,10 +203,10 @@ class Service_User
           'erpSansPreventionniste' => $erpSansPreventionniste,
           'etablissementAvisDefavorable' => $etablissementAvisDefavorable,
           'dossierCommissionEchu' => $listeDesDossierDateCommissionEchu,
-          'CourrierSansReponse' => $listeDesCourrierSansReponse,  
-          'prochainesCommission' => $prochainesCommission,   
-          'NbrDossiersAffect' =>  $NbrDossiersAffect, 
-          'ErpSansProchaineVisitePeriodeOuvert'=>$listeErpOuvertSansProchainesVisitePeriodiques      
+          'CourrierSansReponse' => $listeDesCourrierSansReponse,
+          'prochainesCommission' => $prochainesCommission,
+          'NbrDossiersAffect' =>  $NbrDossiersAffect,
+          'ErpSansProchaineVisitePeriodeOuvert'=>$listeErpOuvertSansProchainesVisitePeriodiques
         );
     }
 
@@ -300,7 +300,7 @@ class Service_User
             $user->ID_UTILISATEURINFORMATIONS = $informations->ID_UTILISATEURINFORMATIONS;
 
             if(array_key_exists('PASSWD_INPUT', $data)) {
-                $user->PASSWD_UTILISATEUR = $data['PASSWD_INPUT'] == '' ? null : md5($user->USERNAME_UTILISATEUR . Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOption('security')['salt'] . $data['PASSWD_INPUT']);
+                $user->PASSWD_UTILISATEUR = $data['PASSWD_INPUT'] == '' ? null : md5($user->USERNAME_UTILISATEUR . getenv('PREVARISC_SECURITY_SALT') . $data['PASSWD_INPUT']);
             }
 
             $user->save();
