@@ -531,7 +531,7 @@
                     <label>Affichage</label>
                     <controller>calendrier-des-commissions</controller>
                     <action>index</action>
-                    <privilege>lecture</privilege>
+                    <privilege>lecture_comission</privilege>
                 </index>
                                 <exportoutlook>
                     <label>Export Outlook</label>
@@ -542,7 +542,7 @@
                     <label>Date liée</label>
                     <controller>calendrier-des-commissions</controller>
                     <action>recupdateliee</action>
-                    <privilege>lecture</privilege>
+                    <privilege>lecture_comission</privilege>
                 </recupdateliee>
                 <gestionodj>
                     <label>Gestion ordre du jour</label>
@@ -553,7 +553,7 @@
                 <resizeodj>
                     <controller>calendrier-des-commissions</controller>
                     <action>resizeodj</action>
-                    <privilege>lecture</privilege>
+                    <privilege>lecture_comission</privilege>
                 </resizeodj>
                 <dropodj>
                     <controller>calendrier-des-commissins</controller>
@@ -564,12 +564,12 @@
                     <label>Selection commissions</label>
                     <controller>calendrier-des-commissions</controller>
                     <action>commissionselection</action>
-                    <privilege>lecture</privilege>
+                    <privilege>lecture_comission</privilege>
                 </commissionselection>
                 <recupevenement>
                     <controller>calenderier-des-commissions</controller>
                     <action>recupevenement</action>
-                    <privilege>lecture</privilege>
+                    <privilege>lecture_comission</privilege>
                 </recupevenement>
                 <recupevenementodj>
                     <controller>calendrier-des-commissions</controller>
@@ -584,34 +584,34 @@
                 <dialogcomm>
                     <controller>calendrier-des-commissions</controller>
                     <action>dialogcomm</action>
-                    <privilege>ecriture</privilege>
+                    <privilege>ecriture_comission</privilege>
                 </dialogcomm>
                 <adddatecomm>
                     <label>Ajouter une date de commission</label>
                     <controller>calendrier-des-commissions</controller>
                     <action>adddatecomm</action>
-                    <privilege>ecriture</privilege>
+                    <privilege>ecriture_comission</privilege>
                 </adddatecomm>
                 <adddatedialogcomm>
                     <controller>calendrier-des-commissions</controller>
                     <action>adddatedialogcomm</action>
-                    <privilege>ecriture</privilege>
+                    <privilege>ecriture_comission</privilege>
                 </adddatedialogcomm>
                 <adddates>
                     <controller>calendrier-des-commisions</controller>
                     <action>adddates</action>
-                    <privilege>creation</privilege>
+                    <privilege>creation_commission</privilege>
                 </adddates>
                 <deplacecommissiondate>
                     <label>Deplacer la date de la commission</label>
                     <controller>calendrier-des-commissions</controller>
                     <action>deplacecommissiondate</action>
-                    <privilege>ecriture</privilege>
+                    <privilege>ecriture_comission</privilege>
                 </deplacecommissiondate>
                 <resizecommissiondate>
                     <controller>calendrier-des-commissions</controller>
                     <action>resizecommissiondate</action>
-                    <privilege>lecture</privilege>
+                    <privilege>lecture_comission</privilege>
                 </resizecommissiondate>
                 <gestionheures>
                     <label>Gestion des heures</label>
