@@ -399,7 +399,6 @@
                     // On met à jour la commune et le groupement
                     $rowset_membre->LIBELLE_COMMISSIONMEMBRE = $_POST[$id_membre."_LIBELLE_COMMISSIONMEMBRE"];
                     $rowset_membre->PRESENCE_COMMISSIONMEMBRE = $_POST[$id_membre."_PRESENCE_COMMISSIONMEMBRE"];
-                    $rowset_membre->ID_UTILISATEURINFORMATIONS = null;
                     $rowset_membre->ID_GROUPEMENT = null;
 
                     switch ($_POST[$id_membre."_typemembre"]) {
@@ -409,7 +408,6 @@
                             break;
 
                         case 2:
-                            $rowset_membre->ID_UTILISATEURINFORMATIONS = $_POST[$id_membre."_ID_UTILISATEURINFORMATIONS"];
                             break;
                     }
 
