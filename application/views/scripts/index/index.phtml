@@ -107,11 +107,6 @@
         
                 <?php 
                 }
-                if($nbrAlert==0)
-                {?>
-                 <li>Aucune alerte</li>   
-               <?php 
-                }
                 
                 foreach($this->ErpSansProchaineVisitePeriodeOuvert as $esp)
                 {?>
@@ -129,6 +124,12 @@
                 }
                 ?>
                     </li>
+                   <?php if($nbrAlert==0)
+                {?>
+                 <li>Aucune alerte</li>   
+               <?php 
+                }?>
+                
         
      </ul>  
     </div>
