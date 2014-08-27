@@ -53,26 +53,20 @@
 
 	// $(".commune, .save-competences, .add-regle, .delete-regle").unbind();
 	
-	// Auto complétion de la Commune
-	$(".commune").autocomplete("/adresse/get?format=json", {
-		minChars: 3,
-		max: 100,
-		parse: function(data) {
-			return $.map(data["resultats"], function(row) {
-				return {
-					data: row,
-					value: row.LIBELLE_COMMUNE,
-					result: row.LIBELLE_COMMUNE
-				}
-			});
-		},
-		formatItem: function(item) {
-			return item.LIBELLE_COMMUNE;
-		}
-	}).result(function(e, item) {
-		$(this).css("background-color", "#EEE").blur();
+	$(".commune").autocomplete("/api/1.0/adresse/get_communes", {
+            minChars: 3,
+            parse: function(data) {
+                return $.map(data["response"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
+            },
+            formatItem: function(item) {
+                return item.LIBELLE_COMMUNE + " (" + item.NUMINSEE_COMMUNE + ")";
+            }
+        }).result(function(e, item) {
+            $(this).css("background-color", "#EEE").blur();
 		$(this).next().val(item.NUMINSEE_COMMUNE);
-	});
+        }).click(function() {
+            $(this).val("").css("background-color", "white");
+        });
 	
 	$(".commune").click(function() {
 		$(this).val("").css("background-color", "white");
