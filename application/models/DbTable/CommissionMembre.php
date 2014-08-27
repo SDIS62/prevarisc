@@ -65,7 +65,6 @@
                     "id_membre" => $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"],
                     "presence" => $row_membreDeLaCommission["PRESENCE_COMMISSIONMEMBRE"],
                     "groupement" => $row_membreDeLaCommission["ID_GROUPEMENT"],
-                    "contact" => $row_membreDeLaCommission["ID_UTILISATEURINFORMATIONS"],
                     "contacts" => $model_utilisateurInformations->getContact("commission", $id_commission),
                     "libelle" => $row_membreDeLaCommission["LIBELLE_COMMISSIONMEMBRE"],
                     "categories" => $this->fullJoinRegle("categorie", "commissionmembrecategorie", "ID_CATEGORIE", $row_membreDeLaCommission["ID_COMMISSIONMEMBRE"]),
