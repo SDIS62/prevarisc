@@ -54,7 +54,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         $this->view->array_commissions = $array_commissions;
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
-        $this->view->is_admin = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "commission", "admin_commission");
+        $this->view->is_admin = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "gestion_parametrages", "gestion_commissions");
     }
 
     public function recupdatelieeAction()

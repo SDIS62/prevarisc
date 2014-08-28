@@ -8,7 +8,7 @@ if(count($this->membresFiles) == 0){
 }
 foreach($this->membresFiles as $val => $membre){
 	//On boucle sur les membres
-	if($membre->ID_GROUPEMENT == NULL && $membre->ID_UTILISATEURINFORMATIONS == NULL){
+	if($membre->ID_GROUPEMENT == NULL){
 		//génération du document par commune pour les maires par exemple		
 		//si le document concernant ce membre existe alors on rentre dans la boucle
 			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
@@ -69,33 +69,33 @@ foreach($this->membresFiles as $val => $membre){
 						//Zend_Debug::dump($dossierInfos);
 						$membreLoop->infosDoss->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
 						if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
-							$membreLoop->infosDoss->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+                                                        addChamp($membreLoop->infosDoss, 'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
 							
 						$membreLoop->infosDoss->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
 						$membreLoop->infosDoss->setVars('objetDossier', $dossierInfos["OBJET_DOSSIER"], true, 'UTF-8');
 						if(isset($dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"]))
-							$membreLoop->infosDoss->setVars('communeConcerne', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');						
+                                                        addChamp($membreLoop->infosDoss, 'communeConcerne', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"]);
 						
 						if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
 							$heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
 							$heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
-							$membreLoop->infosDoss->setVars('heureDebDossier', $heureDebut, true, 'UTF-8');
+                                                        addChamp($membreLoop->infosDoss, 'heureDebDossier', $heureDebut);
 						}else{
 							$membreLoop->infosDoss->setVars('heureDebDossier', '', true, 'UTF-8');
 						}
 						if(isset($dossierInfos["HEURE_FIN_AFFECT"])){
 							$heureFinTab = explode(":",$dossierInfos["HEURE_FIN_AFFECT"]);
 							$heureFin = $heureFinTab[0].":".$heureFinTab[1];
-							$membreLoop->infosDoss->setVars('heureFinDossier', $heureFin, true, 'UTF-8');
+							addChamp($membreLoop->infosDoss, 'heureFinDossier', $heureFin);
 						}else{
-							$membreLoop->infosDoss->setVars('heureFinDossier', '', true, 'UTF-8');
+                                                        addChamp($membreLoop->infosDoss, 'heureFinDossier', '');
 						}
 						
 						$listeDocUrba = "";
 						foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
 							$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
 						}
-						$membreLoop->infosDoss->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
+                                                addChamp($membreLoop->infosDoss, 'numDocUrba', $listeDocUrba);
 						$membreLoop->infosDoss->merge(); 
 
 					}
@@ -111,7 +111,7 @@ foreach($this->membresFiles as $val => $membre){
 				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 			}
 		
-	}else if($membre->ID_GROUPEMENT != NULL){
+	}else{
 		//génération du document par groupement de commune pour les gendarmerie/police par exemple
 		//echo "membre de groupement ".$membre->LIBELLE_COMMISSIONMEMBRE."<br/>";
 
