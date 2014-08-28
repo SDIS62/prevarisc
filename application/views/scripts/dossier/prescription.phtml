@@ -289,7 +289,7 @@ $(document).ready(function(){
 		//On ouvre la boite de dialogue
 		$.ajax({
 			type: "POST",
-			url: "/gestion-prescriptions/formprescription",
+			url: "/dossier/formprescription",
 			success: function(msg){
 				dialogPresc.html(msg);
 				dialogPresc.dialog("open");
