@@ -2978,6 +2978,49 @@ class DossierController extends Zend_Controller_Action
         }
 	}
 	
+	public function formprescriptionAction()
+    {
+        if ($this->_getParam('idPrescType')) {
+            $this->view->idPrescType = $this->_getParam('idPrescType');
+            $this->view->do = 'edit';
+            $dbPrescTypeAssoc = new Model_DbTable_PrescriptionTypeAssoc;
+            $this->view->assoc = $dbPrescTypeAssoc->getPrescriptionAssoc($this->_getParam('idPrescType'));
+        } else {
+            $this->view->do = 'new';
+            $dbCategorie = new Model_DbTable_PrescriptionCat;
+            $this->view->listeCategorie = $dbCategorie->recupPrescriptionCat();
+            switch ($this->_getParam('typePresc')) {
+                case "addPrescriptionCat":
+                    //cas d'une prescription dans une catégorie
+                    $this->view->categorie = $this->_getParam('empl');
+                break;
+                case "addPrescriptionTexte":
+                    //cas d'une prescription dans un texte
+                    $dbPrescTexte = new Model_DbTable_PrescriptionTexte;
+                    $texteInfo = $dbPrescTexte->find($this->_getParam('empl'))->current();
+                    $this->view->categorie = $texteInfo->ID_PRESCRIPTIONCAT;
+                    $this->view->texte = $this->_getParam('empl');
+
+                break;
+                case "addPrescriptionArticle":
+                    //cas d'une prescription dans un article
+                    $dbPrescArticle = new Model_DbTable_PrescriptionArticle;
+                    $articleInfo = $dbPrescArticle->find($this->_getParam('empl'))->current();
+                    $this->view->texte = $articleInfo->ID_PRESCRIPTIONTEXTE;
+
+                    $dbPrescTexte = new Model_DbTable_PrescriptionTexte;
+                    $texteInfo = $dbPrescTexte->find($this->view->texte)->current();
+                    $this->view->categorie = $texteInfo->ID_PRESCRIPTIONCAT;
+
+                    $this->view->article = $this->_getParam('empl');
+                break;
+                default:
+
+                break;
+            }
+        }
+    }
+	
 	
 	public function lienmultipleAction()
 	{
