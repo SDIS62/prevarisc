@@ -6,7 +6,7 @@ class IndexController extends Zend_Controller_Action
     {
         $this->_helper->layout->setLayout('index');
 
-        $this->view->inlineScript()->appendFile("http://packery.metafizzy.co/packery.pkgd.min.js");
+        $this->view->inlineScript()->appendFile("/js/jquery.packery.pkgd.min.js");
         
         $service_feed = new Service_Feed;
         $service_user = new Service_User;

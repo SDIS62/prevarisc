@@ -132,14 +132,13 @@ $(document).ready(function() {
 
 
 					
-					dialog_supp.dialog("destroy");
+					dialog_supp.dialog("close");
                     $("#dialog-supp").html('');
 					return false;
 				},
 				"Annuler": function() {
-					dialog_supp.dialog("destroy");
+					dialog_supp.dialog("close");
                     $("#dialog-supp").html('');
-					return false;
 				}
 			}
 		});
