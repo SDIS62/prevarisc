@@ -1,0 +1,24 @@
+<?php
+if(!$this->categorie && !$this->texte && !$this->article){
+	//On affiche les catégories
+	echo "Categories : ";
+	foreach($this->categorieListe as $val => $ue){
+		echo "<a href='' class='selectCategorie' id='".$ue['ID_PRESCRIPTION_CAT']."' >".$ue['LIBELLE_PRESCRIPTION_CAT']."</a>&nbsp;&nbsp;&nbsp;";
+	}	
+}else if(!$this->texte && !$this->article){
+	//Cas selection catégorie on affiche les textes
+	echo $this->categorieLibelle."&nbsp;&nbsp;&nbsp;<a href='' class='retour' id='retourCategorie' >Retour aux catégories</a><br/><br/>";
+	echo "Textes : ";
+	foreach($this->texteListe as $val => $ue){
+		echo "<a href='' class='selectTexte' id='".$ue['ID_PRESCRIPTIONTEXTE']."' >".$ue['LIBELLE_PRESCRIPTIONTEXTE']."</a>&nbsp;&nbsp;&nbsp;";
+	}
+}else if(!$this->article){
+	//Cas selection catégorie on affiche les textes
+	echo $this->categorieLibelle." > ".$this->texteLibelle."&nbsp;&nbsp;&nbsp;<a href='' class='retour' id='retourTexte' >Retour aux textes</a><br/><br/>";
+	echo "Articles : ";
+	foreach($this->texteArticle as $val => $ue){
+		echo "<a href='' class='selectArticle' id='".$ue['ID_PRESCRIPTIONARTICLE']."' >".$ue['LIBELLE_PRESCRIPTIONARTICLE']."</a>&nbsp;&nbsp;&nbsp;";
+	}
+}else{
+	echo $this->categorieLibelle." > ".$this->texteLibelle." > ".$this->articleLibelle."&nbsp;&nbsp;&nbsp;<a href='' class='retour' id='retourArticle' >Retour aux articles</a><br/>";
+}

@@ -2403,24 +2403,67 @@ class DossierController extends Zend_Controller_Action
     }
 
 //GESTION DE LA PARTIE PRESCRIPTION
+	public function emplacementAction()
+    {
+        $this->view->categorie = $this->_getParam('PRESCRIPTIONTYPE_CATEGORIE');
+        $this->view->texte = $this->_getParam('PRESCRIPTIONTYPE_TEXTE');
+        $this->view->article = $this->_getParam('PRESCRIPTIONTYPE_ARTICLE');
 
-//Autocomplétion pour selection TEXTE
+
+        if (!$this->view->categorie && !$this->view->texte && !$this->view->article) {
+            //on affiche les catégories
+            $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
+            $listePrescriptionCat = $dbPrescriptionCat->recupPrescriptionCat();
+            $this->view->categorieListe = $listePrescriptionCat;
+        } elseif (!$this->view->texte && !$this->view->article) {
+            $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
+            $categorieLibelle = $dbPrescriptionCat->find($this->view->categorie)->current()->toArray();
+            $this->view->categorieLibelle = $categorieLibelle['LIBELLE_PRESCRIPTION_CAT'];
+            //on viens de choisir une catégorie il faut afficher les texte de la catégorie
+            $dbTexte = new Model_DbTable_PrescriptionTexte;
+            $this->view->texteListe = $dbTexte->recupPrescriptionTexte($this->_getParam('PRESCRIPTIONTYPE_CATEGORIE'));
+
+        } elseif (!$this->view->article) {
+            $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
+            $categorieLibelle = $dbPrescriptionCat->find($this->view->categorie)->current()->toArray();
+            $this->view->categorieLibelle = $categorieLibelle['LIBELLE_PRESCRIPTION_CAT'];
+            $dbTexte = new Model_DbTable_PrescriptionTexte;
+            $texteLibelle = $dbTexte->find($this->view->texte)->current()->toArray();
+            $this->view->texteLibelle = $texteLibelle['LIBELLE_PRESCRIPTIONTEXTE'];
+            //on viens de choisir un texte il faut afficher les articles
+            $dbArticle = new Model_DbTable_PrescriptionArticle;
+            $this->view->texteArticle = $dbArticle->recupPrescriptionArticle($this->_getParam('PRESCRIPTIONTYPE_TEXTE'));
+
+        } else {
+            $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
+            $categorieLibelle = $dbPrescriptionCat->find($this->view->categorie)->current()->toArray();
+            $this->view->categorieLibelle = $categorieLibelle['LIBELLE_PRESCRIPTION_CAT'];
+
+            $dbTexte = new Model_DbTable_PrescriptionTexte;
+            $texteLibelle = $dbTexte->find($this->view->texte)->current()->toArray();
+            $this->view->texteLibelle = $texteLibelle['LIBELLE_PRESCRIPTIONTEXTE'];
+
+            $dbArticle = new Model_DbTable_PrescriptionArticle;
+            $articleLibelle = $dbArticle->find($this->view->article)->current()->toArray();
+            $this->view->articleLibelle = $articleLibelle['LIBELLE_PRESCRIPTIONARTICLE'];
+        }
+    }
+	
+	//Autocomplétion pour selection TEXTE
     public function selectiontexteAction()
     {
         if (isset($_GET['q'])) {
-            $DBprescTexte = new Model_DbTable_PrescriptionTexte;
-            //$this->view->selectTexte = $DBprescTexte->selectTexte($_GET['q']);
-            $this->view->selectTexte = $DBprescTexte->fetchAll("LIBELLE_TEXTE LIKE '%".$_GET['q']."%'")->toArray();
+            $DBprescTexte = new Model_DbTable_PrescriptionTexteListe;
+            $this->view->selectTexte = $DBprescTexte->fetchAll('LIBELLE_TEXTE LIKE "%'.$_GET['q'].'%"')->toArray();
         }
     }
 
-//Autocomplétion pour selection ARTICLE
+	//Autocomplétion pour selection ARTICLE
     public function selectionarticleAction()
     {
         if (isset($_GET['q'])) {
-            $DBprescArticle = new Model_DbTable_PrescriptionArticle;
-            //$this->view->selectArticle = $DBprescArticle->selectArticle($_GET['q']);
-            $this->view->selectArticle = $DBprescArticle->fetchAll("LIBELLE_ARTICLE LIKE '%".$_GET['q']."%'")->toArray();
+            $DBprescArticle = new Model_DbTable_PrescriptionArticleListe;
+            $this->view->selectArticle = $DBprescArticle->fetchAll('LIBELLE_ARTICLE LIKE "%'.$_GET['q'].'%"')->toArray();
         }
     }
 
@@ -2433,7 +2476,8 @@ class DossierController extends Zend_Controller_Action
         $listePrescDossier = $dbPrescDossier->recupPrescDossier($this->_getParam('id'));
 
         $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
-
+		//Zend_Debug::dump($listePrescDossier);
+		
         $prescriptionArray = array();
         foreach ($listePrescDossier as $val => $ue) {
             if ($ue['ID_PRESCRIPTION_TYPE']) {
@@ -2445,8 +2489,10 @@ class DossierController extends Zend_Controller_Action
                 $assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
                 array_push($prescriptionArray, $assoc);
             }
+			//Zend_Debug::dump($assoc);
         }
         $this->view->prescriptionDossier = $prescriptionArray;
+		
     }
 
     public function prescriptionwordsearchAction()
@@ -2600,7 +2646,7 @@ class DossierController extends Zend_Controller_Action
                             $article->LIBELLE_ARTICLE = $articleArray[$i];
                             $article->save();
                             $idArticle = $article->ID_ARTICLE;
-                        } elseif (count($article) == 1) {
+                        } else{
                             //l'article existe donc on récupere son ID
                             $idArticle = $article[0]['ID_ARTICLE'];
                         }
@@ -2616,7 +2662,7 @@ class DossierController extends Zend_Controller_Action
                             $texte->LIBELLE_TEXTE = $texteArray[$i];
                             $texte->save();
                             $idTexte = $texte->ID_TEXTE;
-                        } elseif (count($texte) == 1) {
+                        } else{
                             //le texte existe donc on récupere son ID
                             $idTexte = $texte[0]['ID_TEXTE'];
                         }

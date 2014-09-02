@@ -160,7 +160,7 @@ $(document).ready(function(){
 				dialogPrescType.dialog("open");
 				$.ajax({
 					type: "POST",
-					url: "/gestion-prescriptions/emplacement",
+					url: "/dossier/emplacement",
 					data: $("#formPrescription").serialize(),
 					success: function(msg){
 						//alert(msg);
@@ -207,7 +207,7 @@ $(document).ready(function(){
 		$("#listePrescriptionType").html('');
 		$.ajax({
 			type: "POST",
-			url: "/gestion-prescriptions/emplacement",
+			url: "/dossier/emplacement",
 			data: $("#formPrescription").serialize(),
 			success: function(msg){
 				$("#selectEmplacement").html(msg);
