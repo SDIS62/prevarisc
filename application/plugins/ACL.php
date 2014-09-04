@@ -4,16 +4,34 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 {
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
-        // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
-        if ( !Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" && $request->getActionName() != "error" )  {
-            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');
+        // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token
+        $key = "6a0071dbe561c195n1c56d1ecf3a4f54";                    
+        if(isset($_GET['key']) && $_GET['key'] == $key )
+        {
+           return ;
         }
-        elseif(Zend_Auth::getInstance()->hasIdentity()) {
+        // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
+        else if (!Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" && $request->getActionName() != "error" )  {
+            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');           
+        }
+        else if(Zend_Auth::getInstance()->hasIdentity()) {
 
             $service_user = new Service_User;
 
             // On update la dernière action effectuée par l'utilisateur
-            $service_user->updateLastActionDate(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR']);
+            $utilisateur = Zend_Auth::getInstance()->getIdentity();
+            if(!$utilisateur) 
+            {   
+                $request->setControllerName('error');
+                $request->setActionName('error');
+                $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+                $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER;
+                $error->request = clone $request;
+                $error->exception = new Zend_Controller_Dispatcher_Exception('Accès non autorisé', 401);
+                $request->setParam('error_handler', $error);
+                return ;
+            }    
+            $service_user->updateLastActionDate($utilisateur['ID_UTILISATEUR']);
 
             // Chargement du cache
             $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');

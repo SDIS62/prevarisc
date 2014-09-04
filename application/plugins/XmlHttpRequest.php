@@ -1,5 +1,6 @@
 <?php
-
+header("Access-Control-Allow-Origin: *");
+header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
 class Plugin_XmlHttpRequest extends Zend_Controller_Plugin_Abstract
 {
     // Ajax : désactive le layout quand une requete ajax est envoyée
