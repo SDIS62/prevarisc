@@ -5,7 +5,6 @@ class Service_Login
 //login pour l'api
     public function login($username,$password)
     {
-        
         //Reponse
         $reponse='';
         // Instance de Zend_Auth
@@ -16,10 +15,10 @@ class Service_Login
             $model_utilisateur = new Model_DbTable_Utilisateur;
             $model_groupe = new Model_DbTable_Groupe;
             $model_fonction = new Model_DbTable_Fonction;
-
+            
            // Récupération de l'utilisateur
             $user = $model_utilisateur->fetchRow($model_utilisateur->select()->where('USERNAME_UTILISATEUR = ?', $username,'AND PASSWD_UTILISATEUR = ?',$password));
-
+           
             // Si l'utilisateur n'est pas actif, on renvoie false
             if ($user === null || !$user->ACTIF_UTILISATEUR) {
                 $reponse = 'non_autorise';
@@ -27,14 +26,19 @@ class Service_Login
                     'reponse'=> $reponse
                 );
             }
+            else if (md5($username . getenv('PREVARISC_SECURITY_SALT') . $password) !=$user->PASSWD_UTILISATEUR)
+            {
+                $reponse = 'non_autorise';
+                $results = array(
+                    'reponse'=> $reponse
+                );
+            }        
             else 
             {
                $reponse ='autorise'; 
                $results = array(
                     'reponse'=> $reponse
                 );
-               //$cook = Zend_Controller_Request_Http::getCookie($key = 'plm',$default = null);
-               //print_r($cook);
             }
 
             // Stockage de l'utilisateur dans la session
@@ -55,14 +59,6 @@ class Service_Login
             // On encode le jeton
             $token = hash('sha256', $time+$secret_key.$informations);
 
-            $storage = $auth->getStorage()->write((object) array(
-               "ID_UTILISATEUR" => $user->ID_UTILISATEUR,
-               "NOM_UTILISATEURINFORMATIONS" => $row_utilisateurInformations->NOM_UTILISATEURINFORMATIONS,
-               "PRENOM_UTILISATEURINFORMATIONS" => $row_utilisateurInformations->PRENOM_UTILISATEURINFORMATIONS,
-               "LIBELLE_GROUPE" => $row_groupe->LIBELLE_GROUPE,
-               "ID_GROUPE" => $row_groupe->ID_GROUPE,
-               "TOKEN" => $token   
-            ));
             $results = array(
                 'reponse'=> $reponse,
                 'results' => array(

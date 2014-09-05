@@ -78,23 +78,13 @@ class Api_Service_Etablissement
         $service_etablissement = new Service_Etablissement;
         $pieces_jointes = $service_etablissement->getAllPJ($id);
 
-        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
-
+        $path = REAL_DATA_PATH.DS . 'uploads' . DS . 'pieces-jointes' . DS;
         $pieces_jointes_content = array();
-        $piece = array();
-        $i=0;
+        
         foreach($pieces_jointes as $pieces_jointe) {
-            foreach($pieces_jointe as $value) { 
-                $piece[$i]= $value;
-                $i++;
-            } 
-        }
-
-        for ($i=0; $i<= (count($piece)+1)%8; $i++)
-        {   $k = 8*$i;
             $pieces_jointes_content[] = array(
-            'ID_PIECE_JOINTE' =>  $piece[$k],
-            'IMAGE' => base64_encode(file_get_contents($path.$piece[$k].$piece[$k+2]))
+            'ID_PIECE_JOINTE' =>  $pieces_jointe['ID_PIECEJOINTE'],
+            'IMAGE' => base64_encode(file_get_contents($path.$pieces_jointe['ID_PIECEJOINTE'].$pieces_jointe['EXTENSION_PIECEJOINTE']))
             );  
         }
 
