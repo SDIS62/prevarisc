@@ -931,7 +931,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
     public function getAllPJ($id_etablissement)
     {
         $DBused = new Model_DbTable_PieceJointe;
-
         return $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $id_etablissement);
     }
 
@@ -949,16 +948,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
         $extension = strtolower(strrchr($file['name'], "."));
             
-        $data = file_get_contents($file['tmp_name']);
-        $base = base64_encode($data);
         $DBpieceJointe = new Model_DbTable_PieceJointe;
 
         $nouvellePJ = $DBpieceJointe->createRow(array(
             'EXTENSION_PIECEJOINTE' => $extension,
             'NOM_PIECEJOINTE' => $name == '' ? $file['name'] : $name,
             'DESCRIPTION_PIECEJOINTE' => $description,
-            'DATE_PIECEJOINTE' => date('Y-m-d'),
-            'IMAGE' => $base
+            'DATE_PIECEJOINTE' => date('Y-m-d')
         ))->save();
 
         if(!move_uploaded_file($file['tmp_name'], $path . $nouvellePJ . $extension)) {
