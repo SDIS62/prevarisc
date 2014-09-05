@@ -1214,8 +1214,10 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
 
 			//on recupere la liste des infos des établissement
-			$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
-			$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
+			if(isset($listeEtab[0]['ID_ETABLISSEMENT'])){
+				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+				$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
+			}
 
 			$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 			$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
