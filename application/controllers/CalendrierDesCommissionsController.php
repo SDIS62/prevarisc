@@ -1105,6 +1105,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
 	public function generationpvAction()
     {
+		//$this->_helper->viewRenderer->setNoRender();
 		$dateCommId = $this->_getParam("dateCommId");
 		$this->view->idComm = $dateCommId;
 		//Suivant si l'on prend en compte les heures ou non on choisi la requete à effectuer
@@ -1121,6 +1122,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();
 		$model_membres = new Model_DbTable_CommissionMembre;
 		$this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $commissionInfo['COMMISSION_CONCERNE']);
+		//Zend_Debug::dump($this->view->membresFiles);
 		$dbDateCommPj = new Model_DbTable_DateCommissionPj;
 
 		//afin de récuperer les informations des communes (adresse des mairies etc)
@@ -1190,6 +1192,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();
 		//Zend_Debug::dump($this->view->commissionInfos);
 		$model_membres = new Model_DbTable_CommissionMembre;
+		
 		$this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $commissionInfo['COMMISSION_CONCERNE']);
 		$dbDateCommPj = new Model_DbTable_DateCommissionPj;
 

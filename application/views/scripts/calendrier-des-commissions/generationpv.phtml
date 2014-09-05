@@ -7,7 +7,7 @@ if(count($this->membresFiles) == 0){
 }
 foreach($this->membresFiles as $val => $membre){
 	//On boucle sur les membres
-	if($membre->ID_GROUPEMENT == NULL && $membre->ID_UTILISATEURINFORMATIONS == NULL){
+	if($membre->ID_GROUPEMENT == NULL){
 		$nomFichier = $membre->ID_COMMISSIONMEMBRE."PV_".$membre->COURRIER_PV;
 		
 		if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
@@ -42,6 +42,7 @@ foreach($this->membresFiles as $val => $membre){
 							$avis = "";
 						break;					
 					}
+
 					$dossInfos->setVars('avisDossier', $avis, true, 'UTF-8');
 					
 					$dossInfos->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
@@ -52,7 +53,7 @@ foreach($this->membresFiles as $val => $membre){
 						$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
 					}
 					$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
-					
+			
 					//Prescription des dossiers
 					if(isset($dossierInfos['prescription']) && count($dossierInfos['prescription']) > 0){
 						$nbPrescDossier = count($dossierInfos['prescription']);
@@ -102,22 +103,9 @@ foreach($this->membresFiles as $val => $membre){
 							$dossInfos->listePrescription->merge();
 							
 						}
-						
-						
-						/*
-						echo "ID : ".$dossierInfos['ID_DOSSIER']." / ".count($dossierInfos['prescription'])."<br/>";
-						foreach($dossierInfos['prescription'] as $presc => $value){
-							$dossInfos->listePrescription->setVars('texte',$value[0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-							$dossInfos->listePrescription->setVars('article',$value[0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-							$dossInfos->listePrescription->setVars('',$value[0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-							$dossInfos->listePrescription->setVars('',$value[0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-							echo "<br/>".$value[0]['LIBELLE_PRESCRIPTION_DOSSIER']."<br/>";
-						}
-						*/
+
 					}
-
-
-
+					/*		
 					//Informations de l'exploitant du dossier
 					$dossInfos->setVars('nomExploitant',$this->exploitantDossier['exploitantInfos'][0]['NOM_UTILISATEURINFORMATIONS'],true,'UTF8');
 					$dossInfos->setVars('prenomExploitant',$this->exploitantDossier['exploitantInfos'][0]['PRENOM_UTILISATEURINFORMATIONS'],true,'UTF8');
@@ -126,9 +114,11 @@ foreach($this->membresFiles as $val => $membre){
 					$dossInfos->setVars('telPortExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELPORTABLE_UTILISATEURINFORMATIONS'],true,'UTF8');
 					$dossInfos->setVars('numFaxExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELFAX_UTILISATEURINFORMATIONS'],true,'UTF8');
 					$dossInfos->setVars('societeExploitant',$this->exploitantDossier['exploitantInfos'][0]['SOCIETE_UTILISATEURINFORMATIONS'],true,'UTF8');
-					
+					*/
+
+
 					$dossInfos->merge(); 
-					//echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'><a href='/data/uploads/pieces-jointes/".$idPj.".odt' >Le PV : ".$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." (".$dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"].")  a été généré</a></span><br/><br/>";
+
 				} catch (Exception $e){
 
 				}
@@ -143,7 +133,7 @@ foreach($this->membresFiles as $val => $membre){
 			echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 		}
 	}else{
-		//echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
+		echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 	}
 }
 
