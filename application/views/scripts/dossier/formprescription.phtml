@@ -57,7 +57,7 @@ $(document).ready(function(){
 		$("#texteId").val('');
 	});
 	
-	$("#LIBELLE_TEXTE").autocomplete("/gestion-prescriptions/selectiontexte?format=json",{
+	$("#LIBELLE_TEXTE").autocomplete("/dossier/selectiontexte?format=json",{
 		minChars: 2,
 		max: 100,
 		parse: function(data) {
@@ -76,7 +76,7 @@ $(document).ready(function(){
 		$("#textTemp").val(item.ID_TEXTE);
 	});
 
-	$("#LIBELLE_ARTICLE").autocomplete("/gestion-prescriptions/selectionarticle?format=json",{
+	$("#LIBELLE_ARTICLE").autocomplete("/dossier/selectionarticle?format=json",{
 		minChars: 2,
 		max: 100,
 		parse: function(data) {
