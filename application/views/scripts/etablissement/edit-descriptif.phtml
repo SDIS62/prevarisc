@@ -50,5 +50,23 @@
             echo "</dl>";
         }
     ?>
-
+    <script type="text/javascript">
+         // Ajouter les exemples de risques naturels et technologiques
+         
+       
+         // Recherche des risques naturels et technologiques en variables d'environnement
+         <?php 
+         if (getenv('PREVARISC_RISQUES_NATURELS_EXEMPLES') != false){
+            $risques_naturels = getenv('PREVARISC_RISQUES_NATURELS_EXEMPLES');
+         } else $risques_naturels = "Avalanche, Cyclonique, Feux de Forêt, Inondation, Mouvement de terrain, Sismique, Submersion marine, Tempête, Volcanique";
+         $risques_naturels = "<i>Exemples de risques naturels : " . $risques_naturels . "</i>";
+         if (getenv('PREVARISC_RISQUES_TECHNOLOGIQUES_EXEMPLES') != false){
+            $risques_technologiques = getenv('PREVARISC_RISQUES_TECHNOLOGIQUES_EXEMPLES');
+         } else $risques_technologiques = "Industriel, Nucléaire, Rupture de barrage, Transport de matières dangereuses";
+         $risques_technologiques = "<i>Exemples de risques technologiques : " . $risques_technologiques . "</i>";
+          
+         ?>
+         $('textarea[name="descriptifs_techniques[DESCTECH_RISQUES_NATURELS_ETABLISSEMENT]"]').after("<?php echo $risques_naturels ?>");
+         $('textarea[name="descriptifs_techniques[DESCTECH_RISQUES_TECHNOLOGIQUES_ETABLISSEMENT]"]').after("<?php echo $risques_technologiques ?>");
+    </script>
 </form>
