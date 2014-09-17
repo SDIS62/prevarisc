@@ -236,6 +236,7 @@ class Service_Search
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
                         WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)"))
                 ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
+                ->joinLeft("commission", "d.COMMISSION_DOSSIER = commission.ID_COMMISSION","LIBELLE_COMMISSION")    
                 ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
                 ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))
                 ->join("dossiertype", "dossiertype.ID_DOSSIERTYPE = dossiernatureliste.ID_DOSSIERTYPE", "LIBELLE_DOSSIERTYPE")
