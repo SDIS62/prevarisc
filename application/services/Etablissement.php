@@ -69,31 +69,48 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 $avis = $dossier_donnant_avis->AVIS_DOSSIER_COMMISSION;
                 $facteur_dangerosite = $dossier_donnant_avis->FACTDANGE_DOSSIER;
             }
-
-            // récupération de la dernière date de vp
-            $last_visite = $search->setItem("dossier")
+            
+            $last_2_visites = $search->setItem("dossier")
+                    // Dossier correspondant à l'établissement dont l'ID est donné
                 ->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)
+                    // Dossier type "Visite de commission" et "Groupe de visite"
                 ->setCriteria("d.TYPE_DOSSIER", array(2,3))
+                    // Dossier nature "périodique" de type "Visite de commission" et "Groupe de visite"
                 ->setCriteria("ID_NATURE", array(21,26))
                 ->order('DATEVISITE_DOSSIER DESC')
                 ->run()
                 ->getAdapter()
-                ->getItems(0, 1)
+                    // Récupérer deux items
+                ->getItems(0, 2)
                 ->toArray();
-
+            
+            // Peut-on prolonger la période de deux ans ?
+            $extension_periode = false;            
+            if ($last_2_visites !== null && count($last_2_visites) == 2){
+                // Les deux dernières visites ont-elles été favorables ?
+                if ($last_2_visites[0]['AVIS_DOSSIER_COMMISSION'] == 1 && $last_2_visites[1]['AVIS_DOSSIER_COMMISSION'] == 1){
+                    // Absence de local à sommeil ?
+                    if($informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS !== null && $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS == 0) {
+                        $extension_periode = true;
+                    }else if ($informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS == null)$extension_periode = true;
+                }
+            }
+            
             $next_visite = null;
 
-            if($last_visite !== null && count($last_visite) == 1) {
-                $tmp_date = new Zend_Date($last_visite[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
-                $last_visite =  $tmp_date->get( Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
+            if($last_2_visites !== null && count($last_2_visites) != 0) {
+                $tmp_date = new Zend_Date($last_2_visites[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
+                $last_visite =  $tmp_date->get( Zend_date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
 
                 if($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS != 0) {
                     $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
                     $tmp_date->add($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
+                    if ($extension_periode == true) $tmp_date->add(24, Zend_Date::MONTH);
                     $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
                 }
             }
-
+            
+            
             // Récupération de la date de PC initial
             $pc_inital = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", 1)->setCriteria("ID_NATURE", 1)->order('DATEINSERT_DOSSIER ASC')->run();
             $pc_inital = $pc_inital->getAdapter()->getItems(0, 1)->toArray();
@@ -408,7 +425,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
             "DESCTECH_DEFENSE_PTEAUCOMMENTAIRE_ETABLISSEMENT" => "Commentaires sur le / les points d'eau naturel",
             "DESCTECH_DEFENSE_PI_ETABLISSEMENT" => "PI",
             "DESCTECH_DEFENSE_BI_ETABLISSEMENT" => "BI",
-            "DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT" => "Débit simultané (m3/h)"
+            "DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT" => "Débit simultané (m3/h)",
+            "DESCTECH_RISQUES_NATURELS_ETABLISSEMENT" => "Risques naturels",
+            "DESCTECH_RISQUES_TECHNOLOGIQUES_ETABLISSEMENT" => "Risques technologiques"
         );
 
         foreach ($etablissement->toArray() as $key => $value) {
@@ -435,6 +454,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     case "SSI": $title = "SSI"; break;
                     case "SERVICESECU": $title = "Service de sécurité"; break;
                     case "DEFENSE": $title = "Défense incendie"; break;
+                    case "RISQUES": $title = "Risques"; break;
                 }
 
                 $champs_descriptif_technique[$title][array_key_exists($key, $translation_champs_des_tech) ? $translation_champs_des_tech[$key] : $key] = array(
@@ -840,7 +860,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
                 // Local à sommeil en fonction du type
                 if($type !== null) {
-                    if(in_array($type, array(11, 7))) {
+                    if (getenv('PREVARISC_LOCAL_SOMMEIL_TYPES') != false){
+                        $concerned_types = explode(';',getenv('PREVARISC_LOCAL_SOMMEIL_TYPES'));
+                    } else $concerned_types = array(7,11);
+                    if(in_array($type, $concerned_types)) {
                         $results['local_sommeil'] = true;
                     }
                 }
