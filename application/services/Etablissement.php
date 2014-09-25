@@ -97,7 +97,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
             }
             
             $next_visite = null;
-
+            $last_visite = null;
+            
             if($last_2_visites !== null && count($last_2_visites) != 0) {
                 $tmp_date = new Zend_Date($last_2_visites[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
                 $last_visite =  $tmp_date->get( Zend_date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
@@ -571,6 +572,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DB_etablissements_lies = new Model_DbTable_EtablissementLie;
         $DB_preventionniste = new Model_DbTable_EtablissementInformationsPreventionniste;
         $DB_adresse = new Model_DbTable_EtablissementAdresse;
+        $DB_etablissementclassement = new Model_DbTable_EtablissementClassement;
 
         // On commence la transaction
         $db = Zend_Db_Table::getDefaultAdapter();
@@ -669,6 +671,33 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->ICPE_ETABLISSEMENTINFORMATIONS = (int) $data['ICPE_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     break;
+                
+                // Camping
+                case 7:
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    break;
+                
+                // Manifestation temporaire
+                case 8:
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    break;
+                
+                // IOP
+                case 9:
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    break;
+                
+                // Zone
+                case 10:
+                    if ($data['ID_CLASSEMENT'] !== null && $etablissement->ID_ETABLISSEMENT !== null){
+                        $DB_etablissementclassement->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                        $DB_etablissementclassement->insert(array("ID_CLASSEMENT" => $data['ID_CLASSEMENT'], "ID_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT));
+                    }
+                    break;
+                
             }
 
             $etablissement->save();
@@ -714,7 +743,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             }
 
             // Sauvegarde des plans en fonction du genre
-            if(in_array($id_genre, array(2, 3, 5 ,6)) && array_key_exists('PLANS', $data) && count($data['PLANS']) > 0) {
+            if(in_array($id_genre, array(2, 3, 5, 6, 7, 8, 9)) && array_key_exists('PLANS', $data) && count($data['PLANS']) > 0) {
                 foreach($data['PLANS'] as $key => $plan) {
                     if($key > 0) {
                         $DB_plans->createRow(array(
@@ -742,7 +771,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             }
 
             // Sauvegarde des adresses en fonction du genre
-            if(in_array($id_genre, array(2, 4, 5, 6)) && array_key_exists('ADRESSES', $data) && count($data['ADRESSES']) > 0) {
+            if(in_array($id_genre, array(2, 4, 5, 6, 7, 8, 9, 10)) && array_key_exists('ADRESSES', $data) && count($data['ADRESSES']) > 0) {
                 foreach($data['ADRESSES'] as $key => $adresse) {
                     if($key > 0) {
                     	if(array_key_exists('ID_RUE', $adresse) && (int) $adresse["ID_RUE"] > 0) {
