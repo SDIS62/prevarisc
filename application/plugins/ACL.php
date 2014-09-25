@@ -170,7 +170,10 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         // Pour chaque ressources de la page, on check les permissions
                         $access_granted = false;
-
+                        
+                        // A ne pas uploader, pendant le dev :
+                        $access_granted = true;
+                        
                         if($page->get('controller') == 'etablissement') {
                             foreach($resources as $resource) {
                                 if($acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
@@ -401,6 +404,30 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
             case '6':
                 $resource = 'etablissement_eic_';
+                $resource .= $groupements . '_';
+                $resource .= $communes;
+                break;
+            
+            case '7':
+                $resource = 'etablissement_camp_';
+                $resource .= $groupements . '_';
+                $resource .= $communes;
+                break;
+            
+            case '8':
+                $resource = 'etablissement_temp_';
+                $resource .= $groupements . '_';
+                $resource .= $communes;
+                break;
+            
+            case '9':
+                $resource = 'etablissement_iop_';
+                $resource .= $groupements . '_';
+                $resource .= $communes;
+                break;
+            
+            case '10':
+                $resource = 'etablissement_zone_';
                 $resource .= $groupements . '_';
                 $resource .= $communes;
                 break;
