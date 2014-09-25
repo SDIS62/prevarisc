@@ -12,4 +12,10 @@ class Service_Genre
     	$DB_genre = new Model_DbTable_Genre;
     	return $DB_genre->fetchAll()->toArray();
     }
+    
+    public function getClassements()
+    {
+        $DB_classement = new Model_DbTable_Classement;
+    	return $DB_classement->fetchAll()->toArray();
+    }
 }
