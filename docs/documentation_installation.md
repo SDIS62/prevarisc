@@ -70,7 +70,8 @@ PREVARISC_LDAP_PASSWORD | [FACULTATIF] Mot de passe de connexion au LDAP | Chain
 PREVARISC_LDAP_BASEDN | [FACULTATIF] Chaine de selection afin de trouver les utilisateurs dans le LDAP | Chaine de caractères (exemple : DC=sdisxx,DC=fr)
 PREVARISC_DEBUG_ENABLED | [FACULTATIF] Activation du mode debug | 1 ou 0
 PREVARISC_PLUGIN_IGNKEY | [FACULTATIF] Clé IGN pour afficher la carte | Valeur alphanumérique
-PREVARISC_PLUGIN_GOOGLEMAPKEY | [FACULTATIF] Clé Google Map pour afficher la carte (non recommandé) | Valeur alphanumérique
+PREVARISC_PLUGIN_GOOGLEMAPKEY= | [FACULTATIF] Clé Google Map pour afficher la carte (non recommandé) | Valeur alphanumérique
+PREVARISC_THIRDPARTY_PLUGINS= | [FACULTATIF] Liste des classes de Plugins tiers séparée par un ";" à charger au démarrage | Chaine de caractères (exemple : Plugin_MyPlugin;Plugin_YourPluginInc)
 
 * Taper :```/etc/init.d/apache2 restart```
 
