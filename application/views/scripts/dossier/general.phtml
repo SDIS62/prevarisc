@@ -1335,7 +1335,7 @@ echo "
 				foreach($this->array_commissions as $array_commission){
 					echo "<optgroup label='".htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES)."' >";
 					foreach($array_commission["ARRAY"] as $item){
-						echo "<option value='".$item["ID_COMMISSION"]."' ".( (( $action != 'new' && $this->infosDossier['COMMISSION_DOSSIER'] == $item["ID_COMMISSION"]) || ( $action == 'new' && $this->commissionEtab != '' && $this->commissionEtab == $item["ID_COMMISSION"]) )?"selected":"")." >".htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES)."</option>";
+						echo "<option value='".$item["ID_COMMISSION"]."' ".( (( $action != 'new' && $this->infosDossier['COMMISSION_DOSSIER'] == $item["ID_COMMISSION"]) || ( $action == 'new' && $this->commissionEtab != '' && $this->commissionEtab == $item["ID_COMMISSION"]) )?"selected":"")." >".htmlspecialchars($item["LIBELLE_COMMISSION"]." (".$array_commission["LIBELLE"].")", ENT_QUOTES)."</option>";
 					}
 					echo "</optgroup>";
 				}
