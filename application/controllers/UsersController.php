@@ -26,7 +26,7 @@ class UsersController extends Zend_Controller_Action
 
         $this->view->user = $service_user->find($this->_request->getParam('uid'));
         $this->view->commissions = $service_commission->getAll();
-        $this->view->groupements = $service_groupement->findAll();
+        $this->view->groupements = $service_groupement->findGroupementAndGroupementType();
         $this->view->fonctions = $service_user->getAllFonctions();
         $this->view->communes = $service_adresse->getAllCommunes();
         $this->view->groupes = $service_user->getAllGroupes();
