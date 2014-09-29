@@ -39,7 +39,11 @@
                 success: function (result) {
                     contacts = [];
                     $.each(result.response, function (i, contact) {
-                        contacts.push("<span data-id='" + contact.ID_UTILISATEURINFORMATIONS + "'>" + contact.NOM_UTILISATEURINFORMATIONS + " " + contact.PRENOM_UTILISATEURINFORMATIONS + "</span>");
+                        contacts.push("<span data-id='" + contact.ID_UTILISATEURINFORMATIONS + "'>" 
+                                + contact.SOCIETE_UTILISATEURINFORMATIONS + " " 
+                                + contact.NOM_UTILISATEURINFORMATIONS + " " 
+                                + contact.PRENOM_UTILISATEURINFORMATIONS 
+                                + "</span>");
                     });
 
                     process(contacts);
