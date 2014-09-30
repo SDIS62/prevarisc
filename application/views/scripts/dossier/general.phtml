@@ -247,10 +247,10 @@
 		}
 	}
 	
-	function afficherCacherAvis()
+	afficherCacherAvis = function ()
 	{
 		var typeDossier = $("#TYPE_DOSSIER").val();
-
+                
 		var cpt = 0;
 		$(".hideavis").each(function(){
 			if($(this).is(":checked"))
@@ -282,6 +282,8 @@
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 		}
 	}
+        
+        
 	
 	function majAvisSelect()
 	{
@@ -1330,7 +1332,7 @@ echo "
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
 						<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".( ($action == 'new' && $this->commissionEtab != '')?$this->commissionEtab: $this->infosDossier['COMMISSION_DOSSIER'])."' />
 						<select name='commissionSelect' id='commissionSelect' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "")." >
-							<option value=''>Aucune commission</option>
+							<option value='0'>Aucune commission</option>
 				";
 				foreach($this->array_commissions as $array_commission){
 					echo "<optgroup label='".htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES)."' >";
