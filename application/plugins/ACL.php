@@ -3,9 +3,14 @@
 class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 {
     public function preDispatch(Zend_Controller_Request_Abstract $request)
-    {
+    {   
+         // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token                    
+        if(isset($_GET['key']) && $_GET['key'] == getenv('PREVARISC_SECURITY_KEY'))
+        {
+            return ;
+        }
         // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
-        if ( !Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" && $request->getActionName() != "error" )  {
+        else if ( !Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" && $request->getActionName() != "error" )  {
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');
         }
         elseif(Zend_Auth::getInstance()->hasIdentity()) {
