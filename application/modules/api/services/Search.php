@@ -23,7 +23,7 @@ class Api_Service_Search
      * @return string
      */
     public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $count = 10, $page = 1)
-    {
+    {   
         $service_search = new Service_Search;
         $results = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types, $avis_favorable, $statuts, $local_sommeil, $lon, $lat, $parent, null, null, $count, $page);
         return $results;

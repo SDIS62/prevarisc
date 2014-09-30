@@ -18,4 +18,15 @@ class Service_GroupementCommunes
 
         return $model_groupement->fetchAll()->toArray();
     }
+    
+    public function findGroupementAndGroupementType($num_insee = null)
+    {
+        $model_groupement = new Model_DbTable_Groupement;
+
+        if($num_insee !== null) {
+            return $model_groupement->getGroupementParVille($num_insee);
+        }
+
+        return $model_groupement->getAllWithTypes();
+    }
 }

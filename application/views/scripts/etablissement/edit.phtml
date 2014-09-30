@@ -78,6 +78,17 @@
                         <?php endforeach ?>
                     </select>
                 </dd>
+                
+                <dt class="champ_classement champs">Classement</dt>
+                <dd class="champ_classement champs">
+                    <select name='ID_CLASSEMENT'>
+                        <?php foreach( $this->classement as $item ) : ?>
+                            <option value='<?php echo $item["ID_CLASSEMENT"] ?>' <?php if( $item["ID_CLASSEMENT"] == $this->etablissement['informations']["ID_CLASSEMENT"] ) echo "selected" ?>>
+                                <?php echo $item["LIBELLE_CLASSEMENT"] ?>
+                            </option>
+                        <?php endforeach ?>
+                    </select>
+                </dd>
 
                 <dt class="champ_famille champs">Famille</dt>
                 <dd class="champ_famille champs">
@@ -239,8 +250,8 @@
             </table>
 
             <!-- Etablissement lié -->
-            <h4 class='h4_subtitle'>Établissements liés <?php if($this->etablissement['general']) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>&libelle=<?php echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
-            <dl class='dl-horizontal' >
+            <h4 class='h4_subtitle etablissements_lies'>Établissements liés <?php if($this->etablissement['general']) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>&libelle=<?php echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
+            <dl class='dl-horizontal etablissements_lies' >
                 <dt class="etablissement_pere">Père de l'établissement</dt>
                 <dd class="etablissement_pere">
                     Nom de l'établissement : <strong><?php if(count($this->etablissement['parents']) > 0) echo htmlspecialchars(end($this->etablissement['parents'])["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES); elseif( isset($_GET["libelle"]) ) echo htmlspecialchars($_GET["libelle"], ENT_QUOTES)  ?></strong><br/>
@@ -598,7 +609,7 @@
         // Action sur le changement du genre (affichage des champs)
         $("select[name='ID_GENRE']").change(function() {
             $('.champs').hide();
-            $('.etablissement_pere, .etablissements_enfants').show();
+            $('.etablissement_pere, .etablissements_enfants, .etablissements_lies').show();
             switch($(this).find('option:selected').val()) {
                 // Site
                 case '1':
@@ -634,6 +645,30 @@
                     $('.etablissements_enfants, .effectif_heberge, .effectif_public').hide();
                     $("input[name='ICPE_ETABLISSEMENTINFORMATIONS']").change();
                     $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").attr('checked', false).change();
+                    break;
+                
+                // Camping
+                case '7':
+                    $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
+                    $('.etablissements_enfants').hide();
+                    break;
+                    
+                // Manifestation Temporaire
+                case '8':
+                    $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
+                    $('.etablissements_enfants').hide();
+                    break;
+                    
+                // IOP
+                case '9':
+                    $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
+                    $('.etablissements_enfants').hide();
+                    break;
+                    
+                // Zone
+                case '10':
+                    $('.champ_classement, .champ_adresse').show();
+                    $('.etablissements_lies').hide();
                     break;
             }
         }).change();

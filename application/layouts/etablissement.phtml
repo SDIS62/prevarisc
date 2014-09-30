@@ -43,6 +43,20 @@
             <?php endif ?>
         </p>
     <?php endif ?>
+    
+    <!-- Présence de risques naturels ou technologiques-->
+    <?php if(!empty($this->etablissement['general']['DESCTECH_RISQUES_NATURELS_ETABLISSEMENT'])) : ?>
+        <p class='label label-warning'>
+            Présence de risques naturels
+        </p>
+        <br/>
+    <?php endif ?>
+    <?php if(!empty($this->etablissement['general']['DESCTECH_RISQUES_TECHNOLOGIQUES_ETABLISSEMENT'])) : ?>
+        <p class='label label-warning'>
+            Présence de risques technologiques
+        </p>
+        <br/>
+    <?php endif ?>
 
     <!-- Présence d'un dossier échéancier de travaux -->
     <?php if($this->etablissement['presence_echeancier'] == true) : ?>

@@ -69,31 +69,49 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 $avis = $dossier_donnant_avis->AVIS_DOSSIER_COMMISSION;
                 $facteur_dangerosite = $dossier_donnant_avis->FACTDANGE_DOSSIER;
             }
-
-            // récupération de la dernière date de vp
-            $last_visite = $search->setItem("dossier")
+            
+            $last_2_visites = $search->setItem("dossier")
+                    // Dossier correspondant à l'établissement dont l'ID est donné
                 ->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)
+                    // Dossier type "Visite de commission" et "Groupe de visite"
                 ->setCriteria("d.TYPE_DOSSIER", array(2,3))
+                    // Dossier nature "périodique" de type "Visite de commission" et "Groupe de visite"
                 ->setCriteria("ID_NATURE", array(21,26))
                 ->order('DATEVISITE_DOSSIER DESC')
                 ->run()
                 ->getAdapter()
-                ->getItems(0, 1)
+                    // Récupérer deux items
+                ->getItems(0, 2)
                 ->toArray();
-
+            
+            // Peut-on prolonger la période de deux ans ?
+            $extension_periode = false;            
+            if ($last_2_visites !== null && count($last_2_visites) == 2){
+                // Les deux dernières visites ont-elles été favorables ?
+                if ($last_2_visites[0]['AVIS_DOSSIER_COMMISSION'] == 1 && $last_2_visites[1]['AVIS_DOSSIER_COMMISSION'] == 1){
+                    // Absence de local à sommeil ?
+                    if($informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS !== null && $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS == 0) {
+                        $extension_periode = true;
+                    }else if ($informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS == null)$extension_periode = true;
+                }
+            }
+            
             $next_visite = null;
-
-            if($last_visite !== null && count($last_visite) == 1) {
-                $tmp_date = new Zend_Date($last_visite[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
-                $last_visite =  $tmp_date->get( Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
+            $last_visite = null;
+            
+            if($last_2_visites !== null && count($last_2_visites) != 0) {
+                $tmp_date = new Zend_Date($last_2_visites[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
+                $last_visite =  $tmp_date->get( Zend_date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
 
                 if($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS != 0) {
                     $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
                     $tmp_date->add($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
+                    if ($extension_periode == true) $tmp_date->add(24, Zend_Date::MONTH);
                     $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
                 }
             }
-
+            
+            
             // Récupération de la date de PC initial
             $pc_inital = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", 1)->setCriteria("ID_NATURE", 1)->order('DATEINSERT_DOSSIER ASC')->run();
             $pc_inital = $pc_inital->getAdapter()->getItems(0, 1)->toArray();
@@ -408,7 +426,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
             "DESCTECH_DEFENSE_PTEAUCOMMENTAIRE_ETABLISSEMENT" => "Commentaires sur le / les points d'eau naturel",
             "DESCTECH_DEFENSE_PI_ETABLISSEMENT" => "PI",
             "DESCTECH_DEFENSE_BI_ETABLISSEMENT" => "BI",
-            "DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT" => "Débit simultané (m3/h)"
+            "DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT" => "Débit simultané (m3/h)",
+            "DESCTECH_RISQUES_NATURELS_ETABLISSEMENT" => "Risques naturels",
+            "DESCTECH_RISQUES_TECHNOLOGIQUES_ETABLISSEMENT" => "Risques technologiques"
         );
 
         foreach ($etablissement->toArray() as $key => $value) {
@@ -435,6 +455,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     case "SSI": $title = "SSI"; break;
                     case "SERVICESECU": $title = "Service de sécurité"; break;
                     case "DEFENSE": $title = "Défense incendie"; break;
+                    case "RISQUES": $title = "Risques"; break;
                 }
 
                 $champs_descriptif_technique[$title][array_key_exists($key, $translation_champs_des_tech) ? $translation_champs_des_tech[$key] : $key] = array(
@@ -551,6 +572,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DB_etablissements_lies = new Model_DbTable_EtablissementLie;
         $DB_preventionniste = new Model_DbTable_EtablissementInformationsPreventionniste;
         $DB_adresse = new Model_DbTable_EtablissementAdresse;
+        $DB_etablissementclassement = new Model_DbTable_EtablissementClassement;
 
         // On commence la transaction
         $db = Zend_Db_Table::getDefaultAdapter();
@@ -649,6 +671,33 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->ICPE_ETABLISSEMENTINFORMATIONS = (int) $data['ICPE_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     break;
+                
+                // Camping
+                case 7:
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    break;
+                
+                // Manifestation temporaire
+                case 8:
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    break;
+                
+                // IOP
+                case 9:
+                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                    break;
+                
+                // Zone
+                case 10:
+                    if ($data['ID_CLASSEMENT'] !== null && $etablissement->ID_ETABLISSEMENT !== null){
+                        $DB_etablissementclassement->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
+                        $DB_etablissementclassement->insert(array("ID_CLASSEMENT" => $data['ID_CLASSEMENT'], "ID_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT));
+                    }
+                    break;
+                
             }
 
             $etablissement->save();
@@ -694,7 +743,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             }
 
             // Sauvegarde des plans en fonction du genre
-            if(in_array($id_genre, array(2, 3, 5 ,6)) && array_key_exists('PLANS', $data) && count($data['PLANS']) > 0) {
+            if(in_array($id_genre, array(2, 3, 5, 6, 7, 8, 9)) && array_key_exists('PLANS', $data) && count($data['PLANS']) > 0) {
                 foreach($data['PLANS'] as $key => $plan) {
                     if($key > 0) {
                         $DB_plans->createRow(array(
@@ -722,7 +771,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             }
 
             // Sauvegarde des adresses en fonction du genre
-            if(in_array($id_genre, array(2, 4, 5, 6)) && array_key_exists('ADRESSES', $data) && count($data['ADRESSES']) > 0) {
+            if(in_array($id_genre, array(2, 4, 5, 6, 7, 8, 9, 10)) && array_key_exists('ADRESSES', $data) && count($data['ADRESSES']) > 0) {
                 foreach($data['ADRESSES'] as $key => $adresse) {
                     if($key > 0) {
                     	if(array_key_exists('ID_RUE', $adresse) && (int) $adresse["ID_RUE"] > 0) {
@@ -840,7 +889,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
                 // Local à sommeil en fonction du type
                 if($type !== null) {
-                    if(in_array($type, array(11, 7))) {
+                    if (getenv('PREVARISC_LOCAL_SOMMEIL_TYPES') != false){
+                        $concerned_types = explode(';',getenv('PREVARISC_LOCAL_SOMMEIL_TYPES'));
+                    } else $concerned_types = array(7,11);
+                    if(in_array($type, $concerned_types)) {
                         $results['local_sommeil'] = true;
                     }
                 }
@@ -931,7 +983,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
     public function getAllPJ($id_etablissement)
     {
         $DBused = new Model_DbTable_PieceJointe;
-
         return $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $id_etablissement);
     }
 
@@ -946,9 +997,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
      */
     public function addPJ($id_etablissement, $file, $name = '', $description = '', $mise_en_avant = 0)
     {
-        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
+        $path = REAL_DATA_PATH.DS . 'uploads' . DS . 'pieces-jointes' . DS;
         $extension = strtolower(strrchr($file['name'], "."));
-
+            
         $DBpieceJointe = new Model_DbTable_PieceJointe;
 
         $nouvellePJ = $DBpieceJointe->createRow(array(
