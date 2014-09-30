@@ -798,6 +798,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                         elseif($id_genre == 2 && $genre_enfant != 3) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
                         }
+                        elseif($genre_enfant == 1){
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne peut pas être un établissement enfant)', 500);
+                        }
                         elseif($genre_enfant == null) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
                         }
@@ -821,6 +824,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 elseif($id_genre == 3 && $genre_pere != 2) {
                     throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
+                }
+                elseif($id_genre == 1) {
+                    throw new Exception('Le type n\'est pas compatible (Un site ne peut pas avoir de père)', 500);
                 }
                 elseif($genre_pere == null) {
                     throw new Exception('Le père n\'est pas compatible (Les sites, habitation, IGH et EIC n\'ont pas de père)', 500);
