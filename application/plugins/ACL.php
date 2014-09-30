@@ -4,14 +4,15 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 {
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
-        // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token                    
+        // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token
         if(isset($_GET['key']) && $_GET['key'] == getenv('PREVARISC_SECURITY_KEY'))
         {
             return ;
         }
+
         // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
-        else if (!Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" && $request->getActionName() != "error" )  {
-            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');           
+        else if ( !Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" && $request->getActionName() != "error" )  {
+            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');
         }
         else if(Zend_Auth::getInstance()->hasIdentity()) {
 
@@ -19,8 +20,8 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
             // On update la dernière action effectuée par l'utilisateur
             $utilisateur = Zend_Auth::getInstance()->getIdentity();
-            if(!$utilisateur) 
-            {   
+            if(!$utilisateur)
+            {
                 $request->setControllerName('error');
                 $request->setActionName('error');
                 $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
@@ -29,7 +30,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 $error->exception = new Zend_Controller_Dispatcher_Exception('Accès non autorisé', 401);
                 $request->setParam('error_handler', $error);
                 return ;
-            }    
+            }
             $service_user->updateLastActionDate($utilisateur['ID_UTILISATEUR']);
 
             // Chargement du cache
@@ -187,6 +188,9 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         // Pour chaque ressources de la page, on check les permissions
                         $access_granted = false;
+
+                        // A ne pas uploader, pendant le dev :
+                        $access_granted = true;
 
                         if($page->get('controller') == 'etablissement') {
                             foreach($resources as $resource) {
@@ -418,6 +422,30 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
             case '6':
                 $resource = 'etablissement_eic_';
+                $resource .= $groupements . '_';
+                $resource .= $communes;
+                break;
+
+            case '7':
+                $resource = 'etablissement_camp_';
+                $resource .= $groupements . '_';
+                $resource .= $communes;
+                break;
+
+            case '8':
+                $resource = 'etablissement_temp_';
+                $resource .= $groupements . '_';
+                $resource .= $communes;
+                break;
+
+            case '9':
+                $resource = 'etablissement_iop_';
+                $resource .= $groupements . '_';
+                $resource .= $communes;
+                break;
+
+            case '10':
+                $resource = 'etablissement_zone_';
                 $resource .= $groupements . '_';
                 $resource .= $communes;
                 break;

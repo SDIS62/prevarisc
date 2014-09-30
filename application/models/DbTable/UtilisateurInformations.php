@@ -47,7 +47,7 @@
         {
             $select = $this->select()->setIntegrityCheck(false);
             $select  ->from("utilisateurinformations")
-                     ->where("CONCAT(NOM_UTILISATEURINFORMATIONS, PRENOM_UTILISATEURINFORMATIONS) LIKE '%".$q."%'")
+                     ->where("NOM_UTILISATEURINFORMATIONS LIKE '%?%' OR PRENOM_UTILISATEURINFORMATIONS LIKE '%?%' OR SOCIETE_UTILISATEURINFORMATIONS LIKE '%?%'",$q,$q,$q)
                      ->where("ID_UTILISATEURINFORMATIONS NOT IN (SELECT ID_UTILISATEURINFORMATIONS FROM utilisateur)");
 
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;

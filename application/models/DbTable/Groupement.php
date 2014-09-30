@@ -90,4 +90,16 @@ class Model_DbTable_Groupement extends Zend_Db_Table_Abstract
 
         return $this->fetchAll($select)->toArray();
     }
+    
+    public function getAllWithTypes()
+    {
+        $select = $this	->select()
+                        ->distinct()
+                        ->setIntegrityCheck(false)
+                        ->from("groupement")
+                        ->joinLeft("groupementcommune", "groupementcommune.ID_GROUPEMENT = groupement.ID_GROUPEMENT", null)
+                        ->joinLeft("groupementtype", "groupementtype.ID_GROUPEMENTTYPE = groupement.ID_GROUPEMENTTYPE", "LIBELLE_GROUPEMENTTYPE");
+
+        return $this->fetchAll($select)->toArray();
+    }
 }

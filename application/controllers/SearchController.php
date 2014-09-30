@@ -20,6 +20,7 @@ class SearchController extends Zend_Controller_Action
         $service_type = new Service_Type;
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
+        
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -27,7 +28,7 @@ class SearchController extends Zend_Controller_Action
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_famille = $service_famille->getAll();
-        $this->view->DB_classe = $service_classe->getAll();
+        
 
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
@@ -64,19 +65,49 @@ class SearchController extends Zend_Controller_Action
         $this->_helper->layout->setLayout('search');
 
         $service_search = new Service_Search;
+        $service_commissions = new Service_Commission;
+        $service_adresse = new Service_Adresse;
 
         $DB_type = new Model_DbTable_DossierType();
         $this->view->DB_type = $DB_type->fetchAll()->toArray();
+        $this->view->array_commissions = $service_commissions->getCommissionsAndTypes();
+        $this->view->array_communes = $service_adresse->getAllCommunes();
+        $search_prev_actifs = array();
+        $array_voies = array();
 
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
+                $criteresRecherche = array();
+                
+                if (array_key_exists('commune',$parameters) && $parameters['commune'] != ''){
+                    $array_voies = $service_adresse->getVoies($parameters['commune']);
+                }
+                $search_prev_actifs = $service_search->listePrevActifs();
+                
                 $num_doc_urba = array_key_exists('objet', $parameters) && $parameters['objet'] != '' && (string) $parameters['objet'][0] == '#'? substr($parameters['objet'], 1) : null;
                 $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != ''  && (string) $parameters['objet'][0] != '#'? $parameters['objet'] : null;
                 $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
+                $criteresRecherche['commissions'] = array_key_exists('commissions', $parameters) ? $parameters['commissions'] : null;
+                $criteresRecherche['avisCommission'] = array_key_exists('avisCommission', $parameters) ? $parameters['avisCommission'] : null;
+                $criteresRecherche['avisRapporteur'] = array_key_exists('avisRapporteur', $parameters) ? $parameters['avisRapporteur'] : null;
+                $criteresRecherche['commune'] = array_key_exists('commune', $parameters) && $parameters['commune'] != '' ? $parameters['commune'] : null;
+                $criteresRecherche['voie'] = array_key_exists('voie', $parameters) && $parameters['voie'] != '' ? $parameters['voie'] : null;
+                $criteresRecherche['permis'] = array_key_exists('permis', $parameters) && $parameters['permis'] != '' ? $parameters['permis'] : null;
+                $criteresRecherche['preventionniste'] = array_key_exists('preventionniste', $parameters) && $parameters['preventionniste'] != '' ? $parameters['preventionniste'] : null;
+                
+                
+                $criteresRecherche['dateCreationStart'] = array_key_exists('date-creation-start', $parameters) && $this->checkDateFormat($parameters['date-creation-start']) ? $parameters['date-creation-start'] : null;
+                $criteresRecherche['dateCreationEnd'] = array_key_exists('date-creation-end', $parameters) && $this->checkDateFormat($parameters['date-creation-end']) ? $parameters['date-creation-end'] : null;
+                
+                $criteresRecherche['dateReceptionStart'] = array_key_exists('date-reception-start', $parameters) && $this->checkDateFormat($parameters['date-reception-start']) ? $parameters['date-reception-start'] : null;
+                $criteresRecherche['dateReceptionEnd'] = array_key_exists('date-reception-end', $parameters) && $this->checkDateFormat($parameters['date-reception-end']) ? $parameters['date-reception-end'] : null;
+                
+                $criteresRecherche['dateReponseStart'] = array_key_exists('date-reponse-start', $parameters) && $this->checkDateFormat($parameters['date-reponse-start']) ? $parameters['date-reponse-start'] : null;
+                $criteresRecherche['dateReponseEnd'] = array_key_exists('date-reponse-end', $parameters) && $this->checkDateFormat($parameters['date-reponse-end']) ? $parameters['date-reponse-end'] : null;
 
-                $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $parameters['page']);
-
+                $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $parameters['page'],$criteresRecherche);
+                                
                 require('helpers/SearchPaginatorAdapter.php');
                 $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));
                 $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
@@ -86,6 +117,8 @@ class SearchController extends Zend_Controller_Action
             catch(Exception $e) {
                 $this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage() . ')'));
             }
+            $this->view->liste_prev = $search_prev_actifs;
+            $this->view->array_voies = $array_voies;
         }
     }
 
@@ -158,5 +191,12 @@ class SearchController extends Zend_Controller_Action
         $html .= "</ul>";
 
         echo $html;
+    }
+    
+    public function checkDateFormat($date)
+    {
+        if (!$date) return false;
+        $dateArgs = explode('/', $date);
+        return checkdate($dateArgs[1], $dateArgs[0], $dateArgs[2]);
     }
 }

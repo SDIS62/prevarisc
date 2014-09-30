@@ -130,7 +130,7 @@
         <dt>Commissions</dt>
         <dd>
         	<p>
-	            <select name='commissions[]' multiple>
+	            <select name='commissions[]' class="chosen" data-placeholder="Commissions" multiple>
 	                <?php foreach($this->commissions as $commission) : ?>
 	                <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( $this->user['commissions'] != null && in_array($commission, $this->user['commissions']) ) echo "selected" ?>><?php echo $commission['LIBELLE_COMMISSIONTYPE'] . ' - ' . $commission['LIBELLE_COMMISSION'] ?></option>
 	                <?php endforeach ?>
@@ -141,9 +141,9 @@
         <dt>Groupements</dt>
         <dd>
         	<p>
-	            <select name='groupements[]' multiple>
+	            <select name='groupements[]' class="chosen" data-placeholder="Groupements" multiple>
 	                <?php foreach($this->groupements as $groupement) : ?>
-	                <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php if( $this->user['groupements'] != null && in_array($groupement, $this->user['groupements']) ) echo "selected" ?>><?php echo $groupement['LIBELLE_GROUPEMENT'] ?></option>
+	                <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php if( $this->user['groupements'] != null && in_array($groupement, $this->user['groupements']) ) echo "selected" ?>><?php echo "(" . $groupement['LIBELLE_GROUPEMENTTYPE'] . ") " . $groupement['LIBELLE_GROUPEMENT'] ?></option>
 	                <?php endforeach ?>
 	            </select>
             </p>
@@ -156,9 +156,6 @@
 <script>
 	$(document).ready(function() {
 
-    	// Gestion des multiselects
-    	$("select[name='commissions[]']").multiselect({header: false, noneSelectedText: "Aucune commission"});
-    	$("select[name='groupements[]']").multiselect({header: false, noneSelectedText: "Aucun groupement"});
 
     	// Gestion du changement du mot de passe et de la case à cocher LDAP
     	$('#change_passwd').click(function() {
@@ -177,5 +174,11 @@
     			$('#change_passwd').click();
     		}
     	});
+        
+        // Gestion des select et multiselect
+        $(".chosen").chosen({
+            search_contains : true
+        });
+        
 	});
 </script>
