@@ -987,7 +987,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
     public function getAllPJ($id_etablissement)
     {
         $DBused = new Model_DbTable_PieceJointe;
-
         return $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $id_etablissement);
     }
 
@@ -1002,9 +1001,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
      */
     public function addPJ($id_etablissement, $file, $name = '', $description = '', $mise_en_avant = 0)
     {
-        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
+        $path = REAL_DATA_PATH.DS . 'uploads' . DS . 'pieces-jointes' . DS;
         $extension = strtolower(strrchr($file['name'], "."));
-
+            
         $DBpieceJointe = new Model_DbTable_PieceJointe;
 
         $nouvellePJ = $DBpieceJointe->createRow(array(

@@ -19,6 +19,7 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 			->where('dateComm.ID_DATECOMMISSION = ?',$idDateCom)
 			->where("dossAffect.HEURE_DEB_AFFECT IS NULL")
 			->where("dossAffect.HEURE_FIN_AFFECT IS NULL")
+			->order("dossAffect.NUM_DOSSIER")
 			->group('doss.ID_DOSSIER');
 
         return $this->getAdapter()->fetchAll($select);

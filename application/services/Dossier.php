@@ -23,4 +23,18 @@ class Service_Dossier
         $db_nature = new Model_DbTable_DossierNatureliste;
         return $db_nature->fetchAll()->toArray();
     }
+    
+    
+    public function getAllPJ($id_dossier)
+    {
+        $DBused = new Model_DbTable_PieceJointe;
+        return $DBused->affichagePieceJointe("dossierpj", "dossierpj.ID_DOSSIER", $id_dossier);
+    }
+    
+     public function getAllContacts($id_dossier)
+    {
+        $DB_contact = new Model_DbTable_UtilisateurInformations;
+
+        return $DB_contact->getContact('dossier', $id_dossier);
+    }
 }

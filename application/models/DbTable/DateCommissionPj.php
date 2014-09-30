@@ -104,7 +104,26 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 			->join(array('dateComm' => 'datecommission'),'dossAffect.ID_DATECOMMISSION_AFFECT = dateComm.ID_DATECOMMISSION')
 			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
 			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
-			->where('dateComm.ID_DATECOMMISSION = ?',$dateCommId);
+			->where('dateComm.ID_DATECOMMISSION = ?',$dateCommId)
+			->group('doss.ID_DOSSIER')
+			->order('dossAffect.NUM_DOSSIER');
+
+        return $this->getAdapter()->fetchAll($select);
+    }
+	
+	public function TESTRECUPDOSSHEURE($dateCommId)
+    {
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from(array('doss' => 'dossier'))
+			->join(array('dossAffect' => 'dossieraffectation'),'doss.ID_DOSSIER = dossAffect.ID_DOSSIER_AFFECT')
+			->join(array('dateComm' => 'datecommission'),'dossAffect.ID_DATECOMMISSION_AFFECT = dateComm.ID_DATECOMMISSION')
+			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
+			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
+			->where('dateComm.ID_DATECOMMISSION = ?',$dateCommId)
+			->where('dossAffect.HEURE_DEB_AFFECT IS NOT NULL')
+			->group('doss.ID_DOSSIER')
+			->order('dossAffect.HEURE_DEB_AFFECT');
 
         return $this->getAdapter()->fetchAll($select);
     }
