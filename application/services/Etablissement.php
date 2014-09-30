@@ -28,6 +28,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $DB_categorie = new Model_DbTable_Categorie;
             $DB_famille = new Model_DbTable_Famille;
             $DB_classe = new Model_DbTable_Classe;
+            $DB_classement = new Model_DbTable_Classement;
             $DB_type = new Model_DbTable_Type;
             $DB_typeactivite = new Model_DbTable_TypeActivite;
             $DB_commission = new Model_DbTable_Commission;
@@ -168,6 +169,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_CATEGORIE" => @$DB_categorie->find($informations->ID_CATEGORIE)->current()->LIBELLE_CATEGORIE,
                     "LIBELLE_FAMILLE" => @$DB_famille->find($informations->ID_FAMILLE)->current()->LIBELLE_FAMILLE,
                     "LIBELLE_CLASSE" => @$DB_classe->find($informations->ID_CLASSE)->current()->LIBELLE_CLASSE,
+                    "LIBELLE_CLASSEMENT" => @$DB_classement->find($informations->ID_CLASSEMENT)->current()->LIBELLE_CLASSEMENT,
                     "LIBELLE_TYPE_PRINCIPAL" => @$DB_type->find($informations->ID_TYPE)->current()->LIBELLE_TYPE,
                     "LIBELLE_TYPEACTIVITE_PRINCIPAL" => @$DB_typeactivite->find($informations->ID_TYPEACTIVITE)->current()->LIBELLE_ACTIVITE,
                     "LIBELLE_COMMISSION" => @$DB_commission->find($informations->ID_COMMISSION)->current()->LIBELLE_COMMISSION,
@@ -572,7 +574,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DB_etablissements_lies = new Model_DbTable_EtablissementLie;
         $DB_preventionniste = new Model_DbTable_EtablissementInformationsPreventionniste;
         $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        $DB_etablissementclassement = new Model_DbTable_EtablissementClassement;
 
         // On commence la transaction
         $db = Zend_Db_Table::getDefaultAdapter();
@@ -692,10 +693,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 
                 // Zone
                 case 10:
-                    if ($data['ID_CLASSEMENT'] !== null && $etablissement->ID_ETABLISSEMENT !== null){
-                        $DB_etablissementclassement->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                        $DB_etablissementclassement->insert(array("ID_CLASSEMENT" => $data['ID_CLASSEMENT'], "ID_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT));
-                    }
+                    $informations->ID_CLASSEMENT = $data['ID_CLASSEMENT'];
                     break;
                 
             }
@@ -711,7 +709,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $informations->ID_STATUT = $data['ID_STATUT'];
             $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
             $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
-
+//var_dump($informations);exit();
             $informations->save();
 
             // Sauvegarde des préventionnistes

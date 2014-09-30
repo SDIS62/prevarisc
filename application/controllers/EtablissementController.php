@@ -43,6 +43,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_typesplan = new Service_TypePlan;
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
+        $service_classement = new Service_Classement;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -54,6 +55,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
+        $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
@@ -86,6 +88,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_typesplan = new Service_TypePlan;
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
+        $service_classement = new Service_Classement;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -97,6 +100,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
+        $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->add = true;
 
