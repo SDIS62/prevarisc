@@ -242,21 +242,29 @@ try {
 			$cpt = true;
 			$article = '';
 			$texte = '';
+			$textearticle = '';
 			for($j=0; $j < $nbAssoc; $j++)
 			{
 				$articleT = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
 				$texteT = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
 				
 				if($texteT != ''){
-					$texte .= $texteT."\n";
+					$textearticle .= $texteT." - ";
 				}else{
-					$texte .= "\n";
+					$textearticle .= " - ";
 				}
-				
-				if($articleT != ''){
-					$article .= $articleT."\n";
+				if($nbAssoc > 1){
+					if($articleT != ''){
+						$textearticle .= $articleT.", ";
+					}else{
+						$textearticle .= ", ";
+					}
 				}else{
-					$article .= "\n";
+					if($articleT != ''){
+						$textearticle .= $articleT." ";
+					}else{
+						$textearticle .= " ";
+					}
 				}
 
 				if($cpt)
@@ -270,9 +278,9 @@ try {
 					}
 					$cpt = false;
 				}
+				$nbAssoc--;
 			}
-			$prescription->setVars('texte', $texte, true, 'UTF-8');
-			$prescription->setVars('article', $article, true, 'UTF-8');
+			$prescription->setVars('textearticle',$textearticle,true,'UTF-8');
 			$prescription->merge();
 		}
 		$odf->mergeSegment($prescription);	

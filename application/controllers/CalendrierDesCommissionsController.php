@@ -99,7 +99,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         //Si on prend en compte les heures on récupère uniquement les dossiers n'ayant pas d'heure de passage
         $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($this->_getParam('dateCommId'));
 
-
 		$dbDossier = new Model_DbTable_Dossier;
 		$dbDocUrba = new Model_DbTable_DossierDocUrba;
 		$service_etablissement = new Service_Etablissement;
@@ -126,19 +125,8 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
         $this->view->infosDateComm = $infosDateComm;
         $this->view->infosCommission = $infosCommission;
-/*
-        $dbDocUrba = new Model_DbTable_DossierDocUrba;
-        $cpt = 0;
-        foreach ($listeDossiersNonAffect as $dossierNonAffect) {
-            $docsUrba = $dbDocUrba->find($dossierNonAffect['ID_DOSSIER'])->toArray();
+		
 
-            if (count($docsUrba) >= 1) {
-                $listeDossiersNonAffect[$cpt]["NUM_DOCURBA"] = $docsUrba[0]['NUM_DOCURBA'];
-            }
-
-            $cpt++;
-        }
-*/
         $this->view->listeDossierNonAffect = $listeDossiersNonAffect;
     }
 
@@ -275,9 +263,24 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 				$affichage .= $dossierAffect['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]." - ";
 			}
 			$affichage = $dossierAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
+			
+			$nbAdresse = count($dossierAffect['infosEtab']['adresses']);
+			if($nbAdresse != 0){
+				$affichage .= " (";
+				foreach($dossierAffect['infosEtab']['adresses'] as $commune){
+					$affichage .= $commune['LIBELLE_COMMUNE'];
+					if($nbAdresse != 1)
+						$affichage .= ", ";
+					$nbAdresse--;
+				}
+				$affichage .= ") ";
+			}else{
+				$affichage .= " ( adresse non renseignée )";
+			}
+			/*
 			if(isset($dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']) && $dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] != "")
 				$affichage .= " (".$dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
-
+			*/
             if ($dossierAffect['LIBELLE_DOSSIERNATURE'] != "") {
                 $affichage .= " - ".$dossierAffect['LIBELLE_DOSSIERNATURE'];
             }
@@ -854,7 +857,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             $stringUpdate = $this->_getParam('ordreDossier');
 
             $dossierId = explode(",",$stringUpdate);
-
+			
             $dbDossierAffectation = new Model_DbTable_DossierAffectation;
 
             $numDossier = 0;
@@ -1111,26 +1114,33 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		//Suivant si l'on prend en compte les heures ou non on choisi la requete à effectuer
 		$dbDateComm = new Model_DbTable_DateCommission;
 		$commSelect = $dbDateComm->find($dateCommId)->current();
+		
 		$commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();
-
+		//Zend_Debug::dump($commissionInfo);
 		//1 = salle . 2 = visite . 3 = groupe de visite
 		//on recupere le type de commission (salle / visite / groupe de visite)
 		$commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();
+		$this->view->dateComm = $commissionInfo['DATE_COMMISSION'];
 
 		//On récupère le nom de la commission
 		$model_commission = new Model_DbTable_Commission;
 		$this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();
 		$model_membres = new Model_DbTable_CommissionMembre;
-		$this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $commissionInfo['COMMISSION_CONCERNE']);
+		$this->view->membresFiles = $model_membres->fetchAll("ID_COMMISSION = " . $commissionInfo['COMMISSION_CONCERNE'] ." AND ID_GROUPEMENT IS NULL");
 		//Zend_Debug::dump($this->view->membresFiles);
 		$dbDateCommPj = new Model_DbTable_DateCommissionPj;
 
 		//afin de récuperer les informations des communes (adresse des mairies etc)
 		$model_adresseCommune = new Model_DbTable_AdresseCommune;
 		$model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
-
-		$listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
-
+	
+		if($commissionInfo['GESTION_HEURES'] == 1){
+			$listeDossiers = $dbDateCommPj->TESTRECUPDOSSHEURE($dateCommId);
+		}else{
+			$listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
+		}
+		//Zend_Debug::dump($listeDossiers);
+		
 		$dbDossier = new Model_DbTable_Dossier;
 		$dbDocUrba = new Model_DbTable_DossierDocUrba;
 		$service_etablissement = new Service_Etablissement;
@@ -1152,6 +1162,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			//on recupere les prescriptions du dossier
 			$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
 			$listePrescDossier = $dbPrescDossier->recupPrescDossier($ue['ID_DOSSIER']);
+			
 			$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
 			$prescriptionArray = array();
 
@@ -1166,12 +1177,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 					array_push($prescriptionArray, $assoc);
 				}
 			}
-			//echo $ue['ID_DOSSIER']."<br/>";
-			//Zend_Debug::dump($listePrescDossier);
 			$listeDossiers[$val]['prescription'] = $prescriptionArray;
 		}
 		$this->view->dossierComm = $listeDossiers;
-		//Zend_Debug::dump($listeDossiers);
     }
 
 	public function generationcompterenduAction()
@@ -1202,8 +1210,12 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$model_adresseCommune = new Model_DbTable_AdresseCommune;
 		$model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
 
-		$listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
-
+		if($commissionInfo['GESTION_HEURES'] == 1){
+			$listeDossiers = $dbDateCommPj->TESTRECUPDOSSHEURE($dateCommId);
+		}else{
+			$listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
+		}
+		
 		$dbDossier = new Model_DbTable_Dossier;
 		$dbDocUrba = new Model_DbTable_DossierDocUrba;
 		$service_etablissement = new Service_Etablissement;

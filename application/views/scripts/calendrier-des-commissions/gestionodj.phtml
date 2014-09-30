@@ -504,9 +504,22 @@ $(document).ready(function() {
 							//si le dossier est attaché à un établissement
 							echo $dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
 						}
-						if(isset($dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'])){
-							echo " (".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+
+						$nbAdresse = count($dossierNonAffect['infosEtab']['adresses']);
+						if($nbAdresse != 0){
+							echo " (";
+							foreach($dossierNonAffect['infosEtab']['adresses'] as $commune){
+								echo $commune['LIBELLE_COMMUNE'];
+								if($nbAdresse != 1)
+									echo ", ";
+								$nbAdresse--;
+							}
+							echo ") ";
+						}else{
+							echo " ( adresse non renseignée )";
 						}
+						
+						
 						if(isset($dossierNonAffect['infosEtab']['parents']) && isset($dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
 							echo " - ".$dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 						}
@@ -570,9 +583,19 @@ $(document).ready(function() {
 							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='color:black;' >
 								".$dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
 
-
-				if(isset($dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']))
-					echo "(".$dossierNonAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
+				$nbAdresse = count($dossierNonAffect['infosEtab']['adresses']);
+				if($nbAdresse != 0){
+					echo " (";
+					foreach($dossierNonAffect['infosEtab']['adresses'] as $commune){
+						echo $commune['LIBELLE_COMMUNE'];
+						if($nbAdresse != 1)
+							echo ", ";
+						$nbAdresse--;
+					}
+					echo ") ";
+				}else{
+					echo " ( adresse non renseignée )";
+				}
 
 				if(isset($dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
 					echo " - ".$dossierNonAffect['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'];

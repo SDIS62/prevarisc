@@ -3,7 +3,6 @@
 	case "infosEtabs":
 		//Récupére l'ensemble des établissements, sites liés
 		$nbEtab = count($this->listeEtablissement);
-		
 		if($nbEtab > 0){
 			if($nbEtab == 1 && $this->listeEtablissement[0]["LIBELLE_GENRE"] == "Site"){
 				echo "Site concerné : &nbsp;";
@@ -21,18 +20,19 @@
 				foreach($this->listeEtablissement as $etab => $value){
 					if($value['ID_ETABLISSEMENTDOSSIER'] != $idEtabEnCour){
 						$compteur++;
-						//echo $value['ID_ETABLISSEMENTDOSSIER']." --- ".$idEtabEnCour;
 						$idEtabEnCour = $value['ID_ETABLISSEMENTDOSSIER'];
-						$dbEtabAddr = new Model_DbTable_EtablissementAdresse;					
-						$idEtab = $dbEtabAddr->get($value['ID_ETABLISSEMENT']);
-						$EtabAddr = $dbEtabAddr->get($value['ID_ETABLISSEMENT']);
-						//Zend_Debug::dump($EtabAddr);
-						//echo count($EtabAddr);
-						echo "
-							<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."'>
-							".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
-						if(count($EtabAddr) != 0){
-							echo " (".$EtabAddr[0]["LIBELLE_COMMUNE"].")";
+
+						echo "<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."'>".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+						$nbAdresse = count($value['infosEtab']['adresses']);
+						if($nbAdresse != 0){
+							echo " (";
+							foreach($value['infosEtab']['adresses'] as $commune){
+								echo $commune['LIBELLE_COMMUNE'];
+								if($nbAdresse != 1)
+									echo ", ";
+								$nbAdresse--;
+							}
+							echo ") ";
 						}else{
 							echo " ( adresse non renseignée )";
 						}
