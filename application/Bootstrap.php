@@ -7,20 +7,50 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     public function run()
     {
-        // Chargement et activation des plugins
+        $this->loadCorePlugins();
+        
+        $this->loadThirdPartyPlugins();
+        
+        $this->loadActionHelpers();
+
+        return parent::run();
+    }
+    
+    /**
+     * Initialisation des plugins tiers
+     */
+    protected function loadCorePlugins()
+    {
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_View);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_ACL);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_XmlHttpRequest);
-
-        // Ajout des aides d'action
+    }
+    
+    /**
+     * Initialisation des plugins tiers
+     */
+    protected function loadThirdPartyPlugins()
+    {
+        if (getenv('PREVARISC_THIRDPARTY_PLUGINS')) 
+        {
+            $thirdparty_plugins = explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS'));
+            foreach($thirdparty_plugins as $thirdparty_plugin) {
+                Zend_Controller_Front::getInstance()->registerPlugin(new $thirdparty_plugin);
+            }
+        }
+    }
+    
+    /**
+     * Initialisation des aides d'action
+     */
+    protected function loadActionHelpers()
+    {
         Zend_Controller_Action_HelperBroker::addPath(
             APPLICATION_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR . "helpers",
             "Application_Controller_Helper_"
         );
-
-        return parent::run();
     }
-
+    
     /**
      * Initialisation du cache APC
      */
@@ -89,4 +119,5 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     {
         Zend_Session::setOptions(array());
     }
+    
 }
