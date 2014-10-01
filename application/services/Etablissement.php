@@ -369,8 +369,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             "DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT" => "Surface emprise au sol (m²)",
             "DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT" => "Surface totale (m²)",
             "DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT" => "Surface accessible au public (m²)",
-            "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "SHON (m²)",
-            "DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT" => "SHOB (m²)",
+            "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "Surface de plancher (m²)",
             "DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT" => "Nombre de niveaux",
             "DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT" => "PBDN (m)",
             "DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT" => "Nombre de façades accessibles",
@@ -432,7 +431,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         );
 
         foreach ($etablissement->toArray() as $key => $value) {
-            if (preg_match('/DESCTECH/', $key)) {
+            if (preg_match('/DESCTECH/', $key) && strcmp('DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT', $key) != 0) {
                 $key_to_str = str_replace('DESCTECH_', '', $key);
                 $key_to_str = explode('_', $key_to_str);
                 $key_to_str = $key_to_str[0];
@@ -581,6 +580,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         try {
+            
+            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = ($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
+            
             $etablissement = $id_etablissement == null ? $DB_etablissement->createRow() : $DB_etablissement->find($id_etablissement)->current();
 
             if($date == '') {
