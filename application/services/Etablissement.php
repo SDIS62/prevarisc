@@ -497,6 +497,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
         foreach($descriptifs_techniques as $key => $value) {
             $etablissement->$key = $value;
         }
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $cache->remove('etablissement_id_' . $id_etablissement);
 
         $etablissement->save();
     }
