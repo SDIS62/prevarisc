@@ -60,6 +60,10 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $this->view->add = false;
+        
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
+        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
         if($this->_request->isPost()) {
             try {
@@ -103,6 +107,11 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->add = true;
+        
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
+        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
+
 
         if($this->_request->isPost()) {
             try {
