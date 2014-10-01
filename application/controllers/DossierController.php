@@ -430,7 +430,8 @@ class DossierController extends Zend_Controller_Action
 
             //ICI RéCUPERATION DU LIBELLE DE LA COMMISSION !!!!!!!!!!! PUIS AFFICHAGE DANS LE INPUT !!!
             $this->view->commissionInfos = $DBdossierCommission->find($this->view->infosDossier['COMMISSION_DOSSIER'])->current();
-
+            $this->view->commissionInfosCommissionType = $model_typesDesCommissions->find($this->view->commissionInfos['ID_COMMISSIONTYPE'])->current();
+            
             //On récupère la liste de tous les champs que l'on doit afficher en fonction des natures
             //Si il y à plusieurs natures on les fait une par une pour savoir tous les champs à afficher
             $premiereNature = 1;
