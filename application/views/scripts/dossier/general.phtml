@@ -1590,7 +1590,7 @@ echo "
 						</span>
 					</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<select name='AVIS_DOSSIER_COMMISSION' id='AVIS_DOSSIER_COMMISSION' >
+						<select name='AVIS_DOSSIER_COMMISSION' id='AVIS_DOSSIER_COMMISSION' ".(($this->is_allowed_change_avis)?'':'disabled')." >
 							<option value='0' ></option>
 						";
 						foreach($this->listeAvis as $avis){
@@ -1599,7 +1599,7 @@ echo "
 						echo "
 						</select>
 						&nbsp;&nbsp;&nbsp;
-						<input type='checkbox' name='repercuterAvis' id='repercuterAvis' /> Répercuter l'avis sur les établissements enfants
+						<input type='checkbox' name='repercuterAvis' id='repercuterAvis' ".(($this->is_allowed_change_avis)?'':'disabled')."/> Répercuter l'avis sur les établissements enfants
 					</div>
 				</li>
 				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL && $this->infosDossier['FACTDANGE_DOSSIER'] != 0)? "" : "display:none;")."'>
