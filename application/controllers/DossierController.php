@@ -197,6 +197,11 @@ class DossierController extends Zend_Controller_Action
         //Récupération de la liste des avis pour la génération du select
         $DBlisteAvis = new Model_DbTable_Avis;
         $this->view->listeAvis = $DBlisteAvis->getAvis();
+        
+        // AUTORISATIONS CHANGEMENT AVIS DE LA COMMISSION
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+
+            $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
 
         if ($this->_getParam("idEtablissement")) {
             $this->view->idEtablissement = $this->_getParam("idEtablissement");
@@ -445,7 +450,9 @@ class DossierController extends Zend_Controller_Action
                 }
             }
             $this->view->afficherChamps = $afficherChamps;
-
+            
+            
+            
 			//On verifie les éléments masquant l'avis et la date de commission/visite pour les afficher ou non
 
 
