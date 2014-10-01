@@ -16,15 +16,131 @@ foreach($this->membresFiles as $val => $membre){
 			$dossInfos = $odf->setSegment('dossierInfos');
 			
 			foreach($this->dossierComm as $val => $dossierInfos){
+				$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
+				if($nbAdresse != 0){
+					foreach($dossierInfos['infosEtab']['adresses'] as $commune){
+					
+						$dossInfos->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
+						if(isset($commune["LIBELLE_COMMUNE"])){
+							$dossInfos->setVars('communeDossier', $commune["LIBELLE_COMMUNE"], true, 'UTF-8');
+						}
+						
+						$dossInfos->setVars('objetDossier', $dossierInfos['OBJET_DOSSIER'], true, 'UTF-8');
+						//echo $dossierInfos['OBJET_DOSSIER']." <br/>";
+						$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
+						
+						$dateComm = new Zend_Date($this->dateComm);				
+						$dossInfos->setVars('dateCommission', $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR), true, 'UTF-8');
+						
+						if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
+							$dossInfos->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+						else
+							$dossInfos->setVars('nomPereEtab', '', true, 'UTF-8');
+						
+						if(isset($dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
+							$dossInfos->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+						else
+							$dossInfos->setVars('nomEtab', "", true, 'UTF-8');
+							
+						switch($dossierInfos['AVIS_DOSSIER']){
+							case 1:
+								$avis = "Favorable";
+							break;
+							case 2:
+								$avis = "Défavorable";
+							break;
+							default:
+								$avis = "";
+							break;					
+						}
+						
+						try{
+							$dossInfos->setVars('avisDossier', $avis, true, 'UTF-8');
+						} catch (Exception $e){
+
+						}
+
+						if(isset($dossierInfos['infosEtab']['informations'])){
+							$dossInfos->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
+							$dossInfos->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"], true, 'UTF-8');
+						}else{
+							$dossInfos->setVars('categorieEtab', "", true, 'UTF-8');
+							$dossInfos->setVars('typeEtab', "", true, 'UTF-8');
+						}
+						
+						$listeDocUrba = "";
+						foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
+							$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
+						}
+						$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
+						
+						//Prescription des dossiers
+						if(isset($dossierInfos['prescription']) && count($dossierInfos['prescription']) > 0){
+							$nbPrescDossier = count($dossierInfos['prescription']);
+							for($i=0; $i < $nbPrescDossier; $i++)
+							{
+								$nbAssoc = count($dossierInfos['prescription'][$i]);
+								$cpt = true;
+								$article = '';
+								$texte = '';
+								$textearticle = '';
+								for($j=0; $j < $nbAssoc; $j++)
+								{
+									$articleT = $dossierInfos['prescription'][$i][$j]['LIBELLE_ARTICLE'];
+									$texteT = $dossierInfos['prescription'][$i][$j]['LIBELLE_TEXTE'];
+
+									if($texteT != ''){
+										$textearticle .= $texteT." - ";
+									}else{
+										$textearticle .= " - ";
+									}
+									
+									if($articleT != ''){
+										$textearticle .= $articleT.", ";
+									}else{
+										$textearticle .= ", ";
+									}
+									if($cpt)
+									{
+										$dossInfos->listePrescription->setVars('num',$dossierInfos['prescription'][$i][0]['NUM_PRESCRIPTION_DOSSIER'],true,'UTF-8');
+										if( $dossierInfos['prescription'][$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
+										{
+											$dossInfos->listePrescription->setVars('libelle',$dossierInfos['prescription'][$i][0]['PRESCRIPTIONTYPE_LIBELLE'],true,'UTF-8');
+										}else{
+											$dossInfos->listePrescription->setVars('libelle',$dossierInfos['prescription'][$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
+										}
+										$cpt = false;
+									}
+								}
+								
+								$dossInfos->listePrescription->setVars('textearticle',$textearticle,true,'UTF-8');
+								$dossInfos->listePrescription->merge();
+							}
+
+						}else{
+							$dossInfos->listePrescription->setVars('num','',true,'UTF-8');
+							$dossInfos->listePrescription->setVars('libelle','',true,'UTF-8');
+							$dossInfos->listePrescription->setVars('textearticle','',true,'UTF-8');
+							$dossInfos->listePrescription->merge();
+						}
+						
+						
+						$dossInfos->merge(); 
+					}
+				}else{
+					//dossier sans adresse indiquer le dossier en question
+				}
+			
 				//Zend_Debug::dump($dossierInfos);
 				try{
-					
+/*
 					$dossInfos->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
 					if(isset($dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"])){
 						$dossInfos->setVars('communeDossier', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
 					}
 
-					//$dossInfos->setVars('objetDossier', $dossierInfos['OBJET_DOSSIER'], true, 'UTF-8');
+					$dossInfos->setVars('objetDossier', $dossierInfos['OBJET_DOSSIER'], true, 'UTF-8');
+					//echo $dossierInfos['OBJET_DOSSIER']." <br/>";
 					$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
 					
 					$dateComm = new Zend_Date($this->dateComm);				
@@ -32,6 +148,8 @@ foreach($this->membresFiles as $val => $membre){
 
 					if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
 						$dossInfos->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+					else
+						$dossInfos->setVars('nomPereEtab', '', true, 'UTF-8');
 					
 					if(isset($dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
 						$dossInfos->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
@@ -49,8 +167,12 @@ foreach($this->membresFiles as $val => $membre){
 							$avis = "";
 						break;					
 					}
+					
+					try{
+						$dossInfos->setVars('avisDossier', $avis, true, 'UTF-8');
+					} catch (Exception $e){
 
-					$dossInfos->setVars('avisDossier', $avis, true, 'UTF-8');
+					}
 
 					if(isset($dossierInfos['infosEtab']['informations'])){
 						$dossInfos->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
@@ -75,24 +197,25 @@ foreach($this->membresFiles as $val => $membre){
 							$cpt = true;
 							$article = '';
 							$texte = '';
-							
+							$textearticle = '';
 							for($j=0; $j < $nbAssoc; $j++)
 							{
 								$articleT = $dossierInfos['prescription'][$i][$j]['LIBELLE_ARTICLE'];
 								$texteT = $dossierInfos['prescription'][$i][$j]['LIBELLE_TEXTE'];
 
-							
 								if($texteT != ''){
-									$texte .= $texteT."\n";
+									$textearticle .= $texteT." - ";
 								}else{
-									$texte .= "\n";
+									$textearticle .= " - ";
 								}
 								
 								if($articleT != ''){
-									$article .= $articleT."\n";
+									$textearticle .= $articleT.", ";
 								}else{
-									$article .= "\n";
+									$textearticle .= ", ";
 								}
+								
+								
 								if($cpt)
 								{
 									$dossInfos->listePrescription->setVars('num',$dossierInfos['prescription'][$i][0]['NUM_PRESCRIPTION_DOSSIER'],true,'UTF-8');
@@ -109,14 +232,21 @@ foreach($this->membresFiles as $val => $membre){
 								}
 							}
 							
-							$dossInfos->listePrescription->setVars('texte',$texte,true,'UTF-8');
-							$dossInfos->listePrescription->setVars('article',$article,true,'UTF-8');
+							$dossInfos->listePrescription->setVars('textearticle',$textearticle,true,'UTF-8');
+							//$dossInfos->listePrescription->setVars('article',$article,true,'UTF-8');
 							
 							$dossInfos->listePrescription->merge();
 							
 						}
 
+					}else{
+						$dossInfos->listePrescription->setVars('num','',true,'UTF-8');
+						$dossInfos->listePrescription->setVars('libelle','',true,'UTF-8');
+						$dossInfos->listePrescription->setVars('texte','',true,'UTF-8');
+						$dossInfos->listePrescription->setVars('article','',true,'UTF-8');				
 					}
+					
+*/
 
 					/*		
 					//Informations de l'exploitant du dossier
@@ -130,7 +260,7 @@ foreach($this->membresFiles as $val => $membre){
 					*/
 
 
-					$dossInfos->merge(); 
+					//$dossInfos->merge(); 
 
 				} catch (Exception $e){
 

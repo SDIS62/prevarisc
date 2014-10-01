@@ -2720,13 +2720,14 @@ class DossierController extends Zend_Controller_Action
                     //pour chacun des articles et des textes on verifie leurs existance ou non
                     if ($articleArray[$i] != '') {
                         $article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.addslashes($articleArray[$i]).'"')->toArray();
+						//Zend_Debug::dump($article);
                         if (count($article) == 0) {
                             //l'article n'existe pas donc on l'enregistre
                             $article = $dbArticle->createRow();
                             $article->LIBELLE_ARTICLE = $articleArray[$i];
                             $article->save();
                             $idArticle = $article->ID_ARTICLE;
-                        } elseif (count($article) == 1) {
+                        } else {
                             //l'article existe donc on récupere son ID
                             $idArticle = $article[0]['ID_ARTICLE'];
                         }
@@ -2742,7 +2743,7 @@ class DossierController extends Zend_Controller_Action
                             $texte->LIBELLE_TEXTE = $texteArray[$i];
                             $texte->save();
                             $idTexte = $texte->ID_TEXTE;
-                        } elseif (count($texte) == 1) {
+                        } else {
                             //le texte existe donc on récupere son ID
                             $idTexte = $texte[0]['ID_TEXTE'];
                         }
@@ -2836,7 +2837,7 @@ class DossierController extends Zend_Controller_Action
                         $article->LIBELLE_ARTICLE = $articleArray[$i];
                         $article->save();
                         $idArticle = $article->ID_ARTICLE;
-                    } elseif (count($article) == 1) {
+                    } else {
                         //l'article existe donc on récupere son ID
                         $idArticle = $article[0]['ID_ARTICLE'];
                     }
@@ -2852,7 +2853,7 @@ class DossierController extends Zend_Controller_Action
                         $texte->LIBELLE_TEXTE = $texteArray[$i];
                         $texte->save();
                         $idTexte = $texte->ID_TEXTE;
-                    } elseif (count($texte) == 1) {
+                    } else {
                         //le texte existe donc on récupere son ID
                         $idTexte = $texte[0]['ID_TEXTE'];
                     }
