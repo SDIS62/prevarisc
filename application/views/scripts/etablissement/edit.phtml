@@ -319,9 +319,9 @@
                 <tbody>
                     <?php echo $this->partial('etablissement/partials/partial-adresse.phtml') ?>
                     <?php if($this->etablissement['adresses']) : ?>
-                    <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
-                        <?php echo $this->partial('etablissement/partials/partial-adresse.phtml', array('adresse' => $adresse)) ?>
-                    <?php endforeach ?>
+                        <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
+                            <?php echo $this->partial('etablissement/partials/partial-adresse.phtml', array('adresse' => $adresse)) ?>
+                        <?php endforeach ?>
                     <?php endif ?>
                 </tbody>
             </table>

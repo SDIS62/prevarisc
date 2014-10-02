@@ -1,4 +1,4 @@
- <?php
+<?php
 
     class View_Helper_AgendaMois
     {
@@ -188,4 +188,3 @@
             echo  $result;
         }
     }
-?>

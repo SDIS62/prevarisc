@@ -359,7 +359,7 @@
                         <tbody>
                             <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
                                 <tr>
-                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"] ?></td>
+                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUETYPE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"] ?></td>
                                     <td>Adresse postale</td>
                                 </tr>
                             <?php endforeach ?>
