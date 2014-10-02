@@ -11,6 +11,11 @@ function verifInfos($var){
 
 $odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR.$this->fichierSelect);
 
+try {
+	$odf->setVars('dateDuJour',verifInfos($this->dateDuJour),true,'UTF8');
+} catch (OdfException $e) {
+
+}
 
 try {
 	$odf->setVars('typeDossier',verifInfos($this->typeDossier),true,'UTF8');
@@ -38,7 +43,7 @@ try {
 }
 
 try {
-	$odf->setVars('numWinPrev',verifInfos($this->numWinPrev),true,'UTF8');
+	$odf->setVars('numWinPrev',verifInfos($this->numWinPrev),true,'UTF8');        
 } catch (OdfException $e) {
 
 }
@@ -399,6 +404,12 @@ try{
 
 }
 
+try{
+	$odf->setVars('numTotal',verifInfos($this->numTotal),true,'UTF8');		
+} catch (OdfException $e) {
+
+}
+
 try{	
 	$odf->setVars('avisDossier',verifInfos($this->avisDossier),true,'UTF8');
 } catch (OdfException $e) {
@@ -431,6 +442,12 @@ try{
 
 try{
 	$odf->setVars('numFaxEtab',verifInfos($this->numFaxEtab),true,'UTF8');
+} catch (OdfException $e){
+
+}
+
+try{
+	$odf->setVars('mailEtab',verifInfos($this->mailEtab),true,'UTF8');
 } catch (OdfException $e){
 
 }
