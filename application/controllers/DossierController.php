@@ -1628,7 +1628,10 @@ class DossierController extends Zend_Controller_Action
 
 		$this->view->fichierSelect = $this->_getParam("fichierSelect");
 
-		/******
+                $dateDuJour = new Zend_Date();
+                $this->view->dateDuJour = $dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+		
+                /******
 		/
 		/RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
 		/
@@ -1641,6 +1644,7 @@ class DossierController extends Zend_Controller_Action
 		$this->view->numWinPrev = $etablissement['NUMEROID_ETABLISSEMENT'];
 		$this->view->numTelEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
 		$this->view->numFaxEtab = $etablissement['FAX_ETABLISSEMENT'];
+                $this->view->mailEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
 
 		//Informations de l'établissement (catégorie, effectifs, activité / type principal)
 		$object_informations = $model_etablissement->getInformations($idEtab);
@@ -1649,6 +1653,7 @@ class DossierController extends Zend_Controller_Action
 		
 		$this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
 		$this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
+                $this->view->numTotal = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
 		$dbCategorie = new Model_DbTable_Categorie;
 		if ($object_informations["ID_CATEGORIE"]) {
@@ -1771,6 +1776,13 @@ class DossierController extends Zend_Controller_Action
 		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
 		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
 
+                $dbDossierContact = new Model_DbTable_DossierContact;
+		//On recherche si un maitre d'oeuvre existe
+		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,4);
+		if(count($contactInfos) == 1) {
+			$this->view->maiteOeuvre = $contactInfos[0];
+                }
+                
 		$dbDossierContact = new Model_DbTable_DossierContact;
 		//On recherche si un directeur unique de sécurité existe
 		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,8);
