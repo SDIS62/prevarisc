@@ -12,6 +12,7 @@
             }
 
             $src = DATA_PATH . "/uploads/avatars/$size/";
-            echo "<img $attribs src='" . $src . ( file_exists($_SERVER['DOCUMENT_ROOT'].$src.$id.".jpg") ? $id : "default" ) . ".jpg' alt='Avatar' />";
+            $file_path = REAL_DATA_PATH . DS . "uploads" . DS . "avatars" . DS . $size . DS . $id.".jpg";
+            echo "<img $attribs src='" . $src . ( file_exists($file_path) ? $id : "default" ) . ".jpg' alt='Avatar' />";
         }
     }

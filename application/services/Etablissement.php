@@ -1049,7 +1049,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DBpieceJointe = new Model_DbTable_PieceJointe;
         $DBitem = new Model_DbTable_EtablissementPj;
 
-        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
+        $path = REAL_DATA_PATH . DS . 'uploads' . DS . 'pieces-jointes' . DS;
 
         $pj = $DBpieceJointe->find($id_pj)->current();
 
