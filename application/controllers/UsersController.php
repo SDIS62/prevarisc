@@ -113,6 +113,8 @@ class UsersController extends Zend_Controller_Action
                         }
                     }
                 }
+                $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+                $cache->remove('acl');
 
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
@@ -126,6 +128,7 @@ class UsersController extends Zend_Controller_Action
                     'message' => $e->getMessage()
                 ));
             }
+            
             // Redirection
             $this->_helper->redirector('matrice-des-droits');
         }
