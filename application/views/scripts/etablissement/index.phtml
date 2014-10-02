@@ -41,6 +41,14 @@
                     <p><?php echo $this->etablissement['informations']['LIBELLE_CLASSE'] ?></p>
                 </dd>
                 <?php endif ?>
+                
+                <?php if($this->etablissement['informations']['ID_GENRE'] == 10) : ?>
+                <dt>Classement</dt>
+                <dd>
+                    <p><?php echo $this->etablissement['informations']['LIBELLE_CLASSEMENT'] ?></p>
+                </dd>
+                <?php endif ?>
+
 
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5))) : ?>
                 <dt>Périodicité</dt>

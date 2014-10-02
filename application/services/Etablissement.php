@@ -28,6 +28,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $DB_categorie = new Model_DbTable_Categorie;
             $DB_famille = new Model_DbTable_Famille;
             $DB_classe = new Model_DbTable_Classe;
+            $DB_classement = new Model_DbTable_Classement;
             $DB_type = new Model_DbTable_Type;
             $DB_typeactivite = new Model_DbTable_TypeActivite;
             $DB_commission = new Model_DbTable_Commission;
@@ -168,6 +169,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_CATEGORIE" => @$DB_categorie->find($informations->ID_CATEGORIE)->current()->LIBELLE_CATEGORIE,
                     "LIBELLE_FAMILLE" => @$DB_famille->find($informations->ID_FAMILLE)->current()->LIBELLE_FAMILLE,
                     "LIBELLE_CLASSE" => @$DB_classe->find($informations->ID_CLASSE)->current()->LIBELLE_CLASSE,
+                    "LIBELLE_CLASSEMENT" => @$DB_classement->find($informations->ID_CLASSEMENT)->current()->LIBELLE_CLASSEMENT,
                     "LIBELLE_TYPE_PRINCIPAL" => @$DB_type->find($informations->ID_TYPE)->current()->LIBELLE_TYPE,
                     "LIBELLE_TYPEACTIVITE_PRINCIPAL" => @$DB_typeactivite->find($informations->ID_TYPEACTIVITE)->current()->LIBELLE_ACTIVITE,
                     "LIBELLE_COMMISSION" => @$DB_commission->find($informations->ID_COMMISSION)->current()->LIBELLE_COMMISSION,
@@ -369,8 +371,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             "DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT" => "Surface emprise au sol (m²)",
             "DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT" => "Surface totale (m²)",
             "DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT" => "Surface accessible au public (m²)",
-            "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "SHON (m²)",
-            "DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT" => "SHOB (m²)",
+            "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "Surface de plancher (m²)",
             "DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT" => "Nombre de niveaux",
             "DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT" => "PBDN (m)",
             "DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT" => "Nombre de façades accessibles",
@@ -432,7 +433,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         );
 
         foreach ($etablissement->toArray() as $key => $value) {
-            if (preg_match('/DESCTECH/', $key)) {
+            if (preg_match('/DESCTECH/', $key) && strcmp('DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT', $key) != 0) {
                 $key_to_str = str_replace('DESCTECH_', '', $key);
                 $key_to_str = explode('_', $key_to_str);
                 $key_to_str = $key_to_str[0];
@@ -496,6 +497,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
         foreach($descriptifs_techniques as $key => $value) {
             $etablissement->$key = $value;
         }
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $cache->remove('etablissement_id_' . $id_etablissement);
 
         $etablissement->save();
     }
@@ -572,7 +575,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DB_etablissements_lies = new Model_DbTable_EtablissementLie;
         $DB_preventionniste = new Model_DbTable_EtablissementInformationsPreventionniste;
         $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        $DB_etablissementclassement = new Model_DbTable_EtablissementClassement;
 
         // On commence la transaction
         $db = Zend_Db_Table::getDefaultAdapter();
@@ -581,6 +583,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         try {
+            
+            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = ($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
+            
             $etablissement = $id_etablissement == null ? $DB_etablissement->createRow() : $DB_etablissement->find($id_etablissement)->current();
 
             if($date == '') {
@@ -692,10 +697,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 
                 // Zone
                 case 10:
-                    if ($data['ID_CLASSEMENT'] !== null && $etablissement->ID_ETABLISSEMENT !== null){
-                        $DB_etablissementclassement->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                        $DB_etablissementclassement->insert(array("ID_CLASSEMENT" => $data['ID_CLASSEMENT'], "ID_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT));
-                    }
+                    $informations->ID_CLASSEMENT = $data['ID_CLASSEMENT'];
                     break;
                 
             }
@@ -711,7 +713,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $informations->ID_STATUT = $data['ID_STATUT'];
             $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
             $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
-
+//var_dump($informations);exit();
             $informations->save();
 
             // Sauvegarde des préventionnistes
@@ -800,6 +802,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                         elseif($id_genre == 2 && $genre_enfant != 3) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
                         }
+                        elseif($genre_enfant == 1){
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne peut pas être un établissement enfant)', 500);
+                        }
                         elseif($genre_enfant == null) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
                         }
@@ -823,6 +828,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 elseif($id_genre == 3 && $genre_pere != 2) {
                     throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
+                }
+                elseif($id_genre == 1) {
+                    throw new Exception('Le type n\'est pas compatible (Un site ne peut pas avoir de père)', 500);
                 }
                 elseif($genre_pere == null) {
                     throw new Exception('Le père n\'est pas compatible (Les sites, habitation, IGH et EIC n\'ont pas de père)', 500);

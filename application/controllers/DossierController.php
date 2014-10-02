@@ -197,6 +197,11 @@ class DossierController extends Zend_Controller_Action
         //Récupération de la liste des avis pour la génération du select
         $DBlisteAvis = new Model_DbTable_Avis;
         $this->view->listeAvis = $DBlisteAvis->getAvis();
+        
+        // AUTORISATIONS CHANGEMENT AVIS DE LA COMMISSION
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+
+            $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
 
         if ($this->_getParam("idEtablissement")) {
             $this->view->idEtablissement = $this->_getParam("idEtablissement");
@@ -425,7 +430,8 @@ class DossierController extends Zend_Controller_Action
 
             //ICI RéCUPERATION DU LIBELLE DE LA COMMISSION !!!!!!!!!!! PUIS AFFICHAGE DANS LE INPUT !!!
             $this->view->commissionInfos = $DBdossierCommission->find($this->view->infosDossier['COMMISSION_DOSSIER'])->current();
-
+            $this->view->commissionInfosCommissionType = $model_typesDesCommissions->find($this->view->commissionInfos['ID_COMMISSIONTYPE'])->current();
+            
             //On récupère la liste de tous les champs que l'on doit afficher en fonction des natures
             //Si il y à plusieurs natures on les fait une par une pour savoir tous les champs à afficher
             $premiereNature = 1;
@@ -445,7 +451,9 @@ class DossierController extends Zend_Controller_Action
                 }
             }
             $this->view->afficherChamps = $afficherChamps;
-
+            
+            
+            
 			//On verifie les éléments masquant l'avis et la date de commission/visite pour les afficher ou non
 
 

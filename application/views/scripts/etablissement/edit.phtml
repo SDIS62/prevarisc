@@ -1,4 +1,4 @@
-<form id='etablissement' action='<?php echo $this->url(array('action' => $this->add ? 'add' : 'edit')) ?>' method='post' >
+<form id='etablissement' class="<?php echo $this->add ? 'add' : 'edit' ?>" action='<?php echo $this->url(array('action' => $this->add ? 'add' : 'edit')) ?>' method='post' >
 
     <?php if($this->add) : ?>
     <div class='pull-right' >
@@ -29,14 +29,14 @@
                     <dt>Identifiant</dt>
                     <dd>
                         <div>
-                             <input type='text' name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"]?>' />
+                             <input type='text' name='NUMEROID_ETABLISSEMENT' id='NUMEROID_INPUT' value='<?php echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"]?>' />
                         </div>
                     </dd>
 
                     <!-- Statut de l'établissement -->
                     <dt>Statut</dt>
                     <dd>
-                        <select name='ID_STATUT'>
+                        <select name='ID_STATUT' <?php echo ($this->is_allowed_change_statut)?"":"disabled" ?>>
                             <?php foreach( $this->DB_statut as $item ) : ?>
                                 <option value='<?php echo $item["ID_STATUT"] ?>' <?php if( $item["ID_STATUT"] == $this->etablissement['informations']["ID_STATUT"] ) echo "selected" ?> >
                                     <?php echo $item["LIBELLE_STATUT"] ?>
@@ -82,7 +82,8 @@
                 <dt class="champ_classement champs">Classement</dt>
                 <dd class="champ_classement champs">
                     <select name='ID_CLASSEMENT'>
-                        <?php foreach( $this->classement as $item ) : ?>
+                        <?php var_dump($this->DB_classement)?>
+                        <?php foreach( $this->DB_classement as $item ) : ?>
                             <option value='<?php echo $item["ID_CLASSEMENT"] ?>' <?php if( $item["ID_CLASSEMENT"] == $this->etablissement['informations']["ID_CLASSEMENT"] ) echo "selected" ?>>
                                 <?php echo $item["LIBELLE_CLASSEMENT"] ?>
                             </option>

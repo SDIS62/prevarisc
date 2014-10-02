@@ -1250,6 +1250,8 @@ CREATE TABLE `etablissement` (
   `DESCRIPTIF_DEROGATIONS_ETABLISSEMENT` text,
   `DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT` int(11) DEFAULT NULL,
   `DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT` int(11) DEFAULT NULL,
+  `DESCTECH_RISQUES_NATURELS_ETABLISSEMENT` text,
+  `DESCTECH_RISQUES_TECHNOLOGIQUES_ETABLISSEMENT` text,
   PRIMARY KEY (`ID_ETABLISSEMENT`),
   KEY `fk_etablissement_dossier1_idx` (`ID_DOSSIER_DONNANT_AVIS`),
   CONSTRAINT `fk_etablissement_dossier1` FOREIGN KEY (`ID_DOSSIER_DONNANT_AVIS`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -1379,6 +1381,7 @@ CREATE TABLE `etablissementinformations` (
   `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
   `ID_GENRE` int(2) unsigned NOT NULL,
   `ID_CLASSE` int(11) unsigned DEFAULT NULL,
+  `ID_CLASSEMENT` int(11) unsigned DEFAULT NULL,
   `ID_FAMILLE` int(11) DEFAULT NULL,
   `ID_CATEGORIE` int(1) unsigned DEFAULT NULL,
   `ID_TYPE` int(10) unsigned DEFAULT NULL,
@@ -1390,6 +1393,7 @@ CREATE TABLE `etablissementinformations` (
   KEY `fk_etablissementinformations_etablissement1_idx` (`ID_ETABLISSEMENT`),
   KEY `fk_etablissementinformations_genre1_idx` (`ID_GENRE`),
   KEY `fk_etablissementinformations_classe1_idx` (`ID_CLASSE`),
+  KEY `fk_etablissementinformations_classement1_idx` (`ID_CLASSEMENT`),
   KEY `fk_etablissementinformations_famille1_idx` (`ID_FAMILLE`),
   KEY `fk_etablissementinformations_categorie1_idx` (`ID_CATEGORIE`),
   KEY `fk_etablissementinformations_type1_idx` (`ID_TYPE`),
@@ -1398,6 +1402,7 @@ CREATE TABLE `etablissementinformations` (
   KEY `fk_etablissementinformations_statut1_idx` (`ID_STATUT`),
   CONSTRAINT `fk_etablissementinformations_categorie1` FOREIGN KEY (`ID_CATEGORIE`) REFERENCES `categorie` (`ID_CATEGORIE`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `fk_etablissementinformations_classe1` FOREIGN KEY (`ID_CLASSE`) REFERENCES `classe` (`ID_CLASSE`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_classement1` FOREIGN KEY (`ID_CLASSEMENT`) REFERENCES `classement` (`ID_CLASSEMENT`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `fk_etablissementinformations_commission1` FOREIGN KEY (`ID_COMMISSION`) REFERENCES `commission` (`ID_COMMISSION`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `fk_etablissementinformations_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_etablissementinformations_famille1` FOREIGN KEY (`ID_FAMILLE`) REFERENCES `famille` (`ID_FAMILLE`) ON DELETE NO ACTION ON UPDATE CASCADE,
@@ -1426,7 +1431,7 @@ DROP TABLE IF EXISTS `etablissementinformationsplan`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `etablissementinformationsplan` (
   `ID_ETABLISSEMENTINFORMATIONSPLAN` bigint(20) NOT NULL AUTO_INCREMENT,
-  `NUMERO_ETABLISSEMENTPLAN` varchar(50) DEFAULT NULL,
+  `NUMERO_ETABLISSEMENTPLAN` text DEFAULT NULL,
   `DATE_ETABLISSEMENTPLAN` date NOT NULL,
   `MISEAJOUR_ETABLISSEMENTPLAN` tinyint(1) DEFAULT NULL,
   `ID_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned NOT NULL,
@@ -2630,6 +2635,26 @@ INSERT INTO `utilisateurinformations` VALUES (1,'ROOT','ROOT',NULL,NULL,NULL,NUL
 /*!40000 ALTER TABLE `utilisateurinformations` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+-- -----------------------------------------------------
+-- Table `classement`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `classement` ;
+
+CREATE TABLE IF NOT EXISTS `classement` (
+  `ID_CLASSEMENT` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_CLASSEMENT` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`ID_CLASSEMENT`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+LOCK TABLES `classement` WRITE;
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(1, "Artisanale");
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(2, "Commerciale");
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(3, "Industrielle");
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(4, "Lotissement");
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(5, "Autre");
+UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
