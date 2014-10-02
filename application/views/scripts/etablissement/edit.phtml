@@ -36,9 +36,15 @@
                     <!-- Statut de l'établissement -->
                     <dt>Statut</dt>
                     <dd>
-                        <select name='ID_STATUT' <?php echo ($this->is_allowed_change_statut)?"":"disabled" ?>>
+                        <select name='ID_STATUT' <?php if (!$this->is_allowed_change_statut) echo "readonly" ?>>
                             <?php foreach( $this->DB_statut as $item ) : ?>
-                                <option value='<?php echo $item["ID_STATUT"] ?>' <?php if( $item["ID_STATUT"] == $this->etablissement['informations']["ID_STATUT"] ) echo "selected" ?> >
+                                <option value='<?php echo $item["ID_STATUT"] ?>' 
+                                    <?php if( $item["ID_STATUT"] == $this->etablissement['informations']["ID_STATUT"]): ?>
+                                        selected
+                                    <?php elseif (!$this->is_allowed_change_statut): ?>
+                                        disabled
+                                    <?php endif ?>
+                                >
                                     <?php echo $item["LIBELLE_STATUT"] ?>
                                 </option>
                             <?php endforeach ?>
@@ -292,7 +298,7 @@
         <div class='span6'>
             <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
                 <div id='geoportail-container' class='hide' style="height: 350px; max-height: 350px;"></div>
-                <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
+                <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
                 <script>
                     /*
                     $(document).ready(function() {
@@ -906,7 +912,7 @@
         $('#adresse-modal #geolocme').click(function() {
             element = $(this);
             $.ajax({
-                url: "http://nominatim.openstreetmap.org/search",
+                url: "//nominatim.openstreetmap.org/search",
                 dataType: 'json',
                 timeout: 10000,
                 data: {
