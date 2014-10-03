@@ -57,10 +57,10 @@
                     $this->select
                          ->from(array("e" => "etablissement"), array("NUMEROID_ETABLISSEMENT", "DUREEVISITE_ETABLISSEMENT", "NBPREV_ETABLISSEMENT"))
                          ->columns(array(
-                            "NB_ENFANTS" => "( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
+                            "NB_ENFANTS" => new Zend_Db_Expr("( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
                                 FROM etablissement
                                 INNER JOIN etablissementlie ON etablissement.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT
-                                WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"
+                                WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)")
                          ))
                          ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                          ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER"))
@@ -86,25 +86,25 @@
                     $this->select
                          ->from(array("d" => "dossier"))
                          ->columns(array(
-                            "NB_DOSS_LIES" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                            "NB_DOSS_LIES" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
-                                WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)",
-                            "NB_URBA" => "( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
+                                WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                            "NB_URBA" => new Zend_Db_Expr("( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
                                 FROM dossier
                                 INNER JOIN dossierdocurba ON dossierdocurba.ID_DOSSIER = dossier.ID_DOSSIER
                                 WHERE dossier.ID_DOSSIER = d.ID_DOSSIER
-                                LIMIT 1)",
-                            "ALERTE_RECEPTION_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                                LIMIT 1)"),
+                            "ALERTE_RECEPTION_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
                                 INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                                WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)",
-                            "ECHEANCIER_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER1)
+                                WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                            "ECHEANCIER_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER1)
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
                                 INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                                WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)",
+                                WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)"),
                          ))
                          ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
                          ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)

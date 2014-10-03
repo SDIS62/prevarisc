@@ -1,7 +1,7 @@
 <?php foreach ($this->listePj as $pj) : ?>
 <tr>   
     <!-- Lien de la pièce jointe -->
-    <td><a href='<?php echo $this->path . $pj['ID_PIECEJOINTE'] . $pj['EXTENSION_PIECEJOINTE'] ?>' <?php if ($pj['DESCRIPTION_PIECEJOINTE']): ?> title='<?php echo $pj['DESCRIPTION_PIECEJOINTE'] ?>' <?php endif ?> target='_blank' ><?php echo $pj['NOM_PIECEJOINTE'] ?></a></td>
+    <td><a href='<?php echo $this->url(array('controller' => 'piece-jointe', 'action' => 'get', 'id' => $this->id, 'idpj' => $pj['ID_PIECEJOINTE'], 'type' => $this->type)) ?>' <?php if ($pj['DESCRIPTION_PIECEJOINTE']): ?> title='<?php echo $pj['DESCRIPTION_PIECEJOINTE'] ?>' <?php endif ?> target='_blank' ><?php echo $pj['NOM_PIECEJOINTE'] ?></a></td>
     
     <!-- Description -->
     <td><?php echo nl2br(str_replace("<br />", "" ,$pj['DESCRIPTION_PIECEJOINTE'])) ?></td>

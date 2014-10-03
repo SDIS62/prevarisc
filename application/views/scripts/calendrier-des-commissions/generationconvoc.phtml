@@ -157,8 +157,11 @@ foreach($this->informationsMembre as $val => $membre){
 			}
 			$odf->mergeSegment($villeODF);
 
-			$idPj = savePj($this->idComm ,$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']);
-			$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
+			$nouvellePJ = savePj($this->idComm ,$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']);
+                        
+                        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+                        $path = $store->getFilePath($nouvellePJ, 'dateCommission', $this->idComm, true);
+			$odf->saveToDisk($path);
 		
 			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>La convocation pour le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']." à bien été généré</span><br/><br/><br/>";
 
@@ -246,9 +249,11 @@ foreach($this->informationsMembre as $val => $membre){
 			$grpLoop->merge();
 			$odf->mergeSegment($grpLoop);
 
-			$idPj = savePj($this->idComm ,$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']);
+			$nouvellePJ = savePj($this->idComm ,$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']);
 			
-			$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");
+                        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+                        $path = $store->getFilePath($nouvellePJ, 'dateCommission', $this->idComm, true);
+			$odf->saveToDisk($path);
 			
 			echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>La convocation pour le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']." à bien été généré</span><br/><br/><br/>";
 		}
@@ -285,7 +290,7 @@ function savePj($dateCommId, $membreNom){
 	$linkPj->ID_PIECEJOINTE = $nouvellePJ->ID_PIECEJOINTE;
 	$linkPj->save();
 	
-	return $nouvellePJ->ID_PIECEJOINTE;
+	return $nouvellePJ;
 }
 
 ?>

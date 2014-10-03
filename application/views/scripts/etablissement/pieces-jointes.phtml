@@ -28,7 +28,7 @@
 				<?php if(!in_array($piecejointe['EXTENSION_PIECEJOINTE'], array(".jpg", ".jpeg", ".png", ".gif"))) : ?>
 				<tr>   
 					<td>
-						<a href='/data/uploads/pieces-jointes/<?php echo $piecejointe['ID_PIECEJOINTE'] . $piecejointe['EXTENSION_PIECEJOINTE'] ?>' target='_blank' >
+						<a href='<?php echo $this->url(array('controller' => 'piece-jointe', 'action' => 'get', 'idpj' => $piecejointe['ID_PIECEJOINTE'], 'type' => 'etablissement')) ?>' target='_blank' >
 							<?php echo $piecejointe['NOM_PIECEJOINTE'] ?>
 						</a>
 					</td>
@@ -50,8 +50,9 @@
 		<?php foreach ($this->pieces_jointes as $piecejointe) : ?>
 			<?php if(in_array($piecejointe['EXTENSION_PIECEJOINTE'], array(".jpg", ".jpeg", ".png", ".gif"))) : ?>
 			<li class="span3">
-				<a href='/data/uploads/pieces-jointes/<?php echo $piecejointe['ID_PIECEJOINTE'] . $piecejointe['EXTENSION_PIECEJOINTE'] ?>' class="thumbnail">
-					<img src="/data/uploads/pieces-jointes/miniatures/<?php echo $piecejointe['ID_PIECEJOINTE'] . '.jpg'?>" alt="">
+				<a href='<?php echo $this->store->getURLPath($piecejointe, 'etablissement', $this->etablissement['general']['ID_ETABLISSEMENT']); ?>' class="thumbnail">
+                                        <?php $piecejointe['EXTENSION_PIECEJOINTE'] = '.jpg'; ?> 
+					<img src="<?php echo $this->store->getURLPath($piecejointe, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']); ?>" alt="">
 					<h5><?php echo $piecejointe['NOM_PIECEJOINTE'] ?></h5>
 					<p><?php echo $piecejointe['DESCRIPTION_PIECEJOINTE'] ?></p>
 				</a>

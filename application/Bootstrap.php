@@ -12,7 +12,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $this->loadThirdPartyPlugins();
         
         $this->loadActionHelpers();
-
+        
         return parent::run();
     }
     
@@ -118,6 +118,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     protected function _initSession()
     {
         Zend_Session::setOptions(array());
+    }
+    
+    public function _initDataStore() {
+        
+        $options = $this->getOption('resources');
+        $options = $options['dataStore'];
+        $className = $options['adapter'];
+        
+        return new $className($options);
     }
     
 }

@@ -513,7 +513,7 @@
                 // On check si on veut uploader un document odt
                 if ($string_extension == ".odt") {
 
-                    if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], REAL_DATA_PATH . "/uploads/documents_commission/" . $_FILES['COURRIER']['name']) ) {
+                    if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], REAL_DATA_PATH . DS . "uploads" . DS . "documents_commission" . DS . $_FILES['COURRIER']['name']) ) {
 
                          // Les modèles
                         $model_commission = new Model_DbTable_Commission;
@@ -524,7 +524,7 @@
                         // Si il y a déjà un courrier, on le supprime
                         if ($commission->DOCUMENT_CR != null) {
 
-                            unlink(REAL_DATA_PATH . "/uploads/documents_commission/" . $commission->DOCUMENT_CR);
+                            unlink(REAL_DATA_PATH . DS . "uploads" . DS . "documents_commission" . DS . $commission->DOCUMENT_CR);
                         }
 
                         // On met à jour le libellé du courrier modifié
@@ -618,7 +618,7 @@
                         // Si il y a déjà un courrier, on le supprime
                         if ($row_membre->$row != null) {
 
-                            unlink(REAL_DATA_PATH . DS . "uploads" . DS "courriers" . DS . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
+                            unlink(REAL_DATA_PATH . DS . "uploads" . DS . "courriers" . DS . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
                         }
 
                         // On met à jour le libellé du courrier modifié

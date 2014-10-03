@@ -93,6 +93,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         $dbCommission = new Model_DbTable_Commission;
         $infosCommission = $dbCommission->find($infosDateComm['COMMISSION_CONCERNE'])->current();
 
+        $dbCommissionType = new Model_DbTable_CommissionType;
+        $infosCommissionType = $dbCommissionType->find($infosCommission['ID_COMMISSIONTYPE'])->current();
+        
         //récuperation de tout les dossiers affectés à cette date de commission
         $dbDossierAffectation = new Model_DbTable_DossierAffectation;
 
@@ -125,7 +128,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
         $this->view->infosDateComm = $infosDateComm;
         $this->view->infosCommission = $infosCommission;
-		
+        $this->view->infosCommissionType = $infosCommissionType;
 
         $this->view->listeDossierNonAffect = $listeDossiersNonAffect;
     }
@@ -1253,7 +1256,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$this->view->dateCommission = $this->_getParam("dateCommission");
 
 		$dbDossierAffect = new Model_DbTable_DossierAffectation;
-        $listeDossiersAffect = $dbDossierAffect->getDossierAffect($this->_getParam('dateCommission'));
+                $listeDossiersAffect = $dbDossierAffect->getDossierAffect($this->_getParam('dateCommission'));
 		$listeDossierNonAffect = $dbDossierAffect->getDossierNonAffect($this->_getParam('dateCommission'));
 		$listeDossiers = array_merge($listeDossiersAffect, $listeDossierNonAffect);
 
@@ -1276,11 +1279,12 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		//On supprime toute les pièces jointes physiquement et dans la base de données
 		$dbDateCommPj = new Model_DbTable_DateCommissionPj;
 		$listePj = $dbDateCommPj->getPjInfos($this->_getParam('dateCommission'));
-		$path = REAL_DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;
+                $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
 		foreach($listePj as $pj)
 		{
-			if( file_exists($path . $pj['ID_PIECEJOINTE'].$pj['EXTENSION_PIECEJOINTE']) )
-				unlink($path . $pj['ID_PIECEJOINTE'].$pj['EXTENSION_PIECEJOINTE']);
+                    $path = $store->getFilePath($pj, 'dateCommission', $this->_getParam("dateCommission"));
+                    if(file_exists($path))
+                        unlink($path);
 		}
 
 		$whereDateCommPj = $dbDateCommPj->getAdapter()->quoteInto('ID_DATECOMMISSION = ?', $this->_getParam('dateCommission'));

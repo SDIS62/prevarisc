@@ -24,7 +24,7 @@
 		<?php foreach ($this->pieces_jointes as $piecejointe) : ?>
 			<tr>   
 				<td>
-					<a href='/data/uploads/pieces-jointes/<?php echo $piecejointe['ID_PIECEJOINTE'] . $piecejointe['EXTENSION_PIECEJOINTE'] ?>' target='_blank' >
+                                        <a href='<?php echo $this->url(array('controller' => 'etablissement', 'action' => 'get-piece-jointe', 'idpj' => $piecejointe['ID_PIECEJOINTE'], 'type' => 'etablissement')) ?>' target='_blank' >
 						<?php echo $piecejointe['NOM_PIECEJOINTE'] ?>
 					</a>
 				</td>
@@ -63,11 +63,10 @@
         });
 
         var myDropzone = new Dropzone("#dropzone", { 
-            url: "<?php echo $this->url(array('action' => 'add-piece-jointe')) ?>?mise_en_avant=0",
+            url: "<?php echo $this->url(array('action' => 'add-piece-jointe')) ?>",
             paramName: "file"
         });
         myDropzone.on("success", function(file, responseText) {
-            console.log(responseText);
             if (responseText !== undefined) {
                 $('#fiche_etablissement').empty().append(responseText);
             } else
