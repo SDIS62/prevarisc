@@ -6,7 +6,7 @@ class PieceJointeController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->path = REAL_DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;
+        $this->path = REAL_DATA_PATH . DS . "uploads" . DS . "pieces-jointes" . DS;
 
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
@@ -45,7 +45,7 @@ class PieceJointeController extends Zend_Controller_Action
         // On envoi la liste des PJ dans la vue
         $this->view->listePj = $listePj;
 
-        $this->view->path = DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR;;
+        $this->view->path = DATA_PATH . "/uploads/pieces-jointes/";
 
     }
 
@@ -264,7 +264,7 @@ class PieceJointeController extends Zend_Controller_Action
 
              // Données de la pj
              $this->view->html = $this->view->partial("piece-jointe/display.phtml", array (
-                 "path" => DATA_PATH . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . "pieces-jointes" . DIRECTORY_SEPARATOR,
+                 "path" => DATA_PATH . "/uploads/pieces-jointes/",
                  "listePj" => $listePj,
                  "droit_ecriture" => true,
                  "type" => $this->_request->type,

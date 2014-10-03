@@ -4,15 +4,15 @@ date_default_timezone_set('Europe/Paris');
 
 // Définition du chemin vers le dossier application/
 defined('APPLICATION_PATH')
-    || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
+    || define('APPLICATION_PATH', realpath(getenv('APPLICATION_PATH') ? getenv('APPLICATION_PATH') : dirname(__FILE__) . '/../application'));
 
 // Define path to application directory
 defined('DATA_PATH')
-    || define('DATA_PATH', '/data');
+    || define('DATA_PATH', getenv('DATA_PATH') ?  getenv('DATA_PATH') : '/data');
 
 // Define path to application directory
 defined('REAL_DATA_PATH')
-    || define('REAL_DATA_PATH', realpath(dirname(__FILE__) . '/../public/data'));
+    || define('REAL_DATA_PATH', realpath(getenv('REAL_DATA_PATH') ? getenv('REAL_DATA_PATH') : dirname(__FILE__) . '/../public/data'));
 
 // Création d'une constante plus courte qui est égale à DIRECTORY_SEPARATOR
 defined('DS')

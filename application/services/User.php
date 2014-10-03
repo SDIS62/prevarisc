@@ -332,7 +332,7 @@ class Service_User
             // Gestion de l'avatar
             if($avatar !== null) {
 
-                $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'avatars' . DS;
+                $path = REAL_DATA_PATH . DS . 'uploads' . DS . 'avatars' . DS;
                 $extension = strtolower(strrchr($avatar['name'], "."));
 
                 GD_Resize::run($avatar["tmp_name"], $path . "small" . DS . $user->ID_UTILISATEUR . ".jpg", 25, 25);

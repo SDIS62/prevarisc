@@ -710,7 +710,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             $informations->LIBELLE_ETABLISSEMENTINFORMATIONS = $data['LIBELLE_ETABLISSEMENTINFORMATIONS'];
             $informations->ID_GENRE = $id_genre;
-            $informations->ID_STATUT = $data['ID_STATUT'];
+            $informations->ID_STATUT = isset($data['ID_STATUT']) ? $data['ID_STATUT'] : 1;
             $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
             $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
 //var_dump($informations);exit();
@@ -1049,7 +1049,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DBpieceJointe = new Model_DbTable_PieceJointe;
         $DBitem = new Model_DbTable_EtablissementPj;
 
-        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
+        $path = REAL_DATA_PATH . DS . 'uploads' . DS . 'pieces-jointes' . DS;
 
         $pj = $DBpieceJointe->find($id_pj)->current();
 
