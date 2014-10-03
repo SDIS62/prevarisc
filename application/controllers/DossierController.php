@@ -1652,7 +1652,7 @@ class DossierController extends Zend_Controller_Action
 		$this->view->numWinPrev = $etablissement['NUMEROID_ETABLISSEMENT'];
 		$this->view->numTelEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
 		$this->view->numFaxEtab = $etablissement['FAX_ETABLISSEMENT'];
-                $this->view->mailEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
+                $this->view->mailEtab = $etablissement['COURRIEL_ETABLISSEMENT'];
 
 		//Informations de l'établissement (catégorie, effectifs, activité / type principal)
 		$object_informations = $model_etablissement->getInformations($idEtab);
