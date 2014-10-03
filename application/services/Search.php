@@ -547,7 +547,7 @@ class Service_Search
             }
 
             // Gestion des pages et du count
-            $select->limitPage($page, $count > 100 ? 100 : $count);
+            $select->limitPage($page, $count);
 
             // Construction du résultat
             $rows_counter = new Zend_Paginator_Adapter_DbSelect($select);

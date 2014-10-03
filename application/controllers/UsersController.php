@@ -9,8 +9,8 @@ class UsersController extends Zend_Controller_Action
         $service_user = new Service_User;
         $service_search = new Service_Search;
 
-        $this->view->users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, true, 100)['results'];
-        $this->view->inactives_users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, false, 100)['results'];
+        $this->view->users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, true, 1000)['results'];
+        $this->view->inactives_users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, false, 1000)['results'];
 
         $this->view->groupes = $service_user->getAllGroupes();
     }
@@ -57,7 +57,7 @@ class UsersController extends Zend_Controller_Action
         $service_adresse = new Service_Adresse;
 
         $this->view->commissions = $service_commission->getAll();
-        $this->view->groupements = $service_groupement->findAll();
+        $this->view->groupements = $service_groupement->findGroupementAndGroupementType();
         $this->view->fonctions = $service_user->getAllFonctions();
         $this->view->communes = $service_adresse->getAllCommunes();
         $this->view->groupes = $service_user->getAllGroupes();

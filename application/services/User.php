@@ -78,7 +78,11 @@ class Service_User
         // Définition des données types par profil
         switch($profil) {
           case 'Secrétariat':
-            $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse(5);
+
+            // Etablissements Sans Preventionniste
+            $erpSansPreventionniste = $dbEtablissement->listeERPSansPreventionniste();
+              
+            $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse(10);
             if(count($user['commissions']) > 0) {
               $dbDossierAffectation = new Model_DbTable_DossierAffectation;
               $dbDateCommission = new Model_DbTable_DateCommission;
@@ -91,8 +95,8 @@ class Service_User
                 $search->setCriteria("d.DIFFEREAVIS_DOSSIER", 1);
                 $dossiers = array_merge($search->run(false, null, false)->toArray(), $dossiers);
 
-                // Récupération de l'ordre du jour des 3 prochaines commissions
-                foreach($dbDateCommission->fetchAll("COMMISSION_CONCERNE = '" . $commission["ID_COMMISSION"] . "' AND DATE_COMMISSION >= NOW()", "DATE_COMMISSION ASC", 3, 0)->toArray() as $date) {
+                // Récupération de l'ordre du jour des prochaines commissions à J+15j
+                foreach($dbDateCommission->fetchAll("COMMISSION_CONCERNE = '" . $commission["ID_COMMISSION"] . "' AND DATE_COMMISSION >= NOW() AND DATE_COMMISSION <= NOW() + 1296000", "DATE_COMMISSION ASC")->toArray() as $date) {
                   $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($date["ID_DATECOMMISSION"]);
                   $listeDossiersAffect = $dbDossierAffectation->getDossierAffect($date["ID_DATECOMMISSION"]);
                   $odj = array_merge($listeDossiersNonAffect, $listeDossiersAffect);
@@ -141,8 +145,7 @@ class Service_User
             break;
 
           case 'Préventionniste':
-            // Etablissements Sans Preventionniste
-            $erpSansPreventionniste = $dbEtablissement->listeERPSansPreventionniste();
+            
             // Ets 1 - 4ème catégorie
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
@@ -173,7 +176,7 @@ class Service_User
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-            $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4"));
+            $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4", '7', '8', '9', '10'));
             $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
             $etablissements = array_unique($etablissements, SORT_REGULAR);

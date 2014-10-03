@@ -189,9 +189,6 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                         // Pour chaque ressources de la page, on check les permissions
                         $access_granted = false;
 
-                        // A ne pas uploader, pendant le dev :
-                        $access_granted = true;
-
                         if($page->get('controller') == 'etablissement') {
                             foreach($resources as $resource) {
                                 if($acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
