@@ -49,7 +49,7 @@ implements Plugin_Interface_DataStore {
      * @param type $linkedObjectId
      * @return type
      */
-    public function getBasePath($linkedObjectType, $linkedObjectId) {
+    public function getBasePath($piece_jointe, $linkedObjectType, $linkedObjectId) {
         
         $type = isset($this->types[$linkedObjectType]) ? $this->types[$linkedObjectType] : $linkedObjectType;
         
@@ -74,7 +74,7 @@ implements Plugin_Interface_DataStore {
      */
     public function getFilePath($piece_jointe, $linkedObjectType, $linkedObjectId, $createDirIfNotExists = false) {
         
-        $directory = $this->getBasePath($linkedObjectType, $linkedObjectId);
+        $directory = $this->getBasePath($piece_jointe, $linkedObjectType, $linkedObjectId);
         
         if ($createDirIfNotExists && !is_dir($directory) && !mkdir($directory, 0777, true)){
             throw new Exception('Cannot create base directory '.$directory);
