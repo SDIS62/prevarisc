@@ -125,6 +125,22 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                                 if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
                                 if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
                                 break;
+                            case 'camp':
+                                if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                break;
+                            case 'temp':
+                                if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                break;
+                            case 'iop':
+                                if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                break;
+                            case 'zone':
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = $groupements;
+                                if($resource_exploded[4] == '1') $resource_exploded[4] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                break;
                         }
 
                         $resource_imploded = implode($resource_exploded, '_');
@@ -179,7 +195,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                     // Récupération de la resource demandée par la page active
                     $resources = $this->getPageResources($page, $request);
-
+                    
                     // Récupération du privilège demandé par la page active
                     $privilege = $this->getPagePrivilege($page);
 
@@ -443,6 +459,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
             case '10':
                 $resource = 'etablissement_zone_';
+                $resource .= ($etablissement['informations']['ID_CLASSEMENT'] == null ? '0' : $etablissement['informations']['ID_CLASSEMENT'] . '-0') . '_';
                 $resource .= $groupements . '_';
                 $resource .= $communes;
                 break;

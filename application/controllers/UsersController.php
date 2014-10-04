@@ -239,7 +239,7 @@ class UsersController extends Zend_Controller_Action
         unset($this->view->genres[0]);
         $this->view->resources = $model_resource->fetchAll();
         $this->view->familles = $service_famille->getAll();
-        $this->view->classement = $service_genre->getClassements();
+        $this->view->classements = $service_genre->getClassements();
         $this->view->classes = $service_classe->getAll();
     }
 
@@ -334,7 +334,7 @@ class UsersController extends Zend_Controller_Action
                                 }
 
                                 $text = 'Habitation (';
-                                $text .= (is_array($this->_request->types) ? 'Familles ' . implode($array, '-') : 'Toutes les familles') . ' - ';
+                                $text .= (is_array($this->_request->familles) ? 'Familles ' . implode($array, '-') : 'Toutes les familles') . ' - ';
                                 $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
                                 $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
                                 $text .= ')';
@@ -414,12 +414,12 @@ class UsersController extends Zend_Controller_Action
                             
                             case '10':
                                 $name = 'etablissement_zone_';
-                                $name .= (is_array($this->_request->classement) ? implode($this->_request->classement, '-') : '0') . '_';
+                                $name .= (is_array($this->_request->classements) ? implode($this->_request->classements, '-') : '0') . '_';
                                 $name .= $this->_request->groupements . '_';
                                 $name .= $this->_request->commune;
                                 
-                                if(is_array($this->_request->classement)) {
-                                    $array = $this->_request->classement;
+                                if(is_array($this->_request->classements)) {
+                                    $array = $this->_request->classements;
                                     array_walk($array, function(&$val, $key) use(&$array){
                                         $service_genre = new Service_Genre;
                                         $tmp_classement = $service_genre->getClassements();
@@ -432,7 +432,7 @@ class UsersController extends Zend_Controller_Action
                                 }
                                 
                                 $text = 'Zone (';
-                                $text .= (is_array($this->_request->classes) ? 'Classes ' . implode($array, '-') : 'Toutes les classes') . ' - ';
+                                $text .= (is_array($this->_request->classements) ? 'Classes ' . implode($array, '-') : 'Tous les classements') . ' - ';
                                 $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
                                 $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
                                 $text .= ')';

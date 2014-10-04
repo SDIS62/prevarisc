@@ -33,118 +33,107 @@ class Service_User
      */
     public function getDashboardData($id_user)
     {
+        // Récupération des ACL
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $acl = unserialize($cache->load('acl'));
+        
         // Récupération de l'utilisateur & son profil
         $user = $this->find($id_user);
-        $profil = $user['infos']['LIBELLE_FONCTION'];
+        $profil = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
 
-        $etablissements = $commissions = $dossiers = $erpSansPreventionniste = $etablissementAvisDefavorable = $listeDesDossierDateCommissionEchu = $listeDesCourrierSansReponse = $prochainesCommission = $NbrDossiersAffect = $listeErpOuvertSansProchainesVisitePeriodiques = array();
+        $etablissements = 
+                $commissions = 
+                $dossiers = 
+                $erpSansPreventionniste = 
+                $etablissementAvisDefavorable = 
+                $listeDesDossierDateCommissionEchu = 
+                $listeDesCourrierSansReponse = 
+                $prochainesCommission = 
+                $NbrDossiersAffect = 
+                $commissionsUser =
+                $listeErpOuvertSansProchainesVisitePeriodiques = array();
 
-        $dateCommission = new Model_DbTable_DateCommission;
-        $prochainesCommission = $dateCommission->getNextCommission(time(), time() + 3600 * 24 * 15);
+        $dbDateCommission = new Model_DbTable_DateCommission;
         $dbEtablissement = new Model_DbTable_Etablissement;
-        $etablissementAvisDefavorable = $dbEtablissement->listeDesERPSousAvisDefavorable();
         $dbDossier = new Model_DbTable_Dossier ;
-        $listeDesDossierDateCommissionEchu = $dbDossier->listeDesDossierDateCommissionEchu();
         $dbDossierAffectation = new Model_DbTable_DossierAffectation;
+        $service_etablissement = new Service_Etablissement;
+            
+        foreach($user['commissions'] as $commission) {
+            $commissionsUser[] = $commission["ID_COMMISSION"];
+        }
+        
+        if ($acl->isAllowed($profil, "commission", "lecture_commission")) {
+            $days = getenv('PREVARISC_DASHBOARD_NEXT_COMMISSIONS_DAYS') ? (int) getenv('PREVARISC_DASHBOARD_NEXT_COMMISSIONS_DAYS')  : 15;
+            $prochainesCommission = $dbDateCommission->getNextCommission($commissionsUser, time(), time() + 3600 * 24 * $days);
+        }
+        
+        if ($acl->isAllowed($profil, "dashboard", "view_ets_avis_defavorable")) {
+            $etablissementAvisDefavorable = $dbEtablissement->listeDesERPSousAvisDefavorable($commissionsUser);
+        }
+        
+        if ($acl->isAllowed($profil, "dashboard", "view_doss_sans_avis")) {
+            $days = getenv('PREVARISC_DASHBOARD_DOSSIERS_SANS_AVIS_DAYS') ? (int) getenv('PREVARISC_DASHBOARD_DOSSIERS_SANS_AVIS_DAYS')  : 15;
+            $listeDesDossierDateCommissionEchu = $dbDossier->listeDesDossierDateCommissionEchu($commissionsUser, $days);
+        }
+        
+        //Liste des Erp sans commission périodique alors que c'est ouvert
+        if ($acl->isAllowed($profil, "dashboard", "view_ets_ouverts_sans_prochaine_vp")) {
+            $listeErpOuvertSansProchainesVisitePeriodiques = $dbEtablissement->listeErpOuvertSansProchainesVisitePeriodiques($commissionsUser);
+        }
+        
+         // Courriers sans réponse depuis N jours
+        if ($acl->isAllowed($profil, "dashboard", "view_courrier_sans_reponse")) {
+            $days = getenv('PREVARISC_DASHBOARD_COURRIER_SANS_REPONSE_DAYS') ? (int) getenv('PREVARISC_DASHBOARD_COURRIER_SANS_REPONSE_DAYS')  : 10;
+            $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse($days);
+        }  
+        
+        // Etablissements Sans Preventionniste
+        if ($acl->isAllowed($profil, "dashboard", "view_ets_sans_preventionniste")) {
+            $erpSansPreventionniste = $dbEtablissement->listeERPSansPreventionniste();
+        }
+        
+        // Dossiers avec avis différé
+        if ($acl->isAllowed($profil, "dashboard", "view_doss_avis_differe")) {
+            $dossiers = array_merge($dbDossier->listeDossierAvecAvisDiffere($commissionsUser), $dossiers);
+        }
+        
+        // Etablissements sous avis défavorables sur la commune de l'utilisateur
+        if($user["NUMINSEE_COMMUNE"] != null) {
+            if ($acl->isAllowed($profil, "dashboard", "view_ets_avis_defavorable_sur_commune")) {
+                $etablissementAvisDefavorable = array_merge($dbEtablissement->listeDesERPSousAvisDefavorableSurCommune($user["NUMINSEE_COMMUNE"] ), $etablissementAvisDefavorable);
+            }
+        }
+        
+        // on récupère pour chaque prochaine commission le nombre de dossiers affectés
         foreach($prochainesCommission as $commissiondujour)
         {
             //Si on prend en compte les heures on récupère uniquement les dossiers n'ayant pas d'heure de passage
             $listeDossiersAffect = $dbDossierAffectation->getListDossierAffect($commissiondujour['ID_DATECOMMISSION']);
-            $dbDossier = new Model_DbTable_Dossier;
-            $service_etablissement = new Service_Etablissement;
-            $nbrdossier=0;
-            $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = 0;
-                foreach($listeDossiersAffect as $val => $ue)
-                {
-                    //On recupere la liste des établissements qui concernent le dossier
-                    $listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
-                     //on recupere la liste des infos des établissement
-                    if($nbrdossier == 0)
-                    {
-                       $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = 0;
-                    }
-                    if(count($listeEtab) > 0)
-                    {  $nbrdossier++;
-                       $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = $nbrdossier ;
-                    }
-               }
-        }
-
-        //Liste des Erp sans commission périodique alors que c'est ouvert
-         $listeErpOuvertSansProchainesVisitePeriodiques = $dbEtablissement->listeErpOuvertSansProchainesVisitePeriodiques();
-
-
-
-        // Définition des données types par profil
-        switch($profil) {
-          case 'Secrétariat':
-
-            // Etablissements Sans Preventionniste
-            $erpSansPreventionniste = $dbEtablissement->listeERPSansPreventionniste();
-              
-            $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse(10);
-            if(count($user['commissions']) > 0) {
-              $dbDossierAffectation = new Model_DbTable_DossierAffectation;
-              $dbDateCommission = new Model_DbTable_DateCommission;
-
-              foreach($user['commissions'] as $commission) {
-                // Dossiers avec avis différé
-                $search = new Model_DbTable_Search;
-                $search->setItem("dossier");
-                $search->setCriteria("d.COMMISSION_DOSSIER", $commission["ID_COMMISSION"]);
-                $search->setCriteria("d.DIFFEREAVIS_DOSSIER", 1);
-                $dossiers = array_merge($search->run(false, null, false)->toArray(), $dossiers);
-
-                // Récupération de l'ordre du jour des prochaines commissions à J+15j
-                foreach($dbDateCommission->fetchAll("COMMISSION_CONCERNE = '" . $commission["ID_COMMISSION"] . "' AND DATE_COMMISSION >= NOW() AND DATE_COMMISSION <= NOW() + 1296000", "DATE_COMMISSION ASC")->toArray() as $date) {
-                  $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($date["ID_DATECOMMISSION"]);
-                  $listeDossiersAffect = $dbDossierAffectation->getDossierAffect($date["ID_DATECOMMISSION"]);
-                  $odj = array_merge($listeDossiersNonAffect, $listeDossiersAffect);
-                  $odj = array_unique($odj, SORT_REGULAR);
-                  $commissions[] = array("name" => $commission["LIBELLE_COMMISSION"] . ' - ' . $date['LIBELLE_DATECOMMISSION'], "date" => $date["DATE_COMMISSION"], "heure" => $date["HEUREDEB_COMMISSION"] . ' - ' . $date["HEUREFIN_COMMISSION"], "odj" => $odj);
+            $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = array(
+                'total' => 0,
+                'nonVerrouilles' => 0,
+            );
+            
+            foreach($listeDossiersAffect as $ue)
+            {
+                $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']]['total']++;
+                if (!$ue['VERROU_DOSSIER']) {
+                    $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']]['nonVerrouilles']++;
                 }
-              }
-            }
-
-            break;
-
-          case 'Préfet':
-            $search = new Model_DbTable_Search;
-            $search->setItem("etablissement");
-            $search->setCriteria("avis.ID_AVIS", 2);
-            $etablissements = $search->run(false, null, false)->toArray();
-
-            if(count($user['commissions']) > 0) {
-
-              $dbDossierAffectation = new Model_DbTable_DossierAffectation;
-              $dbDateCommission = new Model_DbTable_DateCommission;
-
-              foreach($user['commissions'] as $commission) {
-                // Récupération de l'ordre du jour des 3 prochaines commissions
-                foreach($dbDateCommission->fetchAll("COMMISSION_CONCERNE = '" . $commission["ID_COMMISSION"] . "' AND DATE_COMMISSION >= NOW()", "DATE_COMMISSION ASC", 3, 0)->toArray() as $date) {
-                  $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($date["ID_DATECOMMISSION"]);
-                  $listeDossiersAffect = $dbDossierAffectation->getDossierAffect($date["ID_DATECOMMISSION"]);
-                  $odj = array_merge($listeDossiersNonAffect, $listeDossiersAffect);
-                  $odj = array_unique($odj, SORT_REGULAR);
-                  $commissions[] = array("name" => $commission["LIBELLE_COMMISSION"] . ' - ' . $date['LIBELLE_DATECOMMISSION'], "date" => $date["DATE_COMMISSION"], "heure" => $date["HEUREDEB_COMMISSION"] . ' - ' . $date["HEUREFIN_COMMISSION"], "odj" => $odj);
-                }
-              }
-            }
-
-            break;
-
-          case 'Maire':
-            if($user["NUMINSEE_COMMUNE"] != null) {
-              $search = new Model_DbTable_Search;
-              $search->setItem("etablissement");
-              $search->setCriteria("etablissementadresse.NUMINSEE_COMMUNE", $user["NUMINSEE_COMMUNE"]);
-              $search->setCriteria("avis.ID_AVIS", 2);
-              $etablissements = $search->run(false, null, false)->toArray();
-            }
-
-            break;
-
-          case 'Préventionniste':
+           }
+           
+           
+           // En doublons avec la partie précédente, à harmoniser
+           $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($commissiondujour["ID_DATECOMMISSION"]);
+           $listeDossiersAffect = $dbDossierAffectation->getDossierAffect($commissiondujour["ID_DATECOMMISSION"]);
+           $odj = array_merge($listeDossiersNonAffect, $listeDossiersAffect);
+           $odj = array_unique($odj, SORT_REGULAR);
+           $commissions[] = array("name" => $commission["LIBELLE_COMMISSION"] . ' - ' . $commissiondujour['LIBELLE_DATECOMMISSION'], "date" => $commissiondujour["DATE_COMMISSION"], "heure" => $commissiondujour["HEUREDEB_COMMISSION"] . ' - ' . $commissiondujour["HEUREFIN_COMMISSION"], "odj" => $odj);
+        }   
+        
+        // Etablissements suivis
+        if ($acl->isAllowed($profil, "dashboard", "view_ets_suivis")) {
             
             // Ets 1 - 4ème catégorie
             $search = new Model_DbTable_Search;
@@ -172,7 +161,7 @@ class Service_User
             $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
             $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
-            // EIC - IGH - HAB
+            // EIC - IGH - HAB - Autres
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
@@ -182,21 +171,20 @@ class Service_User
             $etablissements = array_unique($etablissements, SORT_REGULAR);
 
             // Dossiers avec avis différé
-            $service_etablissement = new Service_Etablissement;
-            $dossiers = array();
-            foreach($etablissements as $etablissement) {
-              $dossiers_ets = $service_etablissement->getDossiers($etablissement['ID_ETABLISSEMENT']);
-              $dossiers_merged = $dossiers_ets['etudes'];
-              $dossiers_merged = array_merge($dossiers_merged, $dossiers_ets['visites']);
-              $dossiers_merged = array_merge($dossiers_merged, $dossiers_ets['autres']);
-              foreach($dossiers_merged as $dossier_ets) {
-                if($dossier_ets['DIFFEREAVIS_DOSSIER'] == 1) {
-                  $dossiers[] = $dossier_ets;
+            if ($acl->isAllowed($profil, "dashboard", "view_doss_avis_differe")) {
+                $dossiers = array();
+                foreach($etablissements as $etablissement) {
+                  $dossiers_ets = $service_etablissement->getDossiers($etablissement['ID_ETABLISSEMENT']);
+                  $dossiers_merged = $dossiers_ets['etudes'];
+                  $dossiers_merged = array_merge($dossiers_merged, $dossiers_ets['visites']);
+                  $dossiers_merged = array_merge($dossiers_merged, $dossiers_ets['autres']);
+                  foreach($dossiers_merged as $dossier_ets) {
+                    if($dossier_ets['DIFFEREAVIS_DOSSIER'] == 1) {
+                      $dossiers[] = $dossier_ets;
+                    }
+                  }
                 }
-              }
             }
-
-            break;
         }
 
         return array(

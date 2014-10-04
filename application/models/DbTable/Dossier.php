@@ -271,19 +271,34 @@
             return $this->getAdapter()->fetchAll($select);
         }
         
-        public function listeDesDossierDateCommissionEchu()
+        public function listeDesDossierDateCommissionEchu($idsCommission, $sinceDays = 10)
         {
-                      
+            $ids = (array) $idsCommission;
             $select= "select ID_DOSSIER,OBJET_DOSSIER,LIBELLE_DATECOMMISSION,DATE_COMMISSION,LIBELLE_DOSSIERTYPE,DATEINSERT_DOSSIER from dossiertype,dossier,dossieraffectation,datecommission 
-                   WHERE dossier.AVIS_DOSSIER_COMMISSION = 0
+                   WHERE (dossier.AVIS_DOSSIER_COMMISSION = 0 OR dossier.AVIS_DOSSIER_COMMISSION IS NULL)
                    AND dossiertype.ID_DOSSIERTYPE = dossier.TYPE_DOSSIER
                    AND dossieraffectation.ID_DOSSIER_AFFECT = dossier.ID_DOSSIER
                    AND dossieraffectation.ID_DATECOMMISSION_AFFECT = datecommission.ID_DATECOMMISSION 
-                   AND DATEDIFF(datecommission.DATE_COMMISSION,CURDATE()) <= -10
+                   ".(count($ids) > 0 ? "AND datecommission.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
+                   AND DATEDIFF(datecommission.DATE_COMMISSION,CURDATE()) <= -".((int) $sinceDays)."
                    ";
             
                  
             return $this->getAdapter()->fetchAll($select);
+        }
+        
+        public function listeDossierAvecAvisDiffere($idsCommission) {
+            
+            $ids = (array) $idsCommission;
+            
+            // Dossiers avec avis différé
+            $search = new Model_DbTable_Search;
+            $search->setItem("dossier");
+            if (count($ids) > 0) {
+                $search->setCriteria("d.COMMISSION_DOSSIER", $ids);
+            }
+            $search->setCriteria("d.DIFFEREAVIS_DOSSIER", 1);
+            return $search->run(false, null, false)->toArray();
         }
         
         public function listeDesCourrierSansReponse($duree_en_jour = 5)
