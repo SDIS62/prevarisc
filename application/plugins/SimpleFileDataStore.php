@@ -144,7 +144,7 @@ implements Plugin_Interface_DataStore {
             case 'dossier':
                 $db = new Model_DbTable_EtablissementDossier;
                 $dossiers = $db->getEtablissementListe($linkedObjectId);
-                if ($dossiers && count($dossier) > 0) {
+                if ($dossiers && count($dossiers) > 0) {
                     $service = new Service_Etablissement;
                     $etablissement = $service->get($dossiers[0]['ID_ETABLISSEMENT']);
                     $tokens['%NUMEROID_ETABLISSEMENT%'] = $etablissement['general']['NUMEROID_ETABLISSEMENT'] ? $etablissement['general']['NUMEROID_ETABLISSEMENT'] : $linkedObjectId;
