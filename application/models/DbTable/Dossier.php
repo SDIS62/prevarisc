@@ -279,7 +279,7 @@
                    AND dossiertype.ID_DOSSIERTYPE = dossier.TYPE_DOSSIER
                    AND dossieraffectation.ID_DOSSIER_AFFECT = dossier.ID_DOSSIER
                    AND dossieraffectation.ID_DATECOMMISSION_AFFECT = datecommission.ID_DATECOMMISSION 
-                   ".(count($ids) > 0 ? "AND datecommission.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
+                   ".(count($ids) > 0 ? "AND datecommission.COMMISSION_CONCERNE IN (".implode(',', $ids).")" : "")."
                    AND DATEDIFF(datecommission.DATE_COMMISSION,CURDATE()) <= -".((int) $sinceDays)."
                    ";
             

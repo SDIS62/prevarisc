@@ -51,7 +51,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_activite = $service_typeactivite->getAll();
-        $this->view->DB_commission = $service_commission->getAll();
+        $this->view->DB_commission = $service_commission->getCommissionsAndTypes();
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
@@ -100,7 +100,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_activite = $service_typeactivite->getAll();
-        $this->view->DB_commission = $service_commission->getAll();
+        $this->view->DB_commission = $service_commission->getCommissionsAndTypes();
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();

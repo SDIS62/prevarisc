@@ -328,7 +328,7 @@
                       AND nd.ID_NATURE IN (21,26) 
                       AND ei.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations eii WHERE eii.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT )  
                       AND ei.ID_STATUT = 2
-                      ".(count($ids) > 0 ? "AND etablissementinformations.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
+                      ".(count($ids) > 0 ? "AND ei.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
                       GROUP BY ei.ID_ETABLISSEMENT 
                       ";
              return $this->getAdapter()->fetchAll($select);

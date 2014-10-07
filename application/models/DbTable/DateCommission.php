@@ -51,7 +51,7 @@
                 FROM datecommission d
                 LEFT JOIN commission c ON d.COMMISSION_CONCERNE = c.ID_COMMISSION
                 WHERE DATE_COMMISSION BETWEEN '".date('Y-m-d', $date)."' AND '".date('Y-m-d', $next_date)."'
-                ".(count($ids) > 0 ? "AND d.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
+                ".(count($ids) > 0 ? "AND d.COMMISSION_CONCERNE IN (".implode(',', $ids).")" : "")."
                 ORDER BY DATE_COMMISSION, HEUREDEB_COMMISSION";
             return $this->getAdapter()->fetchAll($select);
         }

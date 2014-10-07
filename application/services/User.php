@@ -112,14 +112,14 @@ class Service_User
             $listeDossiersAffect = $dbDossierAffectation->getListDossierAffect($commissiondujour['ID_DATECOMMISSION']);
             $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']] = array(
                 'total' => 0,
-                'nonVerrouilles' => 0,
+                'verrouilles' => 0,
             );
             
             foreach($listeDossiersAffect as $ue)
             {
                 $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']]['total']++;
-                if (!$ue['VERROU_DOSSIER']) {
-                    $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']]['nonVerrouilles']++;
+                if ($ue['VERROU_DOSSIER'] == 1) {
+                    $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']]['verrouilles']++;
                 }
            }
            
@@ -129,7 +129,13 @@ class Service_User
            $listeDossiersAffect = $dbDossierAffectation->getDossierAffect($commissiondujour["ID_DATECOMMISSION"]);
            $odj = array_merge($listeDossiersNonAffect, $listeDossiersAffect);
            $odj = array_unique($odj, SORT_REGULAR);
-           $commissions[] = array("name" => $commission["LIBELLE_COMMISSION"] . ' - ' . $commissiondujour['LIBELLE_DATECOMMISSION'], "date" => $commissiondujour["DATE_COMMISSION"], "heure" => $commissiondujour["HEUREDEB_COMMISSION"] . ' - ' . $commissiondujour["HEUREFIN_COMMISSION"], "odj" => $odj);
+           $dateFormatter = new DateTime($commissiondujour["DATE_COMMISSION"]);
+           $commissions[] = array(
+               "name" => $commission["LIBELLE_COMMISSION"] . ' - ' . $commissiondujour['LIBELLE_DATECOMMISSION'], 
+               "date" => $dateFormatter->format('d/m/Y'), 
+               "heure" => substr($commissiondujour["HEUREDEB_COMMISSION"], 0, 5) . ' - ' . substr($commissiondujour["HEUREFIN_COMMISSION"], 0, 5), 
+               "odj" => $odj,
+           );
         }   
         
         // Etablissements suivis

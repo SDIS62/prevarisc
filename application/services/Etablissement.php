@@ -23,7 +23,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             $DB_rubriques = new Model_DbTable_EtablissementInformationsRubrique;
             $DB_adresse = new Model_DbTable_EtablissementAdresse;
-            $DB_plans = new Model_DbTable_EtablissementInformationsPlan;
             $DB_genre = new Model_DbTable_Genre;
             $DB_categorie = new Model_DbTable_Categorie;
             $DB_famille = new Model_DbTable_Famille;
@@ -32,6 +31,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $DB_type = new Model_DbTable_Type;
             $DB_typeactivite = new Model_DbTable_TypeActivite;
             $DB_commission = new Model_DbTable_Commission;
+            $DB_commission_type = new Model_DbTable_CommissionType;
             $DB_statut = new Model_DbTable_Statut;
             $DB_dossier = new Model_DbTable_Dossier;
 
@@ -161,7 +161,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     'DUREEVISITE_ETABLISSEMENT' => $general->DUREEVISITE_ETABLISSEMENT
                 );
             }
-
+            
+            $commission = @$DB_commission->find($informations->ID_COMMISSION)->current();
             $etablissement = array(
                 'general' => $general->toArray(),
                 'informations' => array_merge($informations->toArray(), array(
@@ -172,7 +173,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_CLASSEMENT" => @$DB_classement->find($informations->ID_CLASSEMENT)->current()->LIBELLE_CLASSEMENT,
                     "LIBELLE_TYPE_PRINCIPAL" => @$DB_type->find($informations->ID_TYPE)->current()->LIBELLE_TYPE,
                     "LIBELLE_TYPEACTIVITE_PRINCIPAL" => @$DB_typeactivite->find($informations->ID_TYPEACTIVITE)->current()->LIBELLE_ACTIVITE,
-                    "LIBELLE_COMMISSION" => @$DB_commission->find($informations->ID_COMMISSION)->current()->LIBELLE_COMMISSION,
+                    "LIBELLE_COMMISSION" => $commission->LIBELLE_COMMISSION,
+                    "LIBELLE_COMMISSION_TYPE" => @$DB_commission_type->find($commission->ID_COMMISSIONTYPE)->current()->LIBELLE_COMMISSIONTYPE,
                     "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
                 )),
                 'presence_avis_differe' => $presence_avis_differe,
