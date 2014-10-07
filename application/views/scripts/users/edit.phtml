@@ -130,7 +130,7 @@
         <dt>Commissions</dt>
         <dd>
         	<p>
-	            <select name='commissions[]' class="chosen" data-placeholder="Commissions" multiple>
+	            <select name='commissions[]' class="chosen input-xxlarge" data-placeholder="Commissions" multiple="multiple">
 	                <?php foreach($this->commissions as $commission) : ?>
 	                <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( $this->user['commissions'] != null && in_array($commission, $this->user['commissions']) ) echo "selected" ?>><?php echo $commission['LIBELLE_COMMISSIONTYPE'] . ' - ' . $commission['LIBELLE_COMMISSION'] ?></option>
 	                <?php endforeach ?>
@@ -141,9 +141,18 @@
         <dt>Groupements</dt>
         <dd>
         	<p>
-	            <select name='groupements[]' class="chosen" data-placeholder="Groupements" multiple>
+	            <select name='groupements[]' class="chosen input-xxlarge" data-placeholder="Groupements" multiple="multiple">
 	                <?php foreach($this->groupements as $groupement) : ?>
-	                <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php if( $this->user['groupements'] != null && in_array($groupement, $this->user['groupements']) ) echo "selected" ?>><?php echo "(" . $groupement['LIBELLE_GROUPEMENTTYPE'] . ") " . $groupement['LIBELLE_GROUPEMENT'] ?></option>
+                            <?php $selected = false; ?>
+                            <?php if ($this->user['groupements'] != null): ?>
+                                <?php foreach($this->user['groupements'] as $user_groupement): ?>
+                                    <?php if ($groupement['ID_GROUPEMENT'] == $user_groupement['ID_GROUPEMENT']): ?>
+                                        <?php $selected = true; ?>
+                                        <?php break; ?>
+                                    <?php endif ?>
+                                <?php endforeach ?>
+                            <?php endif ?>
+                            <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php echo $selected ? "selected" : '' ?>><?php echo "(" . $groupement['LIBELLE_GROUPEMENTTYPE'] . ") " . $groupement['LIBELLE_GROUPEMENT'] ?></option>
 	                <?php endforeach ?>
 	            </select>
             </p>

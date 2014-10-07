@@ -44,12 +44,14 @@
 
             return $this->getAdapter()->fetchAll($select);
         }
-        public function getNextCommission($date, $next_date)
+        public function getNextCommission($idsCommission, $date, $next_date)
         {
+            $ids = (array) $idsCommission;
             $select = "SELECT *
                 FROM datecommission d
                 LEFT JOIN commission c ON d.COMMISSION_CONCERNE = c.ID_COMMISSION
                 WHERE DATE_COMMISSION BETWEEN '".date('Y-m-d', $date)."' AND '".date('Y-m-d', $next_date)."'
+                ".(count($ids) > 0 ? "AND d.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
                 ORDER BY DATE_COMMISSION, HEUREDEB_COMMISSION";
             return $this->getAdapter()->fetchAll($select);
         }

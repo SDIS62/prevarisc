@@ -190,12 +190,12 @@ class DossierController extends Zend_Controller_Action
 
     public function pieceJointeAction()
     {
-		$DBdossier = new Model_DbTable_Dossier;
-		$this->infosDossier = $DBdossier->find((int) $this->_getParam("id"))->current();
+        $DBdossier = new Model_DbTable_Dossier;
+        $this->infosDossier = $DBdossier->find((int) $this->_getParam("id"))->current();
         $this->_forward("index", "piece-jointe", null, array(
             "type" => "dossier",
             "id" => $this->_request->id,
-			"verrou" => $this->infosDossier['VERROU_DOSSIER']
+            "verrou" => $this->infosDossier['VERROU_DOSSIER']
         ));
     }
 
@@ -2003,13 +2003,17 @@ class DossierController extends Zend_Controller_Action
 			$DBpieceJointe = new Model_DbTable_PieceJointe;
 			$nouvellePJ = $DBpieceJointe->createRow();
 			$nouvellePJ->ID_PIECEJOINTE = $this->view->idPieceJointe;
-			$nouvellePJ->NOM_PIECEJOINTE = "Rapport";
+			$nouvellePJ->NOM_PIECEJOINTE = "Rapport modèle ".substr(basename($this->view->fichierSelect), 0, strlen(basename($this->view->fichierSelect)));
 			$nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
 			$nouvellePJ->DESCRIPTION_PIECEJOINTE = "Rapport de l'établissement ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']." généré le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." à ".$dateDuJour->get(Zend_Date::HOUR.":".Zend_Date::MINUTE);
 			$nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
 			$nouvellePJ->save();
-
-			echo "<a href='/data/uploads/pieces-jointes/".$nouvellePJ->ID_PIECEJOINTE.".odt'>Ouvrir le rapport de l'établissement : ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']."<a/><br/><br/>";
+                        
+                        $this->view->nouvellePJ = $nouvellePJ;
+                        
+                        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+                        $url =  $this->getHelper('url')->url(array('controller' => 'piece-jointe', 'id' => $idDossier, 'action' => 'get', 'idpj' => $nouvellePJ['ID_PIECEJOINTE'], 'type' => 'dossier'));
+			echo "<a href='".$url."'>Ouvrir le rapport de l'établissement : ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']."<a/><br/><br/>";
 
 			$DBsave = new Model_DbTable_DossierPj;
 			$linkPj = $DBsave->createRow();

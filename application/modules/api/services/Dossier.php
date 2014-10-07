@@ -53,13 +53,14 @@ class Api_Service_Dossier
         $service_dossier = new Service_Dossier;
         $pieces_jointes = $service_dossier->getAllPJ($id);
 
-        $path = REAL_DATA_PATH.DS . 'uploads' . DS . 'pieces-jointes' . DS;
+        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
         $pieces_jointes_content = array();
         
         foreach($pieces_jointes as $pieces_jointe) {
+            $path = $store->getFilePath($pieces_jointe, 'etablissement', $id);
             $pieces_jointes_content[] = array(
-            'ID_PIECE_JOINTE' =>  $pieces_jointe['ID_PIECEJOINTE'],
-            'IMAGE' => base64_encode(file_get_contents($path.$pieces_jointe['ID_PIECEJOINTE'].$pieces_jointe['EXTENSION_PIECEJOINTE']))
+                'ID_PIECE_JOINTE' =>  $pieces_jointe['ID_PIECEJOINTE'],
+                'IMAGE' => base64_encode(file_get_contents($path))
             );  
         }
 

@@ -69,12 +69,9 @@
                    <span class="badge badge-warning">Important</span>
                     <a href='/dossier/index/id/<?php echo $courrier['ID_DOSSIER'] ?>'><i class="icon-pencil icon-black" ></i></a>   
                   <?php
-                       if($courrier['DATEREP_DOSSIER']==null)
-                       { 
-                           echo "Le courrier/courriel  &quot;<a href='/dossier/index/id/".$courrier['ID_DOSSIER']."'>".$courrier['OBJET_DOSSIER']."</a>&quot; est sans réponse depuis ".($courrier['DATERETARDREPONSE'] * -1)." jours ";
-                           $nbrAlert++;                          
-                       }
-                        ?> 
+                        echo "Le courrier/courriel  &quot;<a href='/dossier/index/id/".$courrier['ID_DOSSIER']."'>".$courrier['OBJET_DOSSIER']."</a>&quot; est sans réponse depuis ".($courrier['DATERETARDREPONSE'] * -1)." jours ";
+                        $nbrAlert++;                          
+                     ?> 
                    
                 </li>   
         

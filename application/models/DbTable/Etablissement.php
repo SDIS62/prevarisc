@@ -277,19 +277,28 @@
             }
         }
         
-        public function listeDesERPSousAvisDefavorable()
+        public function listeDesERPSousAvisDefavorable($idsCommission)
         {
-                      
-            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS,DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) as PERIODE from  etablissementinformations,dossier,etablissement,etablissementdossier
+            $ids = (array) $idsCommission;
+            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS,DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) as PERIODE from  etablissementinformations,dossier,etablissement
                    WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
-                   AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
-                   AND dossier.ID_DOSSIER  = etablissementdossier.ID_DOSSIER
+                   AND dossier.ID_DOSSIER  = etablissement.ID_DOSSIER_DONNANT_AVIS
                    AND dossier.AVIS_DOSSIER_COMMISSION = 2
                    AND DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) <= -10
+                   ".(count($ids) > 0 ? "AND etablissementinformations.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
                    AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
                    ";
                  
             return $this->getAdapter()->fetchAll($select);
+        }
+        
+        public function listeDesERPSousAvisDefavorableSurCommune($numInsee)
+        {
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("etablissementadresse.NUMINSEE_COMMUNE", $numInsee);
+            $search->setCriteria("avis.ID_AVIS", 2);
+            return $search->run(false, null, false)->toArray();
         }
         
          public function listeERPSansPreventionniste()
@@ -305,8 +314,9 @@
             return $this->getAdapter()->fetchAll($select);
         }
         
-        public function listeErpOuvertSansProchainesVisitePeriodiques()
+        public function listeErpOuvertSansProchainesVisitePeriodiques($idsCommission)
         {
+            $ids = (array) $idsCommission;
             $select = "SELECT LIBELLE_ETABLISSEMENTINFORMATIONS,ei.ID_ETABLISSEMENT ,ed.ID_DOSSIER, MAX(DATE_ADD(c.DATE_COMMISSION, INTERVAL ei.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH)) AS DATECOM
                       FROM etablissementinformations ei
                       LEFT JOIN etablissementdossier ed ON ed.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT
@@ -318,6 +328,7 @@
                       AND nd.ID_NATURE IN (21,26) 
                       AND ei.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations eii WHERE eii.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT )  
                       AND ei.ID_STATUT = 2
+                      ".(count($ids) > 0 ? "AND etablissementinformations.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
                       GROUP BY ei.ID_ETABLISSEMENT 
                       ";
              return $this->getAdapter()->fetchAll($select);

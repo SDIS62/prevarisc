@@ -6,7 +6,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->path = REAL_DATA_PATH . "/uploads/documents";
+        $this->path = REAL_DATA_PATH . DS . "uploads" . DS . "documents";
 
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
@@ -27,12 +27,12 @@ class GestionDesDocumentsController extends Zend_Controller_Action
         while ($element = readdir($dir)) {
             if ($element != '.' && $element != '..') {
                 if($element != '.gitignore')
-                    if (!is_dir($path.'/'.$element)) {$fichier[] = $element;} else {$dossier[] = $element;}
+                    if (!is_dir($path.DS.$element)) {$fichier[] = $element;} else {$dossier[] = $element;}
             }
         }
         closedir($dir);
 
-        $this->view->path = DATA_PATH . "/uploads/documents";;
+        $this->view->path = DATA_PATH . "/uploads/documents";
         $this->view->listeFichiers = $fichier;
     }
 
@@ -45,7 +45,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
         try {
             $this->_helper->viewRenderer->setNoRender(true);
             //Si besoin verificaiton de l'extension du fichier (uniquement odt)
-            if (move_uploaded_file($_FILES['fichier']['tmp_name'], $this->path ."/". $_FILES['fichier']['name'])) {
+            if (move_uploaded_file($_FILES['fichier']['tmp_name'], $this->path .DS. $_FILES['fichier']['name'])) {
                 echo "
                     <script type='text/javascript'>
                         window.top.window.callback('".$_FILES['fichier']['name']."');
@@ -69,7 +69,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
     public function checkAction()
     {
         //On verifie si le fichier existe
-        $this->view->exists = file_exists( $this->path ."/". $this->_request->nomFich);
+        $this->view->exists = file_exists( $this->path .DS. $this->_request->nomFich);
     }
 
     public function suppdocAction()
@@ -79,9 +79,9 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
             $path = $this->path;
             //On verifie si le fichier existe
-            $exist = file_exists( $this->path ."/". $this->_getParam('name'));
-            unlink($this->path ."/". $this->_getParam('name'));
-            $exist2 = file_exists( $this->path ."/". $this->_getParam('name'));
+            $exist = file_exists( $this->path .DS. $this->_getParam('name'));
+            unlink($this->path .DS. $this->_getParam('name'));
+            $exist2 = file_exists( $this->path .DS. $this->_getParam('name'));
 
             if ($exist != $exist2) {
                 //echo "le fichier ".$this->_getParam('name')." a bien été supprimé";

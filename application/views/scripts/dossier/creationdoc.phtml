@@ -12,7 +12,7 @@ function addChamp($odf,$nomOdf, $variable){
   }
 }
 
-$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR.$this->fichierSelect);
+$odf = new Odf($this->fichierSelect);
 
 addChamp($odf, 'dateDuJour', $this->dateDuJour);
 
@@ -503,10 +503,8 @@ if($this->GN == 2){
 }
 
 try{
-    $chemin = REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
+    $chemin = $this->store->getFilePath($this->nouvellePJ, 'dossier', $this->idDossier, true);
     $odf->saveToDisk($chemin);
 } catch (OdfException $e) {
 
 }
-
-?>

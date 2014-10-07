@@ -215,6 +215,12 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
+        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+    }
+    
+    public function getPieceJointeAction($id_etablissement)
+    {
+        $this->forward('get', 'piece-jointe');
     }
 
     public function editPiecesJointesAction()
@@ -225,6 +231,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
+        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        
     }
 
     public function addPieceJointeAction()
@@ -237,10 +245,14 @@ class EtablissementController extends Zend_Controller_Action
         {
             try {
                 $post = $this->_request->getPost();
-                $service_etablissement->addPJ($this->_request->id, $_FILES['file'], $post['name'], $post['description'], $post['mise_en_avant']);
+                $name = isset($post['name']) ? $post['name'] : '';
+                $description = isset($post['description']) ? $post['description'] : '';
+                $mise_en_avant = isset($post['mise_en_avant']) ? $post['mise_en_avant'] : 0;
+                $service_etablissement->addPJ($this->_request->id, $_FILES['file'], $name, $description, $mise_en_avant);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'La pièce jointe a bien été ajoutée.'));
             }
             catch(Exception $e) {
+                var_dump($e);exit();
                 $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Mise à jour annulée', 'message' => 'La pièce jointe n\'a été ajoutée. Veuillez rééssayez. (' . $e->getMessage() . ')'));
             }
 

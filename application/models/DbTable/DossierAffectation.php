@@ -55,9 +55,9 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
         return $this->getAdapter()->fetchAll($select);
     }
     
-     public function getListDossierAffect($idDateCom)
+    public function getListDossierAffect($idDateCom)
     {
-        $select = "SELECT ID_DOSSIER,OBJET_DOSSIER
+        $select = "SELECT ID_DOSSIER,OBJET_DOSSIER, VERROU_DOSSIER
             FROM dossieraffectation , dossier
             WHERE dossier.ID_DOSSIER = dossieraffectation.ID_DOSSIER_AFFECT
             AND dossieraffectation.ID_DATECOMMISSION_AFFECT = '".$idDateCom."'";

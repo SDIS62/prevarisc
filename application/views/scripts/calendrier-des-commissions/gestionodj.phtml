@@ -31,7 +31,7 @@
 <?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
 <?php $this->placeholder('page_header')->captureStart();  ?>
     <h2 class="page-header">
-    Ordre du jour de la <a href='/calendrier-des-commissions?idComm=<?php echo $this->infosDateComm["COMMISSION_CONCERNE"] ?>' > <?php echo $this->infosCommission['LIBELLE_COMMISSION'] ?> </a> du <?php echo $this->dateFr ?>
+    Ordre du jour de la <?php echo $this->infosCommissionType['LIBELLE_COMMISSIONTYPE'] ?> de <a href='/calendrier-des-commissions?idComm=<?php echo $this->infosDateComm["COMMISSION_CONCERNE"] ?>' ><?php echo $this->infosCommission['LIBELLE_COMMISSION'] ?></a> du <?php echo $this->dateFr ?>
     </h2>
 <?php $this->placeholder('page_header')->captureEnd(); ?>
 <?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
