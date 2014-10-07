@@ -45,3 +45,6 @@ INSERT INTO `PRV_prevarisc_v2`.`classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT
 INSERT INTO `PRV_prevarisc_v2`.`classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(3, "Industrielle");
 INSERT INTO `PRV_prevarisc_v2`.`classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(4, "Lotissement");
 INSERT INTO `PRV_prevarisc_v2`.`classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(5, "Autre");
+
+
+ALTER TABLE `PRV_prevarisc_v2`.`etablissementinformations` ADD COLUMN `ID_CLASSEMENT` int(11) unsigned DEFAULT NULL;
