@@ -61,7 +61,11 @@ if($this->infosDossier['DATEINCOMPLET_DOSSIER']){
 
 addChamp($odf, 'demandeurDossier',$this->infosDossier['DEMANDEUR_DOSSIER']);
 #addChamp($odf, 'servInstructeur',$this->servInstructeur);
-addChamp($odf, 'servInstructeur',$this->infosDossier['SERVICEINSTRUC_DOSSIER']);
+addChamp($odf, 'servInstructeur',$this->servInstructeur);
+addChamp($odf, 'servInstructeurPrenomContact',$this->servInstructeurPrenomContact);
+addChamp($odf, 'servInstructeurNomContact',$this->servInstructeurNomContact);
+addChamp($odf, 'servInstructeurMail',$this->servInstructeurMail);
+
 
 //Derogation
 addChamp($odf, 'reglesDerog',$this->infosDossier['REGLEDEROG_DOSSIER']);
@@ -84,6 +88,23 @@ try{
         $nbPrev--;
     }
     $odf->mergeSegment($preventionniste);
+} catch (OdfException $e) {
+
+}
+
+try{
+    $preventionnisteTel = $odf->setSegment('preventionnistesTel');
+    $nbPrev = count($this->preventionnistes);
+    foreach($this->preventionnistes as $prev){
+        if($nbPrev > 1)
+            $sep = ", ";
+        else
+            $sep = " ";
+        $preventionnisteTel->setVars('tel', $prev['TELFIXE_UTILISATEURINFORMATIONS'].$sep, true, 'UTF-8');
+        $preventionnisteTel->merge();
+        $nbPrev--;
+    }
+    $odf->mergeSegment($preventionnisteTel);
 } catch (OdfException $e) {
 
 }
