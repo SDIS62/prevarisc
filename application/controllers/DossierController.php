@@ -1783,7 +1783,6 @@ class DossierController extends Zend_Controller_Action
 		//Récupération de tous les champs de la table dossier
 		$DBdossier = new Model_DbTable_Dossier;
 		$this->view->infosDossier = $DBdossier->find($idDossier)->current();
-
 		//Récupération du type et de la nature du dossier
 		$dbType = new Model_DbTable_DossierType;
 		$typeDossier = $dbType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
@@ -1798,8 +1797,31 @@ class DossierController extends Zend_Controller_Action
 		$this->view->preventionnistes = $DBdossierPrev->getPrevDossier($idDossier);
 
 		$dbGroupement = new Model_DbTable_Groupement;
-		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
-		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
+		//$groupement = $dbGroupement->getByLibelle($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"], $this->view->infosDossier["TYPESERVINSTRUC_DOSSIER"]);
+                if( $this->view->infosDossier["TYPESERVINSTRUC_DOSSIER"] == 'servInstCommune') {
+                    $dbCommune = new Model_DbTable_AdresseCommune;
+                    $commune = $dbCommune->get($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"]);
+                    $idUtilisateur = $commune[0]["ID_UTILISATEURINFORMATIONS"];
+                    $dbUtilisateur = new Model_DbTable_UtilisateurInformations;
+                    $infos = $dbUtilisateur->find($idUtilisateur)->current();
+                    $this->view->servInstructeur = $infos;
+                    $servInstructeur = $this->view->infosDossier["SERVICEINSTRUC_DOSSIER"];
+                    $servInstructeurPrenomContact = $infos['PRENOM_UTILISATEURINFORMATIONS'];
+                    $servInstructeurNomContact = $infos['NOM_UTILISATEURINFORMATIONS'];
+                    $servInstructeurMail = $infos['MAIL_UTILISATEURINFORMATIONS'];
+                    
+                } else {
+                    $libelle = $this->view->infosDossier["SERVICEINSTRUC_DOSSIER"];
+                    $groupement = $dbGroupement->getByLibelle($libelle);
+                    $servInstructeur = $groupement[0]['LIBELLE_GROUPEMENT'];
+                    $servInstructeurPrenomContact = $groupement[0]['PRENOM_UTILISATEURINFORMATIONS'];
+                    $servInstructeurNomContact = $groupement[0]['NOM_UTILISATEURINFORMATIONS'];
+                    $servInstructeurMail = $groupement[0]['MAIL_UTILISATEURINFORMATIONS'];
+                }            
+                $this->view->servInstructeur = $servInstructeur;
+                $this->view->servInstructeurPrenomContact = $servInstructeurPrenomContact;
+                $this->view->servInstructeurNomContact = $servInstructeurNomContact;
+                $this->view->servInstructeurMail = $servInstructeurMail;
 
                 $dbDossierContact = new Model_DbTable_DossierContact;
 		//On recherche si un maitre d'oeuvre existe
