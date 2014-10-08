@@ -128,7 +128,7 @@
 
             <dt class="champ_famille champs">Famille</dt>
             <dd class="champ_famille champs">
-                <select name='familles'>
+                <select name='familles[]' multiple>
                     <?php foreach( $this->familles as $item ) : ?>
                         <option value='<?php echo $item["ID_FAMILLE"] ?>' >
                             <?php echo $item["LIBELLE_FAMILLE"] ?>
@@ -139,10 +139,21 @@
 
             <dt class="champ_classe champs">Classe</dt>
             <dd class="champ_classe champs">
-                <select name='classes'>
+                <select name='classes[]' multiple>
                     <?php foreach( $this->classes as $item ) : ?>
                         <option value='<?php echo $item["ID_CLASSE"] ?>' >
                             <?php echo $item["LIBELLE_CLASSE"] ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
+            </dd>
+            
+            <dt class="champ_classement champs">Classement</dt>
+            <dd class="champ_classement champs">
+                <select name='classements[]' multiple>
+                    <?php foreach( $this->classements as $item ) : ?>
+                        <option value='<?php echo $item["ID_CLASSEMENT"] ?>' >
+                            <?php echo $item["LIBELLE_CLASSEMENT"] ?>
                         </option>
                     <?php endforeach ?>
                 </select>
@@ -230,6 +241,9 @@
         $("select[name='types[]']").multiselect({header: false, noneSelectedText: "Tous les types"});
         $("select[name='categories[]']").multiselect({header: false, noneSelectedText: "Toutes les catégories"});
         $("select[name='dossier_natures[]']").multiselect({header: false, noneSelectedText: "Toutes les natures"});
+        $("select[name='familles[]']").multiselect({header: false, noneSelectedText: "Toutes les familles"});
+        $("select[name='classes[]']").multiselect({header: false, noneSelectedText: "Toutes les classes"});
+        $("select[name='classements[]']").multiselect({header: false, noneSelectedText: "Tous les classements"});
 
         // Action sur le changement du genre des ressources établissement (affichage des champs)
         $("select[name='genre']").change(function() {
@@ -258,6 +272,11 @@
                 // EIC
                 case '6':
                     $('.champ_adresse').show();
+                    break;
+                    
+                // Zones
+                case '10':
+                    $('.champ_classement').show();
                     break;
             }
         }).change();

@@ -222,7 +222,7 @@
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
                 <div id='geoportail' class="tab-pane in" style="height: 350px; max-height: 350px;">
                     <div id='geoportail-container'  style="height: 100%; max-height: 100%;"></div>
-                    <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/2.0.3/GeoportalExtended.js"></script>
+                    <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.0.3/GeoportalExtended.js"></script>
                     <script>
                         $(document).ready(function() {
                             viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
@@ -359,7 +359,7 @@
                         <tbody>
                             <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
                                 <tr>
-                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"] ?></td>
+                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUETYPE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"] ?></td>
                                     <td>Adresse postale</td>
                                 </tr>
                             <?php endforeach ?>
@@ -419,7 +419,7 @@
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 5))) : ?>
                 <dt>Commission</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['LIBELLE_COMMISSION'] ?></p>
+                    <p><?php echo $this->etablissement['informations']['LIBELLE_COMMISSION'] ?> (<?php echo $this->etablissement['informations']['LIBELLE_COMMISSION_TYPE'] ?>)</p>
                 </dd>
                 <?php endif ?>
 

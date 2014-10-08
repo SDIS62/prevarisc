@@ -717,6 +717,12 @@
                             <action>index</action>
                             <privilege>view_doss</privilege>
                         </index>
+                        <get-pieces-jointes>
+                            <label>Téléchargement des pièces jointes</label>
+                            <controller>piece-jointe</controller>
+                            <action>get</action>
+                            <privilege>view_doss</privilege>
+                        </get-pieces-jointes>
                         <form>
                             <controller>piece-jointe</controller>
                             <action>form</action>
@@ -998,6 +1004,12 @@
                     <action>pieces-jointes</action>
                     <privilege>view_ets</privilege>
                 </pieces-jointes>
+                <get-pieces-jointes>
+                    <label>Téléchargement des pièces jointes</label>
+                    <controller>etablissement</controller>
+                    <action>get-piece-jointe</action>
+                    <privilege>view_ets</privilege>
+                </get-pieces-jointes>
                 <edit-pieces-jointes>
                     <label>Édition des pièces jointes</label>
                     <controller>etablissement</controller>

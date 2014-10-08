@@ -23,7 +23,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             $DB_rubriques = new Model_DbTable_EtablissementInformationsRubrique;
             $DB_adresse = new Model_DbTable_EtablissementAdresse;
-            $DB_plans = new Model_DbTable_EtablissementInformationsPlan;
             $DB_genre = new Model_DbTable_Genre;
             $DB_categorie = new Model_DbTable_Categorie;
             $DB_famille = new Model_DbTable_Famille;
@@ -32,6 +31,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $DB_type = new Model_DbTable_Type;
             $DB_typeactivite = new Model_DbTable_TypeActivite;
             $DB_commission = new Model_DbTable_Commission;
+            $DB_commission_type = new Model_DbTable_CommissionType;
             $DB_statut = new Model_DbTable_Statut;
             $DB_dossier = new Model_DbTable_Dossier;
 
@@ -161,7 +161,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     'DUREEVISITE_ETABLISSEMENT' => $general->DUREEVISITE_ETABLISSEMENT
                 );
             }
-
+            
+            $commission = @$DB_commission->find($informations->ID_COMMISSION)->current();
             $etablissement = array(
                 'general' => $general->toArray(),
                 'informations' => array_merge($informations->toArray(), array(
@@ -172,7 +173,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_CLASSEMENT" => @$DB_classement->find($informations->ID_CLASSEMENT)->current()->LIBELLE_CLASSEMENT,
                     "LIBELLE_TYPE_PRINCIPAL" => @$DB_type->find($informations->ID_TYPE)->current()->LIBELLE_TYPE,
                     "LIBELLE_TYPEACTIVITE_PRINCIPAL" => @$DB_typeactivite->find($informations->ID_TYPEACTIVITE)->current()->LIBELLE_ACTIVITE,
-                    "LIBELLE_COMMISSION" => @$DB_commission->find($informations->ID_COMMISSION)->current()->LIBELLE_COMMISSION,
+                    "LIBELLE_COMMISSION" => $commission->LIBELLE_COMMISSION,
+                    "LIBELLE_COMMISSION_TYPE" => @$DB_commission_type->find($commission->ID_COMMISSIONTYPE)->current()->LIBELLE_COMMISSIONTYPE,
                     "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
                 )),
                 'presence_avis_differe' => $presence_avis_differe,
@@ -710,7 +712,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             $informations->LIBELLE_ETABLISSEMENTINFORMATIONS = $data['LIBELLE_ETABLISSEMENTINFORMATIONS'];
             $informations->ID_GENRE = $id_genre;
-            $informations->ID_STATUT = $data['ID_STATUT'];
+            $informations->ID_STATUT = isset($data['ID_STATUT']) ? $data['ID_STATUT'] : 1;
             $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
             $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
 //var_dump($informations);exit();
@@ -993,7 +995,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DBused = new Model_DbTable_PieceJointe;
         return $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $id_etablissement);
     }
-
+    
+    
     /**
      * Ajout d'une pièce jointe pour un établissement
      *
@@ -1005,19 +1008,24 @@ class Service_Etablissement implements Service_Interface_Etablissement
      */
     public function addPJ($id_etablissement, $file, $name = '', $description = '', $mise_en_avant = 0)
     {
-        $path = REAL_DATA_PATH.DS . 'uploads' . DS . 'pieces-jointes' . DS;
+        
         $extension = strtolower(strrchr($file['name'], "."));
-            
+       
         $DBpieceJointe = new Model_DbTable_PieceJointe;
-
-        $nouvellePJ = $DBpieceJointe->createRow(array(
+        
+        $piece_jointe = array(
             'EXTENSION_PIECEJOINTE' => $extension,
-            'NOM_PIECEJOINTE' => $name == '' ? $file['name'] : $name,
+            'NOM_PIECEJOINTE' => $name == '' ? substr($file['name'], 0, -4) : $name,
             'DESCRIPTION_PIECEJOINTE' => $description,
             'DATE_PIECEJOINTE' => date('Y-m-d')
-        ))->save();
-
-        if(!move_uploaded_file($file['tmp_name'], $path . $nouvellePJ . $extension)) {
+        );
+        
+        $piece_jointe['ID_PIECEJOINTE'] = $DBpieceJointe->createRow($piece_jointe)->save();
+        
+        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $file_path = $store->getFilePath($piece_jointe, 'etablissement', $id_etablissement, true);
+        
+        if(!move_uploaded_file($file['tmp_name'], $file_path)) {
             throw new Exception('Ne peut pas déplacer le fichier ' . $file['tmp_name']);
         }
         else {
@@ -1025,12 +1033,15 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             $linkPj = $DBsave->createRow(array(
                 'ID_ETABLISSEMENT' => $id_etablissement,
-                'ID_PIECEJOINTE' => $nouvellePJ,
+                'ID_PIECEJOINTE' => $piece_jointe['ID_PIECEJOINTE'],
                 'PLACEMENT_ETABLISSEMENTPJ' => (int) $mise_en_avant != 0 && in_array($extension, array(".jpg", ".jpeg", ".png", ".gif")) ? $mise_en_avant : 0,
             ))->save();
 
             if(in_array($extension, array(".jpg", ".jpeg", ".png", ".gif"))) {
-                GD_Resize::run($path . $nouvellePJ . $extension, $path . "miniatures" . DIRECTORY_SEPARATOR . $nouvellePJ . ".jpg", 450);
+                $miniature = $piece_jointe;
+                $miniature['EXTENSION_PIECEJOINTE'] = '.jpg';
+                $miniature_path = $store->getFilePath($miniature, 'etablissement_miniature', $id_etablissement, true);
+                GD_Resize::run($file_path, $miniature_path, 450);
             }
         }
 
@@ -1048,14 +1059,18 @@ class Service_Etablissement implements Service_Interface_Etablissement
     {
         $DBpieceJointe = new Model_DbTable_PieceJointe;
         $DBitem = new Model_DbTable_EtablissementPj;
-
-        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
-
+        
         $pj = $DBpieceJointe->find($id_pj)->current();
+        
+        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $file_path = $store->getFilePath($pj, 'etablissement', $id_etablissement);
+        $miniature_pj = $pj;
+        $miniature_pj['EXTENSION_PIECEJOINTE'] = '.jpg';
+        $miniature_path = $store->getFilePath($miniature_pj, 'etablissement_miniature', $id_etablissement);
 
         if ($DBitem != null) {
-            if( file_exists($path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )                         unlink($path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
-            if( file_exists($path . "miniatures" . DS . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )     unlink($path . "miniatures" . DS . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
+            if( file_exists($file_path) )         unlink($file_path);
+            if( file_exists($miniature_path))     unlink($miniature_path);
             $DBitem->delete("ID_PIECEJOINTE = " . (int) $this->_request->id_pj);
             $pj->delete();
         }

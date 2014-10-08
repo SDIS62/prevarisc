@@ -5,7 +5,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
         // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token
-        if(isset($_GET['key']) && $_GET['key'] == getenv('PREVARISC_SECURITY_KEY'))
+        if($request->getParam('key') === getenv('PREVARISC_SECURITY_KEY'))
         {
             return ;
         }
@@ -125,6 +125,22 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                                 if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
                                 if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
                                 break;
+                            case 'camp':
+                                if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                break;
+                            case 'temp':
+                                if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                break;
+                            case 'iop':
+                                if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                break;
+                            case 'zone':
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = $groupements;
+                                if($resource_exploded[4] == '1') $resource_exploded[4] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                break;
                         }
 
                         $resource_imploded = implode($resource_exploded, '_');
@@ -179,7 +195,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                     // Récupération de la resource demandée par la page active
                     $resources = $this->getPageResources($page, $request);
-
+                    
                     // Récupération du privilège demandé par la page active
                     $privilege = $this->getPagePrivilege($page);
 
@@ -188,9 +204,6 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         // Pour chaque ressources de la page, on check les permissions
                         $access_granted = false;
-
-                        // A ne pas uploader, pendant le dev :
-                        $access_granted = true;
 
                         if($page->get('controller') == 'etablissement') {
                             foreach($resources as $resource) {
@@ -446,6 +459,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
             case '10':
                 $resource = 'etablissement_zone_';
+                $resource .= ($etablissement['informations']['ID_CLASSEMENT'] == null ? '0' : $etablissement['informations']['ID_CLASSEMENT'] . '-0') . '_';
                 $resource .= $groupements . '_';
                 $resource .= $communes;
                 break;

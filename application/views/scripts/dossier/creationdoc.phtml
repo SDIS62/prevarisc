@@ -1,762 +1,510 @@
 <?php
 
-function verifInfos($var){
-	if($var == ''){
-		return "";
-	}else{
-		
-		return $var;
-	}
+function addChamp($odf,$nomOdf, $variable){
+  try{
+    if($variable == "") {
+      $variable = "";
+    }
+    $odf->setVars($nomOdf,$variable, true,'UTF8');
+    #$segment->$nomOdf(utf8_decode($variable));
+  } catch (OdfException $e) {
+  
+  }
 }
 
-$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR.$this->fichierSelect);
+$odf = new Odf($this->fichierSelect);
 
+addChamp($odf, 'dateDuJour', $this->dateDuJour);
 
-try {
-	$odf->setVars('typeDossier',verifInfos($this->typeDossier),true,'UTF8');
-} catch (OdfException $e) {
+addChamp($odf, 'typeDossier',$this->typeDossier);
+addChamp($odf, 'natureDossier',$this->natureDossier);
 
+if(isset($this->commissionInfos['LIBELLE_COMMISSION'])) {
+    addChamp($odf, 'libelle_commission',$this->commissionInfos['LIBELLE_COMMISSION']);
 }
 
-try {
-	$odf->setVars('natureDossier',verifInfos($this->natureDossier),true,'UTF8');
-} catch (OdfException $e) {
+addChamp($odf, 'date_commEntete',$this->dateCommEntete);
+addChamp($odf, 'numWinPrev',$this->numWinPrev);        
+addChamp($odf, 'objetDossier',$this->infosDossier['OBJET_DOSSIER']);
+addChamp($odf, 'analyseRisque',$this->infosDossier['ANOMALIE_DOSSIER']);
+addChamp($odf, 'descriptifDossier',$this->infosDossier['DESCRIPTIF_DOSSIER']);
 
-}
-
-try {
-	if(isset($this->commissionInfos['LIBELLE_COMMISSION']))
-		$odf->setVars('libelle_commission',verifInfos($this->commissionInfos['LIBELLE_COMMISSION']),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try {
-	$odf->setVars('date_commEntete',verifInfos($this->dateCommEntete),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try {
-	$odf->setVars('numWinPrev',verifInfos($this->numWinPrev),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try {
-	$odf->setVars('objetDossier',verifInfos($this->infosDossier['OBJET_DOSSIER']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
-try {
-	$odf->setVars('analyseRisque',verifInfos($this->infosDossier['ANOMALIE_DOSSIER']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
-try {
-	$odf->setVars('descriptifDossier',verifInfos($this->infosDossier['DESCRIPTIF_DOSSIER']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
-try {
-	if($this->infosDossier['HORSDELAI_DOSSIER'] == 0){
+if($this->infosDossier['HORSDELAI_DOSSIER'] == 0){
 		$horsdelai = "Non";
 	}else{
 		$horsdelai = "Oui";
 	}
-	$odf->setVars('horsDelai',verifInfos($horsdelai),true,'UTF8');
-}catch (OdfException $e){
+addChamp($odf, 'horsDelai',$horsdelai);
+addChamp($odf, 'docManquant',$this->listeDocManquant['DOCMANQUANT']);
 
+if($this->infosDossier['DATEVISITE_DOSSIER']){
+    addChamp($odf, 'dateVisite',$this->dateVisite);
+}else{
+    addChamp($odf, 'dateVisite',"");
 }
 
-try {
-	$odf->setVars('docManquant',verifInfos($this->listeDocManquant['DOCMANQUANT']),true,'UTF8');
-}catch (OdfException $e){
-
+if($this->infosDossier['DATECOMM_DOSSIER']){
+    $date = new Zend_Date($this->infosDossier['DATECOMM_DOSSIER'], Zend_Date::DATES);
+    $date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+    addChamp($odf, 'dateComm',$date);
+}else{
+    addChamp($odf, 'dateComm',"");
 }
 
-try {
-	if($this->infosDossier['DATEVISITE_DOSSIER']){
-			$odf->setVars('dateVisite',verifInfos($this->dateVisite),true,'UTF8');
-	}else{
-		$odf->setVars('dateVisite',verifInfos(""),true,'UTF8');
-	}
-}catch (OdfException $e){
-
+if($this->infosDossier['DATEINCOMPLET_DOSSIER']){
+    $date = new Zend_Date($this->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
+    $date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+    addChamp($odf, 'dateIncomplet',$date);
+}else{
+    addChamp($odf, 'dateIncomplet',"");
 }
 
-try {
-	if($this->infosDossier['DATECOMM_DOSSIER']){
-		$date = new Zend_Date($this->infosDossier['DATECOMM_DOSSIER'], Zend_Date::DATES);
-		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-		$odf->setVars('dateComm',verifInfos($date),true,'UTF8');
-	}else{
-		$odf->setVars('dateComm',verifInfos(""),true,'UTF8');
-	}
-}catch (OdfException $e){
-
-}
-
-try {
-	if($this->infosDossier['DATEINCOMPLET_DOSSIER']){
-		$date = new Zend_Date($this->infosDossier['DATEINCOMPLET_DOSSIER'], Zend_Date::DATES);
-		$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-		$odf->setVars('dateIncomplet',verifInfos($date),true,'UTF8');
-	}else{
-		$odf->setVars('dateIncomplet',verifInfos(""),true,'UTF8');
-	}
-}catch (OdfException $e){
-
-}
-
-try {
-	$odf->setVars('demandeurDossier',verifInfos($this->infosDossier['DEMANDEUR_DOSSIER']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
-try {
-	$odf->setVars('servInstructeur',verifInfos($this->servInstructeur),true,'UTF8');
-}catch (OdfException $e){
-
-}
+addChamp($odf, 'demandeurDossier',$this->infosDossier['DEMANDEUR_DOSSIER']);
+#addChamp($odf, 'servInstructeur',$this->servInstructeur);
+addChamp($odf, 'servInstructeur',$this->infosDossier['SERVICEINSTRUC_DOSSIER']);
 
 //Derogation
-try {
-	$odf->setVars('reglesDerog',verifInfos($this->infosDossier['REGLEDEROG_DOSSIER']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
-try {
-	$odf->setVars('justificationDerog',verifInfos($this->infosDossier['JUSTIFDEROG_DOSSIER']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
-try {
-	$odf->setVars('mesuresCompensatoiresDerog',verifInfos($this->infosDossier['MESURESCOMPENS_DOSSIER']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
-try {
-	$odf->setVars('mesuresComplementairesDerog',verifInfos($this->infosDossier['MESURESCOMPLE_DOSSIER']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
+addChamp($odf, 'reglesDerog',$this->infosDossier['REGLEDEROG_DOSSIER']);
+addChamp($odf, 'justificationDerog',$this->infosDossier['JUSTIFDEROG_DOSSIER']);
+addChamp($odf, 'mesuresCompensatoiresDerog',$this->infosDossier['MESURESCOMPENS_DOSSIER']);
+addChamp($odf, 'mesuresComplementairesDerog',$this->infosDossier['MESURESCOMPLE_DOSSIER']);
 
 //PARTIE PREVENTIONNISTE
-	try{
-		$preventionniste = $odf->setSegment('preventionnistes');
-		$nbPrev = count($this->preventionnistes);
-		foreach($this->preventionnistes as $prev){
-			$preventionniste->setVars('nom', $prev['NOM_UTILISATEURINFORMATIONS'], true, 'UTF-8');
-			if($nbPrev > 1)
-				$sep = ", ";
-			else
-				$sep = " ";
-			$preventionniste->setVars('prenom', $prev['PRENOM_UTILISATEURINFORMATIONS'].$sep, true, 'UTF-8');
-			$preventionniste->merge();
-			$nbPrev--;
-		}
-		$odf->mergeSegment($preventionniste);
-	} catch (OdfException $e) {
+try{
+    $preventionniste = $odf->setSegment('preventionnistes');
+    $nbPrev = count($this->preventionnistes);
+    foreach($this->preventionnistes as $prev){
+        $preventionniste->setVars('nom', $prev['NOM_UTILISATEURINFORMATIONS'], true, 'UTF-8');
+        if($nbPrev > 1)
+            $sep = ", ";
+        else
+            $sep = " ";
+        $preventionniste->setVars('prenom', $prev['PRENOM_UTILISATEURINFORMATIONS'].$sep, true, 'UTF-8');
+        $preventionniste->merge();
+        $nbPrev--;
+    }
+    $odf->mergeSegment($preventionniste);
+} catch (OdfException $e) {
 
-	}
+}
 
 // PARTIE DOC CONSULTE
-	try{
-		//Generation du segment listeDocs
-		$docConsulte = $odf->setSegment('listeDocs');
-		foreach($this->listeDocs as $document){
-			$exist = false;	
-			foreach($this->dossierDocConsutle as $docExistant){
-				if($docExistant['ID_DOC'] == $document['ID_DOC']){
-					$exist = true;
-					$ref = $docExistant['REF_CONSULTE'];
-					$date = $docExistant['DATE_CONSULTE'];
-				}
-			}
-			$docConsulte->setVars('libelledoc', $document['LIBELLE_DOC'], true, 'UTF-8');
-			if($exist){
-				$docConsulte->setVars('exist', "X", true, 'UTF-8');
-				$docConsulte->setVars('refdoc', $ref, true, 'UTF-8');
-				//Conversion de la date ang -> fr
-				if ($date) {
-					if($date != "0000-00-00"){
-						$date = new Zend_Date($date, Zend_Date::DATES);
-						$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-					}else{
-						$date = "";
-					}
-				}
-				$docConsulte->setVars('datedoc', $date."\n", true, 'UTF-8');
-				$docConsulte->merge();
-			}
-		}
-		$odf->mergeSegment($docConsulte);
-	} catch (OdfException $e) {
+//Generation du segment listeDocs
+try{ 
+    $docConsulte = $odf->setSegment('listeDocs');
+    foreach($this->listeDocs as $document){
+        $exist = false;	
+        foreach($this->dossierDocConsutle as $docExistant){
+            if($docExistant['ID_DOC'] == $document['ID_DOC']){
+                $exist = true;
+                $ref = $docExistant['REF_CONSULTE'];
+                $date = $docExistant['DATE_CONSULTE'];
+            }
+        }
+        $docConsulte->setVars('libelledoc', $document['LIBELLE_DOC'], true, 'UTF-8');
+        if($exist){
+            $docConsulte->setVars('exist', "X", true, 'UTF-8');
+            $docConsulte->setVars('refdoc', $ref, true, 'UTF-8');
+            //Conversion de la date ang -> fr
+            if ($date) {
+                if($date != "0000-00-00"){
+                    $date = new Zend_Date($date, Zend_Date::DATES);
+                    $date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                }else{
+                    $date = "";
+                }
+            }
+            $docConsulte->setVars('datedoc', $date."\n", true, 'UTF-8');
+            $docConsulte->merge();
+        }
+    }
+    $odf->mergeSegment($docConsulte);
+} catch (OdfException $e) {
 
-	}
-	
-	try{
-		//Liste des doncuments conusltés ajoutés
-		$listeDocAjout = $this->listeDocsAjout;
-		$docAjout = $odf->setSegment('listeDocsAjout');
-		foreach($this->listeDocsAjout as $documentAjout){
-			$docAjout->setVars('exist', "X", true, 'UTF-8');
-			$docAjout->setVars('libelledoc', $documentAjout['LIBELLE_DOCAJOUT'], true, 'UTF-8');
-			$docAjout->setVars('refdoc', $documentAjout['REF_DOCAJOUT'], true, 'UTF-8');
-
-			if ($documentAjout['DATE_DOCAJOUT']) {
-				if ($date) {
-					if($date != "0000-00-00"){
-						$date = new Zend_Date($documentAjout['DATE_DOCAJOUT'], Zend_Date::DATES);
-						$date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-					}else{
-						$date = "";
-					}
-				}
-			}
-			$docAjout->setVars('datedoc', $date, true, 'UTF-8');
-			$docAjout->merge();
-		}
-		$odf->mergeSegment($docAjout);
-	} catch (OdfException $e) {
-
-	}
+}
+//Liste des doncuments conusltés ajoutés
+try{
+    $listeDocAjout = $this->listeDocsAjout;
+    $docAjout = $odf->setSegment('listeDocsAjout');
+    foreach($this->listeDocsAjout as $documentAjout){
+        $docAjout->setVars('exist', "X", true, 'UTF-8');
+        $docAjout->setVars('libelledoc', $documentAjout['LIBELLE_DOCAJOUT'], true, 'UTF-8');
+        $docAjout->setVars('refdoc', $documentAjout['REF_DOCAJOUT'], true, 'UTF-8');
+        if ($documentAjout['DATE_DOCAJOUT']) {
+            if ($date) {
+                if($date != "0000-00-00"){
+                    $date = new Zend_Date($documentAjout['DATE_DOCAJOUT'], Zend_Date::DATES);
+                    $date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                }else{
+                    $date = "";
+                }
+            }
+        }
+        $docAjout->setVars('datedoc', $date, true, 'UTF-8');
+        $docAjout->merge();
+    }
+    $odf->mergeSegment($docAjout);
+} catch (OdfException $e) {
+  
+}
 	
 // PARTIE PRESCRIPTION
-	try{
-		$nbPrescDossier = count($this->prescriptionDossier);
-
-		$prescription = $odf->setSegment('listePrescription');
-		for($i=0; $i < $nbPrescDossier; $i++)
+try{
+    $nbPrescDossier = count($this->prescriptionDossier);
+    $prescription = $odf->setSegment('listePrescription');
+    for($i=0; $i < $nbPrescDossier; $i++)
+    {
+	$nbAssoc = count($this->prescriptionDossier[$i]);
+	$cpt = true;
+	$article = '';
+	$texte = '';
+	$textearticle = '';
+	for($j=0; $j < $nbAssoc; $j++)
+	{
+            $articleT = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
+            $texteT = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
+			
+            if($texteT != ''){
+		$textearticle .= $texteT." - ";
+            }else{
+		$textearticle .= " - ";
+            }
+            if($nbAssoc > 1){
+		if($articleT != ''){
+                    $textearticle .= $articleT.", ";
+		}else{
+                    $textearticle .= ", ";
+		}
+            }else{
+		if($articleT != ''){
+                    $textearticle .= $articleT." ";
+		}else{
+                    $textearticle .= " ";
+                }
+            }
+            if($cpt)
+            {
+		$prescription->setVars('num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+		if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
 		{
-			$nbAssoc = count($this->prescriptionDossier[$i]);
-			$cpt = true;
-			$article = '';
-			$texte = '';
-			$textearticle = '';
-			for($j=0; $j < $nbAssoc; $j++)
-			{
-				$articleT = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
-				$texteT = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
-				
-				if($texteT != ''){
-					$textearticle .= $texteT." - ";
-				}else{
-					$textearticle .= " - ";
-				}
-				if($nbAssoc > 1){
-					if($articleT != ''){
-						$textearticle .= $articleT.", ";
-					}else{
-						$textearticle .= ", ";
-					}
-				}else{
-					if($articleT != ''){
-						$textearticle .= $articleT." ";
-					}else{
-						$textearticle .= " ";
-					}
-				}
-
-				if($cpt)
-				{
-					$prescription->setVars('num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-					if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
-					{
-						$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
-					}else{
-						$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-					}
-					$cpt = false;
-				}
-				$nbAssoc--;
-			}
-			$prescription->setVars('textearticle',$textearticle,true,'UTF-8');
-			$prescription->merge();
+                    $prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
+		}else{
+                    $prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
 		}
-		$odf->mergeSegment($prescription);	
-	} catch (OdfException $e) {
-
+		$cpt = false;
+            }
+            $nbAssoc--;
 	}
-	
-	//PARTIE TEXTE APPLICABLE
-	try{
-		$texteAppl = $odf->setSegment('texteAppl');
-		foreach($this->listeTextesAppl as $texteappl){
-			$texteappl = str_replace("’","'",$texteappl['LIBELLE_TEXTESAPPL']);
-			$texteAppl->setVars('libelleTexteAppl', $texteappl, true, 'UTF-8');
-			$texteAppl->merge();
-		}
-		$odf->mergeSegment($texteAppl);	
-	} catch (OdfException $e) {
+	$prescription->setVars('textearticle',$textearticle,true,'UTF-8');
+	$prescription->merge();
+    }
+    $odf->mergeSegment($prescription);	
+} catch (OdfException $e) {
+  
+}
 
-	}
+//PARTIE TEXTE APPLICABLE
+try{
+    $texteAppl = $odf->setSegment('texteAppl');
+    foreach($this->listeTextesAppl as $texteappl){
+	$texteappl = str_replace("’","'",$texteappl['LIBELLE_TEXTESAPPL']);
+	$texteAppl->setVars('libelleTexteAppl', $texteappl, true, 'UTF-8');
+	$texteAppl->merge();
+    }
+    $odf->mergeSegment($texteAppl);	
+} catch (OdfException $e) {
+  
+}	
 
 //GESTION DATES
-	try{
-		$odf->setVars('dateDepotMairie',verifInfos($this->DATEMAIRIE),true,'UTF8');
-	} catch (OdfException $e) {
-
-	}
-	
-	try{
-		$odf->setVars('dateDepotSec',verifInfos($this->DATESECRETARIAT),true,'UTF8');
-	} catch (OdfException $e) {
-
-	}
-	
-	try{
-		$odf->setVars('dateSDIS',verifInfos($this->DATESDIS),true,'UTF8');
-	} catch (OdfException $e) {
-
-	}
-	
-	try{
-		$odf->setVars('dateCreationDossier',verifInfos($this->DATEINSERTDOSSIER),true,'UTF8');
-	} catch (OdfException $e) {
-
-	}
+addChamp($odf, 'dateDepotMairie',$this->DATEMAIRIE);
+addChamp($odf, 'dateDepotSec',$this->DATESECRETARIAT);
+addChamp($odf, 'dateSDIS',$this->DATESDIS);
+addChamp($odf, 'dateCreationDossier',$this->DATEINSERTDOSSIER);
 	
 //INFORMATIONS CONCERNANT L'ETABLISSEMENT
-try{
-	$odf->setVars('genreEtab',verifInfos($this->genreEtab),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('etablissementLibelle',verifInfos($this->etablissementLibelle),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('typeLettreP',verifInfos($this->typeLettreP),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('activiteP',verifInfos($this->libelleActiviteP),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('typeLettreS',verifInfos($this->typeSecondaire),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('activiteS',verifInfos($this->activiteSecondaire),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('communeEtab',verifInfos($this->communeEtab),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('etablissementAdresse',verifInfos($this->etablissementAdresse),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('numDocUrba',verifInfos($this->listeDocUrba),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('categorieEtab',verifInfos($this->categorieEtab),true,'UTF8');	
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('numPublic',verifInfos($this->numPublic),true,'UTF8');	
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('numPersonnel',verifInfos($this->numPersonnel),true,'UTF8');		
-} catch (OdfException $e) {
-
-}
-
-try{	
-	$odf->setVars('avisDossier',verifInfos($this->avisDossier),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{	
-	$odf->setVars('avisDossierCommission',verifInfos($this->avisDossierCommission),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('etatDossier',verifInfos($this->etatDossier),true,'UTF8');
-} catch (OdfException $e){
-
-}
-
-try{
-	$odf->setVars('idDossier',verifInfos($this->idDossier),true,'UTF8');
-} catch (OdfException $e){
-
-}
-
-try{
-	$odf->setVars('numTelEtab',verifInfos($this->numTelEtab),true,'UTF8');
-} catch (OdfException $e){
-
-}
-
-try{
-	$odf->setVars('numFaxEtab',verifInfos($this->numFaxEtab),true,'UTF8');
-} catch (OdfException $e){
-
-}
+addChamp($odf, 'genreEtab',$this->genreEtab);
+addChamp($odf, 'etablissementLibelle',$this->etablissementLibelle);
+addChamp($odf, 'typeLettreP',$this->typeLettreP);
+addChamp($odf, 'activiteP',$this->libelleActiviteP);
+addChamp($odf, 'typeLettreS',$this->typeSecondaire);
+addChamp($odf, 'activiteS',$this->activiteSecondaire);
+addChamp($odf, 'communeEtab',$this->communeEtab);        
+addChamp($odf, 'etablissementAdresse',$this->etablissementAdresse);
+addChamp($odf, 'numDocUrba',$this->listeDocUrba);
+addChamp($odf, 'categorieEtab',$this->categorieEtab);	
+addChamp($odf, 'numPublic',$this->numPublic);	
+addChamp($odf, 'numPersonnel',$this->numPersonnel);
+addChamp($odf, 'numTotal',$this->numTotal);
+addChamp($odf, 'avisDossier',$this->avisDossier);
+addChamp($odf, 'avisDossierCommission',$this->avisDossierCommission);
+addChamp($odf, 'etatDossier',$this->etatDossier);
+addChamp($odf, 'idDossier',$this->idDossier);
+addChamp($odf, 'numTelEtab',$this->numTelEtab);
+addChamp($odf, 'numFaxEtab',$this->numFaxEtab);
+addChamp($odf, 'mailEtab',$this->mailEtab);
 
 //Date de la dernière visite periodique
-try{
-	$odf->setVars('dateLastVP',verifInfos($this->dateLastVP),true,'UTF8');
-	$odf->setVars('avisLastVP',verifInfos($this->avisLastVP),true,'UTF8');
-} catch (OdfException $e){
-
-}
-
+addChamp($odf, 'dateLastVP',$this->dateLastVP);
+addChamp($odf, 'avisLastVP',$this->avisLastVP);
 
 //Informations du DUS du dossier
-try{
-	$odf->setVars('nomDus',verifInfos($this->dusDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('prenomDus',verifInfos($this->dusDossier['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('mailDus',verifInfos($this->dusDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('telFixeDus',verifInfos($this->dusDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('telPortDus',verifInfos($this->dusDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('numFaxDus',verifInfos($this->dusDossier['TELFAX_UTILISATEURINFORMATIONS']),true,'UTF8');	
-	$odf->setVars('societeDus',verifInfos($this->dusDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
-} catch (OdfException $e){
-
-}
+addChamp($odf, 'nomDus',$this->dusDossier['NOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'prenomDus',$this->dusDossier['PRENOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'mailDus',$this->dusDossier['MAIL_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telFixeDus',$this->dusDossier['TELFIXE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telPortDus',$this->dusDossier['TELPORTABLE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'numFaxDus',$this->dusDossier['TELFAX_UTILISATEURINFORMATIONS']);	
+addChamp($odf, 'societeDus',$this->dusDossier['SOCIETE_UTILISATEURINFORMATIONS']);	
 
 //Informations de l'exploitant du dossier
-try{
-	$odf->setVars('nomExploitant',verifInfos($this->exploitantDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('prenomExploitant',verifInfos($this->exploitantDossier['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('mailExploitant',verifInfos($this->exploitantDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('telFixeExploitant',verifInfos($this->exploitantDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('telPortExploitant',verifInfos($this->exploitantDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('numFaxExploitant',verifInfos($this->exploitantDossier['TELFAX_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('societeExploitant',verifInfos($this->exploitantDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');	
-} catch (OdfException $e){
-
-}
+addChamp($odf, 'nomExploitant',$this->exploitantDossier['NOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'prenomExploitant',$this->exploitantDossier['PRENOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'mailExploitant',$this->exploitantDossier['MAIL_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telFixeExploitant',$this->exploitantDossier['TELFIXE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telPortExploitant',$this->exploitantDossier['TELPORTABLE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'numFaxExploitant',$this->exploitantDossier['TELFAX_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'societeExploitant',$this->exploitantDossier['SOCIETE_UTILISATEURINFORMATIONS']);	
 
 //Informations du responsable sécurité du dossier
-try{
-	$odf->setVars('nomRespSecu',verifInfos($this->respsecuDossier['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('prenomRespSecu',verifInfos($this->respsecuDossier['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('mailRespSecu',verifInfos($this->respsecuDossier['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('telFixeRespSecu',verifInfos($this->respsecuDossier['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('telPortRespSecu',verifInfos($this->respsecuDossier['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('numFaxRespSecu',verifInfos($this->respsecuDossier['TELFAX_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('societeRespSecu',verifInfos($this->respsecuDossier['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');
-} catch (OdfException $e){
-
-}
+addChamp($odf, 'nomRespSecu',$this->respsecuDossier['NOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'prenomRespSecu',$this->respsecuDossier['PRENOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'mailRespSecu',$this->respsecuDossier['MAIL_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telFixeRespSecu',$this->respsecuDossier['TELFIXE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telPortRespSecu',$this->respsecuDossier['TELPORTABLE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'numFaxRespSecu',$this->respsecuDossier['TELFAX_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'societeRespSecu',$this->respsecuDossier['SOCIETE_UTILISATEURINFORMATIONS']);
 
 //Informations du proprietaire de l'établissement
-try{
-	$odf->setVars('nomProprio',verifInfos($this->proprioInfos['NOM_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('prenomProprio',verifInfos($this->proprioInfos['PRENOM_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('mailProprio',verifInfos($this->proprioInfos['MAIL_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('telFixeProprio',verifInfos($this->proprioInfos['TELFIXE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('telPortProprio',verifInfos($this->proprioInfos['TELPORTABLE_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('numFaxProprio',verifInfos($this->proprioInfos['TELFAX_UTILISATEURINFORMATIONS']),true,'UTF8');
-	$odf->setVars('societeProprio',verifInfos($this->proprioInfos['SOCIETE_UTILISATEURINFORMATIONS']),true,'UTF8');
-} catch (OdfException $e){
+addChamp($odf, 'nomProprio',$this->proprioInfos['NOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'prenomProprio',$this->proprioInfos['PRENOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'mailProprio',$this->proprioInfos['MAIL_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telFixeProprio',$this->proprioInfos['TELFIXE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telPortProprio',$this->proprioInfos['TELPORTABLE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'numFaxProprio',$this->proprioInfos['TELFAX_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'societeProprio',$this->proprioInfos['SOCIETE_UTILISATEURINFORMATIONS']);
 
-}
+//Informations sur le maitre d'oeuvre
+addChamp($odf, 'nomMaitreOeuvre',$this->maiteOeuvre['NOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'prenomMaitreOeuvre',$this->maiteOeuvre['PRENOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'mailMaitreOeuvre',$this->maiteOeuvre['MAIL_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telFixeMaitreOeuvre',$this->maiteOeuvre['TELFIXE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telPortMaitreOeuvre',$this->maiteOeuvre['TELPORTABLE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'numFaxMaitreOeuvre',$this->maiteOeuvre['TELFAX_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'societeMaitreOeuvre',$this->maiteOeuvre['SOCIETE_UTILISATEURINFORMATIONS']);
 
 //Descriptif de l'établissement
-try{
-	$odf->setVars('historiqueDescriptifEtab',verifInfos($this->etabDesc['DESCRIPTIF_HISTORIQUE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('descriptifEtab',verifInfos($this->etabDesc['DESCRIPTIF_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('derogAccEtab',verifInfos($this->etabDesc['DESCRIPTIF_DEROGATIONS_ETABLISSEMENT']),true,'UTF8');
+addChamp($odf, 'historiqueDescriptifEtab',$this->etabDesc['DESCRIPTIF_HISTORIQUE_ETABLISSEMENT']);
+addChamp($odf, 'descriptifEtab',$this->etabDesc['DESCRIPTIF_ETABLISSEMENT']);
+addChamp($odf, 'derogAccEtab',$this->etabDesc['DESCRIPTIF_DEROGATIONS_ETABLISSEMENT']);
+    //Implantation
+    addChamp($odf, 'surfaceEmpriseSol',$this->etabDesc['DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT']);
+    addChamp($odf, 'SHON',$this->etabDesc['DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT']);
+    addChamp($odf, 'SHOB',$this->etabDesc['DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT']);
+    addChamp($odf, 'nbNiveaux',$this->etabDesc['DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT']);
+    addChamp($odf, 'PBDN',$this->etabDesc['DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT']);
+    addChamp($odf, 'surfaceTotale',$this->etabDesc['DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT']);
+    addChamp($odf, 'surfaceAccessible',$this->etabDesc['DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT']);
 	
-	//Implantation
-	$odf->setVars('surfaceEmpriseSol',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('SHON',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('SHOB',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('nbNiveaux',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('PBDN',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('surfaceTotale',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('surfaceAccessible',verifInfos($this->etabDesc['DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT']),true,'UTF8');
+    //Desserte
+    addChamp($odf, 'nbFacadeAccess',$this->etabDesc['DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT']);
+    addChamp($odf, 'voieEngin',$this->etabDesc['DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT']);
+    addChamp($odf, 'voieEchelle',$this->etabDesc['DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT']);
+    addChamp($odf, 'espaceLibre',$this->etabDesc['DESCTECH_DESSERTE_ESPACELIBRE_ETABLISSEMENT']);
 	
-	//Desserte
-	$odf->setVars('nbFacadeAccess',verifInfos($this->etabDesc['DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('voieEngin',verifInfos($this->etabDesc['DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('voieEchelle',verifInfos($this->etabDesc['DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('espaceLibre',verifInfos($this->etabDesc['DESCTECH_DESSERTE_ESPACELIBRE_ETABLISSEMENT']),true,'UTF8');
+    //Isolement par rapport aux tiers
+    addChamp($odf, 'lateralCF',$this->etabDesc['DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT']);
+    addChamp($odf, 'superposeCF',$this->etabDesc['DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT']);
+    addChamp($odf, 'visAvis',$this->etabDesc['DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT']);
 	
-	//Isolement par rapport aux tiers
-	$odf->setVars('lateralCF',verifInfos($this->etabDesc['DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('superposeCF',verifInfos($this->etabDesc['DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('visAvis',verifInfos($this->etabDesc['DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT']),true,'UTF8');
+    //Stabilité au feu
+    addChamp($odf, 'structureSF',$this->etabDesc['DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT']);
+    addChamp($odf, 'plancherSF',$this->etabDesc['DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT']);
 	
-	//Stabilité au feu
-	$odf->setVars('structureSF',verifInfos($this->etabDesc['DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('plancherSF',verifInfos($this->etabDesc['DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT']),true,'UTF8');
+    //Distribution intérieure
+    $cloisonnementTrad = $this->etabDesc['DESCTECH_DISTRIBUTION_CLOISONNEMENTTRAD_ETABLISSEMENT'];
+    if($cloisonnementTrad == 1){
+    	$cloisonnementTrad = "Oui";
+    }else{
+    	$cloisonnementTrad = "Non";
+    }
+    addChamp($odf, 'cloisonnementTrad',$cloisonnementTrad);
 	
-	//Distribution intérieure
-	$cloisonnementTrad = $this->etabDesc['DESCTECH_DISTRIBUTION_CLOISONNEMENTTRAD_ETABLISSEMENT'];
-	if($cloisonnementTrad == 1){
-		$cloisonnementTrad = "Oui";
-	}else{
-		$cloisonnementTrad = "Non";
-	}
-	$odf->setVars('cloisonnementTrad',verifInfos($cloisonnementTrad),true,'UTF8');
+    $secteurs = $this->etabDesc['DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT'];
+    if($secteurs == 1){
+	$secteurs = "Oui";
+    }else{
+	$secteurs = "Non";
+    }	
+    addChamp($odf, 'secteurs',$secteurs);
 	
-	$secteurs = $this->etabDesc['DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT'];
-	if($secteurs == 1){
-		$secteurs = "Oui";
-	}else{
-		$secteurs = "Non";
-	}	
-	$odf->setVars('secteurs',verifInfos($secteurs),true,'UTF8');
+    $compartiments = $this->etabDesc['DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT'];
+    if($compartiments == 1){
+	$compartiments = "Oui";
+    }else{
+	$compartiments = "Non";
+    }	
+    addChamp($odf, 'compartiments',$compartiments);
 	
-	$compartiments = $this->etabDesc['DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT'];
-	if($compartiments == 1){
-		$compartiments = "Oui";
-	}else{
-		$compartiments = "Non";
-	}	
-	$odf->setVars('compartiments',verifInfos($compartiments),true,'UTF8');
+    //Locaux à risques
+    addChamp($odf, 'locauxRisquesMoyens',$this->etabDesc['DESCTECH_LOCAUXARISQUE_NBRISQUESMOYENS_ETABLISSEMENT']);
+    addChamp($odf, 'locauxRisquesImportants',$this->etabDesc['DESCTECH_LOCAUXARISQUE_NBRISQUESIMPORTANTS_ETABLISSEMENT']);
+    
+    //Espaces d'attentes sécurisés
+    addChamp($odf, 'espacesAttentesNombre',$this->etabDesc['DESCTECH_ESPACES_NOMBRE_ETABLISSEMENT']);
+    addChamp($odf, 'espacesAttentesNiveaux',$this->etabDesc['DESCTECH_ESPACES_NIVEAUCONCERNE_ETABLISSEMENT']);
 	
-	//Locaux à risques
-	$odf->setVars('locauxRisquesMoyens',verifInfos($this->etabDesc['DESCTECH_LOCAUXARISQUE_NBRISQUESMOYENS_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('locauxRisquesImportants',verifInfos($this->etabDesc['DESCTECH_LOCAUXARISQUE_NBRISQUESIMPORTANTS_ETABLISSEMENT']),true,'UTF8');
-	//Espaces d'attentes sécurisés
-	$odf->setVars('espacesAttentesNombre',verifInfos($this->etabDesc['DESCTECH_ESPACES_NOMBRE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('espacesAttentesNiveaux',verifInfos($this->etabDesc['DESCTECH_ESPACES_NIVEAUCONCERNE_ETABLISSEMENT']),true,'UTF8');
+    //Désenfumage
+    $desenfNaturel = $this->etabDesc['DESCTECH_DESENFUMAGE_NATUREL_ETABLISSEMENT'];
+    if($desenfNaturel == 1){
+	$desenfNaturel = "Oui";
+    }else{
+	$desenfNaturel = "Non";
+    }	
+    addChamp($odf, 'desenfNaturel',$desenfNaturel);
 	
-	//Désenfumage
-	$desenfNaturel = $this->etabDesc['DESCTECH_DESENFUMAGE_NATUREL_ETABLISSEMENT'];
-	if($desenfNaturel == 1){
-		$desenfNaturel = "Oui";
-	}else{
-		$desenfNaturel = "Non";
-	}	
-	$odf->setVars('desenfNaturel',verifInfos($desenfNaturel),true,'UTF8');
+    $desenfMecanique = $this->etabDesc['DESCTECH_DESENFUMAGE_MECANIQUE_ETABLISSEMENT'];
+    if($desenfMecanique == 1){
+	$desenfMecanique = "Oui";
+    }else{
+    	$desenfMecanique = "Non";
+    }	
+    addChamp($odf, 'desenfMecanique',$desenfMecanique);
+    addChamp($odf, 'desenfCommentaire',$this->etabDesc['DESCTECH_DESENFUMAGE_COMMENTAIRE_ETABLISSEMENT']);
 	
-	$desenfMecanique = $this->etabDesc['DESCTECH_DESENFUMAGE_MECANIQUE_ETABLISSEMENT'];
-	if($desenfMecanique == 1){
-		$desenfMecanique = "Oui";
-	}else{
-		$desenfMecanique = "Non";
-	}	
-	$odf->setVars('desenfMecanique',verifInfos($desenfMecanique),true,'UTF8');
+    //Chaufferies
+    addChamp($odf, 'nbChaufferie',$this->etabDesc['DESCTECH_CHAUFFERIES_NB_ETABLISSEMENT']);
+    addChamp($odf, 'puissanceMaxChauff',$this->etabDesc['DESCTECH_CHAUFFERIES_PUISSMAX_ETABLISSEMENT']);
+    addChamp($odf, 'nbChauff30kw',$this->etabDesc['DESCTECH_CHAUFFERIES_NB30KW']);
+    addChamp($odf, 'nbChauff70kw',$this->etabDesc['DESCTECH_CHAUFFERIES_NB70KW']);
+    addChamp($odf, 'nbChauff2mw',$this->etabDesc['DESCTECH_CHAUFFERIES_NB2MW']);
+    addChamp($odf, 'puissTotalChaff',$this->etabDesc['DESCTECH_CHAUFFERIES_PUISSANCETOTALE']);
 	
-	$odf->setVars('desenfCommentaire',verifInfos($this->etabDesc['DESCTECH_DESENFUMAGE_COMMENTAIRE_ETABLISSEMENT']),true,'UTF8');
+    //Localisation des coupures d'énergies
+    addChamp($odf, 'locGaz',$this->etabDesc['DESCTECH_COUPURENRJ_GAZ_ETABLISSEMENT']);
+    addChamp($odf, 'locElectricite',$this->etabDesc['DESCTECH_COUPURENRJ_ELEC_ETABLISSEMENT']);
+    addChamp($odf, 'locPhotovoltaique',$this->etabDesc['DESCTECH_COUPURENRJ_PHOTOVOLTAIQUE_ETABLISSEMENT']);
+    addChamp($odf, 'locAutre',$this->etabDesc['DESCTECH_COUPURENRJ_AUTRE_ETABLISSEMENT']);
 	
-	//Chaufferies
-	$odf->setVars('nbChaufferie',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_NB_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('puissanceMaxChauff',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_PUISSMAX_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('nbChauff30kw',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_NB30KW']),true,'UTF8');
-	$odf->setVars('nbChauff70kw',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_NB70KW']),true,'UTF8');
-	$odf->setVars('nbChauff2mw',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_NB2MW']),true,'UTF8');
-	$odf->setVars('puissTotalChaff',verifInfos($this->etabDesc['DESCTECH_CHAUFFERIES_PUISSANCETOTALE']),true,'UTF8');
+    //Ascenseurs
+    addChamp($odf, 'nbAscTot',$this->etabDesc['DESCTECH_ASCENSEURS_NBTOTAL_ETABLISSEMENT']);
+    addChamp($odf, 'nbAscAS4',$this->etabDesc['DESCTECH_ASCENSEURS_NBAS4_ETABLISSEMENT']);
 	
-	//Localisation des coupures d'énergies
-	$odf->setVars('locGaz',verifInfos($this->etabDesc['DESCTECH_COUPURENRJ_GAZ_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('locElectricite',verifInfos($this->etabDesc['DESCTECH_COUPURENRJ_ELEC_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('locPhotovoltaique',verifInfos($this->etabDesc['DESCTECH_COUPURENRJ_PHOTOVOLTAIQUE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('locAutre',verifInfos($this->etabDesc['DESCTECH_COUPURENRJ_AUTRE_ETABLISSEMENT']),true,'UTF8');
-	
-	//Ascenseurs
-	$odf->setVars('nbAscTot',verifInfos($this->etabDesc['DESCTECH_ASCENSEURS_NBTOTAL_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('nbAscAS4',verifInfos($this->etabDesc['DESCTECH_ASCENSEURS_NBAS4_ETABLISSEMENT']),true,'UTF8');
-	
-	//Moyens de secours
-	$colSeches = $this->etabDesc['DESCTECH_MOYENSSECOURS_COLONNESSECHES_ETABLISSEMENT'];
-	if($colSeches == 1){
-		$colSeches = "Oui";
-	}else{
-		$colSeches = "Non";
-	}	
-	$odf->setVars('colSeches',verifInfos($colSeches),true,'UTF8');
+    //Moyens de secours
+    $colSeches = $this->etabDesc['DESCTECH_MOYENSSECOURS_COLONNESSECHES_ETABLISSEMENT'];
+    if($colSeches == 1){
+	$colSeches = "Oui";
+    }else{
+	$colSeches = "Non";
+    }	
+    addChamp($odf, 'colSeches',$colSeches);
 
 	
-	$colHumides = $this->etabDesc['DESCTECH_MOYENSSECOURS_COLONNESHUMIDES_ETABLISSEMENT'];
-	if($colHumides == 1){
-		$colHumides = "Oui";
-	}else{
-		$colHumides = "Non";
-	}	
-	$odf->setVars('colHumides',verifInfos($colHumides),true,'UTF8');
+    $colHumides = $this->etabDesc['DESCTECH_MOYENSSECOURS_COLONNESHUMIDES_ETABLISSEMENT'];
+    if($colHumides == 1){
+        $colHumides = "Oui";
+    }else{
+        $colHumides = "Non";
+    }	
+    addChamp($odf, 'colHumides',$colHumides);
 	
-	$ria = $this->etabDesc['DESCTECH_MOYENSSECOURS_RIA_ETABLISSEMENT'];
-	if($ria == 1){
-		$ria = "Oui";
-	}else{
-		$ria = "Non";
-	}	
-	$odf->setVars('RIA',verifInfos($ria),true,'UTF8');
+    $ria = $this->etabDesc['DESCTECH_MOYENSSECOURS_RIA_ETABLISSEMENT'];
+    if($ria == 1){
+        $ria = "Oui";
+    }else{
+        $ria = "Non";
+    }	
+    addChamp($odf, 'RIA',$ria);
 	
-	$sprinkleur = $this->etabDesc['DESCTECH_MOYENSSECOURS_SPRINKLEUR_ETABLISSEMENT'];
-	if($sprinkleur == 1){
-		$sprinkleur = "Oui";
-	}else{
-		$sprinkleur = "Non";
-	}	
-	$odf->setVars('sprinkleur',verifInfos($sprinkleur),true,'UTF8');
+    $sprinkleur = $this->etabDesc['DESCTECH_MOYENSSECOURS_SPRINKLEUR_ETABLISSEMENT'];
+    if($sprinkleur == 1){
+        $sprinkleur = "Oui";
+    }else{
+        $sprinkleur = "Non";
+    }	
+    addChamp($odf, 'sprinkleur',$sprinkleur);
 	
-	$brouillardEau = $this->etabDesc['DESCTECH_MOYENSSECOURS_BROUILLARDEAU_ETABLISSEMENT'];
-	if($brouillardEau == 1){
-		$brouillardEau = "Oui";
-	}else{
-		$brouillardEau = "Non";
-	}	
-	$odf->setVars('brouillardEau',verifInfos($brouillardEau),true,'UTF8');
+    $brouillardEau = $this->etabDesc['DESCTECH_MOYENSSECOURS_BROUILLARDEAU_ETABLISSEMENT'];
+    if($brouillardEau == 1){
+        $brouillardEau = "Oui";
+    }else{
+        $brouillardEau = "Non";
+    }	
+    addChamp($odf, 'brouillardEau',$brouillardEau);
 	
-	//PC sécurité
-	$presencePCS = $this->etabDesc['DESCTECH_PCSECU_PRESENCE_ETABLISSEMENT'];
-	if($presencePCS == 1){
-		$presencePCS = "Oui";
-	}else{
-		$presencePCS = "Non";
-	}	
-	$odf->setVars('presencePCS',verifInfos($presencePCS),true,'UTF8');
+    //PC sécurité
+    $presencePCS = $this->etabDesc['DESCTECH_PCSECU_PRESENCE_ETABLISSEMENT'];
+    if($presencePCS == 1){
+        $presencePCS = "Oui";
+    }else{
+        $presencePCS = "Non";
+    }	
+    addChamp($odf, 'presencePCS',$presencePCS);
 	
-	$odf->setVars('localisationPCS',verifInfos($this->etabDesc['DESCTECH_PCSECU_LOCALISATION_ETABLISSEMENT']),true,'UTF8');
+    addChamp($odf, 'localisationPCS',$this->etabDesc['DESCTECH_PCSECU_LOCALISATION_ETABLISSEMENT']);
 	
-	//SSI
-	$presenceSSI = $this->etabDesc['DESCTECH_SSI_PRESENCE_ETABLISSEMENT'];
-	if($presenceSSI == 1){
-		$presenceSSI = "Oui";
-	}else{
-		$presenceSSI = "Non";
-	}	
-	$odf->setVars('presenceSSI',verifInfos($presenceSSI),true,'UTF8');
+    //SSI
+    $presenceSSI = $this->etabDesc['DESCTECH_SSI_PRESENCE_ETABLISSEMENT'];
+    if($presenceSSI == 1){
+	$presenceSSI = "Oui";
+    }else{
+	$presenceSSI = "Non";
+    }	
+    addChamp($odf, 'presenceSSI',$presenceSSI);
 	
-	$odf->setVars('catSSI',verifInfos($this->etabDesc['DESCTECH_SSI_CATEGORIE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('alarmeSSI',verifInfos($this->etabDesc['DESCTECH_SSI_ALARME_TYPE_ETABLISSEMENT']),true,'UTF8');
+    addChamp($odf, 'catSSI',$this->etabDesc['DESCTECH_SSI_CATEGORIE_ETABLISSEMENT']);
+    addChamp($odf, 'alarmeSSI',$this->etabDesc['DESCTECH_SSI_ALARME_TYPE_ETABLISSEMENT']);
 	
-	//Servuce de sécurité
-	$persQualEL18 = $this->etabDesc['DESCTECH_SERVICESECU_EL18_ETABLISSEMENT'];
-	if($persQualEL18 == 1){
-		$persQualEL18 = "Oui";
-	}else{
-		$persQualEL18 = "Non";
-	}	
-	$odf->setVars('persQualEL18',verifInfos($persQualEL18),true,'UTF8');
+    //Service de sécurité
+    $persQualEL18 = $this->etabDesc['DESCTECH_SERVICESECU_EL18_ETABLISSEMENT'];
+    if($persQualEL18 == 1){
+	$persQualEL18 = "Oui";
+    }else{
+	$persQualEL18 = "Non";
+    }	
+    addChamp($odf, 'persQualEL18',$persQualEL18);
 	
-	$persDesignes = $this->etabDesc['DESCTECH_SERVICESECU_PERSONNELSDESIGNES_ETABLISSEMENT'];
-	if($persDesignes == 1){
-		$persDesignes = "Oui";
-	}else{
-		$persDesignes = "Non";
-	}	
-	$odf->setVars('persDesignes',verifInfos($persDesignes),true,'UTF8');
+    $persDesignes = $this->etabDesc['DESCTECH_SERVICESECU_PERSONNELSDESIGNES_ETABLISSEMENT'];
+    if($persDesignes == 1){
+	$persDesignes = "Oui";
+    }else{
+	$persDesignes = "Non";
+    }	
+    addChamp($odf, 'persDesignes',$persDesignes);
 	
-	$odf->setVars('nbAgentSecu',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_AGENTDESECU_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('nbChefEquipeSecu',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_CHEFEQUIPE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('nbChefServSecu',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_CHEFDESERVICESECU_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('nbSp',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_SP_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('commentaireSp',verifInfos($this->etabDesc['DESCTECH_SERVICESECU_COMMENTAIRESP_ETABLISSEMENT']),true,'UTF8');
+    addChamp($odf, 'nbAgentSecu',$this->etabDesc['DESCTECH_SERVICESECU_AGENTDESECU_ETABLISSEMENT']);
+    addChamp($odf, 'nbChefEquipeSecu',$this->etabDesc['DESCTECH_SERVICESECU_CHEFEQUIPE_ETABLISSEMENT']);
+    addChamp($odf, 'nbChefServSecu',$this->etabDesc['DESCTECH_SERVICESECU_CHEFDESERVICESECU_ETABLISSEMENT']);
+    addChamp($odf, 'nbSp',$this->etabDesc['DESCTECH_SERVICESECU_SP_ETABLISSEMENT']);
+    addChamp($odf, 'commentaireSp',$this->etabDesc['DESCTECH_SERVICESECU_COMMENTAIRESP_ETABLISSEMENT']);
 	
-	//Défense incendie
-	$odf->setVars('nbPointEau',verifInfos($this->etabDesc['DESCTECH_DEFENSE_PTEAU_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('volumePointEau',verifInfos($this->etabDesc['DESCTECH_DEFENSE_VOLUMEPTEAU_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('commentairePointEauNat',verifInfos($this->etabDesc['DESCTECH_DEFENSE_PTEAUCOMMENTAIRE_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('PI',verifInfos($this->etabDesc['DESCTECH_DEFENSE_PI_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('BI',verifInfos($this->etabDesc['DESCTECH_DEFENSE_BI_ETABLISSEMENT']),true,'UTF8');
-	$odf->setVars('debitSimultane',verifInfos($this->etabDesc['DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT']),true,'UTF8');
-	
-}catch (OdfException $e){
-
-}
-
+    //Défense incendie
+    addChamp($odf, 'nbPointEau',$this->etabDesc['DESCTECH_DEFENSE_PTEAU_ETABLISSEMENT']);
+    addChamp($odf, 'volumePointEau',$this->etabDesc['DESCTECH_DEFENSE_VOLUMEPTEAU_ETABLISSEMENT']);
+    addChamp($odf, 'commentairePointEauNat',$this->etabDesc['DESCTECH_DEFENSE_PTEAUCOMMENTAIRE_ETABLISSEMENT']);
+    addChamp($odf, 'PI',$this->etabDesc['DESCTECH_DEFENSE_PI_ETABLISSEMENT']);
+    addChamp($odf, 'BI',$this->etabDesc['DESCTECH_DEFENSE_BI_ETABLISSEMENT']);
+    addChamp($odf, 'debitSimultane',$this->etabDesc['DESCTECH_DEFENSE_DEBITSIMULTANE_ETABLISSEMENT']);
 
 //INFORMATION CONCERNANT LE PERE DE L'ENTITE
-try{
-	$odf->setVars('etablissementLibelleP',verifInfos($this->infoPere['LIBELLE_ETABLISSEMENTINFORMATIONS']),true,'UTF8');
-}catch (OdfException $e){
-
-}
-
-try{
-	$odf->setVars('typeLettrePPere',verifInfos($this->typeLettrePPere),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('activitePPere',verifInfos($this->libelleActivitePPere),true,'UTF8');
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('categorieEtabPere',verifInfos($this->categorieEtabPere),true,'UTF8');	
-} catch (OdfException $e) {
-
-}
-
-try{
-	$odf->setVars('genrePere',verifInfos($this->genrePere),true,'UTF8');	
-} catch (OdfException $e) {
-
-}
+addChamp($odf, 'etablissementLibelleP',$this->infoPere['LIBELLE_ETABLISSEMENTINFORMATIONS']);
+addChamp($odf, 'typeLettrePPere',$this->typeLettrePPere);
+addChamp($odf, 'activitePPere',$this->libelleActivitePPere);
+addChamp($odf, 'categorieEtabPere',$this->categorieEtabPere);	
+addChamp($odf, 'genrePere',$this->genrePere);	
 
 //INFORMATION DU GN
 if($this->GN == 2){
-	try{
-		$odf->setVars('gn2',verifInfos('×'),true,'UTF8');
-	}catch (OdfException $e){
-
-	}
-	try{
-		$odf->setVars('gn3','',true,'UTF8');
-	}catch (OdfException $e){
-
-	}
+    addChamp($odf, 'gn2','×');
+    addChamp($odf, 'gn3','');
 }else if($this->GN == 3){
-	try{
-		$odf->setVars('gn2','',true,'UTF8');
-	}catch (OdfException $e){
-
-	}
-	try{
-		$odf->setVars('gn3',verifInfos('×'),true,'UTF8');
-	}catch (OdfException $e){
-
-	}
+    addChamp($odf, 'gn2','');
+    addChamp($odf, 'gn3','×');
 }
 
 try{
-	$chemin = REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$this->idPieceJointe.".odt";
-	$odf->saveToDisk($chemin);
+    $chemin = $this->store->getFilePath($this->nouvellePJ, 'dossier', $this->idDossier, true);
+    $odf->saveToDisk($chemin);
 } catch (OdfException $e) {
 
 }
-
-?>
