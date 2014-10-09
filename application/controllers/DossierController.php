@@ -829,15 +829,18 @@ class DossierController extends Zend_Controller_Action
                 //On cherche le type de dossier
                 $dbDossier = new Model_DbTable_Dossier;
                 $type = $dbDossier->getTypeDossier($this->_getParam('idDossier'));
-
+				
                 //Lorsque l'on est dans une visite ou un groupe de visite, on modifie les textes applicables dans l'établissement au fur et à mesure
                 if ($type['TYPE_DOSSIER'] == 2 || $type['TYPE_DOSSIER'] == 3) {
                     $dbEtablissementTextAppl = new Model_DbTable_EtsTextesAppl;
                     if ($this->_getParam('toDo') == 'save') {
-                        $row = $dbEtablissementTextAppl->createRow();
-                        $row->ID_TEXTESAPPL = $this->_getParam('idTexte');
-                        $row->ID_ETABLISSEMENT = $this->_getParam('idEtablissement');
-                        $row->save();
+						$exist = $dbEtablissementTextAppl->find($this->_getParam('idTexte'),$this->_getParam('idEtablissement'))->current();
+						if(!$exist){
+							$row = $dbEtablissementTextAppl->createRow();
+							$row->ID_TEXTESAPPL = $this->_getParam('idTexte');
+							$row->ID_ETABLISSEMENT = $this->_getParam('idEtablissement');
+							$row->save();
+						}
                     } elseif ($this->_getParam('toDo') == 'delete') {
                         $row = $dbEtablissementTextAppl->find($this->_getParam('idTexte'),$this->_getParam('idEtablissement'))->current();
                         $row->delete();
