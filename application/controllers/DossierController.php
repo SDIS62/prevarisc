@@ -85,12 +85,29 @@ class DossierController extends Zend_Controller_Action
         //Téléphonique - OK
         "43" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
     //COURRIER/COURRIEL
-        //Arrivée - OK
-        "34" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","DATEREP","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
-        //Départ - OK
-        "35" => array("DATEINSERT","OBJET","NUMCHRONO","DATEREP","PREVENTIONNISTE","DEMANDEUR"),
-        //En transit (gestion des dossiers en interne....  - OK
-        "36" => array("DATEINSERT","OBJET","DATEMAIRIE","DATESECRETARIAT","PREVENTIONNISTE","DEMANDEUR","DATEENVTRANSIT"),
+        //Lettre - OK
+        "52" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Mise en demeure - OK
+        "55" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Avis écrit motivé - OK
+        "51" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Consultation PLU - OK
+        "53" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Rapport d'organisme agréé - OK
+        "49" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Demande de renseignements
+        "54" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Demande de visite périodique
+        "59" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Demande de visite technique
+        "57" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Demande de visite inopinée
+        "58" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Demande de visite hors programme
+        "50" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        //Demande de visite de réception
+        "60" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        
     //INTERVENTION
         //Incendie - OK
         "37" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE"),
@@ -173,12 +190,12 @@ class DossierController extends Zend_Controller_Action
 
     public function pieceJointeAction()
     {
-		$DBdossier = new Model_DbTable_Dossier;
-		$this->infosDossier = $DBdossier->find((int) $this->_getParam("id"))->current();
+        $DBdossier = new Model_DbTable_Dossier;
+        $this->infosDossier = $DBdossier->find((int) $this->_getParam("id"))->current();
         $this->_forward("index", "piece-jointe", null, array(
             "type" => "dossier",
             "id" => $this->_request->id,
-			"verrou" => $this->infosDossier['VERROU_DOSSIER']
+            "verrou" => $this->infosDossier['VERROU_DOSSIER']
         ));
     }
 
@@ -197,6 +214,11 @@ class DossierController extends Zend_Controller_Action
         //Récupération de la liste des avis pour la génération du select
         $DBlisteAvis = new Model_DbTable_Avis;
         $this->view->listeAvis = $DBlisteAvis->getAvis();
+        
+        // AUTORISATIONS CHANGEMENT AVIS DE LA COMMISSION
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+
+            $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
 
         if ($this->_getParam("idEtablissement")) {
             $this->view->idEtablissement = $this->_getParam("idEtablissement");
@@ -425,7 +447,8 @@ class DossierController extends Zend_Controller_Action
 
             //ICI RéCUPERATION DU LIBELLE DE LA COMMISSION !!!!!!!!!!! PUIS AFFICHAGE DANS LE INPUT !!!
             $this->view->commissionInfos = $DBdossierCommission->find($this->view->infosDossier['COMMISSION_DOSSIER'])->current();
-
+            $this->view->commissionInfosCommissionType = $model_typesDesCommissions->find($this->view->commissionInfos['ID_COMMISSIONTYPE'])->current();
+            
             //On récupère la liste de tous les champs que l'on doit afficher en fonction des natures
             //Si il y à plusieurs natures on les fait une par une pour savoir tous les champs à afficher
             $premiereNature = 1;
@@ -445,7 +468,9 @@ class DossierController extends Zend_Controller_Action
                 }
             }
             $this->view->afficherChamps = $afficherChamps;
-
+            
+            
+            
 			//On verifie les éléments masquant l'avis et la date de commission/visite pour les afficher ou non
 
 
@@ -1628,7 +1653,10 @@ class DossierController extends Zend_Controller_Action
 
 		$this->view->fichierSelect = $this->_getParam("fichierSelect");
 
-		/******
+                $dateDuJour = new Zend_Date();
+                $this->view->dateDuJour = $dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+		
+                /******
 		/
 		/RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
 		/
@@ -1641,6 +1669,7 @@ class DossierController extends Zend_Controller_Action
 		$this->view->numWinPrev = $etablissement['NUMEROID_ETABLISSEMENT'];
 		$this->view->numTelEtab = $etablissement['TELEPHONE_ETABLISSEMENT'];
 		$this->view->numFaxEtab = $etablissement['FAX_ETABLISSEMENT'];
+                $this->view->mailEtab = $etablissement['COURRIEL_ETABLISSEMENT'];
 
 		//Informations de l'établissement (catégorie, effectifs, activité / type principal)
 		$object_informations = $model_etablissement->getInformations($idEtab);
@@ -1649,6 +1678,7 @@ class DossierController extends Zend_Controller_Action
 		
 		$this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
 		$this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
+                $this->view->numTotal = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
 		$dbCategorie = new Model_DbTable_Categorie;
 		if ($object_informations["ID_CATEGORIE"]) {
@@ -1771,6 +1801,13 @@ class DossierController extends Zend_Controller_Action
 		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
 		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
 
+                $dbDossierContact = new Model_DbTable_DossierContact;
+		//On recherche si un maitre d'oeuvre existe
+		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,4);
+		if(count($contactInfos) == 1) {
+			$this->view->maiteOeuvre = $contactInfos[0];
+                }
+                
 		$dbDossierContact = new Model_DbTable_DossierContact;
 		//On recherche si un directeur unique de sécurité existe
 		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,8);
@@ -1966,13 +2003,17 @@ class DossierController extends Zend_Controller_Action
 			$DBpieceJointe = new Model_DbTable_PieceJointe;
 			$nouvellePJ = $DBpieceJointe->createRow();
 			$nouvellePJ->ID_PIECEJOINTE = $this->view->idPieceJointe;
-			$nouvellePJ->NOM_PIECEJOINTE = "Rapport";
+			$nouvellePJ->NOM_PIECEJOINTE = "Rapport modèle ".substr(basename($this->view->fichierSelect), 0, strlen(basename($this->view->fichierSelect)));
 			$nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
 			$nouvellePJ->DESCRIPTION_PIECEJOINTE = "Rapport de l'établissement ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']." généré le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." à ".$dateDuJour->get(Zend_Date::HOUR.":".Zend_Date::MINUTE);
 			$nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
 			$nouvellePJ->save();
-
-			echo "<a href='/data/uploads/pieces-jointes/".$nouvellePJ->ID_PIECEJOINTE.".odt'>Ouvrir le rapport de l'établissement : ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']."<a/><br/><br/>";
+                        
+                        $this->view->nouvellePJ = $nouvellePJ;
+                        
+                        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+                        $url =  $this->getHelper('url')->url(array('controller' => 'piece-jointe', 'id' => $idDossier, 'action' => 'get', 'idpj' => $nouvellePJ['ID_PIECEJOINTE'], 'type' => 'dossier'));
+			echo "<a href='".$url."'>Ouvrir le rapport de l'établissement : ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']."<a/><br/><br/>";
 
 			$DBsave = new Model_DbTable_DossierPj;
 			$linkPj = $DBsave->createRow();

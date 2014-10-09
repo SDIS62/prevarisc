@@ -43,6 +43,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_typesplan = new Service_TypePlan;
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
+        $service_classement = new Service_Classement;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -50,14 +51,19 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_activite = $service_typeactivite->getAll();
-        $this->view->DB_commission = $service_commission->getAll();
+        $this->view->DB_commission = $service_commission->getCommissionsAndTypes();
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
+        $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $this->view->add = false;
+        
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
+        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
         if($this->_request->isPost()) {
             try {
@@ -86,6 +92,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_typesplan = new Service_TypePlan;
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
+        $service_classement = new Service_Classement;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -93,12 +100,18 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_activite = $service_typeactivite->getAll();
-        $this->view->DB_commission = $service_commission->getAll();
+        $this->view->DB_commission = $service_commission->getCommissionsAndTypes();
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
+        $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->add = true;
+        
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
+        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
+
 
         if($this->_request->isPost()) {
             try {
@@ -202,6 +215,12 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
+        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+    }
+    
+    public function getPieceJointeAction($id_etablissement)
+    {
+        $this->forward('get', 'piece-jointe');
     }
 
     public function editPiecesJointesAction()
@@ -212,6 +231,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
+        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        
     }
 
     public function addPieceJointeAction()
@@ -224,10 +245,14 @@ class EtablissementController extends Zend_Controller_Action
         {
             try {
                 $post = $this->_request->getPost();
-                $service_etablissement->addPJ($this->_request->id, $_FILES['file'], $post['name'], $post['description'], $post['mise_en_avant']);
+                $name = isset($post['name']) ? $post['name'] : '';
+                $description = isset($post['description']) ? $post['description'] : '';
+                $mise_en_avant = isset($post['mise_en_avant']) ? $post['mise_en_avant'] : 0;
+                $service_etablissement->addPJ($this->_request->id, $_FILES['file'], $name, $description, $mise_en_avant);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'La pièce jointe a bien été ajoutée.'));
             }
             catch(Exception $e) {
+                var_dump($e);exit();
                 $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Mise à jour annulée', 'message' => 'La pièce jointe n\'a été ajoutée. Veuillez rééssayez. (' . $e->getMessage() . ')'));
             }
 

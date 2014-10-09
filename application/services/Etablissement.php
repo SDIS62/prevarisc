@@ -23,14 +23,15 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             $DB_rubriques = new Model_DbTable_EtablissementInformationsRubrique;
             $DB_adresse = new Model_DbTable_EtablissementAdresse;
-            $DB_plans = new Model_DbTable_EtablissementInformationsPlan;
             $DB_genre = new Model_DbTable_Genre;
             $DB_categorie = new Model_DbTable_Categorie;
             $DB_famille = new Model_DbTable_Famille;
             $DB_classe = new Model_DbTable_Classe;
+            $DB_classement = new Model_DbTable_Classement;
             $DB_type = new Model_DbTable_Type;
             $DB_typeactivite = new Model_DbTable_TypeActivite;
             $DB_commission = new Model_DbTable_Commission;
+            $DB_commission_type = new Model_DbTable_CommissionType;
             $DB_statut = new Model_DbTable_Statut;
             $DB_dossier = new Model_DbTable_Dossier;
 
@@ -160,7 +161,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     'DUREEVISITE_ETABLISSEMENT' => $general->DUREEVISITE_ETABLISSEMENT
                 );
             }
-
+            
+            $commission = @$DB_commission->find($informations->ID_COMMISSION)->current();
             $etablissement = array(
                 'general' => $general->toArray(),
                 'informations' => array_merge($informations->toArray(), array(
@@ -168,9 +170,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_CATEGORIE" => @$DB_categorie->find($informations->ID_CATEGORIE)->current()->LIBELLE_CATEGORIE,
                     "LIBELLE_FAMILLE" => @$DB_famille->find($informations->ID_FAMILLE)->current()->LIBELLE_FAMILLE,
                     "LIBELLE_CLASSE" => @$DB_classe->find($informations->ID_CLASSE)->current()->LIBELLE_CLASSE,
+                    "LIBELLE_CLASSEMENT" => @$DB_classement->find($informations->ID_CLASSEMENT)->current()->LIBELLE_CLASSEMENT,
                     "LIBELLE_TYPE_PRINCIPAL" => @$DB_type->find($informations->ID_TYPE)->current()->LIBELLE_TYPE,
                     "LIBELLE_TYPEACTIVITE_PRINCIPAL" => @$DB_typeactivite->find($informations->ID_TYPEACTIVITE)->current()->LIBELLE_ACTIVITE,
-                    "LIBELLE_COMMISSION" => @$DB_commission->find($informations->ID_COMMISSION)->current()->LIBELLE_COMMISSION,
+                    "LIBELLE_COMMISSION" => $commission->LIBELLE_COMMISSION,
+                    "LIBELLE_COMMISSION_TYPE" => @$DB_commission_type->find($commission->ID_COMMISSIONTYPE)->current()->LIBELLE_COMMISSIONTYPE,
                     "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
                 )),
                 'presence_avis_differe' => $presence_avis_differe,
@@ -369,8 +373,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             "DESCTECH_IMPLANTATION_SURFACE_ETABLISSEMENT" => "Surface emprise au sol (m²)",
             "DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT" => "Surface totale (m²)",
             "DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT" => "Surface accessible au public (m²)",
-            "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "SHON (m²)",
-            "DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT" => "SHOB (m²)",
+            "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "Surface de plancher (m²)",
             "DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT" => "Nombre de niveaux",
             "DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT" => "PBDN (m)",
             "DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT" => "Nombre de façades accessibles",
@@ -432,7 +435,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         );
 
         foreach ($etablissement->toArray() as $key => $value) {
-            if (preg_match('/DESCTECH/', $key)) {
+            if (preg_match('/DESCTECH/', $key) && strcmp('DESCTECH_IMPLANTATION_SHOB_ETABLISSEMENT', $key) != 0) {
                 $key_to_str = str_replace('DESCTECH_', '', $key);
                 $key_to_str = explode('_', $key_to_str);
                 $key_to_str = $key_to_str[0];
@@ -496,6 +499,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
         foreach($descriptifs_techniques as $key => $value) {
             $etablissement->$key = $value;
         }
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $cache->remove('etablissement_id_' . $id_etablissement);
 
         $etablissement->save();
     }
@@ -572,7 +577,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DB_etablissements_lies = new Model_DbTable_EtablissementLie;
         $DB_preventionniste = new Model_DbTable_EtablissementInformationsPreventionniste;
         $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        $DB_etablissementclassement = new Model_DbTable_EtablissementClassement;
 
         // On commence la transaction
         $db = Zend_Db_Table::getDefaultAdapter();
@@ -581,6 +585,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         try {
+            
+            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = ($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
+            
             $etablissement = $id_etablissement == null ? $DB_etablissement->createRow() : $DB_etablissement->find($id_etablissement)->current();
 
             if($date == '') {
@@ -692,10 +699,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 
                 // Zone
                 case 10:
-                    if ($data['ID_CLASSEMENT'] !== null && $etablissement->ID_ETABLISSEMENT !== null){
-                        $DB_etablissementclassement->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                        $DB_etablissementclassement->insert(array("ID_CLASSEMENT" => $data['ID_CLASSEMENT'], "ID_ETABLISSEMENT" => $etablissement->ID_ETABLISSEMENT));
-                    }
+                    $informations->ID_CLASSEMENT = $data['ID_CLASSEMENT'];
                     break;
                 
             }
@@ -708,10 +712,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             $informations->LIBELLE_ETABLISSEMENTINFORMATIONS = $data['LIBELLE_ETABLISSEMENTINFORMATIONS'];
             $informations->ID_GENRE = $id_genre;
-            $informations->ID_STATUT = $data['ID_STATUT'];
+            $informations->ID_STATUT = isset($data['ID_STATUT']) ? $data['ID_STATUT'] : 1;
             $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
             $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
-
+//var_dump($informations);exit();
             $informations->save();
 
             // Sauvegarde des préventionnistes
@@ -800,6 +804,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                         elseif($id_genre == 2 && $genre_enfant != 3) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
                         }
+                        elseif($genre_enfant == 1){
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne peut pas être un établissement enfant)', 500);
+                        }
                         elseif($genre_enfant == null) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
                         }
@@ -823,6 +830,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 elseif($id_genre == 3 && $genre_pere != 2) {
                     throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
+                }
+                elseif($id_genre == 1) {
+                    throw new Exception('Le type n\'est pas compatible (Un site ne peut pas avoir de père)', 500);
                 }
                 elseif($genre_pere == null) {
                     throw new Exception('Le père n\'est pas compatible (Les sites, habitation, IGH et EIC n\'ont pas de père)', 500);
@@ -985,7 +995,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DBused = new Model_DbTable_PieceJointe;
         return $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $id_etablissement);
     }
-
+    
+    
     /**
      * Ajout d'une pièce jointe pour un établissement
      *
@@ -997,19 +1008,24 @@ class Service_Etablissement implements Service_Interface_Etablissement
      */
     public function addPJ($id_etablissement, $file, $name = '', $description = '', $mise_en_avant = 0)
     {
-        $path = REAL_DATA_PATH.DS . 'uploads' . DS . 'pieces-jointes' . DS;
+        
         $extension = strtolower(strrchr($file['name'], "."));
-            
+       
         $DBpieceJointe = new Model_DbTable_PieceJointe;
-
-        $nouvellePJ = $DBpieceJointe->createRow(array(
+        
+        $piece_jointe = array(
             'EXTENSION_PIECEJOINTE' => $extension,
-            'NOM_PIECEJOINTE' => $name == '' ? $file['name'] : $name,
+            'NOM_PIECEJOINTE' => $name == '' ? substr($file['name'], 0, -4) : $name,
             'DESCRIPTION_PIECEJOINTE' => $description,
             'DATE_PIECEJOINTE' => date('Y-m-d')
-        ))->save();
-
-        if(!move_uploaded_file($file['tmp_name'], $path . $nouvellePJ . $extension)) {
+        );
+        
+        $piece_jointe['ID_PIECEJOINTE'] = $DBpieceJointe->createRow($piece_jointe)->save();
+        
+        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $file_path = $store->getFilePath($piece_jointe, 'etablissement', $id_etablissement, true);
+        
+        if(!move_uploaded_file($file['tmp_name'], $file_path)) {
             throw new Exception('Ne peut pas déplacer le fichier ' . $file['tmp_name']);
         }
         else {
@@ -1017,12 +1033,15 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             $linkPj = $DBsave->createRow(array(
                 'ID_ETABLISSEMENT' => $id_etablissement,
-                'ID_PIECEJOINTE' => $nouvellePJ,
+                'ID_PIECEJOINTE' => $piece_jointe['ID_PIECEJOINTE'],
                 'PLACEMENT_ETABLISSEMENTPJ' => (int) $mise_en_avant != 0 && in_array($extension, array(".jpg", ".jpeg", ".png", ".gif")) ? $mise_en_avant : 0,
             ))->save();
 
             if(in_array($extension, array(".jpg", ".jpeg", ".png", ".gif"))) {
-                GD_Resize::run($path . $nouvellePJ . $extension, $path . "miniatures" . DIRECTORY_SEPARATOR . $nouvellePJ . ".jpg", 450);
+                $miniature = $piece_jointe;
+                $miniature['EXTENSION_PIECEJOINTE'] = '.jpg';
+                $miniature_path = $store->getFilePath($miniature, 'etablissement_miniature', $id_etablissement, true);
+                GD_Resize::run($file_path, $miniature_path, 450);
             }
         }
 
@@ -1040,14 +1059,18 @@ class Service_Etablissement implements Service_Interface_Etablissement
     {
         $DBpieceJointe = new Model_DbTable_PieceJointe;
         $DBitem = new Model_DbTable_EtablissementPj;
-
-        $path = APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'data' . DS . 'uploads' . DS . 'pieces-jointes' . DS;
-
+        
         $pj = $DBpieceJointe->find($id_pj)->current();
+        
+        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $file_path = $store->getFilePath($pj, 'etablissement', $id_etablissement);
+        $miniature_pj = $pj;
+        $miniature_pj['EXTENSION_PIECEJOINTE'] = '.jpg';
+        $miniature_path = $store->getFilePath($miniature_pj, 'etablissement_miniature', $id_etablissement);
 
         if ($DBitem != null) {
-            if( file_exists($path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )                         unlink($path . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
-            if( file_exists($path . "miniatures" . DS . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE) )     unlink($path . "miniatures" . DS . $pj->ID_PIECEJOINTE . $pj->EXTENSION_PIECEJOINTE);
+            if( file_exists($file_path) )         unlink($file_path);
+            if( file_exists($miniature_path))     unlink($miniature_path);
             $DBitem->delete("ID_PIECEJOINTE = " . (int) $this->_request->id_pj);
             $pj->delete();
         }

@@ -26,7 +26,6 @@ class Service_GroupementCommunes
         if($num_insee !== null) {
             return $model_groupement->getGroupementParVille($num_insee);
         }
-
         return $model_groupement->getAllWithTypes();
     }
 }

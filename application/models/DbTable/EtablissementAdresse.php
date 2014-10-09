@@ -3,7 +3,7 @@
     class Model_DbTable_EtablissementAdresse extends Zend_Db_Table_Abstract
     {
         protected $_name="etablissementadresse"; // Nom de la base
-        protected $_primary = "ID_ADRESSE"; // Clé primaire
+        protected $_primary = "ID_ADRESSE"; // Clï¿½ primaire
 
         public function get( $id_etablissement )
         {
@@ -33,7 +33,7 @@
 
                 // Adresse d'une cellule
                 case 3:
-                    // Récupération des parents de l'établissement
+                    // Rï¿½cupï¿½ration des parents de l'ï¿½tablissement
                     $results = array();
                     $id_enfant = $id_etablissement;
                     do {
@@ -54,13 +54,14 @@
                     return array();
                     break;
 
-                // Adresse par défaut
+                // Adresse par dï¿½faut
                 default: 
                     $select = $this->select()
                         ->setIntegrityCheck(false)
                         ->from("etablissementadresse")
                         ->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", array("LIBELLE_COMMUNE", "CODEPOSTAL_COMMUNE"))
                         ->joinLeft("adresserue", "etablissementadresse.ID_RUE = adresserue.ID_RUE AND etablissementadresse.NUMINSEE_COMMUNE = adresserue.NUMINSEE_COMMUNE", "LIBELLE_RUE")
+                        ->joinLeft("adresseruetype", "adresseruetype.ID_RUETYPE = adresserue.ID_RUETYPE", array("LIBELLE_RUETYPE", "ABREVIATION_RUETYPE"))
                         ->where("etablissementadresse.ID_ETABLISSEMENT = '$id_etablissement'");
                     return $this->fetchAll($select)->toArray();
             }
@@ -82,7 +83,7 @@
                 return $this->fetchAll($select)->toArray();
         }
 
-        // Donne la liste de ville par rapport à un code postal
+        // Donne la liste de ville par rapport ï¿½ un code postal
         public function getVilleByCP( $code_postal )
         {
             $select = $this->select()
@@ -106,7 +107,7 @@
             return $this->fetchAll($select)->toArray();
         }
 
-        // Retourne les voies par rapport à une ville et un type de voie
+        // Retourne les voies par rapport ï¿½ une ville et un type de voie
         public function getVoies( $code_insee, $q = null )
         {
             $select = $this->select()

@@ -16,15 +16,15 @@
 		<form name='etabRapport' id='etabRapport'>
 	";
 	echo "Selectionnez le rapport que vous souhaitez générer : &nbsp;";	
-	$dirname = REAL_DATA_PATH . "/uploads/documents";
+	$dirname = REAL_DATA_PATH . DS . "uploads" . DS . "documents";
 	$dir = opendir($dirname); 
 
 	echo "<select name='fichierSelect' id='fichierSelect' >";
 	while($file = readdir($dir)) {
-		if($file != '.' && $file != '..' && !is_dir($dirname.$file))
+		if($file != '.' && $file != '..' && !is_dir($dirname.DS.$file))
 		{
 			if($file != '.gitignore')
-				echo "<option value='".DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents".DIRECTORY_SEPARATOR.$file."'>".$file."</option>";
+				echo "<option value='".htmlentities($dirname.DS.$file, ENT_QUOTES)."'>".$file."</option>";
 		}
 	}
 	echo "</select><br/><br/>";

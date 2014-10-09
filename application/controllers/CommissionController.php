@@ -337,10 +337,11 @@
                 $model_membresDossierTypes = new Model_DbTable_CommissionMembreDossierType;
 
                 // On supprime les courriers
+                $courrier_path = REAL_DATA_PATH . DS . "uploads" . DS . "courriers";
                 $row_membre = $model_membres->find($this->_request->id_membre)->current();
-                unlink("./data/uploads/courriers/" . $this->_request->id_membre . "ODJ" . $row_membre->COURRIER_ODJ);
-                unlink("./data/uploads/courriers/" . $this->_request->id_membre . "CONVOCATIONVISITE" . $row_membre->COURRIER_CONVOCATIONVISITE);
-                unlink("./data/uploads/courriers/" . $this->_request->id_membre . "CONVOCATIONSALLE" . $row_membre->COURRIER_CONVOCATIONSALLE);
+                unlink($courrier_path . DS . $this->_request->id_membre . "ODJ" . $row_membre->COURRIER_ODJ);
+                unlink($courrier_path . DS . $this->_request->id_membre . "CONVOCATIONVISITE" . $row_membre->COURRIER_CONVOCATIONVISITE);
+                unlink($courrier_path . DS . $this->_request->id_membre . "CONVOCATIONSALLE" . $row_membre->COURRIER_CONVOCATIONSALLE);
 
                 // On supprime la règle
                 $model_membresTypes->delete("ID_COMMISSIONMEMBRE = " .  $this->_request->id_membre);
@@ -512,7 +513,7 @@
                 // On check si on veut uploader un document odt
                 if ($string_extension == ".odt") {
 
-                    if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], REAL_DATA_PATH . "/uploads/documents_commission/" . $_FILES['COURRIER']['name']) ) {
+                    if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], REAL_DATA_PATH . DS . "uploads" . DS . "documents_commission" . DS . $_FILES['COURRIER']['name']) ) {
 
                          // Les modèles
                         $model_commission = new Model_DbTable_Commission;
@@ -523,7 +524,7 @@
                         // Si il y a déjà un courrier, on le supprime
                         if ($commission->DOCUMENT_CR != null) {
 
-                            unlink(REAL_DATA_PATH . "/uploads/documents_commission/" . $commission->DOCUMENT_CR);
+                            unlink(REAL_DATA_PATH . DS . "uploads" . DS . "documents_commission" . DS . $commission->DOCUMENT_CR);
                         }
 
                         // On met à jour le libellé du courrier modifié
@@ -569,7 +570,7 @@
                 $commission = $model_commission->find($this->_request->id_commission)->current();
 
                 // On supprime le fichier
-                unlink(DATA_PATH . "/uploads/documents_commission/" . $commission->DOCUMENT_CR);
+                unlink(REAL_DATA_PATH . DS . "uploads" . DS . "documents_commission" . DS . $commission->DOCUMENT_CR);
 
                 // On met à null dans la DB
                 $commission->DOCUMENT_CR = null;
@@ -605,7 +606,7 @@
                 // On check si on veut uploader un document odt
                 if ($string_extension == ".odt") {
 
-                    if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], REAL_DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $_FILES['COURRIER']['name']) ) {
+                    if (move_uploaded_file($_FILES['COURRIER']['tmp_name'], REAL_DATA_PATH . DS . "uploads" . DS . "courriers" . DS . $this->_request->id_membre . $this->_request->type . "_" . $_FILES['COURRIER']['name']) ) {
 
                         // Les modèles
                         $model_membres = new Model_DbTable_CommissionMembre;
@@ -617,7 +618,7 @@
                         // Si il y a déjà un courrier, on le supprime
                         if ($row_membre->$row != null) {
 
-                            unlink(REAL_DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
+                            unlink(REAL_DATA_PATH . DS . "uploads" . DS . "courriers" . DS . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
                         }
 
                         // On met à jour le libellé du courrier modifié
@@ -663,7 +664,7 @@
                 $row = "COURRIER_" . $this->_request->type;
 
                 // On supprime le fichier
-                unlink(DATA_PATH . "/uploads/courriers/" . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
+                unlink(REAL_DATA_PATH . DS . "uploads" . DS . "courriers" . DS . $this->_request->id_membre . $this->_request->type . "_" . $row_membre->$row);
 
                 // On met à null dans la DB
                 $row_membre->$row = null;

@@ -16,21 +16,21 @@
                     </li>";
             }
 
-            if( $this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ) {
+            if ($this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ) {
                 echo "<li>
                         <a class='".( ( $this->action == "textesapplicables" ) ? "white_link" : "read" )."' "
                         . "href='".$this->url(array("action"=>"textesapplicables"))."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
                     </li>";
             }
 
-            if($this->natureDossier != 35 && $this->natureDossier != 36) {
+            if ($this->idTypeDossier != 5) {
                 echo "<li>
                         <a class='".( ( $this->action == "docconsulte" ) ? "white_link" : "read" )."' "
                             . "href='".$this->url(array("action"=>"docconsulte"))."'><i class=\"icon-file icon-black\"></i> Documents consultés</a>
                     </li>";
             }
 
-            if($this->natureDossier != 3 && $this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 31 && $this->natureDossier != 32 && $this->natureDossier != 34 && $this->natureDossier != 35 && $this->natureDossier != 36) {
+            if($this->natureDossier != 3 && $this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 31 && $this->natureDossier != 32 && $this->idTypeDossier != 5) {
                 echo "<li>
                         <a class='".( ( $this->action == "prescription" ) ? "white_link" : "read" )."' "
                         . "href='".$this->url(array("action"=>"prescription"))."'><i class=\"icon-flag icon-black\"></i> Prescriptions</a>
@@ -44,7 +44,7 @@
         </li>
 		
 	<?php
-            if($this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 34 && $this->natureDossier != 35 && $this->natureDossier != 36) {
+            if($this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44) {
                 echo "<li>
                         <a class='".( ( $this->action == "contact" ) ? "white_link" : "read" )."' "
                         . "href='".$this->url(array("action"=>"contact"))."'><i class=\"icon-user icon-black\"></i> Contacts</a>

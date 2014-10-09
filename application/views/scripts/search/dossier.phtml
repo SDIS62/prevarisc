@@ -1,37 +1,37 @@
 <!-- Traitement pour l'affichage des dates -->
 <?php
     $dateCreationStart="";
-    if(isset($_GET["date-creation-start"])){
+    if(isset($_GET["date-creation-start"]) && $_GET["date-creation-start"]){
         $dateArray = explode('/', $_GET["date-creation-start"]);
         $dateCreationStart = $dateArray[1]."/".$dateArray[0]."/".$dateArray[2];
     }
     
     $dateCreationEnd="";
-    if(isset($_GET["date-creation-end"])){
+    if(isset($_GET["date-creation-end"]) && $_GET["date-creation-end"]){
         $dateArray = explode('/', $_GET["date-creation-end"]);
         $dateCreationEnd = $dateArray[1]."/".$dateArray[0]."/".$dateArray[2];
     }
     
     $dateReceptionStart="";
-    if(isset($_GET["date-reception-start"])){
+    if(isset($_GET["date-reception-start"]) && $_GET["date-reception-start"]){
         $dateArray = explode('/', $_GET["date-reception-start"]);
         $dateReceptionStart = $dateArray[1]."/".$dateArray[0]."/".$dateArray[2];
     }
     
     $dateReceptionEnd="";
-    if(isset($_GET["date-reception-end"])){
+    if(isset($_GET["date-reception-end"]) && $_GET["date-reception-end"]){
         $dateArray = explode('/', $_GET["date-reception-end"]);
         $dateReceptionEnd = $dateArray[1]."/".$dateArray[0]."/".$dateArray[2];
     }
     
     $dateReponseStart="";
-    if(isset($_GET["date-reponse-start"])){
+    if(isset($_GET["date-reponse-start"]) && $_GET["date-reponse-start"]){
         $dateArray = explode('/', $_GET["date-reponse-start"]);
         $dateReponseStart = $dateArray[1]."/".$dateArray[0]."/".$dateArray[2];
     }
     
     $dateReponseEnd="";
-    if(isset($_GET["date-reponse-end"])){
+    if(isset($_GET["date-reponse-end"]) && $_GET["date-reponse-end"]){
         $dateArray = explode('/', $_GET["date-reponse-end"]);
         $dateReponseEnd = $dateArray[1]."/".$dateArray[0]."/".$dateArray[2];
     }
@@ -272,8 +272,9 @@
         });
         
         
-        $("i.icon-share").click(function(){
-            var rowvalue = $(this).attr('id').substring(6);
+        $("a.pj").click(function(e){
+            e.preventDefault();
+            var rowvalue = $(this).find('i').attr('id').substring(6);
             $('#rowpj'+rowvalue).toggle();
         });
                         

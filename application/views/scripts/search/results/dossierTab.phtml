@@ -148,18 +148,18 @@
     <!-- Pièces jointes -->
     <td>
         <?php if($this->PIECESJOINTES != null) : ?>
-        <i class="icon-share icon-black" id="<?php echo "iconpj".$this->ID_DOSSIER ?>"></i>
+        <a class="btn pj" href="#"><i class="icon-share icon-black" id="<?php echo "iconpj".$this->ID_DOSSIER ?>"></i></a>
         <?php endif ?>
     </td>
 </tr>
 <tr hidden class="info" id="<?php echo "rowpj".$this->ID_DOSSIER ?>">
     <td colspan="5">
         <?php if($this->PIECESJOINTES != null) : ?>
-        <?php foreach ($this->PIECESJOINTES as $piecejointe) : ?>
-        <a href='#' title='<?php echo htmlspecialchars($piecejointe['NOM_PIECEJOINTE'].".".$piecejointe['EXTENSION_PIECEJOINTE'] , ENT_QUOTES) ?>'>
-            <?php echo $piecejointe['NOM_PIECEJOINTE'].".".$piecejointe['EXTENSION_PIECEJOINTE']  ?>
-        </a>
-        <?php endforeach ?>
+            <?php foreach ($this->PIECESJOINTES as $piecejointe) : ?>
+            <a href='#' title='<?php echo htmlspecialchars($piecejointe['NOM_PIECEJOINTE'] , ENT_QUOTES) ?>'>
+                <?php echo $piecejointe['NOM_PIECEJOINTE'] ?>
+            </a>
+            <?php endforeach ?>
         <?php endif ?>
     </td>
 </tr>

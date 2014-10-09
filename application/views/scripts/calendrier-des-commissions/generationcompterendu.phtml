@@ -135,8 +135,11 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 		}
 	}
 	$odf->mergeSegment($dossInfos);
-	$idPj = savePj($this->idComm,"Compte rendu du ");
-	$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");	
+	$nouvellePJ = savePj($this->idComm,"Compte rendu du ");
+        
+        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $path = $store->getFilePath($nouvellePJ, 'dateCommission', $this->idComm, true);
+	$odf->saveToDisk($path);	
 	//$odf->mergeSegment($dossierLoop);
 	echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'>Le compte rendu a été généré avec succes</span><br/><br/><br/>";
 }else{
@@ -161,7 +164,7 @@ function savePj($dateCommId,$libelleDocument){
 	$linkPj->ID_PIECEJOINTE = $nouvellePJ->ID_PIECEJOINTE;
 	$linkPj->save();
 
-	return $nouvellePJ->ID_PIECEJOINTE;
+	return $nouvellePJ;
 }
 	
 ?>
