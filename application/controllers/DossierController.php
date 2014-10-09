@@ -835,7 +835,7 @@ class DossierController extends Zend_Controller_Action
                     $dbEtablissementTextAppl = new Model_DbTable_EtsTextesAppl;
                     if ($this->_getParam('toDo') == 'save') {
 						$exist = $dbEtablissementTextAppl->find($this->_getParam('idTexte'),$this->_getParam('idEtablissement'))->current();
-						if(count($exist->toArray()) != 2){
+						if(!$exist){
 							$row = $dbEtablissementTextAppl->createRow();
 							$row->ID_TEXTESAPPL = $this->_getParam('idTexte');
 							$row->ID_ETABLISSEMENT = $this->_getParam('idEtablissement');
