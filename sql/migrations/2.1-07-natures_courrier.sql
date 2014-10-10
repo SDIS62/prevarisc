@@ -18,7 +18,7 @@ INSERT INTO `PRV_prevarisc_v2`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELL
 INSERT INTO `PRV_prevarisc_v2`.`dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (60,"Demande de visite de réception",5,11);
 
 # Migration des dossiers existants vers lettre simple
-UPDATE `PRV_prevarisc_v2`.dossiernature SET ID_DOSSIERNATURE = 52 WHERE ID_DOSSIERNATURE IN(34,35,36);
+UPDATE `prevarisc`.dossiernature SET ID_NATURE = 52 WHERE ID_NATURE IN(34,35,36);
 
 # Suppression des anciennes natures de courrier
 DELETE FROM `PRV_prevarisc_v2`.`dossiernatureliste` WHERE ID_DOSSIERNATURE IN(34,35,36);
