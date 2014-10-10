@@ -35,6 +35,28 @@ class Model_DbTable_Groupement extends Zend_Db_Table_Abstract
 
         return ( $this->fetchRow( $select ) != null ) ? $this->fetchRow( $select ) : null;
     }
+    
+    public function getByLibelle($libelle)
+    {
+        $select = "SELECT groupement.*, groupementtype.LIBELLE_GROUPEMENTTYPE, utilisateurinformations.*
+                    FROM groupement 
+                    INNER JOIN groupementtype ON groupement.ID_GROUPEMENTTYPE = groupementtype.ID_GROUPEMENTTYPE 
+                    LEFT JOIN utilisateurinformations ON utilisateurinformations.ID_UTILISATEURINFORMATIONS = groupement.ID_UTILISATEURINFORMATIONS 
+                    WHERE (groupement.LIBELLE_GROUPEMENT = '".$libelle."');";
+        //echo $select;
+        //Zend_Debug::dump($DB_information->fetchRow($select));
+        return $this->getAdapter()->fetchAll($select);
+    }
+    
+    public function getByLibelle2($libelle, $libelleGroupementType)
+    {
+        $select = "SELECT groupement.*, groupementtype.LIBELLE_GROUPEMENTTYPE, utilisateurinformations.*
+                    FROM groupement 
+                    INNER JOIN groupementtype ON groupement.ID_GROUPEMENTTYPE = groupementtype.ID_GROUPEMENTTYPE 
+                    LEFT JOIN utilisateurinformations ON utilisateurinformations.ID_UTILISATEURINFORMATIONS = groupement.ID_UTILISATEURINFORMATIONS 
+                    WHERE (groupement.LIBELLE_GROUPEMENT = '".$libelle."' and groupementtype.LIBELLE_GROUPEMENTTYPE = '".$libelleGroupementType."');";
+       return $this->getAdapter()->fetchAll($select);
+    }
 
     public function deleteGroupement($id)
     {
