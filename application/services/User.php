@@ -10,18 +10,28 @@ class Service_User
      */
     public function find($id_user)
     {
-        $model_user = new Model_DbTable_Utilisateur;
-        $model_userinformations = new Model_DbTable_UtilisateurInformations;
-        $model_groupe = new Model_DbTable_Groupe;
-        $model_fonction = new Model_DbTable_Fonction;
+        // Récupération de la ressource cache à partir du bootstrap
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
-        $user = $model_user->find($id_user)->current()->toArray();
-        $user = array_merge($user, array('uid' => $user['ID_UTILISATEUR']));
-        $user = array_merge($user, array('infos' => $model_userinformations->find($user['ID_UTILISATEURINFORMATIONS'])->current()->toArray()));
-        $user = array_merge($user, array('group' => $model_groupe->find($user['ID_GROUPE'])->current()->toArray()));
-        $user = array_merge($user, array('groupements' => $model_user->getGroupements($user['ID_UTILISATEUR']) == null ? null : $model_user->getGroupements($user['ID_UTILISATEUR'])->toArray()));
-        $user = array_merge($user, array('commissions' => $model_user->getCommissions($user['ID_UTILISATEUR']) == null ? null : $model_user->getCommissions($user['ID_UTILISATEUR'])->toArray()));
-        $user['infos'] = array_merge($user['infos'], array('LIBELLE_FONCTION' => $model_fonction->find($user['infos']['ID_FONCTION'])->current()->toArray()['LIBELLE_FONCTION']));
+        if(($user = unserialize($cache->load('user_id_' . $id_user))) === false) {
+        
+            $model_user = new Model_DbTable_Utilisateur;
+            $model_userinformations = new Model_DbTable_UtilisateurInformations;
+            $model_groupe = new Model_DbTable_Groupe;
+            $model_fonction = new Model_DbTable_Fonction;
+
+            $user = $model_user->find($id_user)->current()->toArray();
+            $user = array_merge($user, array('uid' => $user['ID_UTILISATEUR']));
+            $user = array_merge($user, array('infos' => $model_userinformations->find($user['ID_UTILISATEURINFORMATIONS'])->current()->toArray()));
+            $user = array_merge($user, array('group' => $model_groupe->find($user['ID_GROUPE'])->current()->toArray()));
+            $user = array_merge($user, array('groupements' => $model_user->getGroupements($user['ID_UTILISATEUR']) == null ? null : $model_user->getGroupements($user['ID_UTILISATEUR'])->toArray()));
+            $user = array_merge($user, array('commissions' => $model_user->getCommissions($user['ID_UTILISATEUR']) == null ? null : $model_user->getCommissions($user['ID_UTILISATEUR'])->toArray()));
+            $user['infos'] = array_merge($user['infos'], array('LIBELLE_FONCTION' => $model_fonction->find($user['infos']['ID_FONCTION'])->current()->toArray()['LIBELLE_FONCTION']));
+            
+            
+            $cache->save(serialize($user));
+        }
+        
         return $user;
     }
 
@@ -69,7 +79,7 @@ class Service_User
         }
         
         if ($acl->isAllowed($profil, "dashboard", "view_ets_avis_defavorable")) {
-            $etablissementAvisDefavorable = $dbEtablissement->listeDesERPSousAvisDefavorable($commissionsUser);
+            $etablissementAvisDefavorable = $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable($commissionsUser);
         }
         
         if ($acl->isAllowed($profil, "dashboard", "view_doss_sans_avis")) {
@@ -79,7 +89,7 @@ class Service_User
         
         //Liste des Erp sans commission périodique alors que c'est ouvert
         if ($acl->isAllowed($profil, "dashboard", "view_ets_ouverts_sans_prochaine_vp")) {
-            $listeErpOuvertSansProchainesVisitePeriodiques = $dbEtablissement->listeErpOuvertSansProchainesVisitePeriodiques($commissionsUser);
+            $listeErpOuvertSansProchainesVisitePeriodiques = $dbEtablissement->listeErpOuvertsSansProchainesVisitePeriodiques($commissionsUser);
         }
         
          // Courriers sans réponse depuis N jours
@@ -101,7 +111,7 @@ class Service_User
         // Etablissements sous avis défavorables sur la commune de l'utilisateur
         if($user["NUMINSEE_COMMUNE"] != null) {
             if ($acl->isAllowed($profil, "dashboard", "view_ets_avis_defavorable_sur_commune")) {
-                $etablissementAvisDefavorable = array_merge($dbEtablissement->listeDesERPSousAvisDefavorableSurCommune($user["NUMINSEE_COMMUNE"] ), $etablissementAvisDefavorable);
+                $etablissementAvisDefavorable = array_merge($dbEtablissement->listeDesERPOuvertsSousAvisDefavorableSurCommune($user["NUMINSEE_COMMUNE"] ), $etablissementAvisDefavorable);
             }
         }
         
@@ -270,7 +280,9 @@ class Service_User
         $DB_informations = new Model_DbTable_UtilisateurInformations;
         $DB_groupementsUser = new Model_DbTable_UtilisateurGroupement;
         $DB_commissionsUser = new Model_DbTable_UtilisateurCommission;
-
+        
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        
         $db = Zend_Db_Table::getDefaultAdapter();
         $db->beginTransaction();
 
@@ -325,6 +337,8 @@ class Service_User
 
             Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch')->clean(Zend_Cache::CLEANING_MODE_ALL);
             $db->commit();
+            
+            $cache->remove('user_id_' . $user->ID_UTILISATEUR);
 
             // Gestion de l'avatar
             if($avatar !== null) {

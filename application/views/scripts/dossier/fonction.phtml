@@ -42,15 +42,17 @@
 						echo "
 							</a>
 						";
-						if($i < $nbEtab-1 && $compteur > 1){
-							echo " | ";
-						} else 
-                                                {
-                                                    echo "
-                                                        <div class='pull-right' style='font-weight:normal' >
-                                                            <a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $value['ID_ETABLISSEMENT']), null, true)."'>Ajouter un autre dossier</a>
-                                                        </div>";
-						}
+                                                ?>
+                                                <?php if ($this->verrouDossier != 1): ?>
+                                                    <div class='pull-right' style='font-weight:normal'>
+                                                        <div class="btn-group">
+                                                            <a class="btn" id="modificationDossier" href="#">Modifier le dossier</a>
+                                                            <a id='annulModification' class='btn' style="display:none" href="#">Annuler la modification</a>
+                                                            <input id='validModification' type='submit' style="display:none" class="btn btn-success" value='Sauvegarder'>
+                                                        </div>
+                                                    </div>
+                                                <?php endif ?>
+                                                <?php
 						$i++;
 					}
 				}

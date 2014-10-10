@@ -165,7 +165,7 @@ class DossierController extends Zend_Controller_Action
 
             $natureDossier = $DBdossier->getDossierTypeNature($id_dossier);
             $this->view->natureDossier = $natureDossier[0]['ID_NATURE'];
-
+            $this->view->verrouDossier = $dossier['VERROU_DOSSIER'];
             $this->view->idDossier = ($this->_getParam("id"));
         }
     }
@@ -598,11 +598,11 @@ class DossierController extends Zend_Controller_Action
                     $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
                     $this->view->listeEtablissement = $tabEtablissement;
 					
-					$service_etablissement = new Service_Etablissement;
-					foreach($this->view->listeEtablissement as $val => $ue){
-						$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-						$this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
-					}
+                    $service_etablissement = new Service_Etablissement;
+                    foreach($this->view->listeEtablissement as $val => $ue){
+                            $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+                            $this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
+                    }
                 }
             break;
             case "showNature":

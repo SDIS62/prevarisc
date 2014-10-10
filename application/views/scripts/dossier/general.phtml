@@ -799,10 +799,6 @@
 			}
 		});
 	};
-	
-	$("#annulModification").button().click(function() {
-		window.location.reload();
-	});
 
 	//Action lorsque l'on appuie sur le bouton modifier MODE EDITION
 	$("#modificationDossier").live('click',function(){
@@ -813,10 +809,12 @@
 		$("#TYPE_DOSSIER option[value='0']").remove();
 		
 		if($("#do").val() != 'new'){
+                    $("#rapport").hide();
+                    $("#VERROU").hide();
                     $("#validModification").show();
-                    $("#annulModification").show();
-                    $(".generation").hide();
-			//$("#VERROU").hide();
+                    $("#annulModification").show().button().click(function() {
+                            window.location.reload();
+                    });
 		}
 
 		$("#InfosDossier > li > .value").hide();

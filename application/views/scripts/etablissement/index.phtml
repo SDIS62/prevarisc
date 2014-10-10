@@ -84,6 +84,11 @@
                     <?php if($this->etablissement['informations']['R12320_ETABLISSEMENTINFORMATIONS']) : ?>
                         <p>Le <strong>R123-20</strong> est appliqué sur cet établissement.</p>
                     <?php endif ?>
+                    <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2))) : ?>
+                        <?php if($this->etablissement['informations']['DROITPUBLIC_ETABLISSEMENTINFORMATIONS']) : ?>
+                            <p>Cet établissement relève du <strong>droit public</strong>.</p>
+                        <?php endif ?>
+                    <?php endif ?>
                 </dd>
             </dl>
             <?php endif ?>
