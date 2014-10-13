@@ -13,6 +13,7 @@ Evolution :
 
 Corrections :
 * Correction des alertes sur ERP défavorables non ouverts
+* Correction d'une 404 sur le fichier application.combined.js
 
 ## 2.1
 
