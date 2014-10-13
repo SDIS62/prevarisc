@@ -173,7 +173,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_CLASSEMENT" => @$DB_classement->find($informations->ID_CLASSEMENT)->current()->LIBELLE_CLASSEMENT,
                     "LIBELLE_TYPE_PRINCIPAL" => @$DB_type->find($informations->ID_TYPE)->current()->LIBELLE_TYPE,
                     "LIBELLE_TYPEACTIVITE_PRINCIPAL" => @$DB_typeactivite->find($informations->ID_TYPEACTIVITE)->current()->LIBELLE_ACTIVITE,
-                    "LIBELLE_COMMISSION" => $commission->LIBELLE_COMMISSION,
+                    "LIBELLE_COMMISSION" => $commission == null ? null : $commission->LIBELLE_COMMISSION,
                     "LIBELLE_COMMISSION_TYPE" => @$DB_commission_type->find($commission->ID_COMMISSIONTYPE)->current()->LIBELLE_COMMISSIONTYPE,
                     "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
                 )),
