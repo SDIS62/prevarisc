@@ -90,7 +90,12 @@ class PieceJointeController extends Zend_Controller_Action
             throw new Zend_Controller_Action_Exception('Cannot read file '.$filepath, 404);
         }
         
+        header("Pragma: public");
+        header("Expires: -1");
+        header("Cache-Control: public, must-revalidate, post-check=0, pre-check=0");
         header('Content-Disposition: attachment; filename="'.$filename.'"');
+        header("Content-Type: application/octet-stream");
+        
         $handle = fopen($filepath, "r");
         if ($handle) {
             while (($buffer = fgets($handle, 4096)) !== false) {
