@@ -258,6 +258,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         // Redirection vers la page d'erreur si l'accès est non autorisée
                         if(!$access_granted) {
+                            if($request->getControllerName() == 'error') return;
                             $request->setControllerName('error');
                             $request->setActionName('error');
                             $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
