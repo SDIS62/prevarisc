@@ -32,7 +32,8 @@ Une documentation détaillée est disponible ici : [Documentation d'installation
 ## Suivi du projet
 
 * [Travail en cours / jalons](https://github.com/SDIS62/prevarisc/issues/milestones) ;
-* [Suivi des bugs et corrections](https://github.com/SDIS62/prevarisc/issues).
+* [Suivi des bugs et corrections](https://github.com/SDIS62/prevarisc/issues);
+* [FAQ](https://github.com/SDIS62/prevarisc/issues?q=is%3Aissue+label%3Aquestion).
 
 ## Participation au projet
 
