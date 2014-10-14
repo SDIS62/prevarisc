@@ -39,6 +39,11 @@ class Model_DbTable_Preventionniste extends Zend_Db_Table_Abstract
                         $array_tmp['uid'] = $uid['ID_UTILISATEUR'];
                         $array_tmp['nom'] = $uid['NOM_UTILISATEURINFORMATIONS'];
                         $array_tmp['prenom'] = $uid['PRENOM_UTILISATEURINFORMATIONS'];
+
+                        if(in_array($array_tmp, $array_result)) {
+                            continue;
+                        }
+
                         $array_result[] = $array_tmp;
                     }
                 }

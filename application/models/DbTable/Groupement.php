@@ -57,26 +57,30 @@ class Model_DbTable_Groupement extends Zend_Db_Table_Abstract
 
     }
 
-    public function getPreventionnistesByGpt($gpts)
+    public function getPreventionnistesByGpt($groupements)
     {
-        $array_result = array();
+        $preventionnistes_par_gpt = array();
 
-        foreach ($gpts as $gpt) {
-            $select = $this	->select()
-                            ->setIntegrityCheck(false)
-                            ->from("groupementpreventionniste")
-                            ->join("utilisateur", "utilisateur.ID_UTILISATEUR = groupementpreventionniste.ID_UTILISATEUR")
-                            ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = utilisateur.ID_UTILISATEURINFORMATIONS")
-                            ->where("groupementpreventionniste.ID_GROUPEMENT = '".$gpt['ID_GROUPEMENT']."'")
-                            ->order("utilisateurinformations.NOM_UTILISATEURINFORMATIONS ASC");
+        foreach ($groupements as $groupement) {
 
-            $result = $this->fetchAll($select)->toArray();
+            $select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from("groupementpreventionniste", null)
+                ->join("utilisateur", "utilisateur.ID_UTILISATEUR = groupementpreventionniste.ID_UTILISATEUR")
+                ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = utilisateur.ID_UTILISATEURINFORMATIONS")
+                ->where("groupementpreventionniste.ID_GROUPEMENT = ?", $groupement['ID_GROUPEMENT'])
+                ->order("utilisateurinformations.NOM_UTILISATEURINFORMATIONS ASC");
 
-            if(count($result)>0)
-                $array_result[] = $result;
+            $rowset = $this->fetchAll($select);
+
+            if($rowset == null) {
+                continue;
+            }
+
+            $preventionnistes_par_gpt[$groupement['ID_GROUPEMENT']] = $rowset->toArray();
         }
 
-        return array_unique($array_result);
+        return $preventionnistes_par_gpt;
     }
 
     public function getGroupementParVille($code_insee)
@@ -90,7 +94,7 @@ class Model_DbTable_Groupement extends Zend_Db_Table_Abstract
 
         return $this->fetchAll($select)->toArray();
     }
-    
+
     public function getAllWithTypes()
     {
         $select = $this	->select()
