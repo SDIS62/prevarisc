@@ -1351,7 +1351,7 @@ class DossierController extends Zend_Controller_Action
 		}
     }
 
-//Action permettant de lister les établissements et les dossiers liés
+    //Action permettant de lister les établissements et les dossiers liés
     public function lieesAction()
     {
         $DBdossier = new Model_DbTable_Dossier;
@@ -1362,13 +1362,6 @@ class DossierController extends Zend_Controller_Action
 		foreach($this->view->listeEtablissement	as $etab => $val){
 			$this->view->listeEtablissement[$etab]['pereInfos'] = $service_etablissement->get($val['ID_ETABLISSEMENT']);
 		}
-		/*
-		if($this->view->listeEtablissement){
-			$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
-			$this->view->etablissement = $etablissement;
-		}
-		*/
-		//Zend_Debug::dump($this->view->listeEtablissement);
     }
 
     public function contactAction()
@@ -1378,12 +1371,14 @@ class DossierController extends Zend_Controller_Action
 		$this->view->infosDossier = $DBdossier->find((int) $this->_getParam("id"))->current();
     }
 
-	//GESTION DOCUMENTS CONSULTES
+    //GESTION DOCUMENTS CONSULTES
     public function docconsulteAction()
     {
+        $this->view->inlineScript()->appendFile('/js/dossier/dossierDocConsulte.js','text/javascript');
+        
         //récupération du type de dossier (etude / visite)
         $dbdossier = new Model_DbTable_Dossier;
-		$this->view->infosDossier = $dbdossier->find((int) $this->_getParam("id"))->current();
+        $this->view->infosDossier = $dbdossier->find((int) $this->_getParam("id"))->current();
 		
         $dossierType = $dbdossier->getTypeDossier((int) $this->_getParam("id"));
 
@@ -1630,9 +1625,25 @@ class DossierController extends Zend_Controller_Action
 //GENERATION DOCUMENTS
     public function dialoggenrapportAction()
     {
+        
+        $files = array();
+        $dirname = REAL_DATA_PATH . DS . "uploads" . DS . "documents";
+	$dir = opendir($dirname); 
+        while($file = readdir($dir)) {
+		if(!in_array($file, array('.gitignore', '..', '.')) && !is_dir($dirname.DS.$file))
+		{
+                    $files[$dirname.DS.$file] = $file;
+		}
+	}
+        closedir($dir);
+        asort($files);
+        $this->view->files = $files;
+        
+        
         //Permet de charger la liste des établissements liés au dossier pour la selection des rapports à generer
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
+        
     }
 
     public function generationrapportAction()
@@ -1797,27 +1808,35 @@ class DossierController extends Zend_Controller_Action
 		$this->view->preventionnistes = $DBdossierPrev->getPrevDossier($idDossier);
 
 		$dbGroupement = new Model_DbTable_Groupement;
-		//$groupement = $dbGroupement->getByLibelle($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"], $this->view->infosDossier["TYPESERVINSTRUC_DOSSIER"]);
-                if( $this->view->infosDossier["TYPESERVINSTRUC_DOSSIER"] == 'servInstCommune') {
-                    $dbCommune = new Model_DbTable_AdresseCommune;
-                    $commune = $dbCommune->get($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"]);
-                    $idUtilisateur = $commune[0]["ID_UTILISATEURINFORMATIONS"];
-                    $dbUtilisateur = new Model_DbTable_UtilisateurInformations;
-                    $infos = $dbUtilisateur->find($idUtilisateur)->current();
-                    $this->view->servInstructeur = $infos;
-                    $servInstructeur = $this->view->infosDossier["SERVICEINSTRUC_DOSSIER"];
-                    $servInstructeurPrenomContact = $infos['PRENOM_UTILISATEURINFORMATIONS'];
-                    $servInstructeurNomContact = $infos['NOM_UTILISATEURINFORMATIONS'];
-                    $servInstructeurMail = $infos['MAIL_UTILISATEURINFORMATIONS'];
-                    
-                } else {
-                    $libelle = $this->view->infosDossier["SERVICEINSTRUC_DOSSIER"];
-                    $groupement = $dbGroupement->getByLibelle($libelle);
-                    $servInstructeur = $groupement[0]['LIBELLE_GROUPEMENT'];
-                    $servInstructeurPrenomContact = $groupement[0]['PRENOM_UTILISATEURINFORMATIONS'];
-                    $servInstructeurNomContact = $groupement[0]['NOM_UTILISATEURINFORMATIONS'];
-                    $servInstructeurMail = $groupement[0]['MAIL_UTILISATEURINFORMATIONS'];
-                }            
+		
+                $servInstructeur = "";
+                $servInstructeurPrenomContact = "";
+                $servInstructeurNomContact = "";
+                $servInstructeurMail = "";
+                
+                if ($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"]
+                    && $this->view->infosDossier["TYPESERVINSTRUC_DOSSIER"]) {
+                    if ($this->view->infosDossier["TYPESERVINSTRUC_DOSSIER"] == 'servInstCommune') {
+                        $dbCommune = new Model_DbTable_AdresseCommune;
+                        $commune = $dbCommune->get($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"]);
+                        $idUtilisateur = $commune[0]["ID_UTILISATEURINFORMATIONS"];
+                        $dbUtilisateur = new Model_DbTable_UtilisateurInformations;
+                        $infos = $dbUtilisateur->find($idUtilisateur)->current();
+                        $this->view->servInstructeur = $infos;
+                        $servInstructeur = $this->view->infosDossier["SERVICEINSTRUC_DOSSIER"];
+                        $servInstructeurPrenomContact = $infos['PRENOM_UTILISATEURINFORMATIONS'];
+                        $servInstructeurNomContact = $infos['NOM_UTILISATEURINFORMATIONS'];
+                        $servInstructeurMail = $infos['MAIL_UTILISATEURINFORMATIONS'];
+
+                    } else {
+                        $libelle = $this->view->infosDossier["SERVICEINSTRUC_DOSSIER"];
+                        $groupement = $dbGroupement->getByLibelle($libelle);
+                        $servInstructeur = $groupement[0]['LIBELLE_GROUPEMENT'];
+                        $servInstructeurPrenomContact = $groupement[0]['PRENOM_UTILISATEURINFORMATIONS'];
+                        $servInstructeurNomContact = $groupement[0]['NOM_UTILISATEURINFORMATIONS'];
+                        $servInstructeurMail = $groupement[0]['MAIL_UTILISATEURINFORMATIONS'];
+                    }
+                }
                 $this->view->servInstructeur = $servInstructeur;
                 $this->view->servInstructeurPrenomContact = $servInstructeurPrenomContact;
                 $this->view->servInstructeurNomContact = $servInstructeurNomContact;

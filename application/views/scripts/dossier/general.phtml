@@ -440,9 +440,9 @@
 				//if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
 					// Boite de dialogue en ajoutant en callback le traitement du formulaire
 					var nomEtab = "";
-					if($("#infosEtabs").text() != ""){
+					if ($("#infosEtabs > a").length > 0) {
 						nomEtab = $("#infosEtabs > a").html().trim();
-					}else if($("#infosEtablissement").text() != " "){
+					} else if ($("#infosEtablissement > a").length > 0) {
 						nomEtab = $("#infosEtablissement > a").html().trim();
 					}
 					nomEtab = nomEtab.replace('&nbsp;',' ');
@@ -1153,6 +1153,15 @@
 		}
 	});
 </script>
+<?php if ($this->verrouDossier != 1): ?>
+    <div class='pull-right' style='font-weight:normal'>
+        <div class="btn-group">
+            <a class="btn" id="modificationDossier" href="#">Modifier le dossier</a>
+            <a id='annulModification' class='btn' style="display:none" href="#">Annuler la modification</a>
+            <input id='validModification' type='submit' style="display:none" class="btn btn-success" value='Sauvegarder'>
+        </div>
+    </div>
+<?php endif ?>
 <?php
 $action = $this->do;
 

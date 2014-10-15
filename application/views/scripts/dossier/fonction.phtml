@@ -34,7 +34,7 @@
 							}
 							echo ") ";
 						}else{
-							echo " ( adresse non renseignée )";
+							echo " (adresse non renseignée)";
 						}
 						if(isset($value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
 							echo " [ ".$value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." ]";
@@ -42,17 +42,6 @@
 						echo "
 							</a>
 						";
-                                                ?>
-                                                <?php if ($this->verrouDossier != 1): ?>
-                                                    <div class='pull-right' style='font-weight:normal'>
-                                                        <div class="btn-group">
-                                                            <a class="btn" id="modificationDossier" href="#">Modifier le dossier</a>
-                                                            <a id='annulModification' class='btn' style="display:none" href="#">Annuler la modification</a>
-                                                            <input id='validModification' type='submit' style="display:none" class="btn btn-success" value='Sauvegarder'>
-                                                        </div>
-                                                    </div>
-                                                <?php endif ?>
-                                                <?php
 						$i++;
 					}
 				}
