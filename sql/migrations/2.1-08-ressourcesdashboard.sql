@@ -1,5 +1,4 @@
 SET NAMES 'utf8';
-use PRV_prevarisc_v2;
 
 INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(100,"dashboard", "Tableau de bord");
 
