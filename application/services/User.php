@@ -141,7 +141,8 @@ class Service_User
            $odj = array_unique($odj, SORT_REGULAR);
            $dateFormatter = new DateTime($commissiondujour["DATE_COMMISSION"]);
            $commissions[] = array(
-               "name" => $commission["LIBELLE_COMMISSION"] . ' - ' . $commissiondujour['LIBELLE_DATECOMMISSION'], 
+               "id"   => $commissiondujour['ID_DATECOMMISSION'],
+               "name" => $commissiondujour["LIBELLE_COMMISSION"] . ' - ' . $commissiondujour['LIBELLE_DATECOMMISSION'], 
                "date" => $dateFormatter->format('d/m/Y'), 
                "heure" => substr($commissiondujour["HEUREDEB_COMMISSION"], 0, 5) . ' - ' . substr($commissiondujour["HEUREFIN_COMMISSION"], 0, 5), 
                "odj" => $odj,

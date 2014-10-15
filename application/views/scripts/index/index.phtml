@@ -265,7 +265,9 @@
   </div>
   <div class="panel-body" style="font-size: .85em">
     <?php foreach($this->commissions as $commission) : ?>
-      <p class="lead" style="font-size:1.2em; margin-bottom: 0px;"><?php echo strtoupper($commission["name"]) . " du " . $commission["date"] . " (" . $commission["heure"] . ")" ?></p>
+      <p class="lead" style="font-size:1.2em; margin-bottom: 0px;">
+          <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commission['id'] ?>"><?php echo strtoupper($commission["name"]) ?></a>
+          <?php echo " du " . $commission["date"] . " (" . $commission["heure"] . ")" ?></p>
       <?php if(count($commission["odj"]) == 0 ) : ?>
         <p class="muted">Pas de dossier affecté.</p>
       <?php else : ?>
