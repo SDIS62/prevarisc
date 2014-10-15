@@ -10,11 +10,26 @@ Evolution :
 * Ergonomie : bouton modifier un dossier repassé en haut à droite
 * Retrait de la section recherche de courriers obsolètes
 * Ajout de ce fichier changelog
+* Tri par ordre alphabétique des modèles de rapports dans la partie dossier dans la selectbox
+* Dashboard : ajout du lien vers l'ordre du jour de la date de commission sur le bloc d'ordre du jour
+* Ajout du descriptif de l'erreur lorsqu'on arrive pas à créer un dossier via le SimpleDataStore
+* Optimisations de performances sur les ACL
 
 Corrections :
+
 * Correction des alertes sur ERP défavorables non ouverts
 * Correction d'une 404 sur le fichier application.combined.js
 * Correction sur le nom des ressources (droits) du dashboard
+* Déplacement de la récupération des modèles de rapports de la view vers le controlleur
+* Correction des références à PRV_prevarisc_v2 dans les SQL de migration
+* Correction d'un KO sur la recherche de contacts existants
+* Corrections liées à la migration zend framework 1.2.9 dans le controlleurs de statistiques
+* Correction d'un problème sur les ACL lors d'une 2e sollicitations de la méthode : disparition des ACL lors d'un 2e call à APC <= mise en variable static au 1er call
+* Correction d'un problème de download sur les pièces jointes d'un établissement
+* Correction d'un problème sur l'affichage des pièces jointes hors jpg dans les mises en avant sur la fiche établissement
+* Impossible de créer une nouvelle date de commission à la création d'un dossier si celui-ci n'est pas lié à un établissement (pb de js)
+* Correction de l'apparition du bouton "Modifier" sur la partie dossier qui était présent sur tous les onglets et pour chaque niveau de site, cellule...
+* Correction sur documents consultés de dossier "$ is undefined" : report de l'ajout du js inline dans le controlleur au lieu du dossier
 
 ## 2.1
 
