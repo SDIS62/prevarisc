@@ -509,41 +509,29 @@ class DossierController extends Zend_Controller_Action
                         $this->view->idDateCommissionAffect = $ue['ID_DATECOMMISSION'];
                     } else {
                         //VISITE OU GROUPE DE VISITE
-                        $this->view->dateVisite = $this->view->infosDossier['DATEVISITE_DOSSIER'];
-						//on récupère les date liées si il en existe
-						//Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
-						$infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
-						$this->view->ID_AFFECTATION_DOSSIER_VISITE = $infosDateComm['ID_DATECOMMISSION'];
-						if (!$infosDateComm['DATECOMMISSION_LIEES']) {
-							$commPrincipale = $affectDossier['ID_DATECOMMISSION_AFFECT'];
-						} else {
-							$commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
-						}
-						//récupération de l'ensemble des dates liées
-						$recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
-						$nbDatesTotal = count($recupCommLiees);
-						$nbDateDecompte = $nbDatesTotal;
+						$dateVisite = $dbDateComm->getInfosVisite($this->_getParam("id"),$this->view->infosDossier['TYPE_DOSSIER']);
+						$dateLiees = $dbDateComm->getDateLieesv2($dateVisite['ID_DATECOMMISSION_AFFECT']);
+						$this->view->dateVisite = $this->view->infosDossier['DATEVISITE_DOSSIER'];
+						
+						$nbDates = count($dateLiees);
 						
 						$listeDateValue = "";
 						$listeDateInput = "";
-
-						foreach ($recupCommLiees as  $val => $ue) {
+						foreach ($dateLiees as  $val => $ue) {
 							$date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
-							if ($nbDateDecompte == $nbDatesTotal) {
-								//premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
-								$this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
-							}
-							if ($nbDateDecompte > 1) {
-								$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR).", ";
-								$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR).", ";
-							} elseif ($nbDateDecompte == 1) {
-								$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-								$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-							}
-							$this->view->dateVisiteValue = $listeDateValue;
-							$this->view->dateVisiteInput = $listeDateInput;
-							$nbDateDecompte--;
+							
+							$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+							$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+							if($nbDates > 1){
+								$listeDateValue .= ", ";
+								$listeDateInput .= ", ";
+							}	
+							$nbDates--;
 						}
+						
+						$this->view->dateVisiteValue = $listeDateValue;
+						$this->view->dateVisiteInput = $listeDateInput;
+
                     }
                 }
             }
@@ -1240,7 +1228,7 @@ class DossierController extends Zend_Controller_Action
 						$infosDateVisite = $dateAffect;
 					}
 				}
-				
+				//Zend_Debug::dump($infosDateVisite);
 				//Partie concernant la date de visite
 				if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
 					if(isset($infosDateVisite)){
