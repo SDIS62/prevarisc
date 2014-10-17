@@ -1,7 +1,7 @@
 <div class="post">
 
     <h1 class="post-title">
-        <a style='color: #333' href="{{ post.url }}">
+        <a style='color: #333' href="{{ "/" | prepend: site.baseurl }}{{post.url}}">
             {% if post %}
                 {{ post.title }}
             {% else %}
