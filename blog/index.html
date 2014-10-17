@@ -13,16 +13,16 @@ layout: blog
 <ul class="pager">
 
     {% if paginator.next_page %}
-        <li class="previous"><a href="{{ site.baseurl }}page{{paginator.next_page}}">&larr; Ancien</a></li>
+        <li class="previous"><a href="{{ "/blog" | prepend: site.baseurl }}/page{{paginator.next_page}}">&larr; Ancien</a></li>
     {% else %}
         <li class="previous disabled"><a href="#">&larr; Ancien</a></li>
     {% endif %}
 
     {% if paginator.previous_page %}
         {% if paginator.page == 2 %}
-            <li class="next"><a href="/blog">Récent &rarr;</a></li>
+            <li class="next"><a href="{{ "/blog" | prepend: site.baseurl }}">Récent &rarr;</a></li>
         {% else %}
-            <li class="next"><a href="/blog/page{{paginator.previous_page}}">Récent &rarr;</a></li>
+            <li class="next"><a href="{{ "/blog" | prepend: site.baseurl }}/page{{paginator.previous_page}}">Récent &rarr;</a></li>
         {% endif %}
     {% else %}
         <li class="next disabled"><a href="#">Récent &rarr;</a></li>
