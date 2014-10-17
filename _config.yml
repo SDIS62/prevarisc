@@ -10,6 +10,6 @@ highlighter:    pygments
 paginate:       5
 paginate_path: "blog/page:num"
 encoding:       UTF-8
-baseurl:        ""
+baseurl:        "prevarisc"
 
 exclude:        ["README.md"]
