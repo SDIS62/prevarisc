@@ -1,0 +1,20 @@
+<header class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/"><img src='/favicon.ico' style="width: 32px;" /></a>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li {% if page.url contains "/about" %} class="active" {% endif %} ><a href="/about">À propos</a></li>
+                <li {% if page.url contains "/blog" %} class="active" {% endif %} ><a href="/blog">Blog</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="https://gitter.im/SDIS62/prevarisc">Gitter</a></li>
+                <li><a href="https://github.com/SDIS62/prevarisc">Github</a></li>
+                <li><a href="https://github.com/SDIS62/prevarisc/issues?q=is%3Aissue+label%3Aquestion">FAQs</a></li>
+            </ul>
+        </div>
+    </div>
+</header>

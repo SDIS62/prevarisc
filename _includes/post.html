@@ -1,0 +1,46 @@
+<div class="post">
+
+    <h1 class="post-title">
+        <a style='color: #333' href="{{ post.url }}">
+            {% if post %}
+                {{ post.title }}
+            {% else %}
+                {{ page.title }}
+            {% endif %}
+        </a>
+    </h1>
+
+    <p class="post-date text-muted">
+        {% if post %}
+            {% assign postdate = post.date %}
+        {% else %}
+            {% assign postdate = page.date %}
+        {% endif %}
+        {% assign m = postdate | date: "%-m" %}
+        {{ postdate | date: "%-d" }}
+        {% case m %}
+        {% when '1' %}janvier
+        {% when '2' %}février
+        {% when '3' %}mars
+        {% when '4' %}avril
+        {% when '5' %}mai
+        {% when '6' %}juin
+        {% when '7' %}juillet
+        {% when '8' %}août
+        {% when '9' %}septembre
+        {% when '10' %}octobre
+        {% when '11' %}novembre
+        {% when '12' %}décembre
+        {% endcase %}
+        {{ postdate | date: "%Y" }}
+    </p>
+
+    <div class='post-content'>
+        {% if post %}
+            {{ post.content }}
+        {% else %}
+            {{ content }}
+        {% endif %}
+    </div>
+
+</div>

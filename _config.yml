@@ -1,0 +1,15 @@
+title:          Prevarisc
+description:    >
+  Prevarisc est un logiciel national open-source gérant l'ensemble de l'activité
+  du service prévention au sein d'un SDIS. Gérez plus simplement votre service prévention!
+url:            http://sdis62.github.io
+
+markdown:       kramdown
+permalink:      pretty
+highlighter:    pygments
+paginate:       5
+paginate_path: "blog/page:num"
+encoding:       UTF-8
+baseurl:        ""
+
+exclude:        ["README.md"]
