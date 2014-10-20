@@ -277,13 +277,16 @@
             }
         }
         
-        public function listeDesERPSousAvisDefavorable($idsCommission)
+        public function listeDesERPOuvertsSousAvisDefavorable($idsCommission)
         {
             $ids = (array) $idsCommission;
             $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS,DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) as PERIODE from  etablissementinformations,dossier,etablissement
                    WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                    AND dossier.ID_DOSSIER  = etablissement.ID_DOSSIER_DONNANT_AVIS
                    AND dossier.AVIS_DOSSIER_COMMISSION = 2
+                   AND dossier.DATEVISITE_DOSSIER IS NOT NULL
+                   AND etablissementinformations.ID_STATUT = 2
+                   AND etablissementinformations.ID_GENRE IN(2,3)
                    AND DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) <= -10
                    ".(count($ids) > 0 ? "AND etablissementinformations.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
                    AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
@@ -292,46 +295,77 @@
             return $this->getAdapter()->fetchAll($select);
         }
         
-        public function listeDesERPSousAvisDefavorableSurCommune($numInsee)
+        public function listeDesERPOuvertsSousAvisDefavorableSurCommune($numInsee)
         {
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
-            $search->setCriteria("etablissementadresse.NUMINSEE_COMMUNE", $numInsee);
+            if ($numInsee) {
+                $search->setCriteria("etablissementadresse.NUMINSEE_COMMUNE", $numInsee);
+            }
             $search->setCriteria("avis.ID_AVIS", 2);
+            $search->setCriteria("etablissementinformations.ID_GENRE", array(2,3));
+            $search->setCriteria("etablissementinformations.ID_STATUT", 2);
             return $search->run(false, null, false)->toArray();
         }
         
          public function listeERPSansPreventionniste()
         {
                       
-            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS from  etablissementinformations,etablissement
+            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT from  etablissementinformations,etablissement
                    WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                    AND etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
                    AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
-                    GROUP BY ID_ETABLISSEMENT
+                   GROUP BY ID_ETABLISSEMENT
                    ";
                  
             return $this->getAdapter()->fetchAll($select);
         }
         
-        public function listeErpOuvertSansProchainesVisitePeriodiques($idsCommission)
+        public function listeErpOuvertsSansProchainesVisitePeriodiques($idsCommission)
         {
             $ids = (array) $idsCommission;
-            $select = "SELECT LIBELLE_ETABLISSEMENTINFORMATIONS,ei.ID_ETABLISSEMENT ,ed.ID_DOSSIER, MAX(DATE_ADD(c.DATE_COMMISSION, INTERVAL ei.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH)) AS DATECOM
-                      FROM etablissementinformations ei
-                      LEFT JOIN etablissementdossier ed ON ed.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT
-                      LEFT JOIN dossier d ON ed.ID_DOSSIER = d.ID_DOSSIER 
-                      LEFT JOIN dossiernature nd ON d.ID_DOSSIER = nd.ID_DOSSIER 
-                      LEFT JOIN dossieraffectation da ON da.ID_DOSSIER_AFFECT = d.ID_DOSSIER 
-                      LEFT JOIN datecommission c ON da.ID_DATECOMMISSION_AFFECT = c.ID_DATECOMMISSION
-                      WHERE d.TYPE_DOSSIER IN (2,3)
-                      AND nd.ID_NATURE IN (21,26) 
-                      AND ei.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations eii WHERE eii.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT )  
-                      AND ei.ID_STATUT = 2
-                      ".(count($ids) > 0 ? "AND ei.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
-                      GROUP BY ei.ID_ETABLISSEMENT 
+            $select = "SELECT LIBELLE_ETABLISSEMENTINFORMATIONS,ei.ID_ETABLISSEMENT ,ed.ID_DOSSIER,
+                       DATE_ADD(d.DATEVISITE_DOSSIER, INTERVAL ei.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH) AS DATECOM,
+                       d.AVIS_DOSSIER_COMMISSION
+                       FROM etablissementinformations ei
+                       LEFT JOIN etablissementdossier ed ON ed.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT
+                       LEFT JOIN dossier d ON ed.ID_DOSSIER = d.ID_DOSSIER 
+                       LEFT JOIN dossiernature nd ON d.ID_DOSSIER = nd.ID_DOSSIER 
+                       WHERE d.TYPE_DOSSIER IN (2,3)
+                       AND nd.ID_NATURE IN (21,26) 
+                       AND ei.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations eii WHERE eii.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT )  
+                       AND ei.ID_STATUT = 2
+                       AND d.DATEVISITE_DOSSIER is not null
+                       AND ei.ID_GENRE = 2
+                       AND YEAR(DATE_ADD(d.DATEVISITE_DOSSIER, INTERVAL ei.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH)) <= YEAR(NOW())
+                       ".(count($ids) > 0 ? "AND ei.ID_COMMISSION IN (".implode(',', $ids).")" : "")."
+                       ORDER BY ei.ID_ETABLISSEMENT ASC, DATECOM DESC
                       ";
-             return $this->getAdapter()->fetchAll($select);
+            
+             $dossiersPeriodiques = $this->getAdapter()->fetchAll($select);
+             
+             $erpSansProchaineVP = array();
+             $count = count($dossiersPeriodiques);
+             for($i = 0 ; $i < $count ; $i++) {
+                 $dossier = $dossiersPeriodiques[$i];
+                 
+                 // application ge4§3 sur la prolongation de la périodicité de visite
+                 if (!(
+                         $dossier['AVIS_DOSSIER_COMMISSION'] == 1
+                         && $i+1 < $count 
+                         && $dossier['ID_ETABLISSEMENT'] == $dossiersPeriodiques[$i+1]['ID_ETABLISSEMENT']
+                         &&  $dossiersPeriodiques[$i+1]['AVIS_DOSSIER_COMMISSION'] == 1
+                 )) {
+                     $erpSansProchaineVP[] = $dossier;
+                 }
+                 
+                 while($i < $count 
+                         && $dossier['ID_ETABLISSEMENT'] == $dossiersPeriodiques[$i]['ID_ETABLISSEMENT']) {
+                     $i++;
+                 }
+                 
+             }
+             return $erpSansProchaineVP;
         }
         
         

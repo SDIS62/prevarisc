@@ -1097,22 +1097,17 @@
             <controller>search</controller>
             <pages>
                 <etablissement>
-          <label>Établissements</label>
+                    <label>Établissements</label>
                     <controller>search</controller>
                     <action>etablissement</action>
                 </etablissement>
-        <courriers>
-            <label>Courriers</label>
-            <controller>search</controller>
-            <action>courriers</action>
-        </courriers>
                 <dossier>
-          <label>Dossiers</label>
+                    <label>Dossiers</label>
                     <controller>search</controller>
                     <action>dossier</action>
                 </dossier>
                 <utilisateur>
-          <label>Utilisateurs</label>
+                    <label>Utilisateurs</label>
                     <controller>search</controller>
                     <action>utilisateur</action>
                 </utilisateur>

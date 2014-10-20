@@ -34,7 +34,7 @@
 							}
 							echo ") ";
 						}else{
-							echo " ( adresse non renseignée )";
+							echo " (adresse non renseignée)";
 						}
 						if(isset($value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
 							echo " [ ".$value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." ]";
@@ -42,15 +42,6 @@
 						echo "
 							</a>
 						";
-						if($i < $nbEtab-1 && $compteur > 1){
-							echo " | ";
-						} else 
-                                                {
-                                                    echo "
-                                                        <div class='pull-right' style='font-weight:normal' >
-                                                            <a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $value['ID_ETABLISSEMENT']), null, true)."'>Ajouter un autre dossier</a>
-                                                        </div>";
-						}
 						$i++;
 					}
 				}

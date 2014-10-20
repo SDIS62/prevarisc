@@ -18,6 +18,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $etablissement;
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
+        
+        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
     }
 
     public function editAction()
@@ -218,7 +220,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
     }
     
-    public function getPieceJointeAction($id_etablissement)
+    public function getPieceJointeAction()
     {
         $this->forward('get', 'piece-jointe');
     }
@@ -252,7 +254,6 @@ class EtablissementController extends Zend_Controller_Action
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'La pièce jointe a bien été ajoutée.'));
             }
             catch(Exception $e) {
-                var_dump($e);exit();
                 $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Mise à jour annulée', 'message' => 'La pièce jointe n\'a été ajoutée. Veuillez rééssayez. (' . $e->getMessage() . ')'));
             }
 

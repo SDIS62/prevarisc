@@ -16,19 +16,13 @@
 		<form name='etabRapport' id='etabRapport'>
 	";
 	echo "Selectionnez le rapport que vous souhaitez générer : &nbsp;";	
-	$dirname = REAL_DATA_PATH . DS . "uploads" . DS . "documents";
-	$dir = opendir($dirname); 
 
 	echo "<select name='fichierSelect' id='fichierSelect' >";
-	while($file = readdir($dir)) {
-		if($file != '.' && $file != '..' && !is_dir($dirname.DS.$file))
-		{
-			if($file != '.gitignore')
-				echo "<option value='".htmlentities($dirname.DS.$file, ENT_QUOTES)."'>".$file."</option>";
-		}
-	}
+        foreach ($this->files as $file_path => $filename) {
+            echo "<option value='".htmlentities($file_path, ENT_QUOTES)."'>".$filename."</option>";
+        }
 	echo "</select><br/><br/>";
-	closedir($dir);
+	
 	
 	
 	if(count($this->listeEtablissement) <= 1){
