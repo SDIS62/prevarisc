@@ -132,15 +132,14 @@
             return $this->getAdapter()->fetchAll($select);
         }
 		
-		public function getInfosVisite($idDossier,$idType)
+		public function getInfosVisite($idDossier)
 		{
 			//retourne la liste des catégories de prescriptions par ordre
 			$select = $this->select()
 				 ->setIntegrityCheck(false)
 				 ->from(array('da' => 'dossieraffectation'))
 				 ->join(array("dc" => "datecommission") , "da.ID_DATECOMMISSION_AFFECT = dc.ID_DATECOMMISSION")
-				 ->where("da.ID_DOSSIER_AFFECT = ?",$idDossier)
-				 ->where("dc.ID_COMMISSIONTYPEEVENEMENT = ?",$idType);
+				 ->where("da.ID_DOSSIER_AFFECT = ?",$idDossier);
 				 
 			return $this->getAdapter()->fetchRow($select);
 		}
