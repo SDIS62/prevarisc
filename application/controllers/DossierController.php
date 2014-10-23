@@ -508,8 +508,9 @@ class DossierController extends Zend_Controller_Action
                         $this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
                         $this->view->idDateCommissionAffect = $ue['ID_DATECOMMISSION'];
                     } else {
-                        //VISITE OU GROUPE DE VISITE
-						$dateVisite = $dbDateComm->getInfosVisite($this->_getParam("id"),$this->view->infosDossier['TYPE_DOSSIER']);
+                        //VISITE OU GROUPE DE VISITE						
+						$dateVisite = $dbDateComm->getInfosVisite($this->_getParam("id"));
+										
 						$dateLiees = $dbDateComm->getDateLieesv2($dateVisite['ID_DATECOMMISSION_AFFECT']);
 						$this->view->dateVisite = $this->view->infosDossier['DATEVISITE_DOSSIER'];
 						
@@ -531,7 +532,6 @@ class DossierController extends Zend_Controller_Action
 						
 						$this->view->dateVisiteValue = $listeDateValue;
 						$this->view->dateVisiteInput = $listeDateInput;
-
                     }
                 }
             }
