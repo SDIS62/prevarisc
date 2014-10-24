@@ -765,13 +765,10 @@
 					{
 						$("#FACTDANGE").show();
 						$("#ECHEANCIERTRAV").show();
-						$("#ANOMALIE").show();
 					}
+					$("#ANOMALIE").show();
 				}else if(type == 1){
-					if($("#selectNature").val() == 19)
-					{
-						$("#ANOMALIE").show();
-					}
+					$("#ANOMALIE").show();
 				}
 
 				
@@ -1017,20 +1014,9 @@
 			if($(this).val() == 2){
 				$("#FACTDANGE").show();
 				$("#ECHEANCIERTRAV").show();
-				$("#ANOMALIE").show();
 			}else{
 				$("#FACTDANGE").hide();
 				$("#ECHEANCIERTRAV").hide();
-				$("#ANOMALIE").hide();
-			}
-		}else if(type == 1){
-			if($("#selectNature").val() == 19)
-			{
-				if($(this).val() == 2){
-					$("#ANOMALIE").show();
-				}else{
-					$("#ANOMALIE").hide();
-				}
 			}
 		}
 	});
