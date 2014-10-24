@@ -321,6 +321,11 @@ class DossierController extends Zend_Controller_Action
             } else {
                 $this->view->user_info = "";
             }
+			
+			if ($this->view->infosDossier['VERROU_USER_DOSSIER']) {
+				$user = $DB_user->find( $this->view->infosDossier['VERROU_USER_DOSSIER'] )->current();
+                $this->view->user_infoVerrou = $DB_informations->find( $user->ID_UTILISATEURINFORMATIONS )->current();
+			}
 
             //Conversion de la date d'insertion du dossier
             if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
@@ -3174,6 +3179,7 @@ class DossierController extends Zend_Controller_Action
 		$DBdossier = new Model_DbTable_Dossier;
 		$lockDosier = $DBdossier->find($this->_getParam('idDossier'))->current();
 		$lockDosier->VERROU_DOSSIER = 1;
+		$lockDosier->VERROU_USER_DOSSIER = $this->_getParam('ID_CREATEUR');
 		$lockDosier->save();
 		echo $lockDosier->ID_DOSSIER;
 	}
@@ -3184,6 +3190,7 @@ class DossierController extends Zend_Controller_Action
 		$DBdossier = new Model_DbTable_Dossier;
 		$lockDosier = $DBdossier->find($this->_getParam('idDossier'))->current();
 		$lockDosier->VERROU_DOSSIER = 0;
+		$lockDosier->VERROU_USER_DOSSIER = NULL;
 		$lockDosier->save();
 		echo $lockDosier->ID_DOSSIER;
 	}
