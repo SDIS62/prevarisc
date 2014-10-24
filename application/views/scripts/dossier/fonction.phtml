@@ -42,15 +42,20 @@
 						echo "
 							</a>
 						";
+						
+						//affichage preventionniste(s)
 						$nbPrev = count($value['infosEtab']['preventionnistes']);
-						echo "<span style='font-size:10px'>(";
-						foreach($value['infosEtab']['preventionnistes'] as $prev){
-							echo $prev['NOM_UTILISATEURINFORMATIONS']." ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
-							if($nbPrev > 1)
-								echo ", ";
-							$nbPrev--;
+						if($nbPrev >0){
+							echo "<span style='font-size:10px'>(";
+							foreach($value['infosEtab']['preventionnistes'] as $prev){
+								echo $prev['NOM_UTILISATEURINFORMATIONS']." ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
+								if($nbPrev > 1)
+									echo ", ";
+								$nbPrev--;
+							}
+							echo ")</div>";
 						}
-						echo ")</div>";
+						
 						$i++;
 					}
 				}
