@@ -43,6 +43,11 @@ if($this->infosDossier['DATEVISITE_DOSSIER']){
     addChamp($odf, 'dateVisite',"");
 }
 
+//Date de génération du rapport
+$dateGen = new Zend_Date(Zend_Date::DATES);
+$dateGen = $dateGen->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+addChamp($odf, 'dateGeneration',$dateGen);
+
 if($this->infosDossier['DATECOMM_DOSSIER']){
     $date = new Zend_Date($this->infosDossier['DATECOMM_DOSSIER'], Zend_Date::DATES);
     $date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);

@@ -1124,7 +1124,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		//on recupere le type de commission (salle / visite / groupe de visite)
 		$commissionInfo = $dbDateComm->find($dateCommId)->current()->toArray();
 		$this->view->dateComm = $commissionInfo['DATE_COMMISSION'];
-
+		
 		//On récupère le nom de la commission
 		$model_commission = new Model_DbTable_Commission;
 		$this->view->commissionInfos = $model_commission->find($commissionInfo["COMMISSION_CONCERNE"])->toArray();
