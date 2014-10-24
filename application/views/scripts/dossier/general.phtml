@@ -1757,7 +1757,7 @@ echo "
 					</div>
 				</li>
 				<li class='row-fluid' id='PREVENTIONNISTE' style='".( (in_array('PREVENTIONNISTE', $this->afficherChamps) && count($this->preventionnistes) != 0 )? "": "display:none;" )."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'>Préventionniste(s)</div>
+					<div class='left libelle span3' style='float:left;'>Préventionniste(s) du dossier</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".$this->partialLoop('users/embedded/user.phtml', $this->preventionnistes )."
 					</div>
