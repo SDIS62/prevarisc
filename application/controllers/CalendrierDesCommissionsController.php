@@ -105,6 +105,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$dbDossier = new Model_DbTable_Dossier;
 		$dbDocUrba = new Model_DbTable_DossierDocUrba;
 		$service_etablissement = new Service_Etablissement;
+		$DB_prev = new Model_DbTable_DossierPreventionniste;
 		foreach($listeDossiersNonAffect as $val => $ue)
 		{
 			//On recupere la liste des établissements qui concernent le dossier
@@ -117,6 +118,8 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 				$listeDossiersNonAffect[$val]['infosEtab'] = $etablissementInfos;
 				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 				$listeDossiersNonAffect[$val]['listeDocUrba'] = $listeDocUrba;
+
+				$listeDossiersNonAffect[$val]['preventionnistes'] = $DB_prev->getPrevDossier( $ue['ID_DOSSIER'] );
 			}else{
 				unset($listeDossiersNonAffect[$val]);
 			}
@@ -280,10 +283,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			}else{
 				$affichage .= " ( adresse non renseignée )";
 			}
-			/*
-			if(isset($dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']) && $dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] != "")
-				$affichage .= " (".$dossierAffect['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'].")";
-			*/
+			
             if ($dossierAffect['LIBELLE_DOSSIERNATURE'] != "") {
                 $affichage .= " - ".$dossierAffect['LIBELLE_DOSSIERNATURE'];
             }
@@ -298,6 +298,12 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 				foreach($dossierAffect['listeDocUrba'] as $val => $ue){
 					$affichage .= $ue['NUM_DOCURBA']." . ";
 				}
+			}
+			
+			$DB_prev = new Model_DbTable_DossierPreventionniste;
+			$preventionnistes = $DB_prev->getPrevDossier( $dossierAffect['ID_DOSSIER'] );
+            if(count($preventionnistes) > 0){
+				$affichage .= " (".$preventionnistes[0]['NOM_UTILISATEURINFORMATIONS']." ".$preventionnistes[0]['PRENOM_UTILISATEURINFORMATIONS'].")";
 			}
 
 			if($dossierAffect['VERROU_DOSSIER'] == 0){
