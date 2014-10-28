@@ -14,6 +14,7 @@ Evolution :
 * Dashboard : ajout du lien vers l'ordre du jour de la date de commission sur le bloc d'ordre du jour
 * Ajout du descriptif de l'erreur lorsqu'on arrive pas à créer un dossier via le SimpleDataStore
 * Optimisations de performances sur les ACL
+* Ajout de la variable d'environnement PREVARISC_PARKINGS_TYPES précisant les Ids des types d'activités liés aux parkings
 
 Corrections :
 
@@ -30,6 +31,7 @@ Corrections :
 * Impossible de créer une nouvelle date de commission à la création d'un dossier si celui-ci n'est pas lié à un établissement (pb de js)
 * Correction de l'apparition du bouton "Modifier" sur la partie dossier qui était présent sur tous les onglets et pour chaque niveau de site, cellule...
 * Correction sur documents consultés de dossier "$ is undefined" : report de l'ajout du js inline dans le controlleur au lieu du dossier
+* Correction du libellé "Places de stationnement" qui ne revient pas à Public lors de la sélection d'une autre activité
 
 ## 2.1
 

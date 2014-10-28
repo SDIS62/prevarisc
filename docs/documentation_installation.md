@@ -86,6 +86,7 @@ PREVARISC_DATASTORE_ADAPTER | [FACULTATIF] Permet de charger un plugin changeant
 PREVARISC_REAL_DATA_PATH | [FACULTATIF] Répertoire de stockage des fichiers de prévarisc | Chaine de caractères
 PREVARISC_DATA_PATH | [FACULTATIF] Préfixe des URL d'accès aux médias et pièces jointes | Chaine de caractères
 PREVARISC_APPLICATION_PATH | [FACULTATIF] Répertoire racine de l'application Prévarisc | Chaine de caractères
+PREVARISC_PARKINGS_TYPES | [FACULTATIF] Identifiant des types d'activité représentant des parkings séparaés par un ";", par défaut "16"   | Chaine de caractères
 
 * Taper :```/etc/init.d/apache2 restart```
 
