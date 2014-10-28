@@ -1023,3 +1023,8 @@ a.list-group-item-danger.active:focus {
    font-size:12px;
    color: #6E6D6D;
  }
+
+#modal-desc{
+    width: 1000px;
+    margin-left: -500px;
+}
