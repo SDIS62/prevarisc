@@ -173,7 +173,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     "LIBELLE_CLASSEMENT" => @$DB_classement->find($informations->ID_CLASSEMENT)->current()->LIBELLE_CLASSEMENT,
                     "LIBELLE_TYPE_PRINCIPAL" => @$DB_type->find($informations->ID_TYPE)->current()->LIBELLE_TYPE,
                     "LIBELLE_TYPEACTIVITE_PRINCIPAL" => @$DB_typeactivite->find($informations->ID_TYPEACTIVITE)->current()->LIBELLE_ACTIVITE,
-                    "LIBELLE_COMMISSION" => $commission->LIBELLE_COMMISSION,
+                    "LIBELLE_COMMISSION" => $commission == null ? null : $commission->LIBELLE_COMMISSION,
                     "LIBELLE_COMMISSION_TYPE" => @$DB_commission_type->find($commission->ID_COMMISSIONTYPE)->current()->LIBELLE_COMMISSIONTYPE,
                     "LIBELLE_STATUT" => @$DB_statut->find($informations->ID_STATUT)->current()->LIBELLE_STATUT,
                 )),
@@ -375,7 +375,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             "DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT" => "Surface accessible au public (m²)",
             "DESCTECH_IMPLANTATION_SHON_ETABLISSEMENT" => "Surface de plancher (m²)",
             "DESCTECH_IMPLANTATION_NBNIVEAUX_ETABLISSEMENT" => "Nombre de niveaux",
-            "DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT" => "PBDN (m)",
+            "DESCTECH_IMPLANTATION_PBDN_ETABLISSEMENT" => "Plancher bas du dernier niveau (m)",
             "DESCTECH_DESSERTE_NBFACADELIBRE_ETABLISSEMENT" => "Nombre de façades accessibles",
             "DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT" => "Voie engin",
             "DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT" => "Voie echelle",
@@ -618,6 +618,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
             // Sauvegarde des champs de la fiche d'informations en fonction du genre
             $informations->ICPE_ETABLISSEMENTINFORMATIONS = $informations->PERIODICITE_ETABLISSEMENTINFORMATIONS =
+            $informations->DROITPUBLIC_ETABLISSEMENTINFORMATIONS =
             $informations->R12320_ETABLISSEMENTINFORMATIONS = $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS =
             $informations->ID_CLASSE = $informations->ID_FAMILLE =  $informations->ID_CATEGORIE = $informations->ID_TYPE =
             $informations->ID_TYPEACTIVITE = $informations->ID_COMMISSION = $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS =
@@ -633,6 +634,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->ID_TYPE = $data['ID_TYPE'];
                     $informations->ID_TYPEACTIVITE = $data['ID_TYPEACTIVITE'];
                     $informations->R12320_ETABLISSEMENTINFORMATIONS = (int) $data['R12320_ETABLISSEMENTINFORMATIONS'];
+                    $informations->DROITPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['DROITPUBLIC_ETABLISSEMENTINFORMATIONS'];
                     $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS = (int) $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
@@ -715,7 +717,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $informations->ID_STATUT = isset($data['ID_STATUT']) ? $data['ID_STATUT'] : 1;
             $informations->UTILISATEUR_ETABLISSEMENTINFORMATIONS = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
             $informations->ID_ETABLISSEMENT = $etablissement->ID_ETABLISSEMENT;
-//var_dump($informations);exit();
+
             $informations->save();
 
             // Sauvegarde des préventionnistes
@@ -1042,6 +1044,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 $miniature['EXTENSION_PIECEJOINTE'] = '.jpg';
                 $miniature_path = $store->getFilePath($miniature, 'etablissement_miniature', $id_etablissement, true);
                 GD_Resize::run($file_path, $miniature_path, 450);
+                if (!is_file($miniature_path)) {
+                    throw new Exception("Cannot create miniature file: $miniature_path");
+                }
             }
         }
 
@@ -1061,6 +1066,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DBitem = new Model_DbTable_EtablissementPj;
         
         $pj = $DBpieceJointe->find($id_pj)->current();
+        if (!$pj) {
+            return ;
+        }
         
         $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
         $file_path = $store->getFilePath($pj, 'etablissement', $id_etablissement);
@@ -1071,7 +1079,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         if ($DBitem != null) {
             if( file_exists($file_path) )         unlink($file_path);
             if( file_exists($miniature_path))     unlink($miniature_path);
-            $DBitem->delete("ID_PIECEJOINTE = " . (int) $this->_request->id_pj);
+            $DBitem->delete("ID_PIECEJOINTE = " . (int) $id_pj);
             $pj->delete();
         }
 

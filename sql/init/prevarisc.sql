@@ -1381,6 +1381,7 @@ CREATE TABLE `etablissementinformations` (
   `ICPE_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
   `PERIODICITE_ETABLISSEMENTINFORMATIONS` tinyint(4) DEFAULT NULL,
   `R12320_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
+  `DROITPULIC_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
   `LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
   `EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS` int(11) DEFAULT NULL,
   `EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS` int(11) DEFAULT NULL,
@@ -2314,14 +2315,15 @@ LOCK TABLES `privileges` WRITE;
 INSERT INTO `privileges` VALUES (1,'docs','Gestion des documents',1),(2,'groupement_communes','Gestion des groupements de communes',1),(3,'gestion_prescriptions','Gestion des prescriptions',1),(4,'gestion_textes_applicables','Gestion des textes applicables',1),(5,'fil_actus','Écriture dans le fil d\'actualités',1),(6,'gestion_commissions','Gestion des commissions',1),(7,'lecture_commission','Lecture',2),(8,'ecriture_commission','Écriture',2),(9,'creation_commission','Création',2),(10,'modification_odj','Modification de l\'Ordre du Jour',2),(11,'admin','Accès à l\'administration',1),(12,'communes','Gestion des communes',1),(13,'periodicites','Gestion des périodicités',1),(14,'add_etablissement','Création d\'un établissement',3),(15,'add_dossier','Création d\'un dossier',3),(16,'generation_doc_com','Génération des documents de la commission',2),(17,'view_ets','Lecture',4),(18,'edit_ets','Modifier',4),(19,'view_ets','Lecture',5),(20,'edit_ets','Modifier',5),(21,'view_ets','Lecture',6),(22,'edit_ets','Modifier',6),(23,'view_ets','Lecture',7),(24,'edit_ets','Modifier',7),(25,'view_ets','Lecture',8),(26,'edit_ets','Modifier',8),(27,'view_doss','Lecture',9),(28,'edit_doss','Modifier',9),(29,'verrouillage_dossier','Verrouillage d\'un dossier',9);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(50,"edit_avis_com", "Modifier",50);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(51,"edit_statut", "Modifier",51);
+
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(100,"view_ets_avis_defavorable", "Voir les établissements sous avis défavorable",100);
-INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(101,"view_doss_sans_avis", "Voir les établissements sous avis défavorable",100);
-INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(102,"view_ets_ouverts_sans_prochaine_vp", "Voir les établissements sous avis défavorable",100);
-INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(103,"view_courrier_sans_reponse", "Voir les établissements sous avis défavorable",100);
-INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(104,"view_ets_sans_preventionniste", "Voir les établissements sous avis défavorable",100);
-INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(105,"view_doss_avis_differe", "Voir les établissements sous avis défavorable",100);
-INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(106,"view_ets_avis_defavorable_sur_commune", "Voir les établissements sous avis défavorable",100);
-INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(107,"view_ets_suivis", "Voir les établissements sous avis défavorable",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(101,"view_doss_sans_avis", "Voir dossiers de commissions échus sans avis",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(102,"view_ets_ouverts_sans_prochaine_vp", "Voir ets sans prochaine visite périodique",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(103,"view_courrier_sans_reponse", "Voir les courriers sans réponse",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(104,"view_ets_sans_preventionniste", "Voir ets sans préventionniste",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(105,"view_doss_avis_differe", "Voir dossiers avec avis différés",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(106,"view_ets_avis_defavorable_sur_commune", "Voir ets défavorable sur commune utilisateur",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(107,"view_ets_suivis", "Voir ets suivis",100);
 /*!40000 ALTER TABLE `privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 

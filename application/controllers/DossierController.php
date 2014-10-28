@@ -165,7 +165,7 @@ class DossierController extends Zend_Controller_Action
 
             $natureDossier = $DBdossier->getDossierTypeNature($id_dossier);
             $this->view->natureDossier = $natureDossier[0]['ID_NATURE'];
-
+            $this->view->verrouDossier = $dossier['VERROU_DOSSIER'];
             $this->view->idDossier = ($this->_getParam("id"));
         }
     }
@@ -508,42 +508,30 @@ class DossierController extends Zend_Controller_Action
                         $this->view->dateCommInput = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
                         $this->view->idDateCommissionAffect = $ue['ID_DATECOMMISSION'];
                     } else {
-                        //VISITE OU GROUPE DE VISITE
-                        $this->view->dateVisite = $this->view->infosDossier['DATEVISITE_DOSSIER'];
-						//on récupère les date liées si il en existe
-						//Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
-						$infosDateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
-						$this->view->ID_AFFECTATION_DOSSIER_VISITE = $infosDateComm['ID_DATECOMMISSION'];
-						if (!$infosDateComm['DATECOMMISSION_LIEES']) {
-							$commPrincipale = $affectDossier['ID_DATECOMMISSION_AFFECT'];
-						} else {
-							$commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
-						}
-						//récupération de l'ensemble des dates liées
-						$recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
-						$nbDatesTotal = count($recupCommLiees);
-						$nbDateDecompte = $nbDatesTotal;
+                        //VISITE OU GROUPE DE VISITE						
+						$dateVisite = $dbDateComm->getInfosVisite($this->_getParam("id"));
+										
+						$dateLiees = $dbDateComm->getDateLieesv2($dateVisite['ID_DATECOMMISSION_AFFECT']);
+						$this->view->dateVisite = $this->view->infosDossier['DATEVISITE_DOSSIER'];
+						
+						$nbDates = count($dateLiees);
 						
 						$listeDateValue = "";
 						$listeDateInput = "";
-
-						foreach ($recupCommLiees as  $val => $ue) {
+						foreach ($dateLiees as  $val => $ue) {
 							$date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
-							if ($nbDateDecompte == $nbDatesTotal) {
-								//premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
-								$this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
-							}
-							if ($nbDateDecompte > 1) {
-								$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR).", ";
-								$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR).", ";
-							} elseif ($nbDateDecompte == 1) {
-								$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-								$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-							}
-							$this->view->dateVisiteValue = $listeDateValue;
-							$this->view->dateVisiteInput = $listeDateInput;
-							$nbDateDecompte--;
+							
+							$listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+							$listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+							if($nbDates > 1){
+								$listeDateValue .= ", ";
+								$listeDateInput .= ", ";
+							}	
+							$nbDates--;
 						}
+						
+						$this->view->dateVisiteValue = $listeDateValue;
+						$this->view->dateVisiteInput = $listeDateInput;
                     }
                 }
             }
@@ -598,11 +586,11 @@ class DossierController extends Zend_Controller_Action
                     $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
                     $this->view->listeEtablissement = $tabEtablissement;
 					
-					$service_etablissement = new Service_Etablissement;
-					foreach($this->view->listeEtablissement as $val => $ue){
-						$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-						$this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
-					}
+                    $service_etablissement = new Service_Etablissement;
+                    foreach($this->view->listeEtablissement as $val => $ue){
+                            $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+                            $this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
+                    }
                 }
             break;
             case "showNature":
@@ -829,15 +817,18 @@ class DossierController extends Zend_Controller_Action
                 //On cherche le type de dossier
                 $dbDossier = new Model_DbTable_Dossier;
                 $type = $dbDossier->getTypeDossier($this->_getParam('idDossier'));
-
+				
                 //Lorsque l'on est dans une visite ou un groupe de visite, on modifie les textes applicables dans l'établissement au fur et à mesure
                 if ($type['TYPE_DOSSIER'] == 2 || $type['TYPE_DOSSIER'] == 3) {
                     $dbEtablissementTextAppl = new Model_DbTable_EtsTextesAppl;
                     if ($this->_getParam('toDo') == 'save') {
-                        $row = $dbEtablissementTextAppl->createRow();
-                        $row->ID_TEXTESAPPL = $this->_getParam('idTexte');
-                        $row->ID_ETABLISSEMENT = $this->_getParam('idEtablissement');
-                        $row->save();
+						$exist = $dbEtablissementTextAppl->find($this->_getParam('idTexte'),$this->_getParam('idEtablissement'))->current();
+						if(!$exist){
+							$row = $dbEtablissementTextAppl->createRow();
+							$row->ID_TEXTESAPPL = $this->_getParam('idTexte');
+							$row->ID_ETABLISSEMENT = $this->_getParam('idEtablissement');
+							$row->save();
+						}
                     } elseif ($this->_getParam('toDo') == 'delete') {
                         $row = $dbEtablissementTextAppl->find($this->_getParam('idTexte'),$this->_getParam('idEtablissement'))->current();
                         $row->delete();
@@ -1237,7 +1228,7 @@ class DossierController extends Zend_Controller_Action
 						$infosDateVisite = $dateAffect;
 					}
 				}
-				
+				//Zend_Debug::dump($infosDateVisite);
 				//Partie concernant la date de visite
 				if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
 					if(isset($infosDateVisite)){
@@ -1351,7 +1342,7 @@ class DossierController extends Zend_Controller_Action
 		}
     }
 
-//Action permettant de lister les établissements et les dossiers liés
+    //Action permettant de lister les établissements et les dossiers liés
     public function lieesAction()
     {
         $DBdossier = new Model_DbTable_Dossier;
@@ -1362,13 +1353,6 @@ class DossierController extends Zend_Controller_Action
 		foreach($this->view->listeEtablissement	as $etab => $val){
 			$this->view->listeEtablissement[$etab]['pereInfos'] = $service_etablissement->get($val['ID_ETABLISSEMENT']);
 		}
-		/*
-		if($this->view->listeEtablissement){
-			$etablissement = $service_etablissement->get($this->view->listeEtablissement[0]['ID_ETABLISSEMENT']);
-			$this->view->etablissement = $etablissement;
-		}
-		*/
-		//Zend_Debug::dump($this->view->listeEtablissement);
     }
 
     public function contactAction()
@@ -1378,12 +1362,14 @@ class DossierController extends Zend_Controller_Action
 		$this->view->infosDossier = $DBdossier->find((int) $this->_getParam("id"))->current();
     }
 
-	//GESTION DOCUMENTS CONSULTES
+    //GESTION DOCUMENTS CONSULTES
     public function docconsulteAction()
     {
+        $this->view->inlineScript()->appendFile('/js/dossier/dossierDocConsulte.js','text/javascript');
+        
         //récupération du type de dossier (etude / visite)
         $dbdossier = new Model_DbTable_Dossier;
-		$this->view->infosDossier = $dbdossier->find((int) $this->_getParam("id"))->current();
+        $this->view->infosDossier = $dbdossier->find((int) $this->_getParam("id"))->current();
 		
         $dossierType = $dbdossier->getTypeDossier((int) $this->_getParam("id"));
 
@@ -1630,9 +1616,25 @@ class DossierController extends Zend_Controller_Action
 //GENERATION DOCUMENTS
     public function dialoggenrapportAction()
     {
+        
+        $files = array();
+        $dirname = REAL_DATA_PATH . DS . "uploads" . DS . "documents";
+	$dir = opendir($dirname); 
+        while($file = readdir($dir)) {
+		if(!in_array($file, array('.gitignore', '..', '.')) && !is_dir($dirname.DS.$file))
+		{
+                    $files[$dirname.DS.$file] = $file;
+		}
+	}
+        closedir($dir);
+        asort($files);
+        $this->view->files = $files;
+        
+        
         //Permet de charger la liste des établissements liés au dossier pour la selection des rapports à generer
         $DBdossier = new Model_DbTable_Dossier;
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
+        
     }
 
     public function generationrapportAction()
@@ -1783,7 +1785,6 @@ class DossierController extends Zend_Controller_Action
 		//Récupération de tous les champs de la table dossier
 		$DBdossier = new Model_DbTable_Dossier;
 		$this->view->infosDossier = $DBdossier->find($idDossier)->current();
-
 		//Récupération du type et de la nature du dossier
 		$dbType = new Model_DbTable_DossierType;
 		$typeDossier = $dbType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
@@ -1798,8 +1799,39 @@ class DossierController extends Zend_Controller_Action
 		$this->view->preventionnistes = $DBdossierPrev->getPrevDossier($idDossier);
 
 		$dbGroupement = new Model_DbTable_Groupement;
-		$groupement = $dbGroupement->find($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"])->current();
-		$this->view->servInstructeur = $groupement['LIBELLE_GROUPEMENT'];
+		
+                $servInstructeur = "";
+                $servInstructeurPrenomContact = "";
+                $servInstructeurNomContact = "";
+                $servInstructeurMail = "";
+                
+                if ($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"]
+                    && $this->view->infosDossier["TYPESERVINSTRUC_DOSSIER"]) {
+                    if ($this->view->infosDossier["TYPESERVINSTRUC_DOSSIER"] == 'servInstCommune') {
+                        $dbCommune = new Model_DbTable_AdresseCommune;
+                        $commune = $dbCommune->get($this->view->infosDossier["SERVICEINSTRUC_DOSSIER"]);
+                        $idUtilisateur = $commune[0]["ID_UTILISATEURINFORMATIONS"];
+                        $dbUtilisateur = new Model_DbTable_UtilisateurInformations;
+                        $infos = $dbUtilisateur->find($idUtilisateur)->current();
+                        $this->view->servInstructeur = $infos;
+                        $servInstructeur = $this->view->infosDossier["SERVICEINSTRUC_DOSSIER"];
+                        $servInstructeurPrenomContact = $infos['PRENOM_UTILISATEURINFORMATIONS'];
+                        $servInstructeurNomContact = $infos['NOM_UTILISATEURINFORMATIONS'];
+                        $servInstructeurMail = $infos['MAIL_UTILISATEURINFORMATIONS'];
+
+                    } else {
+                        $libelle = $this->view->infosDossier["SERVICEINSTRUC_DOSSIER"];
+                        $groupement = $dbGroupement->getByLibelle($libelle);
+                        $servInstructeur = $groupement[0]['LIBELLE_GROUPEMENT'];
+                        $servInstructeurPrenomContact = $groupement[0]['PRENOM_UTILISATEURINFORMATIONS'];
+                        $servInstructeurNomContact = $groupement[0]['NOM_UTILISATEURINFORMATIONS'];
+                        $servInstructeurMail = $groupement[0]['MAIL_UTILISATEURINFORMATIONS'];
+                    }
+                }
+                $this->view->servInstructeur = $servInstructeur;
+                $this->view->servInstructeurPrenomContact = $servInstructeurPrenomContact;
+                $this->view->servInstructeurNomContact = $servInstructeurNomContact;
+                $this->view->servInstructeurMail = $servInstructeurMail;
 
                 $dbDossierContact = new Model_DbTable_DossierContact;
 		//On recherche si un maitre d'oeuvre existe

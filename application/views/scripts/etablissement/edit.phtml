@@ -88,7 +88,6 @@
                 <dt class="champ_classement champs">Classement</dt>
                 <dd class="champ_classement champs">
                     <select name='ID_CLASSEMENT'>
-                        <?php var_dump($this->DB_classement)?>
                         <?php foreach( $this->DB_classement as $item ) : ?>
                             <option value='<?php echo $item["ID_CLASSEMENT"] ?>' <?php if( $item["ID_CLASSEMENT"] == $this->etablissement['informations']["ID_CLASSEMENT"] ) echo "selected" ?>>
                                 <?php echo $item["LIBELLE_CLASSEMENT"] ?>
@@ -169,6 +168,15 @@
                     <p>
                         <input type='hidden' name='R12320_ETABLISSEMENTINFORMATIONS' value='0' />
                         <input type='checkbox' name='R12320_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["R12320_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+                    </p>
+                </dd>
+                
+                <!-- Relève du droit public -->
+                <dt class='champs champ_droitpublic'>R123-16 ?</dt>
+                <dd class='champs champ_droitpublic'>
+                    <p>
+                        <input type='hidden' name='DROITPUBLIC_ETABLISSEMENTINFORMATIONS' value='0' />
+                        <input type='checkbox' name='DROITPUBLIC_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["DROITPUBLIC_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
                     </p>
                 </dd>
 
@@ -612,7 +620,7 @@
 
                 // Établissement
                 case '2':
-                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_localsommeil, .champ_donnees_pratiques').show();
+                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_localsommeil, .champ_donnees_pratiques, .champ_droitpublic').show();
                     break;
 
                 // Cellule

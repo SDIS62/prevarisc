@@ -84,6 +84,11 @@
                     <?php if($this->etablissement['informations']['R12320_ETABLISSEMENTINFORMATIONS']) : ?>
                         <p>Le <strong>R123-20</strong> est appliqué sur cet établissement.</p>
                     <?php endif ?>
+                    <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2))) : ?>
+                        <?php if($this->etablissement['informations']['DROITPUBLIC_ETABLISSEMENTINFORMATIONS']) : ?>
+                            <p>Le <strong>R123-16</strong> est appliqué sur cet établissement (droit public).</p>
+                        <?php endif ?>
+                    <?php endif ?>
                 </dd>
             </dl>
             <?php endif ?>
@@ -301,7 +306,11 @@
                         <div class="carousel-inner" style="background-color: #333">
                             <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
                             <div class="item <?php if($key == 0 ) echo 'active' ?>"  >
-                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                                <?php $item['EXTENSION_PIECEJOINTE'] = '.jpg'; ?>
+                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" 
+                                     src="<?php echo $this->store->getURLPath($item, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']) ?>" 
+                                     alt="<?php echo htmlentities($item['NOM_PIECEJOINTE']) ?>" 
+                                     />
                                 <div class="carousel-caption">
                                   <h4><?php echo $item['NOM_PIECEJOINTE'] ?></h4>
                                   <p><?php echo $item['DESCRIPTION_PIECEJOINTE'] ?></p>
@@ -328,7 +337,11 @@
                         <div class="carousel-inner" style="background-color: #333">
                             <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
                             <div class="item <?php if($key == 0 ) echo 'active' ?>" >
-                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                                <?php $item['EXTENSION_PIECEJOINTE'] = '.jpg'; ?>
+                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" 
+                                     src="<?php echo $this->store->getURLPath($item, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']) ?>" 
+                                     alt="<?php echo htmlentities($item['NOM_PIECEJOINTE']) ?>" 
+                                     />
                                 <div class="carousel-caption">
                                   <h4><?php echo $item['NOM_PIECEJOINTE'] ?></h4>
                                   <p><?php echo $item['DESCRIPTION_PIECEJOINTE'] ?></p>

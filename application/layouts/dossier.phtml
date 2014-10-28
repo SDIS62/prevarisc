@@ -70,17 +70,6 @@
                 $idLink = "VERROU";
                 $verrou = false;
             } ?>
-            <?php if (!$verrou) : ?>
-            <li>
-                <a class="sep" href="" id="modificationDossier"><i class="icon-pencil icon-black"></i> Modifier le dossier</a>
-            </li>
-            <li> 
-                <a href="" class="sep" id='validModification' style="display:none;"><i class='icon-ok icon-black'></i> Sauvegarder le dossier</a>
-            </li>
-            <li>
-                <a href="" id='annulModification' style="display:none;"><i class="icon-remove icon-black"></i> Annuler</a>
-            </li>
-            <?php endif ?>
             <li>
                 <a class="sep" href="" id="<?php echo $idLink; ?>"><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
             </li>

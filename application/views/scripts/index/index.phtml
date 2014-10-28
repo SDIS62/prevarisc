@@ -6,37 +6,25 @@
        Alertes
        </div>
        <ul class="list-group">
-           <?php
-                foreach($this->etablissementAvisDefavorable as $avis)
-                { ?>
-
-                  <li class="list-group-item">
-
-                   <span class="badge badge-important">Urgent</span>
-                   <a href='etablissement/index/id/<?php echo $avis['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>  
-                    <?php 
-                       if($avis['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
-                       {
-                        echo "L'établissement <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours"; 
-                       }
-                       else 
-                       {
-                         $datedemodif = new DateTime($avis['DATE_ETABLISSEMENTINFORMATIONS']);    
-                         echo "L'établissement du <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
-                       }
-                       ?>  
-
-                  </li>   
-
-                <?php 
-
-                }
-            ?>
-            <?php
-            foreach($this->erpSansPreventionniste as $erpsansprev)
-                { 
-                 ?>
-                   <li class="list-group-item">
+           <?php foreach($this->etablissementAvisDefavorable as $avis): ?>
+            <li class="list-group-item">
+              <span class="badge badge-important">Urgent</span>
+              <a href='etablissement/index/id/<?php echo $avis['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>  
+               <?php 
+                  if($avis['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
+                  {
+                   echo "L'établissement <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours"; 
+                  }
+                  else 
+                  {
+                    $datedemodif = new DateTime($avis['DATE_ETABLISSEMENTINFORMATIONS']);    
+                    echo "L'établissement du <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
+                  }
+                  ?>  
+             </li>   
+            <?php endforeach ?>
+            <?php foreach($this->erpSansPreventionniste as $erpsansprev): ?>
+                <li class="list-group-item">
                    <a href='etablissement/index/id/<?php echo $erpsansprev['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>   
                    <span class="badge badge-warning">Important</span>
                    <?php
@@ -51,12 +39,8 @@
                             echo "L'établissement du <a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sans préventionnistes";
                         }
                       ?>   
-                   </li>   
-
-                   <?php 
-
-                }
-            ?>
+                   </li>
+              <?php endforeach ?>
            </ul>  
     </div>  
     <?php endif ?>
@@ -281,7 +265,9 @@
   </div>
   <div class="panel-body" style="font-size: .85em">
     <?php foreach($this->commissions as $commission) : ?>
-      <p class="lead" style="font-size:1.2em; margin-bottom: 0px;"><?php echo strtoupper($commission["name"]) . " du " . $commission["date"] . " (" . $commission["heure"] . ")" ?></p>
+      <p class="lead" style="font-size:1.2em; margin-bottom: 0px;">
+          <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commission['id'] ?>"><?php echo strtoupper($commission["name"]) ?></a>
+          <?php echo " du " . $commission["date"] . " (" . $commission["heure"] . ")" ?></p>
       <?php if(count($commission["odj"]) == 0 ) : ?>
         <p class="muted">Pas de dossier affecté.</p>
       <?php else : ?>
