@@ -1028,7 +1028,20 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $file_path = $store->getFilePath($piece_jointe, 'etablissement', $id_etablissement, true);
         
         if(!move_uploaded_file($file['tmp_name'], $file_path)) {
-            throw new Exception('Ne peut pas déplacer le fichier ' . $file['tmp_name']);
+            $msg = 'Ne peut pas déplacer le fichier ' . $file['tmp_name']. ' vers '.$file_path;
+            
+            // log some debug information
+            error_log($msg);
+            error_log("is_dir ".dirname($file_path).": ".is_dir(dirname($file_path)));
+            error_log("is_writable ".dirname($file_path).":".is_writable(dirname($file_path)));
+            $cmd = 'ls -all '.dirname($file_path);
+            error_log($cmd);
+            $rslt = explode("\n", shell_exec($cmd));
+            foreach($rslt as $file) {
+                error_log($file);
+            }
+            
+            throw new Exception($msg);
         }
         else {
             $DBsave = new Model_DbTable_EtablissementPj;

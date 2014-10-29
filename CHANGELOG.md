@@ -32,6 +32,8 @@ Corrections :
 * Correction de l'apparition du bouton "Modifier" sur la partie dossier qui était présent sur tous les onglets et pour chaque niveau de site, cellule...
 * Correction sur documents consultés de dossier "$ is undefined" : report de l'ajout du js inline dans le controlleur au lieu du dossier
 * Correction du libellé "Places de stationnement" qui ne revient pas à Public lors de la sélection d'une autre activité
+* Corrections de warnings (undefined indexes) sur la génération des documents
+* Corrections du bouton modifier le dossier qui apparaît à la création du dossier
 
 ## 2.1
 
