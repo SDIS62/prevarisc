@@ -1,4 +1,4 @@
-<li class="etablissement <?php if($this->NB_ENFANTS > 0) echo "slide" ?>" id="<?php echo $this->ID_ETABLISSEMENT ?>">
+<li class="etablissement <?php if($this->NB_ENFANTS > 0) echo "slide" ?>" id="<?php echo $this->ID_ETABLISSEMENT ?>" <?php if($this->ID_STATUT == 1 || $this->ID_STATUT == 3) echo 'style="opacity: 0.5;"' ?>>
 
     <!-- Icone représentant le dropdown des fils -->
     <?php if($this->NB_ENFANTS > 0) : ?>
