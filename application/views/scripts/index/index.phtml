@@ -293,17 +293,11 @@
         });
 
         // Grid !
-        var $container = $('.dashboard');
-
-        $container.packery({
-          itemSelector: '.panel',
-          columnWidth: '.grid-sizer',
-          gutter: '.grid-gutter'
+        $('.dashboard').packery({
+            itemSelector: '.panel',
+            columnWidth: '.grid-sizer',
+            gutter: '.grid-gutter'
         });
-
-        var $itemElems = $( $container.packery('getItemElements') );
-        $itemElems.draggable();
-        $container.packery( 'bindUIDraggableEvents', $itemElems );
 
     });
 </script>
