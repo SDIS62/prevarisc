@@ -48,7 +48,6 @@ class SearchController extends Zend_Controller_Action
 
                 $search = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, 50, $parameters['page']);
 
-                require('helpers/SearchPaginatorAdapter.php');
                 $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
                 $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
 
@@ -108,7 +107,6 @@ class SearchController extends Zend_Controller_Action
 
                 $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $parameters['page'],$criteresRecherche);
 
-                require('helpers/SearchPaginatorAdapter.php');
                 $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
                 $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
 
@@ -139,7 +137,6 @@ class SearchController extends Zend_Controller_Action
 
                 $search = $service_search->users($fonctions, $name, null, true, 50, $parameters['page']);
 
-                require('helpers/SearchPaginatorAdapter.php');
                 $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
                 $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
 
