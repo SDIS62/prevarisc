@@ -51,9 +51,6 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
             $view->headLink()->appendStylesheet('/css/dropzone/dropzone.css', 'all');
 
-            // Envoi de la version en cours sur la vue
-            $view->version_prevarisc = '1.2.1';
-
             // Icône du site
             $view->headLink()->headLink(array("rel" => "shortcut icon","href" => "/images/favicon.ico"));
 
