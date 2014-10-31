@@ -15,9 +15,41 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             // On définie le titre de l'application
             $view->headTitle(strip_tags($view->navigation()->breadcrumbs()->setMinDepth(0)->setSeparator(" / ")));
 
-            // Liens vers les fichiers combinés CSS / JS
-            $view->inlineScript()->appendFile("/js/application.combined.js")->appendFile("/js/jquery.dateentry.js");
-            $view->headLink()->appendStylesheet('/css/application.combined.css', 'all');
+            // JS
+            $view->inlineScript()->appendFile("/js/jquery-1.10.2.min.js");
+            $view->inlineScript()->appendFile("/js/jquery-migrate-1.2.1.min.js");
+            $view->inlineScript()->appendFile("/js/jquery-ui.min.js");
+            $view->inlineScript()->appendFile("/js/jquery.fullcalendar.js");
+            $view->inlineScript()->appendFile("/js/jquery.autocomplete.min.js");
+            $view->inlineScript()->appendFile("/js/jquery.timeentry.js");
+            $view->inlineScript()->appendFile("/js/jquery.elastic.js");
+            $view->inlineScript()->appendFile("/js/jquery.toggletext.js");
+            $view->inlineScript()->appendFile("/js/jquery.multiselect.min.js");
+            $view->inlineScript()->appendFile("/js/jquery.tablesorter.js");
+            $view->inlineScript()->appendFile("/js/jquery.tablesorter.pager.js");
+            $view->inlineScript()->appendFile("/js/jquery.tipsy.js");
+            $view->inlineScript()->appendFile("/js/jquery.fancybox-1.3.4.js");
+            $view->inlineScript()->appendFile("/js/bootstrap.min.js");
+            $view->inlineScript()->appendFile("/js/dropzone.min.js");
+            $view->inlineScript()->appendFile("/js/chosen.jquery.min.js");
+            $view->inlineScript()->appendFile("/js/jquery.dateentry.js");
+            $view->inlineScript()->appendFile("/js/main.js");
+
+            // CSS
+            $view->headLink()->appendStylesheet('/css/bootstrap.min.css', 'all');
+            $view->headLink()->appendStylesheet('/css/main.css', 'all');
+            $view->headLink()->appendStylesheet('/css/login.css', 'all');
+            $view->headLink()->appendStylesheet('/css/components/panel.css', 'all');
+            $view->headLink()->appendStylesheet('/css/chosen.min.css', 'all');
+            $view->headLink()->appendStylesheet('/css/jquery/jquery-ui-1.8.11.custom.css', 'all');
+            $view->headLink()->appendStylesheet('/css/jquery/jquery.tablesorter.css', 'all');
+            $view->headLink()->appendStylesheet('/css/jquery/jquery.multiselect.css', 'all');
+            $view->headLink()->appendStylesheet('/css/jquery/jquery.fullcalendar.css', 'all');
+            $view->headLink()->appendStylesheet('/css/jquery/jquery.fancybox-1.3.4.css', 'all');
+            $view->headLink()->appendStylesheet('/css/jquery/jquery.tipsy.css', 'all');
+            $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
+            $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
+            $view->headLink()->appendStylesheet('/css/dropzone/dropzone.css', 'all');
 
             // Envoi de la version en cours sur la vue
             $view->version_prevarisc = '1.2.1';
@@ -33,7 +65,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->registerHelper(new View_Helper_DateJqueryToBd, 'dateJqueryToBd');
             $view->registerHelper(new View_Helper_ListeGroupement, 'listeGroupement');
             $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
-            
+
             // Définition du partial de vue à utiliser pour le rendu d'une recherche
             Zend_View_Helper_PaginationControl::setDefaultViewPartial('search' . DIRECTORY_SEPARATOR . 'pagination_control.phtml');
 

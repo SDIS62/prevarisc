@@ -43,7 +43,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initCache()
     {
-        return Zend_Cache::factory('Core', 'APC', array(
+        return Zend_Cache::factory('Core', 'File', array(
             'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
             'cache_id_prefix' => 'prevarisc'
         ));
@@ -54,7 +54,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initCacheSearch()
     {
-        return Zend_Cache::factory('Core', 'APC', array(
+        return Zend_Cache::factory('Core', 'File', array(
             'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
             'cache_id_prefix' => 'prevarisc_search'
         ));
