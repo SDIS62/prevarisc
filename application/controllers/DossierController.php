@@ -1054,19 +1054,21 @@ class DossierController extends Zend_Controller_Action
 						}
 					}					
                 } elseif ($MAJEtab == 1) {
-                    $listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
-                    foreach ($listeEtab as $val => $ue) {
-                        $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
-                        $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-                        $etabToEdit->save();
-						$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-						foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
-							$etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
-							$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-							$etabToEdit->save();
+					$listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
+					foreach ($listeEtab as $val => $ue) {
+						$etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
+						$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+						$etabToEdit->save();
+						if($this->_getParam('repercuterAvis')){
+							$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+							foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
+								$etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+								$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+								$etabToEdit->save();
+							}
 						}
-                    }
-					
+					}
+			
                 }
 				
             }
