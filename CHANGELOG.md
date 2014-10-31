@@ -15,6 +15,8 @@ Evolution :
 * Ajout du descriptif de l'erreur lorsqu'on arrive pas à créer un dossier via le SimpleDataStore
 * Optimisations de performances sur les ACL
 * Ajout de la variable d'environnement PREVARISC_PARKINGS_TYPES précisant les Ids des types d'activités liés aux parkings
+* Déplacement et agrandissement de l'identifiant externe
+* Ajout de la possibilité de pas avoir un copie de travail git et forcer une version applicative dans le footer
 
 Corrections :
 

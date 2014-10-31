@@ -19,9 +19,17 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->inlineScript()->appendFile("/js/application.combined.js")->appendFile("/js/jquery.dateentry.js");
             $view->headLink()->appendStylesheet('/css/application.combined.css', 'all');
 
-            // Envoi de la version en cours sur la vue
-            $view->version_prevarisc = '1.2.1';
-
+            // Envoi de la version en cours sur la vue 
+            if (getenv('PREVARISC_VERSION') != false) {
+                $view->branch_prevarisc = getenv('PREVARISC_BRANCH');
+                $view->revision_prevarisc = getenv('PREVARISC_REVISION');
+                $view->version_prevarisc = getenv('PREVARISC_VERSION');
+            } else {
+                $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..');
+                $view->branch_prevarisc = $git->getCurrentBranch();
+                $view->revision_prevarisc = end($git->getRevisions())['sha1'];
+                $view->version_prevarisc = $view->branch_prevarisc . '@' . substr((string) $view->revision_prevarisc, 0, 7);
+            }
             // Icône du site
             $view->headLink()->headLink(array("rel" => "shortcut icon","href" => "/images/favicon.ico"));
 

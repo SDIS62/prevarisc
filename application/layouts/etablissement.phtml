@@ -23,12 +23,24 @@
     <h2 class="page-header">
         <?php if( $this->etablissement['parents'] > 0 ) : ?>
             <?php foreach($this->etablissement['parents'] as $etablissement) : ?>
-                <?php echo "<a href='/etablissement/index/id/" . $etablissement["ID_ETABLISSEMENT"] . "'>" . $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] . "</a> - "; ?>
+                <a href='/etablissement/index/id/<?php echo  $etablissement["ID_ETABLISSEMENT"] ?>'>
+                    <?php echo $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?>
+                </a> - 
             <?php endforeach ?>
         <?php endif ?>
         <?php echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' title='" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "' />" : ''; ?>
-        <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." " ?>
+        <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?>
+        <?php if ($this->etablissement['general']['NUMEROID_ETABLISSEMENT']): ?>
+            <span class="pull-right">
+                <small>
+                    #<?php echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"] ?>
+                </small>
+            </span>
+        <?php endif ?>
     </h2>
+    
+    
+    
 
     <!-- Avis -->
     <?php if($this->etablissement['presence_avis_differe'] == true) : ?>
@@ -69,10 +81,6 @@
 
     <!-- Statut -->
     <p>Statut : <?php echo $this->etablissement['informations']['LIBELLE_STATUT'] ?></p>
-
-    <?php if(!empty($this->etablissement['general']['NUMEROID_ETABLISSEMENT'])) : ?>
-    <p style='float: right'><small>id: <?php echo $this->etablissement['general']['NUMEROID_ETABLISSEMENT'] ?></small></p>
-    <?php endif ?>
 
 </div>
 
