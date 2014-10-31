@@ -17,6 +17,8 @@ Evolution :
 * Ajout de la variable d'environnement PREVARISC_PARKINGS_TYPES précisant les Ids des types d'activités liés aux parkings
 * Déplacement et agrandissement de l'identifiant externe
 * Ajout de la possibilité de pas avoir un copie de travail git et forcer une version applicative dans le footer
+* Fixes #302 Passage des champs de stabilité au feu et isolement en minutes au lieu des heures
+* En lien avec #306, retrait de l'ajout du champ LIBELLE_RUETYPE dans l'affichage des adresses
 
 Corrections :
 
