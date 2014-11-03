@@ -61,10 +61,10 @@ class Service_Search
                 ->joinLeft("etablissementadresse", "e.ID_ETABLISSEMENT = etablissementadresse.ID_ETABLISSEMENT", array("NUMINSEE_COMMUNE", "LON_ETABLISSEMENTADRESSE", "LAT_ETABLISSEMENTADRESSE", "ID_ADRESSE", "ID_RUE"))
                 ->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_DEFAULT")
                 ->joinLeft("adresserue", "adresserue.ID_RUE = etablissementadresse.ID_RUE", "LIBELLE_RUE")
-                ->joinLeft(array("etablissementadressesite" => "etablissementadresse"), "etablissementadressesite.ID_ETABLISSEMENT = (SELECT ID_FILS_ETABLISSEMENT FROM etablissementlie WHERE ID_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_SITE")
-                ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
-                ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
-                ->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
+                ->joinLeft(array("etablissementadressesite" => "etablissementadresse"), "etablissementadressesite.ID_ETABLISSEMENT = (SELECT ID_FILS_ETABLISSEMENT FROM etablissementlie WHERE ID_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", array("ID_RUE AS ID_RUE_SITE", "NUMINSEE_COMMUNE as NUMINSEE_COMMUNE_SITE"))
+               // ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
+                ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", array("ID_RUE AS ID_RUE_CELL", "NUMINSEE_COMMUNE as NUMINSEE_COMMUNE_CELL"))
+                //->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
                 ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
                 ->group("e.ID_ETABLISSEMENT");
 
@@ -119,42 +119,31 @@ class Service_Search
             }
 
             // Critère : commune et rue
-            if($city !== null) {
-                if($genres !== null && count($genres) > 0) {
-                    foreach($genres as $genre) {
-                        switch($genre) {
-                            case "1":
-                                $this->setCriteria($select, "adressecommunesite.LIBELLE_COMMUNE", $city);
-                                if($street_id !== null) {
-                                    $this->setCriteria($select, "etablissementadressesite.ID_RUE", $street_id);
-                                }
-                                break;
-                            case "3":
-                                $this->setCriteria($select, "adressecommunecell.LIBELLE_COMMUNE", $city);
-                                if($street_id !== null) {
-                                    $this->setCriteria($select, "etablissementadressecell.ID_RUE", $street_id);
-                                }
-                                break;
-
-                            default:
-                                $this->setCriteria($select, "adressecommune.LIBELLE_COMMUNE", $city);
-                                if($street_id !== null) {
-                                    $this->setCriteria($select, "etablissementadresse.ID_RUE", $street_id);
-                                }
-                        }
-                    }
+            if($street_id !== null) {
+                $clauses = array();
+                $clauses[] = "etablissementadresse.ID_RUE = ".$select->getAdapter()->quote($street_id);
+                
+                if($genres !== null && in_array('1', $genres)) {
+                    $clause[] = "etablissementadressesite.ID_RUE = ".$select->getAdapter()->quote($street_id);
                 }
-                else {
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_SITE", $city, true, "orHaving");
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_CELLULE", $city, true, "orHaving");
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_DEFAULT", $city, true, "orHaving");
-
-                    if($street_id !== null) {
-                        $this->setCriteria($select, "ID_RUE_SITE", $street_id, true, "orHaving");
-                        $this->setCriteria($select, "ID_RUE_CELL", $street_id, true, "orHaving");
-                        $this->setCriteria($select, "etablissementadresse.ID_RUE", $street_id, true, "orHaving");
-                    }
+                if($genres !== null && in_array('3', $genres)) {
+                    $clause[] = "etablissementadressecell.ID_RUE = ".$select->getAdapter()->quote($street_id);
                 }
+                
+                $select->where('('.implode(' OR ', $clauses).')');
+            }
+            else if($city !== null) {
+                $clauses = array();
+                $clauses[] = "etablissementadresse.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                
+                if($genres !== null && in_array('1', $genres)) {
+                    $clause[] = "etablissementadressesite.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                }
+                if($genres !== null && in_array('3', $genres)) {
+                    $clause[] = "etablissementadressecell.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                }
+                
+                $select->where('('.implode(' OR ', $clauses).')');
             }
 
             // Critères : géolocalisation

@@ -24,8 +24,8 @@
         		</strong>
         		<a href='#' onclick="$('#zone_de_recherche_modal').modal(); return false; ">(Modifier la zone de recherche)</a>
         		<input type='hidden' name='zone_de_recherche_text' value="<?php if(array_key_exists('zone_de_recherche_text', $_GET)) echo $_GET['zone_de_recherche_text'] ?>" />
-				<input type='hidden' name='city' value="<?php if(array_key_exists('city', $_GET)) echo $_GET['city'] ?>" />
-				<input type='hidden' name='street' value="<?php if(array_key_exists('street', $_GET)) echo $_GET['street'] ?>" />
+                        <input type='hidden' name='city' value="<?php if(array_key_exists('city', $_GET)) echo $_GET['city'] ?>" />
+                        <input type='hidden' name='street' value="<?php if(array_key_exists('street', $_GET)) echo $_GET['street'] ?>" />
 	        </small>
 	    </p>
 	</div>
@@ -235,7 +235,7 @@
         	$("input[name='zone_de_recherche_text']").val(text);
             $(".zone_de_recherche_text").text(text);
 
-            $("input[name='city']").val($("input[name='commune_ac']").val());
+            $("input[name='city']").val($("input[name='code_insee']").val());
             $("input[name='street']").val($("input[name='voie']").val());
         	$('form#zone_de_recherche_modal').modal('hide');
         });

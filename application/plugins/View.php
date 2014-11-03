@@ -16,7 +16,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->headTitle(strip_tags($view->navigation()->breadcrumbs()->setMinDepth(0)->setSeparator(" / ")));
 
             // Envoi de la version en cours sur la vue 
-            if (getenv('PREVARISC_VERSION') != false) {
+            if (getenv('PREVARISC_BRANCH') != false) {
                 $view->branch_prevarisc = getenv('PREVARISC_BRANCH');
                 $view->revision_prevarisc = getenv('PREVARISC_REVISION');
                 $view->version_prevarisc = getenv('PREVARISC_BRANCH').'.'.getenv('PREVARISC_REVISION');
