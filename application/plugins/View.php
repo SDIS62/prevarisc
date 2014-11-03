@@ -15,6 +15,19 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             // On définie le titre de l'application
             $view->headTitle(strip_tags($view->navigation()->breadcrumbs()->setMinDepth(0)->setSeparator(" / ")));
 
+            // Envoi de la version en cours sur la vue 
+            if (getenv('PREVARISC_BRANCH') != false) {
+                $view->branch_prevarisc = getenv('PREVARISC_BRANCH');
+                $view->revision_prevarisc = getenv('PREVARISC_REVISION');
+                $view->version_prevarisc = getenv('PREVARISC_BRANCH').'.'.getenv('PREVARISC_REVISION');
+            } else {
+                $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..');
+                $view->branch_prevarisc = $git->getCurrentBranch();
+                $view->revision_prevarisc = end($git->getRevisions())['sha1'];
+                $view->version_prevarisc = $view->branch_prevarisc . '@' . substr((string) $view->revision_prevarisc, 0, 7);
+            }
+
+            
             // JS
             $view->inlineScript()->appendFile("/js/jquery-1.10.2.min.js");
             $view->inlineScript()->appendFile("/js/jquery-migrate-1.2.1.min.js");

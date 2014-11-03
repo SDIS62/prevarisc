@@ -180,7 +180,9 @@ function retrieveInfoDoss($segment, $dossierInfos) {
     }
     addChamp($segment->infosDoss, 'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
     addChamp($segment->infosDoss, 'objetDossier', $dossierInfos["OBJET_DOSSIER"]);
-    addChamp($segment->infosDoss, 'communeConcerne', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"]);
+    if (count($dossierInfos["infosEtab"]["adresses"]) > 0) {
+        addChamp($segment->infosDoss, 'communeConcerne', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"]);
+    }
     if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
         $heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
         $heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];

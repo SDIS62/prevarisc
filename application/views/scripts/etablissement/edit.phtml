@@ -672,8 +672,12 @@
         // Actions sur le changement de type principal
         $("select[name='ID_TYPE']").change(function() {
             // Si l'établissement est un parking, alors l'effectif public est le nombre de places de stationnement
-            if($(this).val() == '16') {
+            <?php $parking_types = explode(';', getenv('PREVARISC_PARKINGS_TYPES') ? getenv('PREVARISC_PARKINGS_TYPES') : 16); ?>
+            if($.inArray($(this).val(), <?php echo Zend_Json::encode($parking_types) ?>) !== -1) {
                 $("dt.effectif_public").html('Places de stationnement');
+            }
+            else {
+                $("dt.effectif_public").html('Public');
             }
         }).change();
 
@@ -907,10 +911,10 @@
                 data: {
                     format: "json",
                     limit: 1,
-                    country: "France",
+                    countrycodes: "FR",
                     street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
                     city: $("input[name='commune_ac']").val(),
-                    postalcode: $("input[name='code_insee']").val().substring(0,2)
+                    postalcode: $("input[name='code_postal']").val()
                 },
                 beforeSend: function() {
                     element.text("Géolocalisation en cours ...");
