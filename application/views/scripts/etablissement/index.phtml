@@ -465,6 +465,10 @@
                 <dd><p><?php echo $this->etablissement['pc_initial'] ?></p></dd>
                 <?php endif ?>
 
+                <!-- Présence DUS -->
+                <dt>Présence d'un DUS</dt>
+                <dd><p><?php echo $this->presence_dus ? 'Oui' : 'Non' ?></p></dd>
+
                 <!-- Données pratiques -->
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(1, 2, 3, 5))) : ?>
                 <dt>Données pratiques</dt>
