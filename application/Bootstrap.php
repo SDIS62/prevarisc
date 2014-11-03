@@ -8,14 +8,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     public function run()
     {
         $this->loadCorePlugins();
-        
+
         $this->loadThirdPartyPlugins();
-        
-        $this->loadActionHelpers();
-        
+
         return parent::run();
     }
-    
+
     /**
      * Initialisation des plugins tiers
      */
@@ -25,13 +23,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_ACL);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_XmlHttpRequest);
     }
-    
+
     /**
      * Initialisation des plugins tiers
      */
     protected function loadThirdPartyPlugins()
     {
-        if (getenv('PREVARISC_THIRDPARTY_PLUGINS')) 
+        if (getenv('PREVARISC_THIRDPARTY_PLUGINS'))
         {
             $thirdparty_plugins = explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS'));
             foreach($thirdparty_plugins as $thirdparty_plugin) {
@@ -39,18 +37,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             }
         }
     }
-    
-    /**
-     * Initialisation des aides d'action
-     */
-    protected function loadActionHelpers()
-    {
-        Zend_Controller_Action_HelperBroker::addPath(
-            APPLICATION_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR . "helpers",
-            "Application_Controller_Helper_"
-        );
-    }
-    
+
     /**
      * Initialisation du cache APC
      */
@@ -119,14 +106,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     {
         Zend_Session::setOptions(array());
     }
-    
+
     public function _initDataStore() {
-        
+
         $options = $this->getOption('resources');
         $options = $options['dataStore'];
         $className = $options['adapter'];
-        
+
         return new $className($options);
     }
-    
+
 }

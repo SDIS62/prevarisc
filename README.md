@@ -2,7 +2,7 @@
 
 [Prevarisc](http://sdis62.github.io/prevarisc/) - Application web open-source gérant l'ensemble de l'activité du service prévention au sein d'un SDIS.
 
-![](https://www.dropbox.com/s/dcfsalor1tqcap9/Capture%20d%27%C3%A9cran%202014-06-20%2010.50.30.png?dl=1)
+![](http://sdis62.github.io/prevarisc/assets/img/screenshot.png)
 
 ## Caractéristiques
 

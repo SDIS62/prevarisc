@@ -1,4 +1,4 @@
-<li class="etablissement <?php if($this->NB_ENFANTS > 0) echo "slide" ?>" id="<?php echo $this->ID_ETABLISSEMENT ?>">
+<li class="etablissement <?php if($this->NB_ENFANTS > 0) echo "slide" ?>" id="<?php echo $this->ID_ETABLISSEMENT ?>" <?php if($this->ID_STATUT == 1 || $this->ID_STATUT == 3) echo 'style="opacity: 0.5;"' ?>>
 
     <!-- Icone représentant le dropdown des fils -->
     <?php if($this->NB_ENFANTS > 0) : ?>
@@ -65,9 +65,9 @@
         }
         elseif($this->DATECOMM_DOSSIER != null)
         {
-            $date = substr($this->DATEINSERT_DOSSIER, 0, 10);
+            $date = substr($this->DATECOMM_DOSSIER, 0, 10);
             if($date != '0000-00-00'){
-                $date = new DateTime(substr($this->DATEINSERT_DOSSIER,0,10));
+                $date = new DateTime(substr($this->DATECOMM_DOSSIER,0,10));
                 $date = date_format($date, 'd/m/Y');
             }else{
                 $date = "00/00/0000";

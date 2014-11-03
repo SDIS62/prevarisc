@@ -60,7 +60,8 @@
                             "NB_ENFANTS" => new Zend_Db_Expr("( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
                                 FROM etablissement
                                 INNER JOIN etablissementlie ON etablissement.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT
-                                WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)")
+                                WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"),
+                            "SIGNED_LABEL" => new Zend_Db_Expr("(CAST(etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS as SIGNED))")
                          ))
                          ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                          ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER"))
@@ -76,6 +77,7 @@
                          ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
                          ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
                          ->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
+                         ->order("SIGNED_LABEL ASC")
                          ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
                          ->group("e.ID_ETABLISSEMENT");
 
