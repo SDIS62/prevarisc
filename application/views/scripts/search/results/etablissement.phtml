@@ -86,7 +86,7 @@
     <span class="avis F" style="font-size: .7em">Favorable <?php echo $this->ID_GENRE == 3 ? '' : " à l'exploitation " ?> <small>(<?php echo $date ?>)</small></span>
     <?php elseif($this->ID_AVIS == 2) : ?>
     <span class="avis D" style="font-size: .7em">Défavorable <?php echo $this->ID_GENRE == 3 ? '' : " à l'exploitation " ?> <small>(<?php echo $date ?>)</small></span>
-    <?php else : ?>
+    <?php elseif($this->ID_GENRE != 1) : ?>
     <span class="avis" style="font-size: .7em">Avis d'exploitation indisponible</span>
     <?php endif ?>
 
