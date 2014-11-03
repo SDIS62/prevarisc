@@ -38,6 +38,7 @@ Corrections :
 * Correction du libellé "Places de stationnement" qui ne revient pas à Public lors de la sélection d'une autre activité
 * Corrections de warnings (undefined indexes) sur la génération des documents
 * Corrections du bouton modifier le dossier qui apparaît à la création du dossier
+* Correction de l'appel au service IGN de géolocalisation : envoi du code postal entier à la place des 2 premiers chiffres du code insee
 
 ## 2.1
 

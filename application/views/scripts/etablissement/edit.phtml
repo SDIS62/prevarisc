@@ -911,10 +911,10 @@
                 data: {
                     format: "json",
                     limit: 1,
-                    country: "France",
+                    countrycodes: "FR",
                     street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
                     city: $("input[name='commune_ac']").val(),
-                    postalcode: $("input[name='code_insee']").val().substring(0,2)
+                    postalcode: $("input[name='code_postal']").val()
                 },
                 beforeSend: function() {
                     element.text("Géolocalisation en cours ...");

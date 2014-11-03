@@ -86,7 +86,6 @@ PREVARISC_DATASTORE_ADAPTER | [FACULTATIF] Permet de charger un plugin changeant
 PREVARISC_REAL_DATA_PATH | [FACULTATIF] Répertoire de stockage des fichiers de prévarisc | Chaine de caractères
 PREVARISC_DATA_PATH | [FACULTATIF] Préfixe des URL d'accès aux médias et pièces jointes | Chaine de caractères
 PREVARISC_APPLICATION_PATH | [FACULTATIF] Répertoire racine de l'application Prévarisc | Chaine de caractères
-PREVARISC_VERSION | [FACULTATIF] Forcer le numéro de version complet de l'installation prévarisc, <branche_git>@<commit_git> sinon   | Chaine de caractères
 PREVARISC_REVISION | [FACULTATIF] Forcer la révision de l'installation prévarisc, <commit_git> sinon   | Chaine de caractères
 PREVARISC_BRANCH | [FACULTATIF] Forcer la branche de l'installation prévarisc, <branche_git> sinon   | Chaine de caractères
 
