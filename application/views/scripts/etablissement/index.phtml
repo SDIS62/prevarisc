@@ -41,7 +41,7 @@
                     <p><?php echo $this->etablissement['informations']['LIBELLE_CLASSE'] ?></p>
                 </dd>
                 <?php endif ?>
-                
+
                 <?php if($this->etablissement['informations']['ID_GENRE'] == 10) : ?>
                 <dt>Classement</dt>
                 <dd>
@@ -53,7 +53,7 @@
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5))) : ?>
                 <dt>Périodicité</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] == 3 ? end($this->etablissement['parents'])['PERIODICITE_ETABLISSEMENTINFORMATIONS'] : $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois</p>
+                    <p><?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? end($this->etablissement['parents'])['PERIODICITE_ETABLISSEMENTINFORMATIONS'] : $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois</p>
                 </dd>
                 <?php endif ?>
             </dl>
@@ -307,9 +307,9 @@
                             <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
                             <div class="item <?php if($key == 0 ) echo 'active' ?>"  >
                                 <?php $item['EXTENSION_PIECEJOINTE'] = '.jpg'; ?>
-                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" 
-                                     src="<?php echo $this->store->getURLPath($item, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']) ?>" 
-                                     alt="<?php echo htmlentities($item['NOM_PIECEJOINTE']) ?>" 
+                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;"
+                                     src="<?php echo $this->store->getURLPath($item, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']) ?>"
+                                     alt="<?php echo htmlentities($item['NOM_PIECEJOINTE']) ?>"
                                      />
                                 <div class="carousel-caption">
                                   <h4><?php echo $item['NOM_PIECEJOINTE'] ?></h4>
@@ -338,9 +338,9 @@
                             <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
                             <div class="item <?php if($key == 0 ) echo 'active' ?>" >
                                 <?php $item['EXTENSION_PIECEJOINTE'] = '.jpg'; ?>
-                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" 
-                                     src="<?php echo $this->store->getURLPath($item, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']) ?>" 
-                                     alt="<?php echo htmlentities($item['NOM_PIECEJOINTE']) ?>" 
+                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;"
+                                     src="<?php echo $this->store->getURLPath($item, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']) ?>"
+                                     alt="<?php echo htmlentities($item['NOM_PIECEJOINTE']) ?>"
                                      />
                                 <div class="carousel-caption">
                                   <h4><?php echo $item['NOM_PIECEJOINTE'] ?></h4>

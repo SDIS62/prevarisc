@@ -48,12 +48,20 @@
             Présence d'un dossier avec avis differé
         </p>
     <?php elseif($this->etablissement['avis'] != null) : ?>
-        <p class='avis <?php echo $this->etablissement['avis'] == 1 ? 'F' : 'D' ?>'>
-            <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') . ($this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation ") ?>
-            <?php if($this->etablissement['avis'] != 1 && $this->etablissement['facteur_dangerosite'] > 0) : ?>
-            · Facteur de criticité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
-            <?php endif ?>
-        </p>
+    
+         <?php if($this->etablissement['avis'] == 1) : ?>
+            <p class="avis F">Favorable <?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation " ?></p>
+         <?php elseif($this->etablissement['avis'] == 2) : ?>
+            <p class="avis D">
+               Défavorable <?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation " ?>
+               <?php if($this->etablissement['facteur_dangerosite'] > 0) : ?>
+                  &nbsp;-&nbsp;Facteur de criticité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
+               <?php endif ?>
+            </p>
+         <?php else : ?>
+            <p class="avis">Avis d'exploitation indisponible</p>
+         <?php endif ?>
+        
     <?php endif ?>
     
     <!-- Présence de risques naturels ou technologiques-->

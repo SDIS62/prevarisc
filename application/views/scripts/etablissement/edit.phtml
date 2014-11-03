@@ -411,11 +411,6 @@
 
     <div class="modal-body">
         <dl>
-            <dt>Date d'enregistrement de la fiche d'informations</dt>
-            <dd id='confirm-modal-date'><span class='confirm-modal-input'></span> <span class='label label-info hide'>Fiche d'informations déjà existante</span></dd>
-        </dl>
-
-        <dl>
             <dt>Valeurs conseillées</dt>
             <dd>
                 <ul>
@@ -518,7 +513,6 @@
                     $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"][value=1]').is(':checked') ? 'Oui' : 'Non' );
                     $('table#preventionnistes tbody tr.preventionniste').each(function(index) { preventionnistes[index] = $(this).find('td').first().find('span').text(); });
                     $('#confirm-modal-preventionnistes .confirm-modal-input').text(preventionnistes.toString() == '' ? 'Aucuns' : preventionnistes.toString());
-                    $('#confirm-modal-date .confirm-modal-input').text(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
                     // On met à jour les valeurs par défauts
                     $('#confirm-modal-commission .confirm-modal-advisable').attr('id', data.response.commission ? data.response.commission.ID_COMMISSION : '').text(data.response.commission ? data.response.commission.LIBELLE_COMMISSION : '');
                     $('#confirm-modal-periodicite .confirm-modal-advisable').text(data.response.periodicite);
