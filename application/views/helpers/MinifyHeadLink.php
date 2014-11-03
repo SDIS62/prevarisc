@@ -60,7 +60,7 @@ class View_Helper_MinifyHeadLink extends Zend_View_Helper_HeadLink
         $stylesheets = array();
         $this->getContainer()->ksort();
         foreach ($this as $item) {
-            if (property_exists($this, 'type') && $item->type == 'text/css' && $item->conditionalStylesheet === false && strpos($item->href, 'http://') === false && $this->isValidStyleSheetExtension($item->href)) {
+            if ($item->type == 'text/css' && $item->conditionalStylesheet === false && strpos($item->href, 'http://') === false && $this->isValidStyleSheetExtension($item->href)) {
                 $stylesheets [$item->media] [] = str_replace($this->getBaseUrl(), '', $item->href);
             } else {
                 // first get all the stylsheets up to this point, and get them into
