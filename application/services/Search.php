@@ -150,9 +150,7 @@ class Service_Search
                     $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_DEFAULT", $city, true, "orHaving");
 
                     if($street_id !== null) {
-                        $this->setCriteria($select, "ID_RUE_SITE", $street_id, true, "orHaving");
-                        $this->setCriteria($select, "ID_RUE_CELL", $street_id, true, "orHaving");
-                        $this->setCriteria($select, "etablissementadresse.ID_RUE", $street_id, true, "orHaving");
+                        $select->where("(etablissementadresse.ID_RUE = ? OR etablissementadressecell.ID_RUE = ? OR etablissementadressesite.ID_RUE = ?)", $street_id, $street_id, $street_id);
                     }
                 }
             }
@@ -209,7 +207,7 @@ class Service_Search
         $search_id = 'search_dossiers_' . md5(serialize(func_get_args()));
 
         if(($results = unserialize($cache->load($search_id))) === false) {
-            
+
             // Création de l'objet recherche
             $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
 
@@ -236,7 +234,7 @@ class Service_Search
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
                         WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)")))
                 ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
-                ->joinLeft("commission", "d.COMMISSION_DOSSIER = commission.ID_COMMISSION","LIBELLE_COMMISSION")    
+                ->joinLeft("commission", "d.COMMISSION_DOSSIER = commission.ID_COMMISSION","LIBELLE_COMMISSION")
                 ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
                 ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))
                 ->join("dossiertype", "dossiertype.ID_DOSSIERTYPE = dossiernatureliste.ID_DOSSIERTYPE", "LIBELLE_DOSSIERTYPE")
@@ -276,40 +274,40 @@ class Service_Search
             if($avis_differe !== null) {
                $this->setCriteria($select, "d.DIFFEREAVIS_DOSSIER", $avis_differe);
             }
-            
+
             // Critères : commissions
             if ($criterias['commissions'] !== null){
                 $this->setCriteria($select, "datecommission.COMMISSION_CONCERNE", $criterias['commissions']);
             }
-            
+
             // Critères : avis commission
             if ($criterias['avisCommission'] !== null){
                 $this->setCriteria($select, "d.AVIS_DOSSIER_COMMISSION", $criterias['avisCommission']);
             }
-            
+
             // Critères : avis rapporteur
             if ($criterias['avisRapporteur'] !== null){
                 $this->setCriteria($select, "d.AVIS_DOSSIER", $criterias['avisRapporteur']);
             }
-            
+
             // Critères : permis
             if ($criterias['permis'] !== null){
                 $this->setCriteria($select, "dossierdocurba.NUM_DOCURBA", $criterias['permis']);
             }
-            
+
             // Critères : permis
             if ($criterias['preventionniste'] !== null){
                 $this->setCriteria($select, "dossierpreventionniste.ID_PREVENTIONNISTE", $criterias['preventionniste']);
             }
-            
+
             if ($criterias['commune'] !== null){
                     $this->setCriteria($select, "ea.NUMINSEE_COMMUNE", $criterias['commune']);
             }
-            
+
             if ($criterias['voie'] !== null){
                 $this->setCriteria($select, "ea.ID_RUE", $criterias['voie']);
             }
-            
+
             if ($criterias['dateCreationStart'] !== null){
                 $select->where("d.DATEINSERT_DOSSIER >= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateCreationStart']);
             }
@@ -328,7 +326,7 @@ class Service_Search
             if ($criterias['dateReponseEnd'] !== null){
                 $select->where("d.DATEREP_DOSSIER <= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReponseEnd']);
             }
-            
+
             // Gestion des pages et du count
             $select->limitPage($page, $count > 100 ? 100 : $count);
 
@@ -342,28 +340,28 @@ class Service_Search
                     'count' => count($rows_counter)
                 )
             );
-            
+
             $newResults = array();
             foreach ($results['results'] as $row){
                 $newResults[$row['ID_DOSSIER']] = $row;
             }
             $results['results'] = $newResults;
-            
+
             $sIDsTable = array();
             foreach ($results['results'] as $row) {
                 array_push($sIDsTable, $row['ID_DOSSIER']);
             }
-            
+
             // Si pas de dossier, pas de recherche
             if (!empty($sIDsTable)){
-                
+
             // Recherche des préventionnistes associés aux dossiers
             $selectPrev = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
             $selectPrev->from(array("u" => "utilisateur"),'ID_UTILISATEUR')
                     ->join(array("ui" =>"utilisateurinformations"),"u.ID_UTILISATEURINFORMATIONS = ui.ID_UTILISATEURINFORMATIONS",array("PRENOM_UTILISATEURINFORMATIONS","NOM_UTILISATEURINFORMATIONS"))
                     ->join("dossierpreventionniste","dossierpreventionniste.ID_PREVENTIONNISTE = u.ID_UTILISATEUR","ID_DOSSIER");
-            
-            
+
+
                 $selectPrev->Where("dossierpreventionniste.ID_DOSSIER IN (?)",$sIDsTable);
 
                 $preventionnistes = $selectPrev->query()->fetchAll();
@@ -373,8 +371,8 @@ class Service_Search
                         array_push($results['results'][$prev['ID_DOSSIER']]['PREVENTIONNISTES'], $prev);
                     }
                 }
-            
-            
+
+
                 // Recherche des pièces jointes associés aux dossiers
                 $selectPj = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
                 $selectPj->from(array("pj" => "piecejointe"),array('NOM_PIECEJOINTE','EXTENSION_PIECEJOINTE'))
@@ -391,13 +389,13 @@ class Service_Search
                     }
                 }
             }
-            
+
             $cache->save(serialize($results));
         }
-        
+
         return $results;
     }
-    
+
     /**
      * Recherche des courriers
      *
@@ -456,7 +454,7 @@ class Service_Search
             if($num_doc_urba !== null) {
                $this->setCriteria($select, "NUM_DOCURBA", $num_doc_urba);
             }
-            
+
             if (null !== $objet) {
                 $select->where("DEMANDEUR_DOSSIER LIKE '%{$objet}%' OR OBJET_DOSSIER LIKE '%{$objet}%'");
             }
@@ -565,7 +563,7 @@ class Service_Search
 
         return $results;
     }
-    
+
      /**
      * Recherche des préventionnistes actifs sur au moins un dossier
      *
