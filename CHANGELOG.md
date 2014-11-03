@@ -40,6 +40,7 @@ Corrections :
 * Corrections du bouton modifier le dossier qui apparaît à la création du dossier
 * Correction de l'appel au service IGN de géolocalisation : envoi du code postal entier à la place des 2 premiers chiffres du code insee
 * Correction : la recherche multi-critère incluant la recherche sur une commune rendait 0 résultats : la recherche imposait la présence d'une commune égale pour les sites et cellules liées
+* Correction des simples quotes dans les groupements de communes qui cassent les listes des membres de commissions et services instructeurs
 
 ## 2.1
 
