@@ -20,7 +20,7 @@ class Service_Search
      * @param int $parent
      * @param string $city
      * @param int $street_id
-     * @param int $count Par défaut 10, max 100
+     * @param int $count Par défaut 10, max 1000
      * @param int $page par défaut = 1
      * @return array
      */
@@ -167,7 +167,7 @@ class Service_Search
             }
 
             // Gestion des pages et du count
-            $select->limitPage($page, $count > 100 ? 100 : $count);
+            $select->limitPage($page, $count > 1000 ? 1000 : $count);
 
             // Construction du résultat
             $rows_counter = new Zend_Paginator_Adapter_DbSelect($select);
