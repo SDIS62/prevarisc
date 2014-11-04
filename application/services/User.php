@@ -52,6 +52,7 @@ class Service_User
         $profil = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
 
         $etablissements =
+                $dossiers_suivis =
                 $commissions =
                 $dossiers =
                 $erpSansPreventionniste =
