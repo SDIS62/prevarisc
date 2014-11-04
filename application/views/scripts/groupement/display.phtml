@@ -77,7 +77,7 @@
 			<?php foreach($this->preventionnistes as $preventionniste) : ?>
 
 				<li id='prev_<?php echo $preventionniste["ID_UTILISATEUR"] ?>'>
-					<span ><a href='/user/profile/uid/<?php echo $preventionniste["ID_UTILISATEUR"]; ?>'><?php echo $preventionniste["NOM_UTILISATEURINFORMATIONS"]." ".$preventionniste["PRENOM_UTILISATEURINFORMATIONS"] ?></a></span>
+					<span ><a href='/user/profile/uid/<?php echo $preventionniste["ID_UTILISATEUR"]; ?>'><?php echo $preventionniste["GRADE_UTILISATEURINFORMATIONS"]." ".$preventionniste["NOM_UTILISATEURINFORMATIONS"]." ".$preventionniste["PRENOM_UTILISATEURINFORMATIONS"] ?></a></span>
 					<span class='action' style='float: right' ><a style='text-decoration: none;' href='javascript:void(0)' onclick=" $(this).parent().parent().remove() ">&times;</a></span>
 					<input type='hidden' name='prev[]' value='<?php echo $preventionniste["ID_UTILISATEUR"]; ?>' />
 				</li>
