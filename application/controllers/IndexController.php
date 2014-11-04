@@ -20,6 +20,10 @@ class IndexController extends Zend_Controller_Action
         $etablissements->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
         $this->view->etablissements = $etablissements;
 
+        $dossiers_suivis = Zend_Paginator::factory($data['dossiers_suivis']);
+        $dossiers_suivis->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
+        $this->view->dossiers_suivis = $dossiers_suivis;
+
         $dossiers = Zend_Paginator::factory($data['dossiers']);
         $dossiers->setItemCountPerPage(10)->setCurrentPageNumber(array_key_exists('page', $_GET) ? (int) $_GET['page'] : 1)->setDefaultScrollingStyle('Elastic');
         $this->view->dossiers = $dossiers;

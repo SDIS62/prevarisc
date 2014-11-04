@@ -241,6 +241,22 @@
 </div>
 <?php endif ?>
 
+<!-- Dossiers suivis -->
+<?php if( count($this->dossiers_suivis) > 0 ) : ?>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Dossiers suivis
+  </div>
+  <div class="panel-body" style="font-size: .85em">
+      <ul class='recherche_liste unstyled no_slide'>
+      <?php echo $this->partialLoop('search/results/dossier.phtml', $this->dossiers_suivis ) ?>
+      </ul>
+      <div style='clear: both'></div>
+      <?php echo $this->dossiers_suivis ?>
+  </div>
+</div>
+<?php endif ?>
+
 <!-- Dossiers avec un avis différé -->
 <?php if( count($this->dossiers) > 0 ) : ?>
 <div class="panel panel-default">
