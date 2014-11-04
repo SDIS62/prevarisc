@@ -193,6 +193,13 @@ class Service_User
             $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4", '7', '8', '9', '10'));
             $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
+            // Dossiers suivis
+            $search = new Model_DbTable_Search;
+            $search->setItem("dossier");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("d.VERROU_DOSSIER", 0);
+            $dossiers_suivis = $search->run(false, null, false)->toArray();
+
             $etablissements = array_unique($etablissements, SORT_REGULAR);
 
             // Dossiers avec avis différé
@@ -214,6 +221,7 @@ class Service_User
 
         return array(
           'etablissements' => $etablissements,
+          'dossiers_suivis' => $dossiers_suivis,
           'dossiers' => $dossiers,
           'commissions' => $commissions,
           'erpSansPreventionniste' => $erpSansPreventionniste,

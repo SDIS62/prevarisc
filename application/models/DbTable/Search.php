@@ -115,6 +115,8 @@
                          ->joinLeft("dossierdocurba", "d.ID_DOSSIER = dossierdocurba.ID_DOSSIER", "NUM_DOCURBA")
                          ->joinLeft(array("e" => "etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
                          ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
+                         ->joinLeft("dossierpreventionniste", "dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER", null)
+                         ->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = dossierpreventionniste.ID_PREVENTIONNISTE", "ID_UTILISATEUR")
                          ->group("d.ID_DOSSIER");
                     break;
 
