@@ -14,7 +14,7 @@ class Service_User
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         if(($user = unserialize($cache->load('user_id_' . $id_user))) === false) {
-        
+
             $model_user = new Model_DbTable_Utilisateur;
             $model_userinformations = new Model_DbTable_UtilisateurInformations;
             $model_groupe = new Model_DbTable_Groupe;
@@ -27,11 +27,11 @@ class Service_User
             $user = array_merge($user, array('groupements' => $model_user->getGroupements($user['ID_UTILISATEUR']) == null ? null : $model_user->getGroupements($user['ID_UTILISATEUR'])->toArray()));
             $user = array_merge($user, array('commissions' => $model_user->getCommissions($user['ID_UTILISATEUR']) == null ? null : $model_user->getCommissions($user['ID_UTILISATEUR'])->toArray()));
             $user['infos'] = array_merge($user['infos'], array('LIBELLE_FONCTION' => $model_fonction->find($user['infos']['ID_FONCTION'])->current()->toArray()['LIBELLE_FONCTION']));
-            
-            
+
+
             $cache->save(serialize($user));
         }
-        
+
         return $user;
     }
 
@@ -46,20 +46,20 @@ class Service_User
         // Récupération des ACL
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
         $acl = unserialize($cache->load('acl'));
-        
+
         // Récupération de l'utilisateur & son profil
         $user = $this->find($id_user);
         $profil = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
 
-        $etablissements = 
-                $commissions = 
-                $dossiers = 
-                $erpSansPreventionniste = 
-                $etablissementAvisDefavorable = 
-                $listeDesDossierDateCommissionEchu = 
-                $listeDesCourrierSansReponse = 
-                $prochainesCommission = 
-                $NbrDossiersAffect = 
+        $etablissements =
+                $commissions =
+                $dossiers =
+                $erpSansPreventionniste =
+                $etablissementAvisDefavorable =
+                $listeDesDossierDateCommissionEchu =
+                $listeDesCourrierSansReponse =
+                $prochainesCommission =
+                $NbrDossiersAffect =
                 $commissionsUser =
                 $listeErpOuvertSansProchainesVisitePeriodiques = array();
 
@@ -68,53 +68,53 @@ class Service_User
         $dbDossier = new Model_DbTable_Dossier ;
         $dbDossierAffectation = new Model_DbTable_DossierAffectation;
         $service_etablissement = new Service_Etablissement;
-            
+
         foreach($user['commissions'] as $commission) {
             $commissionsUser[] = $commission["ID_COMMISSION"];
         }
-        
+
         if ($acl->isAllowed($profil, "commission", "lecture_commission")) {
             $days = getenv('PREVARISC_DASHBOARD_NEXT_COMMISSIONS_DAYS') ? (int) getenv('PREVARISC_DASHBOARD_NEXT_COMMISSIONS_DAYS')  : 15;
             $prochainesCommission = $dbDateCommission->getNextCommission($commissionsUser, time(), time() + 3600 * 24 * $days);
         }
-        
+
         if ($acl->isAllowed($profil, "dashboard", "view_ets_avis_defavorable")) {
             $etablissementAvisDefavorable = $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable($commissionsUser);
         }
-        
+
         if ($acl->isAllowed($profil, "dashboard", "view_doss_sans_avis")) {
             $days = getenv('PREVARISC_DASHBOARD_DOSSIERS_SANS_AVIS_DAYS') ? (int) getenv('PREVARISC_DASHBOARD_DOSSIERS_SANS_AVIS_DAYS')  : 15;
             $listeDesDossierDateCommissionEchu = $dbDossier->listeDesDossierDateCommissionEchu($commissionsUser, $days);
         }
-        
+
         //Liste des Erp sans commission périodique alors que c'est ouvert
         if ($acl->isAllowed($profil, "dashboard", "view_ets_ouverts_sans_prochaine_vp")) {
             $listeErpOuvertSansProchainesVisitePeriodiques = $dbEtablissement->listeErpOuvertsSansProchainesVisitePeriodiques($commissionsUser);
         }
-        
+
          // Courriers sans réponse depuis N jours
         if ($acl->isAllowed($profil, "dashboard", "view_courrier_sans_reponse")) {
             $days = getenv('PREVARISC_DASHBOARD_COURRIER_SANS_REPONSE_DAYS') ? (int) getenv('PREVARISC_DASHBOARD_COURRIER_SANS_REPONSE_DAYS')  : 10;
             $listeDesCourrierSansReponse = $dbDossier->listeDesCourrierSansReponse($days);
-        }  
-        
+        }
+
         // Etablissements Sans Preventionniste
         if ($acl->isAllowed($profil, "dashboard", "view_ets_sans_preventionniste")) {
             $erpSansPreventionniste = $dbEtablissement->listeERPSansPreventionniste();
         }
-        
+
         // Dossiers avec avis différé
         if ($acl->isAllowed($profil, "dashboard", "view_doss_avis_differe")) {
             $dossiers = array_merge($dbDossier->listeDossierAvecAvisDiffere($commissionsUser), $dossiers);
         }
-        
+
         // Etablissements sous avis défavorables sur la commune de l'utilisateur
         if($user["NUMINSEE_COMMUNE"] != null) {
             if ($acl->isAllowed($profil, "dashboard", "view_ets_avis_defavorable_sur_commune")) {
                 $etablissementAvisDefavorable = array_merge($dbEtablissement->listeDesERPOuvertsSousAvisDefavorableSurCommune($user["NUMINSEE_COMMUNE"] ), $etablissementAvisDefavorable);
             }
         }
-        
+
         // on récupère pour chaque prochaine commission le nombre de dossiers affectés
         foreach($prochainesCommission as $commissiondujour)
         {
@@ -124,7 +124,7 @@ class Service_User
                 'total' => 0,
                 'verrouilles' => 0,
             );
-            
+
             foreach($listeDossiersAffect as $ue)
             {
                 $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']]['total']++;
@@ -132,8 +132,8 @@ class Service_User
                     $NbrDossiersAffect[$commissiondujour['ID_DATECOMMISSION']]['verrouilles']++;
                 }
            }
-           
-           
+
+
            // En doublons avec la partie précédente, à harmoniser
            $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($commissiondujour["ID_DATECOMMISSION"]);
            $listeDossiersAffect = $dbDossierAffectation->getDossierAffect($commissiondujour["ID_DATECOMMISSION"]);
@@ -142,16 +142,16 @@ class Service_User
            $dateFormatter = new DateTime($commissiondujour["DATE_COMMISSION"]);
            $commissions[] = array(
                "id"   => $commissiondujour['ID_DATECOMMISSION'],
-               "name" => $commissiondujour["LIBELLE_COMMISSION"] . ' - ' . $commissiondujour['LIBELLE_DATECOMMISSION'], 
-               "date" => $dateFormatter->format('d/m/Y'), 
-               "heure" => substr($commissiondujour["HEUREDEB_COMMISSION"], 0, 5) . ' - ' . substr($commissiondujour["HEUREFIN_COMMISSION"], 0, 5), 
+               "name" => $commissiondujour["LIBELLE_COMMISSION"] . ' - ' . $commissiondujour['LIBELLE_DATECOMMISSION'],
+               "date" => $dateFormatter->format('d/m/Y'),
+               "heure" => substr($commissiondujour["HEUREDEB_COMMISSION"], 0, 5) . ' - ' . substr($commissiondujour["HEUREFIN_COMMISSION"], 0, 5),
                "odj" => $odj,
            );
-        }   
-        
+        }
+
         // Etablissements suivis
         if ($acl->isAllowed($profil, "dashboard", "view_ets_suivis")) {
-            
+
             // Ets 1 - 4ème catégorie
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
@@ -281,9 +281,9 @@ class Service_User
         $DB_informations = new Model_DbTable_UtilisateurInformations;
         $DB_groupementsUser = new Model_DbTable_UtilisateurGroupement;
         $DB_commissionsUser = new Model_DbTable_UtilisateurCommission;
-        
+
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
-        
+
         $db = Zend_Db_Table::getDefaultAdapter();
         $db->beginTransaction();
 
@@ -293,6 +293,7 @@ class Service_User
 
             $informations->NOM_UTILISATEURINFORMATIONS = $data['NOM_UTILISATEURINFORMATIONS'];
             $informations->PRENOM_UTILISATEURINFORMATIONS = $data['PRENOM_UTILISATEURINFORMATIONS'];
+            $informations->GRADE_UTILISATEURINFORMATIONS = $data['GRADE_UTILISATEURINFORMATIONS'];
             $informations->TELFIXE_UTILISATEURINFORMATIONS = $data['TELFIXE_UTILISATEURINFORMATIONS'];
             $informations->TELPORTABLE_UTILISATEURINFORMATIONS = $data['TELPORTABLE_UTILISATEURINFORMATIONS'];
             $informations->TELFAX_UTILISATEURINFORMATIONS = $data['TELFAX_UTILISATEURINFORMATIONS'];
@@ -338,7 +339,7 @@ class Service_User
 
             Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch')->clean(Zend_Cache::CLEANING_MODE_ALL);
             $db->commit();
-            
+
             $cache->remove('user_id_' . $user->ID_UTILISATEUR);
 
             // Gestion de l'avatar
