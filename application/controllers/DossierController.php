@@ -149,6 +149,7 @@ class DossierController extends Zend_Controller_Action
         $id_dossier = null;
         $id_dossier = $this->_getParam("id");
         if ($id_dossier == null) { $id_dossier = $this->_getParam("idDossier"); }
+		$this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
 
         if ($id_dossier != null) {
 
@@ -167,6 +168,8 @@ class DossierController extends Zend_Controller_Action
             $this->view->natureDossier = $natureDossier[0]['ID_NATURE'];
             $this->view->verrouDossier = $dossier['VERROU_DOSSIER'];
             $this->view->idDossier = ($this->_getParam("id"));
+			
+			$this->view->verrou = $dossier->VERROU_DOSSIER;
         }
     }
 

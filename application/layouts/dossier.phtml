@@ -1,6 +1,6 @@
 <?php if($this->action != "add" && $this->do != "new" ) : ?>
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
-
+<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='<?php echo $this->idUser; ?>' />	
 <ul class="nav nav-tabs nav-stacked menu_dashboard" >
         
         <li >
@@ -58,16 +58,16 @@
         </li> 
         <li class="nav-header">Actions</li>
 			<?php
-            $verrou = true;
-            if ($this->infosDossier['VERROU_DOSSIER'] == 1  || (isset($action) && $action == 'new')) {
-                $label = "Déverrouiller";
-                $idLink = "DEVERROU";
-            }
-            else { 
-                $label = "Verrouiller";
-                $idLink = "VERROU";
-                $verrou = false;
-            } ?>
+				$verrou = true;
+				if ($this->verrou == 1  || (isset($action) && $action == 'new')) {
+					$label = "Déverrouiller";
+					$idLink = "DEVERROU";
+				} else { 
+					$label = "Verrouiller";
+					$idLink = "VERROU";
+					$verrou = false;
+				}
+			?>
             <li>
                 <a class="sep" href="" id="<?php echo $idLink; ?>"><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
             </li>
@@ -207,6 +207,57 @@ endif; ?>
                 }
             });
         }
+		
+		$("#VERROU").live('click',function(){
+			$.ajax({
+					url: "/dossier/verrou",
+					data: "idDossier="+$("#idDossier").val()+"&ID_CREATEUR="+$("#ID_CREATEUR").val(),
+					type:"POST",
+					//async: false,
+					beforeSend: function(){
+						$("#chargement").html("<img src='/images/load.gif' />");
+					},
+					success: function(affichageResultat){
+						window.location= affichageResultat;
+					},
+					statusCode: {
+							401:function(){
+								alert("Vous n'êtes pas autorisé à effectuer cette action");
+								$("#chargement").html("");
+							},
+					},
+					error: function(){
+							return false;
+					}
+			});
+			return false;
+		});
+	
+		$("#DEVERROU").live('click',function(){
+			$.ajax({
+					url: "/dossier/deverrou",
+					data: "idDossier="+$("#idDossier").val(),
+					type:"POST",
+					//async: false,
+					beforeSend: function(){
+						$("#chargement").html("<img src='/images/load.gif' />");
+					},
+					success: function(affichageResultat){
+						window.location= affichageResultat;
+					},
+					statusCode: {
+						401:function(){
+							alert("Vous n'êtes pas autorisé à effectuer cette action");
+							$("#chargement").html("");
+						},
+					},
+					error: function(){
+							return false;
+					}
+			});
+			return false;
+		});
+		
     });
 </script>
 

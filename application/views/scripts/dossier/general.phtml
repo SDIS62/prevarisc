@@ -1073,56 +1073,6 @@
 		return false;
 	});
 	
-	$("#VERROU").live('click',function(){
-		$.ajax({
-                    url: "/dossier/verrou",
-                    data: "idDossier="+$("#idDossier").val()+"&ID_CREATEUR="+$("#ID_CREATEUR").val(),
-                    type:"POST",
-                    //async: false,
-                    beforeSend: function(){
-                        $("#chargement").html("<img src='/images/load.gif' />");
-                    },
-                    success: function(affichageResultat){
-                        window.location= affichageResultat;
-                    },
-                    statusCode: {
-                            401:function(){
-                                alert("Vous n'êtes pas autorisé à effectuer cette action");
-                                $("#chargement").html("");
-                            },
-                    },
-                    error: function(){
-                            return false;
-                    }
-		});
-		return false;
-	});
-	
-	$("#DEVERROU").live('click',function(){
-		$.ajax({
-                    url: "/dossier/deverrou",
-                    data: "idDossier="+$("#idDossier").val(),
-                    type:"POST",
-                    //async: false,
-                    beforeSend: function(){
-                        $("#chargement").html("<img src='/images/load.gif' />");
-                    },
-                    success: function(affichageResultat){
-                        window.location= affichageResultat;
-                    },
-                    statusCode: {
-                        401:function(){
-                            alert("Vous n'êtes pas autorisé à effectuer cette action");
-                            $("#chargement").html("");
-                        },
-                    },
-                    error: function(){
-                            return false;
-                    }
-		});
-		return false;
-	});
-	
 	$("input[name=servInst]:radio").live('click', function(){
 		if($(this).val() == 'servInstCommune'){
 			$("#servInstVille").removeAttr('disabled');
