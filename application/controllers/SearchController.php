@@ -20,7 +20,7 @@ class SearchController extends Zend_Controller_Action
         $service_type = new Service_Type;
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
-        
+
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -28,7 +28,7 @@ class SearchController extends Zend_Controller_Action
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_famille = $service_famille->getAll();
-        
+
 
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
@@ -48,8 +48,7 @@ class SearchController extends Zend_Controller_Action
 
                 $search = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, 50, $parameters['page']);
 
-                require('helpers/SearchPaginatorAdapter.php');
-                $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));
+                $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
                 $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
 
                 $this->view->results = $paginator;
@@ -79,12 +78,12 @@ class SearchController extends Zend_Controller_Action
             try {
                 $parameters = $this->_request->getQuery();
                 $criteresRecherche = array();
-                
+
                 if (array_key_exists('commune',$parameters) && $parameters['commune'] != ''){
                     $array_voies = $service_adresse->getVoies($parameters['commune']);
                 }
                 $search_prev_actifs = $service_search->listePrevActifs();
-                
+
                 $num_doc_urba = array_key_exists('objet', $parameters) && $parameters['objet'] != '' && (string) $parameters['objet'][0] == '#'? substr($parameters['objet'], 1) : null;
                 $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != ''  && (string) $parameters['objet'][0] != '#'? $parameters['objet'] : null;
                 $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
@@ -95,21 +94,20 @@ class SearchController extends Zend_Controller_Action
                 $criteresRecherche['voie'] = array_key_exists('voie', $parameters) && $parameters['voie'] != '' ? $parameters['voie'] : null;
                 $criteresRecherche['permis'] = array_key_exists('permis', $parameters) && $parameters['permis'] != '' ? $parameters['permis'] : null;
                 $criteresRecherche['preventionniste'] = array_key_exists('preventionniste', $parameters) && $parameters['preventionniste'] != '' ? $parameters['preventionniste'] : null;
-                
-                
+
+
                 $criteresRecherche['dateCreationStart'] = array_key_exists('date-creation-start', $parameters) && $this->checkDateFormat($parameters['date-creation-start']) ? $parameters['date-creation-start'] : null;
                 $criteresRecherche['dateCreationEnd'] = array_key_exists('date-creation-end', $parameters) && $this->checkDateFormat($parameters['date-creation-end']) ? $parameters['date-creation-end'] : null;
-                
+
                 $criteresRecherche['dateReceptionStart'] = array_key_exists('date-reception-start', $parameters) && $this->checkDateFormat($parameters['date-reception-start']) ? $parameters['date-reception-start'] : null;
                 $criteresRecherche['dateReceptionEnd'] = array_key_exists('date-reception-end', $parameters) && $this->checkDateFormat($parameters['date-reception-end']) ? $parameters['date-reception-end'] : null;
-                
+
                 $criteresRecherche['dateReponseStart'] = array_key_exists('date-reponse-start', $parameters) && $this->checkDateFormat($parameters['date-reponse-start']) ? $parameters['date-reponse-start'] : null;
                 $criteresRecherche['dateReponseEnd'] = array_key_exists('date-reponse-end', $parameters) && $this->checkDateFormat($parameters['date-reponse-end']) ? $parameters['date-reponse-end'] : null;
 
                 $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $parameters['page'],$criteresRecherche);
-                                
-                require('helpers/SearchPaginatorAdapter.php');
-                $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));
+
+                $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
                 $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
 
                 $this->view->results = $paginator;
@@ -139,8 +137,7 @@ class SearchController extends Zend_Controller_Action
 
                 $search = $service_search->users($fonctions, $name, null, true, 50, $parameters['page']);
 
-                require('helpers/SearchPaginatorAdapter.php');
-                $paginator = new Zend_Paginator(new Application_Controller_Helper_SearchPaginatorAdapter($search['results'], $search['search_metadata']['count']));
+                $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
                 $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
 
                 $this->view->results = $paginator;
@@ -156,13 +153,24 @@ class SearchController extends Zend_Controller_Action
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
+        $service_search = new Service_Search;
+
+        if($this->_request->items == 'etablissement') {
+            $data = $service_search->etablissements(null, null, null, null, null, null, null, null, null, null, null, null, $this->_request->parent, null, null, 1000);
+        }
+        else {
+            $data = $service_search->dossiers(null, null, null, $this->_request->parent, null, 100);
+        }
+
+        $data = $data['results'];
+
         $html = "<ul class='recherche_liste'>";
-        $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/' . $this->_request->items . '.phtml', (array) $this->_request->data );
+        $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/' . $this->_request->items . '.phtml', (array) $data );
         $html .= "</ul>";
 
         echo $html;
     }
-    
+
     public function checkDateFormat($date)
     {
         if (!$date) return false;

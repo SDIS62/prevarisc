@@ -1,0 +1,43 @@
+
+<form class="modal" action='<?php echo $this->url(array('controller' => 'index', 'action' => 'add-message')) ?>' method='post' >
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Ajouter un message</h3>
+    </div>
+
+    <div class="modal-body">
+
+        <textarea id='textarea' class='bigger' name='text' rows='10' placeholder="Entrez ici votre message d'information."></textarea>
+
+        <dl class='dl-horizontal'>
+
+            <dt>Confidentialité</dt>
+            <dd>
+                <p>
+                    <?php foreach($this->groupes as $groupe) : ?>
+                    <input type="checkbox" name="conf[]" value="<?php echo $groupe["ID_GROUPE"] ?>" checked="checked" /><?php echo $groupe["LIBELLE_GROUPE"] ?><br/>
+                    <?php endforeach ?>
+                </p>
+            </dd>
+
+            <dt>Type du message</dt>
+            <dd>
+                <p>
+                    <select name="type">
+                        <option>Message de service</option>
+                        <option>Informations</option>
+                        <option>Message personnel</option>
+                        <option>Autre</option>
+                    </select>
+                </p>
+            </dd>
+        </dl>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <input type='submit' id='submit' value='Ajouter' class='btn btn-success' />
+    </div>
+
+</form>

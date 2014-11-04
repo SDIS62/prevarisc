@@ -24,7 +24,7 @@ body {
     background-color: white;
     margin: 0 auto;  /* zéro ou une autre valeur */
     padding: 0;
-    width: 100%; 
+    width: 100%;
     min-height: 100%;
 }
 
@@ -167,7 +167,7 @@ footer {
     background-color: #f4f4f4;
     padding: 10px 20px;
     margin-left:-20px;
-    margin-right:-20px; 
+    margin-right:-20px;
 }
 
 footer a {
@@ -342,6 +342,10 @@ ul.recherche_liste {
 ul.recherche_liste li {
     background-color: #ebebeb;
     padding: 6px;
+}
+
+ul.recherche_liste li.slide {
+    border-left: 3px dotted #aaa;
 }
 
 ul.recherche_liste li.slide + li.ui-helper-hidden {
@@ -679,7 +683,7 @@ text-decoration: none;
     *border:0;
     border-color:#e6e6e6 #e6e6e6 #bfbfbf;
     border-color:rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
-    border-bottom-color:#b3b3b3; 
+    border-bottom-color:#b3b3b3;
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffe6e6e6',GradientType=0);
     filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);
     *zoom:1;
@@ -741,7 +745,7 @@ text-decoration: none;
 .ios_menu_style li, .ios_menu_style li a {
     text-decoration: none;
     list-style-type: none;
-    color: #ced4da;   
+    color: #ced4da;
 }
 
 .ios_menu_style-ul {
@@ -999,16 +1003,16 @@ a.list-group-item-danger.active:focus {
 }
 
 .deconnexion{
-  color:#000; 
-  font-size:10px;  
-  text-decoration: underline;   
+  color:#000;
+  font-size:10px;
+  text-decoration: underline;
  }
- 
- .listcom{  
+
+ .listcom{
   margin-top: 10px;
  }
  .heurcom{
-  color:#08c;     
+  color:#08c;
  }
  .proch-com{
     padding: 10px 10px 10px 10px;
@@ -1024,7 +1028,7 @@ a.list-group-item-danger.active:focus {
    color: #6E6D6D;
  }
 
-#modal-desc{
+ #modal-desc{
     width: 1000px;
     margin-left: -500px;
 }

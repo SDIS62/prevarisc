@@ -175,7 +175,7 @@ function retrieveInfoDoss($segment, $dossierInfos) {
     addChamp($segment->infosDoss, 'idDossier', $dossierInfos["ID_DOSSIER"]);
     addChamp($segment->infosDoss, 'avisDossier', $dossierInfos["AVIS_DOSSIER"]);
     addChamp($segment->infosDoss, 'nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
-    if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"])) {
+    if(isset($dossierInfos['infosEtab']['parents'][0]) && $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"] != NULL) {
         addChamp($segment->infosDoss, 'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
     }
     addChamp($segment->infosDoss, 'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
