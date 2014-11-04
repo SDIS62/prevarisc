@@ -163,6 +163,13 @@
             return $this;
         }
 
+        public function sup($key, $value)
+        {
+            $this->select->where($key . '>' . $this->getAdapter()->quote($value));
+
+            return $this;
+        }
+
         // Limiter les résultats
         public function limit( $value )
         {

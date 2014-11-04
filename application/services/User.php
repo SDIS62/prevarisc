@@ -156,6 +156,8 @@ class Service_User
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
             $search->setCriteria("etablissementinformations.ID_CATEGORIE", array("1","2","3","4"));
             $search->setCriteria("etablissementinformations.ID_GENRE", 2);
             $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
@@ -164,6 +166,8 @@ class Service_User
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
             $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
             $search->setCriteria("avis.ID_AVIS", 2);
             $search->setCriteria("etablissementinformations.ID_GENRE", 2);
@@ -173,6 +177,8 @@ class Service_User
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
             $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
             $search->setCriteria("etablissementinformations.ID_GENRE", 2);
             $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
@@ -182,6 +188,8 @@ class Service_User
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
             $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4", '7', '8', '9', '10'));
             $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
