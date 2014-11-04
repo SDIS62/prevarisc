@@ -153,8 +153,19 @@ class SearchController extends Zend_Controller_Action
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
+        $service_search = new Service_Search;
+
+        if($this->_request->items == 'etablissement') {
+            $data = $service_search->etablissements(null, null, null, null, null, null, null, null, null, null, null, null, $this->_request->parent, null, null, 1000);
+        }
+        else {
+            $data = $service_search->dossiers(null, null, null, $this->_request->parent, null, 100);
+        }
+
+        $data = $data['results'];
+
         $html = "<ul class='recherche_liste'>";
-        $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/' . $this->_request->items . '.phtml', (array) $this->_request->data );
+        $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/' . $this->_request->items . '.phtml', (array) $data );
         $html .= "</ul>";
 
         echo $html;

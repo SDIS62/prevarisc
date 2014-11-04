@@ -18,7 +18,7 @@
 
 	    <p class='pull-right' style='margin: 8px 0 0 5px'>
 			<small>
-	        	Zone de recherche : 
+	        	Zone de recherche :
 	        	<strong class='zone_de_recherche_text'>
 	        		<?php echo array_key_exists('zone_de_recherche_text', $_GET) && $_GET['zone_de_recherche_text'] != '' ? $_GET['zone_de_recherche_text'] : 'Département' ?>
         		</strong>
@@ -162,7 +162,7 @@
 					case '3' : $("#type_span, #categorie_span").show(); break;
 					case '4' : $("#famille_span").show(); break;
 					case '5' : $("#classe_span").show(); break;
-				}	
+				}
 			});
 		}
 
@@ -170,7 +170,7 @@
 		$("select[name='genres[]']").bind("multiselectclick", function() {display_criteres_by_genres()});
 		display_criteres_by_genres();
 
-		// Affichage des établissements enfants
+		// Slide des établissements enfants contenant d'autres établissements
 		$("ul.recherche_liste li.slide").live("click", function() {
 			var container = this;
 			if( $(this).hasClass("active") ) {
@@ -179,11 +179,9 @@
 			}
 			else {
 				$(container).find(".load").show();
-				$.getJSON("/api/1.0/search/etablissements", {parent: $(this).attr("id"), count: 100}, function(data) {
+				$.post("/search/display-ajax-search", {items: 'etablissement', parent: $(this).attr("id")}, function(html) {
 					$(container).toggleClass("active").find(".load").hide();
-					$.post("/search/display-ajax-search", {items: 'etablissement', data: data.response.results}, function(html) {
-						$(container).after("<li class='ui-helper-hidden' >" + html + "</li>").next().slideDown();
-					});
+					$(container).after("<li class='ui-helper-hidden' style='overflow: auto; height: auto;' >" + html + "</li>").next().slideDown();
 				});
 			}
 		});
@@ -225,7 +223,7 @@
         // Validation de la zone de recherche
         $('form#zone_de_recherche_modal a.submit').click(function() {
         	var text = 'Département';
-        	
+
         	if($("input[name='commune_ac']").val() != '') {
         		var text = $("input[name='commune_ac']").val();
         		if($("input[name='voie_ac']").val() != '') {

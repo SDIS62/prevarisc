@@ -505,11 +505,9 @@
             }
             else {
                 $(container).find(".load").show();
-                $.getJSON("/api/1.0/search/etablissements", {parent: $(this).attr("id"), count: 100}, function(data) {
+                $.post("/search/display-ajax-search", {items: 'etablissement', parent: $(this).attr("id")}, function(html) {
                     $(container).toggleClass("active").find(".load").hide();
-                    $.post("/search/display-ajax-search", {items: 'etablissement', data: data.response.results}, function(html) {
-                        $(container).after("<li class='ui-helper-hidden' >" + html + "</li>").next().slideDown();
-                    });
+                    $(container).after("<li class='ui-helper-hidden' style='overflow: auto; height: auto;' >" + html + "</li>").next().slideDown();
                 });
             }
         });
