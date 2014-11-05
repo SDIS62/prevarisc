@@ -2645,6 +2645,7 @@ CREATE TABLE `utilisateurinformations` (
   `DATE_SID` timestamp NULL DEFAULT NULL,
   `ID_UTILISATEURCIVILITE` int(11) unsigned DEFAULT NULL,
   `ID_FONCTION` bigint(20) unsigned DEFAULT NULL,
+  `GRADE_UTILISATEURINFORMATIONS` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`ID_UTILISATEURINFORMATIONS`),
   KEY `fk_utilisateurinformations_utilisateurcivilite1_idx` (`ID_UTILISATEURCIVILITE`),
   KEY `fk_utilisateurinformations_fonction1_idx` (`ID_FONCTION`),

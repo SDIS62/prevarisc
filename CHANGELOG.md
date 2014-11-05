@@ -1,8 +1,12 @@
 # Changelog
 
+## 2.3
+
+RAS
+
 ## 2.2
 
-Evolution :
+Evolutions :
 
 * Ajout du champ "droit public" sur les établissements uniquement
 * Mise sous cache APC du service User

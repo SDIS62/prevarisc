@@ -15,7 +15,9 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 			->join(array('dateComm' => 'datecommission'),'dossAffect.ID_DATECOMMISSION_AFFECT = dateComm.ID_DATECOMMISSION')
 			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
 			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
-      ->join(array('dossType' => "dossiertype"), 'doss.TYPE_DOSSIER = dossType.ID_DOSSIERTYPE', 'LIBELLE_DOSSIERTYPE')
+            ->join(array('dossType' => "dossiertype"), 'doss.TYPE_DOSSIER = dossType.ID_DOSSIERTYPE', 'LIBELLE_DOSSIERTYPE')
+            ->joinLeft(array("e" => "etablissementdossier"), "doss.ID_DOSSIER = e.ID_DOSSIER", null)
+            ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )", "LIBELLE_ETABLISSEMENTINFORMATIONS")
 			->where('dateComm.ID_DATECOMMISSION = ?',$idDateCom)
 			->where("dossAffect.HEURE_DEB_AFFECT IS NULL")
 			->where("dossAffect.HEURE_FIN_AFFECT IS NULL")
@@ -36,7 +38,9 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 			->join(array('dateComm' => 'datecommission'),'dossAffect.ID_DATECOMMISSION_AFFECT = dateComm.ID_DATECOMMISSION')
 			->join(array('dossNat' => 'dossiernature'),'dossNat.ID_DOSSIER = doss.ID_DOSSIER')
 			->join(array('dossNatListe' => 'dossiernatureliste'),'dossNat.ID_NATURE = dossNatListe.ID_DOSSIERNATURE')
-      ->join(array('dossType' => "dossiertype"), 'doss.TYPE_DOSSIER = dossType.ID_DOSSIERTYPE', 'LIBELLE_DOSSIERTYPE')
+            ->join(array('dossType' => "dossiertype"), 'doss.TYPE_DOSSIER = dossType.ID_DOSSIERTYPE', 'LIBELLE_DOSSIERTYPE')
+            ->joinLeft(array("e" => "etablissementdossier"), "doss.ID_DOSSIER = e.ID_DOSSIER", null)
+            ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )", "LIBELLE_ETABLISSEMENTINFORMATIONS")
 			->where("dateComm.ID_DATECOMMISSION = ?",$idDateCom)
 			->where("dossAffect.HEURE_DEB_AFFECT IS NOT NULL")
 			->where("dossAffect.HEURE_FIN_AFFECT IS NOT NULL")
@@ -54,7 +58,7 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
 
         return $this->getAdapter()->fetchAll($select);
     }
-    
+
     public function getListDossierAffect($idDateCom)
     {
         $select = "SELECT ID_DOSSIER,OBJET_DOSSIER, VERROU_DOSSIER

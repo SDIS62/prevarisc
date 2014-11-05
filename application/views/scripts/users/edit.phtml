@@ -90,6 +90,11 @@
 			</select>
 		</dd>
 
+		<dt class='grade_user' >Grade</dt>
+		<dd class='grade_user' >
+			<input type='text' name='GRADE_UTILISATEURINFORMATIONS' value='<?php echo $this->user['infos']["GRADE_UTILISATEURINFORMATIONS"] ?>' />
+		</dd>
+
 		<dt>Téléphones</dt>
 		<dd>
 			<input type='text' name='TELFIXE_UTILISATEURINFORMATIONS' placeholder='Téléphone fixe ...' value='<?php echo $this->user['infos']["TELFIXE_UTILISATEURINFORMATIONS"] ?>' /><br/>
@@ -183,11 +188,21 @@
     			$('#change_passwd').click();
     		}
     	});
-        
+
+		$("select[name='ID_FONCTION']").change(function() {
+			if($(this).find('option:selected').val() == "13") {
+				$('.grade_user').show();
+			}
+			else {
+				$('.grade_user').hide();
+				$('.grade_user').find('input').val(null);
+			}
+		}).change();
+
         // Gestion des select et multiselect
         $(".chosen").chosen({
             search_contains : true
         });
-        
+
 	});
 </script>
