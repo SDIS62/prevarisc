@@ -765,13 +765,10 @@
 					{
 						$("#FACTDANGE").show();
 						$("#ECHEANCIERTRAV").show();
-						$("#ANOMALIE").show();
 					}
+					$("#ANOMALIE").show();
 				}else if(type == 1){
-					if($("#selectNature").val() == 19)
-					{
-						$("#ANOMALIE").show();
-					}
+					$("#ANOMALIE").show();
 				}
 
 				
@@ -862,12 +859,7 @@
 	function ValidateDate(dateValue)
 	{
 		var date_temp = dateValue.split('/');
-		date_temp[1] -=1;        // On rectifie le mois !!!
-		var ma_date = new Date();
-		ma_date.setFullYear(date_temp[2]);
-		ma_date.setMonth(date_temp[1]);
-		ma_date.setDate(date_temp[0]);
-		if(ma_date.getFullYear()==date_temp[2] && ma_date.getMonth()==date_temp[1] && ma_date.getDate()==date_temp[0]){
+		if(date_temp[2] && date_temp[1] > 0 && date_temp[1] < 12 && date_temp[0] > 0 && date_temp[0] <=31){
 			return true;
 		}else{
 			return false;
@@ -1017,20 +1009,9 @@
 			if($(this).val() == 2){
 				$("#FACTDANGE").show();
 				$("#ECHEANCIERTRAV").show();
-				$("#ANOMALIE").show();
 			}else{
 				$("#FACTDANGE").hide();
 				$("#ECHEANCIERTRAV").hide();
-				$("#ANOMALIE").hide();
-			}
-		}else if(type == 1){
-			if($("#selectNature").val() == 19)
-			{
-				if($(this).val() == 2){
-					$("#ANOMALIE").show();
-				}else{
-					$("#ANOMALIE").hide();
-				}
 			}
 		}
 	});
@@ -1059,11 +1040,10 @@
 			url: "/dossier/save",
 			data: data,
 			type:"POST",
-			//async: false,
 			beforeSend: function(){
 				$("#annulModification").hide();
 				$("#validModification").hide();
-                                $("#modificationDossier").show();
+				$("#modificationDossier").show();
 				$("#chargement").html("<img src='/images/load.gif' />");
 			},
 			success: function(affichageResultat){
@@ -1090,56 +1070,6 @@
 			$("#HORSDELAI").show();
 			afficherCacherAvis(0);
 		}		
-		return false;
-	});
-	
-	$("#VERROU").live('click',function(){
-		$.ajax({
-                    url: "/dossier/verrou",
-                    data: "idDossier="+$("#idDossier").val(),
-                    type:"POST",
-                    //async: false,
-                    beforeSend: function(){
-                        $("#chargement").html("<img src='/images/load.gif' />");
-                    },
-                    success: function(affichageResultat){
-                        window.location= affichageResultat;
-                    },
-                    statusCode: {
-                            401:function(){
-                                alert("Vous n'êtes pas autorisé à effectuer cette action");
-                                $("#chargement").html("");
-                            },
-                    },
-                    error: function(){
-                            return false;
-                    }
-		});
-		return false;
-	});
-	
-	$("#DEVERROU").live('click',function(){
-		$.ajax({
-                    url: "/dossier/deverrou",
-                    data: "idDossier="+$("#idDossier").val(),
-                    type:"POST",
-                    //async: false,
-                    beforeSend: function(){
-                        $("#chargement").html("<img src='/images/load.gif' />");
-                    },
-                    success: function(affichageResultat){
-                        window.location= affichageResultat;
-                    },
-                    statusCode: {
-                        401:function(){
-                            alert("Vous n'êtes pas autorisé à effectuer cette action");
-                            $("#chargement").html("");
-                        },
-                    },
-                    error: function(){
-                            return false;
-                    }
-		});
 		return false;
 	});
 	
@@ -1231,7 +1161,10 @@ echo "
 			<ul id='InfosDossier' class='list unstyled' >
 				<li class='row-fluid' id='DATEINSERT' style='".( (in_array('DATEINSERT', $this->afficherChamps) && $this->infosDossier['DATEINSERT_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de création du dossier</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINSERT_DOSSIER']." ".(($this->user_info)? "par : ".$this->user_info['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_info['NOM_UTILISATEURINFORMATIONS'] :"")."</div >
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+						".$this->infosDossier['DATEINSERT_DOSSIER']." ".(($this->user_info)? "par : ".$this->user_info['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_info['NOM_UTILISATEURINFORMATIONS'] :"")."
+						".( ($this->infosDossier['VERROU_DOSSIER']) ? " - Verouillé par : ".$this->user_infoVerrou['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_infoVerrou['NOM_UTILISATEURINFORMATIONS'] :"")."						
+					</div >
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
 						<input type='text' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".( ($this->DATEINSERT_INPUT)?$this->DATEINSERT_INPUT:"" )."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
@@ -1767,7 +1700,7 @@ echo "
 					</div>
 				</li>
 				<li class='row-fluid' id='PREVENTIONNISTE' style='".( (in_array('PREVENTIONNISTE', $this->afficherChamps) && count($this->preventionnistes) != 0 )? "": "display:none;" )."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'>Préventionniste(s)</div>
+					<div class='left libelle span3' style='float:left;'>Préventionniste(s) du dossier</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".$this->partialLoop('users/embedded/user.phtml', $this->preventionnistes )."
 					</div>

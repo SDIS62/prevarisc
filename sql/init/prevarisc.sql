@@ -822,6 +822,7 @@ CREATE TABLE `dossier` (
   `ABSQUORUM_DOSSIER` tinyint(4) DEFAULT NULL,
   `ECHEANCIERTRAV_DOSSIER` date DEFAULT NULL,
   `VERROU_DOSSIER` tinyint(1) DEFAULT '0',
+  `VERROU_USER_DOSSIER` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`ID_DOSSIER`),
   KEY `fk_dossier_dossiertype1_idx` (`TYPE_DOSSIER`),
   KEY `fk_dossier_avis1_idx` (`AVIS_DOSSIER`),

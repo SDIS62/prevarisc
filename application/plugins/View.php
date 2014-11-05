@@ -58,6 +58,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->inlineScript()->appendFile("/js/chosen.jquery.min.js");
             $view->inlineScript()->appendFile("/js/jquery.dateentry.js");
             $view->inlineScript()->appendFile("/js/jquery.marquee.min.js");
+            $view->inlineScript()->appendFile("/js/jquery.hoverintent.js");
             $view->inlineScript()->appendFile("/js/main.js");
 
             // CSS

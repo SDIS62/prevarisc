@@ -348,7 +348,7 @@
 				return $.map(data["selectEtab"], function(row) {
 					return {
 						data: row,
-						value: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent,
+						value: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent+" ("+row.LIBELLE_COMMUNE_CELLULE+")",
 						result: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent
 					}
 				});

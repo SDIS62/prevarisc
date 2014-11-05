@@ -21,7 +21,8 @@
 					if($value['ID_ETABLISSEMENTDOSSIER'] != $idEtabEnCour){
 						$compteur++;
 						$idEtabEnCour = $value['ID_ETABLISSEMENTDOSSIER'];
-
+						echo "<a href='/etablissement/descriptif/id/".$value['ID_ETABLISSEMENT']."' data-target='#modal-desc' data-toggle='modal' id='descEtab' title='Afficher le descriptif'><i class='icon-list-alt icon-black'></i></a>&nbsp;";
+						echo "&nbsp;&nbsp;<a href='/etablissement/dossiers/id/".$value['ID_ETABLISSEMENT']."' title='Se rendre à la liste des dossiers' ><i class='icon-folder-open icon-black'></i></a>&nbsp;&nbsp;";
 						echo "<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."'>".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 						$nbAdresse = count($value['infosEtab']['adresses']);
 						if($nbAdresse != 0){
@@ -42,6 +43,19 @@
 						echo "
 							</a>
 						";
+						//affichage preventionniste(s)
+						$nbPrev = count($value['infosEtab']['preventionnistes']);
+						if($nbPrev >0){
+							echo "<span style='font-size:10px'>(";
+							foreach($value['infosEtab']['preventionnistes'] as $prev){
+								echo $prev['NOM_UTILISATEURINFORMATIONS']." ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
+								if($nbPrev > 1)
+									echo ", ";
+								$nbPrev--;
+							}
+							echo ")</span>";
+						}
+						
 						$i++;
 					}
 				}
