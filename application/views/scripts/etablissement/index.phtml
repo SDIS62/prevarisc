@@ -200,7 +200,7 @@
             <!-- Etablissement lié -->
             <?php if(count($this->etablissement['etablissement_lies']) > 0) : ?>
             <h4 class='h4_subtitle'>Établissements liés <small><?php echo count($this->etablissement['etablissement_lies']) > 0 ? "(" . count($this->etablissement['etablissement_lies']) . " établissements)" : "" ?></small></h4>
-            <ul class='recherche_liste unstyled'>
+            <ul class='recherche_liste unstyled' style='height: 500px; overflow-y: scroll;'>
                 <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissement['etablissement_lies']); ?>
             </ul>
             <?php endif ?>
@@ -465,6 +465,10 @@
                 <dd><p><?php echo $this->etablissement['pc_initial'] ?></p></dd>
                 <?php endif ?>
 
+                <!-- Présence DUS -->
+                <dt>Présence d'un DUS</dt>
+                <dd><p><?php echo $this->presence_dus ? 'Oui' : 'Non' ?></p></dd>
+
                 <!-- Données pratiques -->
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(1, 2, 3, 5))) : ?>
                 <dt>Données pratiques</dt>
@@ -501,11 +505,9 @@
             }
             else {
                 $(container).find(".load").show();
-                $.getJSON("/api/1.0/search/etablissements", {parent: $(this).attr("id"), count: 100}, function(data) {
+                $.post("/search/display-ajax-search", {items: 'etablissement', parent: $(this).attr("id")}, function(html) {
                     $(container).toggleClass("active").find(".load").hide();
-                    $.post("/search/display-ajax-search", {items: 'etablissement', data: data.response.results}, function(html) {
-                        $(container).after("<li class='ui-helper-hidden' >" + html + "</li>").next().slideDown();
-                    });
+                    $(container).after("<li class='ui-helper-hidden' style='overflow: auto; height: auto;' >" + html + "</li>").next().slideDown();
                 });
             }
         });

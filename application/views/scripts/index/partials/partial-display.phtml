@@ -22,7 +22,7 @@
 	</td>
 
 	<td style="border: none">
-			<small style="float: right" class='muted'><?php echo $date ?> - <?php echo $this->TYPE_NEWS ?> - <a href='<?php echo $this->url(array('controller' => 'news', 'action' => 'delete', 'id' => $this->ID_NEWS)) ?>'>Supprimer</a></small>
+			<small style="float: right" class='muted'><?php echo $date ?> - <?php echo $this->TYPE_NEWS ?> - <a href='<?php echo $this->url(array('controller' => 'index', 'action' => 'delete-message', 'id' => $this->ID_NEWS)) ?>'>Supprimer</a></small>
 			<a href="#"><strong><?php echo $this->PRENOM_UTILISATEURINFORMATIONS . ' ' . $this->NOM_UTILISATEURINFORMATIONS ?></strong></a><br>
 			<p><?php echo $this->TEXTE_NEWS ?></p>
 	</td>

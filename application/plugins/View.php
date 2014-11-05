@@ -15,6 +15,18 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             // On définie le titre de l'application
             $view->headTitle(strip_tags($view->navigation()->breadcrumbs()->setMinDepth(0)->setSeparator(" / ")));
 
+            // Chargement des aides de vue
+            $view->registerHelper(new View_Helper_MinifyHeadLink, 'headLink');
+            $view->registerHelper(new View_Helper_MinifyInlineScript, 'inlineScript');
+            $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
+            $view->registerHelper(new View_Helper_AfficheDoc, 'afficheDoc');
+            $view->registerHelper(new View_Helper_AgendaMois, 'agendaMois');
+            $view->registerHelper(new View_Helper_Avatar, 'avatar');
+            $view->registerHelper(new View_Helper_Carte, 'carte');
+            $view->registerHelper(new View_Helper_DateJqueryToBd, 'dateJqueryToBd');
+            $view->registerHelper(new View_Helper_ListeGroupement, 'listeGroupement');
+            $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
+
             // JS
             $view->inlineScript()->appendFile("/js/jquery-1.10.2.min.js");
             $view->inlineScript()->appendFile("/js/jquery-migrate-1.2.1.min.js");
@@ -33,6 +45,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->inlineScript()->appendFile("/js/dropzone.min.js");
             $view->inlineScript()->appendFile("/js/chosen.jquery.min.js");
             $view->inlineScript()->appendFile("/js/jquery.dateentry.js");
+            $view->inlineScript()->appendFile("/js/jquery.marquee.min.js");
             $view->inlineScript()->appendFile("/js/main.js");
 
             // CSS
@@ -50,18 +63,6 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
             $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
             $view->headLink()->appendStylesheet('/css/dropzone/dropzone.css', 'all');
-
-            // Icône du site
-            $view->headLink()->headLink(array("rel" => "shortcut icon","href" => "/images/favicon.ico"));
-
-            // Chargement des aides de vue
-            $view->registerHelper(new View_Helper_AfficheDoc, 'afficheDoc');
-            $view->registerHelper(new View_Helper_AgendaMois, 'agendaMois');
-            $view->registerHelper(new View_Helper_Avatar, 'avatar');
-            $view->registerHelper(new View_Helper_Carte, 'carte');
-            $view->registerHelper(new View_Helper_DateJqueryToBd, 'dateJqueryToBd');
-            $view->registerHelper(new View_Helper_ListeGroupement, 'listeGroupement');
-            $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
 
             // Définition du partial de vue à utiliser pour le rendu d'une recherche
             Zend_View_Helper_PaginationControl::setDefaultViewPartial('search' . DIRECTORY_SEPARATOR . 'pagination_control.phtml');
