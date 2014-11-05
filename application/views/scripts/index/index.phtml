@@ -9,34 +9,34 @@
            <?php foreach($this->etablissementAvisDefavorable as $avis): ?>
             <li class="list-group-item">
               <span class="badge badge-important">Urgent</span>
-              <a href='etablissement/index/id/<?php echo $avis['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>
+              <a href='/etablissement/index/id/<?php echo $avis['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>
                <?php
                   if($avis['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
                   {
-                   echo "L'établissement <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
+                   echo "L'établissement <a href='/etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
                   }
                   else
                   {
                     $datedemodif = new DateTime($avis['DATE_ETABLISSEMENTINFORMATIONS']);
-                    echo "L'établissement du <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
+                    echo "L'établissement du <a href='/etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
                   }
                   ?>
              </li>
             <?php endforeach ?>
             <?php foreach($this->erpSansPreventionniste as $erpsansprev): ?>
                 <li class="list-group-item">
-                   <a href='etablissement/index/id/<?php echo $erpsansprev['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>
+                   <a href='/etablissement/index/id/<?php echo $erpsansprev['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>
                    <span class="badge badge-warning">Important</span>
                    <?php
                         if($erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
                         {
-                            echo "L'établissement <a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'> &quot;".$erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sans préventionnistes";
+                            echo "L'établissement <a href='/etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'> &quot;".$erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sans préventionnistes";
                         }
 
                         else
                         {
                             $datedemodif = new DateTime($erpsansprev['DATE_ETABLISSEMENTINFORMATIONS']);
-                            echo "L'établissement du <a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sans préventionnistes";
+                            echo "L'établissement du <a href='/etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sans préventionnistes";
                         }
                       ?>
                    </li>
@@ -187,7 +187,7 @@
                     if($esp['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
                     {
                         $datecom = new DateTime($esp['DATECOM']);
-                        echo "La prochaine visite périodique l'établissement &quot;<a href='etablissement/index/id/".$esp['ID_ETABLISSEMENT']."'>".$esp['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> doit etre programmée avant le ".$datecom->format('d/m/y').":";
+                        echo "La prochaine visite périodique l'établissement &quot;<a href='/etablissement/index/id/".$esp['ID_ETABLISSEMENT']."'>".$esp['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> doit etre programmée avant le ".$datecom->format('d/m/y').":";
                         echo "<a href='".$this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $esp['ID_ETABLISSEMENT']), null, true)."'> programmer une visite </a>";
                     }   ?>
                 </li>

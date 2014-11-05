@@ -1032,3 +1032,8 @@ a.list-group-item-danger.active:focus {
     width: 1000px;
     margin-left: -500px;
 }
+
+.popover {
+    width: 350px;
+    max-width: none;
+}
