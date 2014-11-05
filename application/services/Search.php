@@ -531,7 +531,7 @@ class Service_Search
 
             // Critères : groupe
             if($groups !== null) {
-               $this->setCriteria($select, "ID_GROUPE", $groups);
+               $this->setCriteria($select, "groupe.ID_GROUPE", $groups);
             }
 
             // Critères : nom

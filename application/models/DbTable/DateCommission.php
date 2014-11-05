@@ -139,7 +139,8 @@
 				 ->setIntegrityCheck(false)
 				 ->from(array('da' => 'dossieraffectation'))
 				 ->join(array("dc" => "datecommission") , "da.ID_DATECOMMISSION_AFFECT = dc.ID_DATECOMMISSION")
-				 ->where("da.ID_DOSSIER_AFFECT = ?",$idDossier);
+				 ->where("da.ID_DOSSIER_AFFECT = ?",$idDossier)
+				 ->where("dc.ID_COMMISSIONTYPEEVENEMENT = 2 OR dc.ID_COMMISSIONTYPEEVENEMENT = 3");
 				 
 			return $this->getAdapter()->fetchRow($select);
 		}
