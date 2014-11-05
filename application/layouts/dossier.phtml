@@ -1,6 +1,6 @@
 <?php if($this->action != "add" && $this->do != "new" ) : ?>
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
-
+<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='<?php echo $this->idUser; ?>' />	
 <ul class="nav nav-tabs nav-stacked menu_dashboard" >
         
         <li >
@@ -56,24 +56,23 @@
             <a class='<?php echo ( $this->action == "piece-jointe" ) ? "white_link" : "read" ?>' 
                href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
         </li> 
-        
         <li class="nav-header">Actions</li>
-        
-        <?php if ( $this->action == "index" ) :
-            $verrou = true;
-            if ($this->infosDossier['VERROU_DOSSIER'] == 1  || (isset($action) && $action == 'new')) {
-                $label = "Déverrouiller";
-                $idLink = "DEVERROU";
-            }
-            else { 
-                $label = "Verrouiller";
-                $idLink = "VERROU";
-                $verrou = false;
-            } ?>
+			<?php
+				$verrou = true;
+				if ($this->verrou == 1  || (isset($action) && $action == 'new')) {
+					$label = "Déverrouiller";
+					$idLink = "DEVERROU";
+				} else { 
+					$label = "Verrouiller";
+					$idLink = "VERROU";
+					$verrou = false;
+				}
+			?>
             <li>
                 <a class="sep" href="" id="<?php echo $idLink; ?>"><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
             </li>
-            <?php if (!$verrou) : ?>
+		<?php  if ( $this->action == "index" ) :
+			if (!$verrou) : ?>
             <li>
                 <a href="" id="rapport"><i class="icon-refresh icon-black"></i> Générer un document</a>
             </li>
@@ -154,7 +153,28 @@ endif; ?>
 
 </div>
 
+        <!-- Modal -->
+		<div class="modal hide fade" tabindex="-1" id="modal-desc" >
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">x</button>
+						<h3>Descriptif de l'établissement</h3>
+					</div>
+					<div class="modal-body">
+						Chargement des éléments...
+					</div>
+					<div class="modal-footer">
+						<a href="#" class="btn" data-dismiss="modal">Fermer</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
 <script>
+
+
+	
     $(document).ready(function(){
 
         if($("#infosEtabs").html() == ''){
@@ -187,6 +207,57 @@ endif; ?>
                 }
             });
         }
+		
+		$("#VERROU").live('click',function(){
+			$.ajax({
+					url: "/dossier/verrou",
+					data: "idDossier="+$("#idDossier").val()+"&ID_CREATEUR="+$("#ID_CREATEUR").val(),
+					type:"POST",
+					//async: false,
+					beforeSend: function(){
+						$("#chargement").html("<img src='/images/load.gif' />");
+					},
+					success: function(affichageResultat){
+						window.location= affichageResultat;
+					},
+					statusCode: {
+							401:function(){
+								alert("Vous n'êtes pas autorisé à effectuer cette action");
+								$("#chargement").html("");
+							},
+					},
+					error: function(){
+							return false;
+					}
+			});
+			return false;
+		});
+	
+		$("#DEVERROU").live('click',function(){
+			$.ajax({
+					url: "/dossier/deverrou",
+					data: "idDossier="+$("#idDossier").val(),
+					type:"POST",
+					//async: false,
+					beforeSend: function(){
+						$("#chargement").html("<img src='/images/load.gif' />");
+					},
+					success: function(affichageResultat){
+						window.location= affichageResultat;
+					},
+					statusCode: {
+						401:function(){
+							alert("Vous n'êtes pas autorisé à effectuer cette action");
+							$("#chargement").html("");
+						},
+					},
+					error: function(){
+							return false;
+					}
+			});
+			return false;
+		});
+		
     });
 </script>
 
