@@ -9,9 +9,11 @@ class Model_DbTable_DossierListeDoc extends Zend_Db_Table_Abstract
     //Fonction qui récupère tous les doc de viste
     public function getDocVisite()
     {
-        $select = "SELECT *
-            FROM listedocconsulte
-            WHERE VISITE_DOC = '1';";
+		$select = $this->select()
+			 ->setIntegrityCheck(false)
+			 ->from(array('ldc' => 'listedocconsulte'))
+			 ->where("ldc.VISITE_DOC = 1")
+			 ->order("ldc.ORDRE_DOC");
 
         return $this->getAdapter()->fetchAll($select);
     }
@@ -19,27 +21,33 @@ class Model_DbTable_DossierListeDoc extends Zend_Db_Table_Abstract
     //Fonction qui récupère tous les doc d'etude
     public function getDocEtude()
     {
-        $select = "SELECT *
-            FROM listedocconsulte
-            WHERE ETUDE_DOC = '1';";
+		$select = $this->select()
+			 ->setIntegrityCheck(false)
+			 ->from(array('ldc' => 'listedocconsulte'))
+			 ->where("ldc.ETUDE_DOC = 1")
+			 ->order("ldc.ORDRE_DOC");
 
         return $this->getAdapter()->fetchAll($select);
     }
 
     public function getDocVisiteRT()
     {
-        $select = "SELECT *
-            FROM listedocconsulte
-            WHERE VISITERT_DOC = '1';";
+		$select = $this->select()
+			 ->setIntegrityCheck(false)
+			 ->from(array('ldc' => 'listedocconsulte'))
+			 ->where("ldc.VISITERT_DOC = 1")
+			 ->order("ldc.ORDRE_DOC");
 
         return $this->getAdapter()->fetchAll($select);
     }
 	
 	public function getDocVisiteVAO()
     {
-        $select = "SELECT *
-            FROM listedocconsulte
-            WHERE VISITEVAO_DOC = '1';";
+		$select = $this->select()
+			 ->setIntegrityCheck(false)
+			 ->from(array('ldc' => 'listedocconsulte'))
+			 ->where("ldc.VISITEVAO_DOC = 1")
+			 ->order("ldc.ORDRE_DOC");
 
         return $this->getAdapter()->fetchAll($select);
     }
