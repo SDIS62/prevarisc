@@ -88,7 +88,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 html += "<br><br>";
                 html += "<a href='/etablissement/index/id/" + ets_id + "' class='btn btn-small btn-primary btn-block'>Voir la fiche</a>";
 
-                e.next().find('.popover-content').html(html);
+                e.popover('destroy');
+                e.popover({html: true, content: html}).popover('show');
             });
         },
         out: function() {
