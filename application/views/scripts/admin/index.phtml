@@ -1,7 +1,12 @@
 <h3 class='page-header'>Panneau d'administration</h3>
 
 <dl class='dl-horizontal' >
-
+    
+    <dt>Version</dt>
+    <dd>
+        <p><?php echo $this->version_prevarisc ?></p>
+    </dd>
+    
     <dt>Clé IGN</dt>
     <dd>
         <p><?php echo $this->key_ign != null ? $this->key_ign : 'Aucune clé' ?></p>
@@ -20,6 +25,21 @@
     <dt>Base utilisée</dt>
     <dd>
         <p><em><?php echo $this->dbname ?></em> sur <em><?php echo $this->db_url ?></em></p>
+    </dd>
+    
+    <dt>HTTP API</dt>
+    <dd>
+        <p><?php echo $this->api_enabled ? 'Activé' : 'Désactivé' ?></p>
+    </dd>
+    
+    <dt>Proxy HTTP</dt>
+    <dd>
+        <p><?php echo $this->proxy_enabled != 1 ? 'Désactivé' : 'Activé' ?></p>
+    </dd>
+    
+    <dt>Plugins Tiers</dt>
+    <dd>
+        <p><?php echo $this->third_party_plugins ? $this->third_party_plugins : 'Aucuns' ?></p>
     </dd>
 
 </dl>

@@ -2,7 +2,20 @@
 
 ## 2.3
 
-RAS
+Evolutions :
+
+* Génération des rapports : reprise des contacts de l'établissement si contacts du dossier absent
+* Ajout de variables de configurations dans la page d'accueil de l'admin
+* Ajout de l'affichage de l'extension du fichier dans la partie pièce jointe
+* Ajout de couleurs sur les liens des popup (illisible avant)
+* Ajout du bouton "Générer un document" sur tous les onglets de la partie dossier
+* Suppression des actions de la barre latérale dans les dossiers et qui ne fonctionne pas et en doublon...
+
+Corrections :
+
+* Correction du titre de l'évenement ajouté au calendrier des comission dans l'ajout/modif d'un dossier en lien avec les titre des établissements modifiés
+* Correction d'un problème d'overflow et align center sur l'auto-complete des nom des contacts existants sur les établissements
+* Correction d'un problème de style sur les onglets sélectionnés
 
 ## 2.2
 
