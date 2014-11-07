@@ -380,11 +380,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
             "DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT" => "Voie engin",
             "DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT" => "Voie echelle",
             "DESCTECH_DESSERTE_ESPACELIBRE_ETABLISSEMENT" => "Espace libre",
-            "DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT" => "Latéral CF (heure)",
-            "DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT" => "Superposé CF (heure)",
+            "DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT" => "Latéral CF (minute)",
+            "DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT" => "Superposé CF (minute)",
             "DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT" => "Vis-à-vis (m)",
-            "DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT" => "Structure SF (heure)",
-            "DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT" => "Plancher SF (heure)",
+            "DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT" => "Structure SF (minute)",
+            "DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT" => "Plancher SF (minute)",
             "DESCTECH_DISTRIBUTION_CLOISONNEMENTTRAD_ETABLISSEMENT" => "Cloisonnement traditionnel",
             "DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT" => "Secteurs",
             "DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT" => "Compartiments",
@@ -1028,7 +1028,20 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $file_path = $store->getFilePath($piece_jointe, 'etablissement', $id_etablissement, true);
         
         if(!move_uploaded_file($file['tmp_name'], $file_path)) {
-            throw new Exception('Ne peut pas déplacer le fichier ' . $file['tmp_name']);
+            $msg = 'Ne peut pas déplacer le fichier ' . $file['tmp_name']. ' vers '.$file_path;
+            
+            // log some debug information
+            error_log($msg);
+            error_log("is_dir ".dirname($file_path).": ".is_dir(dirname($file_path)));
+            error_log("is_writable ".dirname($file_path).":".is_writable(dirname($file_path)));
+            $cmd = 'ls -all '.dirname($file_path);
+            error_log($cmd);
+            $rslt = explode("\n", shell_exec($cmd));
+            foreach($rslt as $file) {
+                error_log($file);
+            }
+            
+            throw new Exception($msg);
         }
         else {
             $DBsave = new Model_DbTable_EtablissementPj;

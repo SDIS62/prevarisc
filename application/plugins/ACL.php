@@ -72,7 +72,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
         }
 
         // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
-        else if ( !Zend_Auth::getInstance()->hasIdentity() && $request->getActionName() != "login" && $request->getActionName() != "error" )  {
+        else if ( !Zend_Auth::getInstance()->hasIdentity() && !in_array($request->getActionName(), array("login", "error")))  {
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');
         }
         else if(Zend_Auth::getInstance()->hasIdentity()) {

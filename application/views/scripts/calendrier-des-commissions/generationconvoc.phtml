@@ -31,7 +31,7 @@ foreach($this->informationsMembre as $val => $membre){
 	$cptConcerne = 0;
 	foreach($this->listeCommunes as $val => $commune){
 		foreach($this->dossierComm as $val => $dossierInfos){
-			if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
+			if( count($dossierInfos['infosEtab']['adresses']) > 0 && count($commune) > 0){
 				if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
 					//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
 					if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])

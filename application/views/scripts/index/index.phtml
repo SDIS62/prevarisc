@@ -44,111 +44,99 @@
            </ul>
     </div>
     <?php endif ?>
-
+    
     <div class="panel panel-default">
         <div class="panel-heading">
             Prochaines commissions
         </div>
-        <?php
-      $commissionsDossier = array();
-      foreach($this->NbrDossiersAffect as $nbrDossier)
-      {
-           $commissionsDossier[] = $nbrDossier;
-      }
-      ?>
-    <?php
-        if($this->prochainesCommission!=NULL)
-        {
-                $jours = array ('Dimanche', 'Lundi', 'Mardi','Mercredi','Jeudi','Vendredi','Samedi');
-                $gardeAujourdhui = 0;
-                $gardeDemain = 0;
-                $numCommission = 0;
-                foreach($this->prochainesCommission as $commissiondujour)
-                {
-
-                        $datec = new DateTime($commissiondujour['DATE_COMMISSION']);
-                        if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
-                            $class="badge-info";
-                            $message="En salle";
-                        } else if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 2) {
-                            $class="badge-success";
-                            $message="Visite de sécurité";
-                        } else {
-                            $class="badge-warning";
-                            $message="Groupe de visite";
-                        }
-
-                    ?>
-                    <div class="listcom">
-                        <strong class="jourcom">
-                        <?php
-
-                            $date = new DateTime($commissiondujour['DATE_COMMISSION']);
-                            $aujourdhui = date('d/m/y');
-                            $demain = date('d/m/y', strtotime('+1 day'));
-                            if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui == 0)
-                            {
-                                echo "Aujourd'hui";
-                                $gardeAujourdhui++;
-                            }
-                            else if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui != 0)
-                            {
-                                 $gardeAujourdhui++;
-                            }
-                            else if($demain == $date->format('d/m/y') && $gardeDemain == 0)
-                            {
-                                echo "Demain";
-                                $gardeDemain++;
-                            }
-                            else if($demain == $date->format('d/m/y') && $gardeDemain != 0)
-                            {
-                                $gardeDemain++;
-                            }
-                            else
-                            {
-                                $passe = date ('w', mktime (0,0,0,$date->format('m'),$date->format('d'),$date->format('y')));
-                                echo "".$jours[$passe]." ".$date->format('d/m/y');
-                            }
-                        ?>
-                        </strong>
-
-                        <div class='proch-com'>
-                            <span class='badge <?php echo $class ?>' style="margin-left:3px; float: right;">
-                                <?php echo $commissionsDossier[$numCommission]['verrouilles'];  ?> / <?php echo $commissionsDossier[$numCommission]['total'];  ?>
-                            </span>
-                            <span class='badge <?php echo $class ?>' style="float: right;"><?php echo $message ?></span>
-
-                            <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['ID_DATECOMMISSION'];?>">
-                                <strong>
-                                    <?php echo $commissiondujour['LIBELLE_COMMISSION'].' - '.$commissiondujour['LIBELLE_DATECOMMISSION']; ?>
-                                </strong>
-                             </a>
-
-                            <p class="heurcom">
-                                <?php
-                                  $HeureDebut = new DateTime($commissiondujour['HEUREDEB_COMMISSION']);
-                                  $HeureFin = new DateTime($commissiondujour['HEUREFIN_COMMISSION']);
-                                  echo "".$HeureDebut->format('H:i')." - ".$HeureFin->format('H:i');
-
-                                 ?>
-                            </p>
-
-                        </div>
-                    </div>
-                    <?php
-                    $numCommission++;
+        <?php if($this->prochainesCommission && count($this->prochainesCommission) > 0): ?>
+            <?php  
+            $commissionsDossier = array();
+            foreach($this->NbrDossiersAffect as $nbrDossier)
+            {
+                 $commissionsDossier[] = $nbrDossier;
+            }
+            $jours = array ('Dimanche', 'Lundi', 'Mardi','Mercredi','Jeudi','Vendredi','Samedi');
+            $gardeAujourdhui = 0; 
+            $gardeDemain = 0; 
+            $numCommission = 0;
+            foreach($this->prochainesCommission as $commissiondujour)
+            {             
+                $datec = new DateTime($commissiondujour['DATE_COMMISSION']);
+                if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
+                    $class="badge-info";
+                    $message="En salle";
+                } else if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 2) {
+                    $class="badge-success";
+                    $message="Visite de sécurité";
+                } else {
+                    $class="badge-warning";
+                    $message="Groupe de visite";
                 }
-        }
-        else
-        {
-        ?>
-            <p class='well text-center pasnotification'>
-              <a>Aucune commission</a>
-            </p>
-     <?php
-     }
-     ?>
 
+                ?>
+                <div class="listcom">        
+                    <strong class="jourcom">       
+                    <?php
+                        $date = new DateTime($commissiondujour['DATE_COMMISSION']);
+                        $aujourdhui = date('d/m/y');
+                        $demain = date('d/m/y', strtotime('+1 day')); 
+                        if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui == 0)
+                        {    
+                            echo "Aujourd'hui";
+                            $gardeAujourdhui++;
+                        }
+                        else if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui != 0)
+                        {
+                             $gardeAujourdhui++;
+                        }
+                        else if($demain == $date->format('d/m/y') && $gardeDemain == 0)
+                        {
+                            echo "Demain";
+                            $gardeDemain++;
+                        } 
+                        else if($demain == $date->format('d/m/y') && $gardeDemain != 0)
+                        {
+                            $gardeDemain++;
+                        }
+                        else
+                        {   
+                            $passe = date ('w', mktime (0,0,0,$date->format('m'),$date->format('d'),$date->format('y')));
+                            echo "".$jours[$passe]." ".$date->format('d/m/y');  
+                        }    
+                    ?>
+                    </strong>   
+
+                    <div class='proch-com'>
+                        <span class='badge <?php echo $class ?>' style="margin-left:3px; float: right;">
+                            <?php echo $commissionsDossier[$numCommission]['verrouilles'];  ?> / <?php echo $commissionsDossier[$numCommission]['total'];  ?>
+                        </span>
+                        <span class='badge <?php echo $class ?>' style="float: right;"><?php echo $message ?></span>      
+
+                        <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['ID_DATECOMMISSION'];?>">
+                            <strong> 
+                                <?php echo $commissiondujour['LIBELLE_COMMISSION'].' - '.$commissiondujour['LIBELLE_DATECOMMISSION']; ?> 
+                            </strong>       
+                         </a>
+
+                        <p class="heurcom">    
+                            <?php
+                              $HeureDebut = new DateTime($commissiondujour['HEUREDEB_COMMISSION']);
+                              $HeureFin = new DateTime($commissiondujour['HEUREFIN_COMMISSION']);
+                              echo "".$HeureDebut->format('H:i')." - ".$HeureFin->format('H:i');
+
+                             ?> 
+                        </p>
+
+                    </div>
+                </div>             
+                <?php
+                $numCommission++;
+            }
+        ?>
+        <?php else: ?>
+            <p class='muted'><small>Aucune prochaine commission</small></p>
+        <?php endif ?>  
     </div>
 
 
