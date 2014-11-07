@@ -36,7 +36,8 @@ document.addEventListener("DOMContentLoaded", function() {
             var free_width = li_width - right_width - 20;
             $(this).find('.pull-left').css('width', free_width + 'px').css('overflow', 'hidden').marquee({
                 duplicated: true,
-                duration: 7500
+                duration: 7500,
+                pauseOnHover: true
             });
         }
     });
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             }
         },
-        interval: 500,
+        interval: 1000,
         timeout: 500
     });
 
