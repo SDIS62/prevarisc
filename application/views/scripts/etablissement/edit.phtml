@@ -670,11 +670,18 @@
         }).change();
 
         // Actions sur le changement de type principal
-        $("select[name='ID_TYPE']").change(function() {
+        changementLibelleEffectifPublic = function(self) {
             // Si l'établissement est un parking, alors l'effectif public est le nombre de places de stationnement
-            if($(this).val() == '16') {
+            if($(self).val() == 16) {
                 $("dt.effectif_public").html('Places de stationnement');
             }
+            else {
+                $("dt.effectif_public").html('Public');
+            }
+        };
+        
+        $("select[name='ID_TYPE']").change(function(){
+            changementLibelleEffectifPublic(this);
         }).change();
 
         // Actions sur le changement de catégorie
@@ -713,7 +720,7 @@
                     $(this).next().append($("<option />").val(activites[x]["ID_TYPEACTIVITE"]).text(activites[x]["LIBELLE_ACTIVITE"]));
                 }
             }
-        })
+        });
 
         // On choisit d'initialiser ou de remettre à 0 les activités en fonction du type
         $("select.type_select").each(function(index) {
@@ -907,10 +914,10 @@
                 data: {
                     format: "json",
                     limit: 1,
-                    country: "France",
+                    countrycodes: "FR",
                     street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
                     city: $("input[name='commune_ac']").val(),
-                    postalcode: $("input[name='code_insee']").val().substring(0,2)
+                    postalcode: $("input[name='code_postal']").val()
                 },
                 beforeSend: function() {
                     element.text("Géolocalisation en cours ...");

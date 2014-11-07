@@ -440,10 +440,10 @@
 				//if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
 					// Boite de dialogue en ajoutant en callback le traitement du formulaire
 					var nomEtab = "";
-					if ($("#infosEtabs > a").length > 0) {
-						nomEtab = $("#infosEtabs > a").html().trim();
-					} else if ($("#infosEtablissement > a").length > 0) {
-						nomEtab = $("#infosEtablissement > a").html().trim();
+					if ($("#infosEtabs a").length > 0) {
+						nomEtab = $("#infosEtabs a").text().trim();
+					} else if ($("#infosEtablissement a").length > 0) {
+						nomEtab = $("#infosEtablissement a").text().trim();
 					}
 					nomEtab = nomEtab.replace('&nbsp;',' ');
 					
@@ -932,75 +932,6 @@
 		return false;
 	});
 	
-	$("#rapport").live('click',function(){
-		//On charge le contenu de la boite de dialogue en Ajax (liste des établissements concernés)
-		$.ajax({
-			url: "/dossier/dialoggenrapport",
-			data: "idDossier="+$("#idDossier").val(),
-			type:"POST",
-			//async: false,
-			beforeSend: function(){
-
-			},
-			success: function(affichageResultat){
-				$("#dialogComm").html('').html(affichageResultat).dialog({
-					resizable: false,
-					height:550,
-					width:800,
-					modal: true,
-					title: 'Génération des rapports',
-					buttons: {
-						'Annuler': function() {
-							$(this).dialog('close');
-							$("#dialogComm").html('');
-						}
-					},
-					close: function(event, ui){
-						$("body").css('overflow','auto');
-						$("#dialogComm").html('');
-					}
-				});				
-			},
-			error: function(){
-				return false;
-			}
-		});
-		
-		return false;		
-	});
-	
-	$("#generate").live('click',function() {
-		var selected = false;
-		$(".etabCheck").each(function(){
-
-			if($(this).attr('checked')){
-				selected = $(this).attr('checked');
-			}
-
-		});
-		
-		if(selected){
-			$.ajax({
-				url: "/dossier/generationrapport",
-				data: $("#etabRapport").serialize()+"&idDossier="+$("#idDossier").val(),
-				type:"POST",
-				//async: false,
-				beforeSend: function(){
-					$("#dialogComm").html("<img src='/images/load.gif' />");
-				},
-				success: function(affichageResultat){
-					var successMess = "<h3>Génération effectuée avec succès</h3><br/>";
-					$("#dialogComm").html(successMess+affichageResultat);
-					$("#dialogComm").append("Vous pouvez retrouver ces documents dans la partie pièces jointes");
-				},
-				error: function(){
-					$("#dialogComm").html("<h3>Erreur lors de la génération du rapport</h3><br/>Si le problème persiste veuillez contacter votre administrateur");
-					return false;
-				}
-			});
-		}
-		return false;		
-	});
 	
 	$("#AVIS_DOSSIER_COMMISSION").live('change',function(){
 		var type = $("#TYPE_DOSSIER").val();
@@ -1083,7 +1014,8 @@
 		}
 	});
 </script>
-<?php if ($this->verrouDossier != 1): ?>
+<?php $action = $this->do; ?>
+<?php if ($this->verrouDossier != 1 && $action == 'edit'): ?>
     <div class='pull-right' style='font-weight:normal'>
         <div class="btn-group">
             <a class="btn" id="modificationDossier" href="#">Modifier le dossier</a>
@@ -1093,8 +1025,6 @@
     </div>
 <?php endif ?>
 <?php
-$action = $this->do;
-
 if($action == 'edit'){
 	$formUrl = "/dossier/index/id/".$this->idDossier;
 }else{
@@ -1761,9 +1691,9 @@ function listeGroupementServInstructeur($selected, $id_type_groupement = null, $
 	echo "<option value='0' >Selectionnez le service instructeur</option>";
 	foreach ($array_groupements as $key => $groupements) {
 		if($id_type_groupement == null || ($id_type_groupement > 0 && $key == $id_type_groupement)) {
-			echo "<optgroup id='gpt_$key' label='".$groupements[0]."'>";
+			echo '<optgroup id="gpt_$key" label="'.$groupements[0].'">';
 			foreach( $groupements[1] as $groupement)
-				echo "<option value='".$groupement["LIBELLE_GROUPEMENT"]."' ". ( ($groupement["LIBELLE_GROUPEMENT"] == $selected) ? "selected" : "" ) .">".$groupement["LIBELLE_GROUPEMENT"]."</option>";
+				echo '<option value="'.$groupement["LIBELLE_GROUPEMENT"].'" '. ( ($groupement["LIBELLE_GROUPEMENT"] == $selected) ? "selected" : "" ) .">".$groupement["LIBELLE_GROUPEMENT"]."</option>";
 			echo "</optgroup>";
 		}
 	}

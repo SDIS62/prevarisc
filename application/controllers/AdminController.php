@@ -11,5 +11,8 @@ class AdminController extends Zend_Controller_Action
         $this->view->ldap_enabled = getenv('PREVARISC_LDAP_ENABLED');
         $this->view->dbname = getenv('PREVARISC_DB_DBNAME');
         $this->view->db_url = getenv('PREVARISC_DB_HOST');
+        $this->view->api_enabled = getenv('PREVARISC_SECURITY_KEY') != "";
+        $this->view->proxy_enabled = getenv('PREVARISC_PROXY_ENABLED');
+        $this->view->third_party_plugins = implode(', ', explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS')));
     }
 }

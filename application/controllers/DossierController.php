@@ -1848,29 +1848,59 @@ class DossierController extends Zend_Controller_Action
 		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,4);
 		if(count($contactInfos) == 1) {
 			$this->view->maiteOeuvre = $contactInfos[0];
+                } else {
+                    $contactInfos = $dbDossierContact->recupContactEtablissement($idEtab,4);
+                    if(count($contactInfos) > 0) {
+                        $this->view->maiteOeuvre = $contactInfos[0];
+                    }
                 }
                 
 		$dbDossierContact = new Model_DbTable_DossierContact;
 		//On recherche si un directeur unique de sécurité existe
 		$contactInfos = $dbDossierContact->recupInfoContact($idDossier,8);
-		if(count($contactInfos) == 1)
+		if(count($contactInfos) == 1) {
 			$this->view->dusDossier = $contactInfos[0];
-
+                } else {
+                    $contactInfos = $dbDossierContact->recupContactEtablissement($idEtab,8);
+                    if(count($contactInfos) > 0) {
+                        $this->view->dusDossier = $contactInfos[0];
+                    }
+                }
+                
 		//un exploitant existe
 		$exploitantInfos = $dbDossierContact->recupInfoContact($idDossier,7);
-		if(count($exploitantInfos) == 1)
+		if(count($exploitantInfos) == 1) {
 			$this->view->exploitantDossier = $exploitantInfos[0];
-
+                } else {
+                    $contactInfos = $dbDossierContact->recupContactEtablissement($idEtab,7);
+                    if(count($contactInfos) > 0) {
+                        $this->view->exploitantDossier = $contactInfos[0];
+                    }
+                }
+                        
+                        
 		//un responsable de sécurité existe
 		$respsecuInfos = $dbDossierContact->recupInfoContact($idDossier,9);
-		if(count($respsecuInfos) == 1)
+		if(count($respsecuInfos) == 1) {
 			$this->view->respsecuDossier = $respsecuInfos[0];
-
+                } else {
+                    $contactInfos = $dbDossierContact->recupContactEtablissement($idEtab,9);
+                    if(count($contactInfos) > 0) {
+                        $this->view->respsecuDossier = $contactInfos[0];
+                    }
+                }
+                
 		//un proprietaire
 		$proprioInfos = $dbDossierContact->recupInfoContact($idDossier,17);
-		if(count($proprioInfos) == 1)
+		if(count($proprioInfos) == 1) {
 			$this->view->proprioInfos = $proprioInfos[0];
-
+                } else {
+                    $contactInfos = $dbDossierContact->recupContactEtablissement($idEtab,17);
+                    if(count($contactInfos) > 0) {
+                        $this->view->proprioInfos = $contactInfos[0];
+                    }
+                }
+                
 		//Affichage dossier incomplet pour generation dossier incomplet
 		//Recuperation des documents manquants dans le cas d'un dossier incomplet
 		$dbDossDocManquant = new Model_DbTable_DossierDocManquant;
@@ -2045,7 +2075,7 @@ class DossierController extends Zend_Controller_Action
 			$DBpieceJointe = new Model_DbTable_PieceJointe;
 			$nouvellePJ = $DBpieceJointe->createRow();
 			$nouvellePJ->ID_PIECEJOINTE = $this->view->idPieceJointe;
-			$nouvellePJ->NOM_PIECEJOINTE = "Rapport modèle ".substr(basename($this->view->fichierSelect), 0, strlen(basename($this->view->fichierSelect)));
+			$nouvellePJ->NOM_PIECEJOINTE = "Rapport modèle ".substr(basename($this->view->fichierSelect), 0, strlen(basename($this->view->fichierSelect)) - 3);
 			$nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
 			$nouvellePJ->DESCRIPTION_PIECEJOINTE = "Rapport de l'établissement ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']." généré le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." à ".$dateDuJour->get(Zend_Date::HOUR.":".Zend_Date::MINUTE);
 			$nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);

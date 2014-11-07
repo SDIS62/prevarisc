@@ -29,7 +29,7 @@
 				<tr>   
 					<td>
 						<a href='<?php echo $this->url(array('controller' => 'piece-jointe', 'action' => 'get', 'idpj' => $piecejointe['ID_PIECEJOINTE'], 'type' => 'etablissement')) ?>' target='_blank' >
-							<?php echo $piecejointe['NOM_PIECEJOINTE'] ?>
+							<?php echo $piecejointe['NOM_PIECEJOINTE'].$piecejointe['EXTENSION_PIECEJOINTE']  ?>
 						</a>
 					</td>
 					<td>

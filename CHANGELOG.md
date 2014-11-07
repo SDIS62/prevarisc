@@ -1,8 +1,25 @@
 # Changelog
 
+## 2.3
+
+Evolutions :
+
+* Génération des rapports : reprise des contacts de l'établissement si contacts du dossier absent
+* Ajout de variables de configurations dans la page d'accueil de l'admin
+* Ajout de l'affichage de l'extension du fichier dans la partie pièce jointe
+* Ajout de couleurs sur les liens des popup (illisible avant)
+* Ajout du bouton "Générer un document" sur tous les onglets de la partie dossier
+* Suppression des actions de la barre latérale dans les dossiers et qui ne fonctionne pas et en doublon...
+
+Corrections :
+
+* Correction du titre de l'évenement ajouté au calendrier des comission dans l'ajout/modif d'un dossier en lien avec les titre des établissements modifiés
+* Correction d'un problème d'overflow et align center sur l'auto-complete des nom des contacts existants sur les établissements
+* Correction d'un problème de style sur les onglets sélectionnés
+
 ## 2.2
 
-Evolution :
+Evolutions :
 
 * Ajout du champ "droit public" sur les établissements uniquement
 * Mise sous cache APC du service User
@@ -14,6 +31,11 @@ Evolution :
 * Dashboard : ajout du lien vers l'ordre du jour de la date de commission sur le bloc d'ordre du jour
 * Ajout du descriptif de l'erreur lorsqu'on arrive pas à créer un dossier via le SimpleDataStore
 * Optimisations de performances sur les ACL
+* Ajout de la variable d'environnement PREVARISC_PARKINGS_TYPES précisant les Ids des types d'activités liés aux parkings
+* Déplacement et agrandissement de l'identifiant externe
+* Ajout de la possibilité de pas avoir un copie de travail git et forcer une version applicative dans le footer
+* Fixes #302 Passage des champs de stabilité au feu et isolement en minutes au lieu des heures
+* En lien avec #306, retrait de l'ajout du champ LIBELLE_RUETYPE dans l'affichage des adresses
 
 Corrections :
 
@@ -30,6 +52,12 @@ Corrections :
 * Impossible de créer une nouvelle date de commission à la création d'un dossier si celui-ci n'est pas lié à un établissement (pb de js)
 * Correction de l'apparition du bouton "Modifier" sur la partie dossier qui était présent sur tous les onglets et pour chaque niveau de site, cellule...
 * Correction sur documents consultés de dossier "$ is undefined" : report de l'ajout du js inline dans le controlleur au lieu du dossier
+* Correction du libellé "Places de stationnement" qui ne revient pas à Public lors de la sélection d'une autre activité
+* Corrections de warnings (undefined indexes) sur la génération des documents
+* Corrections du bouton modifier le dossier qui apparaît à la création du dossier
+* Correction de l'appel au service IGN de géolocalisation : envoi du code postal entier à la place des 2 premiers chiffres du code insee
+* Correction : la recherche multi-critère incluant la recherche sur une commune rendait 0 résultats : la recherche imposait la présence d'une commune égale pour les sites et cellules liées
+* Correction des simples quotes dans les groupements de communes qui cassent les listes des membres de commissions et services instructeurs
 
 ## 2.1
 
