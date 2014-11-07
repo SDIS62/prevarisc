@@ -169,7 +169,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->verrouDossier = $dossier['VERROU_DOSSIER'];
             $this->view->idDossier = ($this->_getParam("id"));
 			
-			$this->view->verrou = $dossier->VERROU_DOSSIER;
+            $this->view->verrou = $dossier->VERROU_DOSSIER;
         }
     }
 
@@ -219,9 +219,9 @@ class DossierController extends Zend_Controller_Action
         $this->view->listeAvis = $DBlisteAvis->getAvis();
         
         // AUTORISATIONS CHANGEMENT AVIS DE LA COMMISSION
-            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
-            $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
+        $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
 
         if ($this->_getParam("idEtablissement")) {
             $this->view->idEtablissement = $this->_getParam("idEtablissement");
@@ -873,6 +873,8 @@ class DossierController extends Zend_Controller_Action
     //Permet de faire les insertions de dossier en base de données et de rediriger vers le dossier/index/id/X => X = id du dossier qui vient d'être crée
     public function saveAction()
     {
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        
         try {
             $this->_helper->viewRenderer->setNoRender();
             $DBdossier = new Model_DbTable_Dossier;
@@ -988,6 +990,8 @@ class DossierController extends Zend_Controller_Action
             }
 
             $idDossier = $nouveauDossier->ID_DOSSIER;
+            
+            $idNature = $this->_getParam("selectNature");
 
             $DBetablissementDossier = new Model_DbTable_EtablissementDossier;
             if ($this->_getParam('do') == 'new') {
@@ -1008,7 +1012,6 @@ class DossierController extends Zend_Controller_Action
                 //Récupération des contacts de l'établissement (Resp. unique de sécu, Proprio, Exploitant, DUS)
                 $dbDossierContact = new Model_DbTable_DossierContact;
                 $contactsEtab = $dbDossierContact->recupContactEtablissement($this->_getParam('idEtablissement'));
-				//Zend_Debug::dump($contactsEtab);
 
                 foreach ($contactsEtab as $contact) {
                     if ($contact['ID_FONCTION'] == 8 || $contact['ID_FONCTION'] == 9 || $contact['ID_FONCTION'] == 17 || $contact['ID_FONCTION'] == 7) {
@@ -1023,55 +1026,70 @@ class DossierController extends Zend_Controller_Action
                 $DBdossierNature = new Model_DbTable_DossierNature;
                 $natureCheck = $DBdossierNature->getDossierNaturesId($idDossier);
                 $nature = $DBdossierNature->find($natureCheck['ID_DOSSIERNATURE'])->current();
-				$nature->ID_NATURE = $this->_getParam("selectNature");
+                $nature->ID_NATURE = $idNature;
                 $nature->save();
             }
-
+            
+            
             //On met le champ ID_DOSSIER_DONNANT_AVIS de établissement avec l'ID du dossier que l'on vient d'enregistrer dans les cas suivant
             if ($this->_getParam("AVIS_DOSSIER_COMMISSION") && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)) {
                 $MAJEtab = 0;
-                if ($this->_getParam("TYPE_DOSSIER") == 1 && $this->_getParam("selectNature") == 19) {
+                if ($this->_getParam("TYPE_DOSSIER") == 1 && $idNature == 19) {
                     //Cas d'une étude uniquement dans le cas d'une levée de reserve
                     $MAJEtab = 1;
-                } elseif ($this->_getParam("TYPE_DOSSIER") == 2 && ($this->_getParam("selectNature") == 21 || $this->_getParam("selectNature") == 23 || $this->_getParam("selectNature") == 24 || $this->_getParam("selectNature") == 47)) {
+                } elseif ($this->_getParam("TYPE_DOSSIER") == 2 && ($idNature == 21 || $idNature == 23 || $idNature == 24 || $idNature == 47)) {
                     //Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
                     $MAJEtab = 1;
-                } elseif ($this->_getParam("TYPE_DOSSIER") == 3 && ($this->_getParam("selectNature") == 26 || $this->_getParam("selectNature") == 28 || $this->_getParam("selectNature") == 29 || $this->_getParam("selectNature") == 48)) {
+                } elseif ($this->_getParam("TYPE_DOSSIER") == 3 && ($idNature == 26 || $idNature == 28 || $idNature == 29 || $idNature == 48)) {
                     //Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
                     $MAJEtab = 1;
                 }
 
                 $dbEtab = new Model_DbTable_Etablissement;
-				$service_etablissement = new Service_Etablissement;
+                $service_etablissement = new Service_Etablissement;
+                
+                if ($MAJEtab == 1) {
+                    
+                    if ($this->_getParam('do') == 'new') {
+                        $listeEtab = array(array(
+                            'ID_ETABLISSEMENT' => $this->_getParam('idEtablissement')
+                        ));
+                    } else {
+                        $listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
+                    }
+                    
+                    foreach ($listeEtab as $val => $ue) {
+                            $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
+                            $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+                            $etabToEdit->save();
+                            $cache->remove('etablissement_id_' . $ue['ID_ETABLISSEMENT']);
+                            
+                            if($this->_getParam('repercuterAvis')){
+                                    $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+                                    foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
+                                            $etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+                                            $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+                                            $etabToEdit->save();
+                                            $cache->remove('etablissement_id_' . $etabEnfant['ID_ETABLISSEMENT']);
+                                    }
+                            }
+                            
+                            // AVERTISSEMENT SUR L'OUVERTURE D'UN ETABLISSEMENT A EFFECTUER
+                            // Dadns les cas d'une visite avant ouverture avec avis de commission positif
+                            if ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 && in_array($idNature, array(47, 48))) 
+                            {
+                                $etabInformation = $dbEtab->getInformations($ue["ID_ETABLISSEMENT"]);
+                                // Si l'établissement est en statut projet, et uniquement ce cas
+                                if ($etabInformation && $etabInformation->ID_STATUT == 1) {
+                                    $this->_helper->flashMessenger(array(
+                                        'context' => 'warning',
+                                        'title' => 'Avertissement',
+                                        'message' => "La visite d'avant ouverture étant favorable, vous devriez passer le statut de l'établissement <a title='Ouvrir' href='/etablissement/edit/id/".$ue["ID_ETABLISSEMENT"]."'>".$etabInformation["LIBELLE_ETABLISSEMENTINFORMATIONS"]."</a> à 'ouvert' (statut actuellement à 'projet')."
+                                    ));
+                                }  
+                            }
 
-                if ($MAJEtab == 1 && $this->_getParam('do') == 'new') {
-                    $etabToEdit = $dbEtab->find($this->_getParam('idEtablissement'))->current();
-                    $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-                    $etabToEdit->save();
-					if($this->_getParam('repercuterAvis')){
-						$etablissementInfos = $service_etablissement->get($this->_getParam('idEtablissement'));
-						foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
-							$etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
-							$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-							$etabToEdit->save();
-						}
-					}					
-                } elseif ($MAJEtab == 1) {
-					$listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
-					foreach ($listeEtab as $val => $ue) {
-						$etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
-						$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-						$etabToEdit->save();
-						if($this->_getParam('repercuterAvis')){
-							$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-							foreach($etablissementInfos["etablissement_lies"] as $etabEnfant){
-								$etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
-								$etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-								$etabToEdit->save();
-							}
-						}
-					}
-			
+                    }
                 }
 				
             }
@@ -1079,7 +1097,6 @@ class DossierController extends Zend_Controller_Action
             //GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
             //lorsque je crée un dossier visite ou groupe de visite VP (21-26), VC (22-27), VI (24-29),
             //il faut que les textes applicables à l’ERP se retrouvent de fait dans le dossier créé
-            $idNature = $this->_getParam("selectNature");
 
             if ( ($idNature == 21 ||  $idNature == 22 || $idNature == 24 || $idNature == 26 || $idNature == 27 || $idNature == 29) &&  $_POST['idEtablissement'] != "" && $_POST['do'] == 'new') {
                 $dbEtablissementTextAppl = new Model_DbTable_EtsTextesAppl;

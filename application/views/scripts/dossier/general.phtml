@@ -923,7 +923,13 @@
 			},
 			success: function(affichageResultat){
 				var idDossier = affichageResultat.replace(' ', '');
-				window.location='/dossier/index/id/'+idDossier;
+                                try { 
+                                    parseInt(idDossier); 
+                                    window.location='/dossier/index/id/'+idDossier;
+                                } catch(e) {
+                                    window.location.reload();
+                                }
+				
 			},
 			error: function(){
 				return false;
