@@ -296,7 +296,7 @@
 		if(typeDossier == 1)
 		{
 			//etude
-			if(natureDossier == 19)
+			if(natureDossier == 19 || natureDossier == 7)
 			{
 				//levée reserve
 				addText = " à l'exploitation";
@@ -1408,7 +1408,7 @@ echo "
 					echo $this->AVIS_VALUE['LIBELLE_AVIS'];
 					if($this->infosDossier['TYPE_DOSSIER'] == 1){
 						//etude
-						if($this->natureConcerne[0]['ID_NATURE'] == 19){
+						if($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7){
 							echo " à l'exploitation";
 						}else{
 							echo " à l'étude";
@@ -1444,7 +1444,7 @@ echo "
 						echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
 						if($this->infosDossier['TYPE_DOSSIER'] == 1){
 							//etude
-							if($this->natureConcerne[0]['ID_NATURE'] == 19){
+							if($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7){
 								echo " à l'exploitation";
 							}else{
 								echo " à l'étude";

@@ -1030,8 +1030,8 @@ class DossierController extends Zend_Controller_Action
             //On met le champ ID_DOSSIER_DONNANT_AVIS de établissement avec l'ID du dossier que l'on vient d'enregistrer dans les cas suivant
             if ($this->_getParam("AVIS_DOSSIER_COMMISSION") && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)) {
                 $MAJEtab = 0;
-                if ($this->_getParam("TYPE_DOSSIER") == 1 && $this->_getParam("selectNature") == 19) {
-                    //Cas d'une étude uniquement dans le cas d'une levée de reserve
+                if ($this->_getParam("TYPE_DOSSIER") == 1 && ($this->_getParam("selectNature") == 19 || $this->_getParam("selectNature") == 7)) {
+                    //Cas d'une étude uniquement dans le cas d'une levée de reserve et d'une levée de prescriptions
                     $MAJEtab = 1;
                 } elseif ($this->_getParam("TYPE_DOSSIER") == 2 && ($this->_getParam("selectNature") == 21 || $this->_getParam("selectNature") == 23 || $this->_getParam("selectNature") == 24 || $this->_getParam("selectNature") == 47)) {
                     //Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
