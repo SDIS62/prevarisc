@@ -440,12 +440,13 @@
 				//if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
 					// Boite de dialogue en ajoutant en callback le traitement du formulaire
 					var nomEtab = "";
-					if ($("#infosEtabs a").length > 0) {
-						nomEtab = $("#infosEtabs a").text().trim();
-					} else if ($("#infosEtablissement a").length > 0) {
-						nomEtab = $("#infosEtablissement a").text().trim();
+					if ($("#infosEtabs > .etab").length > 0) {
+						nomEtab = $("#infosEtabs > .etab").text().trim();
+					} else if ($("#infosEtablissement > .etab").length > 0) {
+						nomEtab = $("#infosEtablissement > .etab").text().trim();
 					}
 					nomEtab = nomEtab.replace('&nbsp;',' ');
+					nomEtab = nomEtab.replace("'"," ");
 					
 					var nomNature = $("#selectNature option:selected").text().trim();
 					var nomCom = nomNature+" - "+nomEtab;
