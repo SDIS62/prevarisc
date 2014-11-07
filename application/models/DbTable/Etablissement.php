@@ -316,6 +316,7 @@
                    AND etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
                    AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
                    AND etablissementinformations.ID_STATUT != 1 AND etablissementinformations.ID_STATUT != 3
+                   AND ((etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS > 0 AND (etablissementinformations.ID_GENRE = 2 OR etablissementinformations.ID_GENRE = 5)) OR (etablissementinformations.ID_GENRE != 2 AND etablissementinformations.ID_GENRE != 5))
                    GROUP BY ID_ETABLISSEMENT
                    ";
 
