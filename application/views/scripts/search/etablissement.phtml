@@ -172,6 +172,9 @@
 
 		// Slide des établissements enfants contenant d'autres établissements
 		$("ul.recherche_liste li.slide").live("click", function() {
+			if($(this).is('a')) {
+				return;
+			}
 			var container = this;
 			if( $(this).hasClass("active") ) {
 				$(this).next().slideUp(400, function() {$(container).next().remove()});
