@@ -33,6 +33,7 @@ class SearchController extends Zend_Controller_Action
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
+                $page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
                 $label = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] != '#' ? $parameters['label'] : null;
                 $identifiant = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] == '#'? substr($parameters['label'], 1) : null;
                 $genres = array_key_exists('genres', $parameters) ? $parameters['genres'] : null;
@@ -46,10 +47,10 @@ class SearchController extends Zend_Controller_Action
                 $city = array_key_exists('city', $parameters) && $parameters['city'] != '' ? $parameters['city'] : null;
                 $street = array_key_exists('street', $parameters) && $parameters['street'] != '' ? $parameters['street'] : null;
 
-                $search = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, 50, $parameters['page']);
+                $search = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, 50, $page);
 
                 $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
-                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
+                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($page)->setDefaultScrollingStyle('Elastic');
 
                 $this->view->results = $paginator;
             }
@@ -84,6 +85,7 @@ class SearchController extends Zend_Controller_Action
                 }
                 $search_prev_actifs = $service_search->listePrevActifs();
 
+                $page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
                 $num_doc_urba = array_key_exists('objet', $parameters) && $parameters['objet'] != '' && (string) $parameters['objet'][0] == '#'? substr($parameters['objet'], 1) : null;
                 $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != ''  && (string) $parameters['objet'][0] != '#'? $parameters['objet'] : null;
                 $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
@@ -105,10 +107,10 @@ class SearchController extends Zend_Controller_Action
                 $criteresRecherche['dateReponseStart'] = array_key_exists('date-reponse-start', $parameters) && $this->checkDateFormat($parameters['date-reponse-start']) ? $parameters['date-reponse-start'] : null;
                 $criteresRecherche['dateReponseEnd'] = array_key_exists('date-reponse-end', $parameters) && $this->checkDateFormat($parameters['date-reponse-end']) ? $parameters['date-reponse-end'] : null;
 
-                $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $parameters['page'],$criteresRecherche);
+                $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $page,$criteresRecherche);
 
                 $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
-                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
+                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($page)->setDefaultScrollingStyle('Elastic');
 
                 $this->view->results = $paginator;
             }
@@ -132,13 +134,14 @@ class SearchController extends Zend_Controller_Action
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
+                $page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
                 $name = $parameters['name'];
                 $fonctions = array_key_exists('fonctions', $parameters) ? $parameters['fonctions'] : null;
 
-                $search = $service_search->users($fonctions, $name, null, true, 50, $parameters['page']);
+                $search = $service_search->users($fonctions, $name, null, true, 50, $page);
 
                 $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
-                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($parameters['page'])->setDefaultScrollingStyle('Elastic');
+                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($page)->setDefaultScrollingStyle('Elastic');
 
                 $this->view->results = $paginator;
             }
