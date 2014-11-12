@@ -368,11 +368,11 @@ ul.recherche_liste li.slide:hover {
 }
 
 ul.no_slide li.slide:hover {
-    cursor: pointer;
+    cursor: default;
 }
 
-ul.no_slide li.slide .ui-icon {
-    display: none;
+ul.no_slide li.slide {
+    border-left: none;
 }
 
 ul.recherche_liste li .avis {
