@@ -65,6 +65,10 @@ h2.page-header {
     margin-top: 0px;
 }
 
+.ui-widget.ui-widget-content a {
+    color: #005580;
+}
+
 /* On règle la navbar en mode "super sleek"
 -------------------------------------------------- */
 
@@ -364,11 +368,11 @@ ul.recherche_liste li.slide:hover {
 }
 
 ul.no_slide li.slide:hover {
-    cursor: pointer;
+    cursor: default;
 }
 
-ul.no_slide li.slide .ui-icon {
-    display: none;
+ul.no_slide li.slide {
+    border-left: none;
 }
 
 ul.recherche_liste li .avis {
@@ -772,6 +776,10 @@ text-decoration: none;
     text-shadow: none;
 }
 
+li .white_link {
+    background-color: white;
+}
+
 .main-container-fluid {
     display: table-cell;
     width: 10%;
@@ -1036,4 +1044,7 @@ a.list-group-item-danger.active:focus {
 .popover {
     width: 350px;
     max-width: none;
+}
+.dropdown-menu {
+    text-align: left;
 }

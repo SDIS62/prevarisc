@@ -24,8 +24,8 @@
         		</strong>
         		<a href='#' onclick="$('#zone_de_recherche_modal').modal(); return false; ">(Modifier la zone de recherche)</a>
         		<input type='hidden' name='zone_de_recherche_text' value="<?php if(array_key_exists('zone_de_recherche_text', $_GET)) echo $_GET['zone_de_recherche_text'] ?>" />
-				<input type='hidden' name='city' value="<?php if(array_key_exists('city', $_GET)) echo $_GET['city'] ?>" />
-				<input type='hidden' name='street' value="<?php if(array_key_exists('street', $_GET)) echo $_GET['street'] ?>" />
+                        <input type='hidden' name='city' value="<?php if(array_key_exists('city', $_GET)) echo $_GET['city'] ?>" />
+                        <input type='hidden' name='street' value="<?php if(array_key_exists('street', $_GET)) echo $_GET['street'] ?>" />
 	        </small>
 	    </p>
 	</div>
@@ -80,9 +80,9 @@
 	    </span>
 
 	    <span id='type_span' class='hide'>
-	        <select name='types[]' multiple>
-	            <?php foreach( $this->DB_type as $type ) : ?>
-	            	<option value='<?php echo $type["ID_TYPE"] ?>' <?php if(array_key_exists('types', $_GET) && in_array($type["ID_TYPE"], (array) $_GET["types"])) echo 'selected' ?>><?php echo $type["LIBELLE_TYPE"] ?></option>
+	        <select name='types_activites[]' multiple>
+	            <?php foreach( $this->DB_typeactivite as $type ) : ?>
+	            	<option value='<?php echo $type["ID_TYPEACTIVITE"] ?>' <?php if(array_key_exists('types_activites', $_GET) && in_array($type["ID_TYPEACTIVITE"], (array) $_GET["types_activites"])) echo 'selected' ?>><?php echo $type["LIBELLE_TYPE"] . ' - ' . $type["LIBELLE_ACTIVITE"] ?></option>
 	            <?php endforeach ?>
 	        </select>
 	  </span>
@@ -149,7 +149,7 @@
 		$("select[name='categories[]']").multiselect({header: false, noneSelectedText: "Toutes les catégories"});
 		$("select[name='classes[]']").multiselect({header: false, noneSelectedText: "Toutes les classes"});
 		$("select[name='familles[]']").multiselect({header: false, noneSelectedText: "Toutes les familles"});
-		$("select[name='types[]']").multiselect({header: false, noneSelectedText: "Tous les types d'activités"});
+		$("select[name='types_activites[]']").multiselect({header: false, noneSelectedText: "Tous les types d'activités"});
 		$("select[name='avis[]']").multiselect({header: false, noneSelectedText: "Tous les avis"});
 		$("select[name='presences_local_sommeil[]']").multiselect({header: false, noneSelectedText: "Qu'importe la présence de local à sommeil", minWidth: 300});
 
@@ -172,6 +172,9 @@
 
 		// Slide des établissements enfants contenant d'autres établissements
 		$("ul.recherche_liste li.slide").live("click", function() {
+			if($(this).is('a')) {
+				return;
+			}
 			var container = this;
 			if( $(this).hasClass("active") ) {
 				$(this).next().slideUp(400, function() {$(container).next().remove()});
@@ -233,7 +236,7 @@
         	$("input[name='zone_de_recherche_text']").val(text);
             $(".zone_de_recherche_text").text(text);
 
-            $("input[name='city']").val($("input[name='commune_ac']").val());
+            $("input[name='city']").val($("input[name='code_insee']").val());
             $("input[name='street']").val($("input[name='voie']").val());
         	$('form#zone_de_recherche_modal').modal('hide');
         });

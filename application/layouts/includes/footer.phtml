@@ -5,8 +5,7 @@
     <a href="/about/dev" >Développeurs</a> &#183;
     <a href="/about/support" >Aide</a> &#183;
     © <?php echo date('Y') ?> Prevarisc
-    <?php $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..'); ?>
-    <a style='text-decoration: none; border-bottom: 1px dotted #ccc;' href="https://github.com/SDIS62/prevarisc/commit/<?php echo end($git->getRevisions())['sha1'] ?>">
-        <?php echo $git->getCurrentBranch() . '@' . substr((string)end($git->getRevisions())['sha1'], 0, 7) ?>
+    <a style='text-decoration: none; border-bottom: 1px dotted #ccc;' href="https://github.com/SDIS62/prevarisc/commit/<?php echo $this->revision_prevarisc ?>">
+        <?php echo $this->version_prevarisc ?>
     </a>
 </footer>

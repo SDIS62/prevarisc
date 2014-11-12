@@ -70,7 +70,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 $avis = $dossier_donnant_avis->AVIS_DOSSIER_COMMISSION;
                 $facteur_dangerosite = $dossier_donnant_avis->FACTDANGE_DOSSIER;
             }
-            
+
             $last_2_visites = $search->setItem("dossier")
                     // Dossier correspondant à l'établissement dont l'ID est donné
                 ->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)
@@ -84,9 +84,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     // Récupérer deux items
                 ->getItems(0, 2)
                 ->toArray();
-            
+
             // Peut-on prolonger la période de deux ans ?
-            $extension_periode = false;            
+            $extension_periode = false;
             if ($last_2_visites !== null && count($last_2_visites) == 2){
                 // Les deux dernières visites ont-elles été favorables ?
                 if ($last_2_visites[0]['AVIS_DOSSIER_COMMISSION'] == 1 && $last_2_visites[1]['AVIS_DOSSIER_COMMISSION'] == 1){
@@ -96,10 +96,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     }else if ($informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS == null)$extension_periode = true;
                 }
             }
-            
+
             $next_visite = null;
             $last_visite = null;
-            
+
             if($last_2_visites !== null && count($last_2_visites) != 0) {
                 $tmp_date = new Zend_Date($last_2_visites[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
                 $last_visite =  $tmp_date->get( Zend_date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
@@ -111,8 +111,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
                 }
             }
-            
-            
+
+
             // Récupération de la date de PC initial
             $pc_inital = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.TYPE_DOSSIER", 1)->setCriteria("ID_NATURE", 1)->order('DATEINSERT_DOSSIER ASC')->run();
             $pc_inital = $pc_inital->getAdapter()->getItems(0, 1)->toArray();
@@ -161,7 +161,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     'DUREEVISITE_ETABLISSEMENT' => $general->DUREEVISITE_ETABLISSEMENT
                 );
             }
-            
+
             $commission = @$DB_commission->find($informations->ID_COMMISSION)->current();
             $etablissement = array(
                 'general' => $general->toArray(),
@@ -261,11 +261,20 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     if ($tmp != null) {
                         $historique[$key][ count($historique[$key])-1 ]["fin"] = $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
                     }
-                    $author = $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"])->current()->ID_UTILISATEURINFORMATIONS)->toArray();
+                    if($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"] > 0) {
+                        $row = $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"])->current()->ID_UTILISATEURINFORMATIONS)->toArray();
+                        $author = array(
+                            'id' => $row["ID_UTILISATEUR"],
+                            'name' => $row['NOM_UTILISATEURINFORMATIONS'] . ' ' . $row['PRENOM_UTILISATEURINFORMATIONS']
+                        );
+                    }
+                    else {
+                        $author = null;
+                    }
                     $historique[$key][] = array(
                         "valeur" => $value,
                         "debut" =>  $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ),
-                        "author" => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"] == 0 ? null : array('id' => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"], 'name' => $author['NOM_UTILISATEURINFORMATIONS'] . ' ' . $author['PRENOM_UTILISATEURINFORMATIONS'])
+                        "author" => $author
                     );
                 }
             }
@@ -380,11 +389,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
             "DESCTECH_DESSERTE_VOIEENGIN_ETABLISSEMENT" => "Voie engin",
             "DESCTECH_DESSERTE_VOIEECHELLE_ETABLISSEMENT" => "Voie echelle",
             "DESCTECH_DESSERTE_ESPACELIBRE_ETABLISSEMENT" => "Espace libre",
-            "DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT" => "Latéral CF (heure)",
-            "DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT" => "Superposé CF (heure)",
+            "DESCTECH_ISOLEMENT_LATERALCF_ETABLISSEMENT" => "Latéral CF (minute)",
+            "DESCTECH_ISOLEMENT_SUPERPOSECF_ETABLISSEMENT" => "Superposé CF (minute)",
             "DESCTECH_ISOLEMENT_VISAVIS_ETABLISSEMENT" => "Vis-à-vis (m)",
-            "DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT" => "Structure SF (heure)",
-            "DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT" => "Plancher SF (heure)",
+            "DESCTECH_STABILITE_STRUCTURESF_ETABLISSEMENT" => "Structure SF (minute)",
+            "DESCTECH_STABILITE_PLANCHERSF_ETABLISSEMENT" => "Plancher SF (minute)",
             "DESCTECH_DISTRIBUTION_CLOISONNEMENTTRAD_ETABLISSEMENT" => "Cloisonnement traditionnel",
             "DESCTECH_DISTRIBUTION_SECTEURS_ETABLISSEMENT" => "Secteurs",
             "DESCTECH_DISTRIBUTION_COMPARTIMENTS_ETABLISSEMENT" => "Compartiments",
@@ -585,9 +594,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         try {
-            
+
             $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = ($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
-            
+
             $etablissement = $id_etablissement == null ? $DB_etablissement->createRow() : $DB_etablissement->find($id_etablissement)->current();
 
             if($date == '') {
@@ -598,13 +607,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
                 $DB_etablissements_lies->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
                 $DB_adresse->delete("ID_ETABLISSEMENT = " . $etablissement->ID_ETABLISSEMENT);
-                
+
                 if($information_a_la_date_donnee != null) {
                     $informations = $information_a_la_date_donnee;
                     $DB_plans->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
                     $DB_rubrique->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
                     $DB_types_activites_secondaires->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
-                    $DB_preventionniste->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);                    
+                    $DB_preventionniste->delete("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS);
                 }
                 else {
                     $informations = $DB_informations->createRow(array('DATE_ETABLISSEMENTINFORMATIONS' => $date));
@@ -680,30 +689,30 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $informations->ICPE_ETABLISSEMENTINFORMATIONS = (int) $data['ICPE_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     break;
-                
+
                 // Camping
                 case 7:
                     $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     break;
-                
+
                 // Manifestation temporaire
                 case 8:
                     $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     break;
-                
+
                 // IOP
                 case 9:
                     $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
                     $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
                     break;
-                
+
                 // Zone
                 case 10:
                     $informations->ID_CLASSEMENT = $data['ID_CLASSEMENT'];
                     break;
-                
+
             }
 
             $etablissement->save();
@@ -997,8 +1006,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DBused = new Model_DbTable_PieceJointe;
         return $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $id_etablissement);
     }
-    
-    
+
+
     /**
      * Ajout d'une pièce jointe pour un établissement
      *
@@ -1010,25 +1019,38 @@ class Service_Etablissement implements Service_Interface_Etablissement
      */
     public function addPJ($id_etablissement, $file, $name = '', $description = '', $mise_en_avant = 0)
     {
-        
+
         $extension = strtolower(strrchr($file['name'], "."));
-       
+
         $DBpieceJointe = new Model_DbTable_PieceJointe;
-        
+
         $piece_jointe = array(
             'EXTENSION_PIECEJOINTE' => $extension,
             'NOM_PIECEJOINTE' => $name == '' ? substr($file['name'], 0, -4) : $name,
             'DESCRIPTION_PIECEJOINTE' => $description,
             'DATE_PIECEJOINTE' => date('Y-m-d')
         );
-        
+
         $piece_jointe['ID_PIECEJOINTE'] = $DBpieceJointe->createRow($piece_jointe)->save();
-        
+
         $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
         $file_path = $store->getFilePath($piece_jointe, 'etablissement', $id_etablissement, true);
-        
+
         if(!move_uploaded_file($file['tmp_name'], $file_path)) {
-            throw new Exception('Ne peut pas déplacer le fichier ' . $file['tmp_name']);
+            $msg = 'Ne peut pas déplacer le fichier ' . $file['tmp_name']. ' vers '.$file_path;
+            
+            // log some debug information
+            error_log($msg);
+            error_log("is_dir ".dirname($file_path).": ".is_dir(dirname($file_path)));
+            error_log("is_writable ".dirname($file_path).":".is_writable(dirname($file_path)));
+            $cmd = 'ls -all '.dirname($file_path);
+            error_log($cmd);
+            $rslt = explode("\n", shell_exec($cmd));
+            foreach($rslt as $file) {
+                error_log($file);
+            }
+            
+            throw new Exception($msg);
         }
         else {
             $DBsave = new Model_DbTable_EtablissementPj;
@@ -1064,12 +1086,12 @@ class Service_Etablissement implements Service_Interface_Etablissement
     {
         $DBpieceJointe = new Model_DbTable_PieceJointe;
         $DBitem = new Model_DbTable_EtablissementPj;
-        
+
         $pj = $DBpieceJointe->find($id_pj)->current();
         if (!$pj) {
             return ;
         }
-        
+
         $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
         $file_path = $store->getFilePath($pj, 'etablissement', $id_etablissement);
         $miniature_pj = $pj;

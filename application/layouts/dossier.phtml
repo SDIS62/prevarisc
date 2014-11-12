@@ -57,74 +57,30 @@
                href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
         </li> 
         <li class="nav-header">Actions</li>
-			<?php
-				$verrou = true;
-				if ($this->verrou == 1  || (isset($action) && $action == 'new')) {
-					$label = "Déverrouiller";
-					$idLink = "DEVERROU";
-				} else { 
-					$label = "Verrouiller";
-					$idLink = "VERROU";
-					$verrou = false;
-				}
-			?>
+        <?php
+                $verrou = true;
+                if ($this->verrou == 1  || (isset($action) && $action == 'new')) {
+                        $label = "Déverrouiller";
+                        $idLink = "DEVERROU";
+                } else { 
+                        $label = "Verrouiller";
+                        $idLink = "VERROU";
+                        $verrou = false;
+                }
+        ?>
+        <li>
+            <a class="sep" href="" id="<?php echo $idLink; ?>"><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
+        </li>
+        <?php if (!$verrou) : ?>
             <li>
-                <a class="sep" href="" id="<?php echo $idLink; ?>"><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
-            </li>
-		<?php  if ( $this->action == "index" ) :
-			if (!$verrou) : ?>
-            <li>
-                <a href="" id="rapport"><i class="icon-refresh icon-black"></i> Générer un document</a>
-            </li>
-            <?php endif ?>
-            <?php if (!$verrou && ($this->idDateCommissionAffect != null)) : ?>
-            <li>
-                <a class="sep" href='/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $this->idDateCommissionAffect; ?>'><i class='icon-calendar icon-black'></i> Afficher ordre du jour</a>
-            </li>
-            <?php endif; ?>
-        <?php endif ?>
-        <?php if ( $this->action == "descriptif") : ?>
-            <li>
-                <a class="sep" href=""><i class="icon-pencil icon-black"></i> Modifier</a>
+                <a href="#" id="rapport"><i class="icon-refresh icon-black"></i> Générer un document</a>
             </li>
         <?php endif ?>
-        <?php if ( $this->action == "docconsulte" ) : ?>
-            <li>
-                <a class="sep" href=""><i class="icon-plus icon-black"></i> Ajouter un nouveau document</a>
-            </li>
-        <?php endif ?>
-        <?php if ( $this->action == "prescription" ) : ?>
-            <li>
-                <a class="sep" href=""><i class="icon-plus icon-black"></i> Ajouter une prescription type</a>
-            </li>
-            <li>
-                <a href=""><i class="icon-plus icon-black"></i> Ajouter une prescription</a>
-            </li>
-        <?php endif ?>
-            <?php if ( $this->action == "liees" ) : ?>
-            <li>
-                <a class="sep" href=""><i class="icon-hdd icon-black"></i> Sauvegarder les liaisons</a>
-            </li>
-            <li>
-                <a href=""><i class="icon-retweet icon-black"></i> Lier à un dossier</a>
-            </li>
-        <?php endif ?>
-        <?php if ( $this->action == "contact" ) : ?>
-            <li>
-                <a class="sep" href=""><i class="icon-plus icon-black"></i> Ajouter un contact extistant</a>
-            </li>
-            <li>
-                <a href=""><i class="icon-plus icon-black"></i> Ajouter un nouveau contact</a>
-            </li>
-        <?php endif ?>
-        <?php if ( $this->action == "piece-jointe" ) : ?>
-            <li>
-                <a class="sep" href=""><i class="icon-plus icon-black"></i> Ajouter une pièce-jointe</a>
-            </li>
-            <li>
-                <a href=""><i class="icon-plus icon-black"></i> Ajout rapide</a>
-            </li>
-        <?php endif ?>
+        <?php if (!$verrou && ($this->idDateCommissionAffect != null)) : ?>
+        <li>
+            <a class="sep" href='/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $this->idDateCommissionAffect; ?>'><i class='icon-calendar icon-black'></i> Afficher ordre du jour</a>
+        </li>
+        <?php endif; ?>
     </ul>
 <?php $this->placeholder('lateral_navigation')->captureEnd();
 endif; ?>
@@ -258,6 +214,76 @@ endif; ?>
 			return false;
 		});
 		
+                $("#rapport").live('click',function(){
+		//On charge le contenu de la boite de dialogue en Ajax (liste des établissements concernés)
+		$.ajax({
+			url: "/dossier/dialoggenrapport",
+			data: "idDossier="+$("#idDossier").val(),
+			type:"POST",
+			//async: false,
+			beforeSend: function(){
+
+			},
+			success: function(affichageResultat){
+				$("#dialogComm").html('').html(affichageResultat).dialog({
+					resizable: false,
+					height:550,
+					width:800,
+					modal: true,
+					title: 'Génération des rapports',
+					buttons: {
+						'Annuler': function() {
+							$(this).dialog('close');
+							$("#dialogComm").html('');
+						}
+					},
+					close: function(event, ui){
+						$("body").css('overflow','auto');
+						$("#dialogComm").html('');
+					}
+				});				
+			},
+			error: function(){
+				return false;
+			}
+		});
+		
+		return false;		
+	});
+	
+	$("#generate").live('click',function() {
+		var selected = false;
+		$(".etabCheck").each(function(){
+
+			if($(this).attr('checked')){
+				selected = $(this).attr('checked');
+			}
+
+		});
+		
+		if(selected){
+			$.ajax({
+				url: "/dossier/generationrapport",
+				data: $("#etabRapport").serialize()+"&idDossier="+$("#idDossier").val(),
+				type:"POST",
+				//async: false,
+				beforeSend: function(){
+					$("#dialogComm").html("<img src='/images/load.gif' />");
+				},
+				success: function(affichageResultat){
+					var successMess = "<h3>Génération effectuée avec succès</h3><br/>";
+					$("#dialogComm").html(successMess+affichageResultat);
+					$("#dialogComm").append("Vous pouvez retrouver ces documents dans la partie pièces jointes");
+				},
+				error: function(){
+					$("#dialogComm").html("<h3>Erreur lors de la génération du rapport</h3><br/>Si le problème persiste veuillez contacter votre administrateur");
+					return false;
+				}
+			});
+		}
+		return false;		
+	});
+                
     });
 </script>
 

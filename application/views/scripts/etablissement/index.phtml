@@ -200,7 +200,7 @@
             <!-- Etablissement lié -->
             <?php if(count($this->etablissement['etablissement_lies']) > 0) : ?>
             <h4 class='h4_subtitle'>Établissements liés <small><?php echo count($this->etablissement['etablissement_lies']) > 0 ? "(" . count($this->etablissement['etablissement_lies']) . " établissements)" : "" ?></small></h4>
-            <ul class='recherche_liste unstyled' style='height: 500px; overflow-y: scroll;'>
+            <ul class='recherche_liste unstyled no_slide' style='max-height: 500px; overflow-y: scroll;'>
                 <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissement['etablissement_lies']); ?>
             </ul>
             <?php endif ?>
@@ -372,7 +372,7 @@
                         <tbody>
                             <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
                                 <tr>
-                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUETYPE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"] ?></td>
+                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"] ?></td>
                                     <td>Adresse postale</td>
                                 </tr>
                             <?php endforeach ?>
@@ -495,21 +495,5 @@
     $(document).ready(function() {
         // Par défaut, on montre le premier onglet disponible (carte, diapo, ou plans) sinon rien
         $('#menu_nav a:last').tab('show');
-
-        // Slide des établissements enfants contenant d'autres établissements
-        $("ul.recherche_liste li.slide").live("click", function() {
-            var container = this;
-            if( $(this).hasClass("active") ) {
-                $(this).next().slideUp(400, function() {$(container).next().remove()});
-                $(this).toggleClass("active");
-            }
-            else {
-                $(container).find(".load").show();
-                $.post("/search/display-ajax-search", {items: 'etablissement', parent: $(this).attr("id")}, function(html) {
-                    $(container).toggleClass("active").find(".load").hide();
-                    $(container).after("<li class='ui-helper-hidden' style='overflow: auto; height: auto;' >" + html + "</li>").next().slideDown();
-                });
-            }
-        });
     });
 </script>

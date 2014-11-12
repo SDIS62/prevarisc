@@ -977,7 +977,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 				$existe = 0;
 				foreach($tabCommune as $tabKey => $value){
 					if(count($ue['infosEtab']["adresses"]) > 0){
-						if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
+						if(isset($value[0]) && $value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
 							$existe = 1;
 						}
 					}
@@ -1092,7 +1092,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 				//echo $value[0]."<br/>";
 				if(isset($ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']))
 				{
-					if($value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
+					if(isset($value[0]) && $value[0] == $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']){
 						$existe = 1;
 					}
 				}else{
