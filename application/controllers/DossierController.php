@@ -1350,6 +1350,7 @@ class DossierController extends Zend_Controller_Action
 				$this->view->selectEtab[$etab]['libelleParent'] = "";
 			}
 		}
+		
     }
 
     //Action permettant de lister les établissements et les dossiers liés
