@@ -1937,8 +1937,9 @@ CREATE TABLE `listedocconsulte` (
   `ETUDE_DOC` tinyint(1) NOT NULL DEFAULT '0',
   `VISITERT_DOC` tinyint(1) NOT NULL DEFAULT '0',
   `VISITEVAO_DOC` tinyint(1) NOT NULL DEFAULT '0',
+  `ORDRE_DOC` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID_DOC`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=60 ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1947,7 +1948,66 @@ CREATE TABLE `listedocconsulte` (
 
 LOCK TABLES `listedocconsulte` WRITE;
 /*!40000 ALTER TABLE `listedocconsulte` DISABLE KEYS */;
-INSERT INTO `listedocconsulte` VALUES (1,'Un courrier de',0,1,0,0),(2,'Un jeu de plans',0,1,0,0),(3,'Une notice de sécurité',0,1,0,0),(4,'Une notice descriptive',0,1,0,0),(5,'Un engagement solidité',0,1,0,0),(6,'Un rapport initial de contrôle technique',0,1,0,0),(7,'Une attestation du directeur unique de sécurité',0,1,0,0),(8,'Relevé de vérification du désenfumage (Art. DF 10)',1,0,0,0),(9,'RVRE triennal du désenfumage mécanique associé à un SSI A ou B',1,0,0,0),(10,'Relevé de vérification du chauffage-ventilation (Art. CH 58)',1,0,0,0),(11,'Attestation de ramonage ou visite des conduits (Art. CH 57)',1,0,0,0),(12,'Relevé de vérification du gaz (Art. GZ 30)',1,0,0,0),(13,'Relevé de vérification des fluides médicaux (Art. U 64 ou J 33)',1,0,0,0),(14,'Relevé ou RVRE des installations électriques et/ou des paratonnerres ou protection contre la foudre (Art. EL 19)',1,0,0,0),(15,'RVRE quinquennal des ascenseurs (Art. AS 9)',1,0,0,0),(16,'Relevé de vérification des ascenseurs (Art. AS 9) et/ou escaliers mécaniques et trottoirs roulants (Art. AS 10)',1,0,0,0),(17,'Contrat d’entretien des ascenseurs, escaliers mécaniques et trottoirs roulants (Art. AS 8)',1,0,0,0),(18,'Attestation de nettoyage du circuit d’extraction (Art. GC 21)',1,0,0,0),(19,'Relevé de vérification des appareils de cuisson (Art. GC 22)',1,0,0,0),(20,'Relevé de vérification des extincteurs (Art. MS 38)',1,0,0,0),(21,'Révision décennal des extincteurs (Art. MS 38)',1,0,0,0),(22,'Relevé de vérification des colonnes sèches (Art. MS 73)',1,0,0,0),(23,'Relevé de vérification des R.I.A. (Art. MS 73)',1,0,0,0),(24,'Relevé de vérification du système d’extinction automatique du type sprinkleur (Art. MS 29/73) ou déversoirs et rideaux d’eau (L 57)',1,0,0,0),(25,'RVRE triennal du sprinkleur (Art. MS 73)',1,0,0,0),(26,'RVRE triennal du SSI A ou B (Art. MS 73)',1,0,0,0),(27,'Relevé de vérification du SSI  ou  d’équipement  d’alarme,  détection,  portes, clapets coupe-feu (Art. MS 73)',1,0,0,0),(28,'Contrat d’entretien du Système de Sécurité Incendie (Art. MS 58)',1,0,0,0),(29,'Dossier d’identité du Système de Sécurité Incendie (Art. MS 73)',1,0,0,0),(30,'Attestation de vérification des communications radioélectriques (Art. MS 71)',1,0,0,0),(31,'RVRE triennal des moyens de communications radioélectriques mode relayés (Art. MS 71)',1,0,0,0),(32,'Relevé de vérification des poteaux d’incendie privés',1,0,0,0),(33,'Relevé de vérification des portes automatiques en façade (Art. GE 6)',1,0,0,0),(34,'Contrat d’entretien des portes automatiques en façade (Art. CO 48)',1,0,0,0),(35,'RVRE des équipements de levage des salles avec espace scénique (L 57)',1,0,0,0),(36,'RVRE triennal des salles de spectacles avec espace scénique (L 57)',1,0,0,0),(37,'Dossier technique amiante',1,0,0,0),(38,'Exercice d’évacuation réalisé',1,0,0,0),(39,'Formation des personnels à l’utilisation des moyens de secours',1,0,0,0),(40,'Cahier des charges fonctionnelles du SSI',0,1,0,0),(41,'Attestation de solidité',0,0,1,1),(42,'Attestation du maître d\'ouvrage',0,0,1,1),(43,'RVRAT',0,0,1,1),(44,'Attestation de réception des hydrants',0,0,1,1),(45,'Dossier d\'identité SSI',0,0,1,1),(46,'Rapport de réception technique du SSI',0,0,1,1),(47,'Mise à jour du dossier d\'identité du SSI',0,0,1,0),(48,'Attestation de réception de modification sprinkleur',0,0,1,0),(49,'Attestation de réception de modification de détection incendie',0,0,1,0);
+INSERT INTO `listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`, `ORDRE_DOC`) VALUES
+(1, 'Un courrier de', 0, 1, 0, 0, 0),
+(2, 'Un jeu de plans', 0, 1, 0, 0, 0),
+(3, 'Une notice de sécurité', 0, 1, 0, 0, 0),
+(4, 'Une notice descriptive', 0, 1, 0, 0, 0),
+(5, 'Un engagement solidité', 0, 1, 0, 0, 0),
+(6, 'Un rapport initial de contrôle technique', 0, 1, 0, 0, 0),
+(7, 'Une attestation du directeur unique de sécurité', 0, 1, 0, 0, 0),
+(8, 'Désenfumage mécanique : Tous les ans par un technicien compétent (DF 10)', 1, 0, 0, 0, 6),
+(9, 'Désenfumage mécanique : Organisme agréé 3 ans SSI A et B', 1, 0, 0, 0, 7),
+(10, 'Chauffage : Relevé de vérification du chauffage-ventilation (CH 58)', 1, 0, 0, 0, 8),
+(11, 'Ramonage : Attestation de ramonage ou visite des conduits (CH 57)', 1, 0, 0, 0, 10),
+(12, 'Gaz : Relevé de vérification du gaz (GZ 30) (GZ 29)', 1, 0, 0, 0, 12),
+(13, 'Gaz médicaux : Relevé de vérification des fluides médicaux (U 64 / J 33)', 1, 0, 0, 0, 37),
+(14, 'Électricité : Relevé ou RVRE des installations électriques et/ou des paratonnerres ou protection contre la foudre (EL 19)', 1, 0, 0, 0, 14),
+(15, 'Ascenseurs Monte-charges : RVRE quinquennal des ascenseurs (AS 9)', 1, 0, 0, 0, 18),
+(16, 'Ascenseurs Monte-charges : Tous les ans (AS 11)', 1, 0, 0, 0, 17),
+(17, 'Ascenseurs Monte-charges : Contrat d’entretien des ascenseurs, escaliers mécaniques et trottoirs roulants (AS 8)', 1, 0, 0, 0, 19),
+(18, 'Hotte : Attestation de nettoyage du circuit d’extraction (GC 21)', 1, 0, 0, 0, 22),
+(19, 'Appareils de cuisson : Relevé de vérification des appareils de cuisson (GC 22)', 1, 0, 0, 0, 21),
+(20, 'Extincteurs : Relevé de vérification des extincteurs (MS 38)', 1, 0, 0, 0, 30),
+(21, 'Extincteurs : Révision décennale des extincteurs (MS 38)', 1, 0, 0, 0, 31),
+(22, 'Autres installations : Relevé de vérification des colonnes sèches (MS 73)', 1, 0, 0, 0, 42),
+(23, 'RIA : Relevé de vérification des R.I.A. (MS 73)', 1, 0, 0, 0, 29),
+(24, 'Installation fixe d''extinction automatique à eau : Relevé de vérification du système d’extinction automatique du type sprinkleur (MS 29/73) ou déversoirs et rideaux d’eau (L 57)', 1, 0, 0, 0, 27),
+(25, 'Installation fixe d''extinction automatique à eau : RVRE triennal du sprinkleur (MS 73)', 1, 0, 0, 0, 28),
+(26, 'Système de sécurité Incendie Alarme Détection : RVRE triennal du SSI A ou B (MS 73)', 1, 0, 0, 0, 24),
+(27, 'Système de sécurité Incendie Alarme Détection : Relevé de vérification du SSI ou d’équipement d’alarme, détection, portes, clapets coupe-feu (MS 73)', 1, 0, 0, 0, 23),
+(28, 'Système de sécurité Incendie Alarme Détection :  Contrat d’entretien du Système de Sécurité Incendie (MS 58)', 1, 0, 0, 0, 25),
+(29, 'Système de sécurité Incendie Alarme Détection : Dossier d’identité du Système de Sécurité Incendie (MS 73)', 1, 0, 0, 0, 26),
+(30, 'Communication radioélectrique : Attestation de vérification des communications radioélectriques (MS 71)', 1, 0, 0, 0, 35),
+(31, 'Communication radioélectrique : RVRE triennal des moyens de communications radioélectriques mode relayés (MS 71)', 1, 0, 0, 0, 36),
+(32, 'Relevé de vérification des PI/BI (MS 73)', 1, 0, 0, 0, 34),
+(33, 'Portes automatiques : Relevé de vérification des portes automatiques en façade (CO 48)', 1, 0, 0, 0, 3),
+(34, 'Portes automatiques : Contrat d’entretien des portes automatiques en façade (CO 48)', 1, 0, 0, 0, 4),
+(35, 'Espaces scéniques : RVRE des équipements de levage des salles avec espace scénique (L 57)', 1, 0, 0, 0, 38),
+(36, 'Espaces scéniques : RVRE triennal des salles de spectacles avec espace scénique (L 57)', 1, 0, 0, 0, 39),
+(37, 'Dossier technique amiante', 1, 0, 0, 0, 2),
+(38, 'Formation Exercice : Exercice d’évacuation réalisé', 1, 0, 0, 0, 32),
+(39, 'Formation Exercice :  Formation des personnels à l’utilisation des moyens de secours', 1, 0, 0, 0, 33),
+(40, 'Cahier des charges fonctionnelles du SSI', 0, 1, 0, 0, 0),
+(41, 'Attestation de solidité', 0, 0, 1, 1, 0),
+(42, 'Attestation du maître d''ouvrage', 0, 0, 1, 1, 0),
+(43, 'RVRAT', 0, 0, 1, 1, 0),
+(44, 'Attestation de réception des hydrants', 0, 0, 1, 1, 0),
+(45, 'Dossier d''identité SSI', 0, 0, 1, 1, 0),
+(46, 'Rapport de réception technique du SSI', 0, 0, 1, 1, 0),
+(47, 'Mise à jour du dossier d''identité du SSI', 0, 0, 1, 0, 0),
+(48, 'Attestation de réception de modification sprinkleur', 0, 0, 1, 0, 0),
+(49, 'Attestation de réception de modification de détection incendie', 0, 0, 1, 0, 0),
+(50, 'Registre de sécurité', 1, 0, 0, 0, 1),
+(51, 'Désenfumage naturel : Tous les ans par un technicien compétent (DF 10)', 1, 0, 0, 0, 5),
+(52, 'Etanchéité (gaz liquide frigorigène) : Tous les ans par un technicien compétent (CH 58) (CH 57)', 1, 0, 0, 0, 9),
+(53, 'Traitement air VMC : Tous les ans par un technicien compétent (CH 58) (CH 57)', 1, 0, 0, 0, 11),
+(54, 'Groupe électrogène : TC/15j / 1/mois (EL18)', 1, 0, 0, 0, 13),
+(55, 'Installations extérieures de protection contre la foudre : Tous les ans par un technicien compétent (EL 19)', 1, 0, 0, 0, 15),
+(56, 'Éclairage : Tous les ans par un technicien compétent (EC 15)', 1, 0, 0, 0, 16),
+(57, 'Escaliers mécaniques : Annuel OA (AS 10)', 1, 0, 0, 0, 20),
+(58, 'Réglage luminosité et son : L 13 OA 1 an', 1, 0, 0, 0, 40),
+(59, '5ème avec hébergement : PE4 PO1 - 2 ans TC : SSI DF manuel CH GC GZ - 1 an TC : EL/détection + contrat', 1, 0, 0, 0, 41);
 /*!40000 ALTER TABLE `listedocconsulte` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2661,7 +2721,7 @@ CREATE TABLE `utilisateurinformations` (
 
 LOCK TABLES `utilisateurinformations` WRITE;
 /*!40000 ALTER TABLE `utilisateurinformations` DISABLE KEYS */;
-INSERT INTO `utilisateurinformations` VALUES (1,'ROOT','ROOT',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,99);
+INSERT INTO `utilisateurinformations` VALUES (1,'ROOT','ROOT',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,99,NULL);
 /*!40000 ALTER TABLE `utilisateurinformations` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
