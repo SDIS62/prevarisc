@@ -24,10 +24,10 @@
     <?php foreach($this->listeFichiers as $lien) : ?>
     <tr style='height:20px;'>
         <td>
-            <a href='<?php echo $this->path . "/" . $lien ?>'><?php echo $lien ?></a>
+            <a href="<?php echo $this->path . "/" . $lien ?>"><?php echo $lien ?></a>
         </td>
         <td>
-            <a href='/' class='supp' id='<?php echo $lien ?>'>Suppression du document</a>
+            <a href='#' class='supp' id="<?php echo $lien ?>">Suppression du document</a>
         </td>
     </tr>
     <?php endforeach ?>
@@ -108,7 +108,7 @@ $(document).ready(function() {
 
 		var dialog_supp = $("<div id='dialog-supp'></div>").appendTo("body");
 		
-		dialog_supp.html("Vous êtes sur le point de supprimer le fichier "+nomFichier+".<br/> Une fois ce fichier supprimé il ne pourra plus être utilisé lors de la génération des rapports.");
+		dialog_supp.html("Vous êtes sur le point de supprimer le fichier \""+nomFichier+"\".<br/> Une fois ce fichier supprimé il ne pourra plus être utilisé lors de la génération des rapports.");
 
 		dialog_supp.dialog({
 			title: "Suppresion document",
@@ -122,7 +122,9 @@ $(document).ready(function() {
 					$.ajax({
 						type: "POST",
 						url: "/gestion-des-documents/suppdoc",
-						data:"name="+nomFichier,
+						data:{
+                                                    name:nomFichier
+                                                },
 						success: function(msg){					
 							//suppression de la ligne
 							elementDoc.parent().parent().remove();

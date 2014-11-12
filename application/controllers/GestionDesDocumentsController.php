@@ -48,7 +48,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
             if (move_uploaded_file($_FILES['fichier']['tmp_name'], $this->path .DS. $_FILES['fichier']['name'])) {
                 echo "
                     <script type='text/javascript'>
-                        window.top.window.callback('".$_FILES['fichier']['name']."');
+                        window.top.window.callback(\"".$_FILES['fichier']['name']."\");
                     </script>
                 ";
             }

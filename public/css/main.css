@@ -776,10 +776,6 @@ text-decoration: none;
     text-shadow: none;
 }
 
-li .white_link {
-    background-color: white;
-}
-
 .main-container-fluid {
     display: table-cell;
     width: 10%;
@@ -847,7 +843,6 @@ li .white_link {
   margin-bottom: 0;
 }
 
-.menu_dashboard li.active a ,
 .menu_dashboard li:hover a
 {
   background: #f9f9f9;

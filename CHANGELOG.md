@@ -10,12 +10,17 @@ Evolutions :
 * Ajout de couleurs sur les liens des popup (illisible avant)
 * Ajout du bouton "Générer un document" sur tous les onglets de la partie dossier
 * Suppression des actions de la barre latérale dans les dossiers et qui ne fonctionne pas et en doublon...
+* Ajout d'un message d'avertissement sur une visite positive avant ouverture d'un ets en projet
 
 Corrections :
 
 * Correction du titre de l'évenement ajouté au calendrier des comission dans l'ajout/modif d'un dossier en lien avec les titre des établissements modifiés
 * Correction d'un problème d'overflow et align center sur l'auto-complete des nom des contacts existants sur les établissements
-* Correction d'un problème de style sur les onglets sélectionnés
+* Correction d'un problème de style sur les onglets sélectionnés dans dossiers et ets
+* Correction d'un problème sur le filtre "classe" dans la recherche des établissements
+* Correction d'un warning sur variable $this->afficherChamps non définit dans le template dossier/general sur les nouveaux dossiers
+* Correction d'erreurs sur ajout et suppression d'un modèle de rapport avec quotes dans le fichier
+* Correction de l'ajout d'un RDV dans le calendrier pour un établissement contenant des quotes
 
 ## 2.2
 

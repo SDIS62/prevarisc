@@ -217,6 +217,7 @@ class DossierController extends Zend_Controller_Action
         //Récupération de la liste des avis pour la génération du select
         $DBlisteAvis = new Model_DbTable_Avis;
         $this->view->listeAvis = $DBlisteAvis->getAvis();
+        $this->view->afficherChamps = array();
         
         // AUTORISATIONS CHANGEMENT AVIS DE LA COMMISSION
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
@@ -476,6 +477,7 @@ class DossierController extends Zend_Controller_Action
                 }
             }
             $this->view->afficherChamps = $afficherChamps;
+            
             
             
             

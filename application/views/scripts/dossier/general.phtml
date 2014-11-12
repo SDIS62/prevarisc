@@ -1100,7 +1100,7 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Date de création du dossier</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
 						".$this->infosDossier['DATEINSERT_DOSSIER']." ".(($this->user_info)? "par : ".$this->user_info['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_info['NOM_UTILISATEURINFORMATIONS'] :"")."
-						".( ($this->infosDossier['VERROU_DOSSIER']) ? " - Verouillé par : ".$this->user_infoVerrou['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_infoVerrou['NOM_UTILISATEURINFORMATIONS'] :"")."						
+						".( ($this->infosDossier['VERROU_DOSSIER']) ? " - Verrouillé par : ".$this->user_infoVerrou['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_infoVerrou['NOM_UTILISATEURINFORMATIONS'] :"")."						
 					</div >
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
 						<input type='text' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".( ($this->DATEINSERT_INPUT)?$this->DATEINSERT_INPUT:"" )."' />
