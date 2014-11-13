@@ -86,27 +86,27 @@ class DossierController extends Zend_Controller_Action
         "43" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
     //COURRIER/COURRIEL
         //Lettre - OK
-        "52" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "52" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Mise en demeure - OK
-        "55" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "55" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Avis écrit motivé - OK
-        "51" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "51" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Consultation PLU - OK
-        "53" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "53" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Rapport d'organisme agréé - OK
-        "49" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "49" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de renseignements
-        "54" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "54" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite périodique
-        "59" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "59" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite technique
-        "57" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "57" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite inopinée
-        "58" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "58" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite hors programme
-        "50" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "50" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite de réception
-        "60" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "60" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         
     //INTERVENTION
         //Incendie - OK
@@ -152,7 +152,6 @@ class DossierController extends Zend_Controller_Action
 		$this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
 
         if ($id_dossier != null) {
-
             //Si on à l'id d'un dossier, on récupére tous les établissements liés à ce dossier
             $DBdossier = new Model_DbTable_Dossier;
             $dossier = $DBdossier->find($id_dossier)->current();
@@ -172,6 +171,32 @@ class DossierController extends Zend_Controller_Action
 			$this->view->verrou = $dossier->VERROU_DOSSIER;
         }
     }
+	
+	public function getetabsAction()
+    {
+		if ($this->_getParam("idEtablissement")) {
+			$DBetab = new Model_DbTable_Etablissement;
+			$etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
+
+			$this->view->etablissement = $etabTab->toArray();
+			
+			$DbAdresse = new Model_DbTable_EtablissementAdresse;
+			$this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
+			
+			$service_etablissement = new Service_Etablissement;
+			$this->view->etablissementInfos = $service_etablissement->get($this->_getParam("idEtablissement"));
+		} elseif ($this->_getParam("idDossier")) {
+			$DBdossier = new Model_DbTable_Dossier;
+			$tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
+			$this->view->listeEtablissement = $tabEtablissement;
+			
+			$service_etablissement = new Service_Etablissement;
+			foreach($this->view->listeEtablissement as $val => $ue){
+					$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+					$this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
+			}
+		}
+	}
 
     public function indexAction()
     {
@@ -577,30 +602,6 @@ class DossierController extends Zend_Controller_Action
     {
         $this->view->do = $this->_getParam("do");
         switch ($this->view->do) {
-            case "infosEtabs":
-                if ($this->_getParam("idEtablissement")) {
-                    $DBetab = new Model_DbTable_Etablissement;
-                    $etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
-
-                    $this->view->etablissement = $etabTab->toArray();
-					
-                    $DbAdresse = new Model_DbTable_EtablissementAdresse;
-                    $this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
-					
-					$service_etablissement = new Service_Etablissement;
-					$this->view->etablissementInfos = $service_etablissement->get($this->_getParam("idEtablissement"));
-                } elseif ($this->_getParam("idDossier")) {
-                    $DBdossier = new Model_DbTable_Dossier;
-                    $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
-                    $this->view->listeEtablissement = $tabEtablissement;
-					
-                    $service_etablissement = new Service_Etablissement;
-                    foreach($this->view->listeEtablissement as $val => $ue){
-                            $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-                            $this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
-                    }
-                }
-            break;
             case "showNature":
                 $idType = (int) $this->_getParam("idType");
 

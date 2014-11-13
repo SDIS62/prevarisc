@@ -1528,7 +1528,23 @@ echo "
 						<input type='text' class='date' id='DATEREP_DOSSIER' name='DATEREP_DOSSIER' value='".( ($this->DATEREP_INPUT)?$this->DATEREP_INPUT:"" )."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
-				</li>				
+				</li>
+				<li class='row-fluid' id='DATETRANSFERTCOMM' style='".( ($action != 'new' && in_array('DATETRANSFERTCOMM', $this->afficherChamps) && $this->infosDossier['DATETRANSFERTCOMM_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date de transfert à la commissions compétente</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATETRANSFERTCOMM_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".( ($this->DATEREP_INPUT)?$this->DATEREP_INPUT:"" )."' />
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
+					</div>
+				</li>
+				<li class='row-fluid' id='DATERECEPTIONCOMM' style='".( ($action != 'new' && in_array('DATERECEPTIONCOMM', $this->afficherChamps) && $this->infosDossier['DATERECEPTIONCOMM_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Date de réception à la commissions compétente</div>
+					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATERECEPTIONCOMM_DOSSIER']."</div>
+					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".( ($this->DATEREP_INPUT)?$this->DATEREP_INPUT:"" )."' />
+						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
+					</div>
+				</li>
 				<li class='row-fluid' id='DATEREUN' style='".( ($action != 'new' && in_array('DATEREUN', $this->afficherChamps) && $this->infosDossier['DATEREUN_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date réunion</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREUN_DOSSIER']."</div>
