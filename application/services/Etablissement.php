@@ -136,11 +136,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray();
 
             // Récupération de l'indicateur de présence d'un DUS
-            $contacts_etablissements_parents = array();
             $contacts_dus = array();
-            $contacts_etablissements_parents = array_merge($contacts_etablissements_parents, $this->getAllContacts($id_etablissement));
+            $contacts = array_merge(array(), $this->getAllContacts($id_etablissement));
             foreach($etablissement_parents as $etablissement_parent) {
-                $contacts_etablissements_parents = array_merge($contacts_etablissements_parents, $this->getAllContacts($etablissement_parent['ID_ETABLISSEMENT']));
+                $contacts = array_merge($contacts, $this->getAllContacts($etablissement_parent['ID_ETABLISSEMENT']));
             }
             foreach($contacts as $contact) {
                 if($contact['ID_FONCTION'] == 8) {
