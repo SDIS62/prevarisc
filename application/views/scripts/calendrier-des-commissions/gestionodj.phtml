@@ -504,17 +504,19 @@ $(document).ready(function() {
 							//si le dossier est attaché à un établissement
 							echo $dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
 						}
-
-						$nbAdresse = count($dossierNonAffect['infosEtab']['adresses']);
-						if($nbAdresse != 0){
-							echo " (";
-							foreach($dossierNonAffect['infosEtab']['adresses'] as $commune){
-								echo $commune['LIBELLE_COMMUNE'];
-								if($nbAdresse != 1)
-									echo ", ";
-								$nbAdresse--;
+						
+						if(isset($dossierNonAffect['infosEtab']['adresses'])){
+							$nbAdresse = count($dossierNonAffect['infosEtab']['adresses']);
+							if($nbAdresse != 0){
+								echo " (";
+								foreach($dossierNonAffect['infosEtab']['adresses'] as $commune){
+									echo $commune['LIBELLE_COMMUNE'];
+									if($nbAdresse != 1)
+										echo ", ";
+									$nbAdresse--;
+								}
+								echo ") ";
 							}
-							echo ") ";
 						}else{
 							echo " ( adresse non renseignée )";
 						}
@@ -542,16 +544,18 @@ $(document).ready(function() {
 						}
 
 						//affichage preventionniste(s)
-						$nbPrev = count($dossierNonAffect['preventionnistes']);
-						if($nbPrev >0){
-							echo "<br/><span style='font-size:10px'>";
-							foreach($dossierNonAffect['preventionnistes'] as $prev){
-								echo $prev['NOM_UTILISATEURINFORMATIONS']." ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
-								if($nbPrev > 1)
-									echo ", ";
-								$nbPrev--;
+						if(isset($dossierNonAffect['preventionnistes'])){
+							$nbPrev = count($dossierNonAffect['preventionnistes']);
+							if($nbPrev >0){
+								echo "<br/><span style='font-size:10px'>";
+								foreach($dossierNonAffect['preventionnistes'] as $prev){
+									echo $prev['NOM_UTILISATEURINFORMATIONS']." ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
+									if($nbPrev > 1)
+										echo ", ";
+									$nbPrev--;
+								}
+								echo "</span>";
 							}
-							echo "</span>";
 						}
 						
 						echo "

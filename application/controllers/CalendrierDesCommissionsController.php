@@ -106,12 +106,14 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$dbDocUrba = new Model_DbTable_DossierDocUrba;
 		$service_etablissement = new Service_Etablissement;
 		$DB_prev = new Model_DbTable_DossierPreventionniste;
+		
 		foreach($listeDossiersNonAffect as $val => $ue)
 		{
 			//On recupere la liste des établissements qui concernent le dossier
 			$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
 			//$listeEtab[0]['ID_ETABLISSEMENT'];
 			//on recupere la liste des infos des établissement
+			
 			if(count($listeEtab) > 0)
 			{
 				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
@@ -120,11 +122,11 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 				$listeDossiersNonAffect[$val]['listeDocUrba'] = $listeDocUrba;
 
 				$listeDossiersNonAffect[$val]['preventionnistes'] = $DB_prev->getPrevDossier( $ue['ID_DOSSIER'] );
-			}else{
-				unset($listeDossiersNonAffect[$val]);
 			}
 		}
-
+		
+		//Zend_Debug::dump($listeDossiersNonAffect);
+		
         //Gestion de l'affichage de la date de la commission
         $date =  new Zend_Date($infosDateComm['DATE_COMMISSION'],'yyyy-MM-dd');
         $this->view->dateFr = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR,'fr');

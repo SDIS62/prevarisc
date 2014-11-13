@@ -257,7 +257,7 @@
                 WHERE etablissementdossier.ID_ETABLISSEMENT = t1.ID_ETABLISSEMENT
                 AND t1.ID_GENRE = genre.ID_GENRE
                 AND etablissementdossier.ID_DOSSIER = '".$id_dossier."'
-				AND (genre.ID_GENRE = 2 || genre.ID_GENRE = 3)
+				AND (genre.ID_GENRE = 2 || genre.ID_GENRE = 3 || genre.ID_GENRE = 5)
                 AND t1.DATE_ETABLISSEMENTINFORMATIONS = (
                     SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS)
                     FROM etablissementdossier, etablissementinformations
