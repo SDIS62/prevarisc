@@ -21,14 +21,12 @@ class SearchController extends Zend_Controller_Action
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
 
-
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
         $this->view->DB_avis = $service_avis->getAll();
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_typeactivite = $service_typeactivite->getAllWithTypes();
         $this->view->DB_famille = $service_famille->getAll();
-
 
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
@@ -67,28 +65,28 @@ class SearchController extends Zend_Controller_Action
         $service_search = new Service_Search;
         $service_commissions = new Service_Commission;
         $service_adresse = new Service_Adresse;
+        $service_dossier = new Service_Dossier;
 
-        $DB_type = new Model_DbTable_DossierType();
-        $this->view->DB_type = $DB_type->fetchAll()->toArray();
+        $this->view->DB_type = $service_dossier->getAllTypes();
         $this->view->array_commissions = $service_commissions->getCommissionsAndTypes();
         $this->view->array_communes = $service_adresse->getAllCommunes();
-        $search_prev_actifs = array();
-        $array_voies = array();
+        $this->view->liste_prev = $service_search->listePrevActifs();
+        $this->view->array_voies = $this->_request->isGet() && count($this->_request->getQuery()) > 0 && array_key_exists('commune', $this->_request->getQuery()) && $this->_request->getQuery()['commune'] != '' ? $service_adresse->getVoies($this->_request->getQuery()['commune']) : array();
+
+        $checkDateFormat = function($date) {
+            if (!$date) return false;
+            $dateArgs = explode('/', $date);
+            return checkdate($dateArgs[1], $dateArgs[0], $dateArgs[2]);
+        };
 
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
-                $criteresRecherche = array();
-
-                if (array_key_exists('commune',$parameters) && $parameters['commune'] != ''){
-                    $array_voies = $service_adresse->getVoies($parameters['commune']);
-                }
-                $search_prev_actifs = $service_search->listePrevActifs();
-
                 $page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
                 $num_doc_urba = array_key_exists('objet', $parameters) && $parameters['objet'] != '' && (string) $parameters['objet'][0] == '#'? substr($parameters['objet'], 1) : null;
                 $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != ''  && (string) $parameters['objet'][0] != '#'? $parameters['objet'] : null;
                 $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
+                $criteresRecherche = array();
                 $criteresRecherche['commissions'] = array_key_exists('commissions', $parameters) ? $parameters['commissions'] : null;
                 $criteresRecherche['avisCommission'] = array_key_exists('avisCommission', $parameters) ? $parameters['avisCommission'] : null;
                 $criteresRecherche['avisRapporteur'] = array_key_exists('avisRapporteur', $parameters) ? $parameters['avisRapporteur'] : null;
@@ -96,16 +94,12 @@ class SearchController extends Zend_Controller_Action
                 $criteresRecherche['voie'] = array_key_exists('voie', $parameters) && $parameters['voie'] != '' ? $parameters['voie'] : null;
                 $criteresRecherche['permis'] = array_key_exists('permis', $parameters) && $parameters['permis'] != '' ? $parameters['permis'] : null;
                 $criteresRecherche['preventionniste'] = array_key_exists('preventionniste', $parameters) && $parameters['preventionniste'] != '' ? $parameters['preventionniste'] : null;
-
-
-                $criteresRecherche['dateCreationStart'] = array_key_exists('date-creation-start', $parameters) && $this->checkDateFormat($parameters['date-creation-start']) ? $parameters['date-creation-start'] : null;
-                $criteresRecherche['dateCreationEnd'] = array_key_exists('date-creation-end', $parameters) && $this->checkDateFormat($parameters['date-creation-end']) ? $parameters['date-creation-end'] : null;
-
-                $criteresRecherche['dateReceptionStart'] = array_key_exists('date-reception-start', $parameters) && $this->checkDateFormat($parameters['date-reception-start']) ? $parameters['date-reception-start'] : null;
-                $criteresRecherche['dateReceptionEnd'] = array_key_exists('date-reception-end', $parameters) && $this->checkDateFormat($parameters['date-reception-end']) ? $parameters['date-reception-end'] : null;
-
-                $criteresRecherche['dateReponseStart'] = array_key_exists('date-reponse-start', $parameters) && $this->checkDateFormat($parameters['date-reponse-start']) ? $parameters['date-reponse-start'] : null;
-                $criteresRecherche['dateReponseEnd'] = array_key_exists('date-reponse-end', $parameters) && $this->checkDateFormat($parameters['date-reponse-end']) ? $parameters['date-reponse-end'] : null;
+                $criteresRecherche['dateCreationStart'] = array_key_exists('date-creation-start', $parameters) && $checkDateFormat($parameters['date-creation-start']) ? $parameters['date-creation-start'] : null;
+                $criteresRecherche['dateCreationEnd'] = array_key_exists('date-creation-end', $parameters) && $checkDateFormat($parameters['date-creation-end']) ? $parameters['date-creation-end'] : null;
+                $criteresRecherche['dateReceptionStart'] = array_key_exists('date-reception-start', $parameters) && $checkDateFormat($parameters['date-reception-start']) ? $parameters['date-reception-start'] : null;
+                $criteresRecherche['dateReceptionEnd'] = array_key_exists('date-reception-end', $parameters) && $checkDateFormat($parameters['date-reception-end']) ? $parameters['date-reception-end'] : null;
+                $criteresRecherche['dateReponseStart'] = array_key_exists('date-reponse-start', $parameters) && $checkDateFormat($parameters['date-reponse-start']) ? $parameters['date-reponse-start'] : null;
+                $criteresRecherche['dateReponseEnd'] = array_key_exists('date-reponse-end', $parameters) && $checkDateFormat($parameters['date-reponse-end']) ? $parameters['date-reponse-end'] : null;
 
                 $search = $service_search->dossiers($types, $objet, $num_doc_urba, null, null, 50, $page,$criteresRecherche);
 
@@ -117,8 +111,6 @@ class SearchController extends Zend_Controller_Action
             catch(Exception $e) {
                 $this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage() . ')'));
             }
-            $this->view->liste_prev = $search_prev_actifs;
-            $this->view->array_voies = $array_voies;
         }
     }
 
@@ -172,12 +164,5 @@ class SearchController extends Zend_Controller_Action
         $html .= "</ul>";
 
         echo $html;
-    }
-
-    public function checkDateFormat($date)
-    {
-        if (!$date) return false;
-        $dateArgs = explode('/', $date);
-        return checkdate($dateArgs[1], $dateArgs[0], $dateArgs[2]);
     }
 }
