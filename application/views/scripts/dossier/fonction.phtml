@@ -8,7 +8,7 @@
 				echo "Site concerné : &nbsp;";
 				
 				echo "
-					<a href='/etablissement/index/id/".$this->listeEtablissement[0]['ID_ETABLISSEMENT']."'>
+					<a href='/etablissement/index/id/".$this->listeEtablissement[0]['ID_ETABLISSEMENT']."' class='etab'>
 						".$this->listeEtablissement[0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." 
 					</a>
 				";
@@ -23,7 +23,7 @@
 						$idEtabEnCour = $value['ID_ETABLISSEMENTDOSSIER'];
 						echo "<a href='/etablissement/descriptif/id/".$value['ID_ETABLISSEMENT']."' data-target='#modal-desc' data-toggle='modal' id='descEtab' title='Afficher le descriptif'><i class='icon-list-alt icon-black'></i></a>&nbsp;";
 						echo "&nbsp;&nbsp;<a href='/etablissement/dossiers/id/".$value['ID_ETABLISSEMENT']."' title='Se rendre à la liste des dossiers' ><i class='icon-folder-open icon-black'></i></a>&nbsp;&nbsp;";
-						echo "<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."'>".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+						echo "<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."' class='etab'>".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 						$nbAdresse = count($value['infosEtab']['adresses']);
 						if($nbAdresse != 0){
 							echo " (";

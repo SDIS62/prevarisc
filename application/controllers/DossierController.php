@@ -53,11 +53,11 @@ class DossierController extends Zend_Controller_Action
         "33" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION"),
     //VISITE DE COMMISSION
         //Réception de travaux - OK
-        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","NPSP","ABSQUORUM","AVIS_COMMISSION"),
+        "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","ABSQUORUM","AVIS_COMMISSION"),
         //Avant ouverture - OK
-        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","NPSP","ABSQUORUM","AVIS_COMMISSION"),
+        "47" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","ABSQUORUM","AVIS_COMMISSION"),
         //Périodique - OK
-        "21" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","PREVENTIONNISTE","DIFFEREAVIS","ABSQUORUM","AVIS_COMMISSION"),
+        "21" => array("DATEINSERT","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","PREVENTIONNISTE","DIFFEREAVIS","ABSQUORUM","AVIS","AVIS_COMMISSION"),
         //Chantier - OK
         "22" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE"),
         //Controle - OK
@@ -1036,7 +1036,8 @@ class DossierController extends Zend_Controller_Action
             //On met le champ ID_DOSSIER_DONNANT_AVIS de établissement avec l'ID du dossier que l'on vient d'enregistrer dans les cas suivant
             if ($this->_getParam("AVIS_DOSSIER_COMMISSION") && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)) {
                 $MAJEtab = 0;
-                if ($this->_getParam("TYPE_DOSSIER") == 1 && $idNature == 19) {
+
+                if ($this->_getParam("TYPE_DOSSIER") == 1 && in_array($idNature, array(19, 7))) {
                     //Cas d'une étude uniquement dans le cas d'une levée de reserve
                     $MAJEtab = 1;
                 } elseif ($this->_getParam("TYPE_DOSSIER") == 2 && ($idNature == 21 || $idNature == 23 || $idNature == 24 || $idNature == 47)) {
@@ -1369,6 +1370,7 @@ class DossierController extends Zend_Controller_Action
 				$this->view->selectEtab[$etab]['libelleParent'] = "";
 			}
 		}
+		
     }
 
     //Action permettant de lister les établissements et les dossiers liés

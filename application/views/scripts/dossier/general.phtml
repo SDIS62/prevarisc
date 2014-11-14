@@ -296,7 +296,7 @@
 		if(typeDossier == 1)
 		{
 			//etude
-			if(natureDossier == 19)
+			if(natureDossier == 19 || natureDossier == 7)
 			{
 				//levée reserve
 				addText = " à l'exploitation";
@@ -440,12 +440,13 @@
 				//if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
 					// Boite de dialogue en ajoutant en callback le traitement du formulaire
 					var nomEtab = "";
-					if ($("#infosEtabs a").length > 0) {
-						nomEtab = $("#infosEtabs a").text().trim();
-					} else if ($("#infosEtablissement a").length > 0) {
-						nomEtab = $("#infosEtablissement a").text().trim();
+					if ($("#infosEtabs > .etab").length > 0) {
+						nomEtab = $("#infosEtabs > .etab").text().trim();
+					} else if ($("#infosEtablissement > .etab").length > 0) {
+						nomEtab = $("#infosEtablissement > .etab").text().trim();
 					}
 					nomEtab = nomEtab.replace('&nbsp;',' ');
+					nomEtab = nomEtab.replace("'"," ");
 					
 					var nomNature = $("#selectNature option:selected").text().trim();
 					var nomCom = nomNature+" - "+nomEtab;
@@ -1413,7 +1414,7 @@ echo "
 					echo $this->AVIS_VALUE['LIBELLE_AVIS'];
 					if($this->infosDossier['TYPE_DOSSIER'] == 1){
 						//etude
-						if($this->natureConcerne[0]['ID_NATURE'] == 19){
+						if($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7){
 							echo " à l'exploitation";
 						}else{
 							echo " à l'étude";
@@ -1441,7 +1442,7 @@ echo "
 						echo "
 						</select>
 					</div>
-				</li>				
+				</li>
 				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && $this->afficheAvis == 1)? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
@@ -1449,7 +1450,7 @@ echo "
 						echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
 						if($this->infosDossier['TYPE_DOSSIER'] == 1){
 							//etude
-							if($this->natureConcerne[0]['ID_NATURE'] == 19){
+							if($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7){
 								echo " à l'exploitation";
 							}else{
 								echo " à l'étude";
