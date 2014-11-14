@@ -87,7 +87,7 @@ if($this->etablissement){
 	echo "
 		</a>
 	";
-	if($this->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+	if(isset($value['avisExploitation']['LIBELLE_AVIS']) && $this->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
 		if($value['avisExploitation']['LIBELLE_AVIS'] == "Favorable"){
 			echo "<span class='avis F'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
 		}else if($value['avisExploitation']['LIBELLE_AVIS'] == "Défavorable"){

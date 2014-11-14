@@ -174,6 +174,7 @@ class DossierController extends Zend_Controller_Action
 	
 	public function getetabsAction()
     {
+		$DBdossier = new Model_DbTable_Dossier;
 		if ($this->_getParam("idEtablissement")) {
 			$DBetab = new Model_DbTable_Etablissement;
 			$etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
@@ -189,8 +190,7 @@ class DossierController extends Zend_Controller_Action
 				$etablissementInfos['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
 			}
 			$this->view->etablissementInfos = $etablissementInfos;
-		} elseif ($this->_getParam("idDossier")) {
-			$DBdossier = new Model_DbTable_Dossier;
+		} elseif ($this->_getParam("idDossier")) {			
 			$tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
 			$this->view->listeEtablissement = $tabEtablissement;
 			
