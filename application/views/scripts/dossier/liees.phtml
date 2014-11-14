@@ -337,90 +337,47 @@
 				$("#saisieDossier").show();
 			}			
 		});
+		
+		$("#saisieEtab").autocomplete("/api/1.0/search/etablissements?format=json", {
+            extraParams: {
+                label: function() {
+                    return $("#saisieEtab").val();
+                }
+            },
+            minChars: 3,
+            width: 500,
+            parse: function(data) {
+                return $.map(data["response"]["results"], function(row) {
+                    return {
+                        data: row,
+                        value: row.LIBELLE_ETABLISSEMENTINFORMATIONS,
+                        result: row.LIBELLE_ETABLISSEMENTINFORMATIONS
+                    }
+                });
+            },
+            formatItem: function(item) {
+                var LIBELLE_COMMUNE = "non localisée";
+                switch(item.ID_GENRE) {
+                    case "1":
+                        LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_SITE;
+                        break;
 
-	});
-	
-	$(function(){
-		$("#saisieEtab").autocomplete("/dossier/selectionetab?format=json",{
-			minChars: 2,
-			max: 100,
-			parse: function(data) {
-				return $.map(data["selectEtab"], function(row) {
-					return {
-						data: row,
-						value: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent+" ("+row.LIBELLE_COMMUNE_CELLULE+")",
-						result: "[" + row.LIBELLE_GENRE + "] " +row.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+row.libelleParent
-					}
-				});
-			},
-			formatItem: function(item) {
-				return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " | "+item.libelleParent;
-			}
-		}).result(function(e, item) {
-			//$("#texteId").val(item.ID_TEXTE);
-			$("#idSelect").val(item.ID_ETABLISSEMENT);
+                    case "3":
+                        LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_CELLULE;
+                        break;
+
+                    default:
+                        LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+                }
+                return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
+            }
+        }).result(function(e, item) {
+            $("#idSelect").val(item.ID_ETABLISSEMENT);
 			$(this).attr('disabled','disabled');
 			$(".add").show();
 			$(".cancelAdd").show();
-		});
-	
-		/*
-		function format(info){
-			return info.infos;
-		}
+        });
 
-		function affiche(info){
-			return info.id;
-		}
-		
-		$("#saisieEtab").autocomplete('/dossier/selectionetab',
-		{
-			dataType: "json",
-			width: 400,
-			minChars: 1,
-			parse: function(data) {
-				return $.map(data, function(row) {
-					return {
-						data: row,
-						value: row.infos,
-						result: row.infos
-					}
-				});
-			},
-			formatItem: function(item) {
-				return format(item);
-			}
-		}).result(function(e, item) {
-			$("#idSelect").val(affiche(item));
-			$(this).attr('disabled','disabled');
-			$(".add").show();
-			$(".cancelAdd").show();
-		});
-		
-		$("#saisieDossier").autocomplete('/dossier/selectiondossier',
-		{
-			dataType: "json",
-			width: 400,
-			minChars: 1,
-			parse: function(data) {
-				return $.map(data, function(row) {
-					return {
-						data: row,
-						value: row.infos,
-						result: row.infos
-					}
-				});
-			},
-			formatItem: function(item) {
-				return format(item);
-			}
-		}).result(function(e, item) {
-			$("#idSelect").val(affiche(item));
-			$(this).attr('disabled','disabled');
-			$(".add").show();
-			$(".cancel").show();
-		});
-		*/
 	});
 </script>
 
@@ -450,13 +407,13 @@ echo "
 						";
 						if($this->infosDossier['VERROU_DOSSIER'] == 0){
 							echo "
-								<button class='deleteChoix btn' >Supprimer l'etablissement</button>
+								<button class='deleteChoix btn' >Supprimer la liaison</button>
 							";
 						}
 						echo "
 								</span>
 								<span style='display:none;' >
-									<button class='confirmDelete btn' >Supprimer l'etablissement</button>
+									<button class='confirmDelete btn' >Confirmer la suppression</button>
 									<button class='cancelDelete btn' >Annuler</button>
 								</span>
 							</div>
