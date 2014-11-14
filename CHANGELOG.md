@@ -21,6 +21,8 @@ Corrections :
 * Correction d'un warning sur variable $this->afficherChamps non définit dans le template dossier/general sur les nouveaux dossiers
 * Correction d'erreurs sur ajout et suppression d'un modèle de rapport avec quotes dans le fichier
 * Correction de l'ajout d'un RDV dans le calendrier pour un établissement contenant des quotes
+* Correction d'un problème de performance dus aux GROUP BY sur la recherche
+* Correction d'une coquille sur la recherche par adresse des cellules et sites
 
 ## 2.2
 

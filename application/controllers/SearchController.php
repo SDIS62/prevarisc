@@ -86,7 +86,7 @@ class SearchController extends Zend_Controller_Action
                 }
                 $search_prev_actifs = $service_search->listePrevActifs();
 
-                $page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
+                $page = array_key_exists('page', $parameters) ? $parameters['page'] : 1;
                 $num_doc_urba = array_key_exists('objet', $parameters) && $parameters['objet'] != '' && (string) $parameters['objet'][0] == '#'? substr($parameters['objet'], 1) : null;
                 $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != ''  && (string) $parameters['objet'][0] != '#'? $parameters['objet'] : null;
                 $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
@@ -135,7 +135,7 @@ class SearchController extends Zend_Controller_Action
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
-                $page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
+                $page = array_key_exists('page', $parameters) ? $parameters['page'] : 1;
                 $name = $parameters['name'];
                 $fonctions = array_key_exists('fonctions', $parameters) ? $parameters['fonctions'] : null;
 
