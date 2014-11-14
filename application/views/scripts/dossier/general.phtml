@@ -1091,6 +1091,18 @@ echo "
 			<h4>Informations sur le dossier</h4>
 			<!-- BEGIN UL InfosDossier -->
 			<ul id='InfosDossier' class='list unstyled' >
+			<!--
+				<li class='row-fluid' id='' >
+					<div class='left libelle span3' style='float:left;'>Statut du dossier</div>
+					<div class='right value span9'>
+						<select name='ETAT_DOSSIER' id='ETAT_DOSSIER' >
+								<option value='0'>En attente</option>
+								<option value='1'>Validé</option>
+								<option value='2'>Projet abandonné</option>
+						</select>
+					</div>
+				</li>
+			-->
 				<li class='row-fluid' id='DATEINSERT' style='".( (in_array('DATEINSERT', $this->afficherChamps) && $this->infosDossier['DATEINSERT_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de création du dossier</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
@@ -1533,7 +1545,7 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Date de transfert à la commissions compétente</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATETRANSFERTCOMM_DOSSIER']."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".( ($this->DATEREP_INPUT)?$this->DATEREP_INPUT:"" )."' />
+						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".( ($this->DATETRANSFERTCOMM_INPUT)?$this->DATETRANSFERTCOMM_INPUT:"" )."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
@@ -1541,7 +1553,7 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Date de réception à la commissions compétente</div>
 					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATERECEPTIONCOMM_DOSSIER']."</div>
 					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".( ($this->DATEREP_INPUT)?$this->DATEREP_INPUT:"" )."' />
+						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".( ($this->DATERECEPTIONCOMM_INPUT)?$this->DATERECEPTIONCOMM_INPUT:"" )."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
