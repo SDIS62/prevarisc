@@ -184,7 +184,11 @@ class DossierController extends Zend_Controller_Action
 			$this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
 			
 			$service_etablissement = new Service_Etablissement;
-			$this->view->etablissementInfos = $service_etablissement->get($this->_getParam("idEtablissement"));
+			$etablissementInfos = $service_etablissement->get($this->_getParam("idEtablissement"));
+			if($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+				$etablissementInfos['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
+			}
+			$this->view->etablissementInfos = $etablissementInfos;
 		} elseif ($this->_getParam("idDossier")) {
 			$DBdossier = new Model_DbTable_Dossier;
 			$tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
@@ -192,8 +196,11 @@ class DossierController extends Zend_Controller_Action
 			
 			$service_etablissement = new Service_Etablissement;
 			foreach($this->view->listeEtablissement as $val => $ue){
-					$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-					$this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
+				$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+				if($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+					$this->view->listeEtablissement[$val]['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
+				}
+				$this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
 			}
 		}
 	}
@@ -236,6 +243,7 @@ class DossierController extends Zend_Controller_Action
     public function generalAction()
     {
         $this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
+		$this->view->userInfos = Zend_Auth::getInstance()->getIdentity();
         //On récupère tous les types de dossier
         $DBdossierType = new Model_DbTable_DossierType;
         $this->view->dossierType = $DBdossierType ->fetchAll();

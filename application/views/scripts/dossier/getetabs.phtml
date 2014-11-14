@@ -11,6 +11,7 @@ if($nbEtab > 0){
 				".$this->listeEtablissement[0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." 
 			</a>
 		";
+
 	}else{
 		echo "Etablissement(s) concerné(s) : &nbsp;";
 		$i = 0;
@@ -42,6 +43,17 @@ if($nbEtab > 0){
 				echo "
 					</a>
 				";
+				if($value['infosEtab']['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+					if($value['avisExploitation']['LIBELLE_AVIS'] == "Favorable"){
+						echo "<span class='avis F'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+					}else if($value['avisExploitation']['LIBELLE_AVIS'] == "Défavorable"){
+						echo "<span class='avis D'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+					}else{
+						echo "<span class='avis'>Avis indisponible</span>&nbsp;";
+					}
+				}else{
+					echo "<span class='avis'>Avis indisponible</span>&nbsp;";
+				}
 				//affichage preventionniste(s)
 				$nbPrev = count($value['infosEtab']['preventionnistes']);
 				if($nbPrev >0){
@@ -75,4 +87,15 @@ if($this->etablissement){
 	echo "
 		</a>
 	";
+	if($this->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+		if($value['avisExploitation']['LIBELLE_AVIS'] == "Favorable"){
+			echo "<span class='avis F'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+		}else if($value['avisExploitation']['LIBELLE_AVIS'] == "Défavorable"){
+			echo "<span class='avis D'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+		}else{
+			echo "<span class='avis'>Avis indisponible</span>&nbsp;";
+		}
+	}else{
+		echo "<span class='avis'>Avis indisponible</span>&nbsp;";
+	}
 }
