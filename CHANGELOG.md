@@ -11,6 +11,9 @@ Evolutions :
 * Ajout du bouton "Générer un document" sur tous les onglets de la partie dossier
 * Suppression des actions de la barre latérale dans les dossiers et qui ne fonctionne pas et en doublon...
 * Ajout d'un message d'avertissement sur une visite positive avant ouverture d'un ets en projet
+* Amélioration visuelle de la liste des commissions et groupements d'un utilisateur
+* Ajout d'un bouton pour ré-initialiser la recherche et uniformisation visuelle
+* Ajout d'un mécanisme d'agrandissement du champ de recherche rapide au focus
 
 Corrections :
 
@@ -23,6 +26,9 @@ Corrections :
 * Correction de l'ajout d'un RDV dans le calendrier pour un établissement contenant des quotes
 * Correction d'un problème de performance dus aux GROUP BY sur la recherche
 * Correction d'une coquille sur la recherche par adresse des cellules et sites
+* Correction d'une erreur lors de la consultation d'un groupement avec des préventionnistes affectés
+* Correction d'un problème de superposition des libellés sur les documents consultés si le libellé est trop long
+* Retrait de 2 requêtes en doublons sur l'édition utilisateur
 
 ## 2.2
 

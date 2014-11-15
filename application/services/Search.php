@@ -336,7 +336,7 @@ class Service_Search
             // Performance optimisation : avoid sorting on big queries, and sort only if 
             // there is at least one where part
             if (count($select->getPart(Zend_Db_Select::WHERE)) > 0) {
-                $select->order("d.DATEINSERT DESC");
+                $select->order("d.DATEINSERT_DOSSIER DESC");
             }
 
             // Gestion des pages et du count

@@ -29,7 +29,7 @@
 				$date = "";
 
             return "
-                <li class='divDoc row-fluid span12' name='divDoc' id='".$natureId."_".$id.$type."' style='display: block; height: 25px;margin: 15px;'>
+                <li class='divDoc row-fluid span12' name='divDoc' id='".$natureId."_".$id.$type."' style='display: block; margin: 0 15px 15px 15px;'>
                     <div style='float:left;' class='span1'>
                         <input type='checkbox' ".$styleChecked." ".$etatCheck." name='check_".$natureId."_".$id.$type."' id='check_".$natureId."_".$id.$type."' ".( ( $verrou == 1)?"disabled='disabled'":"" )." />
                     </div>
