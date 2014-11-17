@@ -50,8 +50,8 @@ class Service_Search
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
                         WHERE dossiernature.ID_NATURE = 46 AND etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)")))
-                ->join(array("etablissementinformations" => new Zend_Db_Expr("(SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS), etablissementinformations.* FROM etablissementinformations group by ID_ETABLISSEMENT)")), "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT")
-                //->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
+                //->join(array("etablissementinformations" => new Zend_Db_Expr("(SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS), etablissementinformations.* FROM etablissementinformations group by ID_ETABLISSEMENT)")), "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT")
+                ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                 ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER", "DIFFEREAVIS_DOSSIER"))
                 ->joinLeft("avis", "dossier.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
                 ->joinLeft("type", "etablissementinformations.ID_TYPE = type.ID_TYPE", "LIBELLE_TYPE")
