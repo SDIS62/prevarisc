@@ -81,8 +81,15 @@ body > .navbar {
 }
 
 #research-input input {
-    width: 50%;
     font-size: 13px;
+    -webkit-transition: width 0.25s ease-in-out;
+    -moz-transition:width 0.25s ease-in-out;
+    -o-transition: width 0.25s ease-in-out;
+    transition: width 0.25s ease-in-out;
+}
+
+#research-input input:focus{
+    width: 300px;
 }
 
 #research-input a {
@@ -776,10 +783,6 @@ text-decoration: none;
     text-shadow: none;
 }
 
-li .white_link {
-    background-color: white;
-}
-
 .main-container-fluid {
     display: table-cell;
     width: 10%;
@@ -847,7 +850,6 @@ li .white_link {
   margin-bottom: 0;
 }
 
-.menu_dashboard li.active a ,
 .menu_dashboard li:hover a
 {
   background: #f9f9f9;
