@@ -154,7 +154,7 @@ endif; ?>
             //cas de création d'un dossier depuis un établissement
             $.ajax({
                 url: "/dossier/getetabs",
-                data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val()+"&type="+$("#do").val(),
+                data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val(),
                 type:"POST",
 				beforeSend: function(){
                     $("#infosEtablissement").html("<img src='/images/load.gif' />");

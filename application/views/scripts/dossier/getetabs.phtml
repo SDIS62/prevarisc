@@ -75,8 +75,10 @@ if($nbEtab > 0){
 //echo count($this->etablissement);
 if($this->etablissement){
 	echo "Etablissement(s) concerné(s) : &nbsp;";
+	echo "<a href='/etablissement/descriptif/id/".$this->etablissement['ID_ETABLISSEMENT']."' data-target='#modal-desc' data-toggle='modal' id='descEtab' title='Afficher le descriptif'><i class='icon-list-alt icon-black'></i></a>&nbsp;";
+	echo "&nbsp;&nbsp;<a href='/etablissement/dossiers/id/".$this->etablissement['ID_ETABLISSEMENT']."' title='Se rendre à la liste des dossiers' ><i class='icon-folder-open icon-black'></i></a>&nbsp;&nbsp;";
 	echo "
-		<a href='/etablissement/index/id/".$this->etablissement['ID_ETABLISSEMENT']."'>
+		<a href='/etablissement/index/id/".$this->etablissement['ID_ETABLISSEMENT']."' class='etab'>
 					".$this->etablissement['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 	if($this->adresseEtab){
 		echo "&nbsp;(".$this->adresseEtab[0]['LIBELLE_COMMUNE'].")";
