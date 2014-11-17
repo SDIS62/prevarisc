@@ -55,10 +55,10 @@
 
 <h3>Préventionnistes affectés</h3>
 <?php if(count($this->prev) == 0 ) : ?>
-<hr class='clear'><p><strong>Aucun préventionnistes.</strong></p>
+    <hr class='clear'><p><strong>Aucun préventionnistes.</strong></p>
 <?php else : ?>
-<?php echo $this->partialLoop('user/user.phtml', $this->prev ) ?>
-<hr class="clear" />
+    <?php echo $this->partialLoop('users/embedded/user.phtml', $this->prev ) ?>
+    <div style='clear: both; margin-bottom: 10px;'></div>
 <?php endif ?>
 
 <h3>Contacts du groupement</h3>

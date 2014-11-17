@@ -43,7 +43,7 @@
                     <li class="li-searched">
                         <form class="navbar-search" action="/search/etablissement" method="get">
                             <div class="input-append" id="research-input">
-                                <input name="label" class="input-large" id="nav-main-search-field" type="text" placeholder="Rechercher ..." style='margin-top: 10px' />
+                                <input name="label" class="input-medium" id="nav-main-search-field" type="text" placeholder="Rechercher ..." style='margin-top: 10px' />
                                 <input name="page" type="hidden" value="1"  />
                                 <button class="btn btn_search" type="submit" style='margin-top: 10px'><i class="icon-search"></i></button>
                                 <a class="btn" href="/search/etablissement?&statuts%5B%5D=2&statuts%5B%5D=4" >Avancée »</a>
@@ -61,7 +61,7 @@
         $("#nav-main-search-field").autocomplete("/api/1.0/search/etablissements?format=json", {
             extraParams: {
                 label: function() {
-                    return $("#nav-main-search-field").val();
+                    return $("#nav-main-search-field").val().trim();
                 }
             },
             minChars: 3,

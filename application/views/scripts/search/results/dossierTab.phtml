@@ -58,6 +58,9 @@
 
     <!-- Nom du dossier -->
     <td class="doss-nom">
+        <?php if ($this->VERROU_DOSSIER == 1): ?>
+            <i class="icon-lock"></i>
+        <?php endif ?>
         <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . $this->OBJET_DOSSIER : ""), ENT_QUOTES) ?>'>
             <?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . substr($this->OBJET_DOSSIER, 0, 70) . ( strlen($this->OBJET_DOSSIER) > 70 ? "(...)" : "" ) : "") . ( $this->NB_URBA != '' ? " - " . $this->NB_URBA : '') ?>
         </a>
@@ -156,9 +159,9 @@
     <td colspan="5">
         <?php if($this->PIECESJOINTES != null) : ?>
             <?php foreach ($this->PIECESJOINTES as $piecejointe) : ?>
-            <a href='#' title='<?php echo htmlspecialchars($piecejointe['NOM_PIECEJOINTE'] , ENT_QUOTES) ?>'>
-                <?php echo $piecejointe['NOM_PIECEJOINTE'] ?>
-            </a>
+              <a href='#' title='<?php echo htmlspecialchars($piecejointe['NOM_PIECEJOINTE'] , ENT_QUOTES) ?>'>
+                <?php echo $piecejointe['NOM_PIECEJOINTE'].$piecejointe['EXTENSION_PIECEJOINTE'] ?>
+              </a><br/>
             <?php endforeach ?>
         <?php endif ?>
     </td>
