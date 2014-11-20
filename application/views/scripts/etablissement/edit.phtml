@@ -38,7 +38,7 @@
                     <dd>
                         <select name='ID_STATUT' <?php if (!$this->is_allowed_change_statut) echo "readonly" ?>>
                             <?php foreach( $this->DB_statut as $item ) : ?>
-                                <option value='<?php echo $item["ID_STATUT"] ?>' 
+                                <option value='<?php echo $item["ID_STATUT"] ?>'
                                     <?php if($this->etablissement && $item["ID_STATUT"] == $this->etablissement['informations']["ID_STATUT"]): ?>
                                         selected
                                     <?php elseif (!$this->is_allowed_change_statut): ?>
@@ -84,7 +84,7 @@
                         <?php endforeach ?>
                     </select>
                 </dd>
-                
+
                 <dt class="champ_classement champs">Classement</dt>
                 <dd class="champ_classement champs">
                     <select name='ID_CLASSEMENT'>
@@ -170,7 +170,7 @@
                         <input type='checkbox' name='R12320_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["R12320_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
                     </p>
                 </dd>
-                
+
                 <!-- Relève du droit public -->
                 <dt class='champs champ_droitpublic'>R123-16 ?</dt>
                 <dd class='champs champ_droitpublic'>
@@ -430,7 +430,7 @@
 </div>
 
 <!-- Boite de construction d'adresse-->
-<form id="adresse-modal" class="modal hide adresse fase" action='<?php echo $this->url(array('action' => 'add')) ?>' method='post' >
+<form id="adresse-modal" class="modal hide adresse fase" action='#' method='post' >
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -482,7 +482,7 @@
 
     <div class="modal-footer">
         <a href="#" data-dismiss="modal" class="btn">Annuler</a>
-        <input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' />
+        <a href="#" data-dismiss="modal" class="btn btn-success" id='submit-adresse'>Sauvegarder</a>
     </div>
 </form>
 
@@ -580,7 +580,7 @@
         });
 
         // Ajout d'une adresse
-        $("form.adresse input[type='submit']").live('click', function() {
+        $("form.adresse a#submit-adresse").live('click', function() {
             time = Date.now();
             node = $('#prototype_adresse').clone().prependTo( $('table.champ_adresse') ).removeClass('hide prototypes').addClass('adresse').attr('id', '');
             node.find('input[name="ADRESSES[-1][LON_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lon"]').val());
@@ -642,25 +642,25 @@
                     $("input[name='ICPE_ETABLISSEMENTINFORMATIONS']").change();
                     $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").attr('checked', false).change();
                     break;
-                
+
                 // Camping
                 case '7':
                     $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
                     $('.etablissements_enfants').hide();
                     break;
-                    
+
                 // Manifestation Temporaire
                 case '8':
                     $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
                     $('.etablissements_enfants').hide();
                     break;
-                    
+
                 // IOP
                 case '9':
                     $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
                     $('.etablissements_enfants').hide();
                     break;
-                    
+
                 // Zone
                 case '10':
                     $('.champ_classement, .champ_adresse').show();
@@ -679,7 +679,7 @@
                 $("dt.effectif_public").html('Public');
             }
         };
-        
+
         $("select[name='ID_TYPE']").change(function(){
             changementLibelleEffectifPublic(this);
         }).change();

@@ -7,35 +7,21 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     public function run()
     {
-        $this->loadCorePlugins();
-
-        $this->loadThirdPartyPlugins();
-
-        return parent::run();
-    }
-
-    /**
-     * Initialisation des plugins tiers
-     */
-    protected function loadCorePlugins()
-    {
+        // Chargement des plugins de base
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_View);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_ACL);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_XmlHttpRequest);
-    }
+        //Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_Security);
 
-    /**
-     * Initialisation des plugins tiers
-     */
-    protected function loadThirdPartyPlugins()
-    {
-        if (getenv('PREVARISC_THIRDPARTY_PLUGINS'))
-        {
+        // Chargement des plugins tiers
+        if (getenv('PREVARISC_THIRDPARTY_PLUGINS')) {
             $thirdparty_plugins = explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS'));
             foreach($thirdparty_plugins as $thirdparty_plugin) {
                 Zend_Controller_Front::getInstance()->registerPlugin(new $thirdparty_plugin);
             }
         }
+
+        return parent::run();
     }
 
     /**
@@ -65,10 +51,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     protected function _initAutoLoader()
     {
-        $autoloader = new Zend_Application_Module_Autoloader(array(
-            'basePath'    => APPLICATION_PATH,
-            'namespace'  => '',
-        ));
+        $autoloader = Zend_Loader_Autoloader::getInstance();
+
+        $autoloader_application = new Zend_Application_Module_Autoloader(array('basePath' => APPLICATION_PATH, 'namespace'  => null));
+
+        $autoloader->pushAutoloader($autoloader_application);
 
         return $autoloader;
     }
@@ -100,15 +87,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     }
 
     /**
-     * On force le stockage des sessions pour tous les modules
+     * Initialisation du data store à utiliser
      */
-    protected function _initSession()
+    public function _initDataStore()
     {
-        Zend_Session::setOptions(array());
-    }
-
-    public function _initDataStore() {
-
         $options = $this->getOption('resources');
         $options = $options['dataStore'];
         $className = $options['adapter'];

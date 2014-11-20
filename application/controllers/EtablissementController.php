@@ -12,15 +12,6 @@ class EtablissementController extends Zend_Controller_Action
 
         $etablissement = $service_etablissement->get($this->_request->id);
 
-        $contacts = $service_etablissement->getAllContacts($this->_request->id);
-        $contacts_dus = array();
-        foreach($contacts as $contact) {
-            if($contact['ID_FONCTION'] == 8) {
-                $contacts_dus[] = $contact;
-            }
-        }
-
-        $this->view->presence_dus = count($contacts_dus) > 0;
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
         $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
