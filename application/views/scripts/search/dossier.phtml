@@ -41,13 +41,22 @@
 <h2 class="page-header">Dossiers</h2>
 <form method='get' class='row-fluid'>
 
-	<div class='navbar-form form-search well well-small span12' style='margin-bottom: 5px;'>
-		<div class="input-append span6 offset3">
-			<input type="text" name='objet' class="search-query" placeholder="Objet du dossier ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
-			<input type='submit' class="btn" value="Rechercher dans Prevarisc"  />
-			<input type='hidden' name='page' value="1" />
-		</div>
-	</div>
+    <div class='navbar-form form-search well well-small span12' style='margin-bottom: 5px;'>
+            <div class="pull-left input-append">
+                    <input type="text" name='objet' class="input-xlarge search-query" placeholder="Objet du dossier ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
+                    <input type='submit' class="btn" value="Rechercher"  />
+                    <input type='hidden' name='page' value="1" />
+            </div>
+        
+            <div class="pull-left" style='margin: 9px 0 0 5px'>
+                <small>
+                    <a href="/search/dossier?label=&page=1">
+                        Réinitialiser
+                    </a>
+                </small>
+            </div>
+        
+    </div>
 
 
 

@@ -277,7 +277,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     if($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"] > 0) {
                         $row = $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"])->current()->ID_UTILISATEURINFORMATIONS)->toArray();
                         $author = array(
-                            'id' => $row["ID_UTILISATEUR"],
+                            'id' => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"],
                             'name' => $row['NOM_UTILISATEURINFORMATIONS'] . ' ' . $row['PRENOM_UTILISATEURINFORMATIONS']
                         );
                     }

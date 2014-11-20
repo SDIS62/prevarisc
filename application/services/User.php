@@ -19,13 +19,16 @@ class Service_User
             $model_userinformations = new Model_DbTable_UtilisateurInformations;
             $model_groupe = new Model_DbTable_Groupe;
             $model_fonction = new Model_DbTable_Fonction;
-
+            
             $user = $model_user->find($id_user)->current()->toArray();
+            $user_groupements = $model_user->getGroupements($user['ID_UTILISATEUR']);
+            $user_commissions = $model_user->getCommissions($user['ID_UTILISATEUR']);
+            
             $user = array_merge($user, array('uid' => $user['ID_UTILISATEUR']));
             $user = array_merge($user, array('infos' => $model_userinformations->find($user['ID_UTILISATEURINFORMATIONS'])->current()->toArray()));
             $user = array_merge($user, array('group' => $model_groupe->find($user['ID_GROUPE'])->current()->toArray()));
-            $user = array_merge($user, array('groupements' => $model_user->getGroupements($user['ID_UTILISATEUR']) == null ? null : $model_user->getGroupements($user['ID_UTILISATEUR'])->toArray()));
-            $user = array_merge($user, array('commissions' => $model_user->getCommissions($user['ID_UTILISATEUR']) == null ? null : $model_user->getCommissions($user['ID_UTILISATEUR'])->toArray()));
+            $user = array_merge($user, array('groupements' => $user_groupements == null ? null : $user_groupements->toArray()));
+            $user = array_merge($user, array('commissions' => $user_commissions == null ? null : $user_commissions->toArray()));
             $user['infos'] = array_merge($user['infos'], array('LIBELLE_FONCTION' => $model_fonction->find($user['infos']['ID_FONCTION'])->current()->toArray()['LIBELLE_FONCTION']));
 
 

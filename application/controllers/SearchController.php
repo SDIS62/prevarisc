@@ -24,6 +24,7 @@ class SearchController extends Zend_Controller_Action
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
         $this->view->DB_avis = $service_avis->getAll();
+        $this->view->DB_classe = $service_classe->getAll();
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_typeactivite = $service_typeactivite->getAllWithTypes();
         $this->view->DB_famille = $service_famille->getAll();
@@ -82,7 +83,7 @@ class SearchController extends Zend_Controller_Action
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
-                $page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
+                $page = array_key_exists('page', $parameters) ? $parameters['page'] : 1;
                 $num_doc_urba = array_key_exists('objet', $parameters) && $parameters['objet'] != '' && (string) $parameters['objet'][0] == '#'? substr($parameters['objet'], 1) : null;
                 $objet = array_key_exists('objet', $parameters) && $parameters['objet'] != ''  && (string) $parameters['objet'][0] != '#'? $parameters['objet'] : null;
                 $types = array_key_exists('types', $parameters) ? $parameters['types'] : null;
@@ -126,7 +127,7 @@ class SearchController extends Zend_Controller_Action
         if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
             try {
                 $parameters = $this->_request->getQuery();
-                $page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
+                $page = array_key_exists('page', $parameters) ? $parameters['page'] : 1;
                 $name = $parameters['name'];
                 $fonctions = array_key_exists('fonctions', $parameters) ? $parameters['fonctions'] : null;
 
