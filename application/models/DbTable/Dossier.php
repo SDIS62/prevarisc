@@ -37,9 +37,11 @@
             return $this->getAdapter()->fetchAll($select);
         }
 
-        //Fonction qui r�cup�re tous les �tablissements li�s au dossier LAST VERSION
+        //Fonction qui récup tous les établissements liés au dossier LAST VERSION
         public function getEtablissementDossier($id_dossier)
         {
+		
+			//retourne la liste des catégories de prescriptions par ordre
             $select = "
                 SELECT etablissementdossier.ID_ETABLISSEMENTDOSSIER ,t1.ID_ETABLISSEMENT, LIBELLE_ETABLISSEMENTINFORMATIONS, LIBELLE_GENRE
                 FROM etablissementdossier, etablissementinformations t1, genre
@@ -52,9 +54,7 @@
                     WHERE etablissementinformations.ID_ETABLISSEMENT = t1.ID_ETABLISSEMENT
                 )
 				GROUP BY ID_ETABLISSEMENT;
-
             ";
-
             //echo $select;
             return $this->getAdapter()->fetchAll($select);
         }

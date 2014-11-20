@@ -86,27 +86,27 @@ class DossierController extends Zend_Controller_Action
         "43" => array("DATEINSERT","OBJET","DATEREUN","PREVENTIONNISTE","DEMANDEUR"),
     //COURRIER/COURRIEL
         //Lettre - OK
-        "52" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "52" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Mise en demeure - OK
-        "55" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "55" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Avis écrit motivé - OK
-        "51" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "51" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Consultation PLU - OK
-        "53" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "53" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Rapport d'organisme agréé - OK
-        "49" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "49" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de renseignements
-        "54" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "54" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite périodique
-        "59" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "59" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite technique
-        "57" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "57" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite inopinée
-        "58" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "58" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite hors programme
-        "50" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "50" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         //Demande de visite de réception
-        "60" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR"),
+        "60" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM"),
         
     //INTERVENTION
         //Incendie - OK
@@ -152,7 +152,6 @@ class DossierController extends Zend_Controller_Action
 		$this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
 
         if ($id_dossier != null) {
-
             //Si on à l'id d'un dossier, on récupére tous les établissements liés à ce dossier
             $DBdossier = new Model_DbTable_Dossier;
             $dossier = $DBdossier->find($id_dossier)->current();
@@ -172,6 +171,39 @@ class DossierController extends Zend_Controller_Action
             $this->view->verrou = $dossier->VERROU_DOSSIER;
         }
     }
+	
+	public function getetabsAction()
+    {
+		$DBdossier = new Model_DbTable_Dossier;
+		if ($this->_getParam("idEtablissement")) {
+			$DBetab = new Model_DbTable_Etablissement;
+			$etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
+
+			$this->view->etablissement = $etabTab->toArray();
+			
+			$DbAdresse = new Model_DbTable_EtablissementAdresse;
+			$this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
+			
+			$service_etablissement = new Service_Etablissement;
+			$etablissementInfos = $service_etablissement->get($this->_getParam("idEtablissement"));
+			if($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+				$etablissementInfos['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
+			}
+			$this->view->etablissementInfos = $etablissementInfos;
+		} elseif ($this->_getParam("idDossier")) {			
+			$tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
+			$this->view->listeEtablissement = $tabEtablissement;
+			
+			$service_etablissement = new Service_Etablissement;
+			foreach($this->view->listeEtablissement as $val => $ue){
+				$etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+				if($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+					$this->view->listeEtablissement[$val]['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
+				}
+				$this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
+			}
+		}
+	}
 
     public function indexAction()
     {
@@ -211,6 +243,7 @@ class DossierController extends Zend_Controller_Action
     public function generalAction()
     {
         $this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
+		$this->view->userInfos = Zend_Auth::getInstance()->getIdentity();
         //On récupère tous les types de dossier
         $DBdossierType = new Model_DbTable_DossierType;
         $this->view->dossierType = $DBdossierType ->fetchAll();
@@ -413,6 +446,20 @@ class DossierController extends Zend_Controller_Action
 				$this->view->infosDossier['DATEINCOMPLET_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
 				$this->view->DATEINCOMPLET = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 			}
+			
+			//Conversion de transfert à la commission compétente
+			if ($this->view->infosDossier['DATETRANSFERTCOMM_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATETRANSFERTCOMM_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATETRANSFERTCOMM_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATETRANSFERTCOMM = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
+			
+			//Conversion de reception à la commission compétente
+			if ($this->view->infosDossier['DATERECEPTIONCOMM_DOSSIER'] != '') {
+				$date = new Zend_Date($this->view->infosDossier['DATERECEPTIONCOMM_DOSSIER'], Zend_Date::DATES);
+				$this->view->infosDossier['DATERECEPTIONCOMM_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
+				$this->view->DATERECEPTIONCOMM = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+			}
 
 			//Conversion de la durée de l'intervention
 			if ($this->view->infosDossier['DUREEINTERV_DOSSIER'] != '') {
@@ -579,30 +626,6 @@ class DossierController extends Zend_Controller_Action
     {
         $this->view->do = $this->_getParam("do");
         switch ($this->view->do) {
-            case "infosEtabs":
-                if ($this->_getParam("idEtablissement")) {
-                    $DBetab = new Model_DbTable_Etablissement;
-                    $etabTab = $DBetab->getInformations($this->_getParam("idEtablissement"));
-
-                    $this->view->etablissement = $etabTab->toArray();
-					
-                    $DbAdresse = new Model_DbTable_EtablissementAdresse;
-                    $this->view->adresseEtab = $DbAdresse->get($this->_getParam("idEtablissement"));
-					
-					$service_etablissement = new Service_Etablissement;
-					$this->view->etablissementInfos = $service_etablissement->get($this->_getParam("idEtablissement"));
-                } elseif ($this->_getParam("idDossier")) {
-                    $DBdossier = new Model_DbTable_Dossier;
-                    $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
-                    $this->view->listeEtablissement = $tabEtablissement;
-					
-                    $service_etablissement = new Service_Etablissement;
-                    foreach($this->view->listeEtablissement as $val => $ue){
-                            $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-                            $this->view->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
-                    }
-                }
-            break;
             case "showNature":
                 $idType = (int) $this->_getParam("idType");
 
@@ -903,7 +926,7 @@ class DossierController extends Zend_Controller_Action
                 //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
                 if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "ABSQUORUM_DOSSIER" && $libelle != "servInst" && $libelle != "servInstVille" && $libelle != "servInstGrp" && $libelle != "repercuterAvis") {
                     //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
-                    if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER" || $libelle == "ECHEANCIERTRAV_DOSSIER" ) {
+                    if ($libelle == "DATEMAIRIE_DOSSIER" || $libelle == "DATESECRETARIAT_DOSSIER" || $libelle == "DATEVISITE_DOSSIER" || $libelle == "DATECOMM_DOSSIER" || $libelle == "DATESDIS_DOSSIER" || $libelle ==  "DATEPREF_DOSSIER" || $libelle ==  "DATEREP_DOSSIER" || $libelle ==  "DATEREUN_DOSSIER" || $libelle == "DATEINTERV_DOSSIER" || $libelle == "DATESIGN_DOSSIER" || $libelle == "DATEINSERT_DOSSIER" || $libelle == "DATEENVTRANSIT_DOSSIER" || $libelle == "ECHEANCIERTRAV_DOSSIER" || $libelle == "DATETRANSFERTCOMM_DOSSIER" || $libelle == "DATERECEPTIONCOMM_DOSSIER") {
                         if ($value) {
                             $dateTab = explode("/",$value);
                             $value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];

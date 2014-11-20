@@ -137,13 +137,13 @@ endif; ?>
         if($("#infosEtabs").html() == ''){
             //cas d'affichage d'un dossier
             $.ajax({
-                url: "/dossier/fonction",
+                url: "/dossier/getetabs",
                 data: "do=infosEtabs&idDossier="+$("#idDossier").val(),
                 type:"POST",
                 beforeSend: function(){
-                    
+                    $("#infosEtablissement").html("<img src='/images/load.gif' />");
                 },
-                success: function(affichageResultat){				
+                success: function(affichageResultat){
                     $("#infosEtabs").html(affichageResultat);
                 },
                 error: function(){
@@ -153,9 +153,12 @@ endif; ?>
         }else if($("#infosEtablissement").html() == ''){
             //cas de création d'un dossier depuis un établissement
             $.ajax({
-                url: "/dossier/fonction",
-                data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val()+"&type="+$("#do").val(),
+                url: "/dossier/getetabs",
+                data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val(),
                 type:"POST",
+				beforeSend: function(){
+                    $("#infosEtablissement").html("<img src='/images/load.gif' />");
+                },
                 success: function(affichageResultat) {			
                     $("#infosEtablissement").html(affichageResultat);
                 },
@@ -215,7 +218,7 @@ endif; ?>
 			return false;
 		});
 		
-                $("#rapport").live('click',function(){
+	$("#rapport").live('click',function(){
 		//On charge le contenu de la boite de dialogue en Ajax (liste des établissements concernés)
 		$.ajax({
 			url: "/dossier/dialoggenrapport",
