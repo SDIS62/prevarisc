@@ -94,11 +94,11 @@
         //retourne 1 si dossier Etude - 0 si Visite
         public function getTypeDossier($id_dossier)
         {
-            $select = "SELECT dossier.TYPE_DOSSIER
-            FROM dossier
-            WHERE dossier.id_dossier = '".$id_dossier."';";
+			$select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from("dossier", "TYPE_DOSSIER")
+                ->where("dossier.ID_DOSSIER = ?",$id_dossier);
 
-            //echo $select;
             return $this->getAdapter()->fetchRow($select);
         }
 

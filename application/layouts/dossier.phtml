@@ -18,9 +18,9 @@
             }
 
             if ($this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ) {
-                echo "<li class='".( ( $this->action == "textesapplicables" ) ? "active" : "read" )."'>
+                echo "<li class='".( ( $this->action == "textes-applicables" ) ? "active" : "read" )."'>
                         <a "
-                        . "href='".$this->url(array("action"=>"textesapplicables"))."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
+                        . "href='".$this->url(array("action"=>"textes-applicables"))."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
                     </li>";
             }
 

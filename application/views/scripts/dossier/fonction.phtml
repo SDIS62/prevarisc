@@ -74,32 +74,6 @@
 			}
 			echo "</ul>";
 		}
-		/*
-		foreach($this->listeDossierEtab as $val => $ue){
-			//Transformation date
-			$dateInsert = new Zend_Date($ue["DATEINSERT_DOSSIER"], Zend_Date::DATES);
-			$dateInsert = $dateInsert->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-			
-			echo "
-				<li>
-					<span>
-						<input type='checkbox' name='idDossierLie[]' value='".$ue['ID_DOSSIER']."' />
-					</span>
-					<span class='doss-nom'>
-						".$ue["LIBELLE_DOSSIERTYPE"]."
-					</span>
-					<span class='doss-date'>
-						".$dateInsert."
-					</span>
-					<span class='doss-objet'>
-						".$ue["OBJET_DOSSIER"]."
-					</span>
-					<span class='doss-donneur-avis'></span>
-				</li>
-			";
-			
-		}
-		*/
 		echo "
 			</div>";
 
