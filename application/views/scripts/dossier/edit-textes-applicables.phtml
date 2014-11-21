@@ -1,0 +1,24 @@
+<form action='<?php echo $this->url(array('action' => 'edit-textes-applicables')) ?>' method='post'>
+    <div class='pull-right' >
+        <div class="btn-group">
+            <a class='btn' href="<?php echo $this->url(array('action' => 'textes-applicables')) ?>">Annuler la modification</a>
+            <input type='submit' class="btn btn-success" value='Sauvegarder'>
+        </div>
+    </div>
+
+    <h3>Modification des Textes applicables</h3>
+
+    <?php foreach($this->textes_applicables as $titre => $textes_applicables) : ?>
+        <h4><?php echo $titre ?></h4>
+        <?php foreach($textes_applicables as $texte_applicable) : ?>
+            <p>
+                <input type="hidden" name="textes_applicables[<?php echo $texte_applicable['ID_TEXTESAPPL'] ?>]" value='0' />
+                <input type="checkbox" name="textes_applicables[<?php echo $texte_applicable['ID_TEXTESAPPL'] ?>]" value='1' <?php echo array_key_exists($titre, $this->textes_applicables_dossier) && array_key_exists($texte_applicable['ID_TEXTESAPPL'], $this->textes_applicables_dossier[$titre]) ? "checked" : ""  ?> />
+                <span style="<?php echo array_key_exists($titre, $this->textes_applicables_dossier) && array_key_exists($texte_applicable['ID_TEXTESAPPL'], $this->textes_applicables_dossier[$titre]) ? "font-weight: bold" : ""  ?>">
+                    <?php echo $texte_applicable['LIBELLE_TEXTESAPPL'] ?>
+                </span>
+            </p>
+        <?php endforeach ?>
+    <?php endforeach ?>
+
+</form>
