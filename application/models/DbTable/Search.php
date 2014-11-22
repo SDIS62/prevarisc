@@ -139,9 +139,16 @@
 
             return $this;
         }
+        
+        public function joinEtablissementDossier() {
+            $this->select
+                    ->joinLeft("etablissementdossier", "etablissementdossier.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT")
+                    ->joinLeft(array('dossiers' => "dossier"), "dossiers.ID_DOSSIER = etablissementdossier.ID_DOSSIER")
+                    ->joinLeft("dossiernature", "dossiernature.ID_DOSSIER = dossiers.ID_DOSSIER");
+        }
 
         // Filtre
-        public function setCriteria( $key, $value, $exact = true, $clause = "where")
+        public function setCriteria( $key, $value = null, $exact = true, $clause = "where")
         {
             $string = null;
 
@@ -156,6 +163,10 @@
                         $string .= " OR ";
                     }
                 }
+                
+            } else if(is_null($value)) {
+                $string = $key;
+                
             } else {
 
                 $string = $key . (( $exact ) ? "=" : " LIKE ") . $this->getAdapter()->quote((( $exact ) ? "" : "%") . $value . (( $exact ) ? "" : "%"));

@@ -173,16 +173,19 @@ function addChamp($odfName, $nomOdf, $variable){
 
 function retrieveInfoDoss($segment, $dossierInfos) {
     addChamp($segment->infosDoss, 'idDossier', $dossierInfos["ID_DOSSIER"]);
-    addChamp($segment->infosDoss, 'avisDossier', $dossierInfos["AVIS_DOSSIER"]);
+    addChamp($segment->infosDoss, 'avisDossier', getAvis($dossierInfos["AVIS_DOSSIER"]));
     addChamp($segment->infosDoss, 'nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
+    addChamp($segment->infosDoss, 'numWinPrev', $dossierInfos['infosEtab']['general']['NUMEROID_ETABLISSEMENT']);
     if(isset($dossierInfos['infosEtab']['parents'][0]) && $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"] != NULL) {
         addChamp($segment->infosDoss, 'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
     }
     addChamp($segment->infosDoss, 'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
     addChamp($segment->infosDoss, 'objetDossier', $dossierInfos["OBJET_DOSSIER"]);
+    $commune = "";
     if (count($dossierInfos["infosEtab"]["adresses"]) > 0) {
-        addChamp($segment->infosDoss, 'communeConcerne', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"]);
+        $commune = $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"];
     }
+    addChamp($segment->infosDoss, 'communeConcerne', $commune);
     if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
         $heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
         $heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
@@ -202,6 +205,14 @@ function retrieveInfoDoss($segment, $dossierInfos) {
         $listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
     }
     addChamp($segment->infosDoss, 'numDocUrba', $listeDocUrba);
+    $listePreventioniste = array();
+    $listeTelPreventioniste = array();
+    foreach($dossierInfos['infosEtab']["preventionnistes"] as $va => $preventioniste){
+	$listePreventioniste[] = $preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
+        $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
+    }
+    addChamp($segment->infosDoss, 'preventionnistes', implode(', ', $listePreventioniste));
+    addChamp($segment->infosDoss, 'listeTelPreventioniste', implode(', ', $listeTelPreventioniste)); 
 }
 
 /*
@@ -260,4 +271,14 @@ function savePj($dateCommId,$libelleMembre){
 	return $nouvellePJ;
 }
 
-?>
+function getAvis($avis) {
+    $avisInt = (int) $avis;
+    
+    if ($avisInt == 0) {
+        return "";
+    } else if ($avisInt == 1) {
+        return "Favorable";
+    } else if ($avisInt == 2) {
+        return "Défavorable";
+    }
+}

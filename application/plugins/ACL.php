@@ -92,6 +92,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 $request->setParam('error_handler', $error);
                 return ;
             }
+            
             $service_user->updateLastActionDate($utilisateur['ID_UTILISATEUR']);
 
             $acl = self::getAcl();
@@ -104,11 +105,11 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 $privileges_dbtable = new Model_DbTable_Privilege;
                 $groupes_dbtable = new Model_DbTable_Groupe;
 
-                $groupements = (array) Zend_Auth::getInstance()->getIdentity()['groupements'];
+                $groupements = (array) $utilisateur['groupements'];
                 array_walk($groupements, function(&$val, $key) use(&$groupements){ $val = $groupements[$key]['ID_GROUPEMENT']; });
                 $groupements = implode('-', $groupements);
 
-                $commissions = (array) Zend_Auth::getInstance()->getIdentity()['commissions'];
+                $commissions = (array) $utilisateur['commissions'];
                 array_walk($commissions, function(&$val, $key) use(&$commissions){ $val = $commissions[$key]['ID_COMMISSION']; });
                 $commissions = implode('-', $commissions);
 
@@ -122,36 +123,36 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                             case 'erp':
                                 if($resource_exploded[4] == '1') $resource_exploded[4] = $commissions;
                                 if($resource_exploded[5] == '1') $resource_exploded[5] = $groupements;
-                                if($resource_exploded[6] == '1') $resource_exploded[6] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                if($resource_exploded[6] == '1') $resource_exploded[6] = $utilisateur['NUMINSEE_COMMUNE'];
                                 break;
                             case 'hab':
                                 if($resource_exploded[3] == '1') $resource_exploded[3] = $groupements;
-                                if($resource_exploded[4] == '1') $resource_exploded[4] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                if($resource_exploded[4] == '1') $resource_exploded[4] = $utilisateur['NUMINSEE_COMMUNE'];
                                 break;
                             case 'igh':
                                 if($resource_exploded[3] == '1') $resource_exploded[3] = $commissions;
                                 if($resource_exploded[4] == '1') $resource_exploded[4] = $groupements;
-                                if($resource_exploded[5] == '1') $resource_exploded[5] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                if($resource_exploded[5] == '1') $resource_exploded[5] = $utilisateur['NUMINSEE_COMMUNE'];
                                 break;
                             case 'eic':
                                 if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
-                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = $utilisateur['NUMINSEE_COMMUNE'];
                                 break;
                             case 'camp':
                                 if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
-                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = $utilisateur['NUMINSEE_COMMUNE'];
                                 break;
                             case 'temp':
                                 if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
-                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = $utilisateur['NUMINSEE_COMMUNE'];
                                 break;
                             case 'iop':
                                 if($resource_exploded[2] == '1') $resource_exploded[2] = $groupements;
-                                if($resource_exploded[3] == '1') $resource_exploded[3] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                if($resource_exploded[3] == '1') $resource_exploded[3] = $utilisateur['NUMINSEE_COMMUNE'];
                                 break;
                             case 'zone':
                                 if($resource_exploded[3] == '1') $resource_exploded[3] = $groupements;
-                                if($resource_exploded[4] == '1') $resource_exploded[4] = Zend_Auth::getInstance()->getIdentity()['NUMINSEE_COMMUNE'];
+                                if($resource_exploded[4] == '1') $resource_exploded[4] = $utilisateur['NUMINSEE_COMMUNE'];
                                 break;
                         }
 
@@ -169,23 +170,23 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                     }
 
                     $privileges = $privileges_dbtable->fetchAll('id_resource = ' . $resource['id_resource'] )->toArray();
-                    $privileges_role = $groupes_dbtable->find(Zend_Auth::getInstance()->getIdentity()['ID_GROUPE'])->current()->findModel_DbTable_PrivilegeViaModel_DbTable_GroupePrivilege()->toArray();
+                    $privileges_role = $groupes_dbtable->find($utilisateur['ID_GROUPE'])->current()->findModel_DbTable_PrivilegeViaModel_DbTable_GroupePrivilege()->toArray();
                     array_walk($privileges_role, function(&$val, $key) use(&$privileges_role){ $val = $privileges_role[$key]['id_privilege']; });
 
                     foreach($list_resources_finale as $resource_finale) {
                         foreach($privileges as $privilege) {
                             if(in_array($privilege['id_privilege'], $privileges_role)) {
-                                $acl->allow(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
+                                $acl->allow($utilisateur['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
                             }
                             else {
-                                $acl->deny(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
+                                $acl->deny($utilisateur['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
                             }
                         }
                     }
                 }
             }
 
-            $role = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
+            $role = $utilisateur['group']['LIBELLE_GROUPE'];
 
             // Récupération de la vue
             $view = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('view');
@@ -193,98 +194,103 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             // Récupération de la page active
             $page = $view->navigation($view->nav)->findActive($view->navigation($view->nav)->getContainer());
 
-            // Si on trouve une page active
-            if($page != null) {
+            try {
+                // Si on trouve une page active
+                if($page != null) {
 
-                $page = $page['page'];
+                    $page = $page['page'];
 
-                if($page->getAction() == null) {
-                    $page = $view->navigation($view->nav)->findOneBy('active', true)->findByAction($request->getActionName());
-                }
+                    if($page->getAction() == null) {
+                        $page = $view->navigation($view->nav)->findOneBy('active', true)->findByAction($request->getActionName());
+                    }
 
-                // Si la page correspond bien, on check l'ACL
-                if($page !== null) {
+                    // Si la page correspond bien, on check l'ACL
+                    if($page !== null) {
 
-                    // Récupération de la resource demandée par la page active
-                    $resources = $this->getPageResources($page, $request);
-                    
-                    // Récupération du privilège demandé par la page active
-                    $privilege = $this->getPagePrivilege($page);
+                        // Récupération de la resource demandée par la page active
+                        $resources = $this->getPageResources($page, $request);
 
-                    // Si il n'y a pas de privilèges associés à la page, on skip la procédure de controle
-                    if($privilege != null) {
+                        // Récupération du privilège demandé par la page active
+                        $privilege = $this->getPagePrivilege($page);
 
-                        // Pour chaque ressources de la page, on check les permissions
-                        $access_granted = false;
+                        // Si il n'y a pas de privilèges associés à la page, on skip la procédure de controle
+                        if($privilege != null) {
 
-                        if($page->get('controller') == 'etablissement') {
-                            foreach($resources as $resource) {
-                                if($acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
-                                    $access_granted = true;
-                                    break;
-                                }
-                            }
-                            if(in_array('editsite', $resources) && $page->get('action') == 'edit') {
-                              if($acl->has("creations") && $acl->isAllowed($role, "creations", "add_etablissement")) {
-                                  $access_granted = true;
-                              }
-                            }
-                        }
-                        elseif($page->get('controller') == 'dossier') {
-                            if($page->get('action') !== 'add' && $page->get('action') !== 'savenew') {
-                                $access_granted_ets = false;
-                                $i = 0;
+                            // Pour chaque ressources de la page, on check les permissions
+                            $access_granted = false;
+
+                            if($page->get('controller') == 'etablissement') {
                                 foreach($resources as $resource) {
-                                    if(explode('_', $resource)[0] == 'etablissement') {
-                                        if($acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
-                                            $access_granted_ets = true;
-                                            break;
-                                        }
-                                        $i++;
-                                    }
-                                }
-                                if($access_granted_ets || $i == 0) {
-                                    foreach($resources as $resource) {
-                                        if((explode('_', $resource)[0] == 'dossier' || explode('_', $resource)[0] == 'creations') && $acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
-                                            $access_granted = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            else {
-                                if($acl->isAllowed($role, 'creations', 'add_dossier')) {
-                                    $access_granted = true;
-                                }
-                            }
-                        }
-                        else {
-                            foreach($resources as $resource) {
-                                if($acl->has($resource)) {
-                                    if($acl->isAllowed($role, $resource,  $privilege)) {
+                                    if($acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
                                         $access_granted = true;
                                         break;
                                     }
                                 }
-                                else {
-                                    $access_granted = true;
+                                if(in_array('editsite', $resources) && $page->get('action') == 'edit') {
+                                  if($acl->has("creations") && $acl->isAllowed($role, "creations", "add_etablissement")) {
+                                      $access_granted = true;
+                                  }
                                 }
                             }
-                        }
+                            elseif($page->get('controller') == 'dossier') {
+                                if($page->get('action') !== 'add' && $page->get('action') !== 'savenew') {
+                                    $access_granted_ets = false;
+                                    $i = 0;
+                                    foreach($resources as $resource) {
+                                        if(explode('_', $resource)[0] == 'etablissement') {
+                                            if($acl->has($resource) && $acl->isAllowed($role, $resource,  'view_ets')) {
+                                                $access_granted_ets = true;
+                                                break;
+                                            }
+                                            $i++;
+                                        }
+                                    }
+                                    if($access_granted_ets || $i == 0) {
+                                        foreach($resources as $resource) {
+                                            if((explode('_', $resource)[0] == 'dossier' || explode('_', $resource)[0] == 'creations') && $acl->has($resource) && $acl->isAllowed($role, $resource, $privilege)) {
+                                                $access_granted = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                else {
+                                    if($acl->isAllowed($role, 'creations', 'add_dossier')) {
+                                        $access_granted = true;
+                                    }
+                                }
+                            }
+                            else {
+                                foreach($resources as $resource) {
+                                    if($acl->has($resource)) {
+                                        if($acl->isAllowed($role, $resource,  $privilege)) {
+                                            $access_granted = true;
+                                            break;
+                                        }
+                                    }
+                                    else {
+                                        $access_granted = true;
+                                    }
+                                }
+                            }
 
-                        // Redirection vers la page d'erreur si l'accès est non autorisée
-                        if(!$access_granted) {
-                            if($request->getControllerName() == 'error') return;
-                            $request->setControllerName('error');
-                            $request->setActionName('error');
-                            $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-                            $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER;
-                            $error->request = clone $request;
-                            $error->exception = new Zend_Controller_Dispatcher_Exception('Accès non autorisé', 401);
-                            $request->setParam('error_handler', $error);
+                            // Redirection vers la page d'erreur si l'accès est non autorisée
+                            if(!$access_granted) {
+                                if($request->getControllerName() == 'error') return;
+                                $request->setControllerName('error');
+                                $request->setActionName('error');
+                                $error = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+                                $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER;
+                                $error->request = clone $request;
+                                $error->exception = new Zend_Controller_Dispatcher_Exception('Accès non autorisé', 401);
+                                $request->setParam('error_handler', $error);
+                            }
                         }
                     }
                 }
+            } catch(Zend_Acl_Role_Registry_Exception $acle) {
+                Zend_Auth::getInstance()->clearIdentity();
+                $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');
             }
         }
     }

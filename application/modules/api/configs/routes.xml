@@ -112,7 +112,7 @@
                 <route>login</route>
                 <defaults controller="login" method="login" />
             </login>
-             <!-- dossier -->
+            <!-- dossier -->
             <dossier type="Zend_Controller_Router_Route">
                 <route>dossier</route>
                 <defaults controller="dossier" />
@@ -135,6 +135,23 @@
                     </contacts>
                 </chains>
             </dossier>
+            
+            <!-- user -->
+            <user type="Zend_Controller_Router_Route">
+                <route>user</route>
+                <defaults controller="user" />
+                <chains>
+                    <get type="Zend_Controller_Router_Route">
+                        <route></route>
+                        <defaults method="get" />
+                    </get>
+                    <preferences type="Zend_Controller_Router_Route">
+                        <route>preferences</route>
+                        <defaults method="getPreferences" />
+                    </preferences>
+                </chains>
+            </user>
+            
         </chains>
     </api_1_0>
 
