@@ -1,45 +1,82 @@
 <h3 class='page-header'>Panneau d'administration</h3>
 
-<dl class='dl-horizontal' >
-    
-    <dt>Version</dt>
-    <dd>
-        <p><?php echo $this->version_prevarisc ?></p>
-    </dd>
-    
-    <dt>Clé IGN</dt>
-    <dd>
-        <p><?php echo $this->key_ign != null ? $this->key_ign : 'Aucune clé' ?></p>
-    </dd>
+<div class="panel panel-default" style="width: 100%">
+    <div class="panel-heading">Informations générales</div>
+        <div class="panel-body">
+            <dl class='dl-horizontal' >
+                <dt>Version</dt>
+                <dd>
+                <p><?php echo $this->version_prevarisc ?></p>
+                </dd>
 
-    <dt>Clé Google MAP</dt>
-    <dd>
-        <p><?php echo $this->key_googlemap != null ? $this->key_googlemap : 'Aucune clé' ?></p>
-    </dd>
+                <dt>Clé IGN</dt>
+                <dd>
+                <p><?php echo $this->key_ign != null ? $this->key_ign : 'Aucune clé' ?></p>
+                </dd>
 
-    <dt>Auth. via LDAP</dt>
-    <dd>
-        <p><?php echo $this->ldap_enabled != 1 ? 'Désactivé' : 'Activé' ?></p>
-    </dd>
+                <dt>Clé Google MAP</dt>
+                <dd>
+                <p><?php echo $this->key_googlemap != null ? $this->key_googlemap : 'Aucune clé' ?></p>
+                </dd>
 
-    <dt>Base utilisée</dt>
-    <dd>
-        <p><em><?php echo $this->dbname ?></em> sur <em><?php echo $this->db_url ?></em></p>
-    </dd>
-    
-    <dt>HTTP API</dt>
-    <dd>
-        <p><?php echo $this->api_enabled ? 'Activé' : 'Désactivé' ?></p>
-    </dd>
-    
-    <dt>Proxy HTTP</dt>
-    <dd>
-        <p><?php echo $this->proxy_enabled != 1 ? 'Désactivé' : 'Activé' ?></p>
-    </dd>
-    
-    <dt>Plugins Tiers</dt>
-    <dd>
-        <p><?php echo $this->third_party_plugins ? $this->third_party_plugins : 'Aucuns' ?></p>
-    </dd>
+                <dt>Auth. via LDAP</dt>
+                <dd>
+                <p><?php echo $this->ldap_enabled != 1 ? 'Désactivé' : 'Activé' ?></p>
+                </dd>
 
-</dl>
+                <dt>Base utilisée</dt>
+                <dd>
+                <p><em><?php echo $this->dbname ?></em> sur <em><?php echo $this->db_url ?></em></p>
+                </dd>
+
+                <dt>HTTP API</dt>
+                <dd>
+                <p><?php echo $this->api_enabled ? 'Activé' : 'Désactivé' ?></p>
+                </dd>
+
+                <dt>Proxy HTTP</dt>
+                <dd>
+                <p><?php echo $this->proxy_enabled != 1 ? 'Désactivé' : 'Activé' ?></p>
+                </dd>
+
+                <dt>Plugins Tiers</dt>
+                <dd>
+                <p><?php echo $this->third_party_plugins ? $this->third_party_plugins : 'Aucuns' ?></p>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" style="width: 100%">
+    <div class="panel-heading">Utilisateurs connectés</div>
+        <div class="panel-body">
+            <?php if($this->users == null) : ?>
+                <p><strong>Aucun résultat.</strong></p>
+            <?php else : ?>
+                <table class='table table-condensed table-striped tablesorter'>
+                    <thead>
+                        <tr>
+                            <th>Identifiant</th>
+                            <th>Nom et prénom</th>
+                            <th>Groupe</th>
+                            <th>Fonction</th>
+                            <th>Etat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach( $this->users as $user ) : ?>
+                            <tr>
+                                <td style='font-style: italic' ><?php echo $user["USERNAME_UTILISATEUR"] ?></td>
+                                <td><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></td>
+                                <td><?php echo $user["LIBELLE_GROUPE"] ?></td>
+                                <td><?php echo $user["LIBELLE_FONCTION"] ?></td>
+                                <td><span class='label label-success'>En ligne</span></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            <?php endif ?>
+        </div>
+    </div>
+</div>

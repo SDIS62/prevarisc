@@ -1,0 +1,29 @@
+<div class='pull-right' >
+    <a class='btn' href="<?php echo $this->url(array('action' => 'edit-textes-applicables')) ?>">Modifier les textes applicables</a>
+</div>
+
+<h3>Textes applicables</h3>
+
+<?php if(count($this->textes_applicables_dossier) == 0) : ?>
+
+    <div class='well well-large text-center'>
+        <p class='lead'>Il n'y a pas de texte applicable.</p>
+        <p><a href='<?php echo $this->url(array('action' => 'edit-textes-applicables')) ?>' class='btn btn-large'>Gérer les textes applicables</a></p>
+    </div>
+
+<?php else : ?>
+
+<div class='row-fluid'>
+    <?php foreach($this->textes_applicables_dossier as $titre => $textes_applicables) : ?>
+        <h4><?php echo $titre ?></h4>
+        <ul class='unstyled'>
+            <?php foreach($textes_applicables as $texte_applicable) : ?>
+                <li>
+                    ✓ <?php echo $texte_applicable['LIBELLE_TEXTESAPPL'] ?>
+                </li>
+            <?php endforeach ?>
+        </ul>
+    <?php endforeach ?>
+</div>
+
+<?php endif ?>

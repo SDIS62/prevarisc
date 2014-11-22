@@ -327,4 +327,17 @@ class Service_User
             }
         }
     }
+
+    /**
+     * Récupération des ressources / privilèges associés à un utilisateur
+     *
+     * @param array $user
+     * @return array
+     */
+    public function getGroupPrivileges($user)
+    {
+        $model_user = new Model_DbTable_Utilisateur;
+        $privileges = $model_user->getGroupPrivileges($user);
+        return $privileges;
+    }
 }

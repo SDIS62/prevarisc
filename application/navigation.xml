@@ -868,6 +868,12 @@
                     <action>textesapplicables</action>
                     <privilege>view_doss</privilege>
                 </textesapplicables>
+				<edit-textesapplicables>
+                     <label>Édition des textes applicables</label>
+                    <controller>dossier</controller>
+                    <action>edit-textes-applicables</action>
+                    <privilege>edit_doss</privilege>
+                </edit-textesapplicables>
                 <selectiontexte>
                     <controller>dossier</controller>
                     <action>selectiontexte</action>

@@ -135,6 +135,18 @@ class Service_Etablissement implements Service_Interface_Etablissement
             // Récupération des établissements liés
             $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray();
 
+            // Récupération de l'indicateur de présence d'un DUS
+            $contacts_dus = array();
+            $contacts = array_merge(array(), $this->getAllContacts($id_etablissement));
+            foreach($etablissement_parents as $etablissement_parent) {
+                $contacts = array_merge($contacts, $this->getAllContacts($etablissement_parent['ID_ETABLISSEMENT']));
+            }
+            foreach($contacts as $contact) {
+                if($contact['ID_FONCTION'] == 8) {
+                    $contacts_dus[] = $contact;
+                }
+            }
+
             // Chargement des données pratiques
             if($informations->ID_GENRE == 1) {
                 $duree_totale = 0;
@@ -193,7 +205,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 'rubriques' => $DB_rubriques->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS, "ID_ETABLISSEMENTINFORMATIONSRUBRIQUE")->toArray(),
                 'etablissement_lies' => $etablissement_lies,
                 'preventionnistes' => $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $id_etablissement)->run()->getAdapter()->getItems(0, 99999999999)->toArray(),
-                'adresses' => $DB_adresse->get($id_etablissement)
+                'adresses' => $DB_adresse->get($id_etablissement),
+                'presence_dus' => count($contacts_dus) > 0
             );
 
             // On stocke en cache
@@ -264,7 +277,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     if($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"] > 0) {
                         $row = $DB_utilisateursInfo->fetchRow("ID_UTILISATEURINFORMATIONS = " . $DB_utilisateurs->find($fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"])->current()->ID_UTILISATEURINFORMATIONS)->toArray();
                         $author = array(
-                            'id' => $row["ID_UTILISATEUR"],
+                            'id' => $fiche["UTILISATEUR_ETABLISSEMENTINFORMATIONS"],
                             'name' => $row['NOM_UTILISATEURINFORMATIONS'] . ' ' . $row['PRENOM_UTILISATEURINFORMATIONS']
                         );
                     }
@@ -1038,7 +1051,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
         if(!move_uploaded_file($file['tmp_name'], $file_path)) {
             $msg = 'Ne peut pas déplacer le fichier ' . $file['tmp_name']. ' vers '.$file_path;
-            
+
             // log some debug information
             error_log($msg);
             error_log("is_dir ".dirname($file_path).": ".is_dir(dirname($file_path)));
@@ -1049,7 +1062,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             foreach($rslt as $file) {
                 error_log($file);
             }
-            
+
             throw new Exception($msg);
         }
         else {

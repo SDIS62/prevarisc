@@ -15,7 +15,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             // On définie le titre de l'application
             $view->headTitle(strip_tags($view->navigation()->breadcrumbs()->setMinDepth(0)->setSeparator(" / ")));
 
-            // Envoi de la version en cours sur la vue 
+            // Envoi de la version en cours sur la vue
             if (getenv('PREVARISC_BRANCH') != false) {
                 $view->branch_prevarisc = getenv('PREVARISC_BRANCH');
                 $view->revision_prevarisc = getenv('PREVARISC_REVISION');
@@ -26,7 +26,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
                 $view->revision_prevarisc = end($git->getRevisions())['sha1'];
                 $view->version_prevarisc = $view->branch_prevarisc . '@' . substr((string) $view->revision_prevarisc, 0, 7);
             }
-        
+
             // Chargement des aides de vue
             $view->registerHelper(new View_Helper_MinifyHeadLink, 'headLink');
             $view->registerHelper(new View_Helper_MinifyInlineScript, 'inlineScript');
@@ -35,7 +35,6 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->registerHelper(new View_Helper_AgendaMois, 'agendaMois');
             $view->registerHelper(new View_Helper_Avatar, 'avatar');
             $view->registerHelper(new View_Helper_Carte, 'carte');
-            $view->registerHelper(new View_Helper_DateJqueryToBd, 'dateJqueryToBd');
             $view->registerHelper(new View_Helper_ListeGroupement, 'listeGroupement');
             $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
 
