@@ -44,6 +44,7 @@ Corrections :
 * Correction sur le nom vide d'un établissement sur le partial de résultat de recherche d'un dossier
 * Retrait de code mort sur le service dashboard
 * Lorsqu'on sait local à sommeil = oui pour un type PE, l'application propose local à sommeil = non alors que l'utilisateur a fait son choix
+* Modification du libellé de la box de génération d'un rapport : "fermer" au lieu de "annuler"
 
 ## 2.2
 
