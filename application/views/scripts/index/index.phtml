@@ -32,14 +32,16 @@ $(document).ready(function() {
       for ( var i=0, len = pckry.items.length; i < len; i++ ) {
         var item = pckry.items[i];
         tabIndex = $( item.element ).attr('id');
-        itemsByTabIndex[ tabIndex ] = item;
+        itemsByTabIndex[tabIndex] = item;
       }
       // overwrite packery item order
       i = 0; len = storedSortOrder.length;
+      var j = 0;
       for (; i < len; i++ ) {
         tabIndex = storedSortOrder[i];
-        if (itemsByTabIndex[ tabIndex ] !== undefined) {
-           pckry.items[i] = itemsByTabIndex[ tabIndex ];
+        if (itemsByTabIndex[tabIndex] !== undefined) {
+           pckry.items[j] = itemsByTabIndex[tabIndex];
+           j++;
         }
       }
     }

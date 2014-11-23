@@ -26,6 +26,7 @@ Evolutions :
 * Retrait de la prolongation de visite du GE4§3 sur 2 VP positives de suite, rendu obsolète
 * Ajout du libellé du type de commission dans la liste déroulante du type de commission pour un établissement
 * Modification de la nomenclature du nom des rapports générés
+* Retrait des variables globales d'exemples de risques naturel : configuration inutile...
 
 Corrections :
 
@@ -47,6 +48,7 @@ Corrections :
 * Lorsqu'on sait local à sommeil = oui pour un type PE, l'application propose local à sommeil = non alors que l'utilisateur a fait son choix
 * Modification du libellé de la box de génération d'un rapport : "fermer" au lieu de "annuler"
 * Correction du bouton générer un rapport qui ne fonctionnait pas sur toutes les pages de dossier
+* Correction d'un problème d'initialisation des blocs lorsqu'un bloc manque dans les préférences utilisateur
 
 ## 2.2
 

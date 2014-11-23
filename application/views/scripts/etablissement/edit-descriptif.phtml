@@ -49,17 +49,11 @@
                     
                     case 'DESCTECH_RISQUES_NATURELS_ETABLISSEMENT': 
                         $risques_naturels = "Avalanche, Cyclonique, Feux de Forêt, Inondation, Mouvement de terrain, Sismique, Submersion marine, Tempête, Volcanique";
-                        if (getenv('PREVARISC_RISQUES_NATURELS_EXEMPLES') != false){
-                            $risques_naturels = getenv('PREVARISC_RISQUES_NATURELS_EXEMPLES');
-                        } 
                         echo "<i>Exemples de risques naturels : $risques_naturels</i>";
                         break;
                         
                     case 'DESCTECH_RISQUES_TECHNOLOGIQUES_ETABLISSEMENT': 
                         $risques_technologiques = "Industriel, Nucléaire, Rupture de barrage, Transport de matières dangereuses";
-                        if (getenv('PREVARISC_RISQUES_TECHNOLOGIQUES_EXEMPLES') != false){
-                            $risques_technologiques = getenv('PREVARISC_RISQUES_TECHNOLOGIQUES_EXEMPLES');
-                        }
                         echo "<i>Exemples de risques technologiques : $risques_technologiques</i>";
                         break;
                 }
