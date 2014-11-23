@@ -23,6 +23,7 @@ Evolutions :
 * Ajout de la possibilité de modifier manuellement la géolocalisation d'un établissement
 * Ajout du conseil de remplir une présence de local à sommeil si aucune sélection de radio button n'a été faite
 * Ajout du champ document d'urbanisme pour l'instruction du permis d'aménager et de démolir
+* Retrait de la prolongation de visite du GE4§3 sur 2 VP positives de suite, rendu obsolète
 
 Corrections :
 
