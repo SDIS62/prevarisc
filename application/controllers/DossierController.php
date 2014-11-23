@@ -1764,7 +1764,7 @@ class DossierController extends Zend_Controller_Action
 			if($array_adresses[0]["CODEPOSTAL_COMMUNE"] != '')
 				$adresse .= $array_adresses[0]["CODEPOSTAL_COMMUNE"]." ";
 			if($array_adresses[0]["LIBELLE_COMMUNE"] != '')
-				$adresse .= $array_adresses[0]["LIBELLE_COMMUNE"]." ";
+				$adresse .= strtoupper($array_adresses[0]["LIBELLE_COMMUNE"])." ";
 			$this->view->etablissementAdresse = $adresse;
 		}
 
@@ -2066,7 +2066,7 @@ class DossierController extends Zend_Controller_Action
 			$DBpieceJointe = new Model_DbTable_PieceJointe;
 			$nouvellePJ = $DBpieceJointe->createRow();
 			$nouvellePJ->ID_PIECEJOINTE = $this->view->idPieceJointe;
-			$nouvellePJ->NOM_PIECEJOINTE = "Rapport modèle ".substr(basename($this->view->fichierSelect), 0, strlen(basename($this->view->fichierSelect)) - 3);
+			$nouvellePJ->NOM_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY)."_".substr(basename($this->view->fichierSelect), 0, strlen(basename($this->view->fichierSelect)) - 4);
 			$nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
 			$nouvellePJ->DESCRIPTION_PIECEJOINTE = "Rapport de l'établissement ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']." généré le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." à ".$dateDuJour->get(Zend_Date::HOUR.":".Zend_Date::MINUTE);
 			$nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
