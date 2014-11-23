@@ -526,7 +526,7 @@
                     // On met à jour les valeurs par défauts
                     $('#confirm-modal-commission .confirm-modal-advisable').attr('id', data.response.commission ? data.response.commission.ID_COMMISSION : '').text(data.response.commission ? data.response.commission.LIBELLE_COMMISSION : '');
                     $('#confirm-modal-periodicite .confirm-modal-advisable').text(data.response.periodicite);
-                    $('#confirm-modal-localsommeil .confirm-modal-advisable').text(data.response.local_sommeil && data.response.local_sommeil == true ? 'Oui' : 'Non');
+                    $('#confirm-modal-localsommeil .confirm-modal-advisable').text(data.response.local_sommeil !== undefined ? (data.response.local_sommeil == true ? 'Oui' : 'Non') : '');
                     if(data.response.preventionnistes && data.response.preventionnistes.length > 0) {
                         var preventionnistes = [];
                         var preventionnistes_ids = [];
