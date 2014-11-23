@@ -18,6 +18,7 @@ Evolutions :
 * Ajout de plusieurs blocs
 * Ajout de la gestion des préférences utilisateur et de la gestion de l'ordre des blocs sur la HP
 * Tri des documents par ordre alphabétique sur l'admin des modèles
+* Ajout des natures de dossier Autorisation d’une ICPE, Certificats d'urbanisme (CU), Permis d'aménager (PA)
 
 Corrections :
 
@@ -35,6 +36,7 @@ Corrections :
 * Retrait de 2 requêtes en doublons sur l'édition utilisateur
 * Correction d'un warning sur la partie calendrier des commissions
 * Correction sur le nom vide d'un établissement sur le partial de résultat de recherche d'un dossier
+* Retrait de code mort sur le service dashboard
 
 ## 2.2
 
