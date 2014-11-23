@@ -921,6 +921,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     $results['periodicite'] = $DB_periodicite->gn4($categorie, $type, $local_sommeil == 'false' ? 0 : 1);
                 }
 
+                // Si pas de valeur de local à sommeil renseignée, on demande par défaut de saisir non
+                if (is_null($local_sommeil)) {
+                    $results['local_sommeil'] = false;
+                }
                 // Local à sommeil en fonction du type
                 if($type !== null) {
                     if (getenv('PREVARISC_LOCAL_SOMMEIL_TYPES') != false){

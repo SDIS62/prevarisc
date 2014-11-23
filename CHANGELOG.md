@@ -21,6 +21,7 @@ Evolutions :
 * Ajout des natures de dossier Autorisation d’une ICPE, Certificats d'urbanisme (CU), Permis d'aménager (PA)
 * Ajout du petit calendrier sur la partie dossier sur la date d'insertion du dossier
 * Ajout de la possibilité de modifier manuellement la géolocalisation d'un établissement
+* Ajout du conseil de remplir une présence de local à sommeil si aucune sélection de radio button n'a été faite
 
 Corrections :
 

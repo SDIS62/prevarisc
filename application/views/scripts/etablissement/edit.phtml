@@ -507,7 +507,7 @@
                 numinsee: $("#adresses").find('tr.adresse').first().find('input[type="hidden"]').first().val(),
                 type: $("select[name='ID_TYPE']").find('option:selected').val(),
                 categorie: $("select[name='ID_CATEGORIE']").find('option:selected').val(),
-                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").is(':checked'),
+                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']:checked").val(),
                 classe: $("select[name='ID_CLASSE']").find('option:selected').val(),
                 id_etablissement_pere: $("input[name='ID_PERE']").val(),
                 ids_etablissements_enfants: etablissements_enfants
@@ -517,9 +517,10 @@
                     // A l'apparition de la boite de confirmation on met à jour les valeurs saisies par l'utilisateur dans la boite
                     var preventionnistes = [];
                     var date = new Date($('input[name="date"]').val());
+                    var localSommeil = $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]:checked').val();
                     $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text());
                     $('#confirm-modal-periodicite .confirm-modal-input').text($('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val());
-                    $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"][value=1]').is(':checked') ? 'Oui' : 'Non' );
+                    $('#confirm-modal-localsommeil .confirm-modal-input').text(localSommeil != undefined ? (localSommeil == 1 ? 'Oui' : 'Non') : '' );
                     $('table#preventionnistes tbody tr.preventionniste').each(function(index) { preventionnistes[index] = $(this).find('td').first().find('span').text(); });
                     $('#confirm-modal-preventionnistes .confirm-modal-input').text(preventionnistes.toString() == '' ? 'Aucuns' : preventionnistes.toString());
                     // On met à jour les valeurs par défauts
