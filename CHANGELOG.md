@@ -18,10 +18,11 @@ Evolutions :
 * Ajout de plusieurs blocs
 * Ajout de la gestion des préférences utilisateur et de la gestion de l'ordre des blocs sur la HP
 * Tri des documents par ordre alphabétique sur l'admin des modèles
-* Ajout des natures de dossier Autorisation d’une ICPE, Certificats d'urbanisme (CU), Permis d'aménager (PA)
+* Ajout des natures de dossier Autorisation d’une ICPE, Certificats d'urbanisme (CU)
 * Ajout du petit calendrier sur la partie dossier sur la date d'insertion du dossier
 * Ajout de la possibilité de modifier manuellement la géolocalisation d'un établissement
 * Ajout du conseil de remplir une présence de local à sommeil si aucune sélection de radio button n'a été faite
+* Ajout du champ document d'urbanisme pour l'instruction du permis d'aménager
 
 Corrections :
 
