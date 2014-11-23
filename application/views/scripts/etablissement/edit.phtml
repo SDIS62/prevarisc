@@ -472,10 +472,19 @@
 
             <dt>Géolocalisation</dt>
             <dd>
-                Longitude: <span class='lon'>Inconnu</span>; Latitude: <span class='lat'>Inconnu</span>
                 <button id="geolocme" class='btn btn-small'>Géolocaliser cette adresse</button>
-                <input type='hidden' name='lon' />
-                <input type='hidden' name='lat' />
+                <br/>
+                <small>Résultat : <span class='result'>Inconnu</span></small>
+            </dd>
+            
+            <dt>Longitude</dt>
+            <dd>
+                 <input type='text' name='lon' />
+            </dd>
+            
+            <dt>Latitude</dt>
+            <dd>
+                 <input type='text' name='lat' />
             </dd>
         </dl>
     </div>
@@ -925,16 +934,14 @@
                 success: function(geolocations) {
                     element.text("Géolocaliser cette adresse");
                     if(geolocations.length > 0) {
+                        $("span.result").text("OK");
                         $("input[name='lon']").val(geolocations[0].lon);
-                        $("span.lon").text(geolocations[0].lon);
                         $("input[name='lat']").val(geolocations[0].lat);
-                        $("span.lat").text(geolocations[0].lat);
                     }
                     else {
+                        $("span.result").text("Introuvable");
                         $("input[name='lon']").val(0);
-                        $("span.lon").text("Introuvable");
                         $("input[name='lat']").val(0);
-                        $("span.lat").text("Introuvable");
                     }
                 },
                 error: function() {
