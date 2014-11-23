@@ -19,6 +19,7 @@ Evolutions :
 * Ajout de la gestion des préférences utilisateur et de la gestion de l'ordre des blocs sur la HP
 * Tri des documents par ordre alphabétique sur l'admin des modèles
 * Ajout des natures de dossier Autorisation d’une ICPE, Certificats d'urbanisme (CU), Permis d'aménager (PA)
+* Ajout du petit calendrier sur la partie dossier sur la date d'insertion du dossier
 
 Corrections :
 
