@@ -22,7 +22,7 @@ Evolutions :
 * Ajout du petit calendrier sur la partie dossier sur la date d'insertion du dossier
 * Ajout de la possibilité de modifier manuellement la géolocalisation d'un établissement
 * Ajout du conseil de remplir une présence de local à sommeil si aucune sélection de radio button n'a été faite
-* Ajout du champ document d'urbanisme pour l'instruction du permis d'aménager
+* Ajout du champ document d'urbanisme pour l'instruction du permis d'aménager et de démolir
 
 Corrections :
 
