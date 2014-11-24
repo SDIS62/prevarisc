@@ -27,6 +27,7 @@ Evolutions :
 * Ajout du libellé du type de commission dans la liste déroulante du type de commission pour un établissement
 * Modification de la nomenclature du nom des rapports générés
 * Retrait des variables globales d'exemples de risques naturel : configuration inutile...
+* Mise en surbrillance de l'onglet de la commission dans le calendrier des commissions
 
 Corrections :
 
@@ -49,8 +50,8 @@ Corrections :
 * Modification du libellé de la box de génération d'un rapport : "fermer" au lieu de "annuler"
 * Correction du bouton générer un rapport qui ne fonctionnait pas sur toutes les pages de dossier
 * Correction d'un problème d'initialisation des blocs lorsqu'un bloc manque dans les préférences utilisateur
-* Mise en surbrillance de l'onglet de la commission dans le calendrier des commissions
 * Correction sur le controlleur proxy
+* Correction sur le bloc des ets défavorables sur la commune dans le cas où l'utilisateur n'a pas de commune
 
 ## 2.2
 

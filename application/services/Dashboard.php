@@ -96,6 +96,11 @@ class Service_Dashboard
     
     public function getERPOuvertsSousAvisDefavorableSurCommune($user) {
         $dbEtablissement = new Model_DbTable_Etablissement;
+        
+        if (!$user["NUMINSEE_COMMUNE"]) {
+            return array();
+        }
+        
         return $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable(null, $user["NUMINSEE_COMMUNE"]);
     }
     

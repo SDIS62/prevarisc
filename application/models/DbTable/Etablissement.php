@@ -276,10 +276,6 @@
 
             }
         }
-        
-        public function listeDesERPOuvertsSousAvisDefavorableSurCommune($numInseeCommune) {
-            return $this->listeDesERPOuvertsSousAvisDefavorable(null, $numInseeCommune);
-        }
 
 
         public function listeDesERPOuvertsSousAvisDefavorable($idsCommission = null, $numInseeCommune = null, $idUtilisateur = null)
