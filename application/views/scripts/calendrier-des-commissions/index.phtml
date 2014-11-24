@@ -14,7 +14,7 @@
               </li>
                 <?php foreach($array_commission["ARRAY"] as $item) : ?>
                     <?php if($this->is_admin || (!$this->is_admin && is_array(Zend_Auth::getInstance()->getIdentity()["commissions"]) && in_array($item, Zend_Auth::getInstance()->getIdentity()["commissions"])))  : ?>
-                    <li active>
+                    <li>
                         <a href="#" class="commissionLink" data-value='<?php echo $item["ID_COMMISSION"] ?>' data-type='<?php echo htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES) ?>'>
                             <?php echo htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES) ?>
                         </a>
@@ -62,12 +62,16 @@
 
 
 	// Selection de la commission
-        $(".commissionLink").live('click',function() {
-            var idCommission = $(this).attr('data-value');
+        $(".commissionLink").live('click',function(e) {
+            e.preventDefault();
+            var $self = $(this);
+            var idCommission = $self.attr('data-value');
+            $(".commissionLink").parent().removeClass('active');
+            $self.parent().addClass('active');
             $("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + idCommission + "' />");
             $("#aff_calendar").button( "option", "disabled", false );
             $("#ordre_jour").button( "option", "disabled", false );
-            $("h2.page-header").html('Calendrier de la '+$(this).attr('data-type')+' de "'+$(this).html().trim()+'"');
+            $("h2.page-header").html('Calendrier de la '+$self.attr('data-type')+' de "'+$self.html().trim()+'"');
             $("#calendar").html('').afficheCalendar(idCommission,'calendrierComm');
         });
 

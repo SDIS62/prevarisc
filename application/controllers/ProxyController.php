@@ -9,7 +9,7 @@ class ProxyController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         
 
-        // On forme la chaine de param�tres
+        // On forme la chaine de paramètres
         $params = "";
         foreach ($this->_request->getParams() as $key => $value) {
 
@@ -52,7 +52,7 @@ class ProxyController extends Zend_Controller_Action
         
         foreach($headers as $header) {
             if ($header) {
-                if (preg_match('/^Content-Type/i', $header) !== false) {
+                if (preg_match('/^Content-Type/i', $header) !== 0) {
                     $this->_response->setRawHeader($header);
                 }
             }
