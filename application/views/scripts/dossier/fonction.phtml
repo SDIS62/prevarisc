@@ -1,83 +1,5 @@
 <?php
  switch($this->do){
-	case "infosEtabs":
-		//Récupére l'ensemble des établissements, sites liés
-		$nbEtab = count($this->listeEtablissement);
-		if($nbEtab > 0){
-			if($nbEtab == 1 && $this->listeEtablissement[0]["LIBELLE_GENRE"] == "Site"){
-				echo "Site concerné : &nbsp;";
-				
-				echo "
-					<a href='/etablissement/index/id/".$this->listeEtablissement[0]['ID_ETABLISSEMENT']."' class='etab'>
-						".$this->listeEtablissement[0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." 
-					</a>
-				";
-			}else{
-				echo "Etablissement(s) concerné(s) : &nbsp;";
-				$i = 0;
-				$idEtabEnCour = null;
-				$compteur = 0;
-				foreach($this->listeEtablissement as $etab => $value){
-					if($value['ID_ETABLISSEMENTDOSSIER'] != $idEtabEnCour){
-						$compteur++;
-						$idEtabEnCour = $value['ID_ETABLISSEMENTDOSSIER'];
-						echo "<a href='/etablissement/descriptif/id/".$value['ID_ETABLISSEMENT']."' data-target='#modal-desc' data-toggle='modal' id='descEtab' title='Afficher le descriptif'><i class='icon-list-alt icon-black'></i></a>&nbsp;";
-						echo "&nbsp;&nbsp;<a href='/etablissement/dossiers/id/".$value['ID_ETABLISSEMENT']."' title='Se rendre à la liste des dossiers' ><i class='icon-folder-open icon-black'></i></a>&nbsp;&nbsp;";
-						echo "<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."' class='etab'>".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
-						$nbAdresse = count($value['infosEtab']['adresses']);
-						if($nbAdresse != 0){
-							echo " (";
-							foreach($value['infosEtab']['adresses'] as $commune){
-								echo $commune['LIBELLE_COMMUNE'];
-								if($nbAdresse != 1)
-									echo ", ";
-								$nbAdresse--;
-							}
-							echo ") ";
-						}else{
-							echo " (adresse non renseignée)";
-						}
-						if(isset($value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
-							echo " [ ".$value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." ]";
-						}
-						echo "
-							</a>
-						";
-						//affichage preventionniste(s)
-						$nbPrev = count($value['infosEtab']['preventionnistes']);
-						if($nbPrev >0){
-							echo "<span style='font-size:10px'>(";
-							foreach($value['infosEtab']['preventionnistes'] as $prev){
-								echo $prev['NOM_UTILISATEURINFORMATIONS']." ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
-								if($nbPrev > 1)
-									echo ", ";
-								$nbPrev--;
-							}
-							echo ")</span>";
-						}
-						
-						$i++;
-					}
-				}
-			}
-		}
-		//echo count($this->etablissement);
-		if($this->etablissement){
-			echo "Etablissement(s) concerné(s) : &nbsp;";
-			echo "
-				<a href='/etablissement/index/id/".$this->etablissement['ID_ETABLISSEMENT']."'>
-							".$this->etablissement['LIBELLE_ETABLISSEMENTINFORMATIONS'];
-			if($this->adresseEtab){
-				echo "&nbsp;(".$this->adresseEtab[0]['LIBELLE_COMMUNE'].")";
-			}
-			if(isset($this->etablissementInfos['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
-				echo " [ ".$this->etablissementInfos['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." ]";
-			}
-			echo "
-				</a>
-			";
-		}
-	break;
 	case "showNature":
 		echo '
 			<script type="text/javascript">
@@ -152,32 +74,6 @@
 			}
 			echo "</ul>";
 		}
-		/*
-		foreach($this->listeDossierEtab as $val => $ue){
-			//Transformation date
-			$dateInsert = new Zend_Date($ue["DATEINSERT_DOSSIER"], Zend_Date::DATES);
-			$dateInsert = $dateInsert->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
-			
-			echo "
-				<li>
-					<span>
-						<input type='checkbox' name='idDossierLie[]' value='".$ue['ID_DOSSIER']."' />
-					</span>
-					<span class='doss-nom'>
-						".$ue["LIBELLE_DOSSIERTYPE"]."
-					</span>
-					<span class='doss-date'>
-						".$dateInsert."
-					</span>
-					<span class='doss-objet'>
-						".$ue["OBJET_DOSSIER"]."
-					</span>
-					<span class='doss-donneur-avis'></span>
-				</li>
-			";
-			
-		}
-		*/
 		echo "
 			</div>";
 

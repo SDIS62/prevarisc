@@ -2,58 +2,59 @@
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
 <input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='<?php echo $this->idUser; ?>' />	
 <ul class="nav nav-tabs nav-stacked menu_dashboard" >
+    <?php /*class="nav nav-tabs nav-stacked menu_dashboard"  */ ?>
         
-        <li >
-            <a class="<?php echo ( $this->action == "index" ) ? "white_link" : "read" ?>" 
+        <li class="<?php echo ( $this->action == "index" ) ? "active" : "read" ?>">
+            <a 
                href='<?php echo $this->url(array("action"=>"index")) ?>'><i class="icon-info-sign icon-black"></i> Informations générales</a>
         </li>
         
 	<?php		
             if($this->idTypeDossier == 1 && $this->natureDossier != 3 && $this->natureDossier != 9 && $this->natureDossier != 19) {
-                echo "<li>
-                        <a class='".(( $this->action == "descriptif") ? "white_link" : "read" )."' "
+                echo "<li class='".(( $this->action == "descriptif") ? "active" : "read" )."'>
+                        <a "
                         . "href='".$this->url(array("action"=>"descriptif"))."'><i class=\"icon-book icon-black\"></i> Descriptif ".(( $this->natureDossier == 1 || $this->natureDossier == 2 ) ? " des travaux" : "")."</a>
                     </li>";
             }
 
             if ($this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ) {
-                echo "<li>
-                        <a class='".( ( $this->action == "textesapplicables" ) ? "white_link" : "read" )."' "
-                        . "href='".$this->url(array("action"=>"textesapplicables"))."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
+                echo "<li class='".( ( $this->action == "textes-applicables" ) ? "active" : "read" )."'>
+                        <a "
+                        . "href='".$this->url(array("action"=>"textes-applicables"))."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
                     </li>";
             }
 
             if ($this->idTypeDossier != 5) {
-                echo "<li>
-                        <a class='".( ( $this->action == "docconsulte" ) ? "white_link" : "read" )."' "
+                echo "<li class='".( ( $this->action == "docconsulte" ) ? "active" : "read" )."'>
+                        <a  "
                             . "href='".$this->url(array("action"=>"docconsulte"))."'><i class=\"icon-file icon-black\"></i> Documents consultés</a>
                     </li>";
             }
 
             if($this->natureDossier != 3 && $this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 31 && $this->natureDossier != 32 && $this->idTypeDossier != 5) {
-                echo "<li>
-                        <a class='".( ( $this->action == "prescription" ) ? "white_link" : "read" )."' "
+                echo "<li class='".( ( $this->action == "prescription" ) ? "active" : "read" )."'>
+                        <a  "
                         . "href='".$this->url(array("action"=>"prescription"))."'><i class=\"icon-flag icon-black\"></i> Prescriptions</a>
                     </li>";
             }
 	?>
 		
-        <li>
-            <a class='<?php echo ( $this->action == "liees" ) ? "white_link" : "read" ?>' 
+        <li class='<?php echo ( $this->action == "liees" ) ? "active" : "read" ?>'>
+            <a  
                 href='<?php echo $this->url(array("action"=>"liees")) ?>'><i class="icon-folder-open icon-black"></i> Établissements et dossiers liés</a>
         </li>
 		
 	<?php
             if($this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44) {
-                echo "<li>
-                        <a class='".( ( $this->action == "contact" ) ? "white_link" : "read" )."' "
+                echo "<li class='".( ( $this->action == "contact" ) ? "active" : "read" )."'>
+                        <a  "
                         . "href='".$this->url(array("action"=>"contact"))."'><i class=\"icon-user icon-black\"></i> Contacts</a>
                     </li>";
             }
 	?>
         
-        <li>
-            <a class='<?php echo ( $this->action == "piece-jointe" ) ? "white_link" : "read" ?>' 
+        <li class='<?php echo ( $this->action == "piece-jointe" ) ? "active" : "read" ?>'>
+            <a 
                href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
         </li> 
         <li class="nav-header">Actions</li>
@@ -136,13 +137,13 @@ endif; ?>
         if($("#infosEtabs").html() == ''){
             //cas d'affichage d'un dossier
             $.ajax({
-                url: "/dossier/fonction",
+                url: "/dossier/getetabs",
                 data: "do=infosEtabs&idDossier="+$("#idDossier").val(),
                 type:"POST",
                 beforeSend: function(){
-                    
+                    $("#infosEtablissement").html("<img src='/images/load.gif' />");
                 },
-                success: function(affichageResultat){				
+                success: function(affichageResultat){
                     $("#infosEtabs").html(affichageResultat);
                 },
                 error: function(){
@@ -152,9 +153,12 @@ endif; ?>
         }else if($("#infosEtablissement").html() == ''){
             //cas de création d'un dossier depuis un établissement
             $.ajax({
-                url: "/dossier/fonction",
-                data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val()+"&type="+$("#do").val(),
+                url: "/dossier/getetabs",
+                data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val(),
                 type:"POST",
+				beforeSend: function(){
+                    $("#infosEtablissement").html("<img src='/images/load.gif' />");
+                },
                 success: function(affichageResultat) {			
                     $("#infosEtablissement").html(affichageResultat);
                 },
@@ -214,7 +218,7 @@ endif; ?>
 			return false;
 		});
 		
-                $("#rapport").live('click',function(){
+	$("#rapport").live('click',function(){
 		//On charge le contenu de la boite de dialogue en Ajax (liste des établissements concernés)
 		$.ajax({
 			url: "/dossier/dialoggenrapport",

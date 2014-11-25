@@ -14,5 +14,15 @@ class AdminController extends Zend_Controller_Action
         $this->view->api_enabled = getenv('PREVARISC_SECURITY_KEY') != "";
         $this->view->proxy_enabled = getenv('PREVARISC_PROXY_ENABLED');
         $this->view->third_party_plugins = implode(', ', explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS')));
+
+        $service_search = new Service_Search;
+        $users = $service_search->users(null, null, null, true, 100)['results'];
+        $this->view->users = array();
+
+        foreach ($users as $user) {
+          if (time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime')) {
+            $this->view->users[] = $user;
+          }
+        }
     }
 }
