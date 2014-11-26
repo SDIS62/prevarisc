@@ -1,16 +1,16 @@
 <?php
 
 class IndexController extends Zend_Controller_Action
-{ 
-    
+{
+
     public function indexAction()
     {
         $service_feed = new Service_Feed;
         $service_dashboard = new Service_Dashboard;
         $service_user = new Service_User;
-        
+
         $blocsConfig = array(
-            
+
             // lié aux commissions
             'nextCommissions' => array(
                 'service' => $service_dashboard,
@@ -21,7 +21,7 @@ class IndexController extends Zend_Controller_Action
                 'height'  => 'small',
                 'width'   => 'small',
             ),
-            
+
             'nextCommissionsOdj' => array(
                 'service' => $service_dashboard,
                 'method'  => 'getNextCommission',
@@ -31,7 +31,7 @@ class IndexController extends Zend_Controller_Action
                 'height'  => 'small',
                 'width'   => 'small',
             ),
-            
+
             // lié aux établissements
             'ERPSuivis' => array(
                 'service' => $service_dashboard,
@@ -87,7 +87,7 @@ class IndexController extends Zend_Controller_Action
                 'height'  => 'small',
                 'width'   => 'small',
             ),
-            
+
             // lié aux dossiers
             'DossiersSuivisSansAvis' => array(
                 'service' => $service_dashboard,
@@ -134,7 +134,7 @@ class IndexController extends Zend_Controller_Action
                 'height'  => 'small',
                 'width'   => 'small',
             ),
-            
+
             // autres blocs
             'feeds' => array(
                 'service' => $service_feed,
@@ -145,13 +145,12 @@ class IndexController extends Zend_Controller_Action
                 'height'  => 'small',
                 'width'   => 'small',
             ),
-            
+
         );
-        
+
         $identity = Zend_Auth::getInstance()->getIdentity();
         $user = $service_user->find($identity['ID_UTILISATEUR']);
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
-        $acl = unserialize($cache->load('acl'));
+        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
         $profil = $user['group']['LIBELLE_GROUPE'];
         $blocs = array();
         foreach($blocsConfig as $blocId => $blocConfig) {
@@ -163,13 +162,13 @@ class IndexController extends Zend_Controller_Action
                     'title' => $blocConfig['title'],
                     'height' => $blocConfig['height'],
                     'width' => $blocConfig['width'],
-                );   
+                );
             }
         }
-        
+
         // determine the bloc order
         // user preferences
-        if (isset($user['preferences']['DASHBOARD_BLOCS']) 
+        if (isset($user['preferences']['DASHBOARD_BLOCS'])
                 && $user['preferences']['DASHBOARD_BLOCS']
                 && $blocsOrder = json_decode($user['preferences']['DASHBOARD_BLOCS'])
         ) {
@@ -182,13 +181,12 @@ class IndexController extends Zend_Controller_Action
         } else {
             $blocsOrder = array_keys($blocsConfig);
         }
-        
+
         $this->view->user = $user;
         $this->view->blocs = $blocs;
         $this->view->blocsOrder = $blocsOrder;
         $this->view->inlineScript()->appendFile("/js/jquery.packery.pkgd.min.js");
         $this->_helper->layout->setLayout('index');
-        $this->render('index');
     }
 
     public function addMessageAction()
