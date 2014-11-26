@@ -860,7 +860,7 @@
 	function ValidateDate(dateValue)
 	{
 		var date_temp = dateValue.split('/');
-		if(date_temp[2] && date_temp[1] > 0 && date_temp[1] < 12 && date_temp[0] > 0 && date_temp[0] <=31){
+		if(date_temp[2] && date_temp[1] > 0 && date_temp[1] <= 12 && date_temp[0] > 0 && date_temp[0] <=31){
 			return true;
 		}else{
 			return false;
