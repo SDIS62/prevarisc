@@ -58,8 +58,8 @@ class Service_Search
                 ->joinLeft("typeactivite", "etablissementinformations.ID_TYPEACTIVITE = typeactivite.ID_TYPEACTIVITE", "LIBELLE_ACTIVITE")
                 ->join("genre", "etablissementinformations.ID_GENRE = genre.ID_GENRE", "LIBELLE_GENRE")
                 ->joinLeft("etablissementlie", "e.ID_ETABLISSEMENT = etablissementlie.ID_FILS_ETABLISSEMENT", array("pere" => "ID_ETABLISSEMENT", "ID_FILS_ETABLISSEMENT"))
-                ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS = etablissementinformations.ID_ETABLISSEMENTINFORMATIONS", null)
-                ->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = etablissementinformationspreventionniste.ID_UTILISATEUR", "ID_UTILISATEUR")
+                //->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS = etablissementinformations.ID_ETABLISSEMENTINFORMATIONS", null)
+                //->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = etablissementinformationspreventionniste.ID_UTILISATEUR", "ID_UTILISATEUR")
                 ->joinLeft("etablissementadresse", "e.ID_ETABLISSEMENT = etablissementadresse.ID_ETABLISSEMENT", array("NUMINSEE_COMMUNE", "LON_ETABLISSEMENTADRESSE", "LAT_ETABLISSEMENTADRESSE", "ID_ADRESSE", "ID_RUE"))
                 ->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_DEFAULT")
                 ->joinLeft("adresserue", "adresserue.ID_RUE = etablissementadresse.ID_RUE", "LIBELLE_RUE")
@@ -67,7 +67,7 @@ class Service_Search
                 ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
                 ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", array("ID_RUE AS ID_RUE_CELL", "NUMINSEE_COMMUNE as NUMINSEE_COMMUNE_CELL"))
                 ->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
-                
+
                 // Vincent MICHEL le 12/11/2014 : retrait de cette clause qui tue les performances
                 // sur la recherche. Je n'ai pas vu d'impact sur le retrait du group by.
                 //->group("e.ID_ETABLISSEMENT")
@@ -161,8 +161,8 @@ class Service_Search
             if($parent !== null) {
                $select->where($parent == 0 ? "etablissementlie.ID_ETABLISSEMENT IS NULL" : "etablissementlie.ID_ETABLISSEMENT = ?", $parent);
             }
-            
-            // Performance optimisation : avoid sorting on big queries, and sort only if 
+
+            // Performance optimisation : avoid sorting on big queries, and sort only if
             // there is at least one where part
             if (count($select->getPart(Zend_Db_Select::WHERE)) > 0) {
                 $select->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC");
@@ -250,12 +250,12 @@ class Service_Search
                 ->joinLeft("datecommission","datecommission.ID_DATECOMMISSION = dossieraffectation.ID_DATECOMMISSION_AFFECT",null)
                 ->joinLeft("dossierpreventionniste","dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER",null)
                 ->joinLeft(array("ea" => "etablissementadresse"),"ea.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT",null)
-                
+
                 // Vincent MICHEL le 12/11/2014 : retrait de cette clauses qui tuent les performances
                 // modification de la jointure avec etablissementinformations pour éviter les doublons
                 //->group("d.ID_DOSSIER")
                 ;
-                
+
             // Critères : numéro de doc urba
             if($num_doc_urba !== null) {
                $select->having("NB_URBA like ?", "%$num_doc_urba%");
@@ -332,8 +332,8 @@ class Service_Search
             if ($criterias['dateReponseEnd'] !== null){
                 $select->where("d.DATEREP_DOSSIER <= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReponseEnd']);
             }
-            
-            // Performance optimisation : avoid sorting on big queries, and sort only if 
+
+            // Performance optimisation : avoid sorting on big queries, and sort only if
             // there is at least one where part
             if (count($select->getPart(Zend_Db_Select::WHERE)) > 0) {
                 $select->order("d.DATEINSERT_DOSSIER DESC");
