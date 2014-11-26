@@ -8,7 +8,7 @@ class Service_Feed
      * int $id_groupe
      * @return array
      */
-    public function get($id_groupe, $count = 5)
+    public function get($id_group, $count = 5)
     {
         $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
 
@@ -16,7 +16,23 @@ class Service_Feed
             ->join("newsgroupe", "news.ID_NEWS = newsgroupe.ID_NEWS", null)
             ->join("utilisateur", "news.ID_UTILISATEUR = utilisateur.ID_UTILISATEUR")
             ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = utilisateur.ID_UTILISATEURINFORMATIONS")
-            ->where("newsgroupe.ID_GROUPE = ?", $id_groupe)
+            ->where("newsgroupe.ID_GROUPE = ?", $id_group)
+            ->group('ID_NEWS')
+            ->order("ID_NEWS DESC")
+            ->limit($count);
+
+        return $select->query()->fetchAll();
+    }
+    
+    public function getFeeds($user, $count = 5)
+    {
+        $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
+
+        $select->from("news")
+            ->join("newsgroupe", "news.ID_NEWS = newsgroupe.ID_NEWS", null)
+            ->join("utilisateur", "news.ID_UTILISATEUR = utilisateur.ID_UTILISATEUR")
+            ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = utilisateur.ID_UTILISATEURINFORMATIONS")
+            ->where("newsgroupe.ID_GROUPE = ?", $user['group']['ID_GROUPE'])
             ->group('ID_NEWS')
             ->order("ID_NEWS DESC")
             ->limit($count);

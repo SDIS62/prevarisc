@@ -1,0 +1,14 @@
+<div id="<?php echo $this->id ?>" class="panel panel-default <?php echo $this->width != 'small' ? 'w2' : '' ?>">
+  <div class="panel-heading">
+    <?php echo $this->title ?> (<?php echo count($this->data) ?>)
+  </div>
+  <div class="panel-body">
+     <?php if (count($this->data) > 0): ?>
+        <ul class='recherche_liste unstyled no_slide scroll-bloc-medium'>
+          <?php echo $this->partialLoop('search/results/dossier.phtml', $this->data) ?>
+        </ul>
+    <?php else: ?>
+        <small class='muted'>Aucun dossier.</small>
+      <?php endif ?>
+  </div>
+</div>

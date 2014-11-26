@@ -271,18 +271,32 @@
             return $this->getAdapter()->fetchAll($select);
         }
         
-        public function listeDesDossierDateCommissionEchu($idsCommission, $sinceDays = 10)
+        public function listeDesDossierDateCommissionEchu($idsCommission, $sinceDays = 10, $untilDays = 100)
         {
             $ids = (array) $idsCommission;
-            $select= "select ID_DOSSIER,OBJET_DOSSIER,LIBELLE_DATECOMMISSION,DATE_COMMISSION,LIBELLE_DOSSIERTYPE,DATEINSERT_DOSSIER from dossiertype,dossier,dossieraffectation,datecommission 
-                   WHERE (dossier.AVIS_DOSSIER_COMMISSION = 0 OR dossier.AVIS_DOSSIER_COMMISSION IS NULL)
-                   AND dossiertype.ID_DOSSIERTYPE = dossier.TYPE_DOSSIER
-                   AND dossieraffectation.ID_DOSSIER_AFFECT = dossier.ID_DOSSIER
-                   AND dossieraffectation.ID_DATECOMMISSION_AFFECT = datecommission.ID_DATECOMMISSION 
-                   ".(count($ids) > 0 ? "AND datecommission.COMMISSION_CONCERNE IN (".implode(',', $ids).")" : "")."
-                   AND DATEDIFF(datecommission.DATE_COMMISSION,CURDATE()) <= -".((int) $sinceDays)."
-                   ";
             
+            $select = $this->select()->setIntegrityCheck(false)
+                         ->from(array("d" => "dossier"))
+                         ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
+                         ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
+                         ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))
+                         ->join("dossiertype", "dossiertype.ID_DOSSIERTYPE = dossiernatureliste.ID_DOSSIERTYPE", "LIBELLE_DOSSIERTYPE")
+                         ->joinLeft("dossierdocurba", "d.ID_DOSSIER = dossierdocurba.ID_DOSSIER", "NUM_DOCURBA")
+                         ->joinLeft(array("e" => "etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
+                         ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
+                         ->joinLeft("dossierpreventionniste", "dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER", null)
+                         ->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = dossierpreventionniste.ID_PREVENTIONNISTE", "ID_UTILISATEUR")
+                         ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )", "LIBELLE_ETABLISSEMENTINFORMATIONS")
+                         ->joinLeft("dossieraffectation", "dossieraffectation.ID_DOSSIER_AFFECT = d.ID_DOSSIER")
+                         ->joinLeft("datecommission", "dossieraffectation.ID_DATECOMMISSION_AFFECT = datecommission.ID_DATECOMMISSION ")
+                         ->group("d.ID_DOSSIER")
+                         ->where("DATEDIFF(CURDATE(), datecommission.DATE_COMMISSION) >= ".((int) $sinceDays))
+                         ->where("DATEDIFF(CURDATE(), datecommission.DATE_COMMISSION) <= ".((int) $untilDays))
+                         ->where("d.AVIS_DOSSIER_COMMISSION IS NULL");
+            
+            if (count($ids) > 0) {
+                $select->where("datecommission.COMMISSION_CONCERNE", $ids);
+            }
                  
             return $this->getAdapter()->fetchAll($select);
         }
@@ -303,17 +317,12 @@
         
         public function listeDesCourrierSansReponse($duree_en_jour = 5)
         {
-                      
-            $select= "select OBJET_DOSSIER , DATEDIFF(DATEINSERT_DOSSIER,CURDATE()) as DATERETARDREPONSE, ID_DOSSIER from dossier 
-                   WHERE TYPE_DOSSIER = 5
-                   AND DATEREP_DOSSIER IS NULL
-                   AND OBJET_DOSSIER IS NOT NULL
-                   AND DATEDIFF(DATEINSERT_DOSSIER,CURDATE()) <= ".((int) $duree_en_jour * -1);
-            
-            return $this->getAdapter()->fetchAll($select);
+            $search = new Model_DbTable_Search;
+            $search->setItem("dossier");
+            $search->setCriteria("d.TYPE_DOSSIER", 5);
+            $search->setCriteria("d.DATEREP_DOSSIER IS NULL");
+            $search->setCriteria("d.OBJET_DOSSIER IS NOT NULL");
+            $search->sup("DATEDIFF(CURDATE(), d.DATEINSERT_DOSSIER)", (int) $duree_en_jour);
+            return $search->run(false, null, false)->toArray();   
         }
-        
-        
-          
-        
     }

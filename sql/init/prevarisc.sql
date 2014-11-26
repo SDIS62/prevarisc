@@ -2387,6 +2387,11 @@ INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(104
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(105,"view_doss_avis_differe", "Voir dossiers avec avis différés",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(106,"view_ets_avis_defavorable_sur_commune", "Voir ets défavorable sur commune utilisateur",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(107,"view_ets_suivis", "Voir ets suivis",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(108,"view_doss_suivis_unlocked", "Voir les dossiers suivis déverrouillés",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(109,"view_doss_suivis_sans_avis", "Voir les dossiers suivis sans avis",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(110,"view_ets_avis_defavorable_suivis", "Voir les établissements défavorables suivis",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(111,"view_next_commissions", "Voir les prochaines commissions",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(112,"view_next_commissions_odj", "Voir les odj des prochaines commissions",100);
 /*!40000 ALTER TABLE `privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2747,6 +2752,32 @@ INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(3, "Indus
 INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(4, "Lotissement");
 INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(5, "Autre");
 UNLOCK TABLES;
+
+
+--
+-- Table structure for table `utilisateur`
+--
+
+DROP TABLE IF EXISTS `utilisateurpreferences`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `utilisateurpreferences` (
+  `ID_UTILISATEURPREFERENCES` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `ID_UTILISATEUR` bigint(20) unsigned NOT NULL,
+  `DASHBOARD_BLOCS` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`ID_UTILISATEURPREFERENCES`),
+  KEY `fk_utilisateurpreferences_utilisateur1_idx` (`ID_UTILISATEUR`),
+  CONSTRAINT `fk_utilisateurpreferences_utilisateur1` FOREIGN KEY (`ID_UTILISATEUR`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+LOCK TABLES `utilisateurpreferences` WRITE;
+/*!40000 ALTER TABLE `utilisateurpreferences` DISABLE KEYS */;
+INSERT INTO `utilisateurpreferences` VALUES (1,1,NULL);
+/*!40000 ALTER TABLE `utilisateurpreferences` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

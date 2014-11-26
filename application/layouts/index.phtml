@@ -1,19 +1,66 @@
-<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
-<ul class="nav nav-tabs nav-stacked menu_dashboard" >
-                      <li class="active" ><a href="#"><i class="icon-th-large"></i> Tableau de bord</a></li>
-                      <li><a href="/calendrier-des-commissions"><i class="icon-calendar"></i> Calendrier des commissions</a></li>
-                      <li><a href="etablissement/add"><i class="icon-plus"></i> Ajouter un établissement</a></li>
-                      <li><a href="dossier/add"><i class="icon-plus"></i> Ajouter un dossier</a></li>
-</ul>
-<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
+<!doctype html>
+<html lang="fr" >
 
-<?php $this->placeholder('page_header')->captureStart();  ?>
-                  <h2 class="page-header">
-                    Tableau de bord
-                    <small>Profil : <?php echo $this->user['infos']['LIBELLE_FONCTION'] ?></small>
-                  </h2>
-<?php $this->placeholder('page_header')->captureEnd(); ?>
+    <head>
 
-<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
-<?php $this->placeholder('before_content')->captureEnd() ?>
-<?php echo $this->render('dashboard.phtml') // Rendu du layout par défaut avec les placeholders ?>
+        <style>body { padding-top: 80px; }</style>
+        <?php echo $this->render("includes/header.phtml"); ?>
+
+    </head>
+
+    <body>
+
+        <?php echo $this->render("includes/nav-main.phtml"); ?>
+
+        <div class='container-fluid' >
+
+
+            <div class='row-fluid page-header' style="margin-top: 55px">
+
+                <div class='span12'>
+                    <h2 style="margin: 4px 0">
+                      <?php echo $this->avatar(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], 'medium', array('style' => "float: left; width: 50px; border: 1px solid #dfdfdf; border-radius: 50%; margin-right: 15px;")) ?>
+                      Tableau de bord
+                      <small>Profil : <?php echo $this->user['group']['LIBELLE_GROUPE'] ?></small>
+                    </h2>
+                    <span>
+                        Bonjour <?php echo Zend_Auth::getInstance()->getIdentity()['infos']['PRENOM_UTILISATEURINFORMATIONS'] ?>
+                        <a class="deconnexion" href="<?php echo $this->url(array('controller' => 'session', 'action' => 'logout'), null, true) ?>">Déconnexion</a>
+                    </span>
+                    <a id="reinitBlocOrder" class="btn btn-small pull-right" href="#">
+                        <i class="icon-th"></i> Ré-initialiser les blocs
+                    </a>
+                </div>
+             </div>
+             <div class='row-fluid'>
+                <div class='span12 dashboard'>
+
+                  <?php echo $this->render("includes/notifications.phtml"); ?>
+
+                  <?php echo $this->placeholder('before_content') ?>
+
+                  <?php echo $this->layout()->content; ?>
+
+                  <?php echo $this->placeholder('after_content') ?>
+
+                </div>
+
+
+            </div>
+            <div class='row-fluid'>
+                <div class="span12">
+                    <?php echo $this->render("includes/footer.phtml"); ?>
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+          $(document).ready(function() {
+              $(".sidebar").css('height', $(document).height() + 'px');
+          });
+        </script>
+
+    </body>
+
+</html>

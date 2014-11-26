@@ -54,7 +54,7 @@ foreach($this->informationsMembre as $val => $membre){
 			//Generation du segment villeDoss
 			$villeODF = $odf->setSegment('villeDoss');
 			foreach($this->listeCommunes as $val => $commune){
-				//Zend_Debug::dump($commune);
+				//Zend_Debug::dump($commune);exit()
 				//Array des infos de la commune = 1
 				//$firstLetter = $commune[0]{0};
 				//if(in_array($firstLetter, $consonne)){
@@ -86,7 +86,7 @@ foreach($this->informationsMembre as $val => $membre){
 				//Generation du segment pour l'affichage des différentes infos du dossier
 				//Zend_Debug::dump($this->dossierComm);
                                 
-                                #$infosDoss = $villeODF->setSegment('infosDoss');
+                                $infosDoss = $villeODF->setSegment('infosDoss');
 				foreach($this->dossierComm as $val => $dossierInfos){
 					if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
 						//echo $dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']." - ".$commune[0];
@@ -127,39 +127,38 @@ foreach($this->informationsMembre as $val => $membre){
 			//On commence par selectionner le document approprié
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			
+                        retrieveInfoGroupementCommission($odf, $this->commissionInfos, $this->heureDeb, $this->dateComm, $infosGroupement, $this->listeCommunes);
+                        
 			//Generation du segment grpLoop
 			$grpLoop = $odf->setSegment('grpLoop');
 
-			//Liste des champs à ajouter			
-			setVars($grpLoop,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
-			
-			$dateDuJour = new Zend_Date();
-			setVars($grpLoop,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
-			
-			setVars($grpLoop,'communeGrp',$infosGroupement["VILLEADRESSE_UTILISATEURINFORMATIONS"]);
-			setVars($grpLoop,'numGrp',$infosGroupement["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
-			setVars($grpLoop,'rueGrp',$infosGroupement["RUEADRESSE_UTILISATEURINFORMATIONS"]);
-			setVars($grpLoop,'cpGrp',$infosGroupement["CPADRESSE_UTILISATEURINFORMATIONS"]);
-			
-			$dateComm = new Zend_Date($this->dateComm);
-
-			addChamp($grpLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
-			addChamp($grpLoop,'heureDebutComm',$this->heureDeb);
+			retrieveInfoGroupementCommission($grpLoop, $this->commissionInfos, $this->heureDeb, $this->dateComm, $infosGroupement, $this->listeCommunes);
 			
 			//On commence par parcourir les dossier pour récuperer la ville concernée
 			foreach($this->dossierComm as $val => $dossierInfos){
+                            $dossierExported = false;
                             //On parcour la liste des ville du groupement concerné pour comparer avec la ville du dossier
                             foreach($listeVillesGroupement as $var => $val){
+                                
 				//Lorsque les deux correspondent, on récupère les éléments du dossier pour générer le document       
-                                if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $val['LIBELLE_COMMUNE']){
+                                if(count($dossierInfos['infosEtab']['adresses']) > 0 && $dossierInfos['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'] == $val['NUMINSEE_COMMUNE']){
                                     if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE']){
                                         retrieveInfoDossier($grpLoop, $dossierInfos);
+                                        setVars($odf, 'nomEtab',$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
+                                        setVars($odf, 'numWinPrev', $dossierInfos['infosEtab']['general']['NUMEROID_ETABLISSEMENT']);
+                                        $dossierExported = true;
+                                        // on a trouvé la ville du groupement de l'établissement, pas la peine de parcourir toutes les villes, on s'arrête
+                                        break;
                                     }else{
 					//cas membre n'a pas les droits
                                     }	
                                 }                                   
-                            }				
-                            $grpLoop->merge();	
+                            }
+                            // si la commune dossier n'est pas dans le groupement considéré
+                            // on ne génère pas de section "vide" avec des balises moches
+                            if ($dossierExported) {
+                                $grpLoop->merge();	
+                            }
 			}
 
 			$odf->mergeSegment($grpLoop);
@@ -211,9 +210,10 @@ function savePj($dateCommId, $membreNom){
 function retrieveInfoDossier($segment, $dossierInfos) {
     setVars($segment, 'nomEtab',$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
     if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"])) {
-        setVars($villeODF, 'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
+        setVars($segment, 'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
     }
     setVars($segment, 'idDossier', $dossierInfos["ID_DOSSIER"]);
+    setVars($segment, 'numWinPrev', $dossierInfos['infosEtab']['general']['NUMEROID_ETABLISSEMENT']);
     setVars($segment, 'mailEtab', $dossierInfos['infosEtab']['general']["COURRIEL_ETABLISSEMENT"]);
     setVars($segment, 'communeEtab', $dossierInfos['infosEtab']["adresses"][0]["LIBELLE_COMMUNE"]);
     $adresse = $dossierInfos['infosEtab']["adresses"][0]["NUMERO_ADRESSE"]." ";
@@ -225,7 +225,9 @@ function retrieveInfoDossier($segment, $dossierInfos) {
     setVars($segment, 'typeLettreP', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"]);
     setVars($segment, 'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);	
     setVars($segment, 'objetDossier', $dossierInfos["OBJET_DOSSIER"]);
-                                                            
+    setVars($segment, 'avisDossierCommission', getAvis($dossierInfos["AVIS_DOSSIER_COMMISSION"]));
+    setVars($segment, 'avisDossier', getAvis($dossierInfos["AVIS_DOSSIER"]));
+    
     if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
         $heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
         $heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
@@ -248,16 +250,52 @@ function retrieveInfoDossier($segment, $dossierInfos) {
     }
     setVars($segment, 'numDocUrba', $listeDocUrba);
     
-    $listePreventioniste = "";
-    $listeTelPreventioniste = "";
+    $listePreventioniste = array();
+    $listeTelPreventioniste = array();
     foreach($dossierInfos['infosEtab']["preventionnistes"] as $va => $preventioniste){
-	$listePreventioniste .= $preventioniste['NOM_UTILISATEURINFORMATIONS']." ";
-        $listePreventioniste .= $preventioniste['PRENOM_UTILISATEURINFORMATIONS'].", ";
-        
-        $listeTelPreventioniste .= $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'].", ";
+	$listePreventioniste[] = $preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
+        $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
     }
-    setVars($segment, 'preventionnistes', $listePreventioniste);
-    setVars($segment, 'listeTelPreventioniste', $listeTelPreventioniste);   
+    setVars($segment, 'preventionnistes', implode(', ', $listePreventioniste));
+    setVars($segment, 'listeTelPreventioniste', implode(', ', $listeTelPreventioniste));   
+}
+
+function retrieveInfoGroupementCommission($odf, $commissionInfos, $heureDeb, $dateComm, $infosGroupement, $listeCommunes) {
+    //Liste des champs à ajouter			
+    setVars($odf,'commissionNom',$commissionInfos[0]['LIBELLE_COMMISSION']);
+
+    $dateDuJour = new Zend_Date();
+    setVars($odf,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+
+    setVars($odf,'communeGrp',$infosGroupement["VILLEADRESSE_UTILISATEURINFORMATIONS"]);
+    setVars($odf,'numGrp',$infosGroupement["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
+    setVars($odf,'rueGrp',$infosGroupement["RUEADRESSE_UTILISATEURINFORMATIONS"]);
+    setVars($odf,'cpGrp',$infosGroupement["CPADRESSE_UTILISATEURINFORMATIONS"]);
+
+    $dateComm = new Zend_Date($dateComm);
+
+    setVars($odf,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+    setVars($odf,'heureDebutComm',$heureDeb);
+    
+    $maires = array();
+    foreach($listeCommunes as $commune) {
+        if (isset($commune[1][0]['NOM_UTILISATEURINFORMATIONS']) && $commune[1][0]['NOM_UTILISATEURINFORMATIONS']) {
+            $maires[] = $commune[1][0]['NOM_UTILISATEURINFORMATIONS']. "  " . $commune[1][0]['PRENOM_UTILISATEURINFORMATIONS'];
+        }
+    }
+    setVars($odf,'maires',implode(', ', $maires));
+}
+
+function getAvis($avis) {
+    $avisInt = (int) $avis;
+    
+    if ($avisInt == 0) {
+        return "";
+    } else if ($avisInt == 1) {
+        return "Favorable";
+    } else if ($avisInt == 2) {
+        return "Défavorable";
+    }
 }
 
 function setVars($odf,$nomOdf, $variable){
@@ -268,7 +306,7 @@ function setVars($odf,$nomOdf, $variable){
     $odf->setVars($nomOdf,$variable, true,'UTF8');
     #$segment->$nomOdf(utf8_decode($variable));
   } catch (Exception $e) {
-  
+      
   }
 }
 
