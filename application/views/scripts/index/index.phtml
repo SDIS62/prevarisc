@@ -1,6 +1,7 @@
 <div class='dashboard'>
 
     <?php foreach($this->blocs as $id => $bloc): ?>
+        <?php $id = md5($id); ?>
         <?php echo $this->partial('index/partials/'.$bloc['type'].'.phtml', array_merge($bloc, array('id' => $id))) ?>
     <?php endforeach ?>
 
