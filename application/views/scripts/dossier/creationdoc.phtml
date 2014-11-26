@@ -267,18 +267,18 @@ try{
 			}
 			if($cpt)
 			{
-				$prescription->setVars('num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+				addChamp($prescription, 'num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']);
 				if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
 				{
-					$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
+					addChamp($prescription, 'libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
 				}else{
-					$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+					addChamp($prescription, 'libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
 				}
 				$cpt = false;
 			}
 			$nbAssoc--;
 		}
-		$prescription->setVars('textearticle',$textearticle,true,'UTF-8');
+		addChamp($prescription, 'textearticle',$textearticle);
 		$prescription->merge();
     }
     $odf->mergeSegment($prescription);	
@@ -291,7 +291,7 @@ try{
     $texteAppl = $odf->setSegment('texteAppl');
     foreach($this->listeTextesAppl as $texteappl){
 	$texteappl = str_replace("’","'",$texteappl['LIBELLE_TEXTESAPPL']);
-	$texteAppl->setVars('libelleTexteAppl', $texteappl, true, 'UTF-8');
+	addChamp($texteAppl, 'libelleTexteAppl', $texteappl);
 	$texteAppl->merge();
     }
     $odf->mergeSegment($texteAppl);	

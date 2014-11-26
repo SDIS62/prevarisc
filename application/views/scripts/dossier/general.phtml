@@ -1116,7 +1116,7 @@ echo "
 						".( ($this->infosDossier['VERROU_DOSSIER']) ? " - Verrouillé par : ".$this->user_infoVerrou['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_infoVerrou['NOM_UTILISATEURINFORMATIONS'] :"")."						
 					</div >
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
-						<input type='text' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".( ($this->DATEINSERT_INPUT)?$this->DATEINSERT_INPUT:"" )."' />
+						<input type='text' class='date' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".( ($this->DATEINSERT_INPUT)?$this->DATEINSERT_INPUT:"" )."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
@@ -1697,7 +1697,6 @@ echo "
 				</li>
 			</ul>
 		</form>
-		<div id='dialogComm' style='display:none;'></div>
 	</div>
 ";
 

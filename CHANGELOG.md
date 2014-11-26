@@ -18,6 +18,14 @@ Evolutions :
 * Ajout de plusieurs blocs
 * Ajout de la gestion des préférences utilisateur et de la gestion de l'ordre des blocs sur la HP
 * Tri des documents par ordre alphabétique sur l'admin des modèles
+* Ajout des natures de dossier Autorisation d’une ICPE, Certificats d'urbanisme (CU)
+* Ajout du petit calendrier sur la partie dossier sur la date d'insertion du dossier
+* Ajout de la possibilité de modifier manuellement la géolocalisation d'un établissement
+* Ajout du conseil de remplir une présence de local à sommeil si aucune sélection de radio button n'a été faite
+* Ajout du champ document d'urbanisme pour l'instruction du permis d'aménager et de démolir
+* Retrait de la prolongation de visite du GE4§3 sur 2 VP positives de suite, rendu obsolète
+* Ajout du libellé du type de commission dans la liste déroulante du type de commission pour un établissement
+* Modification de la nomenclature du nom des rapports générés
 
 Corrections :
 
@@ -35,6 +43,10 @@ Corrections :
 * Retrait de 2 requêtes en doublons sur l'édition utilisateur
 * Correction d'un warning sur la partie calendrier des commissions
 * Correction sur le nom vide d'un établissement sur le partial de résultat de recherche d'un dossier
+* Retrait de code mort sur le service dashboard
+* Lorsqu'on sait local à sommeil = oui pour un type PE, l'application propose local à sommeil = non alors que l'utilisateur a fait son choix
+* Modification du libellé de la box de génération d'un rapport : "fermer" au lieu de "annuler"
+* Correction du bouton générer un rapport qui ne fonctionnait pas sur toutes les pages de dossier
 
 ## 2.2
 

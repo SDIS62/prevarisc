@@ -236,7 +236,7 @@ endif; ?>
 					modal: true,
 					title: 'Génération des rapports',
 					buttons: {
-						'Annuler': function() {
+						'Fermer': function() {
 							$(this).dialog('close');
 							$("#dialogComm").html('');
 						}
@@ -290,7 +290,7 @@ endif; ?>
                 
     });
 </script>
-
+<div id='dialogComm' style='display:none;'></div>
 <?php $this->placeholder('after_content')->captureEnd() ?>
 
 
