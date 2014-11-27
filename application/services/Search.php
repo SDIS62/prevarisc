@@ -124,40 +124,27 @@ class Service_Search
             }
 
             // Critère : commune et rue
-            if($city !== null) {
-                if($genres !== null && count($genres) > 0) {
-                    foreach($genres as $genre) {
-                        switch($genre) {
-                            case "1":
-                            $this->setCriteria($select, "etablissementadressesite.NUMINSEE_COMMUNE", $city);
-                            if($street_id !== null) {
-                                $this->setCriteria($select, "etablissementadressesite.ID_RUE", $street_id);
-                            }
-                            break;
-                            case "3":
-                            $this->setCriteria($select, "etablissementadressecell.NUMINSEE_COMMUNE", $city);
-                            if($street_id !== null) {
-                                $this->setCriteria($select, "etablissementadressecell.ID_RUE", $street_id);
-                            }
-                            break;
-
-                            default:
-                            $this->setCriteria($select, "etablissementadresse.NUMINSEE_COMMUNE", $city);
-                            if($street_id !== null) {
-                                $this->setCriteria($select, "etablissementadresse.ID_RUE", $street_id);
-                            }
-                        }
-                    }
+            if($street_id !== null) {
+                $clauses = array();
+                $clauses[] = "etablissementadresse.ID_RUE = ".$select->getAdapter()->quote($street_id);
+                if($genres == null || in_array('1', $genres)) {
+                    $clauses[] = "etablissementadressesite.ID_RUE = ".$select->getAdapter()->quote($street_id);
                 }
-                else {
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_SITE", $city, true, "orHaving");
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_CELLULE", $city, true, "orHaving");
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_DEFAULT", $city, true, "orHaving");
-
-                    if($street_id !== null) {
-                        $select->where("(etablissementadresse.ID_RUE = ? OR etablissementadressecell.ID_RUE = ? OR etablissementadressesite.ID_RUE = ?)", $street_id, $street_id, $street_id);
-                    }
+                if($genres == null || in_array('3', $genres)) {
+                    $clauses[] = "etablissementadressecell.ID_RUE = ".$select->getAdapter()->quote($street_id);
                 }
+                $select->where('('.implode(' OR ', $clauses).')');
+            }
+            else if($city !== null) {
+                $clauses = array();
+                $clauses[] = "etablissementadresse.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                if($genres == null || in_array('1', $genres)) {
+                    $clauses[] = "etablissementadressesite.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                }
+                if($genres == null || in_array('3', $genres)) {
+                    $clauses[] = "etablissementadressecell.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                }
+                $select->where('('.implode(' OR ', $clauses).')');
             }
 
             // Critères : géolocalisation
