@@ -14,6 +14,10 @@ Evolutions :
 * Amélioration visuelle de la liste des commissions et groupements d'un utilisateur
 * Ajout d'un bouton pour ré-initialiser la recherche et uniformisation visuelle
 * Ajout d'un mécanisme d'agrandissement du champ de recherche rapide au focus
+* Refonte de la gestion des blocs en services
+* Ajout de plusieurs blocs
+* Ajout de la gestion des préférences utilisateur et de la gestion de l'ordre des blocs sur la HP
+* Tri des documents par ordre alphabétique sur l'admin des modèles
 
 Corrections :
 
@@ -29,6 +33,8 @@ Corrections :
 * Correction d'une erreur lors de la consultation d'un groupement avec des préventionnistes affectés
 * Correction d'un problème de superposition des libellés sur les documents consultés si le libellé est trop long
 * Retrait de 2 requêtes en doublons sur l'édition utilisateur
+* Correction d'un warning sur la partie calendrier des commissions
+* Correction sur le nom vide d'un établissement sur le partial de résultat de recherche d'un dossier
 
 ## 2.2
 

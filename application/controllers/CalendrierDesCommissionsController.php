@@ -962,7 +962,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			}
 
 			$libelleCommune = "";
-            $tabCommune[] = array();
+            $tabCommune = array();
             $numCommune = 0;
 			foreach($listeDossiers as $val => $ue)
 			{
@@ -987,6 +987,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
 				if($existe == 0){
 					if(count($ue['infosEtab']["adresses"]) > 0){
+                                            
 						$libelleCommune = $ue['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
 						$adresseCommune = $model_adresseCommune->find($ue['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'])->toArray();
 						$communeInfo = $model_utilisateurInfo->find($adresseCommune[0]["ID_UTILISATEURINFORMATIONS"])->toArray();

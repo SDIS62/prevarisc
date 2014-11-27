@@ -812,22 +812,24 @@ text-decoration: none;
   color: #555555;
 }
 
-.dashboard .grid-sizer {
-  width: 49%;
-}
-
 .dashboard .panel {
   width:  49%;
   float: left;
+  margin-bottom: 0px;
 }
 
 .dashboard .panel.w2 {
   width:  100%;
 }
 
-.dashboard .grid-gutter {
-  width: 2%;
+.dashboard .panel-heading {
+  cursor: pointer;
 }
+
+.dashboard .grid-gutter {
+  width:  2%;
+}
+
 
 .sidebar {
   background-color: #f4f4f4;
@@ -1049,4 +1051,19 @@ a.list-group-item-danger.active:focus {
 }
 .dropdown-menu {
     text-align: left;
+}
+
+.scroll-bloc-large {
+    max-height: 500px; 
+    overflow-y: scroll;
+}
+
+.scroll-bloc-medium {
+    max-height: 300px; 
+    overflow-y: scroll;
+}
+
+.scroll-bloc-small {
+    max-height: 150px; 
+    overflow-y: scroll;
 }
