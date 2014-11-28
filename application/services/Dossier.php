@@ -213,10 +213,13 @@ class Service_Dossier
                     $row->ID_DOSSIER = $id_dossier;
                     $row->save();
 					if($type == 2 || $type == 3){
-						$row = $etsTexteApplicable->createRow();
-						$row->ID_TEXTESAPPL = $id_texte_applicable;
-						$row->ID_ETABLISSEMENT = $id_etablissement;
-						$row->save();
+						$exist = $etsTexteApplicable->find($id_texte_applicable,$id_etablissement)->current();
+						if(! $exist){
+							$row = $etsTexteApplicable->createRow();
+							$row->ID_TEXTESAPPL = $id_texte_applicable;
+							$row->ID_ETABLISSEMENT = $id_etablissement;
+							$row->save();
+						}
 					}
                 }
             }
