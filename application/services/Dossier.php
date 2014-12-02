@@ -213,10 +213,13 @@ class Service_Dossier
                     $row->ID_DOSSIER = $id_dossier;
                     $row->save();
 					if($type == 2 || $type == 3){
-						$row = $etsTexteApplicable->createRow();
-						$row->ID_TEXTESAPPL = $id_texte_applicable;
-						$row->ID_ETABLISSEMENT = $id_etablissement;
-						$row->save();
+						$exist = $etsTexteApplicable->find($id_texte_applicable,$id_etablissement)->current();
+						if(! $exist){
+							$row = $etsTexteApplicable->createRow();
+							$row->ID_TEXTESAPPL = $id_texte_applicable;
+							$row->ID_ETABLISSEMENT = $id_etablissement;
+							$row->save();
+						}
 					}
                 }
             }
@@ -290,7 +293,7 @@ class Service_Dossier
             new Model_DbTable_GroupementContact,
             new Model_DbTable_CommissionContact
         );
-
+		
         // Appartient à d'autre dossier / ets ?
         $exist = false;
         foreach ($DB_contact as $key => $model) {
@@ -307,5 +310,230 @@ class Service_Dossier
             $DB_current->delete("ID_UTILISATEURINFORMATIONS = " . $id_contact . " AND ID_DOSSIER = " . $id_dossier); // Porteuse
         }
     }
+	
+	
+	/**
+     * Retourne les prescriptions d'un dossier
+     *
+     * @param int $id_dossier
+     * @return array
+     */	
+	public function getPrescriptions($id_dossier)
+    {
+        $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+        $listePrescDossier = $dbPrescDossier->recupPrescDossier($id_dossier);
 
+        $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+		
+        $prescriptionArray = array();
+        foreach ($listePrescDossier as $val => $ue) {
+            if ($ue['ID_PRESCRIPTION_TYPE']) {
+                //cas d'une prescription type
+                $assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
+                array_push($prescriptionArray, $assoc);
+            } else {
+                //cas d'une prescription particulière
+                $assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
+                array_push($prescriptionArray, $assoc);
+            }
+        }
+        return $prescriptionArray;
+	}
+	
+	public function getDetailPrescription($id_prescription)
+	{
+		//On recherche la ligne correspondante à la prescription
+		$db_prescription_dossier = new Model_DbTable_PrescriptionDossier;
+		$infos_prescription = $db_prescription_dossier->recupPrescInfos($id_prescription);
+
+		//On va chercher les textes et articles associés à cette prescription
+		if($infos_prescription['ID_PRESCRIPTION_TYPE'] == NULL){
+			$db_prescription_assoc = new Model_DbTable_PrescriptionDossierAssoc;
+			$liste_assoc = $db_prescription_assoc->getPrescriptionDossierAssoc($id_prescription);
+			$infos_prescription['assoc'] = $liste_assoc;
+		}else{
+			$dbPrescTypeAssoc = new Model_DbTable_PrescriptionTypeAssoc;
+			
+			$liste_assoc = $dbPrescTypeAssoc->getPrescriptionAssoc($infos_prescription['ID_PRESCRIPTION_TYPE']);
+			$infos_prescription['assoc'] = $liste_assoc;
+			$infos_prescription['LIBELLE_PRESCRIPTION_DOSSIER'] = $liste_assoc[0]['PRESCRIPTIONTYPE_LIBELLE'];
+		}
+		return $infos_prescription;
+	}
+	
+	public function savePrescription($post)
+	{
+		$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+		$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+
+		if($post['action'] == 'edit'){
+			$prescEdit = $dbPrescDossier->find($post['id_prescription'])->current();
+			$prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $post['PRESCRIPTION_LIBELLE'];
+			$prescEdit->save();
+			
+			$prescAssocDelete = $dbPrescDossierAssoc->getAdapter()->quoteInto('ID_PRESCRIPTION_DOSSIER = ?', $prescEdit->ID_PRESCRIPTION_DOSSIER);
+			$dbPrescDossierAssoc->delete($prescAssocDelete);
+			
+			$nombreAssoc = count($post['texte']);
+			for($i = 0; $i< $nombreAssoc ; $i ++)
+			{
+				$newAssoc = $dbPrescDossierAssoc->createRow();
+				$newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $i + 1;
+				$newAssoc->ID_PRESCRIPTION_DOSSIER = $post['id_prescription'];
+				$newAssoc->ID_TEXTE = $post['texte'][$i];
+				$newAssoc->ID_ARTICLE = $post['article'][$i];
+				$newAssoc->save();
+			}
+		}else if($post['action'] == 'edit-type'){
+			$prescEdit = $dbPrescDossier->find($post['id_prescription'])->current();
+			$prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $post['PRESCRIPTION_LIBELLE'];
+			$prescEdit->ID_PRESCRIPTION_TYPE = NULL;
+			$prescEdit->save();
+			
+			$nombreAssoc = count($post['texte']);
+			for($i = 0; $i< $nombreAssoc ; $i ++)
+			{
+				$newAssoc = $dbPrescDossierAssoc->createRow();
+				$newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $i + 1;
+				$newAssoc->ID_PRESCRIPTION_DOSSIER = $post['id_prescription'];
+				$newAssoc->ID_TEXTE = $post['texte'][$i];
+				$newAssoc->ID_ARTICLE = $post['article'][$i];
+				$newAssoc->save();
+			}
+			
+		}else if($post['action'] == 'presc-add'){
+			$nbPrescription = $dbPrescDossier->recupMaxNumPrescDossier($post['id_dossier']);
+			$numPrescription = $nbPrescription['maxnum'];
+			$numPrescription++;
+			
+			$prescEdit = $dbPrescDossier->createRow();
+			$prescEdit->ID_DOSSIER = $post['id_dossier'];
+			$prescEdit->NUM_PRESCRIPTION_DOSSIER = $numPrescription;
+			$prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $post['PRESCRIPTION_LIBELLE'];
+			$prescEdit->save();
+			
+			$nombreAssoc = count($post['texte']);
+			for($i = 0; $i< $nombreAssoc ; $i ++)
+			{
+				$newAssoc = $dbPrescDossierAssoc->createRow();
+				$newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $i + 1;
+				$newAssoc->ID_PRESCRIPTION_DOSSIER = $prescEdit->ID_PRESCRIPTION_DOSSIER;
+				$newAssoc->ID_TEXTE = $post['texte'][$i];
+				$newAssoc->ID_ARTICLE = $post['article'][$i];
+				$newAssoc->save();
+			}
+		}
+		$id_dossier = $post['id_dossier'];
+		
+/*
+		//Lorsque l'on crée une prescription spécifique à un dossier
+		$prescDossier = $dbPrescDossier->createRow();
+		$prescDossier->ID_DOSSIER = $idDossier;
+
+		//On récupère le num max de prescription du dossier
+		$numMax = $dbPrescDossier->recupMaxNumPrescDossier($idDossier);
+		$num = $numMax['maxnum'];
+		if ($numMax['maxnum'] == NULL) {
+			//premiere prescription que l'on ajoute
+			$num = 1;
+		} else {
+			$num++;
+		}
+
+		$prescDossier->NUM_PRESCRIPTION_DOSSIER = $num;
+		$prescDossier->LIBELLE_PRESCRIPTION_DOSSIER = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
+		$prescDossier->save();
+
+		//on recupere l'id de la prescription que l'on vient d'enregistrer
+		$idPrescDossier = $prescDossier->ID_PRESCRIPTION_DOSSIER;
+
+		//on s'occupe de verifier les textes et articles pour les inserer ou récuperer l'id si besoin puis on insert dans assoc
+		$texteArray = array();
+		$articleArray = array();
+
+		foreach ($_POST['article'] as $libelle => $value) {
+			array_push($articleArray, $value);
+		}
+
+		foreach ($_POST['texte'] as $libelle => $value) {
+			array_push($texteArray, $value);
+		}
+
+		$numAssoc = 1;
+
+		for ($i = 0; $i < count($articleArray); $i++) {
+			//pour chacun des articles et des textes on verifie leurs existance ou non
+			if ($articleArray[$i] != '') {
+				$article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.$articleArray[$i].'"')->toArray();
+				if (count($article) == 0) {
+					//l'article n'existe pas donc on l'enregistre
+					$article = $dbArticle->createRow();
+					$article->LIBELLE_ARTICLE = $articleArray[$i];
+					$article->save();
+					$idArticle = $article->ID_ARTICLE;
+				} else {
+					//l'article existe donc on récupere son ID
+					$idArticle = $article[0]['ID_ARTICLE'];
+				}
+			} else {
+				$idArticle = 1;
+			}
+
+			if ($texteArray[$i] != '') {
+				$texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.$texteArray[$i].'"')->toArray();
+				if (count($texte) == 0) {
+					//le texte n'existe pas donc on l'enregistre
+					$texte = $dbTexte->createRow();
+					$texte->LIBELLE_TEXTE = $texteArray[$i];
+					$texte->save();
+					$idTexte = $texte->ID_TEXTE;
+				} else {
+					//le texte existe donc on récupere son ID
+					$idTexte = $texte[0]['ID_TEXTE'];
+				}
+			} else {
+				$idTexte = 1;
+			}
+			//echo $idTexte." ".$idArticle."<br/>";
+			$prescDossierAssoc = $dbPrescDossierAssoc->createRow();
+			$prescDossierAssoc->ID_PRESCRIPTION_DOSSIER = $idPrescDossier;
+			$prescDossierAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $numAssoc;
+			$prescDossierAssoc->ID_TEXTE = $idTexte;
+			$prescDossierAssoc->ID_ARTICLE = $idArticle;
+			$prescDossierAssoc->save();
+			$idArticle = NULL;
+			$idTexte = NULL;
+			$numAssoc++;
+		}
+
+		//$this->view->idPrescriptionType = $prescType['ID_PRESCRIPTIONTYPE'];
+		$this->view->textes = $texteArray;
+		$this->view->articles = $articleArray;
+		$this->view->libelle = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
+		$this->view->numPresc = $num;
+		$this->view->idPrescriptionDossier = $idPrescDossier;
+*/
+	}
+	
+	public function deletePrescription($post)
+	{
+		$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
+		$dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
+		
+		$prescToDelete = $dbPrescDossier->find($post['id_prescription'])->current();
+		
+		$prescAssocDelete = $dbPrescDossierAssoc->getAdapter()->quoteInto('ID_PRESCRIPTION_DOSSIER = ?', $prescToDelete->ID_PRESCRIPTION_DOSSIER);
+		$dbPrescDossierAssoc->delete($prescAssocDelete);
+		$prescToDelete->delete();
+
+		$prescriptionDossier = $dbPrescDossier->recupPrescDossier($post['id_dossier']);
+		$num = 1;
+		foreach ($prescriptionDossier as $val => $ue) {
+			$prescChangePlace = $dbPrescDossier->find($ue['ID_PRESCRIPTION_DOSSIER'])->current();
+			$prescChangePlace->NUM_PRESCRIPTION_DOSSIER = $num;
+			$prescChangePlace->save();
+			$num++;
+		}
+	}
+	
 }
