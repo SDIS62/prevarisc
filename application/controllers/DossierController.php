@@ -190,6 +190,14 @@ class DossierController extends Zend_Controller_Action
 				$etablissementInfos['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
 			}
 			$this->view->etablissementInfos = $etablissementInfos;
+			//Zend_Debug::dump($this->view->etablissementInfos);
+			
+			if($this->view->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+				$avisExploitationEtab = $DBdossier->getAvisDossier($this->view->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
+				$this->view->avisExploitationEtab = $avisExploitationEtab['AVIS_DOSSIER'];
+			}else{
+				$this->view->avisExploitationEtab = 3;
+			}
 		} elseif ($this->_getParam("idDossier")) {			
 			$tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
 			$this->view->listeEtablissement = $tabEtablissement;
@@ -218,6 +226,8 @@ class DossierController extends Zend_Controller_Action
         if ( isset($this->view->idEtablissement)) {
             $DBetablissement = new Model_DbTable_Etablissement;
             $this->view->etablissementLibelle = $DBetablissement->getLibelle($this->_getParam("id_etablissement"));
+			
+			
         }
 
         $this->_forward('general');
@@ -246,6 +256,7 @@ class DossierController extends Zend_Controller_Action
 		$this->view->userInfos = Zend_Auth::getInstance()->getIdentity();
         //On récupère tous les types de dossier
         $DBdossierType = new Model_DbTable_DossierType;
+		$DBdossier = new Model_DbTable_Dossier;
         $this->view->dossierType = $DBdossierType ->fetchAll();
         //Récupération de la liste des avis pour la génération du select
         $DBlisteAvis = new Model_DbTable_Avis;
@@ -259,6 +270,8 @@ class DossierController extends Zend_Controller_Action
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
+		
+		$service_etablissement = new Service_Etablissement;
 
         if ($this->_getParam("idEtablissement")) {
             $this->view->idEtablissement = $this->_getParam("idEtablissement");
@@ -276,8 +289,16 @@ class DossierController extends Zend_Controller_Action
             $this->view->genre = $etablissement['ID_GENRE'];
             $commissionEtab = $etablissement['ID_COMMISSION'];
             $idEtablissement = $this->_getParam("id_etablissement");
+			
+			$etablissementInfos = $service_etablissement->get($this->view->idEtablissement);
+			$ID_DOSSIER_DONNANT_AVIS = $etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'];
+			if($ID_DOSSIER_DONNANT_AVIS != null){
+				$avisExploitationEtab = $DBdossier->getAvisDossier($ID_DOSSIER_DONNANT_AVIS);
+				$this->view->avisExploitationEtab = $avisExploitationEtab['AVIS_DOSSIER'];
+			}else{
+				$this->view->avisExploitationEtab = 3;
+			}
         } elseif ((int) $this->_getParam("id")) {
-            $DBdossier = new Model_DbTable_Dossier;
             $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
             $this->view->listeEtablissement = $tabEtablissement;
 			if(count($tabEtablissement) > 0){
@@ -286,7 +307,18 @@ class DossierController extends Zend_Controller_Action
 				$this->view->genre = $etablissement['ID_GENRE'];
 				$commissionEtab = $etablissement['ID_COMMISSION'];
 				$idEtablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
+
+				$etablissementInfos = $service_etablissement->get($idEtablissement);
+				$ID_DOSSIER_DONNANT_AVIS = $etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'];
+
+				if($ID_DOSSIER_DONNANT_AVIS != null){
+					$avisExploitationEtab = $DBdossier->getAvisDossier($ID_DOSSIER_DONNANT_AVIS);
+					$this->view->avisExploitationEtab = $avisExploitationEtab['AVIS_DOSSIER'];
+				}else{
+					$this->view->avisExploitationEtab = 3;
+				}
 			}
+			
         }
 
 		if(isset($commissionEtab)){
@@ -329,7 +361,6 @@ class DossierController extends Zend_Controller_Action
             $idDossier = (int) $this->_getParam("id");
             $this->view->idDossier = $idDossier;
             //Récupération de tous les champs de la table dossier
-            $DBdossier = new Model_DbTable_Dossier;
             $this->view->infosDossier = $DBdossier->find($idDossier)->current();
 
 			//On verifie les éléments masquant l'avis et la date de commission/visite pour les afficher ou non
@@ -2291,6 +2322,9 @@ class DossierController extends Zend_Controller_Action
 		$dbArticle = new Model_DbTable_PrescriptionArticleListe;
 		$this->view->listeArticles = $dbArticle->getAllArticles();
 
+		foreach($this->view->listeArticles as $val ){
+			echo $val['ID_ARTICLE']." : ".$val['LIBELLE_ARTICLE']."<br/>";
+		}
 		if(isset($id_prescription)){
 			$service_dossier = new Service_Dossier;
 			$this->view->infosPrescription = $service_dossier->getDetailPrescription($id_prescription);

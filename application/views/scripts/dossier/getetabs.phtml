@@ -89,11 +89,11 @@ if($this->etablissement){
 	echo "
 		</a>
 	";
-	if(isset($value['avisExploitation']['LIBELLE_AVIS']) && $this->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
-		if($value['avisExploitation']['LIBELLE_AVIS'] == "Favorable"){
-			echo "<span class='avis F'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
-		}else if($value['avisExploitation']['LIBELLE_AVIS'] == "Défavorable"){
-			echo "<span class='avis D'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+	if(isset($this->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']) && $this->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+		if($this->avisExploitationEtab  == 1){
+			echo "<span class='avis F'>Favorable</span>&nbsp;";
+		}else if($this->avisExploitationEtab  == 2){
+			echo "<span class='avis D'>Défavorable</span>&nbsp;";
 		}else{
 			echo "<span class='avis'>Avis indisponible</span>&nbsp;";
 		}
