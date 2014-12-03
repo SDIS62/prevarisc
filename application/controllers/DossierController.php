@@ -190,6 +190,14 @@ class DossierController extends Zend_Controller_Action
 				$etablissementInfos['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
 			}
 			$this->view->etablissementInfos = $etablissementInfos;
+			//Zend_Debug::dump($this->view->etablissementInfos);
+			
+			if($this->view->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+				$avisExploitationEtab = $DBdossier->getAvisDossier($this->view->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
+				$this->view->avisExploitationEtab = $avisExploitationEtab['AVIS_DOSSIER'];
+			}else{
+				$this->view->avisExploitationEtab = 3;
+			}
 		} elseif ($this->_getParam("idDossier")) {			
 			$tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
 			$this->view->listeEtablissement = $tabEtablissement;
@@ -218,6 +226,8 @@ class DossierController extends Zend_Controller_Action
         if ( isset($this->view->idEtablissement)) {
             $DBetablissement = new Model_DbTable_Etablissement;
             $this->view->etablissementLibelle = $DBetablissement->getLibelle($this->_getParam("id_etablissement"));
+			
+			
         }
 
         $this->_forward('general');
@@ -246,16 +256,22 @@ class DossierController extends Zend_Controller_Action
 		$this->view->userInfos = Zend_Auth::getInstance()->getIdentity();
         //On récupère tous les types de dossier
         $DBdossierType = new Model_DbTable_DossierType;
+		$DBdossier = new Model_DbTable_Dossier;
         $this->view->dossierType = $DBdossierType ->fetchAll();
         //Récupération de la liste des avis pour la génération du select
         $DBlisteAvis = new Model_DbTable_Avis;
         $this->view->listeAvis = $DBlisteAvis->getAvis();
         $this->view->afficherChamps = array();
+		
+		$listeMois = array("Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre");
+		$this->view->mois = $listeMois;
         
         // AUTORISATIONS CHANGEMENT AVIS DE LA COMMISSION
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
+		
+		$service_etablissement = new Service_Etablissement;
 
         if ($this->_getParam("idEtablissement")) {
             $this->view->idEtablissement = $this->_getParam("idEtablissement");
@@ -273,8 +289,16 @@ class DossierController extends Zend_Controller_Action
             $this->view->genre = $etablissement['ID_GENRE'];
             $commissionEtab = $etablissement['ID_COMMISSION'];
             $idEtablissement = $this->_getParam("id_etablissement");
+			
+			$etablissementInfos = $service_etablissement->get($this->view->idEtablissement);
+			$ID_DOSSIER_DONNANT_AVIS = $etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'];
+			if($ID_DOSSIER_DONNANT_AVIS != null){
+				$avisExploitationEtab = $DBdossier->getAvisDossier($ID_DOSSIER_DONNANT_AVIS);
+				$this->view->avisExploitationEtab = $avisExploitationEtab['AVIS_DOSSIER'];
+			}else{
+				$this->view->avisExploitationEtab = 3;
+			}
         } elseif ((int) $this->_getParam("id")) {
-            $DBdossier = new Model_DbTable_Dossier;
             $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
             $this->view->listeEtablissement = $tabEtablissement;
 			if(count($tabEtablissement) > 0){
@@ -283,7 +307,18 @@ class DossierController extends Zend_Controller_Action
 				$this->view->genre = $etablissement['ID_GENRE'];
 				$commissionEtab = $etablissement['ID_COMMISSION'];
 				$idEtablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
+
+				$etablissementInfos = $service_etablissement->get($idEtablissement);
+				$ID_DOSSIER_DONNANT_AVIS = $etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'];
+
+				if($ID_DOSSIER_DONNANT_AVIS != null){
+					$avisExploitationEtab = $DBdossier->getAvisDossier($ID_DOSSIER_DONNANT_AVIS);
+					$this->view->avisExploitationEtab = $avisExploitationEtab['AVIS_DOSSIER'];
+				}else{
+					$this->view->avisExploitationEtab = 3;
+				}
 			}
+			
         }
 
 		if(isset($commissionEtab)){
@@ -326,7 +361,6 @@ class DossierController extends Zend_Controller_Action
             $idDossier = (int) $this->_getParam("id");
             $this->view->idDossier = $idDossier;
             //Récupération de tous les champs de la table dossier
-            $DBdossier = new Model_DbTable_Dossier;
             $this->view->infosDossier = $DBdossier->find($idDossier)->current();
 
 			//On verifie les éléments masquant l'avis et la date de commission/visite pour les afficher ou non
@@ -1211,9 +1245,7 @@ class DossierController extends Zend_Controller_Action
                 $dbDossierAffectation->deleteDateDossierAffect($idDossier);
             } else {
 				$listeDateDossAffect = $dbDossierAffectation->getDossierAffectAndType($idDossier);
-				//Zend_Debug::dump($listeDateDossAffect);
 				foreach($listeDateDossAffect as $dateAffect){
-					//echo $dateAffect['ID_COMMISSIONTYPEEVENEMENT'];
 					if($dateAffect['ID_COMMISSIONTYPEEVENEMENT'] == 1){
 						//Comm en salle
 						$infosDateSalle = $dateAffect;
@@ -1225,7 +1257,6 @@ class DossierController extends Zend_Controller_Action
 						$infosDateVisite = $dateAffect;
 					}
 				}
-				//Zend_Debug::dump($infosDateVisite);
 				//Partie concernant la date de visite
 				if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
 					if(isset($infosDateVisite)){
@@ -1934,7 +1965,6 @@ class DossierController extends Zend_Controller_Action
 		//Concernant cette affectation on récupere les infos sur la commission (date aux différents format)
 		$dbDateComm = new Model_DbTable_DateCommission;
 		$dateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
-
 		if ($dateComm['DATE_COMMISSION'] != '') {
 			$date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
 			$this->view->dateCommEntete = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
@@ -2208,53 +2238,33 @@ class DossierController extends Zend_Controller_Action
         }
     }
 	
-	//Autocomplétion pour selection TEXTE
-    public function selectiontexteAction()
-    {
-        if (isset($_GET['q'])) {
-            $DBprescTexte = new Model_DbTable_PrescriptionTexteListe;
-            $this->view->selectTexte = $DBprescTexte->fetchAll('LIBELLE_TEXTE LIKE "%'.$_GET['q'].'%"')->toArray();
-        }
-    }
-
-	//Autocomplétion pour selection ARTICLE
-    public function selectionarticleAction()
-    {
-        if (isset($_GET['q'])) {
-            $DBprescArticle = new Model_DbTable_PrescriptionArticleListe;
-            $this->view->selectArticle = $DBprescArticle->fetchAll('LIBELLE_ARTICLE LIKE "%'.$_GET['q'].'%"')->toArray();
-        }
-    }
-
     public function prescriptionAction()
     {
-		$DbDossier = new Model_DbTable_Dossier;
-		$this->view->infosDossier = $DbDossier->find((int) $this->_getParam("id"))->current();
-        //on affiche les prescriptions du dossier
-        $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-        $listePrescDossier = $dbPrescDossier->recupPrescDossier($this->_getParam('id'));
-
-        $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
-		//Zend_Debug::dump($listePrescDossier);
-		
-        $prescriptionArray = array();
-        foreach ($listePrescDossier as $val => $ue) {
-            if ($ue['ID_PRESCRIPTION_TYPE']) {
-                //cas d'une prescription type
-                $assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
-                array_push($prescriptionArray, $assoc);
-            } else {
-                //cas d'une prescription particulière
-                $assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
-                array_push($prescriptionArray, $assoc);
+		$service_dossier = new Service_Dossier;
+		if ($this->_request->isPost()) {
+            try {
+				$post = $this->_request->getPost();
+				
+				if($post['action'] == 'edit' || $post['action'] == 'edit-type'){
+					$service_dossier->savePrescription($post);
+					$this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'La prescription a bien été modifiée'));
+				}else if($post['action'] == 'presc-add'){
+					$service_dossier->savePrescription($post);
+					$this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'La prescription a bien été ajoutée'));
+				}else if($post['action'] == 'delete'){
+					$service_dossier->deletePrescription($post);
+					$this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression effectué.', 'message' => 'La prescription a bien été supprimée'));
+				}
+            } catch (Exception $e) {
+				 $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription (' . $e->getMessage() . ')'));
             }
-			//Zend_Debug::dump($assoc);
         }
-        $this->view->prescriptionDossier = $prescriptionArray;
 		
+		$this->view->id_dossier = $this->_getParam("id");
+		$this->view->prescriptionDossier = $service_dossier->getPrescriptions((int) $this->_getParam("id"));
     }
 
-    public function prescriptionwordsearchAction()
+	public function prescriptionwordsearchAction()
     {
         if ($this->_getParam('motsCles')) {
             $tabMotCles = explode(" ", $this->_getParam('motsCles'));
@@ -2269,31 +2279,19 @@ class DossierController extends Zend_Controller_Action
             }
             $this->view->prescriptionType = $prescriptionArray;
         }
-
     }
 
-    public function prescriptiontypeformAction()
+    public function prescriptionAddAction()
+    {
+		$this->_forward('prescription-edit');
+    }
+	
+	public function prescriptiontypeformAction()
     {
         $this->showprescriptionTypeAction(0,0,0);
     }
-
-    public function prescriptionshowemplacementAction()
-    {
-        $this->view->categorie = $this->_getParam('PRESCRIPTIONTYPE_CATEGORIE');
-        $this->view->texte = $this->_getParam('PRESCRIPTIONTYPE_TEXTE');
-        $this->view->article = $this->_getParam('PRESCRIPTIONTYPE_ARTICLE');
-        if (!$this->view->categorie && !$this->view->texte && !$this->view->article) {
-            $this->showprescriptionTypeAction(0,0,0);
-        } elseif (!$this->view->texte && !$this->view->article) {
-            $this->showprescriptionTypeAction($this->view->categorie,0,0);
-        } elseif (!$this->view->article) {
-            $this->showprescriptionTypeAction($this->view->categorie,$this->view->texte,0);
-        } else {
-            $this->showprescriptionTypeAction($this->view->categorie,$this->view->texte,$this->view->article);
-        }
-    }
-
-    public function showprescriptionTypeAction($categorie,$texte,$article)
+	
+	public function showprescriptionTypeAction($categorie,$texte,$article)
     {
         $dbPrescType = new Model_DbTable_PrescriptionType;
         $listePrescType = $dbPrescType->getPrescriptionType($categorie,$texte,$article);
@@ -2309,8 +2307,54 @@ class DossierController extends Zend_Controller_Action
 
         $this->view->prescriptionType = $prescriptionArray;
     }
+	
+    public function prescriptionEditAction()
+    {
+		$id_dossier = $this->_getParam('id');
+		$id_prescription = $this->_getParam('id-prescription');
+		
+		$this->view->id_dossier = $id_dossier;
+		$this->view->id_prescription = $id_prescription;
+		
+		//On envoi à la vue l'ensemble des textes et articles
+		$dbTexte = new Model_DbTable_PrescriptionTexteListe;
+		$this->view->listeTextes = $dbTexte->getAllTextes();
+		$dbArticle = new Model_DbTable_PrescriptionArticleListe;
+		$this->view->listeArticles = $dbArticle->getAllArticles();
 
-    public function prescriptionaddtypeAction()
+		if(isset($id_prescription)){
+			$service_dossier = new Service_Dossier;
+			$this->view->infosPrescription = $service_dossier->getDetailPrescription($id_prescription);
+			
+			if($this->view->infosPrescription['ID_PRESCRIPTION_TYPE'] == NULL)
+			{
+				$this->view->action = 'edit';
+			}else if($this->view->infosPrescription['ID_PRESCRIPTION_TYPE'] != NULL){
+				$this->view->action = 'edit-type';
+			}
+		}else{
+			$this->view->action = 'presc-add';
+		}
+
+    }
+
+	public function prescriptionshowemplacementAction()
+    {
+        $this->view->categorie = $this->_getParam('PRESCRIPTIONTYPE_CATEGORIE');
+        $this->view->texte = $this->_getParam('PRESCRIPTIONTYPE_TEXTE');
+        $this->view->article = $this->_getParam('PRESCRIPTIONTYPE_ARTICLE');
+        if (!$this->view->categorie && !$this->view->texte && !$this->view->article) {
+            $this->showprescriptionTypeAction(0,0,0);
+        } elseif (!$this->view->texte && !$this->view->article) {
+            $this->showprescriptionTypeAction($this->view->categorie,0,0);
+        } elseif (!$this->view->article) {
+            $this->showprescriptionTypeAction($this->view->categorie,$this->view->texte,0);
+        } else {
+            $this->showprescriptionTypeAction($this->view->categorie,$this->view->texte,$this->view->article);
+        }
+    }
+	
+	public function prescriptionaddtypeAction()
     {
         try {
             $idPrescType = $this->_getParam('idPrescType');
@@ -2358,348 +2402,6 @@ class DossierController extends Zend_Controller_Action
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
                 'title' => 'Erreur lors de l\'ajout de la prescription',
-                'message' => $e->getMessage()
-            ));
-        }
-    }
-
-    public function prescriptioneditsaveAction()
-    {
-        try {
-            $this->_helper->viewRenderer->setNoRender();
-            $this->view->edit = 'edit';
-            $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-            $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
-            $dbTexte = new Model_DbTable_PrescriptionTexteListe;
-            $dbArticle = new Model_DbTable_PrescriptionArticleListe;
-            if ( $this->_getParam('do') == 'prescType' ) {
-                //On edite une prescription type: edition de la prescriptionDossier existante et création des prescriptionDossierAssoc
-                $prescDossier = $dbPrescDossier->find($this->_getParam('idPrescDossier'))->current();
-                $prescDossier->ID_PRESCRIPTION_TYPE = NULL;
-                $prescDossier->LIBELLE_PRESCRIPTION_DOSSIER = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-                $prescDossier->save();
-				
-                $idPrescDossier = $prescDossier->ID_PRESCRIPTION_DOSSIER;
-
-                //on s'occupe de verifier les textes et articles pour les inserer ou récuperer l'id si besoin puis on insert dans assoc
-                $texteArray = array();
-                $articleArray = array();
-
-                foreach ($_POST['article'] as $libelle => $value) {
-                    array_push($articleArray, $value);
-                }
-
-                foreach ($_POST['texte'] as $libelle => $value) {
-                    array_push($texteArray, $value);
-                }
-
-                $numAssoc = 1;
-
-                for ($i = 0; $i < count($articleArray); $i++) {
-                    //pour chacun des articles et des textes on verifie leurs existance ou non
-                    if ($articleArray[$i] != '') {
-                        $article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".addslashes($articleArray[$i])."'")->toArray();
-                        if (count($article) == 0) {
-                            //l'article n'existe pas donc on l'enregistre
-                            $article = $dbArticle->createRow();
-                            $article->LIBELLE_ARTICLE = $articleArray[$i];
-                            $article->save();
-                            $idArticle = $article->ID_ARTICLE;
-                        } else{
-                            //l'article existe donc on récupere son ID
-                            $idArticle = $article[0]['ID_ARTICLE'];
-                        }
-                    } else {
-                        $idArticle = 1;
-                    }
-
-                    if ($texteArray[$i] != '') {
-                        $texte = $dbTexte->fetchAll("LIBELLE_TEXTE LIKE '".addslashes($texteArray[$i])."'")->toArray();
-                        if (count($texte) == 0) {
-                            //le texte n'existe pas donc on l'enregistre
-                            $texte = $dbTexte->createRow();
-                            $texte->LIBELLE_TEXTE = $texteArray[$i];
-                            $texte->save();
-                            $idTexte = $texte->ID_TEXTE;
-                        } else{
-                            //le texte existe donc on récupere son ID
-                            $idTexte = $texte[0]['ID_TEXTE'];
-                        }
-                    } else {
-                        $idTexte = 1;
-                    }
-                    //echo $idTexte." ".$idArticle."<br/>";
-                    $prescDossierAssoc = $dbPrescDossierAssoc->createRow();
-                    $prescDossierAssoc->ID_PRESCRIPTION_DOSSIER = $idPrescDossier;
-                    $prescDossierAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $numAssoc;
-                    $prescDossierAssoc->ID_TEXTE = $idTexte;
-                    $prescDossierAssoc->ID_ARTICLE = $idArticle;
-                    $prescDossierAssoc->save();
-                    $idArticle = NULL;
-                    $idTexte = NULL;
-                    $numAssoc++;
-                }
-                $this->view->textes = $texteArray;
-                $this->view->articles = $articleArray;
-                $this->view->libelle = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-                $this->view->numPresc = $this->_getParam('numPresc');
-                $this->view->idPrescriptionDossier = $idPrescDossier;
-
-                $this->render('prescriptionaddtype');
-            } else {
-                //On edite une prescriptionDossier suppression des associations et creation des nouvelles
-                $idPrescDossier = $this->_getParam('idPrescDossier');
-
-                $prescDossier = $dbPrescDossier->find($idPrescDossier)->current();
-                $prescDossier->ID_PRESCRIPTION_TYPE = NULL;
-                $prescDossier->LIBELLE_PRESCRIPTION_DOSSIER = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-                $prescDossier->save();
-                //on s'occupe de verifier les textes et articles pour les inserer ou récuperer l'id si besoin puis on insert dans assoc
-                $listeAssoc = $dbPrescDossierAssoc->fetchAll("ID_PRESCRIPTION_DOSSIER = " . $this->_getParam('idPrescDossier'))->toArray();
-                //on supprime les associations de la prescription en question
-                foreach ($listeAssoc as $val => $ue) {
-                    $assocToDelete = $dbPrescDossierAssoc->find($idPrescDossier,$ue['NUM_PRESCRIPTION_DOSSIERASSOC'])->current();
-                    $assocToDelete->delete();
-                }
-
-                $texteArray = array();
-                $articleArray = array();
-
-                foreach ($_POST['article'] as $libelle => $value) {
-                    array_push($articleArray, $value);
-                }
-
-                foreach ($_POST['texte'] as $libelle => $value) {
-                    array_push($texteArray, $value);
-                }
-
-                $numAssoc = 1;
-
-                for ($i = 0; $i < count($articleArray); $i++) {
-                    //pour chacun des articles et des textes on verifie leurs existance ou non
-                    if ($articleArray[$i] != '') {
-                        $article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.addslashes($articleArray[$i]).'"')->toArray();
-						//Zend_Debug::dump($article);
-                        if (count($article) == 0) {
-                            //l'article n'existe pas donc on l'enregistre
-                            $article = $dbArticle->createRow();
-                            $article->LIBELLE_ARTICLE = $articleArray[$i];
-                            $article->save();
-                            $idArticle = $article->ID_ARTICLE;
-                        } else {
-                            //l'article existe donc on récupere son ID
-                            $idArticle = $article[0]['ID_ARTICLE'];
-                        }
-                    } else {
-                        $idArticle = 1;
-                    }
-
-                    if ($texteArray[$i] != '') {
-                        $texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.addslashes($texteArray[$i]).'"')->toArray();
-                        if (count($texte) == 0) {
-                            //le texte n'existe pas donc on l'enregistre
-                            $texte = $dbTexte->createRow();
-                            $texte->LIBELLE_TEXTE = $texteArray[$i];
-                            $texte->save();
-                            $idTexte = $texte->ID_TEXTE;
-                        } else {
-                            //le texte existe donc on récupere son ID
-                            $idTexte = $texte[0]['ID_TEXTE'];
-                        }
-                    } else {
-                        $idTexte = 1;
-                    }
-                    $prescDossierAssoc = $dbPrescDossierAssoc->createRow();
-                    $prescDossierAssoc->ID_PRESCRIPTION_DOSSIER = $idPrescDossier;
-                    $prescDossierAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $numAssoc;
-                    $prescDossierAssoc->ID_TEXTE = $idTexte;
-                    $prescDossierAssoc->ID_ARTICLE = $idArticle;
-                    $prescDossierAssoc->save();
-                    $idArticle = NULL;
-                    $idTexte = NULL;
-                    $numAssoc++;
-                }
-                $this->view->textes = $texteArray;
-                $this->view->articles = $articleArray;
-                $this->view->libelle = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-                $this->view->numPresc = $this->_getParam('numPresc');
-                $this->view->idPrescriptionDossier = $idPrescDossier;
-
-                $this->render('prescriptionaddtype');
-            }
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'La prescription a bien été modifiée',
-                'message' => ''
-            ));
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de la modification de la prescription',
-                'message' => $e->getMessage()
-            ));
-        }
-    }
-
-    public function prescriptionaddAction()
-    {
-        try {
-            $this->_helper->viewRenderer->setNoRender();
-            $dbTexte = new Model_DbTable_PrescriptionTexteListe;
-            $dbArticle = new Model_DbTable_PrescriptionArticleListe;
-            $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-            $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
-
-            $idDossier = $this->_getParam('idDossier');
-            //Lorsque l'on crée une prescription spécifique à un dossier
-            $prescDossier = $dbPrescDossier->createRow();
-            $prescDossier->ID_DOSSIER = $idDossier;
-
-            //On récupère le num max de prescription du dossier
-            $numMax = $dbPrescDossier->recupMaxNumPrescDossier($idDossier);
-            $num = $numMax['maxnum'];
-            if ($numMax['maxnum'] == NULL) {
-                //premiere prescription que l'on ajoute
-                $num = 1;
-            } else {
-                $num++;
-            }
-
-            $prescDossier->NUM_PRESCRIPTION_DOSSIER = $num;
-            $prescDossier->LIBELLE_PRESCRIPTION_DOSSIER = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-            $prescDossier->save();
-
-            //on recupere l'id de la prescription que l'on vient d'enregistrer
-            $idPrescDossier = $prescDossier->ID_PRESCRIPTION_DOSSIER;
-
-            //on s'occupe de verifier les textes et articles pour les inserer ou récuperer l'id si besoin puis on insert dans assoc
-            $texteArray = array();
-            $articleArray = array();
-
-            foreach ($_POST['article'] as $libelle => $value) {
-                array_push($articleArray, $value);
-            }
-
-            foreach ($_POST['texte'] as $libelle => $value) {
-                array_push($texteArray, $value);
-            }
-
-            $numAssoc = 1;
-
-            for ($i = 0; $i < count($articleArray); $i++) {
-                //pour chacun des articles et des textes on verifie leurs existance ou non
-                if ($articleArray[$i] != '') {
-                    $article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.$articleArray[$i].'"')->toArray();
-                    if (count($article) == 0) {
-                        //l'article n'existe pas donc on l'enregistre
-                        $article = $dbArticle->createRow();
-                        $article->LIBELLE_ARTICLE = $articleArray[$i];
-                        $article->save();
-                        $idArticle = $article->ID_ARTICLE;
-                    } else {
-                        //l'article existe donc on récupere son ID
-                        $idArticle = $article[0]['ID_ARTICLE'];
-                    }
-                } else {
-                    $idArticle = 1;
-                }
-
-                if ($texteArray[$i] != '') {
-                    $texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.$texteArray[$i].'"')->toArray();
-                    if (count($texte) == 0) {
-                        //le texte n'existe pas donc on l'enregistre
-                        $texte = $dbTexte->createRow();
-                        $texte->LIBELLE_TEXTE = $texteArray[$i];
-                        $texte->save();
-                        $idTexte = $texte->ID_TEXTE;
-                    } else {
-                        //le texte existe donc on récupere son ID
-                        $idTexte = $texte[0]['ID_TEXTE'];
-                    }
-                } else {
-                    $idTexte = 1;
-                }
-                //echo $idTexte." ".$idArticle."<br/>";
-                $prescDossierAssoc = $dbPrescDossierAssoc->createRow();
-                $prescDossierAssoc->ID_PRESCRIPTION_DOSSIER = $idPrescDossier;
-                $prescDossierAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $numAssoc;
-                $prescDossierAssoc->ID_TEXTE = $idTexte;
-                $prescDossierAssoc->ID_ARTICLE = $idArticle;
-                $prescDossierAssoc->save();
-                $idArticle = NULL;
-                $idTexte = NULL;
-                $numAssoc++;
-            }
-
-            //$this->view->idPrescriptionType = $prescType['ID_PRESCRIPTIONTYPE'];
-            $this->view->textes = $texteArray;
-            $this->view->articles = $articleArray;
-            $this->view->libelle = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-            $this->view->numPresc = $num;
-            $this->view->idPrescriptionDossier = $idPrescDossier;
-
-            $this->render('prescriptionaddtype');
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'La prescription a bien été ajoutée',
-                'message' => ''
-            ));
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de l\'ajout de la prescription',
-                'message' => $e->getMessage()
-            ));
-        }
-    }
-
-    public function prescriptioneditAction()
-    {
-        $idDossier = $this->_getParam('idDossier');
-        $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-        $prescDossierEdit = $dbPrescDossier->find($this->_getParam('idPrescDossier'));
-        $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc;
-        if ($prescDossierEdit[0]['ID_PRESCRIPTION_TYPE'] == NULL) {
-            //Il s'agit d'une prescription ordinaire de dossier on recup l'assoc et on remplit les champs
-            $assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($prescDossierEdit[0]['ID_PRESCRIPTION_DOSSIER']);
-            $this->view->do = 'prescDossier';
-        } else {
-            //Il s'agit d'un prescription type donc on recup l'assoc et on remplit les champs
-            $assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($prescDossierEdit[0]['ID_PRESCRIPTION_TYPE'],$prescDossierEdit[0]['ID_PRESCRIPTION_DOSSIER']);
-            $this->view->do = 'prescType';
-        }
-        $this->view->assoc = $assoc;
-        $this->view->idDossier = $idDossier;
-        $this->view->numPresc = $this->_getParam('numPresc');
-        $this->view->idPrescDossier = $this->_getParam('idPrescDossier');
-    }
-
-    public function prescriptiondeleteAction()
-    {
-        try {
-            $this->_helper->viewRenderer->setNoRender();
-
-            $dbPrescDossier = new Model_DbTable_PrescriptionDossier;
-            $prescToDelete = $dbPrescDossier->find($this->_getParam('idPrescDossier'))->current();
-            $prescToDelete->delete();
-
-            $prescriptionDossier = $dbPrescDossier->recupPrescDossier($this->_getParam('idDossier'));
-            $num = 1;
-            foreach ($prescriptionDossier as $val => $ue) {
-                $prescChangePlace = $dbPrescDossier->find($ue['ID_PRESCRIPTION_DOSSIER'])->current();
-                $prescChangePlace->NUM_PRESCRIPTION_DOSSIER = $num;
-                $prescChangePlace->save();
-                $num++;
-            }
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'La prescription a bien été suprimée',
-                'message' => ''
-            ));
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de la suppression de la prescription',
                 'message' => $e->getMessage()
             ));
         }
@@ -2783,54 +2485,6 @@ class DossierController extends Zend_Controller_Action
 
         }
 	}
-	
-	public function formprescriptionAction()
-    {
-        if ($this->_getParam('idPrescType')) {
-            $this->view->idPrescType = $this->_getParam('idPrescType');
-            $this->view->do = 'edit';
-            $dbPrescTypeAssoc = new Model_DbTable_PrescriptionTypeAssoc;
-            $this->view->assoc = $dbPrescTypeAssoc->getPrescriptionAssoc($this->_getParam('idPrescType'));
-        } else {
-            $this->view->do = 'new';
-            $dbCategorie = new Model_DbTable_PrescriptionCat;
-            $this->view->listeCategorie = $dbCategorie->recupPrescriptionCat();
-			
-			//on récupère l'ensemble des textes et des articles pour l'envoyer à la vue
-			$dbTexte = new Model_DbTable_PrescriptionTexteListe;
-			$this->view->listeTextes = $dbTexte->fetchAll();			
-
-            switch ($this->_getParam('typePresc')) {
-                case "addPrescriptionCat":
-                    //cas d'une prescription dans une catégorie
-                    $this->view->categorie = $this->_getParam('empl');
-                break;
-                case "addPrescriptionTexte":
-                    //cas d'une prescription dans un texte
-                    $dbPrescTexte = new Model_DbTable_PrescriptionTexte;
-                    $texteInfo = $dbPrescTexte->find($this->_getParam('empl'))->current();
-                    $this->view->categorie = $texteInfo->ID_PRESCRIPTIONCAT;
-                    $this->view->texte = $this->_getParam('empl');
-
-                break;
-                case "addPrescriptionArticle":
-                    //cas d'une prescription dans un article
-                    $dbPrescArticle = new Model_DbTable_PrescriptionArticle;
-                    $articleInfo = $dbPrescArticle->find($this->_getParam('empl'))->current();
-                    $this->view->texte = $articleInfo->ID_PRESCRIPTIONTEXTE;
-
-                    $dbPrescTexte = new Model_DbTable_PrescriptionTexte;
-                    $texteInfo = $dbPrescTexte->find($this->view->texte)->current();
-                    $this->view->categorie = $texteInfo->ID_PRESCRIPTIONCAT;
-
-                    $this->view->article = $this->_getParam('empl');
-                break;
-                default:
-
-                break;
-            }
-        }
-    }
 
 	public function lienmultipleAction()
 	{
@@ -2858,6 +2512,7 @@ class DossierController extends Zend_Controller_Action
 		}
 	}
 	
+	//GESTION DE LA VERROUILLAGE
 	public function verrouAction()
 	{
 		$this->_helper->viewRenderer->setNoRender();

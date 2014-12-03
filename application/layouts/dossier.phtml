@@ -6,56 +6,56 @@
         
         <li class="<?php echo ( $this->action == "index" ) ? "active" : "read" ?>">
             <a 
-               href='<?php echo $this->url(array("action"=>"index")) ?>'><i class="icon-info-sign icon-black"></i> Informations générales</a>
+               href='<?php echo $this->url(array("controller" => "dossier", "id" => $this->idDossier), false, true) ?>'><i class="icon-info-sign icon-black"></i> Informations générales</a>
         </li>
         
 	<?php		
             if($this->idTypeDossier == 1 && $this->natureDossier != 3 && $this->natureDossier != 9 && $this->natureDossier != 19) {
                 echo "<li class='".(( $this->action == "descriptif") ? "active" : "read" )."'>
                         <a "
-                        . "href='".$this->url(array("action"=>"descriptif"))."'><i class=\"icon-book icon-black\"></i> Descriptif ".(( $this->natureDossier == 1 || $this->natureDossier == 2 ) ? " des travaux" : "")."</a>
+                        . "href='".$this->url(array("controller" => "dossier", "action"=>"descriptif", "id" => $this->idDossier), false, true)."'><i class=\"icon-book icon-black\"></i> Descriptif ".(( $this->natureDossier == 1 || $this->natureDossier == 2 ) ? " des travaux" : "")."</a>
                     </li>";
             }
 
             if ($this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ) {
                 echo "<li class='".( ( $this->action == "textes-applicables" ) ? "active" : "read" )."'>
                         <a "
-                        . "href='".$this->url(array("action"=>"textes-applicables"))."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
+                        . "href='".$this->url(array("controller" => "dossier", "action"=>"textes-applicables", "id" => $this->idDossier), false, true)."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
                     </li>";
             }
 
             if ($this->idTypeDossier != 5) {
                 echo "<li class='".( ( $this->action == "docconsulte" ) ? "active" : "read" )."'>
                         <a  "
-                            . "href='".$this->url(array("action"=>"docconsulte"))."'><i class=\"icon-file icon-black\"></i> Documents consultés</a>
+                            . "href='".$this->url(array("controller" => "dossier", "action"=>"docconsulte", "id" => $this->idDossier), false, true)."'><i class=\"icon-file icon-black\"></i> Documents consultés</a>
                     </li>";
             }
 
             if($this->natureDossier != 3 && $this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 31 && $this->natureDossier != 32 && $this->idTypeDossier != 5) {
                 echo "<li class='".( ( $this->action == "prescription" ) ? "active" : "read" )."'>
                         <a  "
-                        . "href='".$this->url(array("action"=>"prescription"))."'><i class=\"icon-flag icon-black\"></i> Prescriptions</a>
+                        . "href='".$this->url(array("controller" => "dossier", "action"=>"prescription", "id" => $this->idDossier), false, true)."'><i class=\"icon-flag icon-black\"></i> Prescriptions</a>
                     </li>";
             }
 	?>
 		
         <li class='<?php echo ( $this->action == "liees" ) ? "active" : "read" ?>'>
             <a  
-                href='<?php echo $this->url(array("action"=>"liees")) ?>'><i class="icon-folder-open icon-black"></i> Établissements et dossiers liés</a>
+                href='<?php echo $this->url(array("controller" => "dossier", "action"=>"liees", "id" => $this->idDossier), false, true) ?>'><i class="icon-folder-open icon-black"></i> Établissements et dossiers liés</a>
         </li>
 		
 	<?php
             if($this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44) {
                 echo "<li class='".( ( $this->action == "contact" ) ? "active" : "read" )."'>
                         <a  "
-                        . "href='".$this->url(array("action"=>"contact"))."'><i class=\"icon-user icon-black\"></i> Contacts</a>
+                        . "href='".$this->url(array("controller" => "dossier", "action"=>"contact", "id" => $this->idDossier), false, true)."'><i class=\"icon-user icon-black\"></i> Contacts</a>
                     </li>";
             }
 	?>
         
         <li class='<?php echo ( $this->action == "piece-jointe" ) ? "active" : "read" ?>'>
             <a 
-               href='<?php echo $this->url(array("action"=>"piece-jointe")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
+               href='<?php echo $this->url(array("controller" => "dossier", "action"=>"piece-jointe", "id" => $this->idDossier), false, true) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
         </li> 
         <li class="nav-header">Actions</li>
         <?php
@@ -70,7 +70,7 @@
                 }
         ?>
         <li>
-            <a class="sep" href="" id="<?php echo $idLink; ?>"><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
+            <a class="sep" id="<?php echo $idLink; ?>" style='cursor:pointer;'><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
         </li>
         <?php if (!$verrou) : ?>
             <li>

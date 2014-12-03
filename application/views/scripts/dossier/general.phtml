@@ -111,15 +111,22 @@
 		$(".showCalendar").live('click',function(){
 			var typeCalendar = $(this).parent().parent().attr('id');
 			var divName;
+			var mois;
+			var annee;
 			if(typeCalendar == 'DATEVISITE'){
-				divName = 'calendarVisite';			
+				divName = 'calendarVisite';
+				mois = $("#month_visite").val();
+				annee = $("#year_visite").val();
 			}else if (typeCalendar == 'DATECOMM'){
 				divName = 'calendar';
+				mois = $("#month_comm").val();
+				annee = $("#year_comm").val();
 			}
 
 			$("#"+divName).show();
 			$("#"+divName).parent().show();
-			$("#"+divName).afficheCalendar($("#COMMISSION_DOSSIER").val(),'dossier',$('#TYPE_DOSSIER').val(),divName,$(this).attr('id'));
+			
+			$("#"+divName).afficheCalendar($("#COMMISSION_DOSSIER").val(),'dossier',$('#TYPE_DOSSIER').val(),divName,$(this).attr('id'),mois,annee);
 			
 			$(this).hide();
 			$("#"+typeCalendar).find(".hideCalendar").show();
@@ -282,9 +289,7 @@
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 		}
 	}
-        
-        
-	
+  
 	function majAvisSelect()
 	{
 		var genre = $('#genreInfo').val();
@@ -345,7 +350,7 @@
 		
 	}
 	
-	$.fn.afficheCalendar = function(idComm,emplacement,type,divInfo,infoCalendar) {
+	$.fn.afficheCalendar = function(idComm,emplacement,type,divInfo,infoCalendar,mois,annee) {
 		var calendar = $("#"+divInfo).fullCalendar( {
 			header: {
 				left: 'prev,next today',
@@ -360,6 +365,8 @@
 			defaultView: 'month',
 			timeFormat:'H:mm{ - H:mm}',
 			axisFormat: 'H(:mm)',
+			month:mois,
+			year:annee,
 			slotMinutes: 5, //Permet d'afficher un interval de 10 minutes au lieu de 30 par défaut
 			selectHelper: true,
 			firstDay: 1,
@@ -379,6 +386,7 @@
 			aspectRatio: 2,
 			events: function(start, end, callback) {
 				var type;
+				
 				if($("#TYPE_DOSSIER").val() == 1){
 					//cas type dossier étude. On affiche alors que les commissions de type En Salle
 					type = 1;
@@ -564,7 +572,6 @@
 
 										var listeDates = "";
 										for( var i in rez ) {
-											//alert(rez[i]['ID_DATECOMMISSION']);
 											if(nbResultats == nbResultatsTotal){
 												//On prend l'id de la premiere date pour la lier au dossier
 												$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);												
@@ -1076,7 +1083,7 @@ echo "
 						";
 						echo "
 							<select name='selectNature' id='selectNature' ".( ($action == 'edit' )?"disabled='disabled'":"")." >
-									".( ($action == 'edit' )?"":"<option value='0' >Selectionnez un type</option>")."
+							".( ($action == 'edit' )?"":"<option value='0' >Selectionnez un type</option>")."
 						";
 							foreach($this->dossierNatureListe as $value){
 								if($this->natureConcerne[0]['ID_NATURE'] == $value["ID_DOSSIERNATURE"]){
@@ -1256,6 +1263,26 @@ echo "
 						<input type='hidden' name='ID_AFFECTATION_DOSSIER_VISITE' id='ID_AFFECTATION_DOSSIER_VISITE' value='".( ($this->idDateVisiteAffect)?$this->idDateVisiteAffect:"" )."' />
 						<button id='showVisite' class='showCalendar btn'".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
 						<button id='hideVisite' class='hideCalendar btn'".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
+						Afficher
+						<select id='month_visite' style='width:110px;'>
+					";
+					$moisActuel = date("m");
+					$listeMois = $this->mois;
+					for($i = 0 ; $i < count($listeMois); $i++)
+					{
+						echo "<option value='".$i."' ".( ($moisActuel -1 == $i)? "selected='selected'" : "")." >".$listeMois[$i]."</option>";
+					}
+					echo "
+						</select>
+						<select id='year_visite' style='width:70px;'>
+					";
+					$annéeActuelle = date("Y");
+					for($i = $annéeActuelle ; $i >= 1990; $i--)
+					{
+						echo "<option value='".$i."' >".$i."</option>";
+					}
+					echo "
+						</select>
 					</div>
 				</li>
 				<li class='row-fluid' style='display:none;'>
@@ -1276,6 +1303,26 @@ echo "
 						<input type='hidden' name='DATEVISITE_PERIODIQUE' id='DATEVISITE_PERIODIQUE' value='".( ($this->dateCommInput)?$this->dateCommInput:"" )."'/>
 						<button id='showCommission' class='showCalendar btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
 						<button id='hideCommission' class='hideCalendar btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
+						Afficher
+						<select id='month_comm' style='width:110px;'>
+					";
+					$moisActuel = date("m");
+					$listeMois = $this->mois;
+					for($i = 0 ; $i < count($listeMois); $i++)
+					{
+						echo "<option value='".$i."' ".( ($moisActuel -1 == $i)? "selected='selected'" : "")." >".$listeMois[$i]."</option>";
+					}
+					echo "
+						</select>
+						<select id='year_comm' style='width:70px;'>
+					";
+					$annéeActuelle = date("Y");
+					for($i = $annéeActuelle ; $i >= 1990; $i--)
+					{
+						echo "<option value='".$i."' >".$i."</option>";
+					}
+					echo "
+						</select>
 					</div>
 				</li>
 				<li class='row-fluid' style='display:none;'>
@@ -1380,7 +1427,8 @@ echo "
 						<input type='checkbox' class='differeavis' name='DIFFEREAVIS_DOSSIER' disabled ".( ($this->infosDossier['DIFFEREAVIS_DOSSIER'])? "checked" : "").">
 					</div>
 					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='differeavis hideavis' name='DIFFEREAVIS_DOSSIER' ".( ($this->infosDossier['DIFFEREAVIS_DOSSIER'])? "checked" : "")."> 				
+						<input type='checkbox' class='differeavis hideavis' name='DIFFEREAVIS_DOSSIER' ".( ($this->infosDossier['DIFFEREAVIS_DOSSIER'])? "checked" : "")." ".( ($this->avisExploitationEtab != 1)? "disabled='disabled'" : "" ).">
+						".( ($this->avisExploitationEtab != 1)? "<span style='font-size:smaller;'>(Disponible uniquement lorsque l'avis d'exploitation de l'établissement est favorable)</span>" : "" )."
 					</div>
 				</li>
 				<li class='row-fluid' id='NPSP' style='".( ($action != 'new' && in_array('NPSP', $this->afficherChamps) && $this->infosDossier['NPSP_DOSSIER'] != NULL && $this->infosDossier['NPSP_DOSSIER'] != 0 )? "": "display:none;" )."margin-bottom:20px;'>

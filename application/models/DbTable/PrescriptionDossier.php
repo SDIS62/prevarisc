@@ -27,4 +27,15 @@ class Model_DbTable_PrescriptionDossier extends Zend_Db_Table_Abstract
 			 
 		return $this->getAdapter()->fetchAll($select);
 	}
+	
+	public function recupPrescInfos($id_prescription)
+	{
+		//retourne la liste des catégories de prescriptions par ordre
+		$select = $this->select()
+			 ->setIntegrityCheck(false)
+             ->from(array('pd' => 'prescriptiondossier'))
+			 ->where("pd.ID_PRESCRIPTION_DOSSIER = ?",$id_prescription);
+			 
+		return $this->getAdapter()->fetchRow($select);
+	}
 }
