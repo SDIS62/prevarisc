@@ -2322,9 +2322,6 @@ class DossierController extends Zend_Controller_Action
 		$dbArticle = new Model_DbTable_PrescriptionArticleListe;
 		$this->view->listeArticles = $dbArticle->getAllArticles();
 
-		foreach($this->view->listeArticles as $val ){
-			echo $val['ID_ARTICLE']." : ".$val['LIBELLE_ARTICLE']."<br/>";
-		}
 		if(isset($id_prescription)){
 			$service_dossier = new Service_Dossier;
 			$this->view->infosPrescription = $service_dossier->getDetailPrescription($id_prescription);
