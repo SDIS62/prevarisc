@@ -5,12 +5,12 @@ echo "
 	<input type='hidden' name='id_prescription' id='id_prescription' value='".$this->id_prescription."' />
 	<input type='hidden' name='action' id='action' value='".$this->action."' />
 	<div class='row'>
-		<div class='span9'>
+		<div class='span9' ".( ($this->action == 'presc-add' )? "style='display:none;'": "").">
 			<a class='btn btn-warning' id='del-prescription'>Supprimer la prescription</a>
 			<a class='btn btn-danger' id='del-confirm' style='display:none;'>Confirmer la suppression</a>
 			<a class='btn' id='del-cancel' style='display:none;'>Annuler</a>
 		</div>
-		<div class='span3'>
+		<div class='span3' style='float:right;'>
 			<a class='btn btn-default' href='".$this->url(array('action' => 'prescription'))."'>Annuler la modification</a>
 			<input type='submit' class='btn btn-success' value='Sauvegarder'>
 		</div>
@@ -26,7 +26,7 @@ echo "
 	<div class='row'>
 		<div class='span4'>
 			Texte&nbsp;
-			<select style='width:80%;' id='LIBELLE_TEXTE' >
+			<select style='width:80%;' id='LIBELLE_TEXTE' class='chosen'>
 ";
                 foreach ($this->listeTextes as $val) {
                     echo "<option value='".$val["ID_TEXTE"]."'>".$val['LIBELLE_TEXTE']."</option>";
@@ -36,6 +36,8 @@ echo "
 		</div>
 		<div class='span4'>
 			Article&nbsp;
+			</span><span><input type='article' name='LIBELLE_ARTICLE' id='LIBELLE_ARTICLE' value='' style='width:80%;'/></span>
+<!--
 			<select style='width:80%;' id='LIBELLE_ARTICLE'>
 ";
                 foreach ($this->listeArticles as $val) {
@@ -43,6 +45,7 @@ echo "
                 }
 echo "
 			</select>
+-->
 		</div>
 		<div class='span4'>
 			<a class='btn btn-default' id='addAssoc' href=''>Ajouter l'association</a>
@@ -105,6 +108,8 @@ echo "</textarea>
 <script type="text/javascript">
 $(document).ready(function(){
 
+	$(".chosen").chosen({allow_single_deselect: true});
+	
 	$("#formPrescriptionEdit").submit(function(){
 		if( $("#association tbody tr").length <= 0 || $("#PRESCRIPTION_LIBELLE").val() == '' ){
 			$("#alert").show();
@@ -114,20 +119,43 @@ $(document).ready(function(){
 
 	$("#addAssoc").click(function(){
 		var texte = $("#LIBELLE_TEXTE").val();
+		if(texte == null)
+			texte = 1;
+			
 		var article = $("#LIBELLE_ARTICLE").val();
-		if(texte != 1 || article != 1){
+		if( texte != 1 || article != ''){
 			var assocAdd;
 			assocAdd += "<tr>";
 			assocAdd += "<td>"+$("#LIBELLE_TEXTE option:selected").text()+ "<input type='hidden' name='texte[]' value='"+texte+"' /></td>";
-			assocAdd += "<td>"+$("#LIBELLE_ARTICLE option:selected").text()+ "<input type='hidden' name='article[]' value='"+article+"' /></td>";
+			assocAdd += "<td>"+$("#LIBELLE_ARTICLE").val()+ "<input type='hidden' name='article[]' value='"+$("#LIBELLE_ARTICLE").val()+"' /></td>";
 			assocAdd += "<td><a onclick='$(this).parent().parent().remove(); return false;' href='#'>Retirer</a></td>";
 			assocAdd += "</tr>";
 			$("#association").append(assocAdd);
-			$("#LIBELLE_TEXTE").val("0");
-			$("#LIBELLE_ARTICLE").val("0");
+			//$("#LIBELLE_TEXTE").val("0");
+			$("#LIBELLE_TEXTE").val('').trigger('chosen:updated');
+			$("#LIBELLE_ARTICLE").val("");
 			$("#alert").hide();
 		}
 		return false;
+	});
+	
+	$("#LIBELLE_ARTICLE").autocomplete("/dossier/selectionarticle?format=json",{
+		minChars: 2,
+		max: 100,
+		parse: function(data) {
+			return $.map(data["selectArticle"], function(row) {
+				return {
+					data: row,
+					value: row.LIBELLE_ARTICLE,
+					result: row.LIBELLE_ARTICLE
+				}
+			});
+		},
+		formatItem: function(item) {
+			return item.LIBELLE_ARTICLE;
+		}
+	}).result(function(e, item) {
+		
 	});
 
 	$("#del-prescription").click(function(){

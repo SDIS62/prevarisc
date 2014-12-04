@@ -193,7 +193,6 @@ class DossierController extends Zend_Controller_Action
                 $etablissementInfos['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
             }
             $this->view->etablissementInfos = $etablissementInfos;
-            //Zend_Debug::dump($this->view->etablissementInfos);
 
             if ($this->view->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null) {
                 $avisExploitationEtab = $DBdossier->getAvisDossier($this->view->etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
@@ -2416,6 +2415,14 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+	public function selectionarticleAction()
+	{
+		if (isset($_GET['q'])) {
+			$DBprescArticle = new Model_DbTable_PrescriptionArticleListe;
+			$this->view->selectArticle = $DBprescArticle->fetchAll('LIBELLE_ARTICLE LIKE "%'.$_GET['q'].'%"')->toArray();
+		}
+	}
+	
     public function recupprescriptionAction()
     {
         $this->_helper->viewRenderer->setNoRender();

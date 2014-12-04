@@ -378,6 +378,7 @@ class Service_Dossier
      */
     public function savePrescription($post)
     {
+		$dbArticle = new Model_DbTable_PrescriptionArticleListe;
         $dbPrescDossier = new Model_DbTable_PrescriptionDossier();
         $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc();
 
@@ -395,7 +396,20 @@ class Service_Dossier
                 $newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $i + 1;
                 $newAssoc->ID_PRESCRIPTION_DOSSIER = $post['id_prescription'];
                 $newAssoc->ID_TEXTE = $post['texte'][$i];
-                $newAssoc->ID_ARTICLE = $post['article'][$i];
+				
+				$article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".$post['article'][$i]."'")->toArray();
+				if (count($article) == 0) {
+					//l'article n'existe pas donc on l'enregistre
+					$article = $dbArticle->createRow();
+					$article->LIBELLE_ARTICLE = $post['article'][$i];
+					$article->save();
+					$idArticle = $article->ID_ARTICLE;
+				} else{
+					//l'article existe donc on récupere son ID
+					$idArticle = $article[0]['ID_ARTICLE'];
+				}
+				
+                $newAssoc->ID_ARTICLE = $idArticle;
                 $newAssoc->save();
             }
         } elseif ('edit-type' == $post['action']) {
@@ -410,7 +424,20 @@ class Service_Dossier
                 $newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $i + 1;
                 $newAssoc->ID_PRESCRIPTION_DOSSIER = $post['id_prescription'];
                 $newAssoc->ID_TEXTE = $post['texte'][$i];
-                $newAssoc->ID_ARTICLE = $post['article'][$i];
+                
+				$article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".$post['article'][$i]."'")->toArray();
+				if (count($article) == 0) {
+					//l'article n'existe pas donc on l'enregistre
+					$article = $dbArticle->createRow();
+					$article->LIBELLE_ARTICLE = $post['article'][$i];
+					$article->save();
+					$idArticle = $article->ID_ARTICLE;
+				} else{
+					//l'article existe donc on récupere son ID
+					$idArticle = $article[0]['ID_ARTICLE'];
+				}
+				
+                $newAssoc->ID_ARTICLE = $idArticle;
                 $newAssoc->save();
             }
         } elseif ('presc-add' == $post['action']) {
@@ -430,7 +457,20 @@ class Service_Dossier
                 $newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $i + 1;
                 $newAssoc->ID_PRESCRIPTION_DOSSIER = $prescEdit->ID_PRESCRIPTION_DOSSIER;
                 $newAssoc->ID_TEXTE = $post['texte'][$i];
-                $newAssoc->ID_ARTICLE = $post['article'][$i];
+                
+				$article = $dbArticle->fetchAll("LIBELLE_ARTICLE LIKE '".$post['article'][$i]."'")->toArray();
+				if (count($article) == 0) {
+					//l'article n'existe pas donc on l'enregistre
+					$article = $dbArticle->createRow();
+					$article->LIBELLE_ARTICLE = $post['article'][$i];
+					$article->save();
+					$idArticle = $article->ID_ARTICLE;
+				} else{
+					//l'article existe donc on récupere son ID
+					$idArticle = $article[0]['ID_ARTICLE'];
+				}
+				
+                $newAssoc->ID_ARTICLE = $idArticle;
                 $newAssoc->save();
             }
         }
