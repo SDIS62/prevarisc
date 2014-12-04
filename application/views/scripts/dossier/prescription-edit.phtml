@@ -19,7 +19,7 @@ echo "
 	<div class='row' id='alert' style='display:none;'>
 		<ul class='unstyled'>
 			<li class='alert alert-error' >
-				Veuillez spécifier au minimum un texte ou un article avant la sauvegarde
+				Veuillez spécifier au minimum un texte ou un article et un contenu avant la sauvegarde
 			</li>
 		</ul>
 	</div>
@@ -28,9 +28,9 @@ echo "
 			Texte&nbsp;
 			<select style='width:80%;' id='LIBELLE_TEXTE' >
 ";
-				foreach($this->listeTextes as $val){
-					echo "<option value='".$val["ID_TEXTE"]."'>".$val['LIBELLE_TEXTE']."</option>";
-				}
+                foreach ($this->listeTextes as $val) {
+                    echo "<option value='".$val["ID_TEXTE"]."'>".$val['LIBELLE_TEXTE']."</option>";
+                }
 echo "
 			</select>
 		</div>
@@ -38,9 +38,9 @@ echo "
 			Article&nbsp;
 			<select style='width:80%;' id='LIBELLE_ARTICLE'>
 ";
-				foreach($this->listeArticles as $val){
-					echo "<option value='".$val["ID_ARTICLE"]."'>".$val['LIBELLE_ARTICLE']."</option>";
-				}
+                foreach ($this->listeArticles as $val) {
+                    echo "<option value='".$val["ID_ARTICLE"]."'>".$val['LIBELLE_ARTICLE']."</option>";
+                }
 echo "
 			</select>
 		</div>
@@ -71,16 +71,16 @@ echo "
 				</thead>
 				<tbody>
 ";
-if($this->action != 'presc-add'){
-	foreach($this->infosPrescription['assoc'] as $val => $presc){
-		echo "
+if ($this->action != 'presc-add') {
+    foreach ($this->infosPrescription['assoc'] as $val => $presc) {
+        echo "
 			<tr>
 				<td>".$presc['LIBELLE_TEXTE']."<input type='hidden' name='texte[]' value='".$presc['ID_TEXTE']."' /></td>
 				<td>".$presc['LIBELLE_ARTICLE']."<input type='hidden' name='article[]' value='".$presc['ID_ARTICLE']."' /></td>
 				<td><a onclick='$(this).parent().parent().remove(); return false;' href='#'>Retirer</a></td>
 			</tr>
 		";
-	}
+    }
 }
 echo "
 				</tbody>
@@ -92,7 +92,7 @@ echo "
 echo "
 	<div class='row'>
 		<div class='span12'>
-			Contenu : 
+			Contenu :
 			<textarea name='PRESCRIPTION_LIBELLE' id='PRESCRIPTION_LIBELLE' rows='10'>";
 echo $this->infosPrescription['LIBELLE_PRESCRIPTION_DOSSIER'];
 echo "</textarea>
@@ -106,12 +106,12 @@ echo "</textarea>
 $(document).ready(function(){
 
 	$("#formPrescriptionEdit").submit(function(){
-		if( $("#association tbody tr").length <= 0){
+		if( $("#association tbody tr").length <= 0 || $("#PRESCRIPTION_LIBELLE").val() == '' ){
 			$("#alert").show();
 			return false;
 		}
 	});
-	
+
 	$("#addAssoc").click(function(){
 		var texte = $("#LIBELLE_TEXTE").val();
 		var article = $("#LIBELLE_ARTICLE").val();
@@ -129,21 +129,21 @@ $(document).ready(function(){
 		}
 		return false;
 	});
-	
+
 	$("#del-prescription").click(function(){
 		$(this).hide();
 		$("#del-confirm").show();
 		$("#del-cancel").show();
 		return false;
 	});
-	
+
 	$("#del-cancel").click(function(){
 		$(this).hide();
 		$("#del-confirm").hide();
 		$("#del-prescription").show();
 		return false;
 	});
-	
+
 	$("#del-confirm").click(function(){
 		$("#action").val('delete');
 		$("#formPrescriptionEdit").submit();
