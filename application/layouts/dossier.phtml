@@ -10,7 +10,7 @@
         </li>
         
 	<?php		
-            if($this->idTypeDossier == 1 && $this->natureDossier != 3 && $this->natureDossier != 9 && $this->natureDossier != 19) {
+            if($this->idTypeDossier == 1 && $this->natureDossier != 3 && $this->natureDossier != 9) {
                 echo "<li class='".(( $this->action == "descriptif") ? "active" : "read" )."'>
                         <a "
                         . "href='".$this->url(array("controller" => "dossier", "action"=>"descriptif", "id" => $this->idDossier), false, true)."'><i class=\"icon-book icon-black\"></i> Descriptif ".(( $this->natureDossier == 1 || $this->natureDossier == 2 ) ? " des travaux" : "")."</a>
