@@ -79,7 +79,7 @@ if ($this->action != 'presc-add') {
         echo "
 			<tr>
 				<td>".$presc['LIBELLE_TEXTE']."<input type='hidden' name='texte[]' value='".$presc['ID_TEXTE']."' /></td>
-				<td>".$presc['LIBELLE_ARTICLE']."<input type='hidden' name='article[]' value='".$presc['ID_ARTICLE']."' /></td>
+				<td>".$presc['LIBELLE_ARTICLE']."<input type='hidden' name='article[]' value='".$presc['LIBELLE_ARTICLE']."' /></td>
 				<td><a onclick='$(this).parent().parent().remove(); return false;' href='#'>Retirer</a></td>
 			</tr>
 		";
