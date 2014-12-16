@@ -1,8 +1,9 @@
-<div id="home">
+<div id="home" class="dashboard">
     <?php foreach($this->blocs as $id => $bloc): ?>
         <?php echo $this->partial('index/partials/'.$bloc['type'].'.phtml', array_merge($bloc, array('id' => $id))) ?>
     <?php endforeach ?>
     <div class="grid-gutter"></div>
+
 </div>
 
 <div id="reponse-modal" class="modal hide fade" ></div>
@@ -10,7 +11,6 @@
 <br>
 
 <script type="text/javascript">
-
     $(document).ready(function() {
 
         // Gestion des boites modales
@@ -20,89 +20,68 @@
             $(target).load(url);
         });
 
-        // Grid !
-        $('.dashboard').packery({
+        var $container = $('.dashboard').packery({
             itemSelector: '.panel',
             gutter: '.grid-gutter',
+            // disable initial layout
             isInitLayout: false
         });
 
-    var pckry = $container.data('packery');
+        var pckry = $container.data('packery');
 
-    // ----- initial sort ----- //
-    var sortOrder = []; // global variable for saving order, used later
-    var storedSortOrder = <?php echo json_encode($this->blocsOrder) ?>;
-    if ( storedSortOrder ) {
-      // create a hash of items by their tabindex
-      var itemsByTabIndex = {};
-      var tabIndex;
-      for ( var i=0, len = pckry.items.length; i < len; i++ ) {
-        var item = pckry.items[i];
-        tabIndex = $( item.element ).attr('id');
-        itemsByTabIndex[tabIndex] = item;
-      }
-      // overwrite packery item order
-      i = 0; len = storedSortOrder.length;
-      var j = 0;
-      for (; i < len; i++ ) {
-        tabIndex = storedSortOrder[i];
-        if (itemsByTabIndex[tabIndex] !== undefined) {
-           pckry.items[j] = itemsByTabIndex[tabIndex];
-           j++;
+        // ----- initial sort ----- //
+        var sortOrder = []; // global variable for saving order, used later
+        var storedSortOrder = <?php echo json_encode($this->blocsOrder) ?>;
+        if ( storedSortOrder ) {
+            // create a hash of items by their tabindex
+            var itemsByTabIndex = {};
+            var tabIndex;
+            for (var i=0, len = pckry.items.length; i < len; i++ ) {
+                var item = pckry.items[i];
+                tabIndex = $( item.element ).attr('id');
+                itemsByTabIndex[tabIndex] = item;
+            }
+            // overwrite packery item order
+            i = 0; len = storedSortOrder.length;
+            var j = 0;
+            for (; i < len; i++) {
+                tabIndex = storedSortOrder[i];
+                if (itemsByTabIndex[tabIndex] !== undefined) {
+                   pckry.items[j] = itemsByTabIndex[tabIndex];
+                   j++;
+                }
+            }
         }
-      }
-    }
 
-    // ----- packery setup ----- //
-    // optim de perf : on évite au navigateur de dessiner les blocs
-    // avant qu'ils aient pris leur place finale
-    $('.panel').show(); 
+        // ----- packery setup ----- //
+        // optim de perf : on évite au navigateur de dessiner les blocs
+        // avant qu'ils aient pris leur place finale
+        $('.panel').show(); 
+
+        // trigger initial layout
+        $container.packery();
+
+        var $itemElems = $($container.packery('getItemElements') );
+        $itemElems.draggable({
+            handle: ".panel-heading",
+            containment: "parent"
+        });
+        $container.packery( 'bindUIDraggableEvents', $itemElems );
+
     
-    // trigger initial layout
-    $container.packery();
+        var saveTimeout = null;
+        var saveTimeoutMilliseconds = 500;
 
-    var $itemElems = $($container.packery('getItemElements') );
-    $itemElems.draggable({
-        handle: ".panel-heading",
-        containment: "parent"
-    });
-    $container.packery( 'bindUIDraggableEvents', $itemElems );
-    
-    
-    var saveTimeout = null;
-    var saveTimeoutMilliseconds = 500;
+        function orderItems() {
 
-    function orderItems() {
+            // First cancel previous timeouts
+            clearTimeout(saveTimeout);
 
-      // First cancel previous timeouts
-      clearTimeout(saveTimeout);
-
-      var itemElems = pckry.getItemElements();
-      // reset / empty oder array
-      sortOrder.length = 0;
-      for (var i=0; i< itemElems.length; i++) {
-        sortOrder[i] = itemElems[i].getAttribute("id");
-      }
-
-      // Init a new timemout
-      saveTimeout = setTimeout(function() {
-          $.post("/api/1.0/user/preferences", {
-              id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
-              preferences: {
-                  'DASHBOARD_BLOCS': sortOrder
-              }
-          });
-      }, saveTimeoutMilliseconds);
-    }
-
-    $container.packery( 'on', 'layoutComplete', orderItems );
-    $container.packery( 'on', 'dragItemPositioned', orderItems );
-    
-    $('#reinitBlocOrder').click(function() {
-        $.post("/api/1.0/user/preferences", {
-            id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
-            preferences: {
-                'DASHBOARD_BLOCS': null
+            var itemElems = pckry.getItemElements();
+            // reset / empty oder array
+            sortOrder.length = 0;
+            for (var i=0; i< itemElems.length; i++) {
+                sortOrder[i] = itemElems[i].getAttribute("id");
             }
 
             // Init a new timemout
