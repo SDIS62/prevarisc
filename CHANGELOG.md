@@ -18,6 +18,7 @@ Evolutions :
 * Possibilité de recherche un dossier "contenant" (et non pas exactement égal à) un numéro d'AT ou PC
 * Possibilité de mettre un ID ERPv2 ou N° de PC dans les champs d'objet ou de libellé sans # en préfixe
 * Mise à jour des dépendances composer
+* Agrandissement du champ "Nom" des rubriques ICPE pour pouvoir s'adapter à tous les cas comme "Stations-service : installations, ouvertes ou non au public, où les carburants sont transférés de réservoirs de stockage fixes dans les réservoirs à carburant de véhicules à moteur, de bateaux ou d’aéronefs"
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
