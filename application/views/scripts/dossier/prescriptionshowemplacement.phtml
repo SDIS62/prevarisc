@@ -10,7 +10,7 @@ if($nbPrescType == 0)
 for($i=0; $i < $nbPrescType; $i++)
 {
 	echo "
-		<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' style='list-style-type:none;'>
+		<li id='prescriptiontype_".( (isset($this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']))? "" : "")."' style='list-style-type:none;'>
 			<table style='width:900px;'>
 	";
 

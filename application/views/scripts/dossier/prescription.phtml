@@ -1,22 +1,10 @@
+<h3>Gestion des prescriptions</h3>
 <?php
-/*
-
-TRUNCATE TABLE `prescriptionarticle`;
-TRUNCATE TABLE `prescriptionarticleliste`;
-TRUNCATE TABLE `prescriptioncat`; 
-TRUNCATE TABLE `prescriptiontexte`;	
-TRUNCATE TABLE `prescriptiontexteliste`;
-TRUNCATE TABLE `prescriptiontype`;
-TRUNCATE TABLE `prescriptiontypeassoc`;
-TRUNCATE TABLE `prescriptiondossier`;
-TRUNCATE TABLE `prescriptiondossierassoc`;
-
-*/
 if($this->infosDossier['VERROU_DOSSIER'] == 0){
 	echo "
 		<button class='addPresc btn' id='addPrescriptionType' >Ajouter une prescription type</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<button class='addPresc btn' id='addPrescription' >Ajouter une prescription</button>
+		&nbsp;&nbsp;
+		<a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'prescription-add'))."' >Ajouter une prescription</a>
 	";
 	if(count($this->prescriptionDossier) == 0){
 		echo "
@@ -65,7 +53,16 @@ for($i=0; $i < $nbPrescDossier; $i++)
 					echo nl2br($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
 				}
 				echo "</td>";
-				echo "<td class='span1' rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']."' ".(( $this->infosDossier['VERROU_DOSSIER'] == 1)?"style='display:none;'":"").">Modifier</button></td>";
+				echo "
+					<td class='span1' rowspan='".$nbAssoc."'>
+				";
+					if($this->infosDossier['VERROU_DOSSIER'] == 0){
+						echo "
+							<a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'prescription-edit', 'id-prescription' => $this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']))."' >Modifier</a>
+						";
+					}
+				echo "
+					</td>";
 				$cpt = false;
 			}
 			echo "
@@ -298,21 +295,6 @@ $(document).ready(function(){
 		return false;
 	});
 
-	$("#addAssoc").live('click',function(){
-		var texte = $("#LIBELLE_TEXTE").val();
-		var article = $("#LIBELLE_ARTICLE").val();
-		if(texte != '' || article != '')
-		{
-			var assoc = "";
-			assoc += '<tr><td><input type="hidden" name="texte[]" value="'+texte+'" />'+texte+'</td>';
-			assoc += '<td><input type="hidden" name="article[]" value="'+article+'" />'+article+'</td>';
-			assoc += '<td><a href="" class="suppAssoc">&times;</a></td></tr>';
-			$("#association").append(assoc);
-			$("#LIBELLE_TEXTE").val('');
-			$("#LIBELLE_ARTICLE").val('');
-		}
-		return false;
-	});
 	
 	$(".suppAssoc").live('click',function(){
 		$(this).parent().parent().remove();

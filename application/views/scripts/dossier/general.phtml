@@ -61,9 +61,9 @@
         }).click(function() {
 
         });
-		
-		
-		
+
+
+
 		$("#commissionSelect").live('change',function(){
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
@@ -83,7 +83,7 @@
 			}
 			return false;
 		});
-		
+
 		$(".changeCommission").live('click',function(){
 			//ICI SUPPRIMER TOUTES LES LIGNES CORRESPONDANT AU DOSSIER DANS  dossieraffectation ou dans le save...
 			$("#DATEVISITE_INPUT").val('');
@@ -103,7 +103,7 @@
 			$("#calendarVisite").html('');
 
 			$("#commissionSelect").removeAttr('disabled');
-			
+
 			$(this).hide();
 			return false;
 		});
@@ -111,24 +111,31 @@
 		$(".showCalendar").live('click',function(){
 			var typeCalendar = $(this).parent().parent().attr('id');
 			var divName;
+			var mois;
+			var annee;
 			if(typeCalendar == 'DATEVISITE'){
-				divName = 'calendarVisite';			
+				divName = 'calendarVisite';
+				mois = $("#month_visite").val();
+				annee = $("#year_visite").val();
 			}else if (typeCalendar == 'DATECOMM'){
 				divName = 'calendar';
+				mois = $("#month_comm").val();
+				annee = $("#year_comm").val();
 			}
 
 			$("#"+divName).show();
 			$("#"+divName).parent().show();
-			$("#"+divName).afficheCalendar($("#COMMISSION_DOSSIER").val(),'dossier',$('#TYPE_DOSSIER').val(),divName,$(this).attr('id'));
-			
+
+			$("#"+divName).afficheCalendar($("#COMMISSION_DOSSIER").val(),'dossier',$('#TYPE_DOSSIER').val(),divName,$(this).attr('id'),mois,annee);
+
 			$(this).hide();
 			$("#"+typeCalendar).find(".hideCalendar").show();
 
 			return false;
 		});
-		
+
 		$(".hideCalendar").live('click',function(){
-			
+
 			var typeCalendar = $(this).parent().parent().attr('id');
 			var divName;
 			if(typeCalendar == 'DATEVISITE'){
@@ -140,13 +147,13 @@
 			$("#"+divName).hide();
 			$("#"+divName).parent().hide();
 			$("#"+divName).html('');
-			
+
 			$(this).hide();
 			$("#"+typeCalendar).find(".showCalendar").show();
 
 			return false;
 		});
-		
+
 		//Affichage de la nature en fonction du type choisi... Si on choisi le type 0 Alors on cache la nature
 		//génére via la vue fonction le select
 		$("#TYPE_DOSSIER").change(function(){
@@ -159,7 +166,7 @@
 			}else{
 				if($("#do").val() == 'edit'){
 					//afficher message indiquant la perte des documents consultés
-					
+
 				}
 				//Modif de la dénomination de l'avis
 				if(idType == 1 || idType == 2)
@@ -170,7 +177,7 @@
 					//cas d'une visite ou d'un groupe de visite
 					$("#AVIS_DOSSIER").parent().prev().prev().html("Avis du groupe de visite");
 				}
-				
+
 				$.ajax({
 					url: "/dossier/fonction",
 					data: "do=showNature&idType="+idType,
@@ -192,14 +199,14 @@
 			}
 			return false;
 		});
-			
+
 		$(".incomplet").click(function(){
 			if($(this).val() == 1){
 				//incomplet on cache l'avis et on le met sur null
 				afficherCacherAvis(1);
-				
+
 				$("#HORSDELAI").hide();
-				
+
 				$("#inputComplet").hide();
 				//On compte combien de div ayant la class notre page comporte
 				var numDivDocManquant = $('.docManquant').length;
@@ -211,7 +218,7 @@
 					type:"POST",
 					//async: false,
 					beforeSend: function(){
-						
+
 					},
 					success: function(msg){
 						$("#dossierIncomplet").append(msg);
@@ -222,7 +229,7 @@
 				afficherCacherAvis(0);
 			}
 		});
-		
+
 		$(".cancelIncomplet").live('click',function(){
 			$(this).parent().remove();
 			$("#inputComplet").show();
@@ -235,10 +242,10 @@
 			afficherCacherAvis();
 		});
 
-		showCalendar();		
+		showCalendar();
 		majAvisSelect();
 	});
-	//FIN DOC READY FUNCTION	
+	//FIN DOC READY FUNCTION
 	function showCalendar()
 	{
 		if($('#COMMISSION_DOSSIER').val() != '')
@@ -246,11 +253,11 @@
 			$('.showCalendar').show();
 		}
 	}
-	
+
 	afficherCacherAvis = function ()
 	{
 		var typeDossier = $("#TYPE_DOSSIER").val();
-                
+
 		var cpt = 0;
 		$(".hideavis").each(function(){
 			if($(this).is(":checked"))
@@ -282,16 +289,14 @@
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 		}
 	}
-        
-        
-	
+
 	function majAvisSelect()
 	{
 		var genre = $('#genreInfo').val();
 		//etablissement
 		var typeDossier = $("#TYPE_DOSSIER").val();
 		var natureDossier = $("#selectNature").val();
-                
+
                 var addText = "";
 		if(typeDossier == 1)
 		{
@@ -329,7 +334,7 @@
 				$(this).text(text+addText);
 			}
 		});
-		
+
 		$("#AVIS_DOSSIER_COMMISSION option").each(function(){
 			if($(this).val() != 0)
 			{
@@ -342,10 +347,10 @@
 				$(this).text(text+addText);
 			}
 		});
-		
+
 	}
-	
-	$.fn.afficheCalendar = function(idComm,emplacement,type,divInfo,infoCalendar) {
+
+	$.fn.afficheCalendar = function(idComm,emplacement,type,divInfo,infoCalendar,mois,annee) {
 		var calendar = $("#"+divInfo).fullCalendar( {
 			header: {
 				left: 'prev,next today',
@@ -360,6 +365,8 @@
 			defaultView: 'month',
 			timeFormat:'H:mm{ - H:mm}',
 			axisFormat: 'H(:mm)',
+			month:mois,
+			year:annee,
 			slotMinutes: 5, //Permet d'afficher un interval de 10 minutes au lieu de 30 par défaut
 			selectHelper: true,
 			firstDay: 1,
@@ -379,6 +386,7 @@
 			aspectRatio: 2,
 			events: function(start, end, callback) {
 				var type;
+
 				if($("#TYPE_DOSSIER").val() == 1){
 					//cas type dossier étude. On affiche alors que les commissions de type En Salle
 					type = 1;
@@ -388,13 +396,13 @@
 						type = $("#TYPE_DOSSIER").val();
 					}else if(infoCalendar == 'showCommission'){
 						type = 1;
-					}		
+					}
 				}else if($("#TYPE_DOSSIER").val() == 3){
 					if(infoCalendar == 'showVisite'){
 						type = $("#TYPE_DOSSIER").val();
 					}else if(infoCalendar == 'showCommission'){
 						type = 1;
-					}	
+					}
 				}
 				$.ajax({
 					url: '/calendrier-des-commissions/recupevenement?start='+start.getTime()+"&end="+end.getTime()+"&type="+type,
@@ -447,7 +455,7 @@
 					}
 					nomEtab = nomEtab.replace('&nbsp;',' ');
 					nomEtab = nomEtab.replace("'"," ");
-					
+
 					var nomNature = $("#selectNature option:selected").text().trim();
 					var nomCom = nomNature+" - "+nomEtab;
 					var type;
@@ -460,16 +468,16 @@
 							type = $("#TYPE_DOSSIER").val();
 						}else if(infoCalendar == 'showCommission'){
 							type = 1;
-						}		
+						}
 					}else if($("#TYPE_DOSSIER").val() == 3){
 						if(infoCalendar == 'showVisite'){
 							type = $("#TYPE_DOSSIER").val();
 						}else if(infoCalendar == 'showCommission'){
 							type = 1;
-						}	
+						}
 					}
-					
-					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end+"&libelleCom="+nomCom+"&type="+type, function() {	
+
+					my_dialog("/calendrier-des-commissions/dialogcomm", "do=newComm&idComm="+idComm+"&dateD="+start+"&dateF="+end+"&libelleCom="+nomCom+"&type="+type, function() {
 						$("#dialogComm").dialog("option", "buttons", {
 							'Enregistrer dans le calendrier': function() {
 								// Lors de la validation de la boite de dialogue
@@ -514,7 +522,7 @@
 					//Faire vérification du nombre de date liée
 					if($("#TYPE_DOSSIER").val() == 1){
 						//Si une seule date on la renseinge aussi dans l'input date de passage en commission
-						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');					
+						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');
 						var date = new Date(event.end);
 						dd = date.getUTCDate();
 						mm = date.getUTCMonth()+1;
@@ -532,8 +540,8 @@
 							$("#ID_AFFECTATION_DOSSIER_COMMISSION").val(event.id);
 						}
 						$("#"+dateSelect).find(".hideCalendar").click();
-					}else if($("#TYPE_DOSSIER").val() == 3 ||$("#TYPE_DOSSIER").val() == 2){				
-						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');	
+					}else if($("#TYPE_DOSSIER").val() == 3 ||$("#TYPE_DOSSIER").val() == 2){
+						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');
 						if(dateSelect == "DATEVISITE"){
 							$.ajax({
 								data: "idDate=" + event.id,
@@ -544,16 +552,16 @@
 									var rez = eval("("+affichageResultat+")");
 									if(rez.length == 1){
 										//Si une seule date on la renseinge aussi dans l'input date de passage en commission
-										var date = new Date(event.end);					
+										var date = new Date(event.end);
 										dd = date.getUTCDate();
 										mm = date.getUTCMonth()+1;
 										aa = date.getUTCFullYear();
 										if(dd<10)
-											dd='0'+dd						
+											dd='0'+dd
 										if(mm<10)
 											mm='0'+mm
-										
-		
+
+
 										$("#DATEVISITE_INPUT").val(dd+"/"+mm+"/"+aa);
 										$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
 
@@ -564,14 +572,13 @@
 
 										var listeDates = "";
 										for( var i in rez ) {
-											//alert(rez[i]['ID_DATECOMMISSION']);
 											if(nbResultats == nbResultatsTotal){
 												//On prend l'id de la premiere date pour la lier au dossier
-												$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);												
+												$("#ID_AFFECTATION_DOSSIER_VISITE").val(event.id);
 											}
 											var dateFr = convertDateAngToFr(rez[i]['DATE_COMMISSION']);
 											if(nbResultats > 1){
-												listeDates += dateFr+", "; 
+												listeDates += dateFr+", ";
 											}else if(nbResultats == 1){
 												listeDates += dateFr;
 											}
@@ -581,23 +588,23 @@
 
 										$("#hideVisite").click();
 									}
-									
+
 								}
 							});
 						}else if(dateSelect == "DATECOMM"){
-							var date = new Date(event.end);					
+							var date = new Date(event.end);
 							dd = date.getUTCDate();
 							mm = date.getUTCMonth()+1;
 							aa = date.getUTCFullYear();
 							if(dd<10)
-								dd='0'+dd						
+								dd='0'+dd
 							if(mm<10)
 								mm='0'+mm
 							$("#DATECOMM_INPUT").val(dd+"/"+mm+"/"+aa);
 							$("#ID_AFFECTATION_DOSSIER_COMMISSION").val(event.id);
 							$("#hideCommission").click();
 						}
-					
+
 					}
 				}
 				return false;
@@ -619,10 +626,10 @@
 
 						},
 					});
-					
+
 				}
 			},
-			eventResize: function( event, jsEvent, ui, view ) {			
+			eventResize: function( event, jsEvent, ui, view ) {
 				//heure de fin change uniquement fonctionne uniquement sur la vue semaine et jour. Pas sur mois
 				var view = $("#"+divInfo).fullCalendar('getView');
 				var vueInfo = view.title;
@@ -638,11 +645,11 @@
 					type:"POST",
 				});
 			}
-			
-			
-		});	
+
+
+		});
 	};
-	
+
 	// Dialogue standard
 	function my_dialog( url, data, callback ) {
 		// Récupération du contenu de la boite de dialogue
@@ -665,24 +672,24 @@
 						}
 					}
 				});
-				
+
 				if( callback )
 					callback();
 			}
 		});
 	}
-	
+
 	function convertDateAngToFr(dateAng){
 		var tabDate = dateAng.split("-");
 		return tabDate[2]+"/"+tabDate[1]+"/"+tabDate[0];
 	}
-	
+
 	$(".today").live('click',function(){
 		var objetDate = new Date();
 		$(this).prev().attr('value',$("#dateToday").val());
 		return false;
 	});
-	
+
 	//Fonction qui retourne la liste des natures sélectionnées
 	$.fn.recupNatures = function() {
 		var listeIdNature = "";
@@ -698,7 +705,7 @@
 		});
 		return listeIdNature;
 	};
-	
+
 	//Cache les natures de la liste
 	$.fn.cacherNatureDuSelect = function(listeNatures) {
 		//Dans le cas d'une édition on cache dans le select des natures ceux qui sont déjà présentes
@@ -710,7 +717,7 @@
 			$("#selectNature [value="+tabNature[i]+"]").hide();
 		}
 	};
-	
+
 	//Permet dans le cas d'édition d'empécher la suppression de toutes les natures. Cache les .suppNature quand il n'en reste qu'une
 	$.fn.gestionSuppNature = function(){
 		if($("#listeNature > .nature").length == 1){
@@ -719,7 +726,7 @@
 			$(".suppNature").show();
 		}
 	};
-	
+
 	//Affichage des champs en fonction des natures
 	$.fn.afficheChamps = function(listeNature) {
 		$("#InfosDossier > li").hide();
@@ -741,7 +748,7 @@
 						$("#type > .form").show();
 					}
 				}
-				
+
 				var incomplet = $("input[name=INCOMPLET_DOSSIER]:checked").val();
 				var horsdelai = $(".horsdelai").is(':checked');
 				var absquorum = $(".absquorum").is(':checked');
@@ -758,7 +765,7 @@
 					$("#AVIS_COMMISSION").hide();
 					$("#DATECOMM").hide();
 				}
-						
+
 				var type = $("#TYPE_DOSSIER").val();
 				if(type == 2 || type == 3)
 				{
@@ -772,7 +779,7 @@
 					$("#ANOMALIE").show();
 				}
 
-				
+
 				if($("#selectNature").val() == 1 || $("#selectNature").val() == 2){
 					$("#docurbaVal").html('');
 					var docurbaVal;
@@ -802,10 +809,10 @@
 	$("#modificationDossier").live('click',function(){
 		$(this).hide();
 		$("#save_div").hide();
-		
+
 		$("#InfosDossier > li").hide();
 		$("#TYPE_DOSSIER option[value='0']").remove();
-		
+
 		if($("#do").val() != 'new'){
                     $("#rapport").hide();
                     $("#VERROU").hide();
@@ -817,19 +824,19 @@
 
 		$("#InfosDossier > li > .value").hide();
 		$("#InfosDossier > li > .form").show();
-		
+
 		//on fait apparaitre la liste des natures puis on cache les natures déja affichées
 		$("#selectNature").removeAttr('disabled');
 
 		$("#NUM_DOCURBA").show();
 		$("#addNumDoc").show();
-		
+
 		$(".suppDocUrba").show();
 		if($("#do").val() == 'edit'){
 			$("#listeNature").gestionSuppNature();
 		}
 		$("#InfosDossier").afficheChamps($("#selectNature").val());
-		
+
 		//Gestion des cas calendrier comm visite en fonction du type de dossier
 		$(".hideCalendar").hide();
 		return false;
@@ -844,12 +851,12 @@
 		{
 			if($("#do").val() == 'edit'){
 				var listeNature = $("#listeNature").recupNatures();
-				
+
 				$("#InfosDossier").afficheChamps($(this).val());
 				$("#selectNature option[value='0']").remove();
 			}else{
 				var listeNature = $("#listeNature").recupNatures();
-				
+
 				$("#InfosDossier").afficheChamps($(this).val());
 				$("#creationDossier").show();
 			}
@@ -866,7 +873,7 @@
 			return false;
 		}
 	}
-	
+
 	function verifDossier()
 	{
 		//On ne vérifie pas l'objet dans les cas suivant :
@@ -880,7 +887,7 @@
 				return false;
 			}
 		}
-		
+
 		if($("#DATEINSERT_INPUT").val() == ''){
 			$("#DATEINSERT_INPUT").next(".today").click();
 			return true;
@@ -904,14 +911,14 @@
 		if($("#NUM_DOCURBA").val() != ''){
 			$("#addNumDoc").click();
 		}
-		
+
 		var data = $("#newDossier").serialize();
-		
+
 		if($("#TYPE_DOSSIER").val() == 2 && $("#selectNature").val() == 21){
 			var tabDateVisite = $("#DATEVISITE_INPUT").val().split(',');
 			data += "&DATEVISITE_PERIODIQUE="+tabDateVisite[0];
 		}
-		
+
 		$.ajax({
 			url: "/dossier/savenew",
 			data: data,
@@ -924,13 +931,13 @@
 			},
 			success: function(affichageResultat){
 				var idDossier = affichageResultat.replace(' ', '');
-                                try { 
-                                    parseInt(idDossier); 
+                                try {
+                                    parseInt(idDossier);
                                     window.location='/dossier/index/id/'+idDossier;
                                 } catch(e) {
                                     window.location.reload();
                                 }
-				
+
 			},
 			error: function(){
 				return false;
@@ -938,8 +945,8 @@
 		});
 		return false;
 	});
-	
-	
+
+
 	$("#AVIS_DOSSIER_COMMISSION").live('change',function(){
 		var type = $("#TYPE_DOSSIER").val();
 		if(type == 2 || type == 3)
@@ -953,14 +960,14 @@
 			}
 		}
 	});
-	
+
 	$("#echeanciertrav_check").live('click',function(){
 		if($(this).is(':checked'))
 		{
 			$("#ECHEANCIERTRAV_DOSSIER").show();
 		}else{
 			$("#ECHEANCIERTRAV_DOSSIER").val('');
-			$("#ECHEANCIERTRAV_DOSSIER").hide();			
+			$("#ECHEANCIERTRAV_DOSSIER").hide();
 		}
 	});
 
@@ -968,11 +975,11 @@
 	$("#validModification").live('click',function(){
 		if(!verifDossier())
 			return false;
-		
+
 		if($("#NUM_DOCURBA").val() != ''){
 			$("#addNumDoc").click();
 		}
-		
+
 		var data = $("#editDossier").serialize();
 		$.ajax({
 			url: "/dossier/save",
@@ -991,7 +998,7 @@
 				return false;
 			}
 		});
-		return false;		
+		return false;
 	});
 
 	$(".validDocManquant").live('click',function(){
@@ -999,7 +1006,7 @@
 		{
 			//si la date n'est pas renseignée
 			$(this).prev().prev().click();
-			
+
 		}else{
 			$(this).prev().prev().prev().attr('readonly','readonly');			$("#inputComplet").show();
 			$(".incomplet").val(['0']);
@@ -1007,10 +1014,10 @@
 			$("#AVIS_COMMISSION").show();
 			$("#HORSDELAI").show();
 			afficherCacherAvis(0);
-		}		
+		}
 		return false;
 	});
-	
+
 	$("input[name=servInst]:radio").live('click', function(){
 		if($(this).val() == 'servInstCommune'){
 			$("#servInstVille").removeAttr('disabled');
@@ -1022,7 +1029,7 @@
 	});
 </script>
 <?php $action = $this->do; ?>
-<?php if ($this->verrouDossier != 1 && $action == 'edit'): ?>
+<?php if ($this->verrouDossier != 1 && 'edit' == $action): ?>
     <div class='pull-right' style='font-weight:normal'>
         <div class="btn-group">
             <a class="btn" id="modificationDossier" href="#">Modifier le dossier</a>
@@ -1032,10 +1039,10 @@
     </div>
 <?php endif ?>
 <?php
-if($action == 'edit'){
-	$formUrl = "/dossier/index/id/".$this->idDossier;
-}else{
-	$formUrl = "";
+if ('edit' == $action) {
+    $formUrl = "/dossier/index/id/".$this->idDossier;
+} else {
+    $formUrl = "";
 }
 
 echo "
@@ -1045,8 +1052,8 @@ echo "
 			<input type='hidden' name='idEtablissement' id='idEtablissement' value='".$this->idEtablissement."' />
 			<input type='hidden' name='genreInfo' id='genreInfo' value='".$this->genre."' />
 			<input type='hidden' name='do' id='do' value='".$action."' />
-			<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='".$this->idUser."' />	
-			".( ($action == 'edit')? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "" )."
+			<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='".$this->idUser."' />
+			".(('edit' == $action) ? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "")."
 			<div id='boutons' style='float: right'>
                         <button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>
                         <div id='chargement'></div>
@@ -1057,36 +1064,36 @@ echo "
 			<ul class='list unstyled'>
 				<li class='row-fluid' style='margin-bottom:20px;' id='type'>
 					<div class='left libelle span3' style='float:left;'>Type</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'":"" ).">".$this->libelleType."</div>
-					<div class='right form span9' ". ( ($action != 'new')? "style='display:none'":"").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">".$this->libelleType."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none'" : "").">
 						<select name='TYPE_DOSSIER' id='TYPE_DOSSIER' >
 							<option value='0' >Selectionnez un type</option>
 					";
-					foreach ($this->dossierType as $value){
-						echo "<option value='".$value["ID_DOSSIERTYPE"]."' ".( ($this->infosDossier['TYPE_DOSSIER'] == $value["ID_DOSSIERTYPE"])? "selected='selected'" : ""  )." >".$value["LIBELLE_DOSSIERTYPE"]."</option>";
-					}
-					echo "
+                    foreach ($this->dossierType as $value) {
+                        echo "<option value='".$value["ID_DOSSIERTYPE"]."' ".(($this->infosDossier['TYPE_DOSSIER'] == $value["ID_DOSSIERTYPE"]) ? "selected='selected'" : "")." >".$value["LIBELLE_DOSSIERTYPE"]."</option>";
+                    }
+                    echo "
 						</select>
 					</div>
 				</li>
-				<li class='row-fluid' id='nature' style='".( ($action == 'new')?"display:none;":"")."margin-bottom:20px;'>
+				<li class='row-fluid' id='nature' style='".(('new' == $action) ? "display:none;" : "")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Nature</div>
-					<div class='right form span8' ".( ($action != 'new' && $action != 'edit' )?"style='display:none;'":"").">
+					<div class='right form span8' ".(($action != 'new' && $action != 'edit') ? "style='display:none;'" : "").">
 						<div id='listeNature' >
 						";
-						echo "
-							<select name='selectNature' id='selectNature' ".( ($action == 'edit' )?"disabled='disabled'":"")." >
-									".( ($action == 'edit' )?"":"<option value='0' >Selectionnez un type</option>")."
+                        echo "
+							<select name='selectNature' id='selectNature' ".(('edit' == $action) ? "disabled='disabled'" : "")." >
+							".(('edit' == $action) ? "" : "<option value='0' >Selectionnez un type</option>")."
 						";
-							foreach($this->dossierNatureListe as $value){
-								if($this->natureConcerne[0]['ID_NATURE'] == $value["ID_DOSSIERNATURE"]){
-									$selected="selected='selected'";
-								}else{
-									$selected="";
-								}
-								echo "<option value='".$value["ID_DOSSIERNATURE"]."' ".$selected.">".$value['LIBELLE_DOSSIERNATURE']."</option>";
-							}
-						echo "
+                            foreach ($this->dossierNatureListe as $value) {
+                                if ($this->natureConcerne[0]['ID_NATURE'] == $value["ID_DOSSIERNATURE"]) {
+                                    $selected = "selected='selected'";
+                                } else {
+                                    $selected = "";
+                                }
+                                echo "<option value='".$value["ID_DOSSIERNATURE"]."' ".$selected.">".$value['LIBELLE_DOSSIERNATURE']."</option>";
+                            }
+                        echo "
 							</select>
 						</div>
 					</div>
@@ -1109,574 +1116,607 @@ echo "
 					</div>
 				</li>
 			-->
-				<li class='row-fluid' id='DATEINSERT' style='".( (in_array('DATEINSERT', $this->afficherChamps) && $this->infosDossier['DATEINSERT_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATEINSERT' style='".((in_array('DATEINSERT', $this->afficherChamps) && $this->infosDossier['DATEINSERT_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de création du dossier</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						".$this->infosDossier['DATEINSERT_DOSSIER']." ".(($this->user_info)? "par : ".$this->user_info['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_info['NOM_UTILISATEURINFORMATIONS'] :"")."
-						".( ($this->infosDossier['VERROU_DOSSIER']) ? " - Verrouillé par : ".$this->user_infoVerrou['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_infoVerrou['NOM_UTILISATEURINFORMATIONS'] :"")."						
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
+						".$this->infosDossier['DATEINSERT_DOSSIER']." ".(($this->user_info) ? "par : ".$this->user_info['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_info['NOM_UTILISATEURINFORMATIONS'] : "")."
+						".(($this->infosDossier['VERROU_DOSSIER']) ? " - Verrouillé par : ".$this->user_infoVerrou['PRENOM_UTILISATEURINFORMATIONS']." ".$this->user_infoVerrou['NOM_UTILISATEURINFORMATIONS'] : "")."
 					</div >
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
-						<input type='text' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".( ($this->DATEINSERT_INPUT)?$this->DATEINSERT_INPUT:"" )."' />
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' name='DATEINSERT_DOSSIER' id='DATEINSERT_INPUT' value='".(($this->DATEINSERT_INPUT) ? $this->DATEINSERT_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='OBJET' style='".( (in_array('OBJET', $this->afficherChamps) && $this->infosDossier['OBJET_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='OBJET' style='".((in_array('OBJET', $this->afficherChamps) && $this->infosDossier['OBJET_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Objet</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['OBJET_DOSSIER'])."</div >
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
-						<textarea name='OBJET_DOSSIER' id='OBJET_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['OBJET_DOSSIER'])?htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['OBJET_DOSSIER'])."</div >
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<textarea name='OBJET_DOSSIER' id='OBJET_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['OBJET_DOSSIER']) ? htmlspecialchars($this->infosDossier['OBJET_DOSSIER'], ENT_QUOTES) : "")."</textarea>
 					</div>
 				</li>
-				<li class='row-fluid' id='DEMANDEUR' style='".( ($action != 'new' && in_array('DEMANDEUR', $this->afficherChamps) && $this->infosDossier['DEMANDEUR_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DEMANDEUR' style='".(($action != 'new' && in_array('DEMANDEUR', $this->afficherChamps) && $this->infosDossier['DEMANDEUR_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Demandeur</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DEMANDEUR_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='DEMANDEUR_DOSSIER' name='DEMANDEUR_DOSSIER' value='".( ($this->infosDossier['DEMANDEUR_DOSSIER'])?htmlspecialchars($this->infosDossier['DEMANDEUR_DOSSIER'], ENT_QUOTES):"" )."' style='width:650px' /><br/>
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DEMANDEUR_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' id='DEMANDEUR_DOSSIER' name='DEMANDEUR_DOSSIER' value='".(($this->infosDossier['DEMANDEUR_DOSSIER']) ? htmlspecialchars($this->infosDossier['DEMANDEUR_DOSSIER'], ENT_QUOTES) : "")."' style='width:650px' /><br/>
 					</div>
 				</li>
-				
-				<li class='row-fluid' id='LIEUREUNION' style='".( (in_array('LIEUREUNION', $this->afficherChamps) && $this->infosDossier['LIEUREUNION_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+
+				<li class='row-fluid' id='LIEUREUNION' style='".((in_array('LIEUREUNION', $this->afficherChamps) && $this->infosDossier['LIEUREUNION_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Lieu réunion</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['LIEUREUNION_DOSSIER'])."</div >
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'" : "" )."> 
-						<textarea name='LIEUREUNION_DOSSIER' id='LIEUREUNION_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['LIEUREUNION_DOSSIER'])?htmlspecialchars($this->infosDossier['LIEUREUNION_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['LIEUREUNION_DOSSIER'])."</div >
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<textarea name='LIEUREUNION_DOSSIER' id='LIEUREUNION_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['LIEUREUNION_DOSSIER']) ? htmlspecialchars($this->infosDossier['LIEUREUNION_DOSSIER'], ENT_QUOTES) : "")."</textarea>
 					</div>
 				</li>
-				
-				<li class='row-fluid' id='NUMDOCURBA' style='".( (in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0 )? "": "display:none;" )."margin-bottom:20px;'>
+
+				<li class='row-fluid' id='NUMDOCURBA' style='".((in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Numéro document d'urbanisme</div>
 					<!--
-					<div class='right value' ".( ($action == 'new')? "style='display:none;'" : "" )."></div>
+					<div class='right value' ".(('new' == $action) ? "style='display:none;'" : "")."></div>
 					-->
 					<div class='right form span9'>
 						<div id='listeDocUrba' >
 							<span id='docurbaVal'></span>
-							<input type='text' name='NUM_DOCURBA' id='NUM_DOCURBA' value='' ".( ($action != 'new')? "style='display:none;'" : "" )." />
-							&nbsp;<button id='addNumDoc' class='btn' ".( ($action != 'new')? "style='display:none;'" : "" )."><i class='icon-plus'></i>&nbsp;Ajouter le numéro de document d'urbanisme</button>
+							<input type='text' name='NUM_DOCURBA' id='NUM_DOCURBA' value='' ".(($action != 'new') ? "style='display:none;'" : "")." />
+							&nbsp;<button id='addNumDoc' class='btn' ".(($action != 'new') ? "style='display:none;'" : "")."><i class='icon-plus'></i>&nbsp;Ajouter le numéro de document d'urbanisme</button>
 							";
-							if($action != 'new'){
-								foreach($this->dossierDocUrba as $docUrba){
-									echo "
+                            if ($action != 'new') {
+                                foreach ($this->dossierDocUrba as $docUrba) {
+                                    echo "
 										<div class='docurba' style=''>
-											<input type='hidden' name='docUrba[]' value='".$docUrba['NUM_DOCURBA']."' id='urba_".$docUrba['ID_DOCURBA']."'/>".$docUrba['NUM_DOCURBA']."<a href='' idDocUrba='".$docUrba['ID_DOCURBA']."' class='suppDocUrba'  ".( ($action == 'edit' )?"style='display:none;'":"").">&times;</a>
+											<input type='hidden' name='docUrba[]' value='".$docUrba['NUM_DOCURBA']."' id='urba_".$docUrba['ID_DOCURBA']."'/>".$docUrba['NUM_DOCURBA']."<a href='' idDocUrba='".$docUrba['ID_DOCURBA']."' class='suppDocUrba'  ".(('edit' == $action) ? "style='display:none;'" : "").">&times;</a>
 										</div>
 									";
-								}
-							}
-							echo "
+                                }
+                            }
+                            echo "
 						</div>
 					</div>
 				</li>
-				<li class='row-fluid' id='DATEMAIRIE' style='".( ($action != 'new' && in_array('DATEMAIRIE', $this->afficherChamps) && $this->infosDossier['DATEMAIRIE_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATEMAIRIE' style='".(($action != 'new' && in_array('DATEMAIRIE', $this->afficherChamps) && $this->infosDossier['DATEMAIRIE_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date réception mairie</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['DATEMAIRIE_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">".$this->infosDossier['DATEMAIRIE_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
 						<div>
-							<input type='text' class='date' name='DATEMAIRIE_DOSSIER' id='DATEMAIRIE_INPUT' value='".( ($this->DATEMAIRIE_INPUT)?$this->DATEMAIRIE_INPUT:"" )."' />
+							<input type='text' class='date' name='DATEMAIRIE_DOSSIER' id='DATEMAIRIE_INPUT' value='".(($this->DATEMAIRIE_INPUT) ? $this->DATEMAIRIE_INPUT : "")."' />
 							&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 						</div>
 					</div>
 				</li>
-				<li class='row-fluid' id='DATESECRETARIAT' style='".( ($action != 'new' && in_array('DATESECRETARIAT', $this->afficherChamps) && $this->infosDossier['DATESECRETARIAT_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATESECRETARIAT' style='".(($action != 'new' && in_array('DATESECRETARIAT', $this->afficherChamps) && $this->infosDossier['DATESECRETARIAT_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date réception secrétariat commission</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESECRETARIAT_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
-						<input type='text' class='date' name='DATESECRETARIAT_DOSSIER' id='DATESECRETARIAT_INPUT' value='".( ($this->DATESECRETARIAT_INPUT)?$this->DATESECRETARIAT_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATESECRETARIAT_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' name='DATESECRETARIAT_DOSSIER' id='DATESECRETARIAT_INPUT' value='".(($this->DATESECRETARIAT_INPUT) ? $this->DATESECRETARIAT_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				
-				<li class='row-fluid' id='DATEENVTRANSIT' style='".( ($action != 'new' && in_array('DATEENVTRANSIT', $this->afficherChamps) && $this->infosDossier['DATEENVTRANSIT_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+
+				<li class='row-fluid' id='DATEENVTRANSIT' style='".(($action != 'new' && in_array('DATEENVTRANSIT', $this->afficherChamps) && $this->infosDossier['DATEENVTRANSIT_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date d'envoi/transit</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEENVTRANSIT_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")."> 
-						<input type='text' class='date' name='DATEENVTRANSIT_DOSSIER' id='DATEENVTRANSIT_INPUT' value='".( ($this->DATEENVTRANSIT_INPUT)?$this->DATEENVTRANSIT_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATEENVTRANSIT_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' name='DATEENVTRANSIT_DOSSIER' id='DATEENVTRANSIT_INPUT' value='".(($this->DATEENVTRANSIT_INPUT) ? $this->DATEENVTRANSIT_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				
-				<li class='row-fluid' id='DATESDIS' style='".( ($action != 'new' && in_array('DATESDIS', $this->afficherChamps) && $this->infosDossier['DATESDIS_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+
+				<li class='row-fluid' id='DATESDIS' style='".(($action != 'new' && in_array('DATESDIS', $this->afficherChamps) && $this->infosDossier['DATESDIS_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de réception SDIS</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESDIS_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATESDIS_INPUT' name='DATESDIS_DOSSIER' value='".( ($this->DATESDIS_INPUT)?$this->DATESDIS_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATESDIS_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' id='DATESDIS_INPUT' name='DATESDIS_DOSSIER' value='".(($this->DATESDIS_INPUT) ? $this->DATESDIS_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='SERVICEINSTRUC' style='".( ( $action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != NULL && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '0' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='SERVICEINSTRUC' style='".(($action != 'new' && in_array('SERVICEINSTRUC', $this->afficherChamps) && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != NULL && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '0') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Service instructeur</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['SERVICEINSTRUC_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['SERVICEINSTRUC_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
 				";
-				echo "<input type='radio' name='servInst' value='servInstGrp' ".( ($action == 'new' || $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstGrp' || $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == NULL)? "checked='checked'" : "")."  />&nbsp;&nbsp;";
-				echo listeGroupementServInstructeur($this->infosDossier['SERVICEINSTRUC_DOSSIER'], 10, $this->infosDossier['TYPESERVINSTRUC_DOSSIER']);
-				echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='servInst' value='servInstCommune' ".( ($this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstCommune')? "checked='checked'": "" )."/>&nbsp;";
-				echo "<input type='text' name='servInstVille' id='servInstVille' ".( ($this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstGrp' || $action == 'new')? "disabled='disabled'": "" )." value='".( ( $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] == 'servInstCommune' && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '' )? $this->infosDossier['SERVICEINSTRUC_DOSSIER'] : "" )."' />";
-				echo "
+                echo "<input type='radio' name='servInst' value='servInstGrp' ".(('new' == $action || 'servInstGrp' == $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] || NULL == $this->infosDossier['TYPESERVINSTRUC_DOSSIER']) ? "checked='checked'" : "")."  />&nbsp;&nbsp;";
+                echo listeGroupementServInstructeur($this->infosDossier['SERVICEINSTRUC_DOSSIER'], 10, $this->infosDossier['TYPESERVINSTRUC_DOSSIER']);
+                echo "&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='servInst' value='servInstCommune' ".(('servInstCommune' == $this->infosDossier['TYPESERVINSTRUC_DOSSIER']) ? "checked='checked'" : "")."/>&nbsp;";
+                echo "<input type='text' name='servInstVille' id='servInstVille' ".(('servInstGrp' == $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] || 'new' == $action) ? "disabled='disabled'" : "")." value='".(('servInstCommune' == $this->infosDossier['TYPESERVINSTRUC_DOSSIER'] && $this->infosDossier['SERVICEINSTRUC_DOSSIER'] != '') ? $this->infosDossier['SERVICEINSTRUC_DOSSIER'] : "")."' />";
+                echo "
 					</div>
 				</li>
-				<li class='row-fluid' id='COMMISSION' style='".( ($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' && $this->infosDossier['COMMISSION_DOSSIER'] != 'null' && $this->infosDossier['COMMISSION_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='COMMISSION' style='".(($action != 'new' && in_array('COMMISSION', $this->afficherChamps) && $this->infosDossier['COMMISSION_DOSSIER'] != '' && $this->infosDossier['COMMISSION_DOSSIER'] != 'null' && $this->infosDossier['COMMISSION_DOSSIER'] != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Commission concernée</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']." (".$this->commissionInfosCommissionType['LIBELLE_COMMISSIONTYPE'].")</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".( ($action == 'new' && $this->commissionEtab != '')?$this->commissionEtab: $this->infosDossier['COMMISSION_DOSSIER'])."' />
-						<select name='commissionSelect' id='commissionSelect' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "")." >
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">".$this->commissionInfos['LIBELLE_COMMISSION']." (".$this->commissionInfosCommissionType['LIBELLE_COMMISSIONTYPE'].")</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".(('new' == $action && $this->commissionEtab != '') ? $this->commissionEtab : $this->infosDossier['COMMISSION_DOSSIER'])."' />
+						<select name='commissionSelect' id='commissionSelect' ".(($this->commissionInfos['LIBELLE_COMMISSION'] != '') ? "disabled" : "")." >
 							<option value='0'>Aucune commission</option>
 				";
-                                
-				foreach($this->array_commissions as $array_commission){
-					echo "<optgroup label='".htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES)."' >";
-					foreach($array_commission["ARRAY"] as $item){
-						echo "<option value='".$item["ID_COMMISSION"]."' ".( (( $action != 'new' && $this->infosDossier['COMMISSION_DOSSIER'] == $item["ID_COMMISSION"]) || ( $action == 'new' && $this->commissionEtab != '' && $this->commissionEtab == $item["ID_COMMISSION"]) )?"selected":"")." >".htmlspecialchars($item["LIBELLE_COMMISSION"]." (".$array_commission["LIBELLE"].")", ENT_QUOTES)."</option>";
-					}
-					echo "</optgroup>";
-				}
-				echo "
+
+                foreach ($this->array_commissions as $array_commission) {
+                    echo "<optgroup label='".htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES)."' >";
+                    foreach ($array_commission["ARRAY"] as $item) {
+                        echo "<option value='".$item["ID_COMMISSION"]."' ".((($action != 'new' && $this->infosDossier['COMMISSION_DOSSIER'] == $item["ID_COMMISSION"]) || ('new' == $action && $this->commissionEtab != '' && $this->commissionEtab == $item["ID_COMMISSION"])) ? "selected" : "")." >".htmlspecialchars($item["LIBELLE_COMMISSION"]." (".$array_commission["LIBELLE"].")", ENT_QUOTES)."</option>";
+                    }
+                    echo "</optgroup>";
+                }
+                echo "
 						</select>
-						<button class='changeCommission btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-remove'></i>&nbsp;Choisir une autre commission</button>
+						<button class='changeCommission btn' ".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-remove'></i>&nbsp;Choisir une autre commission</button>
 					</div>
 					<!--
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input id='commissionSelect' style='width: 400px; color:gray;' value='".( ($action != 'new')? ( ($this->commissionInfos['LIBELLE_COMMISSION'] != '')? htmlspecialchars($this->commissionInfos['LIBELLE_COMMISSION'], ENT_QUOTES): "Tapez le nom de la commission"):"Tapez le nom de la commission")."' ".( ( $this->commissionInfos['LIBELLE_COMMISSION'] != '' )? "disabled": "" )."/>
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">".$this->commissionInfos['LIBELLE_COMMISSION']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input id='commissionSelect' style='width: 400px; color:gray;' value='".(($action != 'new') ? (($this->commissionInfos['LIBELLE_COMMISSION'] != '') ? htmlspecialchars($this->commissionInfos['LIBELLE_COMMISSION'], ENT_QUOTES) : "Tapez le nom de la commission") : "Tapez le nom de la commission")."' ".(($this->commissionInfos['LIBELLE_COMMISSION'] != '') ? "disabled" : "")."/>
 						<div id='commissionInfos' style='display:none;' >
 							<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".$this->commissionInfos['ID_COMMISSION']."' />
 						</div>
-						<button class='changeCommission btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-remove'></i>&nbsp;Choisir une autre commission</button>
+						<button class='changeCommission btn' ".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-remove'></i>&nbsp;Choisir une autre commission</button>
 					</div>
 					-->
 				</li>
-				<li class='row-fluid' id='DATEVISITE' style='".( ($action != 'new' && in_array('DATEVISITE', $this->afficherChamps) && $this->dateVisite != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATEVISITE' style='".(($action != 'new' && in_array('DATEVISITE', $this->afficherChamps) && $this->dateVisite != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de visite</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
 						".$this->dateVisiteValue."
 					</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".( ($this->dateVisite)?$this->dateVisiteInput:"" )."'  disabled='disabled'/>
-						<input type='hidden' name='ID_AFFECTATION_DOSSIER_VISITE' id='ID_AFFECTATION_DOSSIER_VISITE' value='".( ($this->idDateVisiteAffect)?$this->idDateVisiteAffect:"" )."' />
-						<button id='showVisite' class='showCalendar btn'".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
-						<button id='hideVisite' class='hideCalendar btn'".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".(($this->dateVisite) ? $this->dateVisiteInput : "")."'  disabled='disabled'/>
+						<input type='hidden' name='ID_AFFECTATION_DOSSIER_VISITE' id='ID_AFFECTATION_DOSSIER_VISITE' value='".(($this->idDateVisiteAffect) ? $this->idDateVisiteAffect : "")."' />
+						<button id='showVisite' class='showCalendar btn'".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
+						<button id='hideVisite' class='hideCalendar btn'".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
+						Afficher
+						<select id='month_visite' style='width:110px;'>
+					";
+                    $moisActuel = date("m");
+                    $listeMois = $this->mois;
+                    for ($i = 0; $i < count($listeMois); $i++) {
+                        echo "<option value='".$i."' ".(($moisActuel -1 == $i) ? "selected='selected'" : "")." >".$listeMois[$i]."</option>";
+                    }
+                    echo "
+						</select>
+						<select id='year_visite' style='width:70px;'>
+					";
+                    $annéeActuelle = date("Y");
+                    for ($i = $annéeActuelle; $i >= 1990; $i--) {
+                        echo "<option value='".$i."' >".$i."</option>";
+                    }
+                    echo "
+						</select>
 					</div>
 				</li>
 				<li class='row-fluid' style='display:none;'>
 					<h1>Choisir une date de visite</h1>
 					<div id='calendarVisite' class='grid_14 calendar' style='display:none;'></div>
-					<hr class='clear'/>				
+					<hr class='clear'/>
 				</li>
-				<li class='row-fluid' id='ELEMENTSMANQUANT' style='".( ($action != 'new' && in_array('ELEMENTSMANQUANT', $this->afficherChamps) )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='ELEMENTSMANQUANT' style='".(($action != 'new' && in_array('ELEMENTSMANQUANT', $this->afficherChamps)) ? "" : "display:none;")."margin-bottom:20px;'>
 				</li>
-				<li class='row-fluid' id='DATECOMM' style='".( ($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' && $this->infosDossier['HORSDELAI_DOSSIER'] == 0)? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATECOMM' style='".(($action != 'new' && in_array('DATECOMM', $this->afficherChamps) && $this->dateCommValue != '' && 0 == $this->infosDossier['HORSDELAI_DOSSIER']) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de commission en salle</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						".$this->dateCommValue.( ( $this->idDateCommissionAffect != '' )? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='icon-calendar' ></i></a>" : "" )."				
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
+						".$this->dateCommValue.(($this->idDateCommissionAffect != '') ? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='icon-calendar' ></i></a>" : "")."
 					</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".( ($this->dateCommInput)?$this->dateCommInput:"" )."' disabled='disabled'/>
-						<input type='hidden' name='ID_AFFECTATION_DOSSIER_COMMISSION' id='ID_AFFECTATION_DOSSIER_COMMISSION' value='".( ($this->idDateCommissionAffect)?$this->idDateCommissionAffect: "" )."' />
-						<input type='hidden' name='DATEVISITE_PERIODIQUE' id='DATEVISITE_PERIODIQUE' value='".( ($this->dateCommInput)?$this->dateCommInput:"" )."'/>
-						<button id='showCommission' class='showCalendar btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
-						<button id='hideCommission' class='hideCalendar btn' ".( ( $action == 'new' || $this->commissionInfos['ID_COMMISSION'] == '' )? "style='display:none;'" : "" )."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".(($this->dateCommInput) ? $this->dateCommInput : "")."' disabled='disabled'/>
+						<input type='hidden' name='ID_AFFECTATION_DOSSIER_COMMISSION' id='ID_AFFECTATION_DOSSIER_COMMISSION' value='".(($this->idDateCommissionAffect) ? $this->idDateCommissionAffect : "")."' />
+						<input type='hidden' name='DATEVISITE_PERIODIQUE' id='DATEVISITE_PERIODIQUE' value='".(($this->dateCommInput) ? $this->dateCommInput : "")."'/>
+						<button id='showCommission' class='showCalendar btn' ".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
+						<button id='hideCommission' class='hideCalendar btn' ".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
+						Afficher
+						<select id='month_comm' style='width:110px;'>
+					";
+                    $moisActuel = date("m");
+                    $listeMois = $this->mois;
+                    for ($i = 0; $i < count($listeMois); $i++) {
+                        echo "<option value='".$i."' ".(($moisActuel -1 == $i) ? "selected='selected'" : "")." >".$listeMois[$i]."</option>";
+                    }
+                    echo "
+						</select>
+						<select id='year_comm' style='width:70px;'>
+					";
+                    $annéeActuelle = date("Y");
+                    for ($i = $annéeActuelle; $i >= 1990; $i--) {
+                        echo "<option value='".$i."' >".$i."</option>";
+                    }
+                    echo "
+						</select>
 					</div>
 				</li>
 				<li class='row-fluid' style='display:none;'>
 					<h1>Choisir une date de commission en salle</h1>
 					<div id='calendar' class='grid_14 calendar' style='display:none;'></div>
-					<hr class='clear'/>				
+					<hr class='clear'/>
 				</li>
-				<li class='row-fluid' id='DESCANAL' style='".( ($action != 'new' && in_array('DESCANAL', $this->afficherChamps) && $this->infosDossier['DESCANAL_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DESCANAL' style='".(($action != 'new' && in_array('DESCANAL', $this->afficherChamps) && $this->infosDossier['DESCANAL_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Descriptif analyse de risque</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DESCANAL_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='DESCANAL_DOSSIER' name='DESCANAL_DOSSIER' value='".( ($this->infosDossier['DESCANAL_DOSSIER'])?$this->infosDossier['DESCANAL_DOSSIER']:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DESCANAL_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' id='DESCANAL_DOSSIER' name='DESCANAL_DOSSIER' value='".(($this->infosDossier['DESCANAL_DOSSIER']) ? $this->infosDossier['DESCANAL_DOSSIER'] : "")."' />
 					</div>
 				</li>
-				<li class='row-fluid' id='REGLEDEROG' style='".( ($action != 'new' && in_array('REGLEDEROG', $this->afficherChamps) && $this->infosDossier['REGLEDEROG_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='REGLEDEROG' style='".(($action != 'new' && in_array('REGLEDEROG', $this->afficherChamps) && $this->infosDossier['REGLEDEROG_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Règles auxquelles il est demandé de déroger</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['REGLEDEROG_DOSSIER'])."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<textarea name='REGLEDEROG_DOSSIER' id='REGLEDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['REGLEDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['REGLEDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['REGLEDEROG_DOSSIER'])."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<textarea name='REGLEDEROG_DOSSIER' id='REGLEDEROG_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['REGLEDEROG_DOSSIER']) ? htmlspecialchars($this->infosDossier['REGLEDEROG_DOSSIER'], ENT_QUOTES) : "")."</textarea>
 					</div>
 				</li>
-				<li class='row-fluid' id='JUSTIFDEROG' style='".( ($action != 'new' && in_array('JUSTIFDEROG', $this->afficherChamps) && $this->infosDossier['JUSTIFDEROG_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='JUSTIFDEROG' style='".(($action != 'new' && in_array('JUSTIFDEROG', $this->afficherChamps) && $this->infosDossier['JUSTIFDEROG_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Justification de la dérogation</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['JUSTIFDEROG_DOSSIER'])."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<textarea name='JUSTIFDEROG_DOSSIER' id='JUSTIFDEROG_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['JUSTIFDEROG_DOSSIER'])?htmlspecialchars($this->infosDossier['JUSTIFDEROG_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['JUSTIFDEROG_DOSSIER'])."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<textarea name='JUSTIFDEROG_DOSSIER' id='JUSTIFDEROG_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['JUSTIFDEROG_DOSSIER']) ? htmlspecialchars($this->infosDossier['JUSTIFDEROG_DOSSIER'], ENT_QUOTES) : "")."</textarea>
 					</div>
 				</li>
-				<li class='row-fluid' id='MESURESCOMPENS' style='".( ($action != 'new' && in_array('MESURESCOMPENS', $this->afficherChamps) && $this->infosDossier['MESURESCOMPENS_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='MESURESCOMPENS' style='".(($action != 'new' && in_array('MESURESCOMPENS', $this->afficherChamps) && $this->infosDossier['MESURESCOMPENS_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Mesures compensatoires proposées</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['MESURESCOMPENS_DOSSIER'])."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<textarea name='MESURESCOMPENS_DOSSIER' id='MESURESCOMPENS_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['MESURESCOMPENS_DOSSIER'])?htmlspecialchars($this->infosDossier['MESURESCOMPENS_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['MESURESCOMPENS_DOSSIER'])."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<textarea name='MESURESCOMPENS_DOSSIER' id='MESURESCOMPENS_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['MESURESCOMPENS_DOSSIER']) ? htmlspecialchars($this->infosDossier['MESURESCOMPENS_DOSSIER'], ENT_QUOTES) : "")."</textarea>
 					</div>
 				</li>
-				<li class='row-fluid' id='MESURESCOMPLE' style='".( ($action != 'new' && in_array('MESURESCOMPLE', $this->afficherChamps) && $this->infosDossier['MESURESCOMPLE_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='MESURESCOMPLE' style='".(($action != 'new' && in_array('MESURESCOMPLE', $this->afficherChamps) && $this->infosDossier['MESURESCOMPLE_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Mesures complémentaires à respecter</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['MESURESCOMPLE_DOSSIER'])."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<textarea name='MESURESCOMPLE_DOSSIER' id='MESURESCOMPLE_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['MESURESCOMPLE_DOSSIER'])?htmlspecialchars($this->infosDossier['MESURESCOMPLE_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['MESURESCOMPLE_DOSSIER'])."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<textarea name='MESURESCOMPLE_DOSSIER' id='MESURESCOMPLE_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['MESURESCOMPLE_DOSSIER']) ? htmlspecialchars($this->infosDossier['MESURESCOMPLE_DOSSIER'], ENT_QUOTES) : "")."</textarea>
 					</div>
 				</li>
-				<li class='row-fluid' id='INCOMPLET' style='".( ($action != 'new' && in_array('INCOMPLET', $this->afficherChamps) && $this->infosDossier['INCOMPLET_DOSSIER'] != NULL )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='INCOMPLET' style='".(($action != 'new' && in_array('INCOMPLET', $this->afficherChamps) && $this->infosDossier['INCOMPLET_DOSSIER'] != NULL) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Etat dossier</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-					";						
-					foreach($this->listeDocManquant as $val => $ue)
-					{
-						$date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
-						$dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-						echo nl2br($ue['DOCMANQUANT']);
-						if($ue['DATE_DOCSMANQUANT'] != '')
-							echo "<br/><font style='color:green;' >Reception document(s) le ".$dateDocManquant."</font><br/>";
-						echo "<br/>";
-					}
-					echo "
-						<br/>".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == '0' )? "Complet" : "Incomplet" )."
-						".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == '1' )?"   ".$this->DATEINCOMPLET." " : "" )."
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
+					";
+                    foreach ($this->listeDocManquant as $val => $ue) {
+                        $date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
+                        $dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                        echo nl2br($ue['DOCMANQUANT']);
+                        if ($ue['DATE_DOCSMANQUANT'] != '') {
+                            echo "<br/><font style='color:green;' >Reception document(s) le ".$dateDocManquant."</font><br/>";
+                        }
+                        echo "<br/>";
+                    }
+                    echo "
+						<br/>".(('0' == $this->infosDossier['INCOMPLET_DOSSIER']) ? "Complet" : "Incomplet")."
+						".(('1' == $this->infosDossier['INCOMPLET_DOSSIER']) ? "   ".$this->DATEINCOMPLET." " : "")."
 					</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"")." >
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "")." >
 						<div id='dossierIncomplet'>
 						";
-						foreach($this->listeDocManquant as $val => $ue)
-						{
-							if($ue['DATE_DOCSMANQUANT'] != '')
-							{
-								$disabledTextArea = "readonly='readonly'";
-								$date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
-								$dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-							}else{
-								$disabledTextArea = "";
-								$dateDocManquant = "";
-							}
-							
-							echo "<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$ue['NUM_DOCSMANQUANT']."' ".$disabledTextArea." rows='5' cols='100'>".$ue['DOCMANQUANT']."</textarea>";
-							echo "<input class='date' type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$dateDocManquant."' ".$disabledTextArea."/>&nbsp;";
-							if($ue['DATE_DOCSMANQUANT'] == '')
-							{								
-								echo "<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>&nbsp;&nbsp;&nbsp;<button class='btn validDocManquant'><i class='icon-lock'></i>&nbsp;Valider la reception de document</button><br/><br/>";
-							}
-						}
-						echo "
+                        foreach ($this->listeDocManquant as $val => $ue) {
+                            if ($ue['DATE_DOCSMANQUANT'] != '') {
+                                $disabledTextArea = "readonly='readonly'";
+                                $date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
+                                $dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                            } else {
+                                $disabledTextArea = "";
+                                $dateDocManquant = "";
+                            }
+
+                            echo "<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$ue['NUM_DOCSMANQUANT']."' ".$disabledTextArea." rows='5' cols='100'>".$ue['DOCMANQUANT']."</textarea>";
+                            echo "<input class='date' type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$dateDocManquant."' ".$disabledTextArea."/>&nbsp;";
+                            if ('' == $ue['DATE_DOCSMANQUANT']) {
+                                echo "<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>&nbsp;&nbsp;&nbsp;<button class='btn validDocManquant'><i class='icon-lock'></i>&nbsp;Valider la reception de document</button><br/><br/>";
+                            }
+                        }
+                        echo "
 						</div>
-						<div id='inputComplet' ".( ($this->infosDossier['INCOMPLET_DOSSIER'] == 1) ? "style='display:none;'" : "").">
-							<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".( ($action == 'new' || $this->infosDossier['INCOMPLET_DOSSIER'] == 0)? "checked='checked'" : "")."> Complet
-							<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".( ($this->infosDossier['INCOMPLET_DOSSIER'] == 1)? "checked='checked'" : "")."> Incomplet					
+						<div id='inputComplet' >
+							<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".(('new' == $action || 0 == $this->infosDossier['INCOMPLET_DOSSIER']) ? "checked='checked'" : "")."> Complet
+							<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".((1 == $this->infosDossier['INCOMPLET_DOSSIER']) ? "checked='checked'" : "")."> Incomplet
 						</div>
 					</div>
 				</li>
-				<li class='row-fluid' id='HORSDELAI' style='".( ($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL && $this->infosDossier['HORSDELAI_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='HORSDELAI' style='".(($action != 'new' && in_array('HORSDELAI', $this->afficherChamps) && $this->infosDossier['HORSDELAI_DOSSIER'] != NULL && $this->infosDossier['HORSDELAI_DOSSIER'] != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Hors délai</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						<input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' disabled ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
+						<input type='checkbox' class='horsdelai' name='HORSDELAI_DOSSIER' disabled ".(($this->infosDossier['HORSDELAI_DOSSIER']) ? "checked" : "").">
 					</div>
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='horsdelai hideavis' name='HORSDELAI_DOSSIER' ".( ($this->infosDossier['HORSDELAI_DOSSIER'])? "checked" : "")."> 				
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='checkbox' class='horsdelai hideavis' name='HORSDELAI_DOSSIER' ".(($this->infosDossier['HORSDELAI_DOSSIER']) ? "checked" : "").">
 					</div>
 				</li>
-				<li class='row-fluid' id='DIFFEREAVIS' style='".( ($action != 'new' && in_array('DIFFEREAVIS', $this->afficherChamps) && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != NULL && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != 0)? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DIFFEREAVIS' style='".(($action != 'new' && in_array('DIFFEREAVIS', $this->afficherChamps) && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != NULL && $this->infosDossier['DIFFEREAVIS_DOSSIER'] != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Differe l'avis</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						<input type='checkbox' class='differeavis' name='DIFFEREAVIS_DOSSIER' disabled ".( ($this->infosDossier['DIFFEREAVIS_DOSSIER'])? "checked" : "").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
+						<input type='checkbox' class='differeavis' name='DIFFEREAVIS_DOSSIER' disabled ".(($this->infosDossier['DIFFEREAVIS_DOSSIER']) ? "checked" : "").">
 					</div>
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='differeavis hideavis' name='DIFFEREAVIS_DOSSIER' ".( ($this->infosDossier['DIFFEREAVIS_DOSSIER'])? "checked" : "")."> 				
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='checkbox' class='differeavis hideavis' name='DIFFEREAVIS_DOSSIER' ".(($this->infosDossier['DIFFEREAVIS_DOSSIER']) ? "checked" : "")." ".(($this->avisExploitationEtab != 1) ? "disabled='disabled'" : "").">
+						".(($this->avisExploitationEtab != 1) ? "<span style='font-size:smaller;'>(Disponible uniquement lorsque l'avis d'exploitation de l'établissement est favorable)</span>" : "")."
 					</div>
 				</li>
-				<li class='row-fluid' id='NPSP' style='".( ($action != 'new' && in_array('NPSP', $this->afficherChamps) && $this->infosDossier['NPSP_DOSSIER'] != NULL && $this->infosDossier['NPSP_DOSSIER'] != 0 )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='NPSP' style='".(($action != 'new' && in_array('NPSP', $this->afficherChamps) && $this->infosDossier['NPSP_DOSSIER'] != NULL && $this->infosDossier['NPSP_DOSSIER'] != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Ne peut se prononcer</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						<input type='checkbox' class='npsp' name='NPSP_DOSSIER' disabled ".( ($this->infosDossier['NPSP_DOSSIER'])? "checked" : "").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
+						<input type='checkbox' class='npsp' name='NPSP_DOSSIER' disabled ".(($this->infosDossier['NPSP_DOSSIER']) ? "checked" : "").">
 					</div>
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='npsp hideavis' name='NPSP_DOSSIER' ".( ($this->infosDossier['NPSP_DOSSIER'])? "checked" : "")."> 				
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='checkbox' class='npsp hideavis' name='NPSP_DOSSIER' ".(($this->infosDossier['NPSP_DOSSIER']) ? "checked" : "").">
 					</div>
 				</li>
 
-				<li class='row-fluid' id='ABSQUORUM' style='".( ($action != 'new' && in_array('ABSQUORUM', $this->afficherChamps) && $this->infosDossier['ABSQUORUM_DOSSIER'] == 1 )? "" : "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='ABSQUORUM' style='".(($action != 'new' && in_array('ABSQUORUM', $this->afficherChamps) && 1 == $this->infosDossier['ABSQUORUM_DOSSIER']) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Absence de quorum</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )." >
-						<input type='checkbox' class='absquorum' name='ABSQUORUM_DOSSIER' disabled ".( ($this->infosDossier['ABSQUORUM_DOSSIER'])? "checked" : "").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")." >
+						<input type='checkbox' class='absquorum' name='ABSQUORUM_DOSSIER' disabled ".(($this->infosDossier['ABSQUORUM_DOSSIER']) ? "checked" : "").">
 					</div>
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox' class='absquorum hideavis' name='ABSQUORUM_DOSSIER' ".( ($this->infosDossier['ABSQUORUM_DOSSIER'])? "checked" : "")." > 				
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='checkbox' class='absquorum hideavis' name='ABSQUORUM_DOSSIER' ".(($this->infosDossier['ABSQUORUM_DOSSIER']) ? "checked" : "")." >
 					</div>
 				</li>
-				
-				<li class='row-fluid' id='CNE' style='".( ($action != 'new' && in_array('CNE', $this->afficherChamps) && $this->infosDossier['CNE_DOSSIER'] != NULL && $this->infosDossier['CNE_DOSSIER'] != 0 )? "": "display:none;" )."margin-bottom:20px;'>
+
+				<li class='row-fluid' id='CNE' style='".(($action != 'new' && in_array('CNE', $this->afficherChamps) && $this->infosDossier['CNE_DOSSIER'] != NULL && $this->infosDossier['CNE_DOSSIER'] != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Cellule non exploitée</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						<input type='checkbox' class='cne' name='CNE_DOSSIER' disabled ".( ($this->infosDossier['CNE_DOSSIER'])? "checked" : "").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
+						<input type='checkbox' class='cne' name='CNE_DOSSIER' disabled ".(($this->infosDossier['CNE_DOSSIER']) ? "checked" : "").">
 					</div>
-					<div class='right form span9' ".( ($action != 'new')? "style='display:none;'":"").">
-						<input type='checkbox hideavis' class='cne' name='CNE_DOSSIER' ".( ($this->infosDossier['CNE_DOSSIER'])? "checked" : "")."> 				
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='checkbox hideavis' class='cne' name='CNE_DOSSIER' ".(($this->infosDossier['CNE_DOSSIER']) ? "checked" : "").">
 					</div>
-				</li>				
-				<li class='row-fluid' id='AVIS' style='".( ($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1)? "": "display:none;" )."margin-bottom:20px;'>
+				</li>
+				<li class='row-fluid' id='AVIS' style='".(($action != 'new' && in_array('AVIS', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER'] != '' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>
 				";
-				if($this->infosDossier['TYPE_DOSSIER'] == 2 || $this->infosDossier['TYPE_DOSSIER'] == 1)
-				{
-					echo "Avis du rapporteur";
-				}else if( $this->infosDossier['TYPE_DOSSIER'] == 3){
-					echo "Avis du groupe de visite";
-				}
-				echo "</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>";
-					echo $this->AVIS_VALUE['LIBELLE_AVIS'];
-					if($this->infosDossier['TYPE_DOSSIER'] == 1){
-						//etude
-						if($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7){
-							echo " à l'exploitation";
-						}else{
-							echo " à l'étude";
-						}
-					}else if($this->infosDossier['TYPE_DOSSIER'] == 2 || $this->infosDossier['TYPE_DOSSIER'] == 3){
-						//visite et groupe de visite
-						if($this->natureConcerne[0]['ID_NATURE'] == 20  || $this->natureConcerne[0]['ID_NATURE'] == 25){
-							//Reception de travaux
-							echo " à la reception des travaux";
-						}else{
-							//Reste des visites
-							echo " à l'exploitation";
-						}
-					}
-				echo 
-					"</span></div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+                if (2 == $this->infosDossier['TYPE_DOSSIER'] || 1 == $this->infosDossier['TYPE_DOSSIER']) {
+                    echo "Avis du rapporteur";
+                } elseif (3 == $this->infosDossier['TYPE_DOSSIER']) {
+                    echo "Avis du groupe de visite";
+                }
+                echo "</div>
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."><span class='avis ".$this->AVIS_VALUE['LIBELLE_AVIS'][0]."'>";
+                    echo $this->AVIS_VALUE['LIBELLE_AVIS'];
+                    if (1 == $this->infosDossier['TYPE_DOSSIER']) {
+                        //etude
+                        if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7) {
+                            echo " à l'exploitation";
+                        } else {
+                            echo " à l'étude";
+                        }
+                    } elseif (2 == $this->infosDossier['TYPE_DOSSIER'] || 3 == $this->infosDossier['TYPE_DOSSIER']) {
+                        //visite et groupe de visite
+                        if ($this->natureConcerne[0]['ID_NATURE'] == 20  || $this->natureConcerne[0]['ID_NATURE'] == 25) {
+                            //Reception de travaux
+                            echo " à la reception des travaux";
+                        } else {
+                            //Reste des visites
+                            echo " à l'exploitation";
+                        }
+                    }
+                echo
+                    "</span></div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
 						<select name='AVIS_DOSSIER' id='AVIS_DOSSIER' >
 							<option value='0' ></option>
 						";
-                                
-						foreach($this->listeAvis as $avis){
-							echo "<option value='".$avis["ID_AVIS"]."' ".( ( $this->AVIS_VALUE['ID_AVIS'] == $avis["ID_AVIS"] )? "selected='selected'" :"" )." >".$avis['LIBELLE_AVIS']."</option>";
-						}
-						echo "
+
+                        foreach ($this->listeAvis as $avis) {
+                            echo "<option value='".$avis["ID_AVIS"]."' ".(($this->AVIS_VALUE['ID_AVIS'] == $avis["ID_AVIS"]) ? "selected='selected'" : "")." >".$avis['LIBELLE_AVIS']."</option>";
+                        }
+                        echo "
 						</select>
 					</div>
 				</li>
-				<li class='row-fluid' id='AVIS_COMMISSION' style='".( ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && $this->afficheAvis == 1)? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='AVIS_COMMISSION' style='".(($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && 1 == $this->afficheAvis) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
 						<span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
-						echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
-						if($this->infosDossier['TYPE_DOSSIER'] == 1){
-							//etude
-							if($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7){
-								echo " à l'exploitation";
-							}else{
-								echo " à l'étude";
-							}
-						}else if($this->infosDossier['TYPE_DOSSIER'] == 2 || $this->infosDossier['TYPE_DOSSIER'] == 3){
-							//visite et groupe de visite
-							if($this->natureConcerne[0]['ID_NATURE'] == 20  || $this->natureConcerne[0]['ID_NATURE'] == 25){
-								//Reception de travaux
-								echo " à la reception des travaux";
-							}else{
-								//Reste des visites
-								echo " à l'exploitation";
-							}
-						}
-					echo "
+                        echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
+                        if (1 == $this->infosDossier['TYPE_DOSSIER']) {
+                            //etude
+                            if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7) {
+                                echo " à l'exploitation";
+                            } else {
+                                echo " à l'étude";
+                            }
+                        } elseif (2 == $this->infosDossier['TYPE_DOSSIER'] || 3 == $this->infosDossier['TYPE_DOSSIER']) {
+                            //visite et groupe de visite
+                            if ($this->natureConcerne[0]['ID_NATURE'] == 20  || $this->natureConcerne[0]['ID_NATURE'] == 25) {
+                                //Reception de travaux
+                                echo " à la reception des travaux";
+                            } else {
+                                //Reste des visites
+                                echo " à l'exploitation";
+                            }
+                        }
+                    echo "
 						</span>
 					</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<select name='AVIS_DOSSIER_COMMISSION' id='AVIS_DOSSIER_COMMISSION' ".(($this->is_allowed_change_avis)?'':'disabled')." >
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<select name='AVIS_DOSSIER_COMMISSION' id='AVIS_DOSSIER_COMMISSION' ".(($this->is_allowed_change_avis) ? '' : 'disabled')." >
 							<option value='0' ></option>
 						";
-						foreach($this->listeAvis as $avis){
-							echo "<option value='".$avis["ID_AVIS"]."' ".( ( $this->AVIS_COMMISSION_VALUE['ID_AVIS'] == $avis["ID_AVIS"] )? "selected='selected'" :"" )." >".$avis['LIBELLE_AVIS']."</option>";
-						}
-						echo "
+                        foreach ($this->listeAvis as $avis) {
+                            echo "<option value='".$avis["ID_AVIS"]."' ".(($this->AVIS_COMMISSION_VALUE['ID_AVIS'] == $avis["ID_AVIS"]) ? "selected='selected'" : "")." >".$avis['LIBELLE_AVIS']."</option>";
+                        }
+                        echo "
 						</select>
 						&nbsp;&nbsp;&nbsp;
-						<input type='checkbox' name='repercuterAvis' id='repercuterAvis' ".(($this->is_allowed_change_avis)?'':'disabled')."/> Répercuter l'avis sur les établissements enfants
+						<input type='checkbox' name='repercuterAvis' id='repercuterAvis' ".(($this->is_allowed_change_avis) ? '' : 'disabled')."/> Répercuter l'avis sur les établissements enfants
 					</div>
 				</li>
-				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL && $this->infosDossier['FACTDANGE_DOSSIER'] != 0)? "" : "display:none;")."'>
+				<li class='row-fluid' id='FACTDANGE' style='margin-bottom:20px;".(($action != 'new' && $this->infosDossier['FACTDANGE_DOSSIER'] != NULL && $this->infosDossier['FACTDANGE_DOSSIER'] != 0) ? "" : "display:none;")."'>
 					<div class='left libelle span3' style='float:left;'>Facteur de criticité</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."><span class='factDange ".$this->infosDossier['FACTDANGE_DOSSIER']."'>".$this->infosDossier['FACTDANGE_DOSSIER']."</span></div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."><span class='factDange ".$this->infosDossier['FACTDANGE_DOSSIER']."'>".$this->infosDossier['FACTDANGE_DOSSIER']."</span></div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
 						<select name='FACTDANGE_DOSSIER' id='FACTDANGE_DOSSIER' >
 							<option value='0' >-</option>
 							<option value='1'>1</option>
 							<option value='2'>2</option>
-							<option value='3' ".( ($this->infosDossier['FACTDANGE_DOSSIER'] == 3)? "selected='selected'" : "").">3</option>
+							<option value='3' ".((3 == $this->infosDossier['FACTDANGE_DOSSIER']) ? "selected='selected'" : "").">3</option>
 							<option value='4'>4</option>
 							<option value='5'>5</option>
 						</select>
 					</div>
 				</li>
-				<li class='row-fluid' id='ECHEANCIERTRAV' style='margin-bottom:20px;".( ($action != 'new' && $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL)? "" : "display:none;")."'>
+				<li class='row-fluid' id='ECHEANCIERTRAV' style='margin-bottom:20px;".(($action != 'new' && $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL) ? "" : "display:none;")."'>
 					<div class='left libelle span3' style='float:left;'>Echéancier de travaux / Schéma de mise en sécurité</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['ECHEANCIERTRAV_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='checkbox' id='echeanciertrav_check' ".( ( $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL )? "checked='checked'" : "" )."/>
-						<input type='text' class='date' value='".$this->ECHEANCIERTRAV."'  style='".( ( $this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL )? "" : "display:none;" )."' id='ECHEANCIERTRAV_DOSSIER' name='ECHEANCIERTRAV_DOSSIER' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">".$this->infosDossier['ECHEANCIERTRAV_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='checkbox' id='echeanciertrav_check' ".(($this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL) ? "checked='checked'" : "")."/>
+						<input type='text' class='date' value='".$this->ECHEANCIERTRAV."'  style='".(($this->infosDossier['ECHEANCIERTRAV_DOSSIER'] != NULL) ? "" : "display:none;")."' id='ECHEANCIERTRAV_DOSSIER' name='ECHEANCIERTRAV_DOSSIER' />
 					</div>
 				</li>
-				<li class='row-fluid' id='ANOMALIE' style='".( ($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='ANOMALIE' style='".(($action != 'new' && $this->infosDossier['ANOMALIE_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Analyse de risque</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".nl2br($this->infosDossier['ANOMALIE_DOSSIER'])."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<textarea name='ANOMALIE_DOSSIER' id='ANOMALIE_DOSSIER' rows='3' cols='100'>".( ($this->infosDossier['ANOMALIE_DOSSIER'])?htmlspecialchars($this->infosDossier['ANOMALIE_DOSSIER'], ENT_QUOTES):"" )."</textarea> 
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['ANOMALIE_DOSSIER'])."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<textarea name='ANOMALIE_DOSSIER' id='ANOMALIE_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['ANOMALIE_DOSSIER']) ? htmlspecialchars($this->infosDossier['ANOMALIE_DOSSIER'], ENT_QUOTES) : "")."</textarea>
 					</div>
-				</li>	
+				</li>
 				<!--
-					<li id='COORDSSI' ".( ($action != 'new' && in_array('COORDSSI', $this->afficherChamps) && $this->infosDossier['COORDSSI_DOSSIER'] != '' )? "": "style='display:none;'" ).">
+					<li id='COORDSSI' ".(($action != 'new' && in_array('COORDSSI', $this->afficherChamps) && $this->infosDossier['COORDSSI_DOSSIER'] != '') ? "" : "style='display:none;'").">
 						<div class='left libelle span3' style='float:left;'>Coordinateur Système de Sécurité Incendie</div>
-						<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['COORDSSI_DOSSIER']."</div>
-						<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-							<input type='text' id='COORDSSI_DOSSIER' name='COORDSSI_DOSSIER' value='".( ($this->infosDossier['COORDSSI_DOSSIER'])?$this->infosDossier['COORDSSI_DOSSIER']:"" )."' />
+						<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['COORDSSI_DOSSIER']."</div>
+						<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+							<input type='text' id='COORDSSI_DOSSIER' name='COORDSSI_DOSSIER' value='".(($this->infosDossier['COORDSSI_DOSSIER']) ? $this->infosDossier['COORDSSI_DOSSIER'] : "")."' />
 						</div>
 					</li>
 				-->
-				<li class='row-fluid' id='DATEPREF' style='".( ($action != 'new' && in_array('DATEPREF', $this->afficherChamps) && $this->infosDossier['DATEPREF_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATEPREF' style='".(($action != 'new' && in_array('DATEPREF', $this->afficherChamps) && $this->infosDossier['DATEPREF_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date réception préfecture</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEPREF_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATEPREF_DOSSIER' name='DATEPREF_DOSSIER' value='".( ($this->DATEPREF_INPUT)?$this->DATEPREF_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATEPREF_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' id='DATEPREF_DOSSIER' name='DATEPREF_DOSSIER' value='".(($this->DATEPREF_INPUT) ? $this->DATEPREF_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='DATEREP' style='".( ($action != 'new' && in_array('DATEREP', $this->afficherChamps) && $this->infosDossier['DATEREP_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATEREP' style='".(($action != 'new' && in_array('DATEREP', $this->afficherChamps) && $this->infosDossier['DATEREP_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de réponse</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREP_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATEREP_DOSSIER' name='DATEREP_DOSSIER' value='".( ($this->DATEREP_INPUT)?$this->DATEREP_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATEREP_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' id='DATEREP_DOSSIER' name='DATEREP_DOSSIER' value='".(($this->DATEREP_INPUT) ? $this->DATEREP_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='DATETRANSFERTCOMM' style='".( ($action != 'new' && in_array('DATETRANSFERTCOMM', $this->afficherChamps) && $this->infosDossier['DATETRANSFERTCOMM_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATETRANSFERTCOMM' style='".(($action != 'new' && in_array('DATETRANSFERTCOMM', $this->afficherChamps) && $this->infosDossier['DATETRANSFERTCOMM_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de transfert à la commissions compétente</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATETRANSFERTCOMM_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".( ($this->DATETRANSFERTCOMM_INPUT)?$this->DATETRANSFERTCOMM_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATETRANSFERTCOMM_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".(($this->DATETRANSFERTCOMM_INPUT) ? $this->DATETRANSFERTCOMM_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='DATERECEPTIONCOMM' style='".( ($action != 'new' && in_array('DATERECEPTIONCOMM', $this->afficherChamps) && $this->infosDossier['DATERECEPTIONCOMM_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATERECEPTIONCOMM' style='".(($action != 'new' && in_array('DATERECEPTIONCOMM', $this->afficherChamps) && $this->infosDossier['DATERECEPTIONCOMM_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de réception à la commissions compétente</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATERECEPTIONCOMM_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".( ($this->DATERECEPTIONCOMM_INPUT)?$this->DATERECEPTIONCOMM_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATERECEPTIONCOMM_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".(($this->DATERECEPTIONCOMM_INPUT) ? $this->DATERECEPTIONCOMM_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='DATEREUN' style='".( ($action != 'new' && in_array('DATEREUN', $this->afficherChamps) && $this->infosDossier['DATEREUN_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATEREUN' style='".(($action != 'new' && in_array('DATEREUN', $this->afficherChamps) && $this->infosDossier['DATEREUN_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date réunion</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEREUN_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATEREUN_DOSSIER' name='DATEREUN_DOSSIER' value='".( ($this->DATEREUN_INPUT)?$this->DATEREUN_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATEREUN_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' id='DATEREUN_DOSSIER' name='DATEREUN_DOSSIER' value='".(($this->DATEREUN_INPUT) ? $this->DATEREUN_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='OPERSDIS' style='".( ($action != 'new' && in_array('OPERSDIS', $this->afficherChamps) && $this->infosDossier['OPERSDIS_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='OPERSDIS' style='".(($action != 'new' && in_array('OPERSDIS', $this->afficherChamps) && $this->infosDossier['OPERSDIS_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Opération (intervention) SDIS</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
 				";
-				if($this->infosDossier['OPERSDIS_DOSSIER'] == 1){
-					echo "oui";
-				}else if($this->infosDossier['OPERSDIS_DOSSIER'] == 0){
-					echo "non";
-				}					
-				echo "
+                if (1 == $this->infosDossier['OPERSDIS_DOSSIER']) {
+                    echo "oui";
+                } elseif (0 == $this->infosDossier['OPERSDIS_DOSSIER']) {
+                    echo "non";
+                }
+                echo "
 					</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
 						<div id='operationsdis_infos'>
-							<input type='radio' name='OPERSDIS_DOSSIER' value='1' ".( ($this->infosDossier['OPERSDIS_DOSSIER'] == 1)?"checked":"" ).">Oui<br/>
-							<input type='radio' name='OPERSDIS_DOSSIER' value='0' ".( ($this->infosDossier['OPERSDIS_DOSSIER'] == 0)?"checked":"" ).">Non<br/>
+							<input type='radio' name='OPERSDIS_DOSSIER' value='1' ".((1 == $this->infosDossier['OPERSDIS_DOSSIER']) ? "checked" : "").">Oui<br/>
+							<input type='radio' name='OPERSDIS_DOSSIER' value='0' ".((0 == $this->infosDossier['OPERSDIS_DOSSIER']) ? "checked" : "").">Non<br/>
 						</div>
 					</div>
 				</li>
-				<li class='row-fluid' id='RCCI' style='".( ($action != 'new' && in_array('RCCI', $this->afficherChamps) && $this->infosDossier['RCCI_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='RCCI' style='".(($action != 'new' && in_array('RCCI', $this->afficherChamps) && $this->infosDossier['RCCI_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>RCCI (oui/non) lien rapport</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
 				";
-				if($this->infosDossier['RCCI_DOSSIER'] == 1){
-					echo "oui";
-				}else if($this->infosDossier['RCCI_DOSSIER'] == 0){
-					echo "non";
-				}					
-				echo "
+                if (1 == $this->infosDossier['RCCI_DOSSIER']) {
+                    echo "oui";
+                } elseif (0 == $this->infosDossier['RCCI_DOSSIER']) {
+                    echo "non";
+                }
+                echo "
 					</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
 						<div id='rrci_infos'>
-							<input type='radio' name='RCCI_DOSSIER' value='1' ".( ($this->infosDossier['RCCI_DOSSIER'] == 1)?"checked":"" ).">Oui<br/>
-							<input type='radio' name='RCCI_DOSSIER' value='0' ".( ($this->infosDossier['RCCI_DOSSIER'] == 0)?"checked":"" ).">Non<br/>
+							<input type='radio' name='RCCI_DOSSIER' value='1' ".((1 == $this->infosDossier['RCCI_DOSSIER']) ? "checked" : "").">Oui<br/>
+							<input type='radio' name='RCCI_DOSSIER' value='0' ".((0 == $this->infosDossier['RCCI_DOSSIER']) ? "checked" : "").">Non<br/>
 						</div>
 					</div>
 				</li>
-				<li class='row-fluid' id='REX' style='".( ($action != 'new' && in_array('REX', $this->afficherChamps) && $this->infosDossier['REX_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='REX' style='".(($action != 'new' && in_array('REX', $this->afficherChamps) && $this->infosDossier['REX_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>REX</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">".$this->infosDossier['REX_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='REX_DOSSIER' name='REX_DOSSIER' value='".( ($this->infosDossier['REX_DOSSIER'])?$this->infosDossier['REX_DOSSIER']:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">".$this->infosDossier['REX_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' id='REX_DOSSIER' name='REX_DOSSIER' value='".(($this->infosDossier['REX_DOSSIER']) ? $this->infosDossier['REX_DOSSIER'] : "")."' />
 					</div>
 				</li>
-				<li class='row-fluid' id='CHARGESEC' style='".( ($action != 'new' && in_array('CHARGESEC', $this->afficherChamps) && $this->infosDossier['CHARGESEC_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='CHARGESEC' style='".(($action != 'new' && in_array('CHARGESEC', $this->afficherChamps) && $this->infosDossier['CHARGESEC_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Chargé de sécurité (T)</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['CHARGESEC_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='CHARGESEC_DOSSIER' name='CHARGESEC_DOSSIER' value='".( ($this->CHARGESEC_DOSSIER)?$this->CHARGESEC_DOSSIER:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['CHARGESEC_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' id='CHARGESEC_DOSSIER' name='CHARGESEC_DOSSIER' value='".(($this->CHARGESEC_DOSSIER) ? $this->CHARGESEC_DOSSIER : "")."' />
 					</div>
 				</li>
-				<li class='row-fluid' id='DUREEDEPL' style='".( ($action != 'new' && in_array('DUREEDEPL', $this->afficherChamps) && $this->infosDossier['DUREEDEPL_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DUREEDEPL' style='".(($action != 'new' && in_array('DUREEDEPL', $this->afficherChamps) && $this->infosDossier['DUREEDEPL_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Durée de déplacement</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DUREEDEPL_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='DUREEDEPL_DOSSIER' name='DUREEDEPL_DOSSIER' value='".( ($this->DUREEDEPL_DOSSIER)?$this->DUREEDEPL_DOSSIER:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DUREEDEPL_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' id='DUREEDEPL_DOSSIER' name='DUREEDEPL_DOSSIER' value='".(($this->DUREEDEPL_DOSSIER) ? $this->DUREEDEPL_DOSSIER : "")."' />
 					</div>
 				</li>
-				<li class='row-fluid' id='GRAVPRESC' style='".( ($action != 'new' && in_array('GRAVPRESC', $this->afficherChamps) && $this->infosDossier['GRAVPRESC_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='GRAVPRESC' style='".(($action != 'new' && in_array('GRAVPRESC', $this->afficherChamps) && $this->infosDossier['GRAVPRESC_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Gravité prescription</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['GRAVPRESC_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='GRAVPRESC_DOSSIER' name='GRAVPRESC_DOSSIER' value='".( ($this->GRAVPRESC_DOSSIER)?$this->GRAVPRESC_DOSSIER:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['GRAVPRESC_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' id='GRAVPRESC_DOSSIER' name='GRAVPRESC_DOSSIER' value='".(($this->GRAVPRESC_DOSSIER) ? $this->GRAVPRESC_DOSSIER : "")."' />
 					</div>
 				</li>
-				<li class='row-fluid' id='NUMINTERV' style='".( ($action != 'new' && in_array('NUMINTERV', $this->afficherChamps) && $this->infosDossier['NUMINTERV_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='NUMINTERV' style='".(($action != 'new' && in_array('NUMINTERV', $this->afficherChamps) && $this->infosDossier['NUMINTERV_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Numéro d'intervention</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['NUMINTERV_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' id='NUMINTERV_DOSSIER' name='NUMINTERV_DOSSIER' value='".( ($this->infosDossier['NUMINTERV_DOSSIER'])?$this->infosDossier['NUMINTERV_DOSSIER']:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['NUMINTERV_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' id='NUMINTERV_DOSSIER' name='NUMINTERV_DOSSIER' value='".(($this->infosDossier['NUMINTERV_DOSSIER']) ? $this->infosDossier['NUMINTERV_DOSSIER'] : "")."' />
 					</div>
 				</li>
-				<li class='row-fluid' id='DATEINTERV' style='".( ($action != 'new' && in_array('DATEINTERV', $this->afficherChamps) && $this->infosDossier['DATEINTERV_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATEINTERV' style='".(($action != 'new' && in_array('DATEINTERV', $this->afficherChamps) && $this->infosDossier['DATEINTERV_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date et heure d'intervention</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATEINTERV_DOSSIER']." - ".$this->HEUREINTERV_INPUT."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATEINTERV_DOSSIER' name='DATEINTERV_DOSSIER' value='".( ($this->DATEINTERV_INPUT)?$this->DATEINTERV_INPUT:"" )."' />
-						<input type='text' style='width:40px;' class='time' id='HEUREINTERV_DOSSIER' name='HEUREINTERV_DOSSIER' value='".( ($this->HEUREINTERV_INPUT)?$this->HEUREINTERV_INPUT:"" )."' />					
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATEINTERV_DOSSIER']." - ".$this->HEUREINTERV_INPUT."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' id='DATEINTERV_DOSSIER' name='DATEINTERV_DOSSIER' value='".(($this->DATEINTERV_INPUT) ? $this->DATEINTERV_INPUT : "")."' />
+						<input type='text' style='width:40px;' class='time' id='HEUREINTERV_DOSSIER' name='HEUREINTERV_DOSSIER' value='".(($this->HEUREINTERV_INPUT) ? $this->HEUREINTERV_INPUT : "")."' />
 					</div>
 				</li>
-				<li class='row-fluid' id='DUREEINTERV' style='".( ($action != 'new' && in_array('DUREEINTERV', $this->afficherChamps) && $this->infosDossier['DUREEINTERV_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DUREEINTERV' style='".(($action != 'new' && in_array('DUREEINTERV', $this->afficherChamps) && $this->infosDossier['DUREEINTERV_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Durée intervention</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DUREEINTERV_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='time' id='DUREEINTERV_DOSSIER' name='DUREEINTERV_DOSSIER' value='".( ($this->infosDossier['DUREEINTERV_DOSSIER'])?$this->infosDossier['DUREEINTERV_DOSSIER']:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DUREEINTERV_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='time' id='DUREEINTERV_DOSSIER' name='DUREEINTERV_DOSSIER' value='".(($this->infosDossier['DUREEINTERV_DOSSIER']) ? $this->infosDossier['DUREEINTERV_DOSSIER'] : "")."' />
 					</div>
 				</li>
-				<li class='row-fluid' id='DATESIGN' style='".( ($action != 'new' && in_array('DATESIGN', $this->afficherChamps) && $this->infosDossier['DATESIGN_DOSSIER'] != '' )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='DATESIGN' style='".(($action != 'new' && in_array('DATESIGN', $this->afficherChamps) && $this->infosDossier['DATESIGN_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Date de signature</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" )."> ".$this->infosDossier['DATESIGN_DOSSIER']."</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
-						<input type='text' class='date' id='DATESIGN_INPUT' name='DATESIGN_DOSSIER' value='".( ($this->DATESIGN_INPUT)?$this->DATESIGN_INPUT:"" )."' />
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATESIGN_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' class='date' id='DATESIGN_INPUT' name='DATESIGN_DOSSIER' value='".(($this->DATESIGN_INPUT) ? $this->DATESIGN_INPUT : "")."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
-				<li class='row-fluid' id='PREVENTIONNISTE' style='".( (in_array('PREVENTIONNISTE', $this->afficherChamps) && count($this->preventionnistes) != 0 )? "": "display:none;" )."margin-bottom:20px;'>
+				<li class='row-fluid' id='PREVENTIONNISTE' style='".((in_array('PREVENTIONNISTE', $this->afficherChamps) && count($this->preventionnistes) != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Préventionniste(s) du dossier</div>
-					<div class='right value span9' ".( ($action == 'new')? "style='display:none;'" : "" ).">
-						".$this->partialLoop('users/embedded/user.phtml', $this->preventionnistes )."
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
+						".$this->partialLoop('users/embedded/user.phtml', $this->preventionnistes)."
 					</div>
-					<div class='right form span9' ".( ($action != 'new')?"style='display:none;'":"").">
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
 						<ul class='unstyled'>
 							<li style='liste-style-type:none' id='liste_prev'>
 					";
-					if(count($this->preventionnistes) > 0){
-						foreach($this->preventionnistes as $prev){
-							echo "
+                    if (count($this->preventionnistes) > 0) {
+                        foreach ($this->preventionnistes as $prev) {
+                            echo "
 								<span class='ui-state-highlight' style='float: left; padding: 2px; margin: 0pt 2px 1em 0pt; display: block;'>
 									<input type='hidden' name='preventionniste[]' value='".$prev["uid"]."' />
 									<span>
@@ -1685,9 +1725,9 @@ echo "
 									<a onclick='$(this).parent().remove(); return false;' style='text-decoration: none;' href=''>×</a>
 								</span>
 							";
-						}
-					}		
-					echo "
+                        }
+                    }
+                    echo "
 							</li>
 						</ul>
 						<div style='display: block;'>
@@ -1703,36 +1743,37 @@ echo "
 
 function listeGroupementServInstructeur($selected, $id_type_groupement = null, $type)
 {
-	// Modèles
-	$model_groupements = new Model_DbTable_Groupement;
-	$model_groupementstypes = new Model_DbTable_GroupementType;
+    // Modèles
+    $model_groupements = new Model_DbTable_Groupement();
+    $model_groupementstypes = new Model_DbTable_GroupementType();
 
-	// Liste des types de groupement
-	$array_groupementstypes = $model_groupementstypes->fetchAll()->toArray();
+    // Liste des types de groupement
+    $array_groupementstypes = $model_groupementstypes->fetchAll()->toArray();
 
-	// Initialisation du tableau des groupements
-	$array_groupements = array();
+    // Initialisation du tableau des groupements
+    $array_groupements = array();
 
-	// Pour chaque type, on retouve les model_groupements
-	foreach ($array_groupementstypes as $value) {
-		$array_groupements[ $value["ID_GROUPEMENTTYPE"] ] = array(
-			0 => $value["LIBELLE_GROUPEMENTTYPE"],
-			1 => $model_groupements->fetchAll("ID_GROUPEMENTTYPE = ".$value["ID_GROUPEMENTTYPE"])->toArray()
-		);
-	}
+    // Pour chaque type, on retouve les model_groupements
+    foreach ($array_groupementstypes as $value) {
+        $array_groupements[ $value["ID_GROUPEMENTTYPE"] ] = array(
+            0 => $value["LIBELLE_GROUPEMENTTYPE"],
+            1 => $model_groupements->fetchAll("ID_GROUPEMENTTYPE = ".$value["ID_GROUPEMENTTYPE"])->toArray(),
+        );
+    }
 
-	// Affichage
-	echo "<select name='servInstGrp' id='servInstGrp' ".( ($type == 'servInstCommune')? "disabled='disabled'": "" ).">";
-	echo "<option value='0' >Selectionnez le service instructeur</option>";
-	foreach ($array_groupements as $key => $groupements) {
-		if($id_type_groupement == null || ($id_type_groupement > 0 && $key == $id_type_groupement)) {
-			echo '<optgroup id="gpt_$key" label="'.$groupements[0].'">';
-			foreach( $groupements[1] as $groupement)
-				echo '<option value="'.$groupement["LIBELLE_GROUPEMENT"].'" '. ( ($groupement["LIBELLE_GROUPEMENT"] == $selected) ? "selected" : "" ) .">".$groupement["LIBELLE_GROUPEMENT"]."</option>";
-			echo "</optgroup>";
-		}
-	}
-	echo "</select>";
+    // Affichage
+    echo "<select name='servInstGrp' id='servInstGrp' ".(('servInstCommune' == $type) ? "disabled='disabled'" : "").">";
+    echo "<option value='0' >Selectionnez le service instructeur</option>";
+    foreach ($array_groupements as $key => $groupements) {
+        if (null == $id_type_groupement || ($id_type_groupement > 0 && $key == $id_type_groupement)) {
+            echo '<optgroup id="gpt_$key" label="'.$groupements[0].'">';
+            foreach ($groupements[1] as $groupement) {
+                echo '<option value="'.$groupement["LIBELLE_GROUPEMENT"].'" '.(($groupement["LIBELLE_GROUPEMENT"] == $selected) ? "selected" : "").">".$groupement["LIBELLE_GROUPEMENT"]."</option>";
+            }
+            echo "</optgroup>";
+        }
+    }
+    echo "</select>";
 }
 
 ?>

@@ -37,4 +37,15 @@ class Model_DbTable_PrescriptionDossierAssoc extends Zend_Db_Table_Abstract
 		//echo $select->__toString();
 		return $this->getAdapter()->fetchAll($select);	
 	}
+	
+	public function deletePrescrionAssoc($idPrescriptionDossier)
+	{
+		$select = $this->select()
+			->setIntegrityCheck(false)
+			->from(array("pd" => "prescriptiondossierassoc"))
+			->where("pda.ID_PRESCRIPTION_DOSSIER = ?",$idPrescriptionDossier);
+		
+		//echo $select->__toString();
+		return $this->getAdapter()->fetchAll($select)->delete();	
+	}
 }
