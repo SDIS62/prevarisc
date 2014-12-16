@@ -1,11 +1,9 @@
+<h3>Gestion des prescriptions</h3>
 <?php
 if($this->infosDossier['VERROU_DOSSIER'] == 0){
 	echo "
 		<button class='addPresc btn' id='addPrescriptionType' >Ajouter une prescription type</button>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<!--
-		<button class='addPresc btn' id='addPrescription' >Ajouter une prescription</button>
-		-->
+		&nbsp;&nbsp;
 		<a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'prescription-add'))."' >Ajouter une prescription</a>
 	";
 	if(count($this->prescriptionDossier) == 0){
@@ -57,7 +55,13 @@ for($i=0; $i < $nbPrescDossier; $i++)
 				echo "</td>";
 				echo "
 					<td class='span1' rowspan='".$nbAssoc."'>
-						<a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'prescription-edit', 'id-prescription' => $this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']))."' >Modifier</a>
+				";
+					if($this->infosDossier['VERROU_DOSSIER'] == 0){
+						echo "
+							<a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'prescription-edit', 'id-prescription' => $this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']))."' >Modifier</a>
+						";
+					}
+				echo "
 					</td>";
 				$cpt = false;
 			}
