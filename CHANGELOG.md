@@ -17,6 +17,7 @@ Evolutions :
 * Ajout de la possibilité de désélectionner un élément dans la recherche des dossiers
 * Possibilité de recherche un dossier "contenant" (et non pas exactement égal à) un numéro d'AT ou PC
 * Possibilité de mettre un ID ERPv2 ou N° de PC dans les champs d'objet ou de libellé sans # en préfixe
+* Mise à jour des dépendances composer
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
@@ -25,6 +26,7 @@ Corrections :
 * Perf : remplacement des commentaires HTML par des commentaires PHP dans les partials de result search
 * Perf : affichage des éléments du dashboard seulement ordonnés
 * Recherche géographique : un texte saisi dans la ville ne suffit pas à sélectionner la commune
+* Correction d'un problem d'update composer KO sur apigen en version dev-master impossible car il ne trouve pas une dépendance
 
 ## 2.3
 
