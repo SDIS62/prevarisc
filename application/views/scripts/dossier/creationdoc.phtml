@@ -7,7 +7,7 @@ function addChamp($odf,$nomOdf, $variable){
     }
     $odf->setVars($nomOdf,$variable, true,'UTF8');
     #$segment->$nomOdf(utf8_decode($variable));
-  } catch (OdfException $e) {
+  } catch (Exception $e) {
   
   }
 }
@@ -83,12 +83,14 @@ try{
     $preventionniste = $odf->setSegment('preventionnistes');
     $nbPrev = count($this->preventionnistes);
     foreach($this->preventionnistes as $prev){
-        $preventionniste->setVars('nom', $prev['NOM_UTILISATEURINFORMATIONS'], true, 'UTF-8');
+        addChamp($preventionniste, 'civilite', $prev['LIBELLE_UTILISATEURCIVILITE']);
+        addChamp($preventionniste, 'grade', $prev['GRADE_UTILISATEURINFORMATIONS']);
+        addChamp($preventionniste, 'nom', $prev['NOM_UTILISATEURINFORMATIONS']);
         if($nbPrev > 1)
             $sep = ", ";
         else
             $sep = " ";
-        $preventionniste->setVars('prenom', $prev['PRENOM_UTILISATEURINFORMATIONS'].$sep, true, 'UTF-8');
+        addChamp($preventionniste, 'prenom', $prev['PRENOM_UTILISATEURINFORMATIONS'].$sep);
         $preventionniste->merge();
         $nbPrev--;
     }
@@ -105,7 +107,7 @@ try{
             $sep = ", ";
         else
             $sep = " ";
-        $preventionnisteTel->setVars('tel', $prev['TELFIXE_UTILISATEURINFORMATIONS'].$sep, true, 'UTF-8');
+        addChamp($preventionnisteTel, 'tel', $prev['TELFIXE_UTILISATEURINFORMATIONS'].$sep);
         $preventionnisteTel->merge();
         $nbPrev--;
     }
@@ -127,10 +129,10 @@ try{
                 $date = $docExistant['DATE_CONSULTE'];
             }
         }
-        $docConsulte->setVars('libelledoc', $document['LIBELLE_DOC'], true, 'UTF-8');
+        addChamp($docConsulte, 'libelledoc', $document['LIBELLE_DOC']);
         if($exist){
-            $docConsulte->setVars('exist', "X", true, 'UTF-8');
-            $docConsulte->setVars('refdoc', $ref, true, 'UTF-8');
+            addChamp($docConsulte, 'exist', "X");
+            addChamp($docConsulte, 'refdoc', $ref);
             //Conversion de la date ang -> fr
             if ($date) {
                 if($date != "0000-00-00"){
@@ -140,7 +142,7 @@ try{
                     $date = "";
                 }
             }
-            $docConsulte->setVars('datedoc', $date."\n", true, 'UTF-8');
+            addChamp($docConsulte, 'datedoc',  $date."\n");
             $docConsulte->merge();
         }
     }
@@ -153,9 +155,9 @@ try{
     $listeDocAjout = $this->listeDocsAjout;
     $docAjout = $odf->setSegment('listeDocsAjout');
     foreach($this->listeDocsAjout as $documentAjout){
-        $docAjout->setVars('exist', "X", true, 'UTF-8');
-        $docAjout->setVars('libelledoc', $documentAjout['LIBELLE_DOCAJOUT'], true, 'UTF-8');
-        $docAjout->setVars('refdoc', $documentAjout['REF_DOCAJOUT'], true, 'UTF-8');
+        addChamp($docAjout, 'exist', "X");
+        addChamp($docAjout, 'libelledoc', $documentAjout['LIBELLE_DOCAJOUT']);
+        addChamp($docAjout, 'refdoc', $documentAjout['REF_DOCAJOUT']);
         if ($documentAjout['DATE_DOCAJOUT']) {
             if ($date) {
                 if($date != "0000-00-00"){
@@ -166,7 +168,7 @@ try{
                 }
             }
         }
-        $docAjout->setVars('datedoc', $date, true, 'UTF-8');
+        addChamp($docAjout, 'datedoc', $date);
         $docAjout->merge();
     }
     $odf->mergeSegment($docAjout);

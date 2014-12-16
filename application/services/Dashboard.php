@@ -203,6 +203,11 @@ class Service_Dashboard
         $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
         $search->setCriteria("d.VERROU_DOSSIER", 0);
         $search->setCriteria("d.AVIS_DOSSIER IS NULL");
+        
+        // on retire les dossiers périodiques de la liste, car cela ferait trop de dossiers
+        // on ne garde que les études
+        $search->setCriteria("dossiernature.ID_NATURE NOT IN (".implode(',', array(21, 26)).")");
+        
         $dossiers = $search->run(false, null, false)->toArray();
         
         return $dossiers;

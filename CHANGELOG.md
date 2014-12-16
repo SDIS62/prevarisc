@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.4 
+
+Evolutions :
+* Mise à jour de packery en 1.3.0
+* Ajout d'un message d'avertissement à la suppression de PJ
+* Ajout des icones sur la liste des pièces jointes
+* Uniformisation de la gestion des pièces jointes avec les dossiers : ajout de la possibilité de modifier un contact
+* Ajout d'un paramètre account form au niveau de la connexion LDAP pour éviter d'avoir à retaper le domaine à chaque fois
+* Affichage de la commune du site et de l'ID ERPv2 pour la popup d'information d'un établissement
+* Bloc dossiers du préventionnistes : retrait des dossiers périodiques : trop de dossiers affichés en début d'année sinon
+* Recherche par ID ERPv2 dans la barre de recherche rapide
+* Ajout d'un retour d'erreur si le controlleur proxy échoue
+* Amélioration de l'IHM de génération de rapports
+* Ajout du champ civilité et grade pour les rapports de dossiers
+* Ajout de la possibilité de désélectionner un élément dans la recherche des dossiers
+* Possibilité de recherche un dossier "contenant" (et non pas exactement égal à) un numéro d'AT ou PC
+* Possibilité de mettre un ID ERPv2 ou N° de PC dans les champs d'objet ou de libellé sans # en préfixe
+
+Corrections :
+* Impossibilité de créer des dossiers en décembre : mauvais validateur de date
+* Sur firefox, sur le tableau de bord, impossible de scroller sur les blocs sans déplacer le bloc avec
+* Ajout d'une image manquante sur tipsy
+* Perf : remplacement des commentaires HTML par des commentaires PHP dans les partials de result search
+* Perf : affichage des éléments du dashboard seulement ordonnés
+* Recherche géographique : un texte saisi dans la ville ne suffit pas à sélectionner la commune
+
 ## 2.3
 
 Evolutions :

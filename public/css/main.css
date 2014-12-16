@@ -812,10 +812,19 @@ text-decoration: none;
   color: #555555;
 }
 
+#home .panel {
+    display: none;
+}
+
 .dashboard .panel {
   width:  49%;
   float: left;
   margin-bottom: 0px;
+}
+
+.dashboard .panel.ui-draggable-dragging {
+    border-style: dashed;
+    border-width: 3px;
 }
 
 .dashboard .panel.w2 {
@@ -823,7 +832,7 @@ text-decoration: none;
 }
 
 .dashboard .panel-heading {
-  cursor: pointer;
+  cursor: move;
 }
 
 .dashboard .grid-gutter {
@@ -1066,4 +1075,43 @@ a.list-group-item-danger.active:focus {
 .scroll-bloc-small {
     max-height: 150px; 
     overflow-y: scroll;
+}
+
+#tabPieceJointe .file {
+    padding: 0 0 3px 22px;
+}
+
+#tabPieceJointe .pdf{  
+    background: url('../images/pdf.png') no-repeat;  
+}  
+
+#tabPieceJointe .doc{  
+    background: url('../images/word.png') no-repeat;  
+}  
+
+#tabPieceJointe .odt{  
+    background: url('../images/libreoffice.png') no-repeat;  
+}  
+
+#tabPieceJointe .png,
+#tabPieceJointe .jpg,
+#tabPieceJointe .jpeg,
+#tabPieceJointe .gif,
+#tabPieceJointe .bmp
+{  
+    background: url('../images/image.png') no-repeat;  
+}
+
+#tabPieceJointe .zip,
+#tabPieceJointe .rar
+{  
+    background: url('../images/zip.png') no-repeat;  
+}  
+
+#tabPieceJointe .txt{  
+    background: url('../images/text.png') no-repeat;  
+}
+
+#tabPieceJointe .msg{  
+    background: url('../images/msg.png') no-repeat;  
 }

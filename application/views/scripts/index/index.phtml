@@ -1,8 +1,10 @@
-<?php foreach($this->blocs as $id => $bloc): ?>
-    <?php echo $this->partial('index/partials/'.$bloc['type'].'.phtml', array_merge($bloc, array('id' => $id))) ?>
-<?php endforeach ?>
-<div class="grid-gutter"></div>
-<div id="reponse-modal" class="modal hide fade" ></div>
+<div id="home">
+    <?php foreach($this->blocs as $id => $bloc): ?>
+        <?php echo $this->partial('index/partials/'.$bloc['type'].'.phtml', array_merge($bloc, array('id' => $id))) ?>
+    <?php endforeach ?>
+    <div class="grid-gutter"></div>
+    <div id="reponse-modal" class="modal hide fade" ></div>
+</div>
 <script type="text/javascript">
 $(document).ready(function() {
 
@@ -47,14 +49,21 @@ $(document).ready(function() {
     }
 
     // ----- packery setup ----- //
-
+    // optim de perf : on évite au navigateur de dessiner les blocs
+    // avant qu'ils aient pris leur place finale
+    $('.panel').show(); 
+    
     // trigger initial layout
     $container.packery();
 
     var $itemElems = $($container.packery('getItemElements') );
-    $itemElems.draggable();
+    $itemElems.draggable({
+        handle: ".panel-heading",
+        containment: "parent"
+    });
     $container.packery( 'bindUIDraggableEvents', $itemElems );
-
+    
+    
     var saveTimeout = null;
     var saveTimeoutMilliseconds = 500;
 

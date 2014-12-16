@@ -69,7 +69,7 @@
 							url: a.href + "&format=json",
 							type: "POST",
 							success: function () {
-								$("#contact-content-ajax").load("/contact?item=<?php echo $this->item ?>&id=<?php echo $this->id ?>&ajax=1");
+								$(a).parents(".fiche_contact").remove();
 								$( "#dialog-delete-contact" ).dialog( "destroy" );
 							}
 						});
