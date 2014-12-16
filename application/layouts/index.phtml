@@ -14,12 +14,11 @@
 
         <div class='container-fluid' >
 
-
             <div class='row-fluid page-header' style="margin-top: 55px">
 
                 <div class='span12'>
                     <h2 style="margin: 4px 0">
-                      <?php echo $this->avatar(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], 'medium', array('style' => "float: left; width: 50px; border: 1px solid #dfdfdf; border-radius: 50%; margin-right: 15px;")) ?>
+                      <?php echo $this->avatar(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], 'medium', array('style' => "float: left; width: 50px; border: 1px solid #dfdfdf; border-radius: 50%; margin-right: 15px; margin-top: 14px;")) ?>
                       Tableau de bord
                       <small>Profil : <?php echo $this->user['group']['LIBELLE_GROUPE'] ?></small>
                     </h2>
@@ -31,35 +30,24 @@
                         <i class="icon-th"></i> Ré-initialiser les blocs
                     </a>
                 </div>
-             </div>
+
+            </div>
+
              <div class='row-fluid'>
-                <div class='span12 dashboard'>
 
-                  <?php echo $this->render("includes/notifications.phtml"); ?>
+                <div class='span12'>
 
-                  <?php echo $this->placeholder('before_content') ?>
+                    <?php echo $this->render("includes/notifications.phtml"); ?>
 
-                  <?php echo $this->layout()->content; ?>
-
-                  <?php echo $this->placeholder('after_content') ?>
+                    <?php echo $this->layout()->content; ?>
 
                 </div>
 
+            </div>
 
-            </div>
-            <div class='row-fluid'>
-                <div class="span12">
-                    <?php echo $this->render("includes/footer.phtml"); ?>
-                </div>
-            </div>
+            <?php echo $this->render("includes/footer.phtml"); ?>
 
         </div>
-
-        <script>
-          $(document).ready(function() {
-              $(".sidebar").css('height', $(document).height() + 'px');
-          });
-        </script>
 
     </body>
 
