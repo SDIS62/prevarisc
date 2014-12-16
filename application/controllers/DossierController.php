@@ -2235,6 +2235,9 @@ class DossierController extends Zend_Controller_Action
         }
 
         $this->view->id_dossier = $this->_getParam("id");
+		$DbDossier = new Model_DbTable_Dossier();
+		$this->view->infosDossier = $DbDossier->find((int) $this->view->id_dossier)->current();
+		
         $this->view->prescriptionDossier = $service_dossier->getPrescriptions((int) $this->_getParam("id"));
     }
 
