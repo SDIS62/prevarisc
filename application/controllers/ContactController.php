@@ -142,6 +142,7 @@ class ContactController extends Zend_Controller_Action
 
             if ($_POST) {
                 $this->_helper->viewRenderer->setNoRender(); // On desactive la vue
+                var_dump(array_intersect_key($_POST, $DB_informations->info('metadata')));
                 $row->setFromArray(array_intersect_key($_POST, $DB_informations->info('metadata')))->save();
             } else
                 $this->_forward("form");
@@ -152,6 +153,7 @@ class ContactController extends Zend_Controller_Action
                 'message' => ''
             ));
         } catch (Exception $e) {
+            var_dump($e);
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
                 'title' => 'Erreur lors de la modification du contact',

@@ -19,6 +19,7 @@ Evolutions :
 * Possibilité de mettre un ID ERPv2 ou N° de PC dans les champs d'objet ou de libellé sans # en préfixe
 * Mise à jour des dépendances composer
 * Agrandissement du champ "Nom" des rubriques ICPE pour pouvoir s'adapter à tous les cas comme "Stations-service : installations, ouvertes ou non au public, où les carburants sont transférés de réservoirs de stockage fixes dans les réservoirs à carburant de véhicules à moteur, de bateaux ou d’aéronefs"
+* Ajout de l'étude Demande d'organisation de manifestation temporaire
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
@@ -28,6 +29,7 @@ Corrections :
 * Perf : affichage des éléments du dashboard seulement ordonnés
 * Recherche géographique : un texte saisi dans la ville ne suffit pas à sélectionner la commune
 * Correction d'un problem d'update composer KO sur apigen en version dev-master impossible car il ne trouve pas une dépendance
+* Correction des tailles des champs max sur le formulaire de modification de contact
 
 ## 2.3
 
