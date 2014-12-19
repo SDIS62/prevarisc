@@ -1974,7 +1974,8 @@ class DossierController extends Zend_Controller_Action
         $nbDateDecompte = $nbDatesTotal;
 
         $listeDateInput = "";
-
+        $listeHeureInput = array();
+        
         foreach ($recupCommLiees as  $val => $ue) {
             $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
             if ($nbDateDecompte == $nbDatesTotal) {
@@ -1986,10 +1987,13 @@ class DossierController extends Zend_Controller_Action
             } elseif (1 == $nbDateDecompte) {
                 $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
             }
+            $listeHeureInput[] = substr($ue['HEUREDEB_COMMISSION'], 0, 5). ' à ' .substr($ue['HEUREFIN_COMMISSION'], 0, 5);
+            
             $this->view->dateVisiteInput = $listeDateInput;
             $nbDateDecompte--;
         }
         $this->view->dateVisite = $this->view->dateVisiteInput;
+        $this->view->heureVisite = implode(', ', $listeHeureInput);
 
         //PARTIE DOC CONSULTE
 

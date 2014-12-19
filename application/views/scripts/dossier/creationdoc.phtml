@@ -39,8 +39,10 @@ addChamp($odf, 'docManquant',$this->listeDocManquant['DOCMANQUANT']);
 
 if($this->infosDossier['DATEVISITE_DOSSIER']){
     addChamp($odf, 'dateVisite',$this->dateVisite);
+    addChamp($odf, 'heureVisite',$this->heureVisite);
 }else{
     addChamp($odf, 'dateVisite',"");
+    addChamp($odf, 'heureVisite',"");
 }
 
 //Date de génération du rapport
