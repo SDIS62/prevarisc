@@ -312,20 +312,28 @@
         {
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
+            $search->columns(array(
+                "nextvisiteyear" => new Zend_Db_Expr("YEAR(DATE_ADD(dossiers.DATEVISITE_DOSSIER, INTERVAL etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH))"),
+            ));
             $search->joinEtablissementDossier();
+            $search->setCriteria("dossiers.DATEVISITE_DOSSIER = ( "
+                    . "SELECT MAX(dos.DATEVISITE_DOSSIER) FROM dossier as dos "
+                    . "LEFT JOIN etablissementdossier etabdoss ON etabdoss.ID_DOSSIER = dos.ID_DOSSIER "
+                    . "LEFT JOIN dossiernature dn ON dn.ID_DOSSIER = dos.ID_DOSSIER "
+                    . "WHERE etabdoss.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT "
+                    . "AND dos.TYPE_DOSSIER IN(2,3) "
+                    . "AND dn.ID_NATURE IN (21,26))");
             $search->setCriteria("etablissementinformations.ID_STATUT", 2);
             $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-            $search->setCriteria("dossiers.TYPE_DOSSIER", array(2,3));
-            $search->setCriteria("dossiernature.ID_NATURE", array(21,26)); 
-            $search->setCriteria("dossiers.DATEVISITE_DOSSIER is not null");
             $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
-            $search->setCriteria("YEAR(DATE_ADD(dossiers.DATEVISITE_DOSSIER, INTERVAL etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH)) <= YEAR(NOW())");
-            $search->setCriteria("DATE_ADD(dossiers.DATEVISITE_DOSSIER, INTERVAL etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH) >= NOW()");
             if ($idsCommission) {
                 $search->setCriteria("etablissementinformations.ID_COMMISSION", (array) $idsCommission);
             }
+            $search->having("nextvisiteyear < YEAR(NOW())");
              //etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
-            return $search->run(false, null, false)->toArray(); 
+            $etablissements_isoles = $search->run(false, null, false)->toArray(); 
+            
+            return $etablissements_isoles;
             
         }
 
