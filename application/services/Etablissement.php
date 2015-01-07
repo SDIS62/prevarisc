@@ -901,7 +901,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             case 2:
                 // Périodicité en fonction de la catégorie/type/local à sommeil
                 if($categorie !== null && $type !== null && $local_sommeil !== null) {
-                    $results['periodicite'] = $DB_periodicite->gn4($categorie, $type, $local_sommeil == 'false' ? 0 : 1);
+                    $results['periodicite'] = $DB_periodicite->gn4($categorie, $type, $local_sommeil ? 1 : 0);
                 }
 
                 // Si pas de valeur de local à sommeil renseignée, on demande par défaut de saisir non
@@ -927,7 +927,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
 
                 if(!array_key_exists('commission', $results) && ($numinsee !== null && $categorie !== null && $type !== null && $local_sommeil !== null)) {
-                    $commission = $model_commission->getCommission($numinsee, $categorie, $type, $local_sommeil == 'false' ? 0 : 1);
+                    $commission = $model_commission->getCommission($numinsee, $categorie, $type, $local_sommeil ? 1 : 0);
                     if($commission !== null) {
                         $results['commission'] = $commission[0];
                     }

@@ -32,6 +32,7 @@ Corrections :
 * Correction d'un problem d'update composer KO sur apigen en version dev-master impossible car il ne trouve pas une dépendance
 * Correction des tailles des champs max sur le formulaire de modification de contact
 * Correction sur le bloc des VP non effectuées pour 2015
+* Correction du conseil sur la périodicité d'un établissement
 
 ## 2.3
 
