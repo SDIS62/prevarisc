@@ -2080,7 +2080,7 @@ class DossierController extends Zend_Controller_Action
         $DBpieceJointe = new Model_DbTable_PieceJointe();
         $nouvellePJ = $DBpieceJointe->createRow();
         $nouvellePJ->ID_PIECEJOINTE = $this->view->idPieceJointe;
-        $nouvellePJ->NOM_PIECEJOINTE = "Rapport modèle ".substr(basename($this->view->fichierSelect), 0, strlen(basename($this->view->fichierSelect)) - 3);
+        $nouvellePJ->NOM_PIECEJOINTE = substr(basename($this->view->fichierSelect), 0, strlen(basename($this->view->fichierSelect)) - 3);
         $nouvellePJ->EXTENSION_PIECEJOINTE = ".odt";
         $nouvellePJ->DESCRIPTION_PIECEJOINTE = "Rapport de l'établissement ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']." généré le ".$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." à ".$dateDuJour->get(Zend_Date::HOUR.":".Zend_Date::MINUTE);
         $nouvellePJ->DATE_PIECEJOINTE = $dateDuJour->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
