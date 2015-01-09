@@ -70,6 +70,14 @@
         <span class='avis' style='background-color: #f89406;'>Dossier incomplet</span>
         <?php elseif($this->DIFFEREAVIS_DOSSIER == 1) : ?>
         <span class='avis' style='background-color: #3a87ad;'>Avis différé</span>
+        <?php elseif($this->TYPE_DOSSIER == 5 && !is_null($this->DATEREP_DOSSIER)) : ?>
+        <span class="avis F">Répondu</span>
+        <?php elseif($this->TYPE_DOSSIER == 5 && is_null($this->DATEREP_DOSSIER)) : ?>
+        <span class="avis">Réponse à faire
+            <?php if (!is_null($this->DATESDIS_DOSSIER)): ?>
+                (<?php echo $this->formatDateDiff($this->DATESDIS_DOSSIER) ?>)
+            <?php endif ?>
+        </span>
         <?php elseif($this->ID_AVIS == 1) : ?>
         <span class="avis F">Favorable <?php echo in_array($this->ID_DOSSIERNATURE, array(19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
         <?php elseif($this->ID_AVIS == 2) : ?>

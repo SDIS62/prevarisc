@@ -21,6 +21,7 @@ Evolutions :
 * Agrandissement du champ "Nom" des rubriques ICPE pour pouvoir s'adapter à tous les cas comme "Stations-service : installations, ouvertes ou non au public, où les carburants sont transférés de réservoirs de stockage fixes dans les réservoirs à carburant de véhicules à moteur, de bateaux ou d’aéronefs"
 * Ajout de l'étude Demande d'organisation de manifestation temporaire
 * Ajout de l'heure de visite dans les CR générés
+* Pour les courriers ajout d'un indicateur de réponse / non réponse plutot que l'avis
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
