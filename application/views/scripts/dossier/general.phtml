@@ -1660,7 +1660,15 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Date de transfert à la commissions compétente</div>
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATETRANSFERTCOMM_DOSSIER']."</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".(($this->DATETRANSFERTCOMM_INPUT) ? $this->DATETRANSFERTCOMM_INPUT : "")."' />
+				";
+				if($this->DATETRANSFERTCOMM){
+					$dateTransfertTemp= new Zend_Date($this->DATETRANSFERTCOMM, Zend_Date::DATES);
+					$dateTransfertComm = $dateTransfertTemp->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				}else{
+					$dateTransfertComm = "";
+				}
+				echo "
+						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".$dateTransfertComm."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
@@ -1668,7 +1676,15 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Date de réception à la commissions compétente</div>
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATERECEPTIONCOMM_DOSSIER']."</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".(($this->DATERECEPTIONCOMM_INPUT) ? $this->DATERECEPTIONCOMM_INPUT : "")."' />
+				";
+				if($this->DATERECEPTIONCOMM){
+					$dateReceptTemp= new Zend_Date($this->DATERECEPTIONCOMM, Zend_Date::DATES);
+					$dateReceptTemp = $dateReceptTemp->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				}else{
+					$dateReceptTemp = "";
+				}
+				echo "
+						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".$dateReceptTemp."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
