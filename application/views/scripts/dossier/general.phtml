@@ -247,23 +247,6 @@
 				$(".incomplet").val(['0']);
 				$("#inputComplet").show();
 			}
-			/*
-			if($(this).prev().prev().val() == '')
-			{
-				//si la date n'est pas renseignée
-				$(this).prev().prev().click();
-			}else{
-				//$(this).prev().prev().prev().prev().prev().prev().attr('readonly','readonly');
-				$(this).prev().prev().prev().attr('readonly', true);
-				//$(this).prev().prev().attr('readonly', true);
-				$("#inputComplet").show();
-				$(".incomplet").val(['0']);
-				$("#AVIS").show();
-				$("#AVIS_COMMISSION").show();
-				$("#HORSDELAI").show();
-				afficherCacherAvis(0);
-			}
-			*/
 			return false;
 		});
 		
@@ -276,15 +259,6 @@
 			$(".incomplet").val(['1']);
 			$("#inputComplet").hide();
 			afficherCacherAvis(0);
-			
-			/*
-			$(this).parent().prev().show();
-			$(this).parent().hide();
-			$(this).parent().prev().prev().removeAttr('readonly').addClass('date');
-			$("#inputComplet").hide();
-			$(".incomplet").val(['1']);
-			$(".hideavis").click();
-			*/
 			return false;
 		});
 		
@@ -1433,67 +1407,65 @@ echo "
 						}
                         echo "<br/>";
                     }
-                    echo "
-					</div>
-					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "")." >
-						<div id='dossierIncomplet'>
+					echo "
+						</div>
+						<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "")." >
+							<div id='dossierIncomplet'>
+					";
+
+					$cptDocManquant = count($this->listeDocManquant);
+					foreach ($this->listeDocManquant as $val => $ue) {
+						if ($ue['DATE_DOCSMANQUANT'] != '') {
+							$date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
+							$dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+						} else {
+							$dateDocManquant = "";
+						}
+						
+						if(isset($ue['DATE_RECEPTION_DOC'])){
+							$disabledTextArea = "readonly='readonly'";
+							$disabledText = "readonly='readonly'";
+							$date = new Zend_Date($ue['DATE_RECEPTION_DOC'], Zend_Date::DATES);
+							$dateReceptDoc = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+						}else{
+							$disabledTextArea = "";
+							$disabledText = "";
+						}
+
+						echo "
+							Dossier incomplet le 
+							<input ".( ( isset($ue['DATE_RECEPTION_DOC']))? "readonly='readonly'" : "class='date'" )." type='text' name='dateDocManquant[]' id='dateDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$dateDocManquant."' />
+							&nbsp;
 						";
-
-						$cptDocManquant = count($this->listeDocManquant);
-						//Zend_Debug::dump($this->listeDocManquant);
-						foreach ($this->listeDocManquant as $val => $ue) {
-                            if ($ue['DATE_DOCSMANQUANT'] != '') {
-                                $date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
-                                $dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                            } else {
-                                $dateDocManquant = "";
-                            }
-							
-							if(isset($ue['DATE_RECEPTION_DOC'])){
-								$disabledTextArea = "readonly='readonly'";
-								$disabledText = "readonly='readonly'";
-								$date = new Zend_Date($ue['DATE_RECEPTION_DOC'], Zend_Date::DATES);
-                                $dateReceptDoc = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-							}else{
-								$disabledTextArea = "";
-								$disabledText = "";
-							}
-
+						if($cptDocManquant == 1 && $ue['DATE_RECEPTION_DOC'] == NULL){
 							echo "
-								Dossier incomplet le 
-								<input ".( ( isset($ue['DATE_RECEPTION_DOC']))? "readonly='readonly'" : "class='date'" )." type='text' name='dateDocManquant[]' id='dateDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$dateDocManquant."' />
-								&nbsp;
-							";
-							if($cptDocManquant == 1 && $ue['DATE_RECEPTION_DOC'] == NULL){
-								echo "
-									<button class='today btn'>
-										<i class='icon-calendar'></i>&nbsp;Aujourd'hui
-									</button>
-								";
-							}
-							echo "
-								<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$ue['NUM_DOCSMANQUANT']."' ".$disabledTextArea." rows='5' cols='100'>".$ue['DOCMANQUANT']."</textarea>
-								Document(s) réceptionné(s) le 
-								<input ".( (isset($ue['DATE_RECEPTION_DOC']))? $disabledText :"class='date'")." type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".( (isset($ue['DATE_RECEPTION_DOC']))? $dateReceptDoc : "" )."' />
-								&nbsp;
-							";
-
-							echo "
-								<button class='today btn' ".( ($ue['DATE_RECEPTION_DOC'] != '')? "style='display:none;'" : "" ).">
+								<button class='today btn'>
 									<i class='icon-calendar'></i>&nbsp;Aujourd'hui
 								</button>
-								&nbsp;&nbsp;&nbsp;
-								<button class='btn validDocManquant' ".( ($ue['DATE_RECEPTION_DOC'] != '')? "style='display:none;'" : "" ).">
-									<i class='icon-lock'></i>&nbsp;Valider la reception de document
-								</button>
-								&nbsp;&nbsp;&nbsp;
-								<span ".( ($ue['DATE_RECEPTION_DOC'] != NULL && $cptDocManquant == 1)? "" : "style='display:none;'" ).">
-									<button class='cancelDateRecep btn'><i class='icon-remove'></i>&nbsp;Modifier</button>
-								</span>
-								<br/><br/>
 							";
-							$cptDocManquant--;
-                        }
+						}
+						echo "
+							<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$ue['NUM_DOCSMANQUANT']."' ".$disabledTextArea." rows='5' cols='100'>".$ue['DOCMANQUANT']."</textarea>
+							Document(s) réceptionné(s) le 
+							<input ".( (isset($ue['DATE_RECEPTION_DOC']))? $disabledText :"class='date'")." type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".( (isset($ue['DATE_RECEPTION_DOC']))? $dateReceptDoc : "" )."' />
+							&nbsp;
+						";
+						echo "
+							<button class='today btn' ".( ($ue['DATE_RECEPTION_DOC'] != '')? "style='display:none;'" : "" ).">
+								<i class='icon-calendar'></i>&nbsp;Aujourd'hui
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<button class='btn validDocManquant' ".( ($ue['DATE_RECEPTION_DOC'] != '')? "style='display:none;'" : "" ).">
+								<i class='icon-lock'></i>&nbsp;Valider la reception de document
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<span ".( ($ue['DATE_RECEPTION_DOC'] != NULL && $cptDocManquant == 1)? "" : "style='display:none;'" ).">
+								<button class='cancelDateRecep btn'><i class='icon-remove'></i>&nbsp;Modifier</button>
+							</span>
+							<br/><br/>
+						";
+						$cptDocManquant--;
+					}
 					echo "
 						</div>
 						<div id='inputComplet' ".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == 1)? "style='display:none;'" : "" ).">

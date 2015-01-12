@@ -912,14 +912,7 @@ class DossierController extends Zend_Controller_Action
                             $value = null;
                         }
                     }
-/*
-                    if ("INCOMPLET_DOSSIER" == $libelle && 1 == $value) {
-                        //dossier incomplet on enregistre la date du jour dans le champs DATEINCOMPLET
-						$dateIncomplet = Zend_Date::now();
-                        $nouveauDossier->DATEINCOMPLET_DOSSIER = $dateIncomplet->get(Zend_Date::YEAR."-".Zend_Date::MONTH_SHORT."-".Zend_Date::DAY_SHORT);
-						
-                    }
-*/
+
                     if ('AVIS_DOSSIER' == $libelle && 0 == $value) {
                         $value = null;
                     }
@@ -1147,7 +1140,6 @@ class DossierController extends Zend_Controller_Action
             }
 
             if (isset($_POST['docManquant'])) {
-				//comparatif (combien en param et combien en bd pour mise à jour du dernier si besoin)
                 $docManquantArray = array();
                 $dateDocManquantArray = array();
 				$dateDocManquantRecepArray = array();
@@ -1694,7 +1686,7 @@ class DossierController extends Zend_Controller_Action
         $dateDuJour = new Zend_Date();
         $this->view->dateDuJour = $dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 
-                /******
+        /******
         /
         /RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
         /
