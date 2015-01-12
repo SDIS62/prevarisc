@@ -373,11 +373,15 @@ class DossierController extends Zend_Controller_Action
                 $afficheAvis = 0;
             } elseif (!isset($horsDelai) || $horsDelai != 0) {
                 $afficheAvis = 0;
-            } elseif (!isset($npsp) || $npsp != 0) {
+            //} elseif (!isset($npsp) || $npsp != 0) {
+            } elseif (!isset($npsp)) {
                 $afficheAvis = 0;
             } elseif (!isset($differeAvis) || $differeAvis != 0) {
                 $afficheAvis = 0;
-            }
+            } elseif ($this->view->infosDossier['INCOMPLET_DOSSIER'] != 0) {
+                $afficheAvis = 0;
+            } 
+			
             $this->view->afficheAvis = $afficheAvis;
 
             //récuperation des informations sur le créateur du dossier
@@ -849,15 +853,17 @@ class DossierController extends Zend_Controller_Action
                 }
                 $dossierPjEdit->save();
             break;
-            case "showDocManquant":
-                $dbDocManquant = new Model_DbTable_DocManquant();
-                //Si on passe un id dossier en param alors on cherche le dernier champ doc manquant si il existe
-                //On recupere la liste des documents manquant type
-                $this->view->listeDoc = $dbDocManquant->getDocManquant();
-                $this->view->numDocManquant = $this->_getParam('numDoc');
-            break;
         }
     }
+	
+	public function formdocmanquantAction()
+	{
+		$dbDocManquant = new Model_DbTable_DocManquant();
+		//Si on passe un id dossier en param alors on cherche le dernier champ doc manquant si il existe
+		//On recupere la liste des documents manquant type
+		$this->view->listeDoc = $dbDocManquant->getDocManquant();
+		$this->view->numDocManquant = $this->_getParam('numDoc');
+	}
 
     public function savenewAction()
     {
@@ -893,7 +899,7 @@ class DossierController extends Zend_Controller_Action
             foreach ($_POST as $libelle => $value) {
                 //On exclu la lecture de selectNature => select avec les natures;
                 //NUM_DOCURB => input text pour la saisie des doc urba; docUrba & natureId => interpreté après;
-                if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "ABSQUORUM_DOSSIER" && $libelle != "servInst" && $libelle != "servInstVille" && $libelle != "servInstGrp" && $libelle != "repercuterAvis") {
+                if ($libelle != "DATEVISITE_PERIODIQUE" && $libelle != "selectNature" && $libelle != "NUM_DOCURBA" && $libelle != "natureId" && $libelle != "docUrba" && $libelle != 'do' && $libelle != 'idDossier' && $libelle != 'HEUREINTERV_DOSSIER' && $libelle != 'idEtablissement' && $libelle != 'ID_AFFECTATION_DOSSIER_VISITE' && $libelle != 'ID_AFFECTATION_DOSSIER_COMMISSION' && $libelle != "preventionniste" && $libelle != "commissionSelect" && $libelle != "ID_CREATEUR" && $libelle != "HORSDELAI_DOSSIER" && $libelle != "genreInfo" && $libelle != "docManquant" && $libelle != "dateReceptionDocManquant" && $libelle != "dateDocManquant" && $libelle != "ABSQUORUM_DOSSIER" && $libelle != "servInst" && $libelle != "servInstVille" && $libelle != "servInstGrp" && $libelle != "repercuterAvis" && $libelle != "INCOMPLET_DOSSIER") {
                     //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
                     if ("DATEMAIRIE_DOSSIER" == $libelle || "DATESECRETARIAT_DOSSIER" == $libelle || "DATEVISITE_DOSSIER" == $libelle || "DATECOMM_DOSSIER" == $libelle || "DATESDIS_DOSSIER" == $libelle || "DATEPREF_DOSSIER" ==  $libelle || "DATEREP_DOSSIER" ==  $libelle || "DATEREUN_DOSSIER" ==  $libelle || "DATEINTERV_DOSSIER" == $libelle || "DATESIGN_DOSSIER" == $libelle || "DATEINSERT_DOSSIER" == $libelle || "DATEENVTRANSIT_DOSSIER" == $libelle || "ECHEANCIERTRAV_DOSSIER" == $libelle || "DATETRANSFERTCOMM_DOSSIER" == $libelle || "DATERECEPTIONCOMM_DOSSIER" == $libelle) {
                         if ($value) {
@@ -906,13 +912,14 @@ class DossierController extends Zend_Controller_Action
                             $value = null;
                         }
                     }
-
+/*
                     if ("INCOMPLET_DOSSIER" == $libelle && 1 == $value) {
                         //dossier incomplet on enregistre la date du jour dans le champs DATEINCOMPLET
-                            $dateIncomplet = Zend_Date::now();
+						$dateIncomplet = Zend_Date::now();
                         $nouveauDossier->DATEINCOMPLET_DOSSIER = $dateIncomplet->get(Zend_Date::YEAR."-".Zend_Date::MONTH_SHORT."-".Zend_Date::DAY_SHORT);
+						
                     }
-
+*/
                     if ('AVIS_DOSSIER' == $libelle && 0 == $value) {
                         $value = null;
                     }
@@ -1140,10 +1147,11 @@ class DossierController extends Zend_Controller_Action
             }
 
             if (isset($_POST['docManquant'])) {
-                //comparatif (combien en param et combien en bd pour mise à jour du dernier si besoin)
-
+				//comparatif (combien en param et combien en bd pour mise à jour du dernier si besoin)
                 $docManquantArray = array();
                 $dateDocManquantArray = array();
+				$dateDocManquantRecepArray = array();
+				
                 if (isset($_POST['docManquant'])) {
                     foreach ($_POST['docManquant']  as $libelle => $value) {
                         if ($value != "") {
@@ -1155,6 +1163,14 @@ class DossierController extends Zend_Controller_Action
                 if (isset($_POST['dateReceptionDocManquant'])) {
                     foreach ($_POST['dateReceptionDocManquant']  as $libelle => $value) {
                         if ($value != "") {
+                            array_push($dateDocManquantRecepArray, $value);
+                        }
+                    }
+                }
+				
+				if (isset($_POST['dateDocManquant'])) {
+                    foreach ($_POST['dateDocManquant']  as $libelle => $value) {
+                        if ($value != "") {
                             array_push($dateDocManquantArray, $value);
                         }
                     }
@@ -1164,17 +1180,24 @@ class DossierController extends Zend_Controller_Action
                 $nbDateParam = count($dateDocManquantArray);
 
                 $dbDossDocManquant = new Model_DbTable_DossierDocManquant();
-
                 $cpt = 0;
                 foreach ($docManquantArray  as $libelle => $value) {
-                    $docEnC = $dbDossDocManquant->getDocManquantDossNum($idDossier,$cpt);
-                    if ($docEnC && NULL == $docEnC['DATE_DOCSMANQUANT']) {
+					$docEnC = $dbDossDocManquant->getDocManquantDossNum($idDossier,$cpt);
+
+                    if ($docEnC) {
                         $dossDocManquant = $dbDossDocManquant->find($docEnC['ID_DOCMANQUANT'])->current();
                         $dossDocManquant->DOCMANQUANT = $value;
                         if ($nbDateParam > 0 && $cpt < $nbDateParam) {
                             $dateTab = explode("/",$dateDocManquantArray[$cpt]);
                             $value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
-                            $dossDocManquant->DATE_DOCSMANQUANT = $value;
+                            $dossDocManquant->DATE_DOCSMANQUANT = $value;							
+							if(isset($dateDocManquantRecepArray[$cpt]) && $dateDocManquantRecepArray[$cpt] != NULL && $dateDocManquantRecepArray[$cpt] != ''){
+								$dateTabRecep = explode("/",$dateDocManquantRecepArray[$cpt]);
+								$valueRecep = $dateTabRecep[2]."-".$dateTabRecep[1]."-".$dateTabRecep[0];
+								$dossDocManquant->DATE_RECEPTION_DOC = $valueRecep;
+							}else{
+								$dossDocManquant->DATE_RECEPTION_DOC = NULL;
+							}
                         }
                         $dossDocManquant->save();
                     } elseif (!$docEnC) {
@@ -1186,19 +1209,25 @@ class DossierController extends Zend_Controller_Action
                             $dateTab = explode("/",$dateDocManquantArray[$cpt]);
                             $value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
                             $dossDocManquant->DATE_DOCSMANQUANT = $value;
+							if(isset($dateDocManquantRecepArray[$cpt])){
+								$dateTabRecep = explode("/",$dateDocManquantRecepArray[$cpt]);
+								$valueRecep = $dateTabRecep[2]."-".$dateTabRecep[1]."-".$dateTabRecep[0];
+								$dossDocManquant->DATE_RECEPTION_DOC = $valueRecep;
+							}
                         }
                         $dossDocManquant->save();
                     }
 
                     $cpt++;
                 }
-            }
+			}
+			$nouveauDossier->INCOMPLET_DOSSIER = $_POST['INCOMPLET_DOSSIER'];
+			$nouveauDossier->save();
 
             //lorsque je crée un nouveau dossier de VP pour un ERP qui a déjà été visité, il faudrait que les « éléments consultés » de base soient les mêmes
             //Sauvegarde des numéro de document d'urbanisme du dossier
             $DBdossierDocUrba = new Model_DbTable_DossierDocUrba();
             $where = $DBdossierDocUrba->getAdapter()->quoteInto('ID_DOSSIER = ?',  $idDossier);
-            //echo $where);
             $DBdossierDocUrba->delete($where);
 
             if (isset($_POST['docUrba'])) {
@@ -1207,7 +1236,6 @@ class DossierController extends Zend_Controller_Action
                     $saveDocUrba->ID_DOSSIER = $idDossier;
                     $saveDocUrba->NUM_DOCURBA = $value;
                     $saveDocUrba->save();
-                    //echo $value."<br/>";
                 }
             }
 
