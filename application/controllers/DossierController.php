@@ -1027,7 +1027,7 @@ class DossierController extends Zend_Controller_Action
             if ($this->_getParam("AVIS_DOSSIER_COMMISSION") && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)) {
                 $MAJEtab = 0;
 
-                if ($this->_getParam("TYPE_DOSSIER") == 1 && in_array($idNature, array(19, 7))) {
+                if ($this->_getParam("TYPE_DOSSIER") == 1 && in_array($idNature, array(19, 7, 17))) {
                     //Cas d'une étude uniquement dans le cas d'une levée de reserve
                     $MAJEtab = 1;
                 } elseif ($this->_getParam("TYPE_DOSSIER") == 2 && (21 == $idNature || 23 == $idNature || 24 == $idNature || 47 == $idNature)) {
