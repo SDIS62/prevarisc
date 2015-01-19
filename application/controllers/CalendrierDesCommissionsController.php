@@ -102,30 +102,30 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         //Si on prend en compte les heures on récupère uniquement les dossiers n'ayant pas d'heure de passage
         $listeDossiersNonAffect = $dbDossierAffectation->getDossierNonAffect($this->_getParam('dateCommId'));
 
-		$dbDossier = new Model_DbTable_Dossier;
-		$dbDocUrba = new Model_DbTable_DossierDocUrba;
-		$service_etablissement = new Service_Etablissement;
-		$DB_prev = new Model_DbTable_DossierPreventionniste;
-		
-		foreach($listeDossiersNonAffect as $val => $ue)
-		{
-			//On recupere la liste des établissements qui concernent le dossier
-			$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
-			//$listeEtab[0]['ID_ETABLISSEMENT'];
-			//on recupere la liste des infos des établissement
-			
-			if(count($listeEtab) > 0)
-			{
-				$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
-				$listeDossiersNonAffect[$val]['infosEtab'] = $etablissementInfos;
-				$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
-				$listeDossiersNonAffect[$val]['listeDocUrba'] = $listeDocUrba;
+        $dbDossier = new Model_DbTable_Dossier;
+        $dbDocUrba = new Model_DbTable_DossierDocUrba;
+        $service_etablissement = new Service_Etablissement;
+        $DB_prev = new Model_DbTable_DossierPreventionniste;
 
-				$listeDossiersNonAffect[$val]['preventionnistes'] = $DB_prev->getPrevDossier( $ue['ID_DOSSIER'] );
-			}
-		}
+        foreach($listeDossiersNonAffect as $val => $ue)
+        {
+            //On recupere la liste des établissements qui concernent le dossier
+            $listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+            //$listeEtab[0]['ID_ETABLISSEMENT'];
+            //on recupere la liste des infos des établissement
+
+            if(count($listeEtab) > 0)
+            {
+                $etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+                $listeDossiersNonAffect[$val]['infosEtab'] = $etablissementInfos;
+                $listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+                $listeDossiersNonAffect[$val]['listeDocUrba'] = $listeDocUrba;
+
+                $listeDossiersNonAffect[$val]['preventionnistes'] = $DB_prev->getPrevDossier( $ue['ID_DOSSIER'] );
+            }
+        }
 		
-		//Zend_Debug::dump($listeDossiersNonAffect);
+        //Zend_Debug::dump($listeDossiersNonAffect);
 		
         //Gestion de l'affichage de la date de la commission
         $date =  new Zend_Date($infosDateComm['DATE_COMMISSION'],'yyyy-MM-dd');
@@ -1065,11 +1065,13 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
 
 			//on recupere la liste des infos des établissement
-			$etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
-			$listeDossiers[$val]['infosEtab'] = $etablissementInfos;
+                        if (count($listeEtab) > 0) {
+                            $etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+                            $listeDossiers[$val]['infosEtab'] = $etablissementInfos;
 
-			$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
-			$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+                            $listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+                            $listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+                        }
 		}
 
 		$libelleCommune = "";

@@ -8,7 +8,9 @@
     Nous avons été prévenus, nous nous engageons à corriger ce problème dans les plus brefs délais.
 </p>
 
-<?php if (isset($this->exception)): ?>
+<?php if (!$this->showException): ?>
+<!--
+<?php endif ?>
 <div class="well">
     <h3>Exception information:</h3>
     <p>
@@ -23,4 +25,6 @@
     <pre><?php echo $this->escape(var_export($this->request->getParams(), true)) ?>
     </pre>
 </div>
+<?php if (!$this->showException): ?>
+-->
 <?php endif ?>

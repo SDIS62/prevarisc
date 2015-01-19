@@ -187,6 +187,7 @@ class Service_Dashboard
         $search->setItem("dossier");
         $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
         $search->setCriteria("d.VERROU_DOSSIER", 0);
+        $search->order('IFNULL(d.DATEVISITE_DOSSIER, d.DATEINSERT_DOSSIER) desc');
         $dossiers = $search->run(false, null, false)->toArray();
         
         return $dossiers;

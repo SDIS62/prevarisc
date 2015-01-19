@@ -41,6 +41,11 @@ class PieceJointeController extends Zend_Controller_Action
             $this->view->identifiant = $this->_request->id;
             $listePj = $DBused->affichagePieceJointe("datecommissionpj", "datecommissionpj.ID_DATECOMMISSION", $this->_request->id);
         }
+        
+        // Cas par défaut
+        else {
+            $listePj = array();
+        }
 
         // On envoi la liste des PJ dans la vue
         $this->view->listePj = $listePj;
@@ -130,6 +135,11 @@ class PieceJointeController extends Zend_Controller_Action
             // Modèles
             $DBpieceJointe = new Model_DbTable_PieceJointe;
 
+            // Un fichier est-il envoyé ?
+            if (!isset($_FILES['fichier'])) {
+                throw new Exception('Aucun fichier reçu');
+            }
+            
             // Extension du fichier
             $extension = strrchr($_FILES['fichier']['name'], ".");
 
@@ -153,11 +163,8 @@ class PieceJointeController extends Zend_Controller_Action
             // On check si l'upload est okay
             if (!move_uploaded_file($_FILES['fichier']['tmp_name'], $file_path) ) {
                 $nouvellePJ->delete();
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Impossible de charger la pièce jointe',
-                    'message' => ''
-                ));
+                throw new Exception('Impossible de charger la pièce jointe');
+                
             } else {
 
                 // Dans le cas d'un dossier
@@ -238,6 +245,9 @@ class PieceJointeController extends Zend_Controller_Action
                 'title' => 'Erreur lors de l\'ajout de la pièce jointe',
                 'message' => $e->getMessage()
             ));
+            
+            // CALLBACK
+            echo "<script type='text/javascript'>window.top.window.location.reload();</script>";
         }
     }
 

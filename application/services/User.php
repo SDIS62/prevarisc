@@ -174,7 +174,7 @@ class Service_User
             $cache->remove('user_id_' . $user->ID_UTILISATEUR);
 
             // Gestion de l'avatar
-            if($avatar !== null) {
+            if($avatar !== null && isset($avatar["tmp_name"]) && is_file($avatar["tmp_name"])) {
 
                 $path = REAL_DATA_PATH . DS . 'uploads' . DS . 'avatars' . DS;
                 $extension = strtolower(strrchr($avatar['name'], "."));

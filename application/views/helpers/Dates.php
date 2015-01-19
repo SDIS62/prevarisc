@@ -33,7 +33,7 @@
                 $format[] = "%y ".$doPlural($interval->y, "année"); 
             } 
             if($interval->m !== 0) { 
-                $format[] = "%m ".$doPlural($interval->m, "mois"); 
+                $format[] = "%m mois";
             } 
             if($interval->d !== 0) { 
                 $format[] = "%d ".$doPlural($interval->d, "jour"); 

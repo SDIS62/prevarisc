@@ -113,7 +113,7 @@ class Model_DbTable_Groupement extends Zend_Db_Table_Abstract
                         ->joinInner("groupementcommune", "groupementcommune.ID_GROUPEMENT = groupement.ID_GROUPEMENT", null)
                         ->joinInner("groupementtype", "groupementtype.ID_GROUPEMENTTYPE = groupement.ID_GROUPEMENTTYPE", "LIBELLE_GROUPEMENTTYPE")
                         ->where("groupementcommune.NUMINSEE_COMMUNE = '$code_insee'");
-
+                            
         return $this->fetchAll($select)->toArray();
     }
 
@@ -126,6 +126,21 @@ class Model_DbTable_Groupement extends Zend_Db_Table_Abstract
                         ->joinLeft("groupementcommune", "groupementcommune.ID_GROUPEMENT = groupement.ID_GROUPEMENT", null)
                         ->joinLeft("groupementtype", "groupementtype.ID_GROUPEMENTTYPE = groupement.ID_GROUPEMENTTYPE", "LIBELLE_GROUPEMENTTYPE");
 
+        return $this->fetchAll($select)->toArray();
+    }
+    
+    public function getByEtablissement(array $ids_etablissement = array()) {
+        
+        $select = $this	->select()
+                        ->setIntegrityCheck(false)
+                        ->from("etablissementadresse", array("etablissementadresse.ID_ETABLISSEMENT"))
+                        ->joinLeft("groupementcommune", "etablissementadresse.NUMINSEE_COMMUNE = groupementcommune.NUMINSEE_COMMUNE", array(
+                            "groupementcommune.ID_GROUPEMENT", 
+                            "groupementcommune.NUMINSEE_COMMUNE", 
+                        ))
+                        ->where("etablissementadresse.ID_ETABLISSEMENT IN(?)", $ids_etablissement)
+                        ->group(array('etablissementadresse.ID_ETABLISSEMENT', 'groupementcommune.ID_GROUPEMENT'));
+        
         return $this->fetchAll($select)->toArray();
     }
 }

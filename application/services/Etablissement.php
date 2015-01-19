@@ -116,7 +116,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $presence_echeancier = count($dossiers_echeancier) > 0;
 
             // Récupération des établissements liés
-            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 500)->toArray();
 
             // Récupération de l'indicateur de présence d'un DUS
             $contacts_dus = array();
@@ -187,7 +187,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 'types_activites_secondaires' => $model_etablissement->getTypesActivitesSecondaires($informations->ID_ETABLISSEMENTINFORMATIONS),
                 'rubriques' => $DB_rubriques->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS, "ID_ETABLISSEMENTINFORMATIONSRUBRIQUE")->toArray(),
                 'etablissement_lies' => $etablissement_lies,
-                'preventionnistes' => $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $id_etablissement)->run()->getAdapter()->getItems(0, 99999999999)->toArray(),
+                'preventionnistes' => $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $id_etablissement)->run()->getAdapter()->getItems(0, 50)->toArray(),
                 'adresses' => $DB_adresse->get($id_etablissement),
                 'presence_dus' => count($contacts_dus) > 0
             );
@@ -591,7 +591,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
         try {
 
-            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = ($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
+            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = (!isset($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']) && $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
 
             $etablissement = $id_etablissement == null ? $DB_etablissement->createRow() : $DB_etablissement->find($id_etablissement)->current();
 

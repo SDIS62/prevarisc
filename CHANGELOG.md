@@ -22,6 +22,9 @@ Evolutions :
 * Ajout de l'étude Demande d'organisation de manifestation temporaire
 * Ajout de l'heure de visite dans les CR générés
 * Pour les courriers ajout d'un indicateur de réponse / non réponse plutot que l'avis
+* Tri du bloc des dossiers non verrouillés par date de visite desc ou date de création desc si le 1er est null
+* Tri du bloc des courriers sans réponse par date de création desc
+* Optimisations importantes de performances côté ACL sur les sites qui possèdent des fils nombreux avec des adresses, et avec un nombre de groupements géographiques importants : implémentation d'un lazyloader de ressources
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
@@ -34,6 +37,11 @@ Corrections :
 * Correction des tailles des champs max sur le formulaire de modification de contact
 * Correction sur le bloc des VP non effectuées pour 2015
 * Correction du conseil sur la périodicité d'un établissement
+* Correction d'un undefined index "infosEtab" dans gestionodj
+* Correction d'un undefined index "ID_DATECOMMISSION" dans le tableau de bord, bloc des prochaines commissions + lien mort
+* Correction sur des plurieurs dans les durées affichées sur les courriers
+* Correction (patch) sur le mauvais conseil sur les commissions affectés aux établissements (le fonctionnement est à revoir avec des ids)
+* Retrait de la condition empêchant de générer des convocations pour des établissements qui ne sont pas des ERP, cellules ou IGH
 
 ## 2.3
 

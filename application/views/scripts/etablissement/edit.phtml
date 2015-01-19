@@ -520,7 +520,7 @@
                     var preventionnistes = [];
                     var date = new Date($('input[name="date"]').val());
                     var localSommeil = $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]:checked').val();
-                    $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text());
+                    $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text().replace(/ \(.*\)/gi, ""));
                     $('#confirm-modal-periodicite .confirm-modal-input').text($('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val());
                     $('#confirm-modal-localsommeil .confirm-modal-input').text(localSommeil != undefined ? (localSommeil == 1 ? 'Oui' : 'Non') : '' );
                     $('table#preventionnistes tbody tr.preventionniste').each(function(index) { preventionnistes[index] = $(this).find('td').first().find('span').text(); });
@@ -540,7 +540,7 @@
                     }
                     $('#confirm-modal').find('li').removeClass('confirm-modal-hide');
                     $('#confirm-modal').find('li').each(function(index) {
-                        if($(this).find('.confirm-modal-input').text() == $(this).find('.confirm-modal-advisable').text() || $(this).find('.confirm-modal-advisable').text() == '') {
+                        if($(this).find('.confirm-modal-input').text().trim() == $(this).find('.confirm-modal-advisable').text().trim() || $(this).find('.confirm-modal-advisable').text().trim() == '') {
                             $(this).addClass("confirm-modal-hide");
                         }
                     });

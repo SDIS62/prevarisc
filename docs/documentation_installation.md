@@ -80,6 +80,7 @@ PREVARISC_PROXY_PORT | [FACULTATIF] Le port du proxy | Nombres (exemple : 8080)
 PREVARISC_PROXY_USERNAME | [FACULTATIF] Le nom d'utilisateur du proxy si une authentification est nécessaire, laisser vide sinon | Chaine de caractères (exemple : myusername)
 PREVARISC_PROXY_PASSWORD | [FACULTATIF] Le mot de passe du proxy si une authentification est nécessaire, laisser vide sinon | Chaine de caractères (exemple : mypassword)
 PREVARISC_PROXY_REQUEST_FULLURI | [FACULTATIF] Effectuer les requêtes aux proxy en full URI et non relatives | Boolean : true ou false
+PREVARISC_COMMISSION_COMMUNALE_TYPE | [FACULTATIF] Identifiant de l'id du type de commission communale, par défaut "2" | Entier 
 PREVARISC_LOCAL_SOMMEIL_TYPES | [FACULTATIF] Identifiant des types d'activité obligatoirement en local à sommeil séparaés par un ";", par défaut "7;11" | Liste d'entiers séparés par ";"
 PREVARISC_DATASTORE_ADAPTER | [FACULTATIF] Permet de charger un plugin changeant le mode de stockage des pièces jointes établissement, dossier, et commissions | Classe PHP implémentant Plugin_Interface_DataStore
 PREVARISC_REAL_DATA_PATH | [FACULTATIF] Répertoire de stockage des fichiers de prévarisc | Chaine de caractères

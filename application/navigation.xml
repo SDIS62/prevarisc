@@ -753,11 +753,6 @@
                     <controller>dossier</controller>
                     <action>add</action>
                 </add>
-                <general>
-                    <controller>dossier</controller>
-                    <action>general</action>
-                    <privilege>view_doss</privilege>
-                </general>
                 <fonction>
                     <label>Fonction</label>
                     <controller>dossier</controller>
