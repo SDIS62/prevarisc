@@ -72,7 +72,7 @@
         <li>
             <a class="sep" id="<?php echo $idLink; ?>" style='cursor:pointer;'><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
         </li>
-        <?php if (!$verrou) : ?>
+        <?php if (!$verrou && $this->action == 'index') : ?>
             <li>
                 <a href="#" id="rapport"><i class="icon-refresh icon-black"></i> Générer un document</a>
             </li>

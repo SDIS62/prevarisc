@@ -78,68 +78,6 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 				$dossInfos->merge(); 
 			}
 		}
-		
-		try{
-			/*
-			$dossInfos->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
-			if(isset($dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"])){
-				$dossInfos->setVars('communeDossier', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
-			}
-			$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
-
-			$dateComm = new Zend_Date($this->dateComm);	
-			$dossInfos->setVars('dateCommission', $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR), true, 'UTF-8');
-
-			if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"])){
-				$dossInfos ->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-			}else{
-				$dossInfos ->setVars('nomPereEtab', '', true, 'UTF-8');
-			}
-			
-		
-			switch($dossierInfos['AVIS_DOSSIER']){
-				case 1:
-					$avis = "Favorable";
-				break;
-				case 2:
-					$avis = "Défavorable";
-				break;
-				default:
-					$avis = "";
-				break;					
-			}
-			
-			try{
-				$dossInfos->setVars('avisDossier', $avis, true, 'UTF-8');
-			} catch (Exception $e){
-
-			}
-			
-			$dossInfos->setVars('objetDossier', $dossierInfos['OBJET_DOSSIER'], true, 'UTF-8');
-			
-			if(isset($dossierInfos['infosEtab']['informations'])){
-				$dossInfos->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-				$dossInfos->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
-				$dossInfos->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"], true, 'UTF-8');
-			}else{
-				$dossInfos->setVars('nomEtab', "", true, 'UTF-8');
-				$dossInfos->setVars('categorieEtab', "", true, 'UTF-8');
-				$dossInfos->setVars('typeEtab', "", true, 'UTF-8');
-			}
-			
-			$listeDocUrba = "";
-			foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
-				$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
-			}
-			$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
-
-			*/
-
-			//$dossInfos->merge(); 
-			//echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'><a href='/data/uploads/pieces-jointes/".$idPj.".odt' >Le PV : ".$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." (".$dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"].")  a été généré</a></span><br/><br/>";
-		} catch (Exception $e){
-
-		}
 	}
 	$odf->mergeSegment($dossInfos);
 	$nouvellePJ = savePj($this->idComm,"Compte rendu du ");

@@ -330,7 +330,6 @@ class DossierController extends Zend_Controller_Action
         $this->view->dateToday = $today->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 
         $DBdossierCommission = new Model_DbTable_Commission();
-        //$this->view->commissionsInfos = $DBdossierCommission->getAllCommissions();
 
         // Modèle de données
         $model_typesDesCommissions = new Model_DbTable_CommissionType();
@@ -1830,7 +1829,6 @@ class DossierController extends Zend_Controller_Action
         $this->view->preventionnistes = $DBdossierPrev->getPrevDossier($idDossier);
 
         $dbGroupement = new Model_DbTable_Groupement();
-
         $servInstructeur = "";
         $servInstructeurPrenomContact = "";
         $servInstructeurNomContact = "";
