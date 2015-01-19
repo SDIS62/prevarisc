@@ -25,6 +25,7 @@ Evolutions :
 * Tri du bloc des dossiers non verrouillés par date de visite desc ou date de création desc si le 1er est null
 * Tri du bloc des courriers sans réponse par date de création desc
 * Optimisations importantes de performances côté ACL sur les sites qui possèdent des fils nombreux avec des adresses, et avec un nombre de groupements géographiques importants : implémentation d'un lazyloader de ressources
+* Ajout du numéro d'établissement dans le libéllé côté dossier
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
@@ -42,6 +43,8 @@ Corrections :
 * Correction sur des plurieurs dans les durées affichées sur les courriers
 * Correction (patch) sur le mauvais conseil sur les commissions affectés aux établissements (le fonctionnement est à revoir avec des ids)
 * Retrait de la condition empêchant de générer des convocations pour des établissements qui ne sont pas des ERP, cellules ou IGH
+* Correction d'une régression sur la génération de dossiers
+* Correction de libellés côté fiche contact
 
 ## 2.3
 
@@ -71,6 +74,7 @@ Evolutions :
 * Modification de la nomenclature du nom des rapports générés
 * Retrait des variables globales d'exemples de risques naturel : configuration inutile...
 * Mise en surbrillance de l'onglet de la commission dans le calendrier des commissions
+
 
 Corrections :
 
