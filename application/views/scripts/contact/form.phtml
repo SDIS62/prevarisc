@@ -60,10 +60,18 @@
 		</dd>
 		
 		<!-- Téléphone fixe du contact -->
-		<dt>Numéros de téléphone</dt>
+		<dt>Téléphone</dt>
 		<dd>
 			<span><i class='sprite sprite-telephone' ></i> <input type='text' maxlength="20" value='<?php if(isset($this->user_info["TELFIXE_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELFIXE_UTILISATEURINFORMATIONS"] ?>' name='TELFIXE_UTILISATEURINFORMATIONS'/></span><br/>
+		</dd>
+                
+                <dt>Fax</dt>
+		<dd>
 			<span><i class='sprite sprite-printer_empty' ></i> <input type='text' maxlength="20" value='<?php if(isset($this->user_info["TELFAX_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELFAX_UTILISATEURINFORMATIONS"] ?>' name='TELFAX_UTILISATEURINFORMATIONS' /></span><br/>
+		</dd>
+                
+                <dt>Portable</dt>
+		<dd>
 			<span><i class='sprite sprite-phone' ></i> <input type='text' maxlength="20"  value='<?php if(isset($this->user_info["TELPORTABLE_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELPORTABLE_UTILISATEURINFORMATIONS"] ?>' name='TELPORTABLE_UTILISATEURINFORMATIONS' /></span>
 		</dd>
 		
