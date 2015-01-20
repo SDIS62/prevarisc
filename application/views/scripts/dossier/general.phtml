@@ -683,6 +683,48 @@
 		});
 	};
 
+	//Permet la suppression de date(s)
+	$(".suppression").live('click',function(){
+		//permet de supprimer une date dans les cas d'une édition et d'une création
+		if($("#dateCommission").val()){
+			//Dans le cas d'une édition supprime dans la base et raffraichi le calendrier
+			var tabDo = $(this).attr('id').split('_');
+			data = "do=supp_dateCom&idDateComm="+tabDo[2];
+			if(tabDo[2] == $("#dateCommission").val()){
+				//alert($("#listeDates").first("ul[id^=ligne_]").attr('id'));
+				//alert($("#listeDates ul:first").next("ul").attr('id'));
+
+			}
+			$.ajax({
+				data: data,
+				url: "/calendrier-des-commissions/dialogcomm",
+				type:"POST",
+				beforeSend: function(){
+					//Voir pour faire autrement cars il faut detecter avant de cacher la ligne s'il s'agit d'une date père ou non.
+				},
+				success: function(affichageResultat){
+					//alert(affichageResultat);
+					if(affichageResultat == ''){
+						alert('Il est impossible de supprimer cette date. D\'autres dates sont liées à celle-ci.\nUtilisez le bouton prévu à cet effet afin d\'affecter une autre date principale à la commission');
+					}else{
+						$("#listeDates").countLigne('supp','edit');
+						$("#ligne_"+tabDo[2]).fadeOut().remove();
+						$("#calendar").fullCalendar('refetchEvents');
+					}
+				},
+				error: function(){
+					return false;
+				}
+			});
+		}else{
+			//Dans le cas d'une création on retire simplement la ligne
+			$(this).parent().parent().fadeOut().remove();
+			$("#listeDates").countLigne('supp','new');
+		}
+		//compter le nombre de ligne pour autoriser ou non la périodicité
+		return false;
+	});
+
 	// Dialogue standard
 	function my_dialog( url, data, callback ) {
 		// Récupération du contenu de la boite de dialogue
