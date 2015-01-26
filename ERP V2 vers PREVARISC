@@ -1,0 +1,5 @@
+Je procède actuellement à la reprise des données contenues dans l'application ERP V2 vers l'application PREVARISC avec utilisation de la procédure fournie nommée 
+"ETL de ERP 2 vers Prevarisc.doc".
+Je rencontre des difficultés sur la phase de chargement de la base prevarisc MYSQL à partir des données déjà chargées dans la base TAMPON SQL.
+Le package "2.1 Alim habitations.dtsx" tombe en erreur avec erreur d'insert sur la table etablissementinformations pour cause d'erreur avec les FK sur commission et etablissement.
+Merci de votre aide.
