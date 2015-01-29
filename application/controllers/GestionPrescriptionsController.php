@@ -16,6 +16,8 @@ class GestionPrescriptionsController extends Zend_Controller_Action
     {
         $this->_helper->layout->setLayout('menu_admin');
 
+
+
         $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
         $listePrescriptionCat = $dbPrescriptionCat->recupPrescriptionCat();
 
@@ -451,4 +453,66 @@ class GestionPrescriptionsController extends Zend_Controller_Action
     }
 
 	
+    public function gestionTextesAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        //1 On affiche tous les textes accessible dans les prescriptions
+        $service_prescTextes = new Service_Prescriptions();
+
+
+        if ( $this->_request->isPost() ) {
+            try {
+
+                $post = $this->_request->getPost();
+                $service_prescTextes->saveTexte($post);
+
+                if($post['action'] == 'add'){
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'La texte a bien été enregistré'));
+                }else if($post['action'] == 'edit'){
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Modification effectuée.', 'message' => 'La texte a bien été enregistré'));
+                }else if($post['action'] == 'replace'){
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression effectuée.', 'message' => 'Le texte a bien été supprimé'));
+                }
+
+            } catch (Exception $e) {
+                //$this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription ('.$e->getMessage().')'));
+            }
+        }
+
+        $liste_textes = $service_prescTextes->getTextesListe();
+
+        $this->view->liste_textes = $liste_textes;
+        //Zend_Debug::dump($liste_textes);
+    }
+
+    public function gestionTextesAddAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        $this->_helper->viewRenderer->setNoRender();
+        
+        $this->view->action = 'add';
+
+        $this->render('gestion-textes-edit');
+    }
+
+    public function gestionTextesEditAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        
+        $this->view->action = 'edit';
+        
+        $service_prescTextes = new Service_Prescriptions();
+        $texteInfo = $service_prescTextes->getTexte($this->_getParam('id'));
+        $this->view->texteInfo = $texteInfo;
+    }
+
+    public function gestionTextesReplaceAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+
+        $this->view->action = 'replace';
+
+        $service_prescTextes = new Service_Prescriptions();
+        $texteInfo = $service_prescTextes->getTexte($this->_getParam('id'));
+        $this->view->texteInfo = $texteInfo;
+
+        $liste_textes = $service_prescTextes->getTextesListe($this->_getParam('id'));
+        $this->view->liste_textes = $liste_textes;
+    }
 }

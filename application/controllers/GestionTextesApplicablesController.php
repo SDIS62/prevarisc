@@ -49,6 +49,14 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
                 $newRow->save();
             }
 
+            if($this->_getParam("defPrescription") == "yes"){
+                //on enregistre le texte dans la table prescriptiontexteliste
+                $dbPrescTextes = new Model_DbTable_PrescriptionTexteListe;
+                $newTexte = $dbPrescTextes->createRow();
+                $newTexte->LIBELLE_TEXTE = $this->_getParam("libelle");
+                $newTexte->save();
+            }
+
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le texte a bien été sauvegardé',

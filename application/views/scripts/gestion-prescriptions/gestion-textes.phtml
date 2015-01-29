@@ -1,0 +1,40 @@
+<?php
+
+	echo "
+		<div class='row'>
+			<div class='span9' >
+				<a href='/gestion-prescriptions'>Gestion des prescriptions types</a> <i class='icon-chevron-right'></i> Gestion des textes
+			</div>
+			<div class='span3' style='float:right;'>
+				
+			</div>
+		</div>
+		<h3 class='page-header'>
+			Gestion des textes
+		</h3>
+		<div class='row'>
+			<div class='span12' style='text-align:right;'>
+				<a class='btn btn-default' href='/gestion-prescriptions/gestion-textes-add'><i class='icon-plus'></i>&nbsp;Ajouter un texte</a>
+			</div>
+		</div>
+
+		
+		<br/>
+	";
+
+	foreach($this->liste_textes as $texte)
+	{
+		if($texte['ID_TEXTE'] != 1)
+		{
+			echo "
+				<div class='row' >
+					<div class='span2' style='text-align:right;'>
+						".( ($texte['VISIBLE_TEXTE'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."
+						<a class='btn' href='/gestion-prescriptions/gestion-textes-edit/id/".$texte['ID_TEXTE']."' ><i class='icon-pencil'></i>&nbsp;Modifier</a>
+					</div>
+					<div class='span10' >".$texte['LIBELLE_TEXTE']."</div>					
+				</div>
+				<br/>
+			";
+		}
+	}
