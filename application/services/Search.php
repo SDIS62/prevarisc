@@ -83,7 +83,7 @@ class Service_Search
                     $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", substr($cleanLabel, 1), false);
 
                 // on test si la chaine contient uniquement des caractères de type identifiant sans espace
-                } else  if (preg_match('/^[E0-9\/\-\.]+$/', $cleanLabel) === 1) {
+                } else  if (preg_match('/^[E0-9\/\-\.]+([0-9A-Z]{1,2})?$/', $cleanLabel) === 1) {
                     $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", $cleanLabel, false);
                     
                 // cas par défaut

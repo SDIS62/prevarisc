@@ -26,6 +26,7 @@ Evolutions :
 * Tri du bloc des courriers sans réponse par date de création desc
 * Optimisations importantes de performances côté ACL sur les sites qui possèdent des fils nombreux avec des adresses, et avec un nombre de groupements géographiques importants : implémentation d'un lazyloader de ressources
 * Ajout du numéro d'établissement dans le libéllé côté dossier
+* Possibilité de rechercher directement par numéro d'établissement sans le # pour le 29
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
