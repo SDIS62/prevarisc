@@ -608,7 +608,7 @@ class DossierController extends Zend_Controller_Action
                         $listeDateInput = "";
                         foreach ($dateLiees as  $val => $ue) {
                             $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
-
+                            $this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
                             $listeDateValue .= $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
                             $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
                             if ($nbDates > 1) {
@@ -1980,6 +1980,7 @@ class DossierController extends Zend_Controller_Action
         
         foreach ($recupCommLiees as  $val => $ue) {
             $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
+            
             if ($nbDateDecompte == $nbDatesTotal) {
                 //premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
                 $this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];

@@ -206,7 +206,7 @@ class Service_User
         }
         
         $DB_userPreferences = new Model_DbTable_UtilisateurPreferences;
-        $DB_preferences = $DB_userPreferences->find($id_utilisateur)->current();
+        $DB_preferences = $DB_userPreferences->fetchRow(array('ID_UTILISATEUR = ?' => $id_utilisateur));
         
         if (!$DB_preferences)  {
             return false;

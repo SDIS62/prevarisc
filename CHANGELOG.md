@@ -45,6 +45,8 @@ Corrections :
 * Retrait de la condition empêchant de générer des convocations pour des établissements qui ne sont pas des ERP, cellules ou IGH
 * Correction d'une régression sur la génération de dossiers
 * Correction de libellés côté fiche contact
+* Correction de la sauvegarde des préférences utilisateur
+* Correction sur la date de visite sur la modification d'un dossier qui "sautait" à chaque modification
 
 ## 2.3
 
