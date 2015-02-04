@@ -237,7 +237,7 @@ class Service_Search
                 ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))
                 ->join("dossiertype", "dossiertype.ID_DOSSIERTYPE = dossiernatureliste.ID_DOSSIERTYPE", "LIBELLE_DOSSIERTYPE")
                 ->joinLeft(array("e"=>"etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
-                ->join(array("ei" => new Zend_Db_Expr("(SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS), etablissementinformations.* FROM etablissementinformations group by ID_ETABLISSEMENT)")), "e.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT", array("LIBELLE_ETABLISSEMENTINFORMATIONS","ID_ETABLISSEMENT"))
+                ->joinLeft(array("ei" => new Zend_Db_Expr("(SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS), etablissementinformations.* FROM etablissementinformations group by ID_ETABLISSEMENT)")), "e.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT", array("LIBELLE_ETABLISSEMENTINFORMATIONS","ID_ETABLISSEMENT"))
                 ->joinLeft("type","type.ID_TYPE = ei.ID_TYPE",array("ID_TYPE","LIBELLE_TYPE"))
                 ->joinLeft("genre","genre.ID_GENRE = ei.ID_GENRE","LIBELLE_GENRE")
                 ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
