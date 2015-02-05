@@ -910,6 +910,7 @@
 		if($("#do").val() == 'edit'){
 			$("#listeNature").gestionSuppNature();
 		}
+
 		$("#InfosDossier").afficheChamps($("#selectNature").val());
 
 		//Gestion des cas calendrier comm visite en fonction du type de dossier
@@ -1112,12 +1113,12 @@ echo "
 			<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='".$this->idUser."' />
 			".(('edit' == $action) ? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "")."
 			<div id='boutons' style='float: right'>
-                        <button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>
-                        <div id='chargement'></div>
+                <button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>
+                <div id='chargement'></div>
 			</div>
 			<h3>Informations générales</h3>
 			<!-- BEGIN UL Type/Nature -->
-			<h4>Type et natures du dossier</h4>
+			<h4>Type et nature du dossier</h4>
 			<ul class='list unstyled'>
 				<li class='row-fluid' style='margin-bottom:20px;' id='type'>
 					<div class='left libelle span3' style='float:left;'>Type</div>
@@ -1166,9 +1167,9 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Statut du dossier</div>
 					<div class='right value span9'>
 						<select name='ETAT_DOSSIER' id='ETAT_DOSSIER' >
-								<option value='0'>En attente</option>
-								<option value='1'>Validé</option>
-								<option value='2'>Projet abandonné</option>
+							<option value='0'>En attente</option>
+							<option value='1'>Validé</option>
+							<option value='2'>Projet abandonné</option>
 						</select>
 					</div>
 				</li>
@@ -1210,7 +1211,7 @@ echo "
 				<li class='row-fluid' id='NUMDOCURBA' style='".((in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Numéro document d'urbanisme</div>
 					<!--
-					<div class='right value' ".(('new' == $action) ? "style='display:none;'" : "")."></div>
+						<div class='right value' ".(('new' == $action) ? "style='display:none;'" : "")."></div>
 					-->
 					<div class='right form span9'>
 						<div id='listeDocUrba' >
@@ -1316,7 +1317,7 @@ echo "
 						".$this->dateVisiteValue."
 					</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".(($this->dateVisite) ? $this->dateVisiteInput : "")."'  disabled='disabled'/>
+						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".(($this->dateVisite) ? $this->dateVisiteInput : "")."'  readonly='readonly'/>
 						<input type='hidden' name='ID_AFFECTATION_DOSSIER_VISITE' id='ID_AFFECTATION_DOSSIER_VISITE' value='".(($this->idDateVisiteAffect) ? $this->idDateVisiteAffect : "")."' />
 						<button id='showVisite' class='showCalendar btn'".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
 						<button id='hideVisite' class='hideCalendar btn'".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
@@ -1353,7 +1354,7 @@ echo "
 						".$this->dateCommValue.(($this->idDateCommissionAffect != '') ? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='icon-calendar' ></i></a>" : "")."
 					</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".(($this->dateCommInput) ? $this->dateCommInput : "")."' disabled='disabled'/>
+						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".(($this->dateCommInput) ? $this->dateCommInput : "")."' readonly='readonly'/>
 						<input type='hidden' name='ID_AFFECTATION_DOSSIER_COMMISSION' id='ID_AFFECTATION_DOSSIER_COMMISSION' value='".(($this->idDateCommissionAffect) ? $this->idDateCommissionAffect : "")."' />
 						<input type='hidden' name='DATEVISITE_PERIODIQUE' id='DATEVISITE_PERIODIQUE' value='".(($this->dateCommInput) ? $this->dateCommInput : "")."'/>
 						<button id='showCommission' class='showCalendar btn' ".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>

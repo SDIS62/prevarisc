@@ -617,6 +617,7 @@ class DossierController extends Zend_Controller_Action
                             $nbDates--;
                         }
 
+                        $this->view->idDateVisiteAffect = $dateVisite['ID_DATECOMMISSION_AFFECT'];
                         $this->view->dateVisiteValue = $listeDateValue;
                         $this->view->dateVisiteInput = $listeDateInput;
                     }
@@ -741,7 +742,6 @@ class DossierController extends Zend_Controller_Action
             case 'suppDoc':
                 //cas de la suppression d'un document qui avait été renseigné
                 $tabInfos = split("_",$this->_getParam('docInfos'));
-                //echo $tabInfos[0]." et ".$tabInfos[1];
                 $nature = $tabInfos[0];
                 $numdoc = $tabInfos[1];
                 if (count($tabInfos) == 2) {
@@ -915,12 +915,10 @@ class DossierController extends Zend_Controller_Action
                     if ('AVIS_DOSSIER' == $libelle && 0 == $value) {
                         $value = null;
                     }
-                    //echo $this->_getParam('HORSDELAI_DOSSIER');
 
                     if ('' == $value) {
                         $value = null;
                     }
-                    //echo $libelle." - ".$value."<br/>";
 
                     $nouveauDossier->$libelle = $value;
                 }
@@ -970,7 +968,7 @@ class DossierController extends Zend_Controller_Action
 
             $nouveauDossier->save();
 
-            if ($this->_getParam("selectNature") == 21 && $this->_getParam("TYPE_DOSSIER") == 2) {
+            if ( ($this->_getParam("selectNature") == 21 && $this->_getParam("TYPE_DOSSIER") == 2) || $this->_getParam("selectNature") == 26 ){
                 //VISITE PERIODIQUE
                 //Dans le cas d'une visite périodique on renseigne le champ DATEVISITE_DOSSIER pour pouvoir calculer la périodicité suviante
                 if ($this->_getParam('DATEVISITE_PERIODIQUE')) {
@@ -1261,6 +1259,7 @@ class DossierController extends Zend_Controller_Action
                         $infosDateVisite = $dateAffect;
                     }
                 }
+
                 //Partie concernant la date de visite
                 if ($this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') && $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE') != '') {
                     if (isset($infosDateVisite)) {
