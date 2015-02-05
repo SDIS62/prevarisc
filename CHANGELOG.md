@@ -48,6 +48,7 @@ Corrections :
 * Correction de libellés côté fiche contact
 * Correction de la sauvegarde des préférences utilisateur
 * Correction sur la date de visite sur la modification d'un dossier qui "sautait" à chaque modification
+* Correction d'un erreur javascript sans incidence sur la double inclusion de dossiergeneral.js
 
 ## 2.3
 
