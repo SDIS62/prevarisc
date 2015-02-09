@@ -17,7 +17,7 @@ INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `
 INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (60,"Demande de visite de réception",5,11);
 
 # Migration des dossiers existants vers lettre simple
-UPDATE dossiernature SET ID_DOSSIERNATURE = 52 WHERE ID_DOSSIERNATURE IN(34,35,36);
+UPDATE dossiernature SET ID_NATURE = 52 WHERE ID_NATURE IN(34,35,36);
 
 # Suppression des anciennes natures de courrier
 DELETE FROM `dossiernatureliste` WHERE ID_DOSSIERNATURE IN(34,35,36);
