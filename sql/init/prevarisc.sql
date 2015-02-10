@@ -2753,6 +2753,28 @@ INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(4, "Lotis
 INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(5, "Autre");
 UNLOCK TABLES;
 
+-- -----------------------------------------------------
+-- Table`etablissementclassement`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS`etablissementclassement` (
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_CLASSEMENT` INT(11) UNSIGNED NOT NULL,
+  INDEX `fk_etablissementclassement_classement1_idx` (`ID_CLASSEMENT` ASC),
+  INDEX `fk_etablissementclassement_etablissement1_idx` (`ID_ETABLISSEMENT` ASC),
+  PRIMARY KEY (`ID_ETABLISSEMENT`),
+  CONSTRAINT `fk_etablissementclassement_classement1`
+    FOREIGN KEY (`ID_CLASSEMENT`)
+    REFERENCES`classement` (`ID_CLASSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `etablissementclassement_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES`etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 --
 -- Table structure for table `utilisateur`
