@@ -469,10 +469,10 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                     $commEdit = $dbDateCommission->find($this->_getParam('idDateComm'))->current();
                     if ($commEdit->DATECOMMISSION_LIEES == NULL) {
                         //On est sur la date maitre
-                        $dbDateCommission->dateCommUpdateLibelle($this->_getParam('idDateComm'),$this->_getParam('data'));
+                        $dbDateCommission->dateCommUpdateLibelle($this->_getParam('idDateComm'),  addslashes($this->_getParam('data')));
                     } else {
                         //Cas d'une comm liée
-                        $dbDateCommission->dateCommUpdateLibelle($commEdit->DATECOMMISSION_LIEES,$this->_getParam('data'));
+                        $dbDateCommission->dateCommUpdateLibelle($commEdit->DATECOMMISSION_LIEES,addslashes($this->_getParam('data')));
                     }
                     $this->view->libelleDateComm = $this->_getParam('data');
                 break;
@@ -904,8 +904,18 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			//Zend_Debug::dump($commissionInfo);
             $this->view->typeCommission = $commissionInfo['ID_COMMISSIONTYPEEVENEMENT'];
 			//On récupère la liste des dossiers
+            //Suivant si l'on prend en compte les heures ou non on choisi la requete à effectuer
             $dbDateCommPj = new Model_DbTable_DateCommissionPj;
-            $listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
+            
+            if ($commissionInfo['GESTION_HEURES'] == 1) {
+                    //prise en compte heures
+                    $listeDossiers = $dbDateCommPj->getDossiersInfosByHour($dateCommId);
+            } else {
+                    //prise en compte ordre
+                    $listeDossiers = $dbDateCommPj->getDossiersInfosByOrder($dateCommId);
+            }
+            
+            //$listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
 			//Zend_Debug::dump($listeDossiers);
 
 			//Récupération des membres de la commission
@@ -943,6 +953,11 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			//Zend_Debug::dump($listeDossiers);
 			foreach($listeDossiers as $val => $ue)
 			{
+                            $listePrev = $dbDossier->getPreventionnistesDossier($ue['ID_DOSSIER']);
+                            if (count($listePrev) > 0) {
+                                $listeDossiers[$val]['preventionnistes'] = $listePrev;
+                            }
+                            
 				//On recupere la liste des établissements qui concernent le dossier
 				$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
 				//$listeEtab[0]['ID_ETABLISSEMENT'];
@@ -1007,7 +1022,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             $this->view->nomComm = $listeDossiers[0]["LIBELLE_DATECOMMISSION"];
             $this->view->dateComm = $listeDossiers[0]["DATE_COMMISSION"];
             $this->view->heureDeb = $listeDossiers[0]["HEUREDEB_COMMISSION"];
-
+            
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le document a bien été généré',
@@ -1061,17 +1076,22 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
 		foreach($listeDossiers as $val => $ue)
 		{
-			//On recupere la liste des établissements qui concernent le dossier
-			$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+                    
+                    $listePrev = $dbDossier->getPreventionnistesDossier($ue['ID_DOSSIER']);
+                    if (count($listePrev) > 0) {
+                        $listeDossiers[$val]['preventionnistes'] = $listePrev;
+                    }
+                    
+                    //On recupere la liste des établissements qui concernent le dossier
+                    $listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
+                    //on recupere la liste des infos des établissement
+                    if (count($listeEtab) > 0) {
+                        $etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
+                        $listeDossiers[$val]['infosEtab'] = $etablissementInfos;
 
-			//on recupere la liste des infos des établissement
-                        if (count($listeEtab) > 0) {
-                            $etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
-                            $listeDossiers[$val]['infosEtab'] = $etablissementInfos;
-
-                            $listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
-                            $listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
-                        }
+                        $listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
+                        $listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
+                    }
 		}
 
 		$libelleCommune = "";
@@ -1117,6 +1137,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		//Zend_Debug::dump($listeDossiers);
 		$this->view->listeCommunes = $tabCommune;
 		$this->view->dossierComm = $listeDossiers;
+                $this->view->dateComm = $listeDossiers[0]["DATE_COMMISSION"];
 		$this->view->heureDeb = $listeDossiers[0]["HEUREDEB_COMMISSION"];
     }
 
@@ -1236,6 +1257,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$dbDossierContact = new Model_DbTable_DossierContact;
 		foreach($listeDossiers as $val => $ue)
 		{
+                    
 			//On recupere la liste des établissements qui concernent le dossier
 			$listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
 

@@ -76,7 +76,8 @@ foreach($this->informationsMembre as $val => $membre){
 				$dateDuJour = new Zend_Date();
 				setVars($villeODF,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 				
-				$dateComm = new Zend_Date($this->dateComm);				
+                                
+				$dateComm = new Zend_Date($this->dateComm);	
 				setVars($villeODF,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 				
 				$heureCommTab = explode(":",$this->heureDeb);
@@ -252,7 +253,7 @@ function retrieveInfoDossier($segment, $dossierInfos) {
     
     $listePreventioniste = array();
     $listeTelPreventioniste = array();
-    foreach($dossierInfos['infosEtab']["preventionnistes"] as $va => $preventioniste){
+    foreach($dossierInfos["preventionnistes"] as $va => $preventioniste){
 	$listePreventioniste[] = $preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
         $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
     }

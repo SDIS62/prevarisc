@@ -336,4 +336,21 @@
             $search->order("d.DATEINSERT_DOSSIER desc");
             return $search->run(false, null, false)->toArray();   
         }
+        
+        //Fonction qui récup tous les établissements liés au dossier LAST VERSION
+        public function getPreventionnistesDossier($id_dossier)
+        {
+		
+			//retourne la liste des catégories de prescriptions par ordre
+            $select = "
+                SELECT usrinfos.*
+                FROM dossierpreventionniste, utilisateur usr, utilisateurinformations usrinfos
+                WHERE dossierpreventionniste.ID_PREVENTIONNISTE = usr.ID_UTILISATEUR
+                AND usr.ID_UTILISATEURINFORMATIONS = usrinfos.ID_UTILISATEURINFORMATIONS
+                AND dossierpreventionniste.ID_DOSSIER = '".$id_dossier."'
+		GROUP BY usr.ID_UTILISATEUR;
+            ";
+            //echo $select;
+            return $this->getAdapter()->fetchAll($select);
+        }
     }
