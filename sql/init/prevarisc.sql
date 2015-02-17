@@ -2756,8 +2756,9 @@ UNLOCK TABLES;
 -- -----------------------------------------------------
 -- Table`etablissementclassement`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `etablissementclassement`;
 
-CREATE TABLE IF NOT EXISTS`etablissementclassement` (
+CREATE TABLE IF NOT EXISTS `etablissementclassement` (
   `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
   `ID_CLASSEMENT` INT(11) UNSIGNED NOT NULL,
   INDEX `fk_etablissementclassement_classement1_idx` (`ID_CLASSEMENT` ASC),
@@ -2765,12 +2766,12 @@ CREATE TABLE IF NOT EXISTS`etablissementclassement` (
   PRIMARY KEY (`ID_ETABLISSEMENT`),
   CONSTRAINT `fk_etablissementclassement_classement1`
     FOREIGN KEY (`ID_CLASSEMENT`)
-    REFERENCES`classement` (`ID_CLASSEMENT`)
+    REFERENCES `classement` (`ID_CLASSEMENT`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `etablissementclassement_etablissement1`
     FOREIGN KEY (`ID_ETABLISSEMENT`)
-    REFERENCES`etablissement` (`ID_ETABLISSEMENT`)
+    REFERENCES `etablissement` (`ID_ETABLISSEMENT`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
