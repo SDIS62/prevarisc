@@ -50,6 +50,7 @@ Corrections :
 * Correction sur la date de visite sur la modification d'un dossier qui "sautait" à chaque modification
 * Correction d'un erreur javascript sans incidence sur la double inclusion de dossiergeneral.js
 * Correction de l'utilisation de la variable PREVARISC_REAL_DATA_PATH sous Windows Serveur
+* Correction d'un problème sur la recherche de courriers sans établissements rattachés
 
 ## 2.3
 

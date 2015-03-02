@@ -43,7 +43,7 @@
 
     <div class='navbar-form form-search well well-small span12' style='margin-bottom: 5px;'>
             <div class="pull-left input-append">
-                    <input type="text" name='objet' class="input-xlarge search-query" placeholder="Objet du dossier ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
+                <input type="text" name='objet' class="input-xlarge search-query" placeholder="Objet du dossier ..." value="<?php if(isset($_GET["objet"])) echo htmlentities($_GET["objet"]) ?>" />
                     <input type='submit' class="btn" value="Rechercher"  />
                     <input type='hidden' name='page' value="1" />
             </div>
@@ -125,7 +125,7 @@
             </div>
             <div class='row-fluid'>
                 <div class='span4'>
-                    <input type="text" name='permis' class='span12' value='<?php echo isset($_GET["permis"])?$_GET["permis"]:'' ?>' placeholder="Numéro de permis" />
+                    <input type="text" name='permis' class='span12' value="<?php echo isset($_GET["permis"])?htmlentities($_GET["permis"]):'' ?>" placeholder="Numéro de permis" />
                 </div>
                 <div class='span3'>&nbsp;</div>
                 <div class='span5'>
