@@ -14,14 +14,17 @@ if(!$this->edit)
 		$texte = $this->textes[$j];
 		echo "
 			<tr>
-				<td class='span2'>".$texte."</td>
+				<td class='span3'>".$texte."</td>
 				<td class='span2'>".$article."</td>
 		";
 		if($cpt)
 		{
-			echo "<td rowspan='".$nbAssoc."' class='span1 numPresc'>".$this->numPresc."</td>";			
-			echo "<td rowspan='".$nbAssoc."' class='span6'>".nl2br($this->libelle)."</td>";
-			echo "<td class='span1' rowspan='".$nbAssoc."'><button class='edit btn' id='prescDossier_".$this->idPrescriptionDossier."'>Modifier</button></td>";
+			if($this->typePrescDossier != 0){
+				echo "<td rowspan='".$nbAssoc."' class='span1 numPresc'>".$this->numPresc."</td>";			
+			}
+
+			echo "<td rowspan='".$nbAssoc."' class='".( ( $this->typePrescDossier != 0 )? "span5" :"span6" )."'>".nl2br($this->libelle)."</td>";
+			echo "<td class='span1' rowspan='".$nbAssoc."'><button class='btn' id='prescDossier_".$this->idPrescriptionDossier."'>Modifier</button></td>";
 			$cpt = false;
 		}
 		echo "
@@ -35,14 +38,3 @@ if(!$this->edit)
 	echo "</li>";
 
 ?>
-<script type="text/javascript">
-
-$(document).ready(function(){
-	$(".edit").button({
-		icons: {
-			primary: 'ui-icon-pencil'
-		}
-	});
-});
-
-</script>

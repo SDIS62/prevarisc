@@ -6,7 +6,7 @@ if($this->infosDossier['VERROU_DOSSIER'] == 0){
 		&nbsp;&nbsp;
 		<a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'prescription-add'))."' >Ajouter une prescription</a>
 	";
-	if(count($this->prescriptionDossier) == 0){
+	if(count($this->prescriptionExploitation) == 0 && count($this->prescriptionAmelioration) == 0){
 		echo "
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<button class='recupPrescDossier btn' id='recupPrescDossier' >Reprendre les prescriptions d'un dossier précédent</button>
@@ -17,69 +17,108 @@ if($this->infosDossier['VERROU_DOSSIER'] == 0){
 		<div>
 	";
 }
-echo "
-	<ul class='listePrescriptions unstyled'>
-";
 
-$nbPrescDossier = count($this->prescriptionDossier);
-//echo $nbPrescDossier;
-for($i=0; $i < $nbPrescDossier; $i++)
-{
-	if(isset($this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']))
-	{
-		echo "
-			<li class='table-responsive' id='prescriptionDossier_".$this->prescriptionDossier[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none; margin-bottom:15px;'>
-				<table class='table'>
-		";
-		$nbAssoc = count($this->prescriptionDossier[$i]);
-		$cpt = true;
-		for($j=0; $j < $nbAssoc; $j++)
-		{
-			$article = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
-			$texte = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
-			echo "
-				<tr>
-					<td class='span2'>".$texte."</td>
-					<td class='span2'>".$article."</td>
-			";
-			if($cpt)
-			{
-				echo "<td rowspan='".$nbAssoc."' class='span1 numPresc' >".$this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']."</td>";
-				echo "<td rowspan='".$nbAssoc."' class='span6'>";
-				if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
-				{
-					echo nl2br($this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
-				}else{
-					echo nl2br($this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
-				}
-				echo "</td>";
-				echo "
-					<td class='span1' rowspan='".$nbAssoc."'>
-				";
-					if($this->infosDossier['VERROU_DOSSIER'] == 0){
-						echo "
-							<a class='btn' href='".$this->url(array('controller' => 'dossier', 'action' => 'prescription-edit', 'id-prescription' => $this->prescriptionDossier[$i][$j]['ID_PRESCRIPTION_DOSSIER']))."' >Modifier</a>
-						";
-					}
-				echo "
-					</td>";
-				$cpt = false;
-			}
-			echo "
-				</tr>
-			";
-		}
-		echo "
-				</table>
-			</li>
-		";
-	}
-}
-	
 echo "
-		</ul>		
+	<h3>Prescriptions en rappel réglementaire</h3>
+	<div class='row'>
+		<ul id='prescRappelReg' class='listePrescriptions'>
+";
+	echo showPrescription($this->prescriptionReglDossier,$this->id_dossier);
+echo "
+		</ul>
+	</div>
+	<br/>
+	<h3>Prescriptions liées à l'exploitation</h3>
+	<div class='row'>
+		<ul id='prescExploitation' class='listePrescriptions'>
+";
+	echo showPrescription($this->prescriptionExploitation,$this->id_dossier);
+echo "
+		</ul>
+	</div>
+	<br/>
+	<h3>Prescriptions liées à l'amélioration du niveau de sécurité</h3>
+	<div class='row'>
+		<ul id='prescAmelioration' class='listePrescriptions'>
+";
+	echo showPrescription($this->prescriptionAmelioration,$this->id_dossier);
+echo "
+		</ul>
 	</div>
 ";
+
+
+	function showPrescription($tabPrescriptions,$id_dossier)
+	{
+		//Zend_Debug::dump($tabPrescriptions);
+		$listePrescr = $tabPrescriptions;
+		$nbPrescDossier = count($listePrescr);
+
+		if($nbPrescDossier == 0){
+			echo "<div class='span12' style='font-style:italic;'>Actuellement aucune prescription dans cette catégorie</div>";
+		}
+
+		for($i=0; $i < $nbPrescDossier; $i++)
+		{
+			if(isset($listePrescr[$i][0]['ID_PRESCRIPTION_DOSSIER']))
+			{
+				echo "
+					<li class='table-responsive' id='prescriptionDossier_".$listePrescr[$i][0]['ID_PRESCRIPTION_DOSSIER']."' style='list-style-type:none; margin-bottom:15px;'>
+						<table class='table'>
+				";
+				$nbAssoc = count($listePrescr[$i]);
+				$cpt = true;
+				for($j=0; $j < $nbAssoc; $j++)
+				{
+					$article = $listePrescr[$i][$j]['LIBELLE_ARTICLE'];
+					$texte = $listePrescr[$i][$j]['LIBELLE_TEXTE'];
+					echo "
+						<tr>
+							<td class='span3'>".$texte."</td>
+							<td class='span2'>".$article."</td>
+					";
+
+					if($cpt)
+					{
+						if($listePrescr[$i][$j]['TYPE_PRESCRIPTION_DOSSIER'] != 0){
+							echo "
+								<td rowspan='".$nbAssoc."' class='span1 numPresc'>
+									".$listePrescr[$i][0]['NUM_PRESCRIPTION_DOSSIER']."
+								</td>
+							";
+						}
+
+						if($listePrescr[$i][0]["ID_PRESCRIPTION_TYPE"] == null){
+							echo "
+								<td rowspan='".$nbAssoc."' class='".( ( $listePrescr[$i][$j]['TYPE_PRESCRIPTION_DOSSIER'] != 0 )? "span5" :"span6" )."'>
+									".nl2br($listePrescr[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'])."
+								</td>
+							";
+						}else{
+							echo "
+								<td rowspan='".$nbAssoc."' class='".( ( $listePrescr[$i][$j]['TYPE_PRESCRIPTION_DOSSIER'] != 0 )? "span5" :"span6" )."'>
+									".nl2br($listePrescr[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."
+								</td>
+							";
+						}
+						echo "
+							<td class='span1' rowspan='".$nbAssoc."'>
+								<a class='btn' href='/dossier/prescription-edit/id/".$id_dossier."/id-prescription/".$listePrescr[$i][0]['ID_PRESCRIPTION_DOSSIER']."' >Modifier</a>
+							</td>
+						";
+						$cpt = false;
+					}
+					echo "
+						</tr>
+					";
+				}
+				echo "
+						</table>
+					</li>
+				";
+			}
+		}
+	}	//FIN fonction show prescriptions
 
 ?>
 <script type="text/javascript">
@@ -87,10 +126,18 @@ echo "
 $(document).ready(function(){
 
 <?php if($this->infosDossier['VERROU_DOSSIER'] == 0){ ?>
+
+
+
+
+
+
+
 	$(".listePrescriptions").sortable({
 		update: function(event, ui) {
 			var listePrescriptionUpdate = new Array();
 			var num = 1;
+			var listeUpdate = $(this);
 			$(".listePrescriptions > li").each(function(){
 				//on parcour les li pour récolter les changements et mettre à jour dans la base
 				//on change le num de li
@@ -106,7 +153,7 @@ $(document).ready(function(){
 				
 				num = num + 1;
 			});
-			
+
 			$.ajax({
 				url: "/dossier/prescriptionchangepos",
 				data: "do=changePrescOrder&tableUpdate="+listePrescriptionUpdate+"&idDossier="+$("#idDossier").val(),
@@ -122,7 +169,7 @@ $(document).ready(function(){
 					return false;
 				}
 			});
-		}	
+		}
 	});
 <?php } ?>
 //Ajout prescription type
@@ -228,15 +275,20 @@ $(document).ready(function(){
 	$(".add").live('click',function(){
 		var tabId = $(this).attr('id').split('_');
 		var id = tabId[1];
+
+		var typePresc = $("#TYPE_PRESCRIPTION_DOSSIER").val();
 		//alert(id);
 		//On enregistre la prescription associée au dossier puis on integre le tableau retourné dans le li class=listePrescriptions
 
 		$.ajax({
 			type: "POST",
 			url: "/dossier/prescriptionaddtype",
-			data: "&idPrescType="+id+"&idDossier="+$("#idDossier").val(),
+			data: "&idPrescType="+id+"&idDossier="+$("#idDossier").val()+"&typePrescriptionDossier="+typePresc,
+			beforeSend: function(){
+				$("#listePrescriptionType").html("<img src='/images/load.gif' />");
+			},
 			success: function(msg){
-				$(".listePrescriptions").append(msg);
+				window.location = '/dossier/prescription/id/'+$("#idDossier").val();
 			}
 		});
 		return false;	

@@ -1,0 +1,75 @@
+<?php
+	echo "
+		<form name='formTextEdit' id='formTextEdit' action='/gestion-prescriptions/gestion-textes' method='POST'>
+			<input type='hidden' name='id_texte' id='id_texte' value='".$this->texteInfo['ID_TEXTE']."' />
+			<input type='hidden' name='action' id='action' value='".$this->action."' />
+			<div class='row'>
+				<div class='span12' >
+					<a href='/gestion-prescriptions'>Gestion des prescriptions types</a> <i class='icon-chevron-right'></i> <a href='/gestion-prescriptions/gestion-textes'>Gestion des textes</a>
+					<i class='icon-chevron-right'></i>
+	";
+	if($this->action == 'add'){
+		echo "Ajout d'un nouveau texte";
+	}else if($this->action == 'edit'){
+		echo "Modification d'un texte existant";
+	}
+	echo "
+				</div>
+			</div>
+			<h3 class='page-header'>
+	";
+	if($this->action == 'add'){
+		echo "Ajout d'un nouveau texte";
+	}else if($this->action == 'edit'){
+		echo "Modification d'un texte existant";
+	}
+	echo "
+			</h3>
+			<div class='row'>
+				<div class='span12' style='text-align:right;'>
+					<a class='btn btn-default' href='/gestion-prescriptions/gestion-textes'>
+	";
+	if($this->action == 'add'){
+		echo "Retourner à la liste des textes";
+	}else if($this->action == 'edit'){
+		echo "Annuler la modification";
+	}
+	echo "</a>
+					<input type='submit' class='btn btn-success' value='Sauvegarder' />
+				</div>
+			</div>
+			<br/><br/>
+			<div class='row'>
+				<div class='span2'>
+					Libellé du texte
+				</div>
+				<div class='span10'>
+	";
+	echo '
+				<input type="text" name="LIBELLE_TEXTE" id="LIBELLE_TEXTE" value="'.$this->texteInfo['LIBELLE_TEXTE'].'" style="width:100%;"/>
+	';
+	echo "
+				</div>
+			</div>
+			<div class='row'>
+				<div class='span2'>
+					Visibilité du texte
+				</div>
+				<div class='span10'>
+					<select name='VISIBLE_TEXTE'>
+						<option value='1' ".( ($this->texteInfo['VISIBLE_TEXTE'] == 1)? "selected": "" )." >Afficher</option>
+						<option value='0' ".( ($this->texteInfo['VISIBLE_TEXTE'] == 0)? "selected": "" ).">Masquer</option>
+					</select>
+				</div>
+			</div>
+			<br/>
+			<div class='row' ".( ( $this->action != 'edit' )? "style='display:none;'" : "" ).">
+				<div class='span12' style='text-align:center;' >
+					<a class='btn btn-warning' id='del-prescription' href='".$this->url(array('controller'=>'gestion-prescriptions', 'action' => 'gestion-textes-replace'))."'>
+						Supprimer le texte et le remplacer par un autre
+					</a>
+				</div>
+			</div>
+		</form>
+	";
+

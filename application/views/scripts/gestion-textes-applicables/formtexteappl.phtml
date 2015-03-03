@@ -19,8 +19,19 @@ echo "
 		<textarea name='libelle' cols='150' rows='5'>".( ($this->idTexteAppl && $this->texteEdit[0]['LIBELLE_TEXTESAPPL'] != '')? $this->texteEdit[0]['LIBELLE_TEXTESAPPL'] : "" )."</textarea>
 		<hr class='clear'>
 		<select name='visible' id='visible'>
-			<option value='1' ".( ($this->idTexteAppl && $this->texteEdit[0]['VISIBLE_TEXTESAPPL'] == 1)?"selected='selected'": "" ).">Afficher</option>
-			<option value='0' ".( ($this->idTexteAppl && $this->texteEdit[0]['VISIBLE_TEXTESAPPL'] == 0)?"selected='selected'": "" ).">Masquer</option>
+			<option value='1' ".( ($this->idTexteAppl && $this->texteEdit[0]['VISIBLE_TEXTESAPPL'] == 1)? " selected": "" ).">Afficher</option>
+			<option value='0' ".( ($this->idTexteAppl && $this->texteEdit[0]['VISIBLE_TEXTESAPPL'] == 0)? " selected": "" ).">Masquer</option>
 		</select>
+		<br/><br/>
+		Rendre ce texte disponible pour les prescriptions
+		<div class='row'>
+			<div class='span2'>
+				<input type='radio' name='defPrescription' value='yes' />&nbsp;Oui
+			</div>
+			<div class='span2'>
+				<input type='radio' name='defPrescription' value='no' checked />Non
+			</div>
+			<div class='span8'></div>
+		</div>
 	</form>
 ";

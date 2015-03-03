@@ -1,0 +1,109 @@
+<?php
+	echo "
+		<form name='formArticleEdit' id='formArticleEdit' action='/gestion-prescriptions/gestion-articles' method='POST'>
+			<input type='hidden' name='id_article' id='id_article' value='".$this->articleInfo['ID_ARTICLE']."' />
+			<input type='hidden' name='action' id='action' value='".$this->action."' />
+			<div class='row'>
+				<div class='span12' >
+					<a href='/gestion-prescriptions'>Gestion des prescriptions types</a>
+					<i class='icon-chevron-right'></i>
+					<a href='/gestion-prescriptions/gestion-articles'>Gestion des articles</a>
+					<i class='icon-chevron-right'></i>
+					<a href='/gestion-prescriptions/gestion-articles-edit/id/".$this->articleInfo['ID_ARTICLE']."'>Retour à la modification</a>
+					<i class='icon-chevron-right'></i>
+					Remplacer et supprimer un article existant
+				</div>
+			</div>
+			<h3 class='page-header'>
+				Remplacer et supprimer un article existant
+			</h3>
+			<div class='row'>
+				<div class='span10' >
+				</div>
+				<div class='span2' style='text-align:right;'>
+					<a class='btn btn-default' href='".$this->url(array('controller'=>'gestion-prescriptions', 'action' => 'gestion-articles-edit'))."'>Annuler la suppression</a>
+				</div>
+			</div>
+			<br/><br/>
+			<h3>Article que vous allez supprimer</h3>
+			<div style='margin-left:40px;'>
+				<div class='row'>
+					<div class='span1'>
+						Libellé
+					</div>
+					<div class='span11'>
+						".$this->articleInfo['LIBELLE_ARTICLE']."
+					</div>
+				</div>
+				<div class='row'>
+					<div class='span1'>
+						Visibilité
+					</div>
+					<div class='span11'>
+						".( ($this->articleInfo['VISIBLE_ARTICLE'] == '1')? "Visible" : "Masqué")."
+					</div>
+				</div>
+				<span style='color:red;'>(Dans l'ensemble des prescriptions existantes, cet article sera remplacé par celui que vous allez choisir ci-dessous)</span>
+			</div>			
+			<h3>Choisissez dans la liste l'article que vous souhaitez utiliser en remplacement</h3>
+			<div style='margin-left:40px;'>
+	";
+	foreach($this->liste_articles as $article)
+	{
+		if($article['ID_ARTICLE'] != 1)
+		{
+			if($article['ID_ARTICLE'] != $this->articleInfo['ID_ARTICLE'])
+			{
+				echo "
+					<div class='row texteRow' id='texteRow_".$article['ID_ARTICLE']."'>
+						<div class='span12' >
+							<input type='radio' class='texteRadio' name='idArticleReplace' value='".$article['ID_ARTICLE']."' /> ".$article['LIBELLE_ARTICLE']."
+						</div>
+					</div>
+				";
+			}
+		}
+	}
+	echo "
+			</div>
+		<br/><br/>
+		<div  id='confirm' style='display:none;'>
+			<div class='row'>
+				<div class='span6'>
+				</div>
+				<div class='span6' style='text-align:right;'>
+					<span style='color:red;'><i class='icon-exclamation-sign'></i>&nbsp;Cette action est irréversible</span>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='span6'>
+					<a class='btn btn-default' id='cancelTexte'>Choisir un autre texte</a>
+				</div>
+				<div class='span6' style='text-align:right;'>
+					<input type='submit' class='btn btn-danger' value='Supprimer l&#145;article' />
+				</div>
+			</div>
+		</div>
+			
+		</form>
+	";
+?>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    	$(".texteRadio").click(function(){
+    		var idTexte = $(this).val();
+    		$(".texteRow").hide();
+    		$("#texteRow_"+idTexte).show();
+    		$("#confirm").show();
+    		$('html, body').animate({scrollTop:0}, 'slow');
+    	});
+
+    	$("#cancelTexte").click(function(){
+    		$(".texteRadio").prop('checked', false);
+    		$(".texteRow").show();
+    		$("#confirm").hide();
+    	});
+
+    });
+</script>

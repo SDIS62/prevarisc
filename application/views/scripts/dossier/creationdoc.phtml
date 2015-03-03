@@ -88,7 +88,8 @@ try{
             $sep = ", ";
         else
             $sep = " ";
-        $preventionniste->setVars('prenom', $prev['PRENOM_UTILISATEURINFORMATIONS'].$sep, true, 'UTF-8');
+        $preventionniste->setVars('prenom', $prev['PRENOM_UTILISATEURINFORMATIONS'], true, 'UTF-8');
+        $preventionniste->setVars('grade', $prev['GRADE_UTILISATEURINFORMATIONS'].$sep , true, 'UTF-8');
         $preventionniste->merge();
         $nbPrev--;
     }
@@ -173,118 +174,97 @@ try{
 } catch (OdfException $e) {
   
 }
-/*
-//Prescription des dossiers
-$prescription = $odf->setSegment('listePrescription');
-if(isset($dossierInfos['prescription']) && count($dossierInfos['prescription']) > 0){
-	
-	$nbPrescDossier = count($dossierInfos['prescription']);
-	for($i=0; $i < $nbPrescDossier; $i++)
-	{
-		$nbAssoc = count($dossierInfos['prescription'][$i]);
-		$cpt = true;
-		$article = '';
-		$texte = '';
-		$textearticle = '';
-		for($j=0; $j < $nbAssoc; $j++)
-		{
-			$articleT = $dossierInfos['prescription'][$i][$j]['LIBELLE_ARTICLE'];
-			$texteT = $dossierInfos['prescription'][$i][$j]['LIBELLE_TEXTE'];
 
-			if($texteT != ''){
-				$textearticle .= $texteT." - ";
-			}else{
-				$textearticle .= " - ";
-			}
-			
-			if($articleT != ''){
-				$textearticle .= $articleT.", ";
-			}else{
-				$textearticle .= ", ";
-			}
-			if($cpt)
-			{
-				$prescription->setVars('num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-				//$dossInfos->listePrescription->setVars('num',$dossierInfos['prescription'][$i][0]['NUM_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-				if( $dossierInfos['prescription'][$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
-				{
-					$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
-					//$dossInfos->listePrescription->setVars('libelle',$dossierInfos['prescription'][$i][0]['PRESCRIPTIONTYPE_LIBELLE'],true,'UTF-8');
-				}else{
-					$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-					//$dossInfos->listePrescription->setVars('libelle',$dossierInfos['prescription'][$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-				}
-				$cpt = false;
-			}
-		}
-		$prescription->setVars('textearticle',$textearticle,true,'UTF-8');
-		 $odf->mergeSegment($prescription);	
-		//$dossInfos->listePrescription->setVars('textearticle',$textearticle,true,'UTF-8');
-		//$dossInfos->listePrescription->merge();
-	}
-
-}else{
-	$prescription->setVars('num','',true,'UTF-8');
-	$prescription->setVars('libelle','',true,'UTF-8');
-	$prescription->setVars('textearticle','',true,'UTF-8');
-	 $odf->mergeSegment($prescription);	
-}
-
-*/
 // PARTIE PRESCRIPTION
-try{
-    $nbPrescDossier = count($this->prescriptionDossier);
-    $prescription = $odf->setSegment('listePrescription');
-    for($i=0; $i < $nbPrescDossier; $i++)
-    {
-		$nbAssoc = count($this->prescriptionDossier[$i]);
-		$cpt = true;
-		$article = '';
-		$texte = '';
-		$textearticle = '';
-		for($j=0; $j < $nbAssoc; $j++)
-		{
-			$articleT = $this->prescriptionDossier[$i][$j]['LIBELLE_ARTICLE'];
-			$texteT = $this->prescriptionDossier[$i][$j]['LIBELLE_TEXTE'];
+function addPrescription($listePrescription,$type,$odf){
+    //Zend_Debug::dump($listePrescription);
 
-			if($texteT != ''){
-				$textearticle .= $texteT." - ";
-			}else{
-				$textearticle .= " - ";
-			}
-			if($nbAssoc > 1){
-				if($articleT != ''){
-					$textearticle .= $articleT.", ";
-				}else{
-					$textearticle .= ", ";
-				}
-			}else{
-				if($articleT != ''){
-					$textearticle .= $articleT." ";
-				}else{
-					$textearticle .= " ";
-				}
-			}
-			if($cpt)
-			{
-				$prescription->setVars('num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-				if( $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
-				{
-					$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
-				}else{
-					$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-				}
-				$cpt = false;
-			}
-			$nbAssoc--;
-		}
-		$prescription->setVars('textearticle',$textearticle,true,'UTF-8');
-		$prescription->merge();
+    //TYPE_PRESCRIPTION_DOSSIER
+    try{
+
+        if($type == 0){
+            $prescription = $odf->setSegment('listeRappelReg');
+        }else if ($type == 1){
+            $prescription = $odf->setSegment('listeExploitation');
+        }else if ($type == 2){
+            $prescription = $odf->setSegment('listeAmelioration');
+        }
+
+
+        $nbPrescDossier = count($listePrescription);
+        //echo "type : - ".$type."nb presc".$nbPrescDossier."<br/>";
+        if($nbPrescDossier)
+        {
+            for($i=0; $i < $nbPrescDossier; $i++)
+            {
+                $nbAssoc = count($listePrescription[$i]);
+                $cpt = true;
+                $article = '';
+                $texte = '';
+                $textearticle = '';
+                for($j=0; $j < $nbAssoc; $j++)
+                {
+                    $articleT = $listePrescription[$i][$j]['LIBELLE_ARTICLE'];
+                    $texteT = $listePrescription[$i][$j]['LIBELLE_TEXTE'];
+
+                    if($texteT != ''){
+                        $textearticle .= $texteT." - ";
+                    }else{
+                        $textearticle .= " - ";
+                    }
+                    if($nbAssoc > 1){
+                        if($articleT != ''){
+                            $textearticle .= $articleT.", ";
+                        }else{
+                            $textearticle .= ", ";
+                        }
+                    }else{
+                        if($articleT != ''){
+                            $textearticle .= $articleT." ";
+                        }else{
+                            $textearticle .= " ";
+                        }
+                    }
+                    if($cpt)
+                    {
+                        if($type != 0){
+                            $prescription->setVars('num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+                        }
+
+                        if( $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
+                        {
+                            $prescription->setVars('libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
+                        }else{
+                            $prescription->setVars('libelle', $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+                        }
+                        $cpt = false;
+                    }
+                    $nbAssoc--;
+                }
+                $prescription->setVars('textearticle',$textearticle,true,'UTF-8');
+                $prescription->merge();
+            }
+
+        }else{
+            //echo "ploip";
+            if($type != 0){
+                $prescription->setVars('num', '', true, 'UTF-8');
+            }
+            $prescription->setVars('libelle', '', true, 'UTF-8');
+            $prescription->setVars('textearticle','',true,'UTF-8');
+            $prescription->merge();
+        }
+        $odf->mergeSegment($prescription);
+    } catch (OdfException $e) {
+      
     }
-    $odf->mergeSegment($prescription);	
-} catch (OdfException $e) {
-  
+
 }
+
+
+addPrescription($this->prescriptionReglDossier,0,$odf);
+addPrescription($this->prescriptionExploitation,1,$odf);
+addPrescription($this->prescriptionAmelioration,2,$odf);
 
 //PARTIE TEXTE APPLICABLE
 try{

@@ -1,0 +1,16 @@
+<?php
+	echo "<div id='infosIncomplet_".$this->numDocManquant."' >";
+	echo "Dossier incomplet le <input class='date' type='text' name='dateDocManquant[]' id='dateDocManquant_".$this->numDocManquant."' value='".$this->dateDay."'/>&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>";
+	echo "&nbsp;&nbsp;&nbsp;<button class='btn cancelIncomplet' id='cancelIncomplet_".$this->numDocManquant."'><i class='icon-remove'></i>&nbsp;Annuler</button>";
+	echo "<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$this->numDocManquant."' rows='5' cols='100'>";
+	foreach($this->listeDoc as $val => $ue)
+	{
+		echo $ue['LIBELLE_DOCMANQUANT']."\n";
+	}
+	echo "</textarea>";
+	
+	echo "Date de réception des pièces <input class='date' type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$this->numDocManquant."' />&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>";
+	echo "&nbsp;&nbsp;&nbsp;<button class='btn validDocManquant'><i class='icon-lock'></i>&nbsp;Valider la reception de document</button>";
+	
+	echo "</div>";
+?>

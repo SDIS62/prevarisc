@@ -10,6 +10,8 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         $ajaxContext->addActionContext('selectiontexte', 'json')
                         ->addActionContext('selectionarticle', 'json')
                         ->initContext();
+
+        $this->_helper->layout->setLayout('menu_admin');
     }
 
     public function indexAction()
@@ -450,5 +452,194 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         }
     }
 
+
+/* GESTION DES TEXTES */
 	
+    public function gestionTextesAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        $service_prescTextes = new Service_Prescriptions();
+        if ( $this->_request->isPost() ) {
+            try {
+                $post = $this->_request->getPost();
+                if($post['action'] == 'add'){
+                    $service_prescTextes->saveTexte($post);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'La texte a bien été enregistré'));
+                }else if($post['action'] == 'edit'){
+                    $service_prescTextes->saveTexte($post,$post['id_texte']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Modification effectuée.', 'message' => 'La texte a bien été enregistré'));
+                }else if($post['action'] == 'replace'){
+                    $service_prescTextes->replaceTexte($post['id_texte'],$post['idTexteReplace']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression effectuée.', 'message' => 'Le texte a bien été supprimé'));
+                }
+
+            } catch (Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription ('.$e->getMessage().')'));
+            }
+        }
+
+        $liste_textes = $service_prescTextes->getTextesListe();
+
+        $this->view->liste_textes = $liste_textes;
+        //Zend_Debug::dump($liste_textes);
+    }
+
+    public function gestionTextesAddAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        $this->_helper->viewRenderer->setNoRender();
+        
+        $this->view->action = 'add';
+
+        $this->render('gestion-textes-edit');
+    }
+
+    public function gestionTextesEditAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        
+        $this->view->action = 'edit';
+        
+        $service_prescTextes = new Service_Prescriptions();
+        $texteInfo = $service_prescTextes->getTexte($this->_getParam('id'));
+        $this->view->texteInfo = $texteInfo;
+    }
+
+    public function gestionTextesReplaceAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+
+        $this->view->action = 'replace';
+
+        $service_prescTextes = new Service_Prescriptions();
+        $texteInfo = $service_prescTextes->getTexte($this->_getParam('id'));
+        $this->view->texteInfo = $texteInfo;
+
+        $liste_textes = $service_prescTextes->getTextesListe($this->_getParam('id'));
+        $this->view->liste_textes = $liste_textes;
+    }
+
+
+/* GESTION DES ARTICLES */
+
+    public function gestionArticlesAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        //1 On affiche tous les textes accessible dans les prescriptions
+        $service_prescription = new Service_Prescriptions();
+
+
+        if ( $this->_request->isPost() ) {
+            try {
+                $post = $this->_request->getPost();
+                if($post['action'] == 'add'){
+                    $service_prescription->saveArticle($post);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'L\'article a bien été enregistré'));
+                }else if($post['action'] == 'edit'){
+                    $service_prescription->saveArticle($post,$post['id_article']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Modification effectuée.', 'message' => 'L\'article a bien été enregistré'));
+                }else if($post['action'] == 'replace'){
+                    $service_prescription->replaceArticle($post['id_article'],$post['idArticleReplace']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression effectuée.', 'message' => 'L\'article a bien été supprimé'));
+                }
+
+            } catch (Exception $e) {
+                //$this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription ('.$e->getMessage().')'));
+            }
+        }
+
+        $liste_articles = $service_prescription->getArticlesListe();
+
+        $this->view->liste_articles = $liste_articles;
+        //Zend_Debug::dump($liste_textes);
+    }
+
+    public function gestionArticlesAddAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        $this->_helper->viewRenderer->setNoRender();
+        
+        $this->view->action = 'add';
+
+        $this->render('gestion-articles-edit');
+    }
+
+    public function gestionArticlesEditAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        
+        $this->view->action = 'edit';
+        
+        $service_prescription = new Service_Prescriptions();
+        $articleInfo = $service_prescription->getArticle($this->_getParam('id'));
+        $this->view->articleInfo = $articleInfo;
+    }
+
+    public function gestionArticlesReplaceAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+
+        $this->view->action = 'replace';
+
+        $service_prescription = new Service_Prescriptions();
+        $articleInfo = $service_prescription->getArticle($this->_getParam('id'));
+        $this->view->articleInfo = $articleInfo;
+
+        $liste_articles = $service_prescription->getArticlesListe();
+        $this->view->liste_articles = $liste_articles;
+    }
+
+/* GESTION DES RAPPELS REGLEMENTAIRES */
+
+    public function gestionRappelRegAction(){
+        $service_prescription = new Service_Prescriptions();
+        
+        if ($this->_request->isPost()) {
+                $post = $this->_request->getPost();
+
+                if($post['action'] == 'add'){
+                    $service_prescription->savePrescription($post);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'Le rappel réglementaire a bien été enregistré'));
+                }else if($post['action'] == 'edit'){
+                    $service_prescription->savePrescription($post,$post['idPrescription']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Rappel réglementaire modifié.', 'message' => 'Le rappel réglementaire a bien été modifié'));
+                }
+        }
+
+        $this->view->listePrescEtude = $service_prescription->getPrescriptions('etude');
+        $this->view->listePrescVisite = $service_prescription->getPrescriptions('visite');        
+    }
+
+    public function gestionRappelRegAddAction(){
+        $this->_forward('prescription-form');
+
+        //On envoi à la vue l'ensemble des textes et articles
+        $dbTexte = new Model_DbTable_PrescriptionTexteListe();
+        $this->view->listeTextes = $dbTexte->getAllTextes();
+        $dbArticle = new Model_DbTable_PrescriptionArticleListe();
+        $this->view->listeArticles = $dbArticle->getAllArticles();
+
+        $this->view->action = 'add';
+        $this->view->typeAction = 'rappel-reg';
+    }
+
+    public function gestionRappelRegEditAction(){
+        $this->_forward('prescription-form');
+
+        $dbTexte = new Model_DbTable_PrescriptionTexteListe();
+        $dbArticle = new Model_DbTable_PrescriptionArticleListe();
+
+        $this->view->listeTextes = $dbTexte->getAllTextes();
+        $this->view->listeArticles = $dbArticle->getAllArticles();
+
+        
+        $idPrescription = $this->_getParam('id');
+        $typeAction = 'rappel-reg';
+
+        $service_prescription = new Service_Prescriptions();        
+        $prescriptionInfo = $service_prescription->getPrescriptionInfo($this->_getParam('id'),$typeAction);
+
+        $this->view->infosPrescription = $prescriptionInfo;
+        $this->view->idPrescription = $idPrescription;
+        $this->view->action = 'edit';
+        $this->view->typeAction = $typeAction;
+        $this->view->libelle = $prescriptionInfo[0]["PRESCRIPTIONREGL_LIBELLE"];
+    }
+/* FORMULAIRE DE PRESCRIPTIONS */
+    
+    public function prescriptionFormAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+    }
 }

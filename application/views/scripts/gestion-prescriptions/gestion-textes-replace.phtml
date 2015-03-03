@@ -1,0 +1,109 @@
+<?php
+	echo "
+		<form name='formTextEdit' id='formTextEdit' action='/gestion-prescriptions/gestion-textes' method='POST'>
+			<input type='hidden' name='id_texte' id='id_texte' value='".$this->texteInfo['ID_TEXTE']."' />
+			<input type='hidden' name='action' id='action' value='".$this->action."' />
+			<div class='row'>
+				<div class='span12' >
+					<a href='/gestion-prescriptions'>Gestion des prescriptions types</a>
+					<i class='icon-chevron-right'></i>
+					<a href='/gestion-prescriptions/gestion-textes'>Gestion des textes</a>
+					<i class='icon-chevron-right'></i>
+					<a href='/gestion-prescriptions/gestion-textes-edit/id/".$this->texteInfo['ID_TEXTE']."'>Retour à la modification</a>
+					<i class='icon-chevron-right'></i>
+					Remplacer et supprimer un texte existant
+				</div>
+			</div>
+			<h3 class='page-header'>
+				Remplacer et supprimer un texte existant
+			</h3>
+			<div class='row'>
+				<div class='span10' >
+				</div>
+				<div class='span2' style='text-align:right;'>
+					<a class='btn btn-default' href='".$this->url(array('controller'=>'gestion-prescriptions', 'action' => 'gestion-textes-edit'))."'>Annuler la suppression</a>
+				</div>
+			</div>
+			<br/><br/>
+			<h3>Texte que vous allez supprimer</h3>
+			<div style='margin-left:40px;'>
+				<div class='row'>
+					<div class='span1'>
+						Libellé
+					</div>
+					<div class='span11'>
+						".$this->texteInfo['LIBELLE_TEXTE']."
+					</div>
+				</div>
+				<div class='row'>
+					<div class='span1'>
+						Visibilité
+					</div>
+					<div class='span11'>
+						".( ($this->texteInfo['VISIBLE_TEXTE'] == '1')? "Visible" : "Masqué")."
+					</div>
+				</div>
+				<span style='color:red;'>(Dans l'ensemble des prescriptions existantes, ce texte sera remplacé par celui que vous allez choisir ci-dessous)</span>
+			</div>			
+			<h3>Choisissez dans la liste le texte que vous souhaitez utiliser en remplacement</h3>
+			<div style='margin-left:40px;'>
+	";
+	foreach($this->liste_textes as $texte)
+	{
+		if($texte['ID_TEXTE'] != 1)
+		{
+			if($texte['ID_TEXTE'] != $this->texteInfo['ID_TEXTE'])
+			{
+				echo "
+					<div class='row texteRow' id='texteRow_".$texte['ID_TEXTE']."'>
+						<div class='span12' >
+							<input type='radio' class='texteRadio' name='idTexteReplace' value='".$texte['ID_TEXTE']."' /> ".$texte['LIBELLE_TEXTE']."
+						</div>
+					</div>
+				";
+			}
+		}
+	}
+	echo "
+			</div>
+		<br/><br/>
+		<div  id='confirm' style='display:none;'>
+			<div class='row'>
+				<div class='span6'>
+				</div>
+				<div class='span6' style='text-align:right;'>
+					<span style='color:red;'><i class='icon-exclamation-sign'></i>&nbsp;Cette action est irréversible</span>
+				</div>
+			</div>
+			<div class='row'>
+				<div class='span6'>
+					<a class='btn btn-default' id='cancelTexte'>Choisir un autre texte</a>
+				</div>
+				<div class='span6' style='text-align:right;'>
+					<input type='submit' class='btn btn-danger' value='Supprimer le texte' />
+				</div>
+			</div>
+		</div>
+			
+		</form>
+	";
+?>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    	$(".texteRadio").click(function(){
+    		var idTexte = $(this).val();
+    		$(".texteRow").hide();
+    		$("#texteRow_"+idTexte).show();
+    		$("#confirm").show();
+    		$('html, body').animate({scrollTop:0}, 'slow');
+    	});
+
+    	$("#cancelTexte").click(function(){
+    		$(".texteRadio").prop('checked', false);
+    		$(".texteRow").show();
+    		$("#confirm").hide();
+    	});
+
+    });
+</script>
