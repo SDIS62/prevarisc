@@ -1171,6 +1171,14 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			$listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
 			$listeDossiers[$val]['listeDocUrba'] = $listeDocUrba;
 
+            $service_dossier = new Service_Dossier();
+            $listeDossiers[$val]['prescriptionReglDossier'] = $service_dossier->getPrescriptions((int) $ue['ID_DOSSIER'],0);
+            $listeDossiers[$val]['prescriptionExploitation'] = $service_dossier->getPrescriptions((int) $ue['ID_DOSSIER'],1);
+            $listeDossiers[$val]['prescriptionAmelioration'] = $service_dossier->getPrescriptions((int) $ue['ID_DOSSIER'],2);
+
+
+
+/*
 			//on recupere les prescriptions du dossier
 			$dbPrescDossier = new Model_DbTable_PrescriptionDossier;
 			$listePrescDossier = $dbPrescDossier->recupPrescDossier($ue['ID_DOSSIER']);
@@ -1190,8 +1198,10 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 				}
 			}
 			$listeDossiers[$val]['prescription'] = $prescriptionArray;
+*/
 		}
 		$this->view->dossierComm = $listeDossiers;
+        //Zend_Debug::dump($this->view->dossierComm);
     }
 
 	public function generationcompterenduAction()

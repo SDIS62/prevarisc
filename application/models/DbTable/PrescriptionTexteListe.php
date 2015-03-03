@@ -5,20 +5,22 @@ class Model_DbTable_PrescriptionTexteListe extends Zend_Db_Table_Abstract
     protected $_name="prescriptiontexteliste"; // Nom de la base
     protected $_primary = "ID_TEXTE"; // Clé primaire
 	
-	public function getAllTextes()
+	public function getAllTextes($visible = null)
 	{
-		//retourne la liste des catégories de prescriptions par ordre
 		$select = $this->select()
 			 ->setIntegrityCheck(false)
-             ->from(array('ptl' => 'prescriptiontexteliste'))
-			 ->order("ptl.LIBELLE_TEXTE");
+             ->from(array('ptl' => 'prescriptiontexteliste'));
+		
+		if($visible != null)
+			$select->where("VISIBLE_TEXTE = ?", $visible);
+
+		$select->order("ptl.LIBELLE_TEXTE");
 			 
 		return $this->getAdapter()->fetchAll($select);
 	}
 
 	public function getTexte($idTexte)
 	{
-		//retourne la liste des catégories de prescriptions par ordre
 		$select = $this->select()
 			 ->setIntegrityCheck(false)
              ->where("ID_TEXTE = ?",$idTexte);
@@ -32,6 +34,7 @@ class Model_DbTable_PrescriptionTexteListe extends Zend_Db_Table_Abstract
 		//MAJ des id des textes dans les tables : prescriptiondossierassoc, prescriptiontypeassoc
 		$this->getAdapter()->update('prescriptiondossierassoc',$data,$where);
 		$this->getAdapter()->update('prescriptiontypeassoc',$data,$where);
+		$this->getAdapter()->update('prescriptionreglassoc',$data,$where);
 		//Suppression du texte
 		$this->delete("ID_TEXTE = " . $idOldTexte);
 	}

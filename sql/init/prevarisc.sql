@@ -942,6 +942,7 @@ CREATE TABLE `dossierdocmanquant` (
   `NUM_DOCSMANQUANT` varchar(45) NOT NULL,
   `DOCMANQUANT` text,
   `DATE_DOCSMANQUANT` date DEFAULT NULL,
+  `DATE_RECEPTION_DOC` date DEFAULT NULL,
   PRIMARY KEY (`ID_DOCMANQUANT`),
   UNIQUE KEY `ID_DOCMANQUANT_UNIQUE` (`ID_DOCMANQUANT`),
   KEY `fk_dossierdocmanquant_dossier1_idx` (`ID_DOSSIER`),
@@ -2155,6 +2156,7 @@ DROP TABLE IF EXISTS `prescriptionarticleliste`;
 CREATE TABLE `prescriptionarticleliste` (
   `ID_ARTICLE` bigint(20) NOT NULL AUTO_INCREMENT,
   `LIBELLE_ARTICLE` varchar(255) NOT NULL,
+  `VISIBLE_ARTICLE` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`ID_ARTICLE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2205,6 +2207,7 @@ CREATE TABLE `prescriptiondossier` (
   `NUM_PRESCRIPTION_DOSSIER` int(11) NOT NULL,
   `ID_PRESCRIPTION_TYPE` bigint(20) DEFAULT NULL,
   `LIBELLE_PRESCRIPTION_DOSSIER` text,
+  `TYPE_PRESCRIPTION_DOSSIER` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`ID_PRESCRIPTION_DOSSIER`),
   UNIQUE KEY `ID_PRESCRIPTION_DOSSIER_UNIQUE` (`ID_PRESCRIPTION_DOSSIER`),
   KEY `fk_prescriptiondossier_dossier1_idx` (`ID_DOSSIER`),
@@ -2285,6 +2288,7 @@ DROP TABLE IF EXISTS `prescriptiontexteliste`;
 CREATE TABLE `prescriptiontexteliste` (
   `ID_TEXTE` bigint(20) NOT NULL AUTO_INCREMENT,
   `LIBELLE_TEXTE` varchar(255) NOT NULL,
+  `VISIBLE_TEXTE` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`ID_TEXTE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2810,3 +2814,37 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2014-06-21 20:53:01
+
+
+-- -----------------------------------------------------
+-- Table`prescriptionregl`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `prescriptionregl` (
+  `ID_PRESCRIPTIONREGL` bigint(20) NOT NULL AUTO_INCREMENT,
+  `PRESCRIPTIONREGL_TYPE` tinyint(1) DEFAULT NULL,
+  `PRESCRIPTIONREGL_LIBELLE` text,
+  `PRESCRIPTIONREGL_VISIBLE` tinyint(1) DEFAULT 1,
+  PRIMARY KEY (`ID_PRESCRIPTIONREGL`)
+) 
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
+-- Table`prescriptionreglassoc`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `prescriptionreglassoc` (
+  `ID_PRESCRIPTIONREGL` bigint(20) NOT NULL,
+  `NUM_PRESCRIPTIONASSOC` int(11) NOT NULL,
+  `ID_TEXTE` bigint(20) NOT NULL,
+  `ID_ARTICLE` bigint(20) NOT NULL,
+  INDEX `fk_prescriptionreglassoc_prescriptionregl1_idx` (`ID_PRESCRIPTIONREGL`),
+  PRIMARY KEY (`ID_PRESCRIPTIONREGL`,`NUM_PRESCRIPTIONASSOC`),
+  CONSTRAINT `fk_prescriptionreglassoc_prescriptionregl1` 
+    FOREIGN KEY (`ID_PRESCRIPTIONREGL`)
+    REFERENCES `prescriptionregl` (`ID_PRESCRIPTIONREGL`) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;

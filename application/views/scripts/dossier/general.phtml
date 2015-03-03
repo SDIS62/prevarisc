@@ -1457,6 +1457,7 @@ echo "
 					";
 
 					$cptDocManquant = count($this->listeDocManquant);
+					//Zend_Debug::dump($this->listeDocManquant);
 					foreach ($this->listeDocManquant as $val => $ue) {
 						if ($ue['DATE_DOCSMANQUANT'] != '') {
 							$date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);

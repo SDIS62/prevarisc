@@ -1,5 +1,90 @@
 <?php
 
+// PARTIE PRESCRIPTION
+function addPrescription($listePrescription,$type,$odf){
+    //TYPE_PRESCRIPTION_DOSSIER
+    try{
+
+        if($type == 0){
+            $prescription = $odf->listeRappelReg;
+        }else if ($type == 1){
+            $prescription = $odf->listeExploitation;
+        }else if ($type == 2){
+            $prescription = $odf->listeAmelioration;
+        }
+
+        $nbPrescDossier = count($listePrescription);
+        
+        if($nbPrescDossier)
+        {
+            for($i=0; $i < $nbPrescDossier; $i++)
+            {
+                $nbAssoc = count($listePrescription[$i]);
+                $cpt = true;
+                $article = '';
+                $texte = '';
+                $textearticle = '';
+                for($j=0; $j < $nbAssoc; $j++)
+                {
+                    $articleT = $listePrescription[$i][$j]['LIBELLE_ARTICLE'];
+                    $texteT = $listePrescription[$i][$j]['LIBELLE_TEXTE'];
+
+                    if($texteT != ''){
+                        $textearticle .= $texteT." - ";
+                    }else{
+                        $textearticle .= " - ";
+                    }
+                    if($nbAssoc > 1){
+                        if($articleT != ''){
+                            $textearticle .= $articleT.", ";
+                        }else{
+                            $textearticle .= ", ";
+                        }
+                    }else{
+                        if($articleT != ''){
+                            $textearticle .= $articleT." ";
+                        }else{
+                            $textearticle .= " ";
+                        }
+                    }
+                    if($cpt)
+                    {
+                        if($type != 0){
+                            $prescription->setVars('num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+                        }
+
+                        if( $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
+                        {
+                            $prescription->setVars('libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
+                        }else{
+                            $prescription->setVars('libelle', $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+                        }
+                        $cpt = false;
+                    }
+                    $nbAssoc--;
+                }
+                $prescription->setVars('textearticle',$textearticle,true,'UTF-8');
+                $prescription->merge();
+            }
+
+        }else{
+            //echo "ploip";
+            if($type != 0){
+                $prescription->setVars('num', '', true, 'UTF-8');
+            }
+            $prescription->setVars('libelle', '', true, 'UTF-8');
+            $prescription->setVars('textearticle','',true,'UTF-8');
+            $prescription->merge();
+        }
+        //$odf->mergeSegment($prescription);
+    } catch (OdfException $e) {
+      
+    }
+
+}
+
+
+
 $consonne = array("a", "e", "i", "o", "u", "y", "A", "E", "I", "O", "U", "Y");
 if(count($this->membresFiles) == 0){
 	echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun membre n'a été renseigné pour la commission</span><br/><br/><br/>";
@@ -16,6 +101,7 @@ foreach($this->membresFiles as $val => $membre){
 			$dossInfos = $odf->setSegment('dossierInfos');
 			
 			foreach($this->dossierComm as $val => $dossierInfos){
+
 				$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
 				if($nbAdresse != 0){
 					foreach($dossierInfos['infosEtab']['adresses'] as $commune){
@@ -70,10 +156,10 @@ foreach($this->membresFiles as $val => $membre){
 
 						if(isset($dossierInfos['infosEtab']['informations'])){
 							$dossInfos->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
-							$dossInfos->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"], true, 'UTF-8');
+							//$dossInfos->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"], true, 'UTF-8');
 						}else{
 							$dossInfos->setVars('categorieEtab', "", true, 'UTF-8');
-							$dossInfos->setVars('typeEtab', "", true, 'UTF-8');
+							//$dossInfos->setVars('typeEtab', "", true, 'UTF-8');
 						}
 						
 						$listeDocUrba = "";
@@ -81,7 +167,16 @@ foreach($this->membresFiles as $val => $membre){
 							$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
 						}
 						$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
+
+
+						addPrescription($dossierInfos['prescriptionReglDossier'],0,$dossInfos);
+						addPrescription($dossierInfos['prescriptionExploitation'],1,$dossInfos);
+						addPrescription($dossierInfos['prescriptionAmelioration'],2,$dossInfos);
 						
+
+
+/*
+
 						//Prescription des dossiers
 						if(isset($dossierInfos['prescription']) && count($dossierInfos['prescription']) > 0){
 							$nbPrescDossier = count($dossierInfos['prescription']);
@@ -131,7 +226,10 @@ foreach($this->membresFiles as $val => $membre){
 							$dossInfos->listePrescription->setVars('textearticle','',true,'UTF-8');
 							$dossInfos->listePrescription->merge();
 						}
-						
+
+*/
+
+
 						
 						$dossInfos->merge(); 
 					}
