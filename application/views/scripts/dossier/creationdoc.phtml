@@ -182,22 +182,19 @@ try{
 // PARTIE PRESCRIPTION
 function addPrescription($listePrescription,$type,$odf){
     //Zend_Debug::dump($listePrescription);
-
     //TYPE_PRESCRIPTION_DOSSIER
     try{
-
         if($type == 0){
-            $prescription = $odf->setSegment('listeRappelReg');
+            $prescription = $odf->setSegment('listeReg');
         }else if ($type == 1){
             $prescription = $odf->setSegment('listeExploitation');
         }else if ($type == 2){
             $prescription = $odf->setSegment('listeAmelioration');
         }
 
-
         $nbPrescDossier = count($listePrescription);
-        //echo "type : - ".$type."nb presc".$nbPrescDossier."<br/>";
-        if($nbPrescDossier)
+
+        if($nbPrescDossier != 0)
         {
             for($i=0; $i < $nbPrescDossier; $i++)
             {
@@ -232,14 +229,14 @@ function addPrescription($listePrescription,$type,$odf){
                     if($cpt)
                     {
                         if($type != 0){
-                            addChamp($prescription, 'num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER']);
+                            addChamp($prescription, 'num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER']);
                         }
 
                         if( $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
                         {
-                            addChamp($prescription, 'libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
+                            addChamp($prescription, 'libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
                         }else{
-                            addChamp($prescription, 'libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
+                            addChamp($prescription, 'libelle', $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
                         }
                         $cpt = false;
                     }
@@ -250,7 +247,6 @@ function addPrescription($listePrescription,$type,$odf){
             }
 
         }else{
-            //echo "ploip";
             if($type != 0){
                 $prescription->setVars('num', '', true, 'UTF-8');
             }
