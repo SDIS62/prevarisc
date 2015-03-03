@@ -236,7 +236,7 @@ endif; ?>
 					modal: true,
 					title: 'Génération des rapports',
 					buttons: {
-						'Annuler': function() {
+						'Fermer': function() {
 							$(this).dialog('close');
 							$("#dialogComm").html('');
 						}
@@ -256,41 +256,37 @@ endif; ?>
 	});
 	
 	$("#generate").live('click',function() {
-		var selected = false;
-		$(".etabCheck").each(function(){
-
-			if($(this).attr('checked')){
-				selected = $(this).attr('checked');
-			}
-
-		});
-		
-		if(selected){
-			$.ajax({
-				url: "/dossier/generationrapport",
-				data: $("#etabRapport").serialize()+"&idDossier="+$("#idDossier").val(),
-				type:"POST",
-				//async: false,
-				beforeSend: function(){
-					$("#dialogComm").html("<img src='/images/load.gif' />");
-				},
-				success: function(affichageResultat){
-					var successMess = "<h3>Génération effectuée avec succès</h3><br/>";
-					$("#dialogComm").html(successMess+affichageResultat);
-					$("#dialogComm").append("Vous pouvez retrouver ces documents dans la partie pièces jointes");
-				},
-				error: function(){
-					$("#dialogComm").html("<h3>Erreur lors de la génération du rapport</h3><br/>Si le problème persiste veuillez contacter votre administrateur");
-					return false;
-				}
-			});
-		}
-		return false;		
+            
+            if ($('.etabCheck:checked').length == 0) {
+                alert('Vous devez sélectionner un établissement pour pouvoir générer un rapport.');
+                return false;
+            }
+            
+            $(this).attr('disabled', 'disabled');
+            
+            $.ajax({
+                url: "/dossier/generationrapport",
+                data: $("#etabRapport").serialize()+"&idDossier="+$("#idDossier").val(),
+                type:"POST",
+                //async: false,
+                beforeSend: function(){
+                    $("#dialogComm").html("<img src='/images/load.gif' />");
+                },
+                success: function(affichageResultat){
+                    var successMess = "<h3>Génération effectuée avec succès</h3><br/>";
+                    $("#dialogComm").html(successMess+affichageResultat);
+                    $("#dialogComm").append("Vous pouvez retrouver ces documents dans la partie pièces jointes");
+                },
+                error: function(){
+                    $("#dialogComm").html("<h3>Erreur lors de la génération du rapport</h3><br/>Si le problème persiste veuillez contacter votre administrateur");
+                    return false;
+                }
+            });		
 	});
                 
     });
 </script>
-
+<div id='dialogComm' style='display:none;'></div>
 <?php $this->placeholder('after_content')->captureEnd() ?>
 
 

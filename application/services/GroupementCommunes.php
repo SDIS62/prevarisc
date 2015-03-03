@@ -28,4 +28,11 @@ class Service_GroupementCommunes
         }
         return $model_groupement->getAllWithTypes();
     }
+    
+    public function findGroupementForEtablissement(array $ids_etablissement = array())
+    {
+        $model_groupement = new Model_DbTable_Groupement;
+
+        return $model_groupement->getByEtablissement($ids_etablissement);
+    }
 }

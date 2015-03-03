@@ -1,0 +1,3 @@
+SET NAMES 'utf8';
+
+ALTER TABLE etablissementinformationsrubrique MODIFY `NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE` varchar(500) NOT NULL;

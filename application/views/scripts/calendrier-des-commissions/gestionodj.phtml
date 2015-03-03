@@ -599,9 +599,9 @@ $(document).ready(function() {
 					<li num='".$dossierNonAffect['NUM_DOSSIER']."' >
 						<div class='dossierODJ external-event' id='".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='padding:5px 0 5px 15px;margin:5px;text-align:left;border:1px solid #9FC6FF;background-color:".$background.";border-radius:10px 10px;-moz-border-radius:10px 10px; -webkit-border-radius:10px 10px;'>
 							<a href='/dossier/index/id/".$dossierNonAffect['ID_DOSSIER_AFFECT']."' style='color:black;' >
-								".$dossierNonAffect['infosEtab']['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS' ];
+								".$dossierNonAffect['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 
-				$nbAdresse = count($dossierNonAffect['infosEtab']['adresses']);
+				$nbAdresse = isset($dossierNonAffect['infosEtab']['adresses']) ? count($dossierNonAffect['infosEtab']['adresses']) : 0;
 				if($nbAdresse != 0){
 					echo " (";
 					foreach($dossierNonAffect['infosEtab']['adresses'] as $commune){
@@ -633,7 +633,7 @@ $(document).ready(function() {
 					echo "Numéro document d'urbanisme : ".$dossierNonAffect['NUM_DOCURBA'];
 				}
 				//affichage preventionniste(s)
-				$nbPrev = count($dossierNonAffect['preventionnistes']);
+				$nbPrev = isset($dossierNonAffect['preventionnistes']) ? count($dossierNonAffect['preventionnistes']) : 0;
 				if($nbPrev >0){
 					echo "<span style='font-size:10px'>";
 					foreach($dossierNonAffect['preventionnistes'] as $prev){

@@ -349,11 +349,13 @@
                 <!-- Commission compétente -->
                 <dt class="champ_commission champs">Commission</dt>
                 <dd class="champ_commission champs">
-                    <select name='ID_COMMISSION' >
+                    <select name='ID_COMMISSION' class="input-xlarge" >
                         <?php foreach($this->DB_commission as $commission_type) : ?>
                             <optgroup label="<?php echo $commission_type['LIBELLE'] ?>">
                                 <?php foreach($commission_type['ARRAY'] as $item ) : ?>
-                                    <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->etablissement['informations']["ID_COMMISSION"] ) echo "selected" ?> ><?php echo $item["LIBELLE_COMMISSION"] ?></option>
+                                    <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->etablissement['informations']["ID_COMMISSION"] ) echo "selected" ?> >
+                                        <?php echo $item["LIBELLE_COMMISSION"] ?> (<?php echo $commission_type['LIBELLE'] ?>)
+                                    </option>
                                 <?php endforeach ?>
                             </optgroup>
                         <?php endforeach ?>
@@ -472,10 +474,19 @@
 
             <dt>Géolocalisation</dt>
             <dd>
-                Longitude: <span class='lon'>Inconnu</span>; Latitude: <span class='lat'>Inconnu</span>
-                <button id="geolocme" class='btn btn-small'>Géolocaliser cette adresse</button>
-                <input type='hidden' name='lon' />
-                <input type='hidden' name='lat' />
+                <button id="geolocme" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse</button>
+                <br/>
+                <small>Résultat : <span class='result'>Inconnu</span></small>
+            </dd>
+            
+            <dt>Longitude</dt>
+            <dd>
+                 <input type='text' name='lon' />
+            </dd>
+            
+            <dt>Latitude</dt>
+            <dd>
+                 <input type='text' name='lat' />
             </dd>
         </dl>
     </div>
@@ -498,7 +509,7 @@
                 numinsee: $("#adresses").find('tr.adresse').first().find('input[type="hidden"]').first().val(),
                 type: $("select[name='ID_TYPE']").find('option:selected').val(),
                 categorie: $("select[name='ID_CATEGORIE']").find('option:selected').val(),
-                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").is(':checked'),
+                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']:checked").val(),
                 classe: $("select[name='ID_CLASSE']").find('option:selected').val(),
                 id_etablissement_pere: $("input[name='ID_PERE']").val(),
                 ids_etablissements_enfants: etablissements_enfants
@@ -508,15 +519,16 @@
                     // A l'apparition de la boite de confirmation on met à jour les valeurs saisies par l'utilisateur dans la boite
                     var preventionnistes = [];
                     var date = new Date($('input[name="date"]').val());
-                    $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text());
+                    var localSommeil = $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]:checked').val();
+                    $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text().replace(/ \(.*\)/gi, ""));
                     $('#confirm-modal-periodicite .confirm-modal-input').text($('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val());
-                    $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"][value=1]').is(':checked') ? 'Oui' : 'Non' );
+                    $('#confirm-modal-localsommeil .confirm-modal-input').text(localSommeil != undefined ? (localSommeil == 1 ? 'Oui' : 'Non') : '' );
                     $('table#preventionnistes tbody tr.preventionniste').each(function(index) { preventionnistes[index] = $(this).find('td').first().find('span').text(); });
                     $('#confirm-modal-preventionnistes .confirm-modal-input').text(preventionnistes.toString() == '' ? 'Aucuns' : preventionnistes.toString());
                     // On met à jour les valeurs par défauts
                     $('#confirm-modal-commission .confirm-modal-advisable').attr('id', data.response.commission ? data.response.commission.ID_COMMISSION : '').text(data.response.commission ? data.response.commission.LIBELLE_COMMISSION : '');
                     $('#confirm-modal-periodicite .confirm-modal-advisable').text(data.response.periodicite);
-                    $('#confirm-modal-localsommeil .confirm-modal-advisable').text(data.response.local_sommeil && data.response.local_sommeil == true ? 'Oui' : 'Non');
+                    $('#confirm-modal-localsommeil .confirm-modal-advisable').text(data.response.local_sommeil !== undefined ? (data.response.local_sommeil == true ? 'Oui' : 'Non') : '');
                     if(data.response.preventionnistes && data.response.preventionnistes.length > 0) {
                         var preventionnistes = [];
                         var preventionnistes_ids = [];
@@ -528,7 +540,7 @@
                     }
                     $('#confirm-modal').find('li').removeClass('confirm-modal-hide');
                     $('#confirm-modal').find('li').each(function(index) {
-                        if($(this).find('.confirm-modal-input').text() == $(this).find('.confirm-modal-advisable').text() || $(this).find('.confirm-modal-advisable').text() == '') {
+                        if($(this).find('.confirm-modal-input').text().trim() == $(this).find('.confirm-modal-advisable').text().trim() || $(this).find('.confirm-modal-advisable').text().trim() == '') {
                             $(this).addClass("confirm-modal-hide");
                         }
                     });
@@ -925,16 +937,14 @@
                 success: function(geolocations) {
                     element.text("Géolocaliser cette adresse");
                     if(geolocations.length > 0) {
+                        $("span.result").text("OK");
                         $("input[name='lon']").val(geolocations[0].lon);
-                        $("span.lon").text(geolocations[0].lon);
                         $("input[name='lat']").val(geolocations[0].lat);
-                        $("span.lat").text(geolocations[0].lat);
                     }
                     else {
+                        $("span.result").text("Introuvable");
                         $("input[name='lon']").val(0);
-                        $("span.lon").text("Introuvable");
                         $("input[name='lat']").val(0);
-                        $("span.lat").text("Introuvable");
                     }
                 },
                 error: function() {

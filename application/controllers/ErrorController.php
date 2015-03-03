@@ -47,9 +47,8 @@ class ErrorController extends Zend_Controller_Action
         }
         
         // Si l'affichage des exceptions est activé, on envoie un message
-        if ($this->getInvokeArg('displayExceptions') == true) {
-            $this->view->exception = $errors->exception;
-        }
+        $this->view->showException = $this->getInvokeArg('displayExceptions');
+        $this->view->exception = $errors->exception;
         
         // On envoie la requête de l'erreur sur la vue
         $this->view->request   = $errors->request;

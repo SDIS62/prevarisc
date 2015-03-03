@@ -75,7 +75,21 @@ class Service_Search
 
             // Critères : nom de l'établissement
             if($label !== null) {
-               $this->setCriteria($select, "LIBELLE_ETABLISSEMENTINFORMATIONS", $label, false);
+                
+                $cleanLabel = trim($label);
+                
+                // recherche par id
+                if (substr($cleanLabel, 0, 1) == "#") {
+                    $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", substr($cleanLabel, 1), false);
+
+                // on test si la chaine contient uniquement des caractères de type identifiant sans espace
+                } else  if (preg_match('/^[E0-9\/\-\.]+([0-9A-Z]{1,2})?$/', $cleanLabel) === 1) {
+                    $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", $cleanLabel, false);
+                    
+                // cas par défaut
+                } else {
+                  $this->setCriteria($select, "LIBELLE_ETABLISSEMENTINFORMATIONS", $cleanLabel, false);
+                }
             }
 
             // Critères : identifiant
@@ -259,7 +273,19 @@ class Service_Search
 
             // Critères : objet
             if($objet !== null) {
-               $this->setCriteria($select, "OBJET_DOSSIER", $objet, false);
+                
+                $cleanObjet = trim($objet);
+                
+                // recherche par id
+                if (substr($cleanObjet, 0, 1) == "#") {
+                    $select->having("NB_URBA like ?", "%".substr($cleanObjet, 1)."%");
+                // on test si la chaine contient uniquement des caractères de type identifiant sans espace
+                } else  if (preg_match('/^[0-9A-Z\.]+$/', $cleanObjet) === 1) {
+                    $select->having("NB_URBA like ?", "%".$cleanObjet."%");
+                // cas par défaut
+                } else {
+                  $this->setCriteria($select, "OBJET_DOSSIER", $cleanObjet, false);
+                }
             }
 
             // Critères : parent
@@ -278,54 +304,54 @@ class Service_Search
             }
 
             // Critères : commissions
-            if ($criterias['commissions'] !== null){
+            if (isset($criterias['commissions']) && $criterias['commissions'] !== null){
                 $this->setCriteria($select, "datecommission.COMMISSION_CONCERNE", $criterias['commissions']);
             }
 
             // Critères : avis commission
-            if ($criterias['avisCommission'] !== null){
+            if (isset($criterias['avisCommission']) && $criterias['avisCommission'] !== null){
                 $this->setCriteria($select, "d.AVIS_DOSSIER_COMMISSION", $criterias['avisCommission']);
             }
 
             // Critères : avis rapporteur
-            if ($criterias['avisRapporteur'] !== null){
+            if (isset($criterias['avisRapporteur']) && $criterias['avisRapporteur'] !== null){
                 $this->setCriteria($select, "d.AVIS_DOSSIER", $criterias['avisRapporteur']);
             }
 
             // Critères : permis
-            if ($criterias['permis'] !== null){
+            if (isset($criterias['permis']) && $criterias['permis'] !== null){
                 $this->setCriteria($select, "dossierdocurba.NUM_DOCURBA", $criterias['permis']);
             }
 
             // Critères : permis
-            if ($criterias['preventionniste'] !== null){
+            if (isset($criterias['preventionniste']) && $criterias['preventionniste'] !== null){
                 $this->setCriteria($select, "dossierpreventionniste.ID_PREVENTIONNISTE", $criterias['preventionniste']);
             }
 
-            if ($criterias['commune'] !== null){
+            if (isset($criterias['commune']) && $criterias['commune'] !== null){
                     $this->setCriteria($select, "ea.NUMINSEE_COMMUNE", $criterias['commune']);
             }
 
-            if ($criterias['voie'] !== null){
+            if (isset($criterias['voie']) && $criterias['voie'] !== null){
                 $this->setCriteria($select, "ea.ID_RUE", $criterias['voie']);
             }
 
-            if ($criterias['dateCreationStart'] !== null){
+            if (isset($criterias['dateCreationStart']) && $criterias['dateCreationStart'] !== null){
                 $select->where("d.DATEINSERT_DOSSIER >= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateCreationStart']);
             }
-            if ($criterias['dateCreationEnd'] !== null){
+            if (isset($criterias['dateCreationEnd']) && $criterias['dateCreationEnd'] !== null){
                 $select->where("d.DATEINSERT_DOSSIER <= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateCreationEnd']);
             }
-            if ($criterias['dateReceptionStart'] !== null){
+            if (isset($criterias['dateReceptionStart']) && $criterias['dateReceptionStart'] !== null){
                 $select->where("d.DATESDIS_DOSSIER >= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReceptionStart']);
             }
-            if ($criterias['dateReceptionEnd'] !== null){
+            if (isset($criterias['dateReceptionEnd']) && $criterias['dateReceptionEnd'] !== null){
                 $select->where("d.DATESDIS_DOSSIER <= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReceptionEnd']);
             }
-            if ($criterias['dateReponseStart'] !== null){
+            if (isset($criterias['dateReponseStart']) && $criterias['dateReponseStart'] !== null){
                 $select->where("d.DATEREP_DOSSIER >= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReponseStart']);
             }
-            if ($criterias['dateReponseEnd'] !== null){
+            if (isset($criterias['dateReponseEnd']) && $criterias['dateReponseEnd'] !== null){
                 $select->where("d.DATEREP_DOSSIER <= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReponseEnd']);
             }
 

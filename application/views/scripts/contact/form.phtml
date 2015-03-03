@@ -55,37 +55,45 @@
 				<option value='<?php echo $item["ID_UTILISATEURCIVILITE"] ?>' <?php if($item["ID_UTILISATEURCIVILITE"] == $this->user_info["ID_UTILISATEURCIVILITE"]) echo "selected" ?> ><?php echo $item["LIBELLE_UTILISATEURCIVILITE"] ?></option>
 				<?php endforeach ?>
 			</select>
-			<input type='text' value='<?php if(isset($this->user_info["NOM_UTILISATEURINFORMATIONS"])) echo $this->user_info["NOM_UTILISATEURINFORMATIONS"] ?>' name='NOM_UTILISATEURINFORMATIONS' placeholder='Nom' />
-			<input type='text' value='<?php if(isset($this->user_info["PRENOM_UTILISATEURINFORMATIONS"])) echo $this->user_info["PRENOM_UTILISATEURINFORMATIONS"] ?>' name='PRENOM_UTILISATEURINFORMATIONS' placeholder='Prénom' />
+			<input type='text' maxlength="50" value='<?php if(isset($this->user_info["NOM_UTILISATEURINFORMATIONS"])) echo $this->user_info["NOM_UTILISATEURINFORMATIONS"] ?>' name='NOM_UTILISATEURINFORMATIONS' placeholder='Nom' />
+			<input type='text' maxlength="50" value='<?php if(isset($this->user_info["PRENOM_UTILISATEURINFORMATIONS"])) echo $this->user_info["PRENOM_UTILISATEURINFORMATIONS"] ?>' name='PRENOM_UTILISATEURINFORMATIONS' placeholder='Prénom' />
 		</dd>
 		
 		<!-- Téléphone fixe du contact -->
-		<dt>Numéros de téléphone</dt>
+		<dt>Téléphone</dt>
 		<dd>
-			<span><i class='sprite sprite-telephone' ></i> <input type='text' value='<?php if(isset($this->user_info["TELFIXE_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELFIXE_UTILISATEURINFORMATIONS"] ?>' name='TELFIXE_UTILISATEURINFORMATIONS'/></span><br/>
-			<span><i class='sprite sprite-printer_empty' ></i> <input type='text' value='<?php if(isset($this->user_info["TELFAX_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELFAX_UTILISATEURINFORMATIONS"] ?>' name='TELFAX_UTILISATEURINFORMATIONS' /></span><br/>
-			<span><i class='sprite sprite-phone' ></i> <input type='text' value='<?php if(isset($this->user_info["TELPORTABLE_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELPORTABLE_UTILISATEURINFORMATIONS"] ?>' name='TELPORTABLE_UTILISATEURINFORMATIONS' /></span>
+			<span><i class='sprite sprite-telephone' ></i> <input type='text' maxlength="20" value='<?php if(isset($this->user_info["TELFIXE_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELFIXE_UTILISATEURINFORMATIONS"] ?>' name='TELFIXE_UTILISATEURINFORMATIONS'/></span><br/>
+		</dd>
+                
+                <dt>Fax</dt>
+		<dd>
+			<span><i class='sprite sprite-printer_empty' ></i> <input type='text' maxlength="20" value='<?php if(isset($this->user_info["TELFAX_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELFAX_UTILISATEURINFORMATIONS"] ?>' name='TELFAX_UTILISATEURINFORMATIONS' /></span><br/>
+		</dd>
+                
+                <dt>Portable</dt>
+		<dd>
+			<span><i class='sprite sprite-phone' ></i> <input type='text' maxlength="20"  value='<?php if(isset($this->user_info["TELPORTABLE_UTILISATEURINFORMATIONS"])) echo $this->user_info["TELPORTABLE_UTILISATEURINFORMATIONS"] ?>' name='TELPORTABLE_UTILISATEURINFORMATIONS' /></span>
 		</dd>
 		
 		<!-- Mail du contact-->
 		<dt>Courriel</dt>
 		<dd>
-			<input type='text' value='<?php if(isset($this->user_info["MAIL_UTILISATEURINFORMATIONS"])) echo $this->user_info["MAIL_UTILISATEURINFORMATIONS"] ?>' name='MAIL_UTILISATEURINFORMATIONS' />
+			<input type='text' maxlength="50" value='<?php if(isset($this->user_info["MAIL_UTILISATEURINFORMATIONS"])) echo $this->user_info["MAIL_UTILISATEURINFORMATIONS"] ?>' name='MAIL_UTILISATEURINFORMATIONS' />
 		</dd>
 		
 		<!-- Site web du contact-->
 		<dt>Site web</dt>
 		<dd>
-			<input type='text' value='<?php if(isset($this->user_info["WEB_UTILISATEURINFORMATIONS"])) echo $this->user_info["WEB_UTILISATEURINFORMATIONS"] ?>' name='WEB_UTILISATEURINFORMATIONS' />
+			<input type='text' maxlength="100" value='<?php if(isset($this->user_info["WEB_UTILISATEURINFORMATIONS"])) echo $this->user_info["WEB_UTILISATEURINFORMATIONS"] ?>' name='WEB_UTILISATEURINFORMATIONS' />
 		</dd>
 		
 		<!-- Localisation du contact -->
 		<dt>Adresse</dt>
 		<dd>
-			<span>Numéro : <input type='text' value='<?php if(isset($this->user_info["NUMEROADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] ?>' name='NUMEROADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
-			<span>Rue : <input type='text' value='<?php if(isset($this->user_info["RUEADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["RUEADRESSE_UTILISATEURINFORMATIONS"] ?>' name='RUEADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
-			<span>Code postal : <input type='text' value='<?php if(isset($this->user_info["CPADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["CPADRESSE_UTILISATEURINFORMATIONS"] ?>' name='CPADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
-			<span>Ville : <input type='text' value='<?php if(isset($this->user_info["VILLEADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["VILLEADRESSE_UTILISATEURINFORMATIONS"] ?>' name='VILLEADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
+                        <span>Numéro : <input type='text' maxlength="10" value='<?php if(isset($this->user_info["NUMEROADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["NUMEROADRESSE_UTILISATEURINFORMATIONS"] ?>' name='NUMEROADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
+			<span>Rue : <input type='text' maxlength="255" value='<?php if(isset($this->user_info["RUEADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["RUEADRESSE_UTILISATEURINFORMATIONS"] ?>' name='RUEADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
+			<span>Code postal : <input type='text' maxlength="5" value='<?php if(isset($this->user_info["CPADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["CPADRESSE_UTILISATEURINFORMATIONS"] ?>' name='CPADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
+			<span>Ville : <input type='text' maxlength="255" value='<?php if(isset($this->user_info["VILLEADRESSE_UTILISATEURINFORMATIONS"])) echo $this->user_info["VILLEADRESSE_UTILISATEURINFORMATIONS"] ?>' name='VILLEADRESSE_UTILISATEURINFORMATIONS'/></span><br/>
 			
 		</dd>
 		

@@ -71,43 +71,26 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 $facteur_dangerosite = $dossier_donnant_avis->FACTDANGE_DOSSIER;
             }
 
-            $last_2_visites = $search->setItem("dossier")
+            $last_visite = $search->setItem("dossier")
                     // Dossier correspondant à l'établissement dont l'ID est donné
                 ->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)
                     // Dossier type "Visite de commission" et "Groupe de visite"
                 ->setCriteria("d.TYPE_DOSSIER", array(2,3))
-                    // Dossier nature "périodique" de type "Visite de commission" et "Groupe de visite"
-                ->setCriteria("ID_NATURE", array(21,26))
+                    // Dossier nature "périodique" et autres types donnant avis de type "Visite de commission" et "Groupe de visite"
+                ->setCriteria("ID_NATURE", array(21,23,24,26,28,29,47,48))
                 ->order('DATEVISITE_DOSSIER DESC')
-                ->run()
-                ->getAdapter()
-                    // Récupérer deux items
-                ->getItems(0, 2)
-                ->toArray();
-
-            // Peut-on prolonger la période de deux ans ?
-            $extension_periode = false;
-            if ($last_2_visites !== null && count($last_2_visites) == 2){
-                // Les deux dernières visites ont-elles été favorables ?
-                if ($last_2_visites[0]['AVIS_DOSSIER_COMMISSION'] == 1 && $last_2_visites[1]['AVIS_DOSSIER_COMMISSION'] == 1){
-                    // Absence de local à sommeil ?
-                    if($informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS !== null && $informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS == 0) {
-                        $extension_periode = true;
-                    }else if ($informations->LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS == null)$extension_periode = true;
-                }
-            }
+                ->limit(1)
+                ->run(false, null, false)->toArray();
 
             $next_visite = null;
-            $last_visite = null;
 
-            if($last_2_visites !== null && count($last_2_visites) != 0) {
-                $tmp_date = new Zend_Date($last_2_visites[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
+            if ($last_visite !== null && count($last_visite) > 0){
+                $tmp_date = new Zend_Date($last_visite[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
                 $last_visite =  $tmp_date->get( Zend_date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
 
                 if($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS != 0) {
                     $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
                     $tmp_date->add($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
-                    if ($extension_periode == true) $tmp_date->add(24, Zend_Date::MONTH);
                     $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
                 }
             }
@@ -133,7 +116,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $presence_echeancier = count($dossiers_echeancier) > 0;
 
             // Récupération des établissements liés
-            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 99999999999)->toArray();
+            $etablissement_lies = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_etablissement)->order("LIBELLE_ETABLISSEMENTINFORMATIONS")->run()->getAdapter()->getItems(0, 500)->toArray();
 
             // Récupération de l'indicateur de présence d'un DUS
             $contacts_dus = array();
@@ -204,7 +187,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 'types_activites_secondaires' => $model_etablissement->getTypesActivitesSecondaires($informations->ID_ETABLISSEMENTINFORMATIONS),
                 'rubriques' => $DB_rubriques->fetchAll("ID_ETABLISSEMENTINFORMATIONS = " . $informations->ID_ETABLISSEMENTINFORMATIONS, "ID_ETABLISSEMENTINFORMATIONSRUBRIQUE")->toArray(),
                 'etablissement_lies' => $etablissement_lies,
-                'preventionnistes' => $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $id_etablissement)->run()->getAdapter()->getItems(0, 99999999999)->toArray(),
+                'preventionnistes' => $search->setItem("utilisateur")->setCriteria("etablissementinformations.ID_ETABLISSEMENT", $id_etablissement)->run()->getAdapter()->getItems(0, 50)->toArray(),
                 'adresses' => $DB_adresse->get($id_etablissement),
                 'presence_dus' => count($contacts_dus) > 0
             );
@@ -608,7 +591,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
         try {
 
-            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = ($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
+            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = (!isset($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']) && $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
 
             $etablissement = $id_etablissement == null ? $DB_etablissement->createRow() : $DB_etablissement->find($id_etablissement)->current();
 
@@ -918,9 +901,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
             case 2:
                 // Périodicité en fonction de la catégorie/type/local à sommeil
                 if($categorie !== null && $type !== null && $local_sommeil !== null) {
-                    $results['periodicite'] = $DB_periodicite->gn4($categorie, $type, $local_sommeil == 'false' ? 0 : 1);
+                    $results['periodicite'] = $DB_periodicite->gn4($categorie, $type, $local_sommeil ? 1 : 0);
                 }
 
+                // Si pas de valeur de local à sommeil renseignée, on demande par défaut de saisir non
+                if (is_null($local_sommeil)) {
+                    $results['local_sommeil'] = false;
+                }
                 // Local à sommeil en fonction du type
                 if($type !== null) {
                     if (getenv('PREVARISC_LOCAL_SOMMEIL_TYPES') != false){
@@ -940,7 +927,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
 
                 if(!array_key_exists('commission', $results) && ($numinsee !== null && $categorie !== null && $type !== null && $local_sommeil !== null)) {
-                    $commission = $model_commission->getCommission($numinsee, $categorie, $type, $local_sommeil == 'false' ? 0 : 1);
+                    $commission = $model_commission->getCommission($numinsee, $categorie, $type, $local_sommeil ? 1 : 0);
                     if($commission !== null) {
                         $results['commission'] = $commission[0];
                     }

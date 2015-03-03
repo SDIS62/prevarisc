@@ -1,5 +1,57 @@
 # Changelog
 
+## 2.4 
+
+Evolutions :
+* Mise à jour de packery en 1.3.0
+* Ajout d'un message d'avertissement à la suppression de PJ
+* Ajout des icones sur la liste des pièces jointes
+* Uniformisation de la gestion des pièces jointes avec les dossiers : ajout de la possibilité de modifier un contact
+* Ajout d'un paramètre account form au niveau de la connexion LDAP pour éviter d'avoir à retaper le domaine à chaque fois
+* Affichage de la commune du site et de l'ID ERPv2 pour la popup d'information d'un établissement
+* Bloc dossiers du préventionnistes : retrait des dossiers périodiques : trop de dossiers affichés en début d'année sinon
+* Recherche par ID ERPv2 dans la barre de recherche rapide
+* Ajout d'un retour d'erreur si le controlleur proxy échoue
+* Amélioration de l'IHM de génération de rapports
+* Ajout du champ civilité et grade pour les rapports de dossiers
+* Ajout de la possibilité de désélectionner un élément dans la recherche des dossiers
+* Possibilité de recherche un dossier "contenant" (et non pas exactement égal à) un numéro d'AT ou PC
+* Possibilité de mettre un ID ERPv2 ou N° de PC dans les champs d'objet ou de libellé sans # en préfixe
+* Mise à jour des dépendances composer
+* Agrandissement du champ "Nom" des rubriques ICPE pour pouvoir s'adapter à tous les cas comme "Stations-service : installations, ouvertes ou non au public, où les carburants sont transférés de réservoirs de stockage fixes dans les réservoirs à carburant de véhicules à moteur, de bateaux ou d’aéronefs"
+* Ajout de l'étude Demande d'organisation de manifestation temporaire
+* Ajout de l'heure de visite dans les CR générés
+* Pour les courriers ajout d'un indicateur de réponse / non réponse plutot que l'avis
+* Tri du bloc des dossiers non verrouillés par date de visite desc ou date de création desc si le 1er est null
+* Tri du bloc des courriers sans réponse par date de création desc
+* Optimisations importantes de performances côté ACL sur les sites qui possèdent des fils nombreux avec des adresses, et avec un nombre de groupements géographiques importants : implémentation d'un lazyloader de ressources
+* Ajout du numéro d'établissement dans le libéllé côté dossier
+* Possibilité de rechercher directement par numéro d'établissement sans le # pour le 29
+
+Corrections :
+* Impossibilité de créer des dossiers en décembre : mauvais validateur de date
+* Sur firefox, sur le tableau de bord, impossible de scroller sur les blocs sans déplacer le bloc avec
+* Ajout d'une image manquante sur tipsy
+* Perf : remplacement des commentaires HTML par des commentaires PHP dans les partials de result search
+* Perf : affichage des éléments du dashboard seulement ordonnés
+* Recherche géographique : un texte saisi dans la ville ne suffit pas à sélectionner la commune
+* Correction d'un problem d'update composer KO sur apigen en version dev-master impossible car il ne trouve pas une dépendance
+* Correction des tailles des champs max sur le formulaire de modification de contact
+* Correction sur le bloc des VP non effectuées pour 2015
+* Correction du conseil sur la périodicité d'un établissement
+* Correction d'un undefined index "infosEtab" dans gestionodj
+* Correction d'un undefined index "ID_DATECOMMISSION" dans le tableau de bord, bloc des prochaines commissions + lien mort
+* Correction sur des plurieurs dans les durées affichées sur les courriers
+* Correction (patch) sur le mauvais conseil sur les commissions affectés aux établissements (le fonctionnement est à revoir avec des ids)
+* Retrait de la condition empêchant de générer des convocations pour des établissements qui ne sont pas des ERP, cellules ou IGH
+* Correction d'une régression sur la génération de dossiers
+* Correction de libellés côté fiche contact
+* Correction de la sauvegarde des préférences utilisateur
+* Correction sur la date de visite sur la modification d'un dossier qui "sautait" à chaque modification
+* Correction d'un erreur javascript sans incidence sur la double inclusion de dossiergeneral.js
+* Correction de l'utilisation de la variable PREVARISC_REAL_DATA_PATH sous Windows Serveur
+* Correction d'un problème sur la recherche de courriers sans établissements rattachés
+
 ## 2.3
 
 Evolutions :
@@ -18,6 +70,17 @@ Evolutions :
 * Ajout de plusieurs blocs
 * Ajout de la gestion des préférences utilisateur et de la gestion de l'ordre des blocs sur la HP
 * Tri des documents par ordre alphabétique sur l'admin des modèles
+* Ajout des natures de dossier Autorisation d’une ICPE, Certificats d'urbanisme (CU)
+* Ajout du petit calendrier sur la partie dossier sur la date d'insertion du dossier
+* Ajout de la possibilité de modifier manuellement la géolocalisation d'un établissement
+* Ajout du conseil de remplir une présence de local à sommeil si aucune sélection de radio button n'a été faite
+* Ajout du champ document d'urbanisme pour l'instruction du permis d'aménager et de démolir
+* Retrait de la prolongation de visite du GE4§3 sur 2 VP positives de suite, rendu obsolète
+* Ajout du libellé du type de commission dans la liste déroulante du type de commission pour un établissement
+* Modification de la nomenclature du nom des rapports générés
+* Retrait des variables globales d'exemples de risques naturel : configuration inutile...
+* Mise en surbrillance de l'onglet de la commission dans le calendrier des commissions
+
 
 Corrections :
 
@@ -35,6 +98,13 @@ Corrections :
 * Retrait de 2 requêtes en doublons sur l'édition utilisateur
 * Correction d'un warning sur la partie calendrier des commissions
 * Correction sur le nom vide d'un établissement sur le partial de résultat de recherche d'un dossier
+* Retrait de code mort sur le service dashboard
+* Lorsqu'on sait local à sommeil = oui pour un type PE, l'application propose local à sommeil = non alors que l'utilisateur a fait son choix
+* Modification du libellé de la box de génération d'un rapport : "fermer" au lieu de "annuler"
+* Correction du bouton générer un rapport qui ne fonctionnait pas sur toutes les pages de dossier
+* Correction d'un problème d'initialisation des blocs lorsqu'un bloc manque dans les préférences utilisateur
+* Correction sur le controlleur proxy
+* Correction sur le bloc des ets défavorables sur la commune dans le cas où l'utilisateur n'a pas de commune
 
 ## 2.2
 

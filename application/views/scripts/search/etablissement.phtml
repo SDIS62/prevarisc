@@ -20,10 +20,12 @@
 	    <p class='pull-right' style='margin: 9px 0 0 5px'>
                 <small>
                     Zone de recherche :
-                    <strong class='zone_de_recherche_text'>
+                    <a href='#' id="zone_de_recherche_edit">
+                        <strong class='zone_de_recherche_text'>
                             <?php echo array_key_exists('zone_de_recherche_text', $_GET) && $_GET['zone_de_recherche_text'] != '' ? $_GET['zone_de_recherche_text'] : 'Département' ?>
-                    </strong>
-                    <a href='#' onclick="$('#zone_de_recherche_modal').modal(); return false; ">(Modifier la zone de recherche)</a>
+                        </strong>
+                    </a>
+                    <a href='#' id="zone_de_recherche_reset"><i class="icon-remove"></i></a>
                     <input type='hidden' name='zone_de_recherche_text' value="<?php if(array_key_exists('zone_de_recherche_text', $_GET)) echo $_GET['zone_de_recherche_text'] ?>" />
                     <input type='hidden' name='city' value="<?php if(array_key_exists('city', $_GET)) echo $_GET['city'] ?>" />
                     <input type='hidden' name='street' value="<?php if(array_key_exists('street', $_GET)) echo $_GET['street'] ?>" />
@@ -190,6 +192,20 @@
 				});
 			}
 		});
+        $('#zone_de_recherche_edit').click(function(e){
+            e.preventDefault();
+            $('#zone_de_recherche_modal').modal();
+        });
+        
+         $('#zone_de_recherche_reset').click(function(e){
+            e.preventDefault();
+            $("input[name='zone_de_recherche_text']").val("Département");
+            $(".zone_de_recherche_text").text("Département");
+
+            $("input[name='city']").val("");
+            $("input[name='street']").val("");
+        });
+        
 
 		// Auto complétion de la ville
         $("form#zone_de_recherche_modal input[name='commune_ac']").autocomplete("/api/1.0/adresse/get_communes", {
@@ -201,7 +217,7 @@
                 return item.LIBELLE_COMMUNE + " (" + item.NUMINSEE_COMMUNE + ")";
             }
         }).result(function(e, item) {
-        	$("input[name='code_insee']").val( item.NUMINSEE_COMMUNE );
+            $("input[name='code_insee']").val( item.NUMINSEE_COMMUNE );
             $("input[name='voie_ac']").removeAttr('disabled');
         }).click(function() {
             $(this).val("");
@@ -227,20 +243,20 @@
 
         // Validation de la zone de recherche
         $('form#zone_de_recherche_modal a.submit').click(function() {
-        	var text = 'Département';
+            var text = 'Département';
 
-        	if($("input[name='commune_ac']").val() != '') {
-        		var text = $("input[name='commune_ac']").val();
-        		if($("input[name='voie_ac']").val() != '') {
-        			var text = $("input[name='commune_ac']").val() + ', ' + $("input[name='voie_ac']").val();
-        		}
-        	}
-        	$("input[name='zone_de_recherche_text']").val(text);
+            if($("input[name='code_insee']").val() != '') {
+                    var text = $("input[name='commune_ac']").val();
+                    if($("input[name='voie_ac']").val() != '') {
+                            var text = $("input[name='commune_ac']").val() + ', ' + $("input[name='voie_ac']").val();
+                    }
+            }
+            $("input[name='zone_de_recherche_text']").val(text);
             $(".zone_de_recherche_text").text(text);
 
             $("input[name='city']").val($("input[name='code_insee']").val());
             $("input[name='street']").val($("input[name='voie']").val());
-        	$('form#zone_de_recherche_modal').modal('hide');
+            $('form#zone_de_recherche_modal').modal('hide');
         });
 	});
 </script>

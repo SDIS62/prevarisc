@@ -275,7 +275,7 @@ if(isset($this->do) && $this->do == 'edit'){
 		break;
 		case 'libelleCom':
 			echo "
-				Saisissez le libellé de la commission <input type='text' name='value_libelleCom' id='value_libelleCom' value='".$this->libelleDateComm."' />
+				Saisissez le libellé de la commission <input type='text' name='value_libelleCom' id='value_libelleCom' value='".htmlentities($this->libelleDateComm, ENT_QUOTES)."' />
 				<button class='validation btn' id='valid_libelleCom'><i class='icon-ok'></i>&nbsp;</button>
 				<button class='annulation btn' id='annule_libelleCom'><i class='icon-remove'></i>&nbsp;</button>
 			";

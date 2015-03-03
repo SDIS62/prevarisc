@@ -1,10 +1,7 @@
-<div class='dashboard'>
-
+<div id="home" class="dashboard">
     <?php foreach($this->blocs as $id => $bloc): ?>
-        <?php $id = md5($id); ?>
         <?php echo $this->partial('index/partials/'.$bloc['type'].'.phtml', array_merge($bloc, array('id' => $id))) ?>
     <?php endforeach ?>
-
     <div class="grid-gutter"></div>
 
 </div>
@@ -14,7 +11,6 @@
 <br>
 
 <script type="text/javascript">
-
     $(document).ready(function() {
 
         // Gestion des boites modales
@@ -24,14 +20,13 @@
             $(target).load(url);
         });
 
-        // Grid !
-        $('.dashboard').packery({
+        var $container = $('.dashboard').packery({
             itemSelector: '.panel',
             gutter: '.grid-gutter',
+            // disable initial layout
             isInitLayout: false
         });
 
-        $container = $('.dashboard');
         var pckry = $container.data('packery');
 
         // ----- initial sort ----- //
@@ -41,30 +36,39 @@
             // create a hash of items by their tabindex
             var itemsByTabIndex = {};
             var tabIndex;
-            for ( var i=0, len = pckry.items.length; i < len; i++ ) {
+            for (var i=0, len = pckry.items.length; i < len; i++ ) {
                 var item = pckry.items[i];
                 tabIndex = $( item.element ).attr('id');
-                itemsByTabIndex[ tabIndex ] = item;
+                itemsByTabIndex[tabIndex] = item;
             }
             // overwrite packery item order
             i = 0; len = storedSortOrder.length;
-            for (; i < len; i++ ) {
+            var j = 0;
+            for (; i < len; i++) {
                 tabIndex = storedSortOrder[i];
-                if (itemsByTabIndex[ tabIndex ] !== undefined) {
-                    pckry.items[i] = itemsByTabIndex[ tabIndex ];
+                if (itemsByTabIndex[tabIndex] !== undefined) {
+                   pckry.items[j] = itemsByTabIndex[tabIndex];
+                   j++;
                 }
             }
         }
 
         // ----- packery setup ----- //
+        // optim de perf : on évite au navigateur de dessiner les blocs
+        // avant qu'ils aient pris leur place finale
+        $('.panel').show(); 
 
         // trigger initial layout
         $container.packery();
 
         var $itemElems = $($container.packery('getItemElements') );
-        $itemElems.draggable();
+        $itemElems.draggable({
+            handle: ".panel-heading",
+            containment: "parent"
+        });
         $container.packery( 'bindUIDraggableEvents', $itemElems );
 
+    
         var saveTimeout = null;
         var saveTimeoutMilliseconds = 500;
 

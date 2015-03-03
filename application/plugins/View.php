@@ -33,6 +33,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
             $view->registerHelper(new View_Helper_AfficheDoc, 'afficheDoc');
             $view->registerHelper(new View_Helper_AgendaMois, 'agendaMois');
+            $view->registerHelper(new View_Helper_Dates, 'formatDateDiff');
             $view->registerHelper(new View_Helper_Avatar, 'avatar');
             $view->registerHelper(new View_Helper_Carte, 'carte');
             $view->registerHelper(new View_Helper_ListeGroupement, 'listeGroupement');

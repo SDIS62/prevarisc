@@ -6,13 +6,13 @@ date_default_timezone_set('Europe/Paris');
 defined('DS') || define('DS', DIRECTORY_SEPARATOR);
 
 // Définition du chemin vers le dossier application/
-defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(getenv('PREVARISC_APPLICATION_PATH') ? getenv('PREVARISC_APPLICATION_PATH') : dirname(__FILE__).DS.'..'.DS.'application'));
+defined('APPLICATION_PATH') || define('APPLICATION_PATH', getenv('PREVARISC_APPLICATION_PATH') ? getenv('PREVARISC_APPLICATION_PATH') : dirname(__FILE__).DS.'..'.DS.'application');
 
 // Define path to application directory
 defined('DATA_PATH') || define('DATA_PATH', getenv('PREVARISC_DATA_PATH') ?  getenv('PREVARISC_DATA_PATH') : DS.'data');
 
 // Define path to application directory
-defined('REAL_DATA_PATH') || define('REAL_DATA_PATH', realpath(getenv('PREVARISC_REAL_DATA_PATH') ? getenv('PREVARISC_REAL_DATA_PATH') : dirname(__FILE__).DS.'..'.DS.'public'.DS.'data'));
+defined('REAL_DATA_PATH') || define('REAL_DATA_PATH', getenv('PREVARISC_REAL_DATA_PATH') ? getenv('PREVARISC_REAL_DATA_PATH') : dirname(__FILE__).DS.'..'.DS.'public'.DS.'data');
 
 // Chargements des librairies
 require APPLICATION_PATH.DS."..".DS."vendor".DS."autoload.php";

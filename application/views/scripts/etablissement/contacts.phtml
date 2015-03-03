@@ -1,48 +1,16 @@
-<div class='pull-right' >
-    <a class='btn' href="<?php echo $this->url(array('action' => 'edit-contacts')) ?>">Gestion des contacts</a>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#contact-content").load("/contact?item=etablissement&id=<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>&verrou=0");
+});
+</script>
+<?php
+/*
+TRUNCATE TABLE  `dossiercontact`;
+*/
+?>
+<div>
+	<h4>Liste des contacts</h4>
 </div>
-
-<h3>Contacts</h3>
-
-<?php if(count($this->contacts_etablissements_parents) > 0) : ?>
-
-	<h4>Contacts des établissements parents</h4>
-	<div class='row-fluid'>
-	<?php foreach($this->contacts_etablissements_parents as $contact) : ?>
-		<div class='span4'>
-			<?php echo $this->partial('etablissement/partials/partial-contact.phtml', $contact) ?>
-		</div>
-		<?php if(!isset($i)) $i = 1; else $i++; ?>
-		<?php if($i == 3) : ?>
-			</div> <div class='row-fluid'>
-		<?php endif ?>
-	<?php endforeach ?>
-	</div>
-
-<?php endif ?>
-
-<?php if(count($this->contacts) == 0) : ?>
-
-    <div class='well well-large text-center'>
-        <p class='lead'>Il n'y a pas de contact.</p>
-        <p><a href='<?php echo $this->url(array('action' => 'edit-contacts')) ?>' class='btn btn-large'>Ajouter un contact</a></p>
-    </div>
-
-<?php else : ?>
-
-	<?php if(count($this->contacts_etablissements_parents) > 0) : ?>
-		<h4>Contacts de l'établissement</h4>
-	<?php endif ?>
-	<div class='row-fluid'>
-	<?php foreach($this->contacts as $contact) : ?>
-		<div class='span4'>
-			<?php echo $this->partial('etablissement/partials/partial-contact.phtml', $contact) ?>
-		</div>
-		<?php if(!isset($i)) $i = 1; else $i++; ?>
-		<?php if($i == 3) : ?>
-			</div> <div class='row-fluid'>
-		<?php endif ?>
-	<?php endforeach ?>
-	</div>
-
-<?php endif ?>
+<div id='contact-content'>
+</div>
+<br/>

@@ -58,6 +58,17 @@
             //echo $select;
             return $this->getAdapter()->fetchAll($select);
         }
+        
+        // Fonction optimisée pour les ACL
+        public function getEtablissementDossier2($id_dossier)
+        {
+            $select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from("etablissementdossier", array("etablissementdossier.ID_ETABLISSEMENT"))
+                ->where("etablissementdossier.ID_DOSSIER = ?", $id_dossier);
+
+            return $this->fetchAll($select)->toArray();
+        }
 
         //autocompletion utilis� dans la partie dossier - Recherche etablissement LAST VERSION
         public function searchLibelleEtab( $etablissementLibelle )
@@ -257,13 +268,12 @@
                 WHERE etablissementdossier.ID_ETABLISSEMENT = t1.ID_ETABLISSEMENT
                 AND t1.ID_GENRE = genre.ID_GENRE
                 AND etablissementdossier.ID_DOSSIER = '".$id_dossier."'
-				AND (genre.ID_GENRE = 2 || genre.ID_GENRE = 3 || genre.ID_GENRE = 5)
                 AND t1.DATE_ETABLISSEMENTINFORMATIONS = (
                     SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS)
                     FROM etablissementdossier, etablissementinformations
                     WHERE etablissementinformations.ID_ETABLISSEMENT = t1.ID_ETABLISSEMENT
                 )
-				GROUP BY ID_ETABLISSEMENT;
+                GROUP BY ID_ETABLISSEMENT;
 
             ";
 
@@ -323,6 +333,24 @@
             $search->setCriteria("d.DATEREP_DOSSIER IS NULL");
             $search->setCriteria("d.OBJET_DOSSIER IS NOT NULL");
             $search->sup("DATEDIFF(CURDATE(), d.DATEINSERT_DOSSIER)", (int) $duree_en_jour);
+            $search->order("d.DATEINSERT_DOSSIER desc");
             return $search->run(false, null, false)->toArray();   
+        }
+        
+        //Fonction qui récup tous les établissements liés au dossier LAST VERSION
+        public function getPreventionnistesDossier($id_dossier)
+        {
+		
+			//retourne la liste des catégories de prescriptions par ordre
+            $select = "
+                SELECT usrinfos.*
+                FROM dossierpreventionniste, utilisateur usr, utilisateurinformations usrinfos
+                WHERE dossierpreventionniste.ID_PREVENTIONNISTE = usr.ID_UTILISATEUR
+                AND usr.ID_UTILISATEURINFORMATIONS = usrinfos.ID_UTILISATEURINFORMATIONS
+                AND dossierpreventionniste.ID_DOSSIER = '".$id_dossier."'
+		GROUP BY usr.ID_UTILISATEUR;
+            ";
+            //echo $select;
+            return $this->getAdapter()->fetchAll($select);
         }
     }

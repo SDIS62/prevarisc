@@ -62,14 +62,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 data.response.adresses.forEach(function(element, index, array) {
                     array[index] = element.LIBELLE_COMMUNE;
                 });
-                var ets_adresses = data.response.adresses.join(' - ');
+                
+                if(data.response.informations.ID_GENRE == 1) {
+                    var ets_adresses = "";
+                    data.response.etablissement_lies.forEach(function(element, index, array) {
+                        if (element.LIBELLE_COMMUNE_ADRESSE_DEFAULT != null && ets_adresses == "") {
+                            ets_adresses = element.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
+                        }
+                    });
+                }
+                else {
+                    var ets_adresses = data.response.adresses.join(' - ');
+                }
 
                 html = "";
                 if(ets_parents != '') html += "<span>" + ets_parents + "</span><br>";
                 html += "<span class='lead'><strong>";
                 if(ets_type != null) html+= "<img src='/images/types/b/icone-type-" + ets_type + ".png'>&nbsp;";
-                html += ets_libelle + "&nbsp;</strong></span>";
-                html += "<span><small>" + ets_adresses + "</small></span>";
+                html += ets_libelle + "</strong></span>";
+                html += "&nbsp;<span><small>" + ets_adresses + "</small></span>";
+                html += "<br /><span><small>#" + data.response.general.NUMEROID_ETABLISSEMENT + "</small></span>";
 
                 if(data.response.presence_avis_differe === true) {
                     html += "<br><br><p class='avis' style='background-color: #3a87ad; font-size: .7em; float: none'>Avis différé</p>";

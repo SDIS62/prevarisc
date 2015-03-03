@@ -11,6 +11,8 @@ if($nbEtab > 0){
 				".$this->listeEtablissement[0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." 
 			</a>
 		";
+                
+                echo " <span style='font-size:10px'>#".$this->listeEtablissement[0]['infosEtab']['general']['NUMEROID_ETABLISSEMENT']."</span>";
 
 	}else{
 		echo "Etablissement(s) concerné(s) : &nbsp;";
@@ -67,6 +69,8 @@ if($nbEtab > 0){
 					echo ")</span>";
 				}
 				
+                                echo " <span style='font-size:10px'>#".$value['infosEtab']['general']['NUMEROID_ETABLISSEMENT']."</span>";
+                                
 				$i++;
 			}
 		}
@@ -100,4 +104,6 @@ if($this->etablissement){
 	}else{
 		echo "<span class='avis'>Avis indisponible</span>&nbsp;";
 	}
+        
+        echo " <span style='font-size:10px'>#".$this->etablissementInfos['general']['NUMEROID_ETABLISSEMENT']."</span>";
 }

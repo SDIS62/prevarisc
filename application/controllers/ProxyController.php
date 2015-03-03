@@ -9,7 +9,7 @@ class ProxyController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoRender(true);
         
 
-        // On forme la chaine de param�tres
+        // On forme la chaine de paramètres
         $params = "";
         foreach ($this->_request->getParams() as $key => $value) {
 
@@ -43,20 +43,26 @@ class ProxyController extends Zend_Controller_Action
         
         $data = curl_exec($ch);
         
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $header = substr($data, 0, $header_size);
-        $headers = explode("\r\n", $header);
-        $body = substr($data, $header_size);
+        if ($data === false) {
+            $body = curl_error($ch);
+        } else {
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $header = substr($data, 0, $header_size);
+            $headers = explode("\r\n", $header);
+            $body = substr($data, $header_size);
 
-        curl_close($ch);
-        
-        foreach($headers as $header) {
-            if ($header) {
-                if (preg_match('/^Content-Type/i', $header) !== false) {
-                    $this->_response->setRawHeader($header);
+            curl_close($ch);
+
+            foreach($headers as $header) {
+                if ($header) {
+                    if (preg_match('/^Content-Type/i', $header) !== 0) {
+                        $this->_response->setRawHeader($header);
+                    }
                 }
             }
         }
+        
+        
         
         $this->_response->setBody($body);
     }

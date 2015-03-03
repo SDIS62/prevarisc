@@ -55,7 +55,7 @@ foreach($this->membresFiles as $val => $membre){
                                         $dateDuJour = new Zend_Date();
                                         addChamp($membreLoop,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 										
-					$dateComm = new Zend_Date($this->dateComm);				
+					$dateComm = new Zend_Date($this->dateComm);
 					addChamp($membreLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 					
 					$heureCommTab = explode(":",$this->heureDeb);
@@ -89,7 +89,6 @@ foreach($this->membresFiles as $val => $membre){
 
 			//si le membre du groupement en question posède un document le concernant on génére la convocation
 			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
-			
 			if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
 				$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 
@@ -124,9 +123,7 @@ foreach($this->membresFiles as $val => $membre){
 				addChamp($grpLoop,'numGrp',$infosGroupement["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
 				addChamp($grpLoop,'rueGrp',$infosGroupement["RUEADRESSE_UTILISATEURINFORMATIONS"]);
 				addChamp($grpLoop,'cpGrp',$infosGroupement["CPADRESSE_UTILISATEURINFORMATIONS"]);
-
 				$dateComm = new Zend_Date($this->dateComm);
-
 				//echo $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." - ".$this->heureDeb." <br/><br/><br/>";
 				addChamp($grpLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 				addChamp($grpLoop,'heureDebutComm',$this->heureDeb);
@@ -172,6 +169,20 @@ function addChamp($odfName, $nomOdf, $variable){
 //Zend_Debug::dump($this->membresFiles->toArray());
 
 function retrieveInfoDoss($segment, $dossierInfos) {
+    $typeDossierCourt = 'F';
+
+    switch($dossierInfos['TYPE_DOSSIER']){
+        case 1 :
+            $typeDossierCourt = 'E';
+            break;
+        case 2 :
+        case 3 :
+            $typeDossierCourt = 'V';
+            break;
+        default :
+            $typeDossierCourt = 'A';
+            break;
+    }
     addChamp($segment->infosDoss, 'idDossier', $dossierInfos["ID_DOSSIER"]);
     addChamp($segment->infosDoss, 'avisDossier', getAvis($dossierInfos["AVIS_DOSSIER"]));
     addChamp($segment->infosDoss, 'nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
@@ -186,6 +197,15 @@ function retrieveInfoDoss($segment, $dossierInfos) {
         $commune = $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"];
     }
     addChamp($segment->infosDoss, 'communeConcerne', $commune);
+    $adresse = "";
+    if ($dossierInfos['infosEtab']["adresses"]){
+    $adresse = $dossierInfos['infosEtab']["adresses"][0]["NUMERO_ADRESSE"]." ";
+        $adresse .= $dossierInfos['infosEtab']["adresses"][0]["LIBELLE_RUE"]." ";
+        $adresse .= $dossierInfos['infosEtab']["adresses"][0]["CODEPOSTAL_COMMUNE"]." ";
+        $adresse .= $dossierInfos['infosEtab']["adresses"][0]["LIBELLE_COMMUNE"];
+    }
+    addChamp($segment->infosDoss, 'etablissementAdresse', $adresse);
+    
     if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
         $heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
         $heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
@@ -205,9 +225,10 @@ function retrieveInfoDoss($segment, $dossierInfos) {
         $listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
     }
     addChamp($segment->infosDoss, 'numDocUrba', $listeDocUrba);
+    addChamp($segment->infosDoss, 'typeDossierCourt', $typeDossierCourt);
     $listePreventioniste = array();
     $listeTelPreventioniste = array();
-    foreach($dossierInfos['infosEtab']["preventionnistes"] as $va => $preventioniste){
+    foreach($dossierInfos["preventionnistes"] as $va => $preventioniste){
 	$listePreventioniste[] = $preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
         $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
     }

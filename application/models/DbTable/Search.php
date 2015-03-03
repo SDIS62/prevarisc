@@ -142,7 +142,7 @@
         
         public function joinEtablissementDossier() {
             $this->select
-                    ->joinLeft("etablissementdossier", "etablissementdossier.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT")
+                    ->joinLeft("etablissementdossier", "etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT")
                     ->joinLeft(array('dossiers' => "dossier"), "dossiers.ID_DOSSIER = etablissementdossier.ID_DOSSIER")
                     ->joinLeft("dossiernature", "dossiernature.ID_DOSSIER = dossiers.ID_DOSSIER");
         }
@@ -195,6 +195,20 @@
         public function order( $value )
         {
             $this->select->order( $value );
+
+            return $this;
+        }
+        
+        public function columns( $array )
+        {
+            $this->select->columns( $array );
+
+            return $this;
+        }
+        
+        public function having( $value )
+        {
+            $this->select->having( $value );
 
             return $this;
         }

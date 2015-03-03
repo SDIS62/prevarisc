@@ -4,9 +4,9 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 {
 
     protected $_name="datecommissionpj"; // Nom de la base
-    protected $_primary = "ID_DATECOMMISSION";// Clé primaire
+    protected $_primary = "ID_DATECOMMISSION";// Clï¿½ primaire
 
-    //récupération de la liste des dossiers prévu à la date de commission passée en paramètres
+    //rï¿½cupï¿½ration de la liste des dossiers prï¿½vu ï¿½ la date de commission passï¿½e en paramï¿½tres
 /*
     public function getDossiersInfosOLD($dateCommId)
     {
@@ -47,7 +47,7 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 	
     public function getDossiersInfosByHour($dateCommId)
     {
-		//Retourne les dossiers avec toutes les informations le concernant classés par heure
+		//Retourne les dossiers avec toutes les informations le concernant classï¿½s par heure
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from(array('doss' => 'dossier'))
@@ -71,7 +71,7 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 
     public function getDossiersInfosByOrder($dateCommId)
     {
-		//Retourne les dossiers avec toutes les informations le concernant classés par ordre
+		//Retourne les dossiers avec toutes les informations le concernant classï¿½s par ordre
 		$select = $this->select()
 			->setIntegrityCheck(false)
 			->from(array('doss' => 'dossier'))

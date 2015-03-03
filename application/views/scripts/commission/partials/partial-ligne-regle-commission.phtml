@@ -5,7 +5,8 @@
             <input type='hidden' name='ID_REGLE[]' value='<?php echo $this->id_regle ?>' />
         
             <!-- Emplacement géographique (Si c'est une communale, c'est une commune sinon un groupement) -->
-            <?php if($this->infos["ID_COMMISSIONTYPE"] == 2) : ?>
+            <?php $id_type_commission_communale = getenv('PREVARISC_COMMISSION_COMMUNALE_TYPE') ? getenv('PREVARISC_COMMISSION_COMMUNALE_TYPE') : 2; ?>
+            <?php if($this->infos["ID_COMMISSIONTYPE"] == $id_type_commission_communale) : ?>
                 <p>
                     Commune
                     <input type='text' class='commune' value='<?php echo $this->commune["LIBELLE_COMMUNE"] ?>' class='bigger' size=25 <?php if($this->commune["NUMINSEE_COMMUNE"]) echo "style='background-color: #EEE'" ?> />

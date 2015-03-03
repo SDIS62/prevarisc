@@ -43,7 +43,7 @@
 
     <div class='navbar-form form-search well well-small span12' style='margin-bottom: 5px;'>
             <div class="pull-left input-append">
-                    <input type="text" name='objet' class="input-xlarge search-query" placeholder="Objet du dossier ..." value='<?php if(isset($_GET["objet"])) echo $_GET["objet"] ?>' />
+                <input type="text" name='objet' class="input-xlarge search-query" placeholder="Objet du dossier ..." value="<?php if(isset($_GET["objet"])) echo htmlentities($_GET["objet"]) ?>" />
                     <input type='submit' class="btn" value="Rechercher"  />
                     <input type='hidden' name='page' value="1" />
             </div>
@@ -94,16 +94,16 @@
             </div>
             <div class='row-fluid'>
                 <div class='span4'>
-                    <select name='commune' class="span12 chosen" data-placeholder='Types'>
-                        <option value=''>Sélectionnez une commune</option>
+                    <select name='commune' class="span12 chosen" data-placeholder='Sélectionner une commune'>
+                        <option value=''></option>
                     <?php foreach( $this->array_communes as $commune ) : ?>
                         <option value='<?php echo $commune["NUMINSEE_COMMUNE"] ?>' <?php if(isset($_GET["commune"]) && $commune["NUMINSEE_COMMUNE"] == $_GET["commune"]) echo 'selected' ?>><?php echo $commune["LIBELLE_COMMUNE"] ?></option>
                     <?php endforeach ?>
                     </select>
                 </div>
                 <div class='span3'>
-                    <select name='voie' class="span12 chosen" data-placeholder='Types'>
-                        <option value=''>Sélectionnez une voie</option>
+                    <select name='voie' class="span12 chosen" data-placeholder='Sélectionner une voie'>
+                        <option value=''></option>
                         <?php foreach( $this->array_voies as $voie ) : ?>
                             <option value='<?php echo $voie["ID_RUE"] ?>' <?php if(isset($_GET["voie"]) && $voie["ID_RUE"] == $_GET["voie"]) echo 'selected' ?>><?php echo $voie["LIBELLE_RUE"] ?></option>
                         <?php endforeach ?>
@@ -125,7 +125,7 @@
             </div>
             <div class='row-fluid'>
                 <div class='span4'>
-                    <input type="text" name='permis' class='span12' value='<?php echo isset($_GET["permis"])?$_GET["permis"]:'' ?>' placeholder="Numéro de permis" />
+                    <input type="text" name='permis' class='span12' value="<?php echo isset($_GET["permis"])?htmlentities($_GET["permis"]):'' ?>" placeholder="Numéro de permis" />
                 </div>
                 <div class='span3'>&nbsp;</div>
                 <div class='span5'>
@@ -139,8 +139,8 @@
             </div>
             <div class='row-fluid'>
                 <div class='span4'>
-                    <select name="preventionniste" class='span12 chosen' placeholder_text_single='Préventionniste'>
-                        <option value=''>Sélectionnez un préventionniste</option>
+                    <select name="preventionniste" class='span12 chosen' data-placeholder='Sélectionnez un préventionniste'>
+                        <option value=''></option>
                         <?php foreach( $this->liste_prev as $prev ) : ?>
                         <option value='<?php echo $prev["ID_PREVENTIONNISTE"] ?>' <?php if(isset($_GET["preventionniste"]) && $prev["ID_PREVENTIONNISTE"] == $_GET["preventionniste"]) echo 'selected' ?>><?php echo $prev["NOM_UTILISATEURINFORMATIONS"]." ".$prev["PRENOM_UTILISATEURINFORMATIONS"] ?></option>
                         <?php endforeach ?>
@@ -189,7 +189,9 @@
     	$("input[name='num_doc_urba']").focus().keyup(function() {$('input[type="submit"]').attr('disabled', $(this).val() == '')}).keyup();
 
 	// Gestion des select et multiselect
-        $(".chosen").chosen();
+        $(".chosen").chosen({
+            allow_single_deselect: true
+        });
 
       // Affichage des dossiers enfants
       $("ul.recherche_liste li.slide").live("click", function() {
@@ -220,7 +222,7 @@
                         voies = [];
                         var selectVoie = $('select[name=voie]');
                         selectVoie.empty();
-                        selectVoie.append("<option value=''>Sélectionnez une voie</option>");
+                        selectVoie.append("<option value=''></option>");
                         $.each(result.response, function (i, voie) {
                             selectVoie.append($("<option></option>")
                                 .attr("value",voie.ID_RUE).text(voie.LIBELLE_RUE));
