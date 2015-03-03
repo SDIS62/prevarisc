@@ -3,9 +3,9 @@
 class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 {
     private static $acl = null;
-    
+
     public static function getAcl() {
-        
+
         if (self::$acl == null) {
             // Chargement du cache
             $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
@@ -27,7 +27,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                     if(!$acl->hasRole($role->LIBELLE_GROUPE)) {
                         $acl->addRole($role->LIBELLE_GROUPE);
                     }
-                    
+
                     $privileges_role = $role->findModel_DbTable_PrivilegeViaModel_DbTable_GroupePrivilege()->toArray();
                     array_walk($privileges_role, function(&$val, $key) use(&$privileges_role){ $val = $privileges_role[$key]['id_privilege']; });
 
@@ -60,10 +60,10 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             }
             self::$acl = $acl;
         }
-        
+
         return self::$acl;
     }
-    
+
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
         // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token
@@ -93,7 +93,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 $request->setParam('error_handler', $error);
                 return ;
             }
-            
+
             $service_user->updateLastActionDate($utilisateur['ID_UTILISATEUR']);
 
             $acl = self::getAcl();
@@ -114,10 +114,10 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 array_walk($commissions, function(&$val, $key) use(&$commissions){ $val = $commissions[$key]['ID_COMMISSION']; });
                 $commissions = implode('-', $commissions);
 
-                
+
                 $privileges_role = $groupes_dbtable->find($utilisateur['ID_GROUPE'])->current()->findModel_DbTable_PrivilegeViaModel_DbTable_GroupePrivilege()->toArray();
                 array_walk($privileges_role, function(&$val, $key) use(&$privileges_role){ $val = $privileges_role[$key]['id_privilege']; });
-                
+
                 // On ajoute les ressources spécialisées
                 foreach($resources_dbtable->fetchAll()->toArray() as $resource) {
                     if(explode('_', $resource['name'])[0] == 'etablissement') {
@@ -163,7 +163,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         $resource_imploded = implode($resource_exploded, '_');
                         $list_resources_finale =  array($resource_imploded);
-                        
+
                         $resources = new ResourceContainer($list_resources_finale);
                         foreach($resources as $r) {
                             if(!$acl->has($r)) {
@@ -179,11 +179,13 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                     foreach($list_resources_finale as $resource_finale) {
                         foreach($privileges as $privilege) {
-                            if(in_array($privilege['id_privilege'], $privileges_role)) {
-                                $acl->allow($utilisateur['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
-                            }
-                            else {
-                                $acl->deny($utilisateur['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
+                            if($acl->has($resource_finale)) {
+                                if(in_array($privilege['id_privilege'], $privileges_role)) {
+                                    $acl->allow($utilisateur['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
+                                }
+                                else {
+                                    $acl->deny($utilisateur['group']['LIBELLE_GROUPE'], $resource_finale, $privilege['name']);
+                                }
                             }
                         }
                     }
@@ -299,7 +301,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
         }
     }
 
-    
+
 
     /**
      * getPageResources
@@ -320,7 +322,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             }
             elseif($page->get('controller') == 'dossier') {
                 if($page->getResource() === null && $request != null) {
-                    
+
                     if ($id_dossier = $request->getParam('id')) {
                         $model_dossier = new Model_DbTable_Dossier;
                         $dossier_nature = $model_dossier->getNatureDossier($id_dossier);
@@ -333,7 +335,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                         }
                         $resources[] = 'dossier_' . $dossier_nature['ID_NATURE'];
                     }
-                    
+
                     $resources[] = 'dossier_0';
 
                     return $resources;
@@ -374,16 +376,16 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
      * @return null|array
      */
     private function getEtablissementPageResourses($id_etablissement)
-    {   
+    {
         $service_etablissement = new Service_Etablissement;
         $service_groupement_communes = new Service_GroupementCommunes;
 
         $etablissement = $service_etablissement->get($id_etablissement);
-        
+
         $groupements = array();
         $communes = array();
         $etablissements = array($id_etablissement => $etablissement);
-        
+
         switch($etablissement['informations']['ID_GENRE']) {
             case '1':
                 foreach($etablissement['etablissement_lies'] as $etablissements_enfant) {
@@ -392,12 +394,12 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             default:
                 break;
         }
-        
-        // on récupère les communes des adresses puis les groupements rattachés aux communes de ces adresses 
+
+        // on récupère les communes des adresses puis les groupements rattachés aux communes de ces adresses
         // pour chacun des établissement : 1 pour un ERP, 1+N pour un site (+ ses enfants)
         $ids_etablissement = array_keys($etablissements);
         $groupement_adresses = $service_groupement_communes->findGroupementForEtablissement($ids_etablissement);
-        
+
         foreach($groupement_adresses as $groupement_adresse) {
             if ($groupement_adresse['ID_GROUPEMENT']) {
                 $groupements[$groupement_adresse['ID_ETABLISSEMENT']][] = $groupement_adresse['ID_GROUPEMENT'];
@@ -406,11 +408,11 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                 $communes[$groupement_adresse['ID_ETABLISSEMENT']][] = $groupement_adresse['NUMINSEE_COMMUNE'];
             }
         }
-        
+
         foreach($ids_etablissement as $id) {
             $groupements[$id][] = '0';
             $groupements[$id] = implode('-', $groupements[$id]);
-            
+
             $communes[$id][] = '0';
             $communes[$id] = implode('-', $communes[$id]);
         }
@@ -420,7 +422,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
         switch($etablissement['informations']['ID_GENRE']) {
             case '1':
                 $resource = array('editsite');
-                
+
                 foreach($ids_etablissement as $id) {
                     $new_resource = 'etablissement_erp_';
                     $new_resource .= ($etablissements[$id]['informations']['ID_TYPEACTIVITE'] == null ? '0' : $etablissements[$id]['informations']['ID_TYPEACTIVITE'] . '-0') . '_';
@@ -428,12 +430,12 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
                     $new_resource .= ($etablissements[$id]['informations']['ID_COMMISSION'] == null ? '0' : $etablissements[$id]['informations']['ID_COMMISSION'] . '-0') . '_';
                     $new_resource .= $groupements[$id] . '_';
                     $new_resource .= $communes[$id];
-                    
+
                     $resource[] = $new_resource;
                 }
-                
+
                 $resource = array_unique($resource);
-                
+
                 break;
 
             case '2':
@@ -499,10 +501,10 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
         }
         $list_resources_finale = is_array($resource) ? $resource : array($resource);
         //$this->develop_resources($list_resources_finale);
-        
+
         return $list_resources_finale;
     }
-   
+
 }
 
 /**
@@ -510,19 +512,19 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
  * qui ne les développent qu'à la demande, cette fonction coûtant cher en exécution
  */
 class ResourceContainer implements Iterator {
-    
+
     protected $resources = array();
-    
+
     protected $developped_resources = array();
-    
+
     protected $resources_index = 0;
-    
+
     protected $developped_resources_index = 0;
-    
+
     public function __construct(array $resources = array()) {
         $this->resources = $resources;
     }
-            
+
     public function current() {
         if (isset($this->developped_resources[$this->developped_resources_index])) {
             return $this->developped_resources[$this->developped_resources_index];
@@ -551,7 +553,7 @@ class ResourceContainer implements Iterator {
         $this->developped_resources = array();
         $this->resources_index = 0;
         $this->developped_resources_index = 0;
-        
+
         if (count($this->resources) > 0) {
             $this->developped_resources = array($this->resources[$this->resources_index]);
             $this->develop_resources($this->developped_resources);
@@ -559,14 +561,14 @@ class ResourceContainer implements Iterator {
     }
 
     public function valid() {
-        return isset($this->developped_resources[$this->developped_resources_index]) 
+        return isset($this->developped_resources[$this->developped_resources_index])
         && isset($this->resources[$this->resources_index]);
     }
-    
+
     public function hasNonDeveloppedResource($resource) {
         return in_array($resource, $this->resources);
     }
-    
+
     public function develop_resources(&$list_resources_finale) {
         for($i = 0; $i < count($list_resources_finale); $i++) {
             $resource_exploded = explode('_', $list_resources_finale[$i]);
