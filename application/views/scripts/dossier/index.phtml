@@ -63,7 +63,6 @@
         });
 
 
-
 		$("#commissionSelect").live('change',function(){
 			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
@@ -203,7 +202,8 @@
 		$(".incomplet").click(function(){
 			if($(this).val() == 1){
 				//incomplet on cache l'avis et on le met sur null
-				afficherCacherAvis(1);
+				$(this).addClass('hideavis');
+				afficherCacherAvis();
 
 				$("#HORSDELAI").hide();
 
@@ -213,10 +213,9 @@
 				numDivDocManquant++;
 				//On affiche la liste des documents manquants
 				$.ajax({
-					url: "/dossier/fonction",
-					data: "do=showDocManquant&numDoc="+numDivDocManquant+"&idDossier="+$("#idDossier").val(),
+					url: "/dossier/formdocmanquant",
+					data: "numDoc="+numDivDocManquant+"&idDossier="+$("#idDossier").val(),
 					type:"POST",
-					//async: false,
 					beforeSend: function(){
 
 					},
@@ -226,14 +225,48 @@
 				});
 			}else{
 				//complet on affiche l'avis
-				afficherCacherAvis(0);
+				$(this).removeClass('hideavis');
+				afficherCacherAvis();
 			}
 		});
 
+		$(".validDocManquant").live('click',function(){
+			
+			if($(this).prev().prev().val() == ''){
+				$(this).prev().click();
+				$(this).click();
+				return false;
+			}else{
+				$(this).prev().prev().removeClass('date').attr('readonly', 'readonly');
+				$(this).prev().prev().prev().prev().prev().removeClass('date').attr('readonly', 'readonly');
+				$(this).prev().prev().prev().attr('readonly', 'readonly');
+				$(this).hide();
+				$(this).next().show();
+				$(".incomplet").removeClass('hideavis');
+				afficherCacherAvis();
+				$(".incomplet").val(['0']);
+				$("#inputComplet").show();
+			}
+			return false;
+		});
+		
+		$(".cancelDateRecep").live('click',function(){
+			$(this).parent().prev().prev().prev().removeAttr('readonly').addClass('date');
+			$(this).parent().hide();
+			$(this).parent().prev().show();
+			$(this).parent().prev().prev().prev().prev().removeAttr('readonly');
+			$(".incomplet").addClass('hideavis');
+			$(".incomplet").val(['1']);
+			$("#inputComplet").hide();
+			afficherCacherAvis(0);
+			return false;
+		});
+		
 		$(".cancelIncomplet").live('click',function(){
 			$(this).parent().remove();
 			$("#inputComplet").show();
 			$(".incomplet").val(['0']);
+			$(".incomplet").removeClass('hideavis');
 			afficherCacherAvis(0);
 			return false;
 		});
@@ -301,9 +334,9 @@
 		if(typeDossier == 1)
 		{
 			//etude
-			if(natureDossier == 19 || natureDossier == 7)
+			if(natureDossier == 19 || natureDossier == 7 || natureDossier == 17)
 			{
-				//levée reserve
+				//levée reserve et avis différé
 				addText = " à l'exploitation";
 			}else{
 				addText = " à l'étude";
@@ -650,6 +683,48 @@
 		});
 	};
 
+	//Permet la suppression de date(s)
+	$(".suppression").live('click',function(){
+		//permet de supprimer une date dans les cas d'une édition et d'une création
+		if($("#dateCommission").val()){
+			//Dans le cas d'une édition supprime dans la base et raffraichi le calendrier
+			var tabDo = $(this).attr('id').split('_');
+			data = "do=supp_dateCom&idDateComm="+tabDo[2];
+			if(tabDo[2] == $("#dateCommission").val()){
+				//alert($("#listeDates").first("ul[id^=ligne_]").attr('id'));
+				//alert($("#listeDates ul:first").next("ul").attr('id'));
+
+			}
+			$.ajax({
+				data: data,
+				url: "/calendrier-des-commissions/dialogcomm",
+				type:"POST",
+				beforeSend: function(){
+					//Voir pour faire autrement cars il faut detecter avant de cacher la ligne s'il s'agit d'une date père ou non.
+				},
+				success: function(affichageResultat){
+					//alert(affichageResultat);
+					if(affichageResultat == ''){
+						alert('Il est impossible de supprimer cette date. D\'autres dates sont liées à celle-ci.\nUtilisez le bouton prévu à cet effet afin d\'affecter une autre date principale à la commission');
+					}else{
+						$("#listeDates").countLigne('supp','edit');
+						$("#ligne_"+tabDo[2]).fadeOut().remove();
+						$("#calendar").fullCalendar('refetchEvents');
+					}
+				},
+				error: function(){
+					return false;
+				}
+			});
+		}else{
+			//Dans le cas d'une création on retire simplement la ligne
+			$(this).parent().parent().fadeOut().remove();
+			$("#listeDates").countLigne('supp','new');
+		}
+		//compter le nombre de ligne pour autoriser ou non la périodicité
+		return false;
+	});
+
 	// Dialogue standard
 	function my_dialog( url, data, callback ) {
 		// Récupération du contenu de la boite de dialogue
@@ -754,7 +829,7 @@
 				var absquorum = $(".absquorum").is(':checked');
 				var differeavis = $(".differeavis").is(':checked');
 				var npsp = $(".npsp").is(':checked');
-
+				
 				if(incomplet == 1){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
@@ -814,12 +889,12 @@
 		$("#TYPE_DOSSIER option[value='0']").remove();
 
 		if($("#do").val() != 'new'){
-                    $("#rapport").hide();
-                    $("#VERROU").hide();
-                    $("#validModification").show();
-                    $("#annulModification").show().button().click(function() {
-                            window.location.reload();
-                    });
+			$("#rapport").hide();
+			$("#VERROU").hide();
+			$("#validModification").show();
+			$("#annulModification").show().button().click(function() {
+					window.location.reload();
+			});
 		}
 
 		$("#InfosDossier > li > .value").hide();
@@ -835,6 +910,7 @@
 		if($("#do").val() == 'edit'){
 			$("#listeNature").gestionSuppNature();
 		}
+
 		$("#InfosDossier").afficheChamps($("#selectNature").val());
 
 		//Gestion des cas calendrier comm visite en fonction du type de dossier
@@ -870,7 +946,7 @@
 		if(date_temp[2] && date_temp[1] > 0 && date_temp[1] <= 12 && date_temp[0] > 0 && date_temp[0] <=31){
 			return true;
 		}else{
-                    return false;
+			return false;
 		}
 	}
 
@@ -946,7 +1022,6 @@
 		return false;
 	});
 
-
 	$("#AVIS_DOSSIER_COMMISSION").live('change',function(){
 		var type = $("#TYPE_DOSSIER").val();
 		if(type == 2 || type == 3)
@@ -1001,23 +1076,6 @@
 		return false;
 	});
 
-	$(".validDocManquant").live('click',function(){
-		if($(this).prev().prev().val() == '')
-		{
-			//si la date n'est pas renseignée
-			$(this).prev().prev().click();
-
-		}else{
-			$(this).prev().prev().prev().attr('readonly','readonly');			$("#inputComplet").show();
-			$(".incomplet").val(['0']);
-			$("#AVIS").show();
-			$("#AVIS_COMMISSION").show();
-			$("#HORSDELAI").show();
-			afficherCacherAvis(0);
-		}
-		return false;
-	});
-
 	$("input[name=servInst]:radio").live('click', function(){
 		if($(this).val() == 'servInstCommune'){
 			$("#servInstVille").removeAttr('disabled');
@@ -1055,12 +1113,12 @@ echo "
 			<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='".$this->idUser."' />
 			".(('edit' == $action) ? "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />" : "")."
 			<div id='boutons' style='float: right'>
-                        <button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>
-                        <div id='chargement'></div>
+                <button id='creationDossier' class='save btn' style='display:none; z-index:150;'>Créer le dossier</button>
+                <div id='chargement'></div>
 			</div>
 			<h3>Informations générales</h3>
 			<!-- BEGIN UL Type/Nature -->
-			<h4>Type et natures du dossier</h4>
+			<h4>Type et nature du dossier</h4>
 			<ul class='list unstyled'>
 				<li class='row-fluid' style='margin-bottom:20px;' id='type'>
 					<div class='left libelle span3' style='float:left;'>Type</div>
@@ -1109,9 +1167,9 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Statut du dossier</div>
 					<div class='right value span9'>
 						<select name='ETAT_DOSSIER' id='ETAT_DOSSIER' >
-								<option value='0'>En attente</option>
-								<option value='1'>Validé</option>
-								<option value='2'>Projet abandonné</option>
+							<option value='0'>En attente</option>
+							<option value='1'>Validé</option>
+							<option value='2'>Projet abandonné</option>
 						</select>
 					</div>
 				</li>
@@ -1153,7 +1211,7 @@ echo "
 				<li class='row-fluid' id='NUMDOCURBA' style='".((in_array('NUMDOCURBA', $this->afficherChamps) && count($this->dossierDocUrba) != 0) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Numéro document d'urbanisme</div>
 					<!--
-					<div class='right value' ".(('new' == $action) ? "style='display:none;'" : "")."></div>
+						<div class='right value' ".(('new' == $action) ? "style='display:none;'" : "")."></div>
 					-->
 					<div class='right form span9'>
 						<div id='listeDocUrba' >
@@ -1259,7 +1317,7 @@ echo "
 						".$this->dateVisiteValue."
 					</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".(($this->dateVisite) ? $this->dateVisiteInput : "")."'  disabled='disabled'/>
+						<input type='text' style='width:400px;' widht name='DATEVISITE_DOSSIER' id='DATEVISITE_INPUT' value='".(($this->dateVisite) ? $this->dateVisiteInput : "")."'  readonly='readonly'/>
 						<input type='hidden' name='ID_AFFECTATION_DOSSIER_VISITE' id='ID_AFFECTATION_DOSSIER_VISITE' value='".(($this->idDateVisiteAffect) ? $this->idDateVisiteAffect : "")."' />
 						<button id='showVisite' class='showCalendar btn'".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
 						<button id='hideVisite' class='hideCalendar btn'".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-up'></i>&nbsp;Cacher le calendrier</button>
@@ -1296,7 +1354,7 @@ echo "
 						".$this->dateCommValue.(($this->idDateCommissionAffect != '') ? "&nbsp;&nbsp;<a href='/calendrier-des-commissions/gestionodj/dateCommId/".$this->idDateCommissionAffect."' title='afficher ordre du jour' ><i class='icon-calendar' ></i></a>" : "")."
 					</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".(($this->dateCommInput) ? $this->dateCommInput : "")."' disabled='disabled'/>
+						<input type='text' name='DATECOMM_DOSSIER' id='DATECOMM_INPUT' value='".(($this->dateCommInput) ? $this->dateCommInput : "")."' readonly='readonly'/>
 						<input type='hidden' name='ID_AFFECTATION_DOSSIER_COMMISSION' id='ID_AFFECTATION_DOSSIER_COMMISSION' value='".(($this->idDateCommissionAffect) ? $this->idDateCommissionAffect : "")."' />
 						<input type='hidden' name='DATEVISITE_PERIODIQUE' id='DATEVISITE_PERIODIQUE' value='".(($this->dateCommInput) ? $this->dateCommInput : "")."'/>
 						<button id='showCommission' class='showCalendar btn' ".(('new' == $action || '' == $this->commissionInfos['ID_COMMISSION']) ? "style='display:none;'" : "")."><i class='icon-chevron-down'></i>&nbsp;Afficher le calendrier</button>
@@ -1363,43 +1421,98 @@ echo "
 				</li>
 				<li class='row-fluid' id='INCOMPLET' style='".(($action != 'new' && in_array('INCOMPLET', $this->afficherChamps) && $this->infosDossier['INCOMPLET_DOSSIER'] != NULL) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Etat dossier</div>
+					
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
-					";
+				";
+				echo "
+					<span style='font-weight:bolder;'>
+						".(('0' == $this->infosDossier['INCOMPLET_DOSSIER']) ? "Complet" : "Incomplet")."
+					</span>
+					<br/><br/>
+				";
                     foreach ($this->listeDocManquant as $val => $ue) {
-                        $date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
+						$date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
                         $dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+						echo "
+							<span style='font-weight:bolder;'>
+								Incomplet le ".$dateDocManquant."
+							</span>
+							<br/>
+						";
                         echo nl2br($ue['DOCMANQUANT']);
-                        if ($ue['DATE_DOCSMANQUANT'] != '') {
-                            echo "<br/><font style='color:green;' >Reception document(s) le ".$dateDocManquant."</font><br/>";
-                        }
+						if(isset($ue['DATE_RECEPTION_DOC'])){
+							$date2 = new Zend_Date($ue['DATE_RECEPTION_DOC'], Zend_Date::DATES);
+							$dateReceptionDoc = $date2->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+							if ($ue['DATE_DOCSMANQUANT'] != '') {
+								echo "<br/><font style='color:green;' >Réception document(s) le ".$dateReceptionDoc."</font><br/>";
+								
+							}
+						}
                         echo "<br/>";
                     }
-                    echo "
-						<br/>".(('0' == $this->infosDossier['INCOMPLET_DOSSIER']) ? "Complet" : "Incomplet")."
-						".(('1' == $this->infosDossier['INCOMPLET_DOSSIER']) ? "   ".$this->DATEINCOMPLET." " : "")."
-					</div>
-					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "")." >
-						<div id='dossierIncomplet'>
-						";
-                        foreach ($this->listeDocManquant as $val => $ue) {
-                            if ($ue['DATE_DOCSMANQUANT'] != '') {
-                                $disabledTextArea = "readonly='readonly'";
-                                $date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
-                                $dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                            } else {
-                                $disabledTextArea = "";
-                                $dateDocManquant = "";
-                            }
-
-                            echo "<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$ue['NUM_DOCSMANQUANT']."' ".$disabledTextArea." rows='5' cols='100'>".$ue['DOCMANQUANT']."</textarea>";
-                            echo "<input class='date' type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$dateDocManquant."' ".$disabledTextArea."/>&nbsp;";
-                            if ('' == $ue['DATE_DOCSMANQUANT']) {
-                                echo "<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>&nbsp;&nbsp;&nbsp;<button class='btn validDocManquant'><i class='icon-lock'></i>&nbsp;Valider la reception de document</button><br/><br/>";
-                            }
-                        }
-                        echo "
+					echo "
 						</div>
-						<div id='inputComplet' >
+						<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "")." >
+							<div id='dossierIncomplet'>
+					";
+
+					$cptDocManquant = count($this->listeDocManquant);
+					//Zend_Debug::dump($this->listeDocManquant);
+					foreach ($this->listeDocManquant as $val => $ue) {
+						if ($ue['DATE_DOCSMANQUANT'] != '') {
+							$date = new Zend_Date($ue['DATE_DOCSMANQUANT'], Zend_Date::DATES);
+							$dateDocManquant = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+						} else {
+							$dateDocManquant = "";
+						}
+						
+						if(isset($ue['DATE_RECEPTION_DOC'])){
+							$disabledTextArea = "readonly='readonly'";
+							$disabledText = "readonly='readonly'";
+							$date = new Zend_Date($ue['DATE_RECEPTION_DOC'], Zend_Date::DATES);
+							$dateReceptDoc = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+						}else{
+							$disabledTextArea = "";
+							$disabledText = "";
+						}
+
+						echo "
+							Dossier incomplet le 
+							<input ".( ( isset($ue['DATE_RECEPTION_DOC']))? "readonly='readonly'" : "class='date'" )." type='text' name='dateDocManquant[]' id='dateDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$dateDocManquant."' />
+							&nbsp;
+						";
+						if($cptDocManquant == 1 && $ue['DATE_RECEPTION_DOC'] == NULL){
+							echo "
+								<button class='today btn'>
+									<i class='icon-calendar'></i>&nbsp;Aujourd'hui
+								</button>
+							";
+						}
+						echo "
+							<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$ue['NUM_DOCSMANQUANT']."' ".$disabledTextArea." rows='5' cols='100'>".$ue['DOCMANQUANT']."</textarea>
+							Document(s) réceptionné(s) le 
+							<input ".( (isset($ue['DATE_RECEPTION_DOC']))? $disabledText :"class='date'")." type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".( (isset($ue['DATE_RECEPTION_DOC']))? $dateReceptDoc : "" )."' />
+							&nbsp;
+						";
+						echo "
+							<button class='today btn' ".( ($ue['DATE_RECEPTION_DOC'] != '')? "style='display:none;'" : "" ).">
+								<i class='icon-calendar'></i>&nbsp;Aujourd'hui
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<button class='btn validDocManquant' ".( ($ue['DATE_RECEPTION_DOC'] != '')? "style='display:none;'" : "" ).">
+								<i class='icon-lock'></i>&nbsp;Valider la reception de document
+							</button>
+							&nbsp;&nbsp;&nbsp;
+							<span ".( ($ue['DATE_RECEPTION_DOC'] != NULL && $cptDocManquant == 1)? "" : "style='display:none;'" ).">
+								<button class='cancelDateRecep btn'><i class='icon-remove'></i>&nbsp;Modifier</button>
+							</span>
+							<br/><br/>
+						";
+						$cptDocManquant--;
+					}
+					echo "
+						</div>
+						<div id='inputComplet' ".( ( $this->infosDossier['INCOMPLET_DOSSIER'] == 1)? "style='display:none;'" : "" ).">
 							<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='0' ".(('new' == $action || 0 == $this->infosDossier['INCOMPLET_DOSSIER']) ? "checked='checked'" : "")."> Complet
 							<input type='radio' class='incomplet' name='INCOMPLET_DOSSIER' value='1' ".((1 == $this->infosDossier['INCOMPLET_DOSSIER']) ? "checked='checked'" : "")."> Incomplet
 						</div>
@@ -1466,7 +1579,7 @@ echo "
                     echo $this->AVIS_VALUE['LIBELLE_AVIS'];
                     if (1 == $this->infosDossier['TYPE_DOSSIER']) {
                         //etude
-                        if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7) {
+                        if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7 || $this->natureConcerne[0]['ID_NATURE'] == 17) {
                             echo " à l'exploitation";
                         } else {
                             echo " à l'étude";
@@ -1495,14 +1608,14 @@ echo "
 						</select>
 					</div>
 				</li>
-				<li class='row-fluid' id='AVIS_COMMISSION' style='".(($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '' && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != 0 && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && 1 == $this->afficheAvis) ? "" : "display:none;")."margin-bottom:20px;'>
+				<li class='row-fluid' id='AVIS_COMMISSION' style='".(($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '0' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && 1 == $this->afficheAvis) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
 						<span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
                         echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
                         if (1 == $this->infosDossier['TYPE_DOSSIER']) {
                             //etude
-                            if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7) {
+                            if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7 || $this->natureConcerne[0]['ID_NATURE'] == 17) {
                                 echo " à l'exploitation";
                             } else {
                                 echo " à l'étude";
@@ -1591,7 +1704,15 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Date de transfert à la commissions compétente</div>
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATETRANSFERTCOMM_DOSSIER']."</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".(($this->DATETRANSFERTCOMM_INPUT) ? $this->DATETRANSFERTCOMM_INPUT : "")."' />
+				";
+				if($this->DATETRANSFERTCOMM){
+					$dateTransfertTemp= new Zend_Date($this->DATETRANSFERTCOMM, Zend_Date::DATES);
+					$dateTransfertComm = $dateTransfertTemp->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				}else{
+					$dateTransfertComm = "";
+				}
+				echo "
+						<input type='text' class='date' id='DATETRANSFERTCOMM_DOSSIER' name='DATETRANSFERTCOMM_DOSSIER' value='".$dateTransfertComm."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
@@ -1599,7 +1720,15 @@ echo "
 					<div class='left libelle span3' style='float:left;'>Date de réception à la commissions compétente</div>
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['DATERECEPTIONCOMM_DOSSIER']."</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".(($this->DATERECEPTIONCOMM_INPUT) ? $this->DATERECEPTIONCOMM_INPUT : "")."' />
+				";
+				if($this->DATERECEPTIONCOMM){
+					$dateReceptTemp= new Zend_Date($this->DATERECEPTIONCOMM, Zend_Date::DATES);
+					$dateReceptTemp = $dateReceptTemp->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+				}else{
+					$dateReceptTemp = "";
+				}
+				echo "
+						<input type='text' class='date' id='DATERECEPTIONCOMM_DOSSIER' name='DATERECEPTIONCOMM_DOSSIER' value='".$dateReceptTemp."' />
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
@@ -1737,6 +1866,7 @@ echo "
 				</li>
 			</ul>
 		</form>
+		<div id='dialogComm' style='display:none;'></div>
 	</div>
 ";
 
