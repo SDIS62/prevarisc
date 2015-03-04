@@ -1054,7 +1054,11 @@ class DossierController extends Zend_Controller_Action
                     }
 
                     foreach ($listeEtab as $val => $ue) {
+
                         $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
+                        //Avant la mise à jour du champ ID_DOSSIER_DONNANT_AVIS on s'assure que la date de l'avis est plus récente
+                        
+
                         $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
                         $etabToEdit->save();
                         $cache->remove('etablissement_id_'.$ue['ID_ETABLISSEMENT']);
@@ -1069,21 +1073,22 @@ class DossierController extends Zend_Controller_Action
                             }
                         }
 
-                            // AVERTISSEMENT SUR L'OUVERTURE D'UN ETABLISSEMENT A EFFECTUER
-                            // Dadns les cas d'une visite avant ouverture avec avis de commission positif
-                            if ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 && in_array($idNature, array(47, 48))) {
-                                $etabInformation = $dbEtab->getInformations($ue["ID_ETABLISSEMENT"]);
-                                // Si l'établissement est en statut projet, et uniquement ce cas
-                                if ($etabInformation && 1 == $etabInformation->ID_STATUT) {
-                                    $this->_helper->flashMessenger(array(
-                                        'context' => 'warning',
-                                        'title' => 'Avertissement',
-                                        'message' => "La visite d'avant ouverture étant favorable, vous devriez passer le statut de l'établissement <a title='Ouvrir' href='/etablissement/edit/id/".$ue["ID_ETABLISSEMENT"]."'>".$etabInformation["LIBELLE_ETABLISSEMENTINFORMATIONS"]."</a> à 'ouvert' (statut actuellement à 'projet').",
-                                    ));
-                                }
+                        // AVERTISSEMENT SUR L'OUVERTURE D'UN ETABLISSEMENT A EFFECTUER
+                        // Dans le cas d'une visite avant ouverture avec avis de commission positif
+                        if ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 && in_array($idNature, array(47, 48))) {
+                            $etabInformation = $dbEtab->getInformations($ue["ID_ETABLISSEMENT"]);
+                            // Si l'établissement est en statut projet, et uniquement ce cas
+                            if ($etabInformation && 1 == $etabInformation->ID_STATUT) {
+                                $this->_helper->flashMessenger(array(
+                                    'context' => 'warning',
+                                    'title' => 'Avertissement',
+                                    'message' => "La visite d'avant ouverture étant favorable, vous devriez passer le statut de l'établissement <a title='Ouvrir' href='/etablissement/edit/id/".$ue["ID_ETABLISSEMENT"]."'>".$etabInformation["LIBELLE_ETABLISSEMENTINFORMATIONS"]."</a> à 'ouvert' (statut actuellement à 'projet').",
+                                ));
                             }
+                        }
                     }
                 }
+
             }
 
             //GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
