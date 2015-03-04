@@ -6,7 +6,7 @@ function addPrescription($listePrescription,$type,$odf){
     try{
 
         if($type == 0){
-            $prescription = $odf->listeRappelReg;
+            $prescription = $odf->listeReg;
         }else if ($type == 1){
             $prescription = $odf->listeExploitation;
         }else if ($type == 2){
