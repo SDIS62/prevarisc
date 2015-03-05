@@ -85,7 +85,7 @@ try{
     $preventionniste = $odf->setSegment('preventionnistes');
     $nbPrev = count($this->preventionnistes);
     foreach($this->preventionnistes as $prev){
-        addChamp($preventionniste, 'civilite', $prev['LIBELLE_UTILISATEURCIVILITE']);
+        //addChamp($preventionniste, 'civilite', $prev['LIBELLE_UTILISATEURCIVILITE']);
         addChamp($preventionniste, 'grade', $prev['GRADE_UTILISATEURINFORMATIONS']);
         addChamp($preventionniste, 'nom', $prev['NOM_UTILISATEURINFORMATIONS']);
         if($nbPrev > 1)

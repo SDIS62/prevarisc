@@ -256,19 +256,16 @@ endif; ?>
 	});
 	
 	$("#generate").live('click',function() {
-            
             if ($('.etabCheck:checked').length == 0) {
                 alert('Vous devez sélectionner un établissement pour pouvoir générer un rapport.');
                 return false;
             }
             
             $(this).attr('disabled', 'disabled');
-            
             $.ajax({
                 url: "/dossier/generationrapport",
                 data: $("#etabRapport").serialize()+"&idDossier="+$("#idDossier").val(),
                 type:"POST",
-                //async: false,
                 beforeSend: function(){
                     $("#dialogComm").html("<img src='/images/load.gif' />");
                 },
@@ -286,8 +283,6 @@ endif; ?>
                 
     });
 </script>
-<div id='dialogComm' style='display:none;'></div>
 <?php $this->placeholder('after_content')->captureEnd() ?>
-
 
 <?php echo $this->render('dashboard.phtml') // Rendu du layout par défaut avec les placeholders ?>
