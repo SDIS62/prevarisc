@@ -24,6 +24,7 @@ function addPrescription($listePrescription,$type,$odf){
                 $article = '';
                 $texte = '';
                 $textearticle = '';
+                $nbCpt = $nbAssoc;
                 for($j=0; $j < $nbAssoc; $j++)
                 {
                     $articleT = $listePrescription[$i][$j]['LIBELLE_ARTICLE'];
@@ -34,7 +35,7 @@ function addPrescription($listePrescription,$type,$odf){
                     }else{
                         $textearticle .= " - ";
                     }
-                    if($nbAssoc > 1){
+                    if($nbCpt > 1){
                         if($articleT != ''){
                             $textearticle .= $articleT.", ";
                         }else{
@@ -61,7 +62,7 @@ function addPrescription($listePrescription,$type,$odf){
                         }
                         $cpt = false;
                     }
-                    $nbAssoc--;
+                    $nbCpt--;
                 }
                 $prescription->setVars('textearticle',$textearticle,true,'UTF-8');
                 $prescription->merge();
