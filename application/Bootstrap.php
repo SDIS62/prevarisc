@@ -25,25 +25,46 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     }
 
     /**
+    * Initialisation des ACL
+    */
+    protected function _initAcl()
+    {
+        require 'Acl.php';
+
+        $acl = new Acl;
+
+        return $acl;
+    }
+
+    /**
      * Initialisation du cache APC
      */
     protected function _initCache()
     {
-        return Zend_Cache::factory('Core', 'APC', array(
-            'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
-            'cache_id_prefix' => 'prevarisc'
-        ));
-    }
+        require_once 'services'.DS.'Interface'.DS.'Cache.php';
+        require_once 'services'.DS.'Cache.php';
 
-    /**
-     * Initialisation du cache APC spécial recherches
-     */
-    protected function _initCacheSearch()
-    {
-        return Zend_Cache::factory('Core', 'APC', array(
+        $host = '';
+
+        if (isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])) {
+            $host = $_SERVER['HTTP_HOST'];
+        } else if (isset($_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT'])) {
+            $name = $_SERVER['SERVER_NAME'];
+            $port = $_SERVER['SERVER_PORT'];
+            if (($scheme == 'http' && $port == 80) ||
+            ($scheme == 'https' && $port == 443)) {
+                $host = $name;
+            } else {
+                $host = $name . ':' . $port;
+            }
+        }
+
+        return Zend_Cache::factory('Core', 'File', array(
             'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
-            'cache_id_prefix' => 'prevarisc_search'
+            'cache_id_prefix' => 'prevarisc_'.md5($host)
         ));
+
+        return new Service_Cache($cache);
     }
 
     /**

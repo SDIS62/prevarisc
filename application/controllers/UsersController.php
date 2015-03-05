@@ -113,8 +113,6 @@ class UsersController extends Zend_Controller_Action
                         }
                     }
                 }
-                $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
-                $cache->remove('acl');
 
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
@@ -128,7 +126,7 @@ class UsersController extends Zend_Controller_Action
                     'message' => $e->getMessage()
                 ));
             }
-            
+
             // Redirection
             $this->_helper->redirector('matrice-des-droits');
         }
@@ -378,46 +376,46 @@ class UsersController extends Zend_Controller_Action
                                 $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
                                 $text .= ')';
                                 break;
-                            
+
                             case '7':
                                 $name = 'etablissement_camp_';
                                 $name .= $this->_request->groupements . '_';
                                 $name .= $this->_request->commune;
-                                
+
                                 $text = 'Camping (';
                                 $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
                                 $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
                                 $text .= ')';
                                 break;
-                            
+
                             case '8':
                                 $name = 'etablissement_temp_';
                                 $name .= $this->_request->groupements . '_';
                                 $name .= $this->_request->commune;
-                                
+
                                 $text = 'Manifestation temporaire (';
                                 $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
                                 $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
                                 $text .= ')';
                                 break;
-                            
+
                             case '9':
                                 $name = 'etablissement_iop_';
                                 $name .= $this->_request->groupements . '_';
                                 $name .= $this->_request->commune;
-                                
+
                                 $text = 'IOP (';
                                 $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
                                 $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
                                 $text .= ')';
                                 break;
-                            
+
                             case '10':
                                 $name = 'etablissement_zone_';
                                 $name .= (is_array($this->_request->classements) ? implode($this->_request->classements, '-') : '0') . '_';
                                 $name .= $this->_request->groupements . '_';
                                 $name .= $this->_request->commune;
-                                
+
                                 if(is_array($this->_request->classements)) {
                                     $array = $this->_request->classements;
                                     array_walk($array, function(&$val, $key) use(&$array){
@@ -430,7 +428,7 @@ class UsersController extends Zend_Controller_Action
                                         $array[$key] = $classement[$val];
                                     });
                                 }
-                                
+
                                 $text = 'Zone (';
                                 $text .= (is_array($this->_request->classements) ? 'Classes ' . implode($array, '-') : 'Tous les classements') . ' - ';
                                 $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';

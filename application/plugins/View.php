@@ -23,7 +23,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             } else {
                 $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..');
                 $view->branch_prevarisc = $git->getCurrentBranch();
-                $view->revision_prevarisc = end($git->getRevisions())['sha1'];
+                $view->revision_prevarisc = @end($git->getRevisions())['sha1'];
                 $view->version_prevarisc = $view->branch_prevarisc . '@' . substr((string) $view->revision_prevarisc, 0, 7);
             }
 
@@ -36,6 +36,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->registerHelper(new View_Helper_Dates, 'formatDateDiff');
             $view->registerHelper(new View_Helper_Avatar, 'avatar');
             $view->registerHelper(new View_Helper_Carte, 'carte');
+            $view->registerHelper(new View_Helper_IsAllowed, 'isAllowed');
             $view->registerHelper(new View_Helper_ListeGroupement, 'listeGroupement');
             $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
 

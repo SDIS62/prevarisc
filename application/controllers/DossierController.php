@@ -253,7 +253,7 @@ class DossierController extends Zend_Controller_Action
 
         // / ! \ Le forward refait passer par toute la chaîne
         // $this->_forward('general');
-        
+
         $this->view->idUser = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
         $this->view->userInfos = Zend_Auth::getInstance()->getIdentity();
         //On récupère tous les types de dossier
@@ -269,9 +269,9 @@ class DossierController extends Zend_Controller_Action
         $this->view->mois = $listeMois;
 
         // AUTORISATIONS CHANGEMENT AVIS DE LA COMMISSION
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
 
-        $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
+        $this->view->is_allowed_change_avis = $acl->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
 
         $service_etablissement = new Service_Etablissement();
 
@@ -382,8 +382,8 @@ class DossierController extends Zend_Controller_Action
                 $afficheAvis = 0;
             } elseif ($this->view->infosDossier['INCOMPLET_DOSSIER'] != 0) {
                 $afficheAvis = 0;
-            } 
-			
+            }
+
             $this->view->afficheAvis = $afficheAvis;
 
             //récuperation des informations sur le créateur du dossier
@@ -857,7 +857,7 @@ class DossierController extends Zend_Controller_Action
             break;
         }
     }
-	
+
 	public function formdocmanquantAction()
 	{
 		$dbDocManquant = new Model_DbTable_DocManquant();
@@ -1156,7 +1156,7 @@ class DossierController extends Zend_Controller_Action
                 $docManquantArray = array();
                 $dateDocManquantArray = array();
 				$dateDocManquantRecepArray = array();
-				
+
                 if (isset($_POST['docManquant'])) {
                     foreach ($_POST['docManquant']  as $libelle => $value) {
                         if ($value != "") {
@@ -1172,7 +1172,7 @@ class DossierController extends Zend_Controller_Action
                         }
                     }
                 }
-				
+
 				if (isset($_POST['dateDocManquant'])) {
                     foreach ($_POST['dateDocManquant']  as $libelle => $value) {
                         if ($value != "") {
@@ -1195,7 +1195,7 @@ class DossierController extends Zend_Controller_Action
                         if ($nbDateParam > 0 && $cpt < $nbDateParam) {
                             $dateTab = explode("/",$dateDocManquantArray[$cpt]);
                             $value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
-                            $dossDocManquant->DATE_DOCSMANQUANT = $value;							
+                            $dossDocManquant->DATE_DOCSMANQUANT = $value;
 							if(isset($dateDocManquantRecepArray[$cpt]) && $dateDocManquantRecepArray[$cpt] != NULL && $dateDocManquantRecepArray[$cpt] != ''){
 								$dateTabRecep = explode("/",$dateDocManquantRecepArray[$cpt]);
 								$valueRecep = $dateTabRecep[2]."-".$dateTabRecep[1]."-".$dateTabRecep[0];
@@ -2006,10 +2006,10 @@ class DossierController extends Zend_Controller_Action
 
         $listeDateInput = "";
         $listeHeureInput = array();
-        
+
         foreach ($recupCommLiees as  $val => $ue) {
             $date = new Zend_Date($ue['DATE_COMMISSION'], Zend_Date::DATES);
-            
+
             if ($nbDateDecompte == $nbDatesTotal) {
                 //premiere date = date visite donc on renseigne l'input hidden correspondant avec l'id de cette date
                 $this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
@@ -2020,7 +2020,7 @@ class DossierController extends Zend_Controller_Action
                 $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
             }
             $listeHeureInput[] = substr($ue['HEUREDEB_COMMISSION'], 0, 5). ' à ' .substr($ue['HEUREFIN_COMMISSION'], 0, 5);
-            
+
             $this->view->dateVisiteInput = $listeDateInput;
             $nbDateDecompte--;
         }
@@ -2163,7 +2163,7 @@ class DossierController extends Zend_Controller_Action
 
         $this->render('creationdoc');
     }
-    
+
     public function descriptifAction()
     {
         if ((int) $this->_getParam("id")) {
@@ -2385,7 +2385,7 @@ class DossierController extends Zend_Controller_Action
         $idPrescType = $this->_getParam('idPrescType');
         $idDossier = $this->_getParam('idDossier');
         $this->view->typePrescDossier = $this->_getParam('typePrescriptionDossier');
-        
+
         //on recup le num max de prescription du dossier
         $dbPrescDossier = new Model_DbTable_PrescriptionDossier();
         $numMax = $dbPrescDossier->recupMaxNumPrescDossier($idDossier, $this->_getParam('typePrescriptionDossier'));
@@ -2425,7 +2425,7 @@ class DossierController extends Zend_Controller_Action
         $this->view->articles = $articleArray;
 
         $nbPresc = 1;
-        $listeExploit = $dbPrescDossier->recupPrescDossier($idDossier, 1);                
+        $listeExploit = $dbPrescDossier->recupPrescDossier($idDossier, 1);
         foreach($listeExploit as $prescDossier){
             $prescCount = $dbPrescDossier->find($prescDossier['ID_PRESCRIPTION_DOSSIER'])->current();
             $prescCount->NUM_PRESCRIPTION_DOSSIER = $nbPresc;
@@ -2451,9 +2451,9 @@ class DossierController extends Zend_Controller_Action
         $tabId = explode(",",$stringUpdate);
 
 
-        $service_dossier = new Service_Dossier();        
+        $service_dossier = new Service_Dossier();
         $service_dossier->changePosPrescription($tabId);
-        
+
     }
 
     public function formrecupprescriptionAction()
@@ -2482,7 +2482,7 @@ class DossierController extends Zend_Controller_Action
 			$this->view->selectArticle = $DBprescArticle->fetchAll('LIBELLE_ARTICLE LIKE "%'.$_GET['q'].'%"')->toArray();
 		}
 	}
-*/	
+*/
     public function recupprescriptionAction()
     {
         $this->_helper->viewRenderer->setNoRender();

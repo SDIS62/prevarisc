@@ -1,3 +1,4 @@
+<?php if(true || $this->isAllowed('index', 'dossier', 'default', array('id' => $this->ID_DOSSIER))) : ?>
 <tr <?php if($this->NB_DOSS_LIES > 0) echo "class='slide'" ?> id="<?php echo "row".$this->ID_DOSSIER ?>">
 
     <?php
@@ -26,14 +27,14 @@
             }
             $date_text = "<br/>ayant pour date de passage en commission le";
         }
-    
+
     ?>
-    
+
     <?php /* Etablissement */ ?>
     <td class="doss-nom">
-        
-         
-        
+
+
+
         <a href='/etablissement/index/id/<?php echo $this->ID_ETABLISSEMENT ?>' title='<?php echo htmlspecialchars($this->LIBELLE_ETABLISSEMENTINFORMATIONS , ENT_QUOTES) ?>'>
             <?php echo $this->LIBELLE_ETABLISSEMENTINFORMATIONS  ?>
         </a>
@@ -50,7 +51,7 @@
             </strong>
         </small>
     </td>
-    
+
     <?php /* Icone représentant le dropdown des fils */ ?>
     <?php if($this->NB_DOSS_LIES > 0) : ?>
     <span class="icone_enfants" ><i class='ui-icon ui-icon-triangle-1-e' style='position: relative; left: -25px; float: left; margin-right: -25px;' ></i></span>
@@ -85,7 +86,7 @@
         <?php else : ?>
         <span class="avis">Avis indisponible</span>
         <?php endif ?>
-        
+
         <?php /* Alerte sur la reception de travaux */ ?>
         <?php if($this->ALERTE_RECEPTION_TRAVAUX > 0) : ?>
         <span class='avis' style='background-color: #3a87ad'>Présence d'un dossier de reception de travaux</span>
@@ -95,10 +96,10 @@
         <span class='avis' style='background-color: #3a87ad'>Fait l'objet d'un échéancier de travaux</span>
         <?php endif ?>
     </td>
-    
-    
-    
-    
+
+
+
+
 
     <?php /* Dates du dossier */ ?>
     <td>
@@ -146,7 +147,7 @@
     <?php if($this->NB_DOSS_LIES > 0) : ?>
         <span class='load ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement ...' /></span>
     <?php endif ?>
-    
+
     <?php /* Préventionnistes */ ?>
     <td>
         <?php if($this->PREVENTIONNISTES != null) : ?>
@@ -155,7 +156,7 @@
         <?php endforeach ?>
         <?php endif ?>
     </td>
-        
+
     <?php /* Pièces jointes */ ?>
     <td>
         <?php if($this->PIECESJOINTES != null) : ?>
@@ -174,3 +175,4 @@
         <?php endif ?>
     </td>
 </tr>
+<?php endif ?>

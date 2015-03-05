@@ -150,8 +150,7 @@ class IndexController extends Zend_Controller_Action
 
                 $identity = Zend_Auth::getInstance()->getIdentity();
                 $user = $service_user->find($identity['ID_UTILISATEUR']);
-                $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
-                $acl = unserialize($cache->load('acl'));
+                $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
                 $profil = $user['group']['LIBELLE_GROUPE'];
                 $blocs = array();
                 foreach($blocsConfig as $blocId => $blocConfig) {

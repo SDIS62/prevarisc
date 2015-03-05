@@ -27,7 +27,7 @@ class Service_Search
     public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types_activites = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $city = null, $street_id = null, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         // Identifiant de la recherche
         $search_id = 'search_etablissements_' . md5(serialize(func_get_args()));
@@ -75,9 +75,9 @@ class Service_Search
 
             // Critères : nom de l'établissement
             if($label !== null) {
-                
+
                 $cleanLabel = trim($label);
-                
+
                 // recherche par id
                 if (substr($cleanLabel, 0, 1) == "#") {
                     $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", substr($cleanLabel, 1), false);
@@ -85,7 +85,7 @@ class Service_Search
                 // on test si la chaine contient uniquement des caractères de type identifiant sans espace
                 } else  if (preg_match('/^[E0-9\/\-\.]+([0-9A-Z]{1,2})?$/', $cleanLabel) === 1) {
                     $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", $cleanLabel, false);
-                    
+
                 // cas par défaut
                 } else {
                   $this->setCriteria($select, "LIBELLE_ETABLISSEMENTINFORMATIONS", $cleanLabel, false);
@@ -213,7 +213,7 @@ class Service_Search
     public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $avis_differe = null, $count = 10, $page = 1, $criterias = null)
     {
         // Récupération de la ressource cache à partir du bootstrap
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         // Identifiant de la recherche
         $search_id = 'search_dossiers_' . md5(serialize(func_get_args()));
@@ -273,9 +273,9 @@ class Service_Search
 
             // Critères : objet
             if($objet !== null) {
-                
+
                 $cleanObjet = trim($objet);
-                
+
                 // recherche par id
                 if (substr($cleanObjet, 0, 1) == "#") {
                     $select->having("NB_URBA like ?", "%".substr($cleanObjet, 1)."%");

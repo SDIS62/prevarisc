@@ -63,9 +63,9 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->add = false;
 
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
         $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
-        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
+        $this->view->is_allowed_change_statut = $acl->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
         if($this->_request->isPost()) {
             try {
@@ -110,9 +110,9 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->add = true;
 
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
         $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
-        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
+        $this->view->is_allowed_change_statut = $acl->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
 
         if($this->_request->isPost()) {
