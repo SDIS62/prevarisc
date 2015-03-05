@@ -1104,12 +1104,14 @@ class DossierController extends Zend_Controller_Action
             //GESTION DE LA RECUPERATION DES PRESCRIPTIONS EN RAPPEL REGLEMETAIRE DANS LE CAS DES ETUDES ET DES VISITES
             $service_prescription = new Service_Prescriptions;
             $service_dossier = new Service_Dossier;
-            if($this->_getParam("TYPE_DOSSIER") == 1){
-                $listePrescRegl = $service_prescription->getPrescriptions('etude');
-                 $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
-            }else if($this->_getParam("TYPE_DOSSIER") == 2 || $this->_getParam("TYPE_DOSSIER") == 3){
-                $listePrescRegl = $service_prescription->getPrescriptions('visite');
-                $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
+            if($this->_getParam('do') == 'new'){
+                if($this->_getParam("TYPE_DOSSIER") == 1 ){
+                    $listePrescRegl = $service_prescription->getPrescriptions('etude');
+                     $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
+                }else if($this->_getParam("TYPE_DOSSIER") == 2 || $this->_getParam("TYPE_DOSSIER") == 3){
+                    $listePrescRegl = $service_prescription->getPrescriptions('visite');
+                    $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
+                }
             }
 
             //GESTION DE LA RECUPERATION DES DOCUMENTS CONSULTES DE LA PRECEDENTE VP SI IL EN EXISTE UNE (UNIQUEMENT EN CREATION DE DOSSIER)

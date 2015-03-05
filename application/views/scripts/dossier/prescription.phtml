@@ -23,7 +23,7 @@ echo "
 	<div class='row'>
 		<ul id='prescRappelReg' class='listePrescriptions'>
 ";
-	echo showPrescription($this->prescriptionReglDossier,$this->id_dossier);
+	echo showPrescription($this->prescriptionReglDossier,$this->id_dossier,$this->infosDossier['VERROU_DOSSIER']);
 echo "
 		</ul>
 	</div>
@@ -32,7 +32,7 @@ echo "
 	<div class='row'>
 		<ul id='prescExploitation' class='listePrescriptions'>
 ";
-	echo showPrescription($this->prescriptionExploitation,$this->id_dossier);
+	echo showPrescription($this->prescriptionExploitation,$this->id_dossier,$this->infosDossier['VERROU_DOSSIER']);
 echo "
 		</ul>
 	</div>
@@ -41,14 +41,14 @@ echo "
 	<div class='row'>
 		<ul id='prescAmelioration' class='listePrescriptions'>
 ";
-	echo showPrescription($this->prescriptionAmelioration,$this->id_dossier);
+	echo showPrescription($this->prescriptionAmelioration,$this->id_dossier,$this->infosDossier['VERROU_DOSSIER']);
 echo "
 		</ul>
 	</div>
 ";
 
 
-	function showPrescription($tabPrescriptions,$id_dossier)
+	function showPrescription($tabPrescriptions,$id_dossier,$verrou)
 	{
 		//Zend_Debug::dump($tabPrescriptions);
 		$listePrescr = $tabPrescriptions;
@@ -101,11 +101,13 @@ echo "
 								</td>
 							";
 						}
-						echo "
-							<td class='span1' rowspan='".$nbAssoc."'>
-								<a class='btn' href='/dossier/prescription-edit/id/".$id_dossier."/id-prescription/".$listePrescr[$i][0]['ID_PRESCRIPTION_DOSSIER']."' >Modifier</a>
-							</td>
-						";
+						if($verrou == 0){
+							echo "
+								<td class='span1' rowspan='".$nbAssoc."'>
+									<a class='btn' href='/dossier/prescription-edit/id/".$id_dossier."/id-prescription/".$listePrescr[$i][0]['ID_PRESCRIPTION_DOSSIER']."' >Modifier</a>
+								</td>
+							";
+						}
 						$cpt = false;
 					}
 					echo "
@@ -126,12 +128,6 @@ echo "
 $(document).ready(function(){
 
 <?php if($this->infosDossier['VERROU_DOSSIER'] == 0){ ?>
-
-
-
-
-
-
 
 	$(".listePrescriptions").sortable({
 		update: function(event, ui) {
@@ -171,6 +167,7 @@ $(document).ready(function(){
 			});
 		}
 	});
+
 <?php } ?>
 //Ajout prescription type
 	var dialogPrescType = $('<div style="display:none;"></div>').appendTo('body');
