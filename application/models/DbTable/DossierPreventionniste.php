@@ -8,13 +8,11 @@ class Model_DbTable_DossierPreventionniste extends Zend_Db_Table_Abstract
     public function getPrevDossier($idDossier)
     {
         $select = "SELECT *, ID_UTILISATEUR as uid
-            FROM dossierpreventionniste, utilisateur, utilisateurinformations, utilisateurcivilite
-            WHERE dossierpreventionniste.ID_DOSSIER = '".$idDossier."'
-            AND dossierpreventionniste.ID_PREVENTIONNISTE = utilisateur.ID_UTILISATEUR
+            FROM dossierpreventionniste, utilisateur, utilisateurinformations
+            WHERE dossierpreventionniste.ID_PREVENTIONNISTE = utilisateur.ID_UTILISATEUR
             AND utilisateur.ID_UTILISATEURINFORMATIONS = utilisateurinformations.ID_UTILISATEURINFORMATIONS
-            AND utilisateurinformations.ID_UTILISATEURCIVILITE = utilisateurcivilite.ID_UTILISATEURCIVILITE
+            AND dossierpreventionniste.ID_DOSSIER = '".$idDossier."'
         ;";
-        //echo $select;
         return $this->getAdapter()->fetchAll($select);
     }
 	
