@@ -1054,24 +1054,75 @@ class DossierController extends Zend_Controller_Action
                     }
 
                     foreach ($listeEtab as $val => $ue) {
-                        $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
-                        $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-                        $etabToEdit->save();
-                        $cache->remove('etablissement_id_'.$ue['ID_ETABLISSEMENT']);
 
-                        if ($this->_getParam('repercuterAvis')) {
-                            $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-                            foreach ($etablissementInfos["etablissement_lies"] as $etabEnfant) {
-                                $etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
-                                $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-                                $etabToEdit->save();
-                                $cache->remove('etablissement_id_'.$etabEnfant['ID_ETABLISSEMENT']);
+                        $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
+
+                        //Avant la mise à jour du champ ID_DOSSIER_DONNANT_AVIS on s'assure que la date de l'avis est plus récente
+                        if(isset($etabToEdit->ID_DOSSIER_DONNANT_AVIS) && $etabToEdit->ID_DOSSIER_DONNANT_AVIS != NULL) {
+                            $dossierAncienAvis = $DBdossier->find($etabToEdit->ID_DOSSIER_DONNANT_AVIS)->current();
+
+                            if($dossierAncienAvis->TYPE_DOSSIER == 1 || $dossierAncienAvis->TYPE_DOSSIER == 3){
+                                
+                                if($dossierAncienAvis->DATECOMM_DOSSIER != NULL && $dossierAncienAvis->DATECOMM_DOSSIER != ''){
+                                    $dateAncienAvis = $dossierAncienAvis->DATECOMM_DOSSIER;
+                                }else{
+                                    $dateAncienAvis = $dossierAncienAvis->DATEINSERT_DOSSIER;
+                                }
+
+                                if($nouveauDossier->DATECOMM_DOSSIER != NULL && $nouveauDossier->DATECOMM_DOSSIER != ''){
+                                    $dateNewAvis = $nouveauDossier->DATECOMM_DOSSIER;
+                                }else{
+                                    $dateNewAvis = $nouveauDossier->DATEINSERT_DOSSIER;
+                                }
+
+                            }else if($dossierAncienAvis->TYPE_DOSSIER == 2){
+
+                                if($dossierAncienAvis->DATEVISITE_DOSSIER != NULL && $dossierAncienAvis->DATEVISITE_DOSSIER != ''){
+                                    $dateAncienAvis = $dossierAncienAvis->DATEVISITE_DOSSIER;
+                                }else{
+                                    $dateAncienAvis = $dossierAncienAvis->DATEINSERT_DOSSIER;
+                                }
+
+                                if($nouveauDossier->DATEVISITE_DOSSIER != NULL && $nouveauDossier->DATEVISITE_DOSSIER != ''){
+                                    $dateNewAvis = $nouveauDossier->DATEVISITE_DOSSIER;
+                                }else{
+                                    $dateNewAvis = $nouveauDossier->DATEINSERT_DOSSIER;
+                                }                                
                             }
+
+                            $dateAncienAvis = new Zend_Date($dateAncienAvis, Zend_Date::DATES);
+                            $dateNewAvis = new Zend_Date($dateNewAvis, Zend_Date::DATES);
+
+                            if($dateNewAvis > $dateAncienAvis){
+                                $MAJEtab = 1;
+                            }else{
+                                $MAJEtab = 0;
+                            }
+                            
+                        }else{
+                            $MAJEtab == 1;
                         }
 
+                        if(  $MAJEtab == 1 ){
+                            $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+                            $etabToEdit->save();
+                            $cache->remove('etablissement_id_'.$ue['ID_ETABLISSEMENT']);
+
+                            if ($this->_getParam('repercuterAvis')) 
+                            {
+                                $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+                                foreach ($etablissementInfos["etablissement_lies"] as $etabEnfant) {
+                                    $etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+                                    $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+                                    $etabToEdit->save();
+                                    $cache->remove('etablissement_id_'.$etabEnfant['ID_ETABLISSEMENT']);
+                                }
+                            }
+
                             // AVERTISSEMENT SUR L'OUVERTURE D'UN ETABLISSEMENT A EFFECTUER
-                            // Dadns les cas d'une visite avant ouverture avec avis de commission positif
-                            if ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 && in_array($idNature, array(47, 48))) {
+                            // Dans le cas d'une visite avant ouverture avec avis de commission positif
+                            if ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 && in_array($idNature, array(47, 48)))
+                            {
                                 $etabInformation = $dbEtab->getInformations($ue["ID_ETABLISSEMENT"]);
                                 // Si l'établissement est en statut projet, et uniquement ce cas
                                 if ($etabInformation && 1 == $etabInformation->ID_STATUT) {
@@ -1082,8 +1133,10 @@ class DossierController extends Zend_Controller_Action
                                     ));
                                 }
                             }
+                        }
                     }
                 }
+
             }
 
             //GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
