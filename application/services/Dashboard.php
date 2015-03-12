@@ -202,7 +202,6 @@ class Service_Dashboard
         $search = new Model_DbTable_Search;
         $search->setItem("dossier");
         $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("d.VERROU_DOSSIER", 0);
         $search->setCriteria("d.AVIS_DOSSIER IS NULL");
         
         // on retire les dossiers périodiques de la liste, car cela ferait trop de dossiers
