@@ -1709,6 +1709,10 @@ CREATE TABLE `genre` (
 LOCK TABLES `genre` WRITE;
 /*!40000 ALTER TABLE `genre` DISABLE KEYS */;
 INSERT INTO `genre` VALUES (1,'Site'),(2,'Établissement'),(3,'Cellule'),(4,'Habitation'),(5,'IGH'),(6,'EIC');
+INSERT INTO `genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (7, 'Camping');
+INSERT INTO `genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (8, 'Manifestation Temporaire');
+INSERT INTO `genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (9, 'IOP');
+INSERT INTO `genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (10, 'Zone');
 /*!40000 ALTER TABLE `genre` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2381,7 +2385,15 @@ LOCK TABLES `privileges` WRITE;
 INSERT INTO `privileges` VALUES (1,'docs','Gestion des documents',1),(2,'groupement_communes','Gestion des groupements de communes',1),(3,'gestion_prescriptions','Gestion des prescriptions',1),(4,'gestion_textes_applicables','Gestion des textes applicables',1),(5,'fil_actus','Écriture dans le fil d\'actualités',1),(6,'gestion_commissions','Gestion des commissions',1),(7,'lecture_commission','Lecture',2),(8,'ecriture_commission','Écriture',2),(9,'creation_commission','Création',2),(10,'modification_odj','Modification de l\'Ordre du Jour',2),(11,'admin','Accès à l\'administration',1),(12,'communes','Gestion des communes',1),(13,'periodicites','Gestion des périodicités',1),(14,'add_etablissement','Création d\'un établissement',3),(15,'add_dossier','Création d\'un dossier',3),(16,'generation_doc_com','Génération des documents de la commission',2),(17,'view_ets','Lecture',4),(18,'edit_ets','Modifier',4),(19,'view_ets','Lecture',5),(20,'edit_ets','Modifier',5),(21,'view_ets','Lecture',6),(22,'edit_ets','Modifier',6),(23,'view_ets','Lecture',7),(24,'edit_ets','Modifier',7),(25,'view_ets','Lecture',8),(26,'edit_ets','Modifier',8),(27,'view_doss','Lecture',9),(28,'edit_doss','Modifier',9),(29,'verrouillage_dossier','Verrouillage d\'un dossier',9);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(50,"edit_avis_com", "Modifier",50);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(51,"edit_statut", "Modifier",51);
-
+INSERT INTO `privileges` VALUES 
+(52,'view_ets','Lecture',52),
+(53,'edit_ets','Modifier',52),
+(54,'view_ets','Lecture',53),
+(55,'edit_ets','Modifier',53),
+(56,'view_ets','Lecture',54),
+(57,'edit_ets','Modifier',54),
+(58,'view_ets','Lecture',55),
+(59,'edit_ets','Modifier',55);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(100,"view_ets_avis_defavorable", "Voir les établissements sous avis défavorable",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(101,"view_doss_sans_avis", "Voir dossiers de commissions échus sans avis",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(102,"view_ets_ouverts_sans_prochaine_vp", "Voir ets sans prochaine visite périodique",100);
@@ -2422,6 +2434,10 @@ LOCK TABLES `resources` WRITE;
 INSERT INTO `resources` VALUES (1,'gestion_parametrages','Gestion et Paramétrages'),(2,'commission','Gestion des calendriers des commissions'),(3,'creations','Gestion des droits de création'),(4,'etablissement_erp_0_0_0_0_0','Établissement (Tous les types - Toutes les catégories - Ignorer les commissions - Ignorer les groupements - Ignorer la commune)'),(5,'etablissement_cell_0_0','Cellule (Tous les types - Toutes les catégories)'),(6,'etablissement_hab_0_0_0','Habitation (Toutes les familles - Ignorer les groupements - Ignorer la commune)'),(7,'etablissement_igh_0_0_0_0','IGH (Toutes les classes - Ignorer les commissions - Ignorer les groupements - Ignorer la commune)'),(8,'etablissement_eic_0_0','EIC (Ignorer les groupements - Ignorer la commune)'),(9,'dossier_0','Dossier (Toutes les natures)');
 INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(50,"avis_commission", "Gestion de l'avis de la commission");
 INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(51,"statut_etablissement", "Gestion du statut d'un établissement");
+INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(52,'etablissement_camp_0_0','Camping (Ignorer les groupements - Ignorer la commune)'),
+(53,'etablissement_temp_0_0','Manifestation temporaire (Ignorer les groupements - Ignorer la commune)'),
+(54,'etablissement_iop_0_0','IOP (Ignorer les groupements - Ignorer la commune)'),
+(55,'etablissement_zone_0_0_0','Zone (Toutes les classes - Ignorer les groupements - Ignorer la commune)');
 INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(100,"dashboard", "Tableau de bord");
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 UNLOCK TABLES;
