@@ -54,6 +54,7 @@ Corrections :
 * Correction d'un problème sur la recherche de courriers sans établissements rattachés
 * Correction sur le bloc "dossiers suivi du préventionniste" qui ne doivent pas forcément être verrouillés pour disparaître de son bloc
 * Correction importante lors du déplacement/modification d'une date de commission/visite sur la calendrier, non répercuté sur la liste des dossiers d'un établissement
+* Correction de la possibilité d'ajouter une PJ sur un dossier même verrouillé
 
 ## 2.3
 
