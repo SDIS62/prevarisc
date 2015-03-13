@@ -149,6 +149,14 @@ $(document).ready(function(){
 		});
 	});
 
+	$(".hideDetailTexte").live('click',function(){
+		var tabId = $(this).attr('id').split('_');
+		var idTexte = tabId[1];
+		$("#article_"+idTexte).html('');
+		$("#hidearticle_"+idTexte).hide();
+		$("#showarticle_"+idTexte).show();
+	});
+
 	$(".showDetailArticle").live('click',function(){
 		//requete ajax pour trouver les prescriptions faisant partie de cette catégorie
 		var tabId = $(this).attr('id').split('_');
