@@ -2,6 +2,83 @@
 
 class Service_Prescriptions
 {
+    /* GESTION PRESCRIPTION TYPE */
+    public function showPrescriptionType($categorie,$texte,$article){
+        $dbPrescType = new Model_DbTable_PrescriptionType;
+        $listePrescType = $dbPrescType->getPrescriptionType($categorie,$texte,$article);
+
+        $dbPrescAssoc = new Model_DbTable_PrescriptionTypeAssoc;
+        $prescriptionArray = array();
+
+        foreach ($listePrescType as $val => $ue) {
+            $assoc = $dbPrescAssoc->getPrescriptionAssoc($ue['ID_PRESCRIPTIONTYPE']);
+            array_push($prescriptionArray, $assoc);
+        }
+
+        return $prescriptionArray;
+    }
+
+    public function getCategories(){
+        $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
+        return $dbPrescriptionCat->recupPrescriptionCat();
+    }
+
+    public function getPrescriptionTypeDetail($idPrescType){
+        $dbPrescTypeAssoc = new Model_DbTable_PrescriptionTypeAssoc;
+        return $dbPrescTypeAssoc->getPrescriptionAssoc($idPrescType);
+    }
+    
+
+    public function savePrescriptionType($post,$idPrescriptionType = null){
+        $dbPrescType = new Model_DbTable_PrescriptionType;
+        $dbPresTypeAssoc = new Model_DbTable_PrescriptionTypeAssoc;
+        
+        if ($idPrescriptionType == null) {
+            $prescType = $dbPrescType->createRow();
+        }else{
+            $prescType = $dbPrescType->find($idPrescriptionType)->current();
+        }
+
+
+        $prescType->PRESCRIPTIONTYPE_LIBELLE = $post['PRESCRIPTIONTYPE_LIBELLE'];
+        
+        $prescType->PRESCRIPTIONTYPE_CATEGORIE = $post['PRESCRIPTIONTYPE_CATEGORIE'];
+        $prescType->PRESCRIPTIONTYPE_TEXTE = $post['PRESCRIPTIONTYPE_TEXTE'];
+        $prescType->PRESCRIPTIONTYPE_ARTICLE = $post['PRESCRIPTIONTYPE_ARTICLE'];
+
+        $prescType->save();
+
+        if ($idPrescriptionType != null) {
+            $prescTypeAssocDelete = $dbPresTypeAssoc->getAdapter()->quoteInto('ID_PRESCRIPTIONTYPE = ?', $post['ID_PRESCRIPTIONTYPE']);
+            $dbPresTypeAssoc->delete($prescTypeAssocDelete);
+        }
+
+        $nombreAssoc = count($post['texte']);
+        for ($i = 0; $i< $nombreAssoc; $i ++) {
+            $newAssoc = $dbPresTypeAssoc->createRow();
+            $newAssoc->ID_PRESCRIPTIONTYPE = $prescType->ID_PRESCRIPTIONTYPE;
+            $newAssoc->NUM_PRESCRIPTIONASSOC = $i + 1;
+            
+            if($post['texte'][$i] == 0 || $post['texte'][$i] == ''){
+                $texe = 1;
+            }else{
+                $texe = $post['texte'][$i];
+            }
+            
+            $newAssoc->ID_TEXTE = $texe;
+            if($post['article'][$i] == 0 || $post['article'][$i] == ''){
+                $article = 1;
+            }else{
+                $article = $post['article'][$i];
+            }
+
+            $newAssoc->ID_ARTICLE = $article;
+            $newAssoc->save();
+        }
+        
+        return $prescType->ID_PRESCRIPTIONTYPE;
+    }
+
     /* GESTION DES TEXTES */
     public function getTextesListe(){
         $dbPrescTextes = new Model_DbTable_PrescriptionTexteListe;

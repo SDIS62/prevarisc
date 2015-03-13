@@ -46,7 +46,7 @@
 				if($cpt)
 				{
 					echo "<td rowspan='".$nbAssoc."' class='span5'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-					echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
+					echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><a href='#myModal' role='button' class='editPrescriptionType btn' data-toggle='modal'>Editer</a></td>";
 					$cpt = false;
 				}
 				echo "
@@ -66,16 +66,7 @@
 	echo "
 		<button class='addArticleTexte btn' >Ajouter un article</button>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<button class='prescription btn' id='addPrescriptionTexte_".$this->idTexte."'>Ajouter une prescription</button>
+		<a href='#myModal' role='button' class='prescription btn' id='addPrescriptionTexte_".$this->idTexte."' data-toggle='modal'>Ajouter une prescription</a>
 	";
 
 ?>
-
-<script type="text/javascript">
-
-
-$(document).ready(function(){
-	//$(".prescriptionarticle").sortable();
-	
-});
-</script>
