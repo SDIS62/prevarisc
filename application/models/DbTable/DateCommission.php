@@ -157,5 +157,32 @@
 				 
 			return $this->getAdapter()->fetchAll($select);
 		}
+                
+        public function updateDependingDossierDates($datecommission)
+        {
+            $dbAffectDossier = new Model_DbTable_DossierAffectation();
+            $dbDossier = new Model_DbTable_Dossier();
+            
+            // on récupère les dossiers liés à la commission
+            $dossiersAffecte = $dbAffectDossier->fetchAll('ID_DATECOMMISSION_AFFECT = '.$datecommission->ID_DATECOMMISSION);
+            $dossiersAffecteIds = array();
+            foreach($dossiersAffecte as $dossierAffecte) {
+                $dossiersAffecteIds[] = $dossierAffecte['ID_DOSSIER_AFFECT'];
+            }
+            
+            // si des dossiers sont liés, en fonction du type,
+            // on update les dates en text dans les différents fields du dossiers pour 
+            // des cohérences de données
+            if ($dossiersAffecteIds) {
+                if (in_array($datecommission->ID_COMMISSIONTYPEEVENEMENT, array(1))) {
+                    //COMMISSION EN SALLE
+                    $dbDossier->update(array('DATECOMM_DOSSIER' => $datecommission->DATE_COMMISSION), 'ID_DOSSIER IN('.implode(',', $dossiersAffecteIds).')');
+                }
+                else if (in_array($datecommission->ID_COMMISSIONTYPEEVENEMENT, array(2,3))) {
+                    //VISITE OU GROUPE DE VISITE
+                    $dbDossier->update(array('DATEVISITE_DOSSIER' => $datecommission->DATE_COMMISSION), 'ID_DOSSIER IN ('.implode(',', $dossiersAffecteIds).')');
+                }
+            }
+        }
 
     }

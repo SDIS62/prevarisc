@@ -536,8 +536,8 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 break;
                 case "valid_dateCom":
                     //VALIDATION Lorsque l'on modifie la date
-                        $HeureD = new Zend_Date($this->_getParam('hd'),'HH:mm','en');
-                        $HeureF = new Zend_Date($this->_getParam('hf'),'HH:mm','en');
+                    $HeureD = new Zend_Date($this->_getParam('hd'),'HH:mm','en');
+                    $HeureF = new Zend_Date($this->_getParam('hf'),'HH:mm','en');
                     $date = new Zend_Date($this->_getParam('date'),Zend_Date::DATES,'fr');
 
                     $dbDateCommission = new Model_DbTable_DateCommission;
@@ -546,6 +546,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                     $updateDateComm->HEUREFIN_COMMISSION = $HeureF->get('HH:mm');
                     $updateDateComm->DATE_COMMISSION = $date->get(Zend_Date::YEAR."-".Zend_Date::MONTH."-".Zend_Date::DAY);
                     $updateDateComm->save();
+                    
+                    $dbDateCommission->updateDependingDossierDates($updateDateComm);
+                    
                     $this->view->updateDateComm = $updateDateComm;
                     $this->view->first = $this->_getParam('first');
                 break;
@@ -741,6 +744,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
     public function deplacecommissiondateAction()
     {
+            
         try {
             $date = new Zend_Date($_POST['debut'],Zend_Date::DATES,'en');
 
@@ -756,6 +760,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 $commUpdate->HEUREFIN_COMMISSION = $HeureF->get('HH:mm');
             }
             $commUpdate->save();
+
+            $dbDateCommission->updateDependingDossierDates($commUpdate);
+            
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'L\'événement a bien été déplacé',
