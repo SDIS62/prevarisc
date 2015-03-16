@@ -1,7 +1,12 @@
 <div id='dossierInfos'>
 
-<h3 float='left' >Descriptif des travaux</h3>
-
+<h3 float='left' >
+    Descriptif
+    <?php
+        if(isset($this->natureConcerne[0]['ID_NATURE']) && $this->natureConcerne[0]['ID_NATURE'] != 19)
+            echo "des travaux";
+     ?>
+</h3>
 
 <!-- Boutons -->
 <div float='right' >
