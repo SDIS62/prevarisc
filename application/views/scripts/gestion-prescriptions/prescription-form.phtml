@@ -158,11 +158,17 @@ $(document).ready(function(){
 	$("#addAssoc").click(function(){
 		var texte = $("#LIBELLE_TEXTE").val();
 		var article = $("#LIBELLE_ARTICLE").val();
-		if( texte != 1 || article != 1){
+		if( ( texte != 1 && texte != null ) || ( article != 1 && article != null) ){
+			if(texte == null){
+				texte = 1;
+			}
+			if(article == null){
+				article = 1;
+			}
 			var assocAdd;
 			assocAdd += "<tr>";
 			assocAdd += "<td>"+$("#LIBELLE_TEXTE option:selected").text()+ "<input type='hidden' name='texte[]' value='"+texte+"' /></td>";
-			assocAdd += "<td>"+$("#LIBELLE_ARTICLE option:selected").text()+ "<input type='hidden' name='article[]' value='"+$("#LIBELLE_ARTICLE").val()+"' /></td>";
+			assocAdd += "<td>"+$("#LIBELLE_ARTICLE option:selected").text()+ "<input type='hidden' name='article[]' value='"+article+"' /></td>";
 			assocAdd += "<td><a onclick='$(this).parent().parent().remove(); return false;' href='#'>Retirer</a></td>";
 			assocAdd += "</tr>";
 
@@ -176,7 +182,7 @@ $(document).ready(function(){
 		}
 		return false;
 	});
-
+/*
 	$("#del-prescription").click(function(){
 		$(this).hide();
 		$("#del-confirm").show();
@@ -196,5 +202,6 @@ $(document).ready(function(){
 		$("#formPrescriptionEdit").submit();
 		return false;
 	});
+*/
 });
 </script>

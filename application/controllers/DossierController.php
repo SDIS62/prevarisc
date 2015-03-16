@@ -140,9 +140,7 @@ class DossierController extends Zend_Controller_Action
 
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
-        $ajaxContext->addActionContext('selectiontexte', 'json')
-            ->addActionContext('selectionarticle', 'json')
-            ->addActionContext('selectionabreviation', 'json')
+        $ajaxContext->addActionContext('selectionabreviation', 'json')
             ->addActionContext('selectionetab', 'json')
             ->initContext();
 
@@ -2529,15 +2527,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->autres = $dossiers['autres'];
         }
     }
-/*
-	public function selectionarticleAction()
-	{
-		if (isset($_GET['q'])) {
-			$DBprescArticle = new Model_DbTable_PrescriptionArticleListe;
-			$this->view->selectArticle = $DBprescArticle->fetchAll('LIBELLE_ARTICLE LIKE "%'.$_GET['q'].'%"')->toArray();
-		}
-	}
-*/	
+	
     public function recupprescriptionAction()
     {
         $this->_helper->viewRenderer->setNoRender();

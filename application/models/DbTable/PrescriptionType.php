@@ -33,4 +33,11 @@ class Model_DbTable_PrescriptionType extends Zend_Db_Table_Abstract
 		//echo $select->__toString();
 		return $this->getAdapter()->fetchAll($select);
 	}
+
+	public function replaceId($idOldType, $idNewType){
+		$data = array('ID_PRESCRIPTION_TYPE' => $idNewType);
+		$where[] = "ID_PRESCRIPTION_TYPE = ".$idOldType;
+		//MAJ des id des textes dans les tables : prescriptiondossierassoc, prescriptiontypeassoc
+		$this->getAdapter()->update('prescriptiondossier',$data,$where);
+	}
 }

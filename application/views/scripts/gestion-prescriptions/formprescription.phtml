@@ -8,13 +8,41 @@ echo "
 	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:$this->article)."' />
 	<div id='selectEmplacement' ></div>
 	<br/><br/>
+	<div class='row' id='alert' style='display:none;'>
+		<ul class='unstyled'>
+			<li class='alert alert-error' >
+				Veuillez spécifier au minimum un texte ou un article et un contenu avant la sauvegarde
+			</li>
+		</ul>
+	</div>
 ";
-
-echo '
-	<span>Texte : </span><span><input type="texte" name="LIBELLE_TEXTE" id="LIBELLE_TEXTE" value="" style="width:400px;"/></span>
-	<span>Article : </span><span><input type="article" name="LIBELLE_ARTICLE" id="LIBELLE_ARTICLE" value="" style="width:400px;"/></span>
-	<button id="addAssoc" class="btn" >Ajouter</button>
-';
+echo "
+	<div>
+		<div class='span4'>
+			Texte&nbsp;
+			<select style='width:80%;' id='LIBELLE_TEXTE' class='chosen'>
+";
+        foreach ($this->listeTextes as $val) {
+            echo "<option value='".$val["ID_TEXTE"]."'>".$val['LIBELLE_TEXTE']."</option>";
+        }
+echo "
+			</select>
+		</div>
+		<div class='span4'>
+			Article&nbsp;
+			<select style='width:80%;' id='LIBELLE_ARTICLE' class='chosen'>
+";
+        foreach ($this->listeArticles as $val) {
+            echo "<option value='".$val["ID_ARTICLE"]."'>".$val['LIBELLE_ARTICLE']."</option>";
+        }
+echo "
+			</select>
+		</div>
+		<div class='span4'>
+			<a class='btn btn-default' id='addAssoc' href=''>Ajouter l'association</a>
+		</div>
+	</div>
+";
 
 echo "
 	<br/><br/>
@@ -32,8 +60,8 @@ if($this->do == 'edit')
 	{
 		echo '
 			<tr>
-				<td><input type="hidden" name="texte[]" value="'.$ue['LIBELLE_TEXTE'].'" />'.$ue['LIBELLE_TEXTE'].'</td>
-				<td><input type="hidden" name="article[]" value="'.$ue['LIBELLE_ARTICLE'].'" />'.$ue['LIBELLE_ARTICLE'].'</td>
+				<td><input type="hidden" name="texte[]" value="'.$ue['ID_TEXTE'].'" />'.$ue['LIBELLE_TEXTE'].'</td>
+				<td><input type="hidden" name="article[]" value="'.$ue['ID_ARTICLE'].'" />'.$ue['LIBELLE_ARTICLE'].'</td>
 				<td><a href="" class="suppAssoc">&times;</a></td>
 			</tr>
 		';
@@ -52,49 +80,35 @@ echo "
 ?>
 <script type="text/javascript">
 $(document).ready(function(){
-	
-	$("#LIBELLE_TEXTE").live('focus',function(){
-		$("#texteId").val('');
-	});
-	
-	$("#LIBELLE_TEXTE").autocomplete("/gestion-prescriptions/selectiontexte?format=json",{
-		minChars: 2,
-		max: 100,
-		parse: function(data) {
-			return $.map(data["selectTexte"], function(row) {
-				return {
-					data: row,
-					value: row.LIBELLE_TEXTE,
-					result: row.LIBELLE_TEXTE
-				}
-			});
-		},
-		formatItem: function(item) {
-			return item.LIBELLE_TEXTE;
-		}
-	}).result(function(e, item) {
-		$("#textTemp").val(item.ID_TEXTE);
-	});
+	$(".chosen").chosen({allow_single_deselect: true});
 
-	$("#LIBELLE_ARTICLE").autocomplete("/gestion-prescriptions/selectionarticle?format=json",{
-		minChars: 2,
-		max: 100,
-		parse: function(data) {
-			return $.map(data["selectArticle"], function(row) {
-				return {
-					data: row,
-					value: row.LIBELLE_ARTICLE,
-					result: row.LIBELLE_ARTICLE
-				}
-			});
-		},
-		formatItem: function(item) {
-			//alert(item.LIBELLE_COMMISSION);
-			return item.LIBELLE_ARTICLE;
-		}
-	}).result(function(e, item) {
-		$("#articleTemp").val(item.ID_TEXTE);
-	});
+	$("#addAssoc").click(function(){
+		var texte = $("#LIBELLE_TEXTE").val();
+		var article = $("#LIBELLE_ARTICLE").val();
+		//alert(texte+" "+article);
+		if( ( texte != 1 && texte != null ) || ( article != 1 && article != null) ){
+			if(texte == null){
+				texte = 1;
+			}
+			if(article == null){
+				article = 1;
+			}
+			var assocAdd;
+			assocAdd += "<tr>";
+			assocAdd += "<td>"+$("#LIBELLE_TEXTE option:selected").text()+ "<input type='hidden' name='texte[]' value='"+texte+"' /></td>";
+			assocAdd += "<td>"+$("#LIBELLE_ARTICLE option:selected").text()+ "<input type='hidden' name='article[]' value='"+article+"' /></td>";
+			assocAdd += "<td><a onclick='$(this).parent().parent().remove(); return false;' href='#'>Retirer</a></td>";
+			assocAdd += "</tr>";
 
+			$("#association").append(assocAdd);
+
+			$("#LIBELLE_TEXTE").val('').trigger('chosen:updated');
+			$("#LIBELLE_ARTICLE").val('').trigger('chosen:updated');
+			$("#alert").hide();
+		}else{
+			$("#alert").show();
+		}
+		return false;
+	});
 
 });
