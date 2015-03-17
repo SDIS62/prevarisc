@@ -302,12 +302,14 @@
                          ->group("d.ID_DOSSIER")
                          ->where("DATEDIFF(CURDATE(), datecommission.DATE_COMMISSION) >= ".((int) $sinceDays))
                          ->where("DATEDIFF(CURDATE(), datecommission.DATE_COMMISSION) <= ".((int) $untilDays))
-                         ->where("d.AVIS_DOSSIER_COMMISSION IS NULL");
+                         ->where("d.AVIS_DOSSIER_COMMISSION IS NULL or d.AVIS_DOSSIER_COMMISSION = 0")
+                         ->order("datecommission.DATE_COMMISSION desc");
             
             if (count($ids) > 0) {
-                $select->where("datecommission.COMMISSION_CONCERNE", $ids);
+                $select->where("datecommission.COMMISSION_CONCERNE IN (".implode(",", $ids).")");
             }
-                 
+            
+            
             return $this->getAdapter()->fetchAll($select);
         }
         
