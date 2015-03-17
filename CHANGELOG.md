@@ -55,6 +55,7 @@ Corrections :
 * Correction sur le bloc "dossiers suivi du préventionniste" qui ne doivent pas forcément être verrouillés pour disparaître de son bloc
 * Correction importante lors du déplacement/modification d'une date de commission/visite sur la calendrier, non répercuté sur la liste des dossiers d'un établissement
 * Correction de la possibilité d'ajouter une PJ sur un dossier même verrouillé
+* Augmentation de la limite du nombre d'utilisateurs connectés affichés dans le BO (avec +300 maires, on ne voit pas tous les utilisateurs)
 
 ## 2.3
 
