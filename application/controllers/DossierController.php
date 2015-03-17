@@ -2228,6 +2228,9 @@ class DossierController extends Zend_Controller_Action
             //Récupération de tous les champs de la table dossier
             $DBdossier = new Model_DbTable_Dossier();
             $this->view->infosDossier = $DBdossier->find($idDossier)->current();
+            
+            $DBdossierNature = new Model_DbTable_DossierNature();
+            $this->view->natureConcerne = $DBdossierNature->getDossierNaturesLibelle($idDossier);
         }
 
         if ($this->_request->DESCRIPTIF_DOSSIER) {
