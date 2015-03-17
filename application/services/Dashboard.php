@@ -196,17 +196,20 @@ class Service_Dashboard
     public function getDossiersSuivisSansAvis($user) {
         
         $dossiers = array();
+        
         $id_user = $user['ID_UTILISATEUR'];
         
         // Dossiers suivis
         $search = new Model_DbTable_Search;
         $search->setItem("dossier");
         $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("d.AVIS_DOSSIER IS NULL");
         
-        // on retire les dossiers périodiques de la liste, car cela ferait trop de dossiers
-        // on ne garde que les études
-        $search->setCriteria("dossiernature.ID_NATURE NOT IN (".implode(',', array(21, 26)).")");
+        $conditionEtudesSansAvis = "d.AVIS_DOSSIER IS NULL AND (d.AVIS_DOSSIER_COMMISSION IS NULL OR d.AVIS_DOSSIER_COMMISSION = 0) AND d.TYPE_DOSSIER = 1";
+        $conditionCourriersSansReponse = "d.DATEREP_DOSSIER IS NULL AND d.TYPE_DOSSIER = 5";
+        
+        $search->setCriteria("($conditionEtudesSansAvis) OR ($conditionCourriersSansReponse)");        
+        
+        $search->order('d.DATEINSERT_DOSSIER desc');
         
         $dossiers = $search->run(false, null, false)->toArray();
         
