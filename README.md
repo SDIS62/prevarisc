@@ -27,7 +27,7 @@ $ chmod –R 755 public/
 ```
 Ensuite vous pouvez créer un fichier secret.ini dans application/configs afin de configurer Prevarisc pour qu'il ait accès à la base de données (entre autres).
 Vous devez créer un Virtualhost pointant vers le dossier public de Prevarisc.
-Une documentation détaillée est disponible ici : [Documentation d'installation](https://github.com/SDIS62/prevarisc/blob/master/docs/documentation_installation.md).
+Une documentation détaillée est disponible ici : [Documentation d'installation](https://github.com/SDIS62/prevarisc/blob/2.x/docs/documentation_installation.md).
 
 ## Suivi du projet
 
@@ -37,7 +37,7 @@ Une documentation détaillée est disponible ici : [Documentation d'installation
 
 ## Participation au projet
 
-Voir la [documentation de contribution](https://github.com/SDIS62/prevarisc/blob/master/CONTRIBUTING.md).
+Voir la [documentation de contribution](https://github.com/SDIS62/prevarisc/blob/2.x/CONTRIBUTING.md).
 
 Ps: Nous sommes régulièrement solicité sur l'ajout et/ou sur la suppression de certaines fonctionnalités. Si un changement peut avoir un impact positif sur l'ensemble des utilisateurs, nous serions heureux de l'examiner. 
 
