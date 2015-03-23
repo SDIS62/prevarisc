@@ -13,8 +13,6 @@ function addPrescription($listePrescription,$type,$odf){
             $prescription = $odf->listeAmelioration;
         }
 
-        Zend_debug::dump($prescription);
-
         $nbPrescDossier = count($listePrescription);
         
         if($nbPrescDossier)
