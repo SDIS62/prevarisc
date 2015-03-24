@@ -36,8 +36,8 @@ foreach($this->informationsMembre as $val => $membre){
 					//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
 					if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
 					{
-						$cptConcerne ++;
-					}
+                                            $cptConcerne ++;
+                                        }
 				}
 			}
 		}
@@ -87,7 +87,6 @@ foreach($this->informationsMembre as $val => $membre){
 				//Generation du segment pour l'affichage des différentes infos du dossier
 				//Zend_Debug::dump($this->dossierComm);
                                 
-                                $infosDoss = $villeODF->setSegment('infosDoss');
 				foreach($this->dossierComm as $val => $dossierInfos){
 					if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
 						//echo $dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']." - ".$commune[0];
@@ -95,14 +94,15 @@ foreach($this->informationsMembre as $val => $membre){
 							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
 							if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
 							{
-                                                            retrieveInfoDossier($villeODF, $dossierInfos);
+                                                            retrieveInfoDossier($villeODF->infosDoss, $dossierInfos);
+                                                            $villeODF->infosDoss->merge();
                                                         }else{
 								//cas membre n'a pas les droits
 							}
 						}
 					}
-                                    $villeODF->merge();
-				}                            
+				}
+                                $villeODF->merge();
 			}
 			$odf->mergeSegment($villeODF);
 
