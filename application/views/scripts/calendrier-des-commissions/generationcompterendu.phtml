@@ -21,7 +21,7 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 
 	$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."documents_commission".DIRECTORY_SEPARATOR.$nomFichier);
 	$dossInfos = $odf->setSegment('dossierInfos');
-	
+
 	foreach($this->dossierComm as $val => $dossierInfos){
 		if(isset($dossierInfos['infosEtab']['adresses'])){
 			$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
@@ -37,11 +37,11 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 				if(isset($commune["LIBELLE_COMMUNE"])){
 					addChamp($dossInfos,'communeDossier', $commune["LIBELLE_COMMUNE"]);
 				}
-				
+
 				addChamp($dossInfos,'objetDossier', $dossierInfos['OBJET_DOSSIER']);
 				addChamp($dossInfos,'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
 
-				$dateComm = new Zend_Date($this->dateComm);				
+				$dateComm = new Zend_Date($this->dateComm);
 				addChamp($dossInfos,'dateCommission', $dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
 
 				if(isset($dossierInfos["DATEVISITE_DOSSIER"]) && $dossierInfos["DATEVISITE_DOSSIER"] != NULL){
@@ -66,7 +66,13 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 					addChamp($dossInfos,'codePostal', $dossierInfos['infosEtab']['adresses'][0]["CODEPOSTAL_COMMUNE"]);
 				else
 					addChamp($dossInfos,'codePostal', '');
-				
+
+                                try{
+					$dossInfos->setVars('numWinPrev', $dossierInfos['infosEtab']['general']['NUMEROID_ETABLISSEMENT'], true, 'UTF-8');
+				} catch (Exception $e){
+
+				}
+
 				if(isset($dossierInfos['infosEtab']['adresses'][0]["LIBELLE_COMMUNE"]))
 					addChamp($dossInfos,'libelleCommune', $dossierInfos['infosEtab']['adresses'][0]["LIBELLE_COMMUNE"]);
 				else
@@ -123,27 +129,27 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 					break;
 					default:
 						$avis = "";
-					break;					
+					break;
 				}
 				addChamp($dossInfos,'avisDossier', $avis);
-				
+
 				$listeDocUrba = "";
 				foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
 					$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
 				}
 				addChamp($dossInfos,'numDocUrba', $listeDocUrba);
-		
 
-				$dossInfos->merge(); 
+
+				$dossInfos->merge();
 			}
 		}
 	}
 	$odf->mergeSegment($dossInfos);
 	$nouvellePJ = savePj($this->idComm,"Compte rendu du ");
-        
+
         $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
         $path = $store->getFilePath($nouvellePJ, 'dateCommission', $this->idComm, true);
-	$odf->saveToDisk($path);	
+	$odf->saveToDisk($path);
 	//$odf->mergeSegment($dossierLoop);
 	echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'>Le compte rendu a été généré avec succes</span><br/><br/><br/>";
 }else{
@@ -170,5 +176,5 @@ function savePj($dateCommId,$libelleDocument){
 
 	return $nouvellePJ;
 }
-	
+
 ?>
