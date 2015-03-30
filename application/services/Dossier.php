@@ -669,4 +669,55 @@ class Service_Dossier
         }
     }
 
+    public function getEtabInfos($id_dossier = null, $id_etablissement = null){
+        $DBdossier = new Model_DbTable_Dossier();
+
+        if ($id_etablissement != null) {
+
+            $DBetab = new Model_DbTable_Etablissement();
+            $etabTab = $DBetab->getInformations($id_etablissement);
+
+            $this->etablissement = $etabTab->toArray();
+
+            $DbAdresse = new Model_DbTable_EtablissementAdresse();
+            $this->etablissement['adresses'] = $DbAdresse->get($id_etablissement);
+
+
+
+            $service_etablissement = new Service_Etablissement();
+            $etablissementInfos = $service_etablissement->get($id_etablissement);
+            if ($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null) {
+                $etablissementInfos['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
+            }
+            $this->etablissement['etablissementInfos'] = $etablissementInfos;
+
+            if ($this->etablissement['etablissementInfos']['general']['ID_DOSSIER_DONNANT_AVIS'] != null) {
+                $avisExploitationEtab = $DBdossier->getAvisDossier($this->etablissement['etablissementInfos']['general']['ID_DOSSIER_DONNANT_AVIS']);
+                $this->etablissement['avisExploitationEtab'] = $avisExploitationEtab['AVIS_DOSSIER'];
+            } else {
+                $this->view->avisExploitationEtab = 3;
+            }
+
+            return $this->etablissement;
+
+        } elseif ($id_dossier != null){
+            $tabEtablissement = $DBdossier->getEtablissementDossier((int) $id_dossier);
+            $this->listeEtablissement = $tabEtablissement;
+
+            $service_etablissement = new Service_Etablissement();
+            foreach ($this->listeEtablissement as $val => $ue) {
+                $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+                if ($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null) {
+                    $this->listeEtablissement[$val]['avisExploitation'] = $DBdossier->getAvisDossier($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']);
+                }
+                $this->listeEtablissement[$val]['infosEtab'] = $etablissementInfos;
+            }
+
+            return $this->listeEtablissement;
+        }
+
+
+
+    }
+
 }

@@ -88,17 +88,158 @@ endif; ?>
 
 <?php $this->placeholder('page_header')->captureStart();  //$this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
 
-<?php if($this->action == "add" || $this->do == "new" ) : ?>
-    <h2 class="page-header">Création d'un nouveau dossier</h2>
-    <h3 class="page-header"><div style='margin:10px;' id='infosEtablissement'></div></h3>
-<?php else : ?>
-    <h2 class="page-header">
-        <span style="color: #333333"><?php echo $this->libelleType; ?></span>
-        <small><br/><?php echo nl2br($this->objetDossier) ?></small>
-        <div style='margin:10px;' id='infosEtabs'></div>
-    </h2>
-<?php endif ?>
+<?php 
+    if($this->action == "add" || $this->do == "new" ){
+        //Cas d'ajout d'un nouveau dossier
+        echo "
+            <h2 class='page-header'>Création d'un nouveau dossier</h2>
+            <h3 class='page-header'>
+                <div style='margin:10px;' id='infosEtablissement'>
+        ";
+        if($this->enteteEtab){
+            echo "Etablissement(s) concerné(s) : &nbsp;";
+            echo "<a href='/etablissement/descriptif/id/".$this->enteteEtab['ID_ETABLISSEMENT']."' data-target='#modal-desc' data-toggle='modal' id='descEtab' title='Afficher le descriptif'><i class='icon-list-alt icon-black'></i></a>&nbsp;";
+            echo "&nbsp;&nbsp;<a href='/etablissement/dossiers/id/".$this->enteteEtab['ID_ETABLISSEMENT']."' title='Se rendre à la liste des dossiers' ><i class='icon-folder-open icon-black'></i></a>&nbsp;&nbsp;";
+            echo "
+                <a href='/etablissement/index/id/".$this->enteteEtab['ID_ETABLISSEMENT']."' class='etab'>
+                            ".$this->enteteEtab['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+            if($this->enteteEtab['adresses']){
+                echo "&nbsp;(".$this->enteteEtab['adresses'][0]['LIBELLE_COMMUNE'].")";
+            }
+            $etablissementInfos = $this->enteteEtab['etablissementInfos'];
+            if(isset($etablissementInfos['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
+                echo " [ ".$etablissementInfos['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." ]";
+            }
+            echo "
+                </a>
+            ";
+            if(isset($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']) && $etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+                if($this->avisExploitationEtab  == 1){
+                    echo "<span class='avis F'>Favorable</span>&nbsp;";
+                }else if($this->avisExploitationEtab  == 2){
+                    echo "<span class='avis D'>Défavorable</span>&nbsp;";
+                }else if($etablissementInfos['presence_avis_differe']){
+                    echo "<span class='label label-info'>Avis différé</span>&nbsp;";
+                }else{
+                    echo "<span class='avis'>Avis indisponible</span>&nbsp;";
+                }
+            }else{
+                echo "<span class='avis'>Avis indisponible</span>&nbsp;";
+            }
 
+            $nbPrev = count($etablissementInfos['preventionnistes']);
+            if($nbPrev >0){
+                echo "<span style='font-size:10px'>(";
+                foreach($etablissementInfos['preventionnistes'] as $prev){
+                    echo $prev['NOM_UTILISATEURINFORMATIONS']." ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
+                    if($nbPrev > 1)
+                        echo ", ";
+                    $nbPrev--;
+                }
+                echo ")</span>";
+            }
+                
+            echo " <span style='font-size:10px'>#".$etablissementInfos['general']['NUMEROID_ETABLISSEMENT']."</span>";
+        }
+        echo "
+                </div>
+            </h3>
+        ";
+    }else{
+        //Lorsqu'il s'agit d'un dossier existant
+        echo "
+            <h2 class='page-header'>
+                <span style='color: #333333'>".$this->libelleType."</span>
+                <small><br/>".nl2br($this->objetDossier)."</small>
+        ";
+
+        echo "
+                <div style='margin:10px;' id='infosEtabs'>
+        ";
+
+        $nbEtab = count($this->enteteEtab);
+        if($nbEtab > 0){
+            if($nbEtab == 1 && $this->enteteEtab[0]["LIBELLE_GENRE"] == "Site"){
+                echo "Site concerné : &nbsp;";
+                
+                echo "
+                    <a href='/etablissement/index/id/".$this->enteteEtab[0]['ID_ETABLISSEMENT']."' class='etab'>
+                        ".$this->enteteEtab[0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." 
+                    </a>
+                ";
+                        
+                echo " <span style='font-size:10px'>#".$this->enteteEtab[0]['infosEtab']['general']['NUMEROID_ETABLISSEMENT']."</span>";
+            }else{
+                echo "Etablissement(s) concerné(s) : &nbsp;";
+                $i = 0;
+                $idEtabEnCour = null;
+                $compteur = 0;
+                //Zend_Debug::dump($this->listeEtablissement);
+                foreach($this->enteteEtab as $etab => $value){
+                    if($value['ID_ETABLISSEMENTDOSSIER'] != $idEtabEnCour){
+                        $compteur++;
+                        $idEtabEnCour = $value['ID_ETABLISSEMENTDOSSIER'];
+                        echo "<a href='/etablissement/descriptif/id/".$value['ID_ETABLISSEMENT']."' data-target='#modal-desc' data-toggle='modal' id='descEtab' title='Afficher le descriptif'><i class='icon-list-alt icon-black'></i></a>&nbsp;";
+                        echo "&nbsp;&nbsp;<a href='/etablissement/dossiers/id/".$value['ID_ETABLISSEMENT']."' title='Se rendre à la liste des dossiers' ><i class='icon-folder-open icon-black'></i></a>&nbsp;&nbsp;";
+                        echo "<a href='/etablissement/index/id/".$value['ID_ETABLISSEMENT']."' class='etab'>".$value['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+                        $nbAdresse = count($value['infosEtab']['adresses']);
+                        if($nbAdresse != 0){
+                            echo " (";
+                            foreach($value['infosEtab']['adresses'] as $commune){
+                                echo $commune['LIBELLE_COMMUNE'];
+                                if($nbAdresse != 1)
+                                    echo ", ";
+                                $nbAdresse--;
+                            }
+                            echo ") ";
+                        }else{
+                            echo " (adresse non renseignée)";
+                        }
+                        if(isset($value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS'])){
+                            echo " [ ".$value['infosEtab']['parents'][0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." ]";
+                        }
+                        echo "
+                            </a>
+                        ";
+                        if($value['infosEtab']['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
+                            if($value['avisExploitation']['LIBELLE_AVIS'] == "Favorable"){
+                                echo "<span class='avis F'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+                            }else if($value['avisExploitation']['LIBELLE_AVIS'] == "Défavorable"){
+                                echo "<span class='avis D'>".$value['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+                            }else if($value['infosEtab']['presence_avis_differe']){
+                                echo "<span class='label label-info'>Avis différé</span>&nbsp;";
+                            }else{
+                                echo "<span class='avis'>Avis indisponible</span>&nbsp;";
+                            }
+                        }else{
+                            echo "<span class='avis'>Avis indisponible</span>&nbsp;";
+                        }
+                        //affichage preventionniste(s)
+                        $nbPrev = count($value['infosEtab']['preventionnistes']);
+                        if($nbPrev >0){
+                            echo "<span style='font-size:10px'>(";
+                            foreach($value['infosEtab']['preventionnistes'] as $prev){
+                                echo $prev['NOM_UTILISATEURINFORMATIONS']." ".$prev['PRENOM_UTILISATEURINFORMATIONS'];
+                                if($nbPrev > 1)
+                                    echo ", ";
+                                $nbPrev--;
+                            }
+                            echo ")</span>";
+                        }
+                        
+                                        echo " <span style='font-size:10px'>#".$value['infosEtab']['general']['NUMEROID_ETABLISSEMENT']."</span>";
+                                        
+                        $i++;
+                    }
+                }
+            }
+        }
+        echo "
+                </div>
+            </h2>
+        ";
+    }
+?>
 <div class='grid_16' >
 
 <?php echo "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />"; ?>
@@ -109,65 +250,29 @@ endif; ?>
 <?php $this->placeholder('after_content')->captureStart() // Capture du 'after_content' ?>
 
 </div>
-
-        <!-- Modal -->
-		<div class="modal hide fade" tabindex="-1" id="modal-desc" >
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">x</button>
-						<h3>Descriptif de l'établissement</h3>
-					</div>
-					<div class="modal-body">
-						Chargement des éléments...
-					</div>
-					<div class="modal-footer">
-						<a href="#" class="btn" data-dismiss="modal">Fermer</a>
-					</div>
+    <!-- Modal -->
+	<div class="modal hide fade" tabindex="-1" id="modal-desc" >
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">x</button>
+					<h3>Descriptif de l'établissement</h3>
+				</div>
+				<div class="modal-body">
+					Chargement des éléments...
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn" data-dismiss="modal">Fermer</a>
 				</div>
 			</div>
 		</div>
-
+	</div>
 <script>
 
 
 	
     $(document).ready(function(){
 
-        if($("#infosEtabs").html() == ''){
-            //cas d'affichage d'un dossier
-            $.ajax({
-                url: "/dossier/getetabs",
-                data: "do=infosEtabs&idDossier="+$("#idDossier").val(),
-                type:"POST",
-                beforeSend: function(){
-                    $("#infosEtablissement").html("<img src='/images/load.gif' />");
-                },
-                success: function(affichageResultat){
-                    $("#infosEtabs").html(affichageResultat);
-                },
-                error: function(){
-                    return false;
-                }
-            });
-        }else if($("#infosEtablissement").html() == ''){
-            //cas de création d'un dossier depuis un établissement
-            $.ajax({
-                url: "/dossier/getetabs",
-                data: "do=infosEtabs&idEtablissement="+$("#idEtablissement").val(),
-                type:"POST",
-				beforeSend: function(){
-                    $("#infosEtablissement").html("<img src='/images/load.gif' />");
-                },
-                success: function(affichageResultat) {			
-                    $("#infosEtablissement").html(affichageResultat);
-                },
-                error: function(){
-                    return false;
-                }
-            });
-        }
-		
 		$("#VERROU").live('click',function(){
 			$.ajax({
 					url: "/dossier/verrou",
@@ -218,68 +323,68 @@ endif; ?>
 			return false;
 		});
 		
-	$("#rapport").live('click',function(){
-		//On charge le contenu de la boite de dialogue en Ajax (liste des établissements concernés)
-		$.ajax({
-			url: "/dossier/dialoggenrapport",
-			data: "idDossier="+$("#idDossier").val(),
-			type:"POST",
-			//async: false,
-			beforeSend: function(){
+    	$("#rapport").live('click',function(){
+    		//On charge le contenu de la boite de dialogue en Ajax (liste des établissements concernés)
+    		$.ajax({
+    			url: "/dossier/dialoggenrapport",
+    			data: "idDossier="+$("#idDossier").val(),
+    			type:"POST",
+    			//async: false,
+    			beforeSend: function(){
 
-			},
-			success: function(affichageResultat){
-				$("#dialogComm").html('').html(affichageResultat).dialog({
-					resizable: false,
-					height:550,
-					width:800,
-					modal: true,
-					title: 'Génération des rapports',
-					buttons: {
-						'Fermer': function() {
-							$(this).dialog('close');
-							$("#dialogComm").html('');
-						}
-					},
-					close: function(event, ui){
-						$("body").css('overflow','auto');
-						$("#dialogComm").html('');
-					}
-				});				
-			},
-			error: function(){
-				return false;
-			}
-		});
-		
-		return false;		
-	});
-	
-	$("#generate").live('click',function() {
-            if ($('.etabCheck:checked').length == 0) {
-                alert('Vous devez sélectionner un établissement pour pouvoir générer un rapport.');
-                return false;
-            }
-            
-            $(this).attr('disabled', 'disabled');
-            $.ajax({
-                url: "/dossier/generationrapport",
-                data: $("#etabRapport").serialize()+"&idDossier="+$("#idDossier").val(),
-                type:"POST",
-                beforeSend: function(){
-                    $("#dialogComm").html("<img src='/images/load.gif' />");
-                },
-                success: function(affichageResultat){
-                    var successMess = "<h3>Génération effectuée avec succès</h3><br/>";
-                    $("#dialogComm").html(successMess+affichageResultat);
-                    $("#dialogComm").append("Vous pouvez retrouver ces documents dans la partie pièces jointes");
-                },
-                error: function(){
-                    $("#dialogComm").html("<h3>Erreur lors de la génération du rapport</h3><br/>Si le problème persiste veuillez contacter votre administrateur");
+    			},
+    			success: function(affichageResultat){
+    				$("#dialogComm").html('').html(affichageResultat).dialog({
+    					resizable: false,
+    					height:550,
+    					width:800,
+    					modal: true,
+    					title: 'Génération des rapports',
+    					buttons: {
+    						'Fermer': function() {
+    							$(this).dialog('close');
+    							$("#dialogComm").html('');
+    						}
+    					},
+    					close: function(event, ui){
+    						$("body").css('overflow','auto');
+    						$("#dialogComm").html('');
+    					}
+    				});				
+    			},
+    			error: function(){
+    				return false;
+    			}
+    		});
+    		
+    		return false;		
+    	});
+    	
+    	$("#generate").live('click',function() {
+                if ($('.etabCheck:checked').length == 0) {
+                    alert('Vous devez sélectionner un établissement pour pouvoir générer un rapport.');
                     return false;
                 }
-            });		
-	});
+                
+                $(this).attr('disabled', 'disabled');
+                $.ajax({
+                    url: "/dossier/generationrapport",
+                    data: $("#etabRapport").serialize()+"&idDossier="+$("#idDossier").val(),
+                    type:"POST",
+                    beforeSend: function(){
+                        $("#dialogComm").html("<img src='/images/load.gif' />");
+                    },
+                    success: function(affichageResultat){
+                        var successMess = "<h3>Génération effectuée avec succès</h3><br/>";
+                        $("#dialogComm").html(successMess+affichageResultat);
+                        $("#dialogComm").append("Vous pouvez retrouver ces documents dans la partie pièces jointes");
+                    },
+                    error: function(){
+                        $("#dialogComm").html("<h3>Erreur lors de la génération du rapport</h3><br/>Si le problème persiste veuillez contacter votre administrateur");
+                        return false;
+                    }
+                });		
+    	});
                 
     });
 </script>
