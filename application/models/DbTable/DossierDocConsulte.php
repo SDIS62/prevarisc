@@ -8,12 +8,12 @@ class Model_DbTable_DossierDocConsulte extends Zend_Db_Table_Abstract
 
     public function getGeneral($idDossier,$idDoc)
     {
-        $select = "SELECT *
-            FROM dossierdocconsulte
-            WHERE ID_DOSSIER = '".$idDossier."'
-            AND ID_DOC = '".$idDoc."'
-        ;";
-        //echo $select;
+        $select = $this->select()
+             ->setIntegrityCheck(false)
+             ->from(array('ddc' => 'dossierdocconsulte'))
+             ->where("ddc.ID_DOSSIER = ?",$idDossier)
+             ->where("ddc.ID_DOC = ?",$idDoc);
+
         return $this->getAdapter()->fetchRow($select);
     }
 
