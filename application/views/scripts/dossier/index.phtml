@@ -1,4 +1,4 @@
-<script type='text/javascript' >
+﻿<script type='text/javascript' >
 
 	$(document).ready(function(){
 
@@ -1007,12 +1007,12 @@
 			},
 			success: function(affichageResultat){
 				var idDossier = affichageResultat.replace(' ', '');
-                                try {
-                                    parseInt(idDossier);
-                                    window.location='/dossier/index/id/'+idDossier;
-                                } catch(e) {
-                                    window.location.reload();
-                                }
+                try {
+                    parseInt(idDossier);
+                    window.location='/dossier/index/id/'+idDossier;
+                } catch(e) {
+                    window.location.reload();
+                }
 
 			},
 			error: function(){
@@ -1067,7 +1067,12 @@
 				$("#chargement").html("<img src='/images/load.gif' />");
 			},
 			success: function(affichageResultat){
-				window.location= affichageResultat;
+				try {
+					var affichageResultat = affichageResultat.Replace("\ufeff", "");
+                    window.location='/dossier/index/id/'+affichageResultat;
+                } catch(e) {
+                    window.location.reload();
+                }
 			},
 			error: function(){
 				return false;

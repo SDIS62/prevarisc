@@ -748,7 +748,7 @@ class DossierController extends Zend_Controller_Action
                 if (count($tabInfos) == 2) {
                     //cas d'un document existant
                     $dbToUse = new Model_DbTable_DossierDocConsulte();
-                    $searchResult = $dbToUse->getGeneral($this->_getParam('idDossier'), $nature, $numdoc);
+                    $searchResult = $dbToUse->getGeneral($this->_getParam('idDossier'), $numdoc);
                     $docDelete = $dbToUse->find($searchResult['ID_DOSSIERDOCCONSULTE'])->current();
                     $docDelete->delete();
                 } elseif (count($tabInfos) == 3) {
@@ -881,19 +881,48 @@ class DossierController extends Zend_Controller_Action
         try {
             $this->_helper->viewRenderer->setNoRender();
             $DBdossier = new Model_DbTable_Dossier();
+            $DBdossierNature = new Model_DbTable_DossierNature();
             if ($this->_getParam('do') == 'new') {
                 $nouveauDossier = $DBdossier->createRow();
                 $nouveauDossier->CREATEUR_DOSSIER = $this->_getParam('ID_CREATEUR');
             } elseif ($this->_getParam('do') == 'edit') {
                 $nouveauDossier = $DBdossier->find($this->_getParam('idDossier'))->current();
-                $typeDossier = $nouveauDossier['TYPE_DOSSIER'];
-                if ($typeDossier != $this->_getParam("TYPE_DOSSIER")) {
-                    //si le type a changé on supprime les documents consultés et les documents d'urbanisme
-                    $dbDocAjout = new Model_DbTable_ListeDocAjout();
+
+                $oldType = $nouveauDossier['TYPE_DOSSIER'];
+                $newType = $this->_getParam("TYPE_DOSSIER");
+                $oldNature = $DBdossier->getNatureDossier($this->_getParam('idDossier'));
+                $oldNature = $oldNature['ID_NATURE'];
+
+                $newNature = $this->_getParam("selectNature");
+
+                $arrayT1 = array(24,21,23,29,26,28);
+                $arrayT2 = array(20,47,25,48);
+
+                $dbDocConsulte = new Model_DbTable_DossierDocConsulte();
+                $dbDocAjout = new Model_DbTable_ListeDocAjout();
+
+                if( in_array($oldNature, $arrayT1) && in_array($newNature, $arrayT1)){
+                    //On conserve les documents consultés
+                }else if( in_array($oldNature, $arrayT2) && in_array($newNature, $arrayT2) ){
+                    //On conserve les documents consultés en faisant une copie dans la table docajout
+                    $docRestant = $dbDocConsulte->getDocOtheNature($this->_getParam('idDossier'),$oldNature);
+                    foreach($docRestant as $doc){
+                        $newDocAjout = $dbDocAjout->createRow();
+                        $newDocAjout->LIBELLE_DOCAJOUT = $doc['LIBELLE_DOC'];
+                        $newDocAjout->REF_DOCAJOUT = $doc['REF_CONSULTE'];
+                        $newDocAjout->DATE_DOCAJOUT = $doc['DATE_CONSULTE'];
+                        $newDocAjout->ID_DOSSIER = $doc['ID_DOSSIER'];
+                        $newDocAjout->ID_NATURE = $newNature;
+                        $newDocAjout->save();
+
+                        $where = $dbDocConsulte->getAdapter()->quoteInto('ID_DOSSIERDOCCONSULTE = ?', $doc['ID_DOSSIERDOCCONSULTE']);
+                        $dbDocConsulte->delete($where);
+                    }
+                }else{
+                    //On supprime les documents consultés                    
                     $where = $dbDocAjout->getAdapter()->quoteInto('ID_DOSSIER = ?', $this->_getParam('idDossier'));
                     $dbDocAjout->delete($where);
 
-                    $dbDocConsulte = new Model_DbTable_DossierDocConsulte();
                     $where = $dbDocConsulte->getAdapter()->quoteInto('ID_DOSSIER = ?', $this->_getParam('idDossier'));
                     $dbDocConsulte->delete($where);
                 }
@@ -997,7 +1026,7 @@ class DossierController extends Zend_Controller_Action
                 }
                 //Sauvegarde des natures du dossier
 
-                $DBdossierNature = new Model_DbTable_DossierNature();
+                
                 $saveNature = $DBdossierNature->createRow();
                 $saveNature->ID_DOSSIER = $idDossier;
                 $saveNature->ID_NATURE = $_POST['selectNature'];
@@ -1166,7 +1195,7 @@ class DossierController extends Zend_Controller_Action
             }
 
             //GESTION DE LA RECUPERATION DES DOCUMENTS CONSULTES DE LA PRECEDENTE VP SI IL EN EXISTE UNE (UNIQUEMENT EN CREATION DE DOSSIER)
-            if ((21 == $idNature || 26 == $idNature) &&  $_POST['idEtablissement'] != "") {
+            if ((21 == $idNature || 26 == $idNature) &&  $_POST['idEtablissement'] != "" && $this->_getParam('do') == 'new') {
                 $lastVP = $DBdossier->findLastVp($this->_getParam("idEtablissement"));
                 $idDossierLastVP = $lastVP['ID_DOSSIER'];
                 if ($lastVP['ID_DOSSIER'] != '') {
@@ -1472,6 +1501,8 @@ class DossierController extends Zend_Controller_Action
         $dbdossier = new Model_DbTable_Dossier();
         $this->view->infosDossier = $dbdossier->find((int) $this->_getParam("id"))->current();
 
+        $typeDossier = $this->view->infosDossier['TYPE_DOSSIER'];
+
         $dossierType = $dbdossier->getTypeDossier((int) $this->_getParam("id"));
 
         $this->view->idDossier = (int) $this->_getParam("id");
@@ -1507,15 +1538,17 @@ class DossierController extends Zend_Controller_Action
             $listeDocRenseigne[$nature["ID_NATURE"]] = $dblistedoc->recupDocDossier($this->_getParam("id"),$nature["ID_NATURE"]);
 
             //ici on récupère tous les documents qui ont été ajoutés par l'utilisateur (document non proposé par défaut)
-            $listeDocAjout[$nature["ID_NATURE"]] = $dblistedocAjout->getDocAjout((int) $this->_getParam("id"),$nature["ID_NATURE"]);
+            $listeDocAjout[$nature["ID_NATURE"]] = $dblistedocAjout->getDocAjout((int) $this->_getParam("id"));
+
         }
+
         //On envoie à la vue la liste des documents consultés classés par nature (peux y avoir plusieurs fois la même liste)
         $this->view->listeDocs = $listeDocConsulte;
-
         //on envoie à la vue tous les documents qui ont été renseignés parmi la liste de ceux récupéré dans la boucle ci-dessus
         $this->view->dossierDocConsutle = $listeDocRenseigne;
         //on recup les docs ajouté pr le dossiers
         $this->view->listeDocsAjout = $listeDocAjout;
+
     }
 
     public function ajoutdocAction($idDossier)
@@ -1575,7 +1608,6 @@ class DossierController extends Zend_Controller_Action
 
             if (count($tabNom) == 2) {
                 $dblistedoc = new Model_DbTable_DossierDocConsulte();
-                echo "vala les params ".$id_dossier." - ".$tabNom[0]." - ".$tabNom[1];
                 $listevalid = $dblistedoc->getGeneral($id_dossier,$tabNom[0],$tabNom[1]);
 
                 $liste = $dblistedoc->find($listevalid['ID_DOSSIERDOCCONSULTE'])->current();
