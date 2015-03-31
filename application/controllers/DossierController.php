@@ -1596,7 +1596,7 @@ class DossierController extends Zend_Controller_Action
 
             if (count($tabNom) == 2) {
                 $dblistedoc = new Model_DbTable_DossierDocConsulte();
-                $listevalid = $dblistedoc->getGeneral($id_dossier,$tabNom[0],$tabNom[1]);
+                $listevalid = $dblistedoc->getGeneral($id_dossier,$tabNom[1]);
 
                 $liste = $dblistedoc->find($listevalid['ID_DOSSIERDOCCONSULTE'])->current();
                 if ($listevalid) {
