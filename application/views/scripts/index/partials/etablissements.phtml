@@ -1,14 +1,12 @@
-<div id="<?php echo $this->id ?>" class="panel panel-default <?php echo $this->width != 'small' ? 'w2' : '' ?>">
-  <div class="panel-heading">
-    <?php echo $this->title ?> (<?php echo count($this->data) ?>)
-  </div>
-  <div class="panel-body">
-      <?php if (count($this->data) > 0): ?>
-        <ul class='recherche_liste unstyled no_slide scroll-bloc-medium'>
-          <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->data) ?>
-        </ul>
-      <?php else: ?>
-        <small class='muted'>Aucun établissement.</small>
-      <?php endif ?>
-  </div>
-</div>
+<?php if (count($this->data) > 0): ?>
+  <ul class='recherche_liste unstyled no_slide scroll-bloc-medium'>
+    <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->data) ?>
+  </ul>
+<?php else: ?>
+  <small class='muted'>Aucun établissement.</small>
+<?php endif ?>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#<?php echo $this->id ?> .panel-heading").append(' (<?php echo count($this->data) ?>)');
+    });
+</script>
