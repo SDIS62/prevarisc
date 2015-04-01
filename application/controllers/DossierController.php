@@ -2530,13 +2530,16 @@ class DossierController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender();
 
+        $stringUpdateReg = $this->_getParam('tableUpdateReg');
+        $tabIdReg = explode(",",$stringUpdateReg);
+
         $stringUpdate = $this->_getParam('tableUpdate');
         $tabId = explode(",",$stringUpdate);
 
 
         $service_dossier = new Service_Dossier();        
-        $service_dossier->changePosPrescription($tabId);
-        
+        $service_dossier->changePosPrescription($tabIdReg);
+        $service_dossier->changePosPrescription($tabId);        
     }
 
     public function formrecupprescriptionAction()
