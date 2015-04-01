@@ -131,10 +131,44 @@ $(document).ready(function(){
 
 	$(".listePrescriptions").sortable({
 		update: function(event, ui) {
+			var listePrescriptionUpdateReg = new Array();
 			var listePrescriptionUpdate = new Array();
 			var num = 1;
-			var listeUpdate = $(this);
-			$(".listePrescriptions > li").each(function(){
+			
+			$("#prescRappelReg > li").each(function(){
+				//on parcour les li pour récolter les changements et mettre à jour dans la base
+				//on change le num de li
+				$(this).attr('num',num);
+				//on change le num affiché
+				//alert($(this).children().children().children().html());
+				$(this).children().children().children().children(".numPresc").html(num);
+				
+				//on recupere id du li en cours "presc_x"
+				var liId = $(this).attr('id');
+				var liId = liId.split('_');
+				listePrescriptionUpdateReg.push(liId[1]);
+				
+				num = num + 1;
+			});
+
+			var num = 1;
+			$("#prescExploitation > li").each(function(){
+				//on parcour les li pour récolter les changements et mettre à jour dans la base
+				//on change le num de li
+				$(this).attr('num',num);
+				//on change le num affiché
+				//alert($(this).children().children().children().html());
+				$(this).children().children().children().children(".numPresc").html(num);
+				
+				//on recupere id du li en cours "presc_x"
+				var liId = $(this).attr('id');
+				var liId = liId.split('_');
+				listePrescriptionUpdate.push(liId[1]);
+				
+				num = num + 1;
+			});
+
+			$("#prescAmelioration > li").each(function(){
 				//on parcour les li pour récolter les changements et mettre à jour dans la base
 				//on change le num de li
 				$(this).attr('num',num);
@@ -152,7 +186,7 @@ $(document).ready(function(){
 
 			$.ajax({
 				url: "/dossier/prescriptionchangepos",
-				data: "do=changePrescOrder&tableUpdate="+listePrescriptionUpdate+"&idDossier="+$("#idDossier").val(),
+				data: "do=changePrescOrder&tableUpdate="+listePrescriptionUpdate+"&tableUpdateReg="+listePrescriptionUpdateReg+"&idDossier="+$("#idDossier").val(),
 				type:"POST",
 				beforeSend: function(){
 
