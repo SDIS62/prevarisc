@@ -1,6 +1,6 @@
 <div id="home" class="dashboard">
     <?php foreach($this->blocs as $id => $bloc): ?>
-        <?php echo $this->partial('index/partials/'.$bloc['type'].'.phtml', array_merge($bloc, array('id' => $id))) ?>
+        <?php echo $this->partial('index/partials/'.$bloc['type'].'_bloc.phtml', array_merge($bloc, array('id' => $id))) ?>
     <?php endforeach ?>
     <div class="grid-gutter"></div>
 
@@ -20,7 +20,7 @@
             $(target).load(url);
         });
 
-        var $container = $('.dashboard').packery({
+        $container = $('.dashboard').packery({
             itemSelector: '.panel',
             gutter: '.grid-gutter',
             // disable initial layout
@@ -56,7 +56,7 @@
         // ----- packery setup ----- //
         // optim de perf : on évite au navigateur de dessiner les blocs
         // avant qu'ils aient pris leur place finale
-        $('.panel').show(); 
+        $('.panel').show();
 
         // trigger initial layout
         $container.packery();
@@ -68,9 +68,8 @@
         });
         $container.packery( 'bindUIDraggableEvents', $itemElems );
 
-    
         var saveTimeout = null;
-        var saveTimeoutMilliseconds = 500;
+        var saveTimeoutMilliseconds = 1000;
 
         function orderItems() {
 
@@ -85,18 +84,20 @@
             }
 
             // Init a new timemout
-            saveTimeout = setTimeout(function() {
-                $.post("/api/1.0/user/preferences", {
-                    id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
-                    preferences: {
-                        'DASHBOARD_BLOCS': sortOrder
-                    }
-                });
-            }, saveTimeoutMilliseconds);
+            if ($('.panel.loading').length == 0) {
+                saveTimeout = setTimeout(function() {
+                    $.post("/api/1.0/user/preferences", {
+                        id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
+                        preferences: {
+                            'DASHBOARD_BLOCS': sortOrder
+                        }
+                    });
+                }, saveTimeoutMilliseconds);
+            }
         }
 
         $container.packery( 'on', 'layoutComplete', orderItems );
-        $container.packery( 'on', 'dragItemPositioned', orderItems );
+        //$container.packery( 'on', 'dragItemPositioned', orderItems );
 
         $('#reinitBlocOrder').click(function() {
             $.post("/api/1.0/user/preferences", {
@@ -107,6 +108,10 @@
             }, function() {
                 window.location.reload();
             });
+        });
+
+        $(".panel").each(function(i, elem) {
+            loadBloc($(elem));
         });
 
     });

@@ -4,14 +4,153 @@ class Service_Dashboard
 {
     protected $options = array();
     
-    public function __construct() {
+    protected $blocsConfig = array(
+
+        // lié aux commissions
+        'nextCommissions' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getNextCommission',
+            'acl'     => array('dashboard', 'view_next_commissions'),
+            'title'   => 'Prochaines commissions',
+            'type'    => 'commissions',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+
+        'nextCommissionsOdj' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getNextCommission',
+            'acl'     => array('dashboard', 'view_next_commissions_odj'),
+            'title'   => 'Prochaines commissions',
+            'type'    => 'odj',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+
+        // lié aux établissements
+        'ERPSuivis' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getERPSuivis',
+            'acl'     => array('dashboard', 'view_ets_suivis'),
+            'title'   => 'Etablissements suivis',
+            'type'    => 'etablissements',
+            'height'  => 'small',
+            'width'   => 'medium',
+        ),
+        'ERPOuvertsSousAvisDefavorable' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getERPOuvertsSousAvisDefavorable',
+            'acl'     => array('dashboard', 'view_ets_avis_defavorable'),
+            'title'   => 'Etablissements sous avis défavorable',
+            'type'    => 'etablissements',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        'ERPOuvertsSousAvisDefavorableSuivis' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getERPOuvertsSousAvisDefavorableSuivis',
+            'acl'     => array('dashboard', 'view_ets_avis_defavorable_suivis'),
+            'title'   => 'Etablissements suivis sous avis défavorable',
+            'type'    => 'etablissements',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        'ERPOuvertsSousAvisDefavorableSurCommune' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getERPOuvertsSousAvisDefavorableSurCommune',
+            'acl'     => array('dashboard', 'view_ets_avis_defavorable_sur_commune'),
+            'title'   => 'Etablissements de votre commune sous avis défavorable',
+            'type'    => 'etablissements',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        'ERPSansPreventionniste' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getERPSansPreventionniste',
+            'acl'     => array('dashboard', 'view_ets_sans_preventionniste'),
+            'title'   => 'Etablissements sans préventionnistes',
+            'type'    => 'etablissements',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        'ERPOuvertsSansProchainesVisitePeriodiques' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getERPOuvertsSansProchainesVisitePeriodiques',
+            'acl'     => array('dashboard', 'view_ets_ouverts_sans_prochaine_vp'),
+            'title'   => 'Etablissements sans prochaine VP cette année',
+            'type'    => 'etablissements',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+
+        // lié aux dossiers
+        'DossiersSuivisSansAvis' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getDossiersSuivisSansAvis',
+            'acl'     => array('dashboard', 'view_doss_suivis_sans_avis'),
+            'title'   => 'Dossiers suivis sans avis du rapporteur',
+            'type'    => 'dossiers',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        'DossiersSuivisNonVerrouilles' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getDossiersSuivisNonVerrouilles',
+            'acl'     => array('dashboard', 'view_doss_suivis_unlocked'),
+            'title'   => 'Dossiers suivis non verrouillés',
+            'type'    => 'dossiers',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        'DossierDateCommissionEchu' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getDossierDateCommissionEchu',
+            'acl'     => array('dashboard', 'view_doss_sans_avis'),
+            'title'   => 'Dossiers sans avis de commission',
+            'type'    => 'dossiers',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        'DossierAvecAvisDiffere' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getDossierAvecAvisDiffere',
+            'acl'     => array('dashboard', 'view_doss_avis_differe'),
+            'title'   => 'Dossiers avec avis différés',
+            'type'    => 'dossiers',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        'CourrierSansReponse' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getCourrierSansReponse',
+            'acl'     => array('dashboard', 'view_courrier_sans_reponse'),
+            'title'   => 'Courriers sans réponse',
+            'type'    => 'dossiers',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+
+        // autres blocs
+        'feeds' => array(
+            'service' => 'Service_Feed',
+            'method'  => 'getFeeds',
+            'acl'     => null,
+            'title'   => 'Messages',
+            'type'    => 'feeds',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+
+    );
+    
+    public function __construct($options = array()) {
         
         // default options
-        $this->options = array(
+        $this->options = array_merge(array(
             'next_commissions_days' => 15,
             'dossiers_sans_avis_days' => 15,
             'courrier_sans_reponse_days' => 10,
-        );
+        ), $options);
         
         // custom configurations
         if (getenv('PREVARISC_DASHBOARD_NEXT_COMMISSIONS_DAYS')) {
@@ -25,6 +164,10 @@ class Service_Dashboard
         if (getenv('PREVARISC_DASHBOARD_COURRIER_SANS_REPONSE_DAYS')) {
             $this->options['courrier_sans_reponse_days'] = (int) getenv('PREVARISC_DASHBOARD_COURRIER_SANS_REPONSE_DAYS');
         }
+    }
+    
+    public function getBlocConfig() {
+        return $this->blocsConfig;
     }
     
     protected function getCommissionUser($user) {
