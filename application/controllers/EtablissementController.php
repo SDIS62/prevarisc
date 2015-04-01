@@ -30,7 +30,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_carto = new Service_Carto;
 
         $etablissement = $service_etablissement->get($this->_request->id);
-
+        
         $this->view->etablissement = $etablissement;
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
