@@ -1007,6 +1007,7 @@
 			},
 			success: function(affichageResultat){
 				var idDossier = affichageResultat.replace(' ', '');
+				idDossier.replace("\ufeff", "");
                 try {
                     parseInt(idDossier);
                     window.location='/dossier/index/id/'+idDossier;
@@ -1068,7 +1069,7 @@
 			},
 			success: function(affichageResultat){
 				try {
-					var affichageResultat = affichageResultat.Replace("\ufeff", "");
+					var affichageResultat = affichageResultat.replace("\ufeff", "");
                     window.location='/dossier/index/id/'+affichageResultat;
                 } catch(e) {
                     window.location.reload();
