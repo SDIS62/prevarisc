@@ -111,8 +111,20 @@
         });
 
         $(".panel").each(function(i, elem) {
-            loadBloc($(elem));
+            //loadBloc($(elem));
         });
-
+        
+        $(".panel-heading .icon").click(function() {
+            var $self = $(this);
+            var $panel = $self.parents('.panel');
+            if ($self.hasClass('icon-chevron-right')) {
+                $self.removeClass('icon-chevron-right').addClass('icon-chevron-down');
+                if ($panel.hasClass('empty') && !$panel.hasClass('loading')) {
+                    $panel.find('.panel-body img').show();
+                    loadBloc($panel);
+                }
+            }
+        });
+        
     });
 </script>
