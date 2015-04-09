@@ -134,6 +134,8 @@ function bindEtsPopup($elem) {
 };
 
 function loadBloc($bloc) {
+    $bloc.find('.panel-body').show();
+    $bloc.removeClass('empty').addClass('loading');
     $.ajax({
         type: 'post',
         url: "/index/bloc",
@@ -143,7 +145,7 @@ function loadBloc($bloc) {
             $container.packery('fit', $bloc.get(0));
             bindEtsMarquee($bloc);
             bindEtsPopup($bloc);
-            $bloc.removeClass('loading');
+            $bloc.removeClass('loading').addClass('loaded');
         }
     });
 }
