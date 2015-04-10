@@ -835,7 +835,7 @@ text-decoration: none;
   cursor: move;
 }
 
-.dashboard .panel-heading .icon {
+.dashboard .panel.empty .icon {
   cursor: pointer;
 }
 
