@@ -1681,6 +1681,13 @@ echo "
 						<textarea name='ANOMALIE_DOSSIER' id='ANOMALIE_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['ANOMALIE_DOSSIER']) ? htmlspecialchars($this->infosDossier['ANOMALIE_DOSSIER'], ENT_QUOTES) : "")."</textarea>
 					</div>
 				</li>
+				<li class='row-fluid' id='OBSERVATION' style='".((in_array('OBSERVATION', $this->afficherChamps) && $this->infosDossier['OBSERVATION_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Observations</div>
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['OBSERVATION_DOSSIER'])."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<textarea name='OBSERVATION_DOSSIER' id='OBSERVATION_DOSSIER' rows='3' cols='100'>".(($this->infosDossier['OBSERVATION_DOSSIER']) ? htmlspecialchars($this->infosDossier['OBSERVATION_DOSSIER'], ENT_QUOTES) : "")."</textarea>
+					</div>
+				</li>
 				<!--
 					<li id='COORDSSI' ".(($action != 'new' && in_array('COORDSSI', $this->afficherChamps) && $this->infosDossier['COORDSSI_DOSSIER'] != '') ? "" : "style='display:none;'").">
 						<div class='left libelle span3' style='float:left;'>Coordinateur Système de Sécurité Incendie</div>
