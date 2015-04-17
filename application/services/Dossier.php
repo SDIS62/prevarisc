@@ -695,7 +695,7 @@ class Service_Dossier
                 $avisExploitationEtab = $DBdossier->getAvisDossier($this->etablissement['etablissementInfos']['general']['ID_DOSSIER_DONNANT_AVIS']);
                 $this->etablissement['avisExploitationEtab'] = $avisExploitationEtab['AVIS_DOSSIER'];
             } else {
-                $this->view->avisExploitationEtab = 3;
+                $this->etablissement['avisExploitationEtab'] = 3;
             }
 
             return $this->etablissement;
