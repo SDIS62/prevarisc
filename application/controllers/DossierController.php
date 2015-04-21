@@ -892,7 +892,7 @@ class DossierController extends Zend_Controller_Action
                         $where = $dbDocConsulte->getAdapter()->quoteInto('ID_DOSSIERDOCCONSULTE = ?', $doc['ID_DOSSIERDOCCONSULTE']);
                         $dbDocConsulte->delete($where);
                     }
-                }else{
+                }else if( $oldNature != $newNature ){
                     //On supprime les documents consultés                    
                     $where = $dbDocAjout->getAdapter()->quoteInto('ID_DOSSIER = ?', $this->_getParam('idDossier'));
                     $dbDocAjout->delete($where);
