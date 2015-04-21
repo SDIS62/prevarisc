@@ -4,7 +4,6 @@
 function addPrescription($listePrescription,$type,$odf){
     //TYPE_PRESCRIPTION_DOSSIER
     try{
-
         if($type == 0){
             $prescription = $odf->listeReg;
         }else if ($type == 1){
@@ -69,7 +68,7 @@ function addPrescription($listePrescription,$type,$odf){
             }
 
         }else{
-            //echo "ploip";
+
             if($type != 0){
                 $prescription->setVars('num', '', true, 'UTF-8');
             }
@@ -100,10 +99,21 @@ foreach($this->membresFiles as $val => $membre){
 		
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			$dossInfos = $odf->setSegment('dossierInfos');
-			
+
+			$i = 0;
 			foreach($this->dossierComm as $val => $dossierInfos){
 
-				$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
+				if($i == 0){
+					Zend_Debug::dump($dossierInfos);
+					$i = 1;
+				}
+
+				if(isset($dossierInfos['infosEtab'])){
+					$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
+				}else{
+					$nbAdresse = 0;
+				}
+
 				if($nbAdresse != 0){
 					foreach($dossierInfos['infosEtab']['adresses'] as $commune){
 					
@@ -113,19 +123,57 @@ foreach($this->membresFiles as $val => $membre){
 						}
 						
 						$dossInfos->setVars('objetDossier', $dossierInfos['OBJET_DOSSIER'], true, 'UTF-8');
-						//echo $dossierInfos['OBJET_DOSSIER']." <br/>";
 						$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
 						
 						$dateComm = new Zend_Date($this->dateComm);				
 						$dossInfos->setVars('dateCommission', $dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR), true, 'UTF-8');
 						
-						
-						$dateVisite = new Zend_Date($dossierInfos["DATEVISITE_DOSSIER"]);
-						try{
-							$dossInfos->setVars('dateVisite', $dateVisite->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR), true, 'UTF-8');
-						} catch (Exception $e){
-
+						if(isset($dossierInfos["DATEVISITE_DOSSIER"]) && $dossierInfos["DATEVISITE_DOSSIER"] != NULL){
+							$dateVisite = new Zend_Date($dossierInfos["DATEVISITE_DOSSIER"]);
+						}else if(isset($dossierInfos['infosEtab']["last_visite"]) && $dossierInfos['infosEtab']["last_visite"] != NULL){
+							$dateVisite = new Zend_Date($dossierInfos['infosEtab']["last_visite"]);
 						}
+
+						if($dateVisite){
+							try{
+								$dossInfos->setVars('dateVisite', $dateVisite->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR), true, 'UTF-8');
+							} catch (Exception $e){
+
+							}
+						}
+
+						//DEBUT Adresse
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["LIBELLE_RUE"]))
+							$dossInfos->setVars('libelleRue', $dossierInfos['infosEtab']['adresses'][0]["LIBELLE_RUE"], true, 'UTF-8');
+						else
+							$dossInfos->setVars('libelleRue', '', true, 'UTF-8');
+
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["CODEPOSTAL_COMMUNE"]))
+							$dossInfos->setVars('codePostal', $dossierInfos['infosEtab']['adresses'][0]["CODEPOSTAL_COMMUNE"], true, 'UTF-8');
+						else
+							$dossInfos->setVars('codePostal', '', true, 'UTF-8');
+						
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["LIBELLE_COMMUNE"]))
+							$dossInfos->setVars('libelleCommune', $dossierInfos['infosEtab']['adresses'][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
+						else
+							$dossInfos->setVars('libelleCommune', '', true, 'UTF-8');
+						//FIN Adresse 
+
+						switch($dossierInfos['TYPE_DOSSIER']){
+							case 1:
+								$type = "Étude";
+							break;
+							case 2:
+								$type = "Visite de commission";
+							break;
+							case 3:
+								$type = "Groupe de visite";
+							break;
+							default:
+								$type = "";
+							break;
+						}
+						$dossInfos->setVars('typeDossier', $type, true, 'UTF-8');
 
 						if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
 							$dossInfos->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
@@ -136,7 +184,12 @@ foreach($this->membresFiles as $val => $membre){
 							$dossInfos->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
 						else
 							$dossInfos->setVars('nomEtab', "", true, 'UTF-8');
-							
+
+						if(isset($dossierInfos['infosEtab']['informations']["LIBELLE_TYPEACTIVITE_PRINCIPAL"]))
+							$dossInfos->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPEACTIVITE_PRINCIPAL"], true, 'UTF-8');
+						else
+							$dossInfos->setVars('typeEtab', "", true, 'UTF-8');
+
 						switch($dossierInfos['AVIS_DOSSIER']){
 							case 1:
 								$avis = "Favorable";
@@ -169,12 +222,9 @@ foreach($this->membresFiles as $val => $membre){
 						}
 						$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
 
-
 						addPrescription($dossierInfos['prescriptionReglDossier'],0,$dossInfos);
 						addPrescription($dossierInfos['prescriptionExploitation'],1,$dossInfos);
 						addPrescription($dossierInfos['prescriptionAmelioration'],2,$dossInfos);
-
-
 						
 						$dossInfos->merge(); 
 					}
