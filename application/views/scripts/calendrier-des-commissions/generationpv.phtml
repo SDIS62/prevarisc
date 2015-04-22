@@ -19,9 +19,17 @@ function addPrescription($listePrescription,$type,$odf){
 
 		}
     }else if ($type == 1){
-        $prescription = $odf->listeExploitation;
+        try{
+			$prescription = $odf->listeExploitation;
+		} catch (Exception $e) {
+
+		}
     }else if ($type == 2){
-        $prescription = $odf->listeAmelioration;
+        try{
+			$prescription = $odf->listeAmelioration;
+		} catch (Exception $e) {
+
+		}
     }
 
     $nbPrescDossier = count($listePrescription);
