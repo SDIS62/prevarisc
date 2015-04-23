@@ -23,7 +23,12 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 	$dossInfos = $odf->setSegment('dossierInfos');
 	
 	foreach($this->dossierComm as $val => $dossierInfos){
-		$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
+		if(isset($dossierInfos['infosEtab']['adresses'])){
+			$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
+		} else {
+			$nbAdresse = 0;
+		}
+
 		if($nbAdresse != 0){
 			foreach($dossierInfos['infosEtab']['adresses'] as $commune){
 
