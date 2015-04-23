@@ -1,20 +1,41 @@
 <?php
 
+function addChamp($odf,$nomOdf, $variable){
+  try{
+    $odf->setVars($nomOdf,$variable, true,'UTF8');
+    #$segment->$nomOdf(utf8_decode($variable));
+  } catch (Exception $e) {
+
+  }
+}
+
 // PARTIE PRESCRIPTION
 function addPrescription($listePrescription,$type,$odf){
     //TYPE_PRESCRIPTION_DOSSIER
-    try{
+    if($type == 0){
+		try{
+			$prescription = $odf->listeReg;
+		} catch (Exception $e) {
 
-        if($type == 0){
-            $prescription = $odf->listeReg;
-        }else if ($type == 1){
-            $prescription = $odf->listeExploitation;
-        }else if ($type == 2){
-            $prescription = $odf->listeAmelioration;
-        }
+		}
+    }else if ($type == 1){
+        try{
+			$prescription = $odf->listeExploitation;
+		} catch (Exception $e) {
 
-        $nbPrescDossier = count($listePrescription);
-        
+		}
+    }else if ($type == 2){
+        try{
+			$prescription = $odf->listeAmelioration;
+		} catch (Exception $e) {
+
+		}
+    }
+
+    $nbPrescDossier = count($listePrescription);
+
+    if( isset($prescription) ){
+
         if($nbPrescDossier)
         {
             for($i=0; $i < $nbPrescDossier; $i++)
@@ -69,7 +90,7 @@ function addPrescription($listePrescription,$type,$odf){
             }
 
         }else{
-            //echo "ploip";
+
             if($type != 0){
                 $prescription->setVars('num', '', true, 'UTF-8');
             }
@@ -77,9 +98,6 @@ function addPrescription($listePrescription,$type,$odf){
             $prescription->setVars('textearticle','',true,'UTF-8');
             $prescription->merge();
         }
-        //$odf->mergeSegment($prescription);
-    } catch (OdfException $e) {
-      
     }
 
 }
@@ -95,48 +113,105 @@ foreach($this->membresFiles as $val => $membre){
 	//On boucle sur les membres
 	if($membre->ID_GROUPEMENT == NULL){
 		$nomFichier = $membre->ID_COMMISSIONMEMBRE."PV_".$membre->COURRIER_PV;
-		
+
 		if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
-		
+
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			$dossInfos = $odf->setSegment('dossierInfos');
-			
-			foreach($this->dossierComm as $val => $dossierInfos){
 
-				$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
+			foreach($this->dossierComm as $val => $dossierInfos){
+				if(isset($dossierInfos['infosEtab'])){
+					$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
+				}else{
+					$nbAdresse = 0;
+				}
+
 				if($nbAdresse != 0){
 					foreach($dossierInfos['infosEtab']['adresses'] as $commune){
-					
-						$dossInfos->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
-						if(isset($commune["LIBELLE_COMMUNE"])){
-							$dossInfos->setVars('communeDossier', $commune["LIBELLE_COMMUNE"], true, 'UTF-8');
-						}
-						
-						$dossInfos->setVars('objetDossier', $dossierInfos['OBJET_DOSSIER'], true, 'UTF-8');
-						//echo $dossierInfos['OBJET_DOSSIER']." <br/>";
-						$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
-						
-						$dateComm = new Zend_Date($this->dateComm);				
-						$dossInfos->setVars('dateCommission', $dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR), true, 'UTF-8');
-						
-						
-						$dateVisite = new Zend_Date($dossierInfos["DATEVISITE_DOSSIER"]);
-						try{
-							$dossInfos->setVars('dateVisite', $dateVisite->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR), true, 'UTF-8');
-						} catch (Exception $e){
+						addChamp($dossInfos,'commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION']);
 
+						if(isset($commune["LIBELLE_COMMUNE"])){
+							addChamp($dossInfos,'communeDossier', $commune["LIBELLE_COMMUNE"]);
 						}
+
+						addChamp($dossInfos,'objetDossier', $dossierInfos['OBJET_DOSSIER']);
+						addChamp($dossInfos,'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
+
+						$dateComm = new Zend_Date($this->dateComm);
+						addChamp($dossInfos,'dateCommission', $dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
+
+						if(isset($dossierInfos["DATEVISITE_DOSSIER"]) && $dossierInfos["DATEVISITE_DOSSIER"] != NULL){
+							$dateVisite = new Zend_Date($dossierInfos["DATEVISITE_DOSSIER"]);
+						}else if(isset($dossierInfos['infosEtab']["last_visite"]) && $dossierInfos['infosEtab']["last_visite"] != NULL){
+							$dateVisite = new Zend_Date($dossierInfos['infosEtab']["last_visite"]);
+						}
+
+						if(isset($dateVisite) && $dateVisite != ""){
+							addChamp($dossInfos,'dateVisite', $dateVisite->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
+						}else{
+							addChamp($dossInfos,'dateVisite', "");
+						}
+
+						//DEBUT Adresse
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["LIBELLE_RUE"]))
+							addChamp($dossInfos,'libelleRue', $dossierInfos['infosEtab']['adresses'][0]["LIBELLE_RUE"]);
+						else
+							addChamp($dossInfos,'libelleRue', '');
+
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["CODEPOSTAL_COMMUNE"]))
+							addChamp($dossInfos,'codePostal', $dossierInfos['infosEtab']['adresses'][0]["CODEPOSTAL_COMMUNE"]);
+						else
+							addChamp($dossInfos,'codePostal', '');
+
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["LIBELLE_COMMUNE"]))
+							addChamp($dossInfos,'libelleCommune', $dossierInfos['infosEtab']['adresses'][0]["LIBELLE_COMMUNE"]);
+						else
+							addChamp($dossInfos,'libelleCommune','');
+						//FIN Adresse
+
+						//DEBUT Effectif total
+						$effectifTotal = $dossierInfos['infosEtab']['informations']["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $dossierInfos['infosEtab']['informations']["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
+
+						if($effectifTotal == 0)
+							addChamp($dossInfos,'effectifTotal', "non renseigné");
+						else
+							addChamp($dossInfos,'effectifTotal', $effectifTotal);
+						//FIN Effectif total
+
+						switch($dossierInfos['TYPE_DOSSIER']){
+							case 1:
+								$type = "Étude";
+							break;
+							case 2:
+								$type = "Visite de commission";
+							break;
+							case 3:
+								$type = "Groupe de visite";
+							break;
+							default:
+								$type = "";
+							break;
+						}
+						addChamp($dossInfos,'typeDossier', $type);
 
 						if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
-							$dossInfos->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
+							addChamp($dossInfos,'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
 						else
-							$dossInfos->setVars('nomPereEtab', '', true, 'UTF-8');
-						
-						if(isset($dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
-							$dossInfos->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-						else
-							$dossInfos->setVars('nomEtab', "", true, 'UTF-8');
-							
+							addChamp($dossInfos,'nomPereEtab', '');
+
+
+
+						if(isset($dossierInfos['infosEtab']['informations'])){
+							addChamp($dossInfos,'nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
+							addChamp($dossInfos,'categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"]);
+							addChamp($dossInfos,'typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"]);
+						}else{
+							addChamp($dossInfos,'nomEtab', '');
+							addChamp($dossInfos,'categorieEtab', '');
+							addChamp($dossInfos,'typeEtab', '');
+						}
+
+
 						switch($dossierInfos['AVIS_DOSSIER']){
 							case 1:
 								$avis = "Favorable";
@@ -146,48 +221,32 @@ foreach($this->membresFiles as $val => $membre){
 							break;
 							default:
 								$avis = "";
-							break;					
+							break;
 						}
-						
-						try{
-							$dossInfos->setVars('avisDossier', $avis, true, 'UTF-8');
-						} catch (Exception $e){
+						addChamp($dossInfos,'avisDossier', $avis);
 
-						}
-
-						if(isset($dossierInfos['infosEtab']['informations'])){
-							$dossInfos->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
-							//$dossInfos->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"], true, 'UTF-8');
-						}else{
-							$dossInfos->setVars('categorieEtab', "", true, 'UTF-8');
-							//$dossInfos->setVars('typeEtab', "", true, 'UTF-8');
-						}
-						
 						$listeDocUrba = "";
 						foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
 							$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
 						}
-						$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
-
+						addChamp($dossInfos,'numDocUrba', $listeDocUrba);
 
 						addPrescription($dossierInfos['prescriptionReglDossier'],0,$dossInfos);
 						addPrescription($dossierInfos['prescriptionExploitation'],1,$dossInfos);
 						addPrescription($dossierInfos['prescriptionAmelioration'],2,$dossInfos);
 
-
-						
-						$dossInfos->merge(); 
+						$dossInfos->merge();
 					}
 				}else{
 					//dossier sans adresse indiquer le dossier en question
 				}
-				
+
 			}
 			$odf->mergeSegment($dossInfos);
 			$nouvellePJ = savePj($this->idComm,"Le pv a bien été généré");
             $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
             $path = $store->getFilePath($nouvellePJ, 'dateCommission', $this->idComm, true);
-			$odf->saveToDisk($path);	
+			$odf->saveToDisk($path);
 			//$odf->mergeSegment($dossierLoop);
 			echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'>Le PV a été généré avec succes</span><br/><br/><br/>";
 		}else{
@@ -218,5 +277,5 @@ function savePj($dateCommId,$libelleDocument){
 
 	return $nouvellePJ;
 }
-	
+
 ?>
