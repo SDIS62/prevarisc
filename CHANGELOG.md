@@ -28,6 +28,7 @@ Evolutions :
 * Ajout du numéro d'établissement dans le libéllé côté dossier
 * Possibilité de rechercher directement par numéro d'établissement sans le # pour le 29
 * Régularisation sur l'ajout des nouveaux genres et des migrations de données
+* Ajout du champ numWinPrev pour les CR de commissions
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
@@ -55,12 +56,10 @@ Corrections :
 * Correction sur le bloc "dossiers suivi du préventionniste" qui ne doivent pas forcément être verrouillés pour disparaître de son bloc
 * Correction importante lors du déplacement/modification d'une date de commission/visite sur la calendrier, non répercuté sur la liste des dossiers d'un établissement
 * Correction de la possibilité d'ajouter une PJ sur un dossier même verrouillé
-<<<<<<< HEAD
 * Augmentation de la limite du nombre d'utilisateurs connectés affichés dans le BO (avec +300 maires, on ne voit pas tous les utilisateurs)
-=======
->>>>>>> origin/pr/379
 * Correction du bloc "dossiers suivi du préventionniste" qui affichait trop de dossiers avec le retrait du verrouillage. On n'affiche plus que les courriers et études.
 * Correction générale sur les blocs du dashboard : les dossiers sont enregistrés avec un avis commission = 0 !!! et non null
+* Correction sur les convocations pour les maires : partie dossiersInfos KO
 
 ## 2.3
 
