@@ -1,0 +1,10 @@
+<div id="<?php echo $this->id ?>" class="panel panel-default <?php echo $this->width != 'small' ? 'w2' : '' ?> empty">
+  <div class="panel-heading">
+    <i class="icon icon-chevron-right"></i>
+    <?php echo $this->title ?>
+    <a class='btn btn-small pull-right' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'index', 'action' => 'add-message')) ?>'>Ajouter un message</a>
+  </div>
+  <div class="panel-body" style="display:none">
+      <img src="/images/load.gif" />
+  </div>
+</div>

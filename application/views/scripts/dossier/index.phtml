@@ -231,7 +231,7 @@
 		});
 
 		$(".validDocManquant").live('click',function(){
-			
+
 			if($(this).prev().prev().val() == ''){
 				$(this).prev().click();
 				$(this).click();
@@ -249,7 +249,7 @@
 			}
 			return false;
 		});
-		
+
 		$(".cancelDateRecep").live('click',function(){
 			$(this).parent().prev().prev().prev().removeAttr('readonly').addClass('date');
 			$(this).parent().hide();
@@ -261,7 +261,7 @@
 			afficherCacherAvis(0);
 			return false;
 		});
-		
+
 		$(".cancelIncomplet").live('click',function(){
 			$(this).parent().remove();
 			$("#inputComplet").show();
@@ -829,7 +829,7 @@
 				var absquorum = $(".absquorum").is(':checked');
 				var differeavis = $(".differeavis").is(':checked');
 				var npsp = $(".npsp").is(':checked');
-				
+
 				if(incomplet == 1){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
@@ -1427,7 +1427,7 @@ echo "
 				</li>
 				<li class='row-fluid' id='INCOMPLET' style='".(($action != 'new' && in_array('INCOMPLET', $this->afficherChamps) && $this->infosDossier['INCOMPLET_DOSSIER'] != NULL) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Etat dossier</div>
-					
+
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
 				";
 				echo "
@@ -1451,7 +1451,7 @@ echo "
 							$dateReceptionDoc = $date2->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 							if ($ue['DATE_DOCSMANQUANT'] != '') {
 								echo "<br/><font style='color:green;' >Réception document(s) le ".$dateReceptionDoc."</font><br/>";
-								
+
 							}
 						}
                         echo "<br/>";
@@ -1471,7 +1471,7 @@ echo "
 						} else {
 							$dateDocManquant = "";
 						}
-						
+
 						if(isset($ue['DATE_RECEPTION_DOC'])){
 							$disabledTextArea = "readonly='readonly'";
 							$disabledText = "readonly='readonly'";
@@ -1483,7 +1483,7 @@ echo "
 						}
 
 						echo "
-							Dossier incomplet le 
+							Dossier incomplet le
 							<input ".( ( isset($ue['DATE_RECEPTION_DOC']))? "readonly='readonly'" : "class='date'" )." type='text' name='dateDocManquant[]' id='dateDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".$dateDocManquant."' />
 							&nbsp;
 						";
@@ -1496,7 +1496,7 @@ echo "
 						}
 						echo "
 							<textarea  name='docManquant[]' class='docManquant' id='docManquant_".$ue['NUM_DOCSMANQUANT']."' ".$disabledTextArea." rows='5' cols='100'>".$ue['DOCMANQUANT']."</textarea>
-							Document(s) réceptionné(s) le 
+							Document(s) réceptionné(s) le
 							<input ".( (isset($ue['DATE_RECEPTION_DOC']))? $disabledText :"class='date'")." type='text' name='dateReceptionDocManquant[]' id='dateReceptionDocManquant_".$ue['NUM_DOCSMANQUANT']."' value='".( (isset($ue['DATE_RECEPTION_DOC']))? $dateReceptDoc : "" )."' />
 							&nbsp;
 						";

@@ -29,6 +29,7 @@ Evolutions :
 * Possibilité de rechercher directement par numéro d'établissement sans le # pour le 29
 * Régularisation sur l'ajout des nouveaux genres et des migrations de données
 * Ajout du champ numWinPrev pour les CR de commissions
+* Ajout du chargement en ajax asynchrone du tableau de bord : induit des lenteurs importantes lorsqu'ils y a trop d'éléments
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date

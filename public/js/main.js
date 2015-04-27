@@ -1,9 +1,17 @@
 document.addEventListener("DOMContentLoaded", function() {
+    bindTitlePopup();
+    bindContainerSize();
+    bindEtsMarquee($(document));
+    bindEtsPopup($(document));
+}, false);
+
+function bindTitlePopup() {
     // Titres
     $('a[title]').tipsy({live: true});
     $('abbr[title]').tipsy({live: true});
+}
 
-
+function bindContainerSize() {
     if ($('.ios_menu_style').is(':visible') > 0) {
         $('.main-container-fluid').css("width","80%");
         $('.main-container-fluid').css("display","table-cell");
@@ -12,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
         $('.main-container-fluid').css("width","100%");
         $('.main-container-fluid').css("display","block");
     }
-
+    
     $('.menu-trigger').click(function() {
         if ($('.ios_menu_style').is(':visible') > 0) {
             $('.ios_menu_style').hide();
@@ -24,11 +32,12 @@ document.addEventListener("DOMContentLoaded", function() {
             $('.main-container-fluid').css("width","80%");
             $('.main-container-fluid').css("display","table-cell");
         }
-
     });
+}
 
+function bindEtsMarquee($elem) {
     // Marquee sur les listes de recherche
-    $('ul.recherche_liste li.etablissement').each(function() {
+    $elem.find('ul.recherche_liste li.etablissement').each(function() {
         var li_width = $(this).width();
         var left_width = $(this).find('.pull-left').width();
         var right_width = $(this).find('.pull-right').width();
@@ -41,9 +50,12 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     });
+}
+    
+function bindEtsPopup($elem) {
 
     // Bulle ETS
-    $('a[href^="/etablissement/index/id/"]').hoverIntent({
+    $elem.find('a[href^="/etablissement/index/id/"]').hoverIntent({
         over: function () {
             var id = $(this).attr('href').replace("/etablissement/index/id/", "");
             var e = $(this);
@@ -119,5 +131,21 @@ document.addEventListener("DOMContentLoaded", function() {
         interval: 1000,
         timeout: 500
     });
+};
 
-}, false);
+function loadBloc($bloc) {
+    $bloc.find('.panel-body').show();
+    $bloc.removeClass('empty').addClass('loading');
+    $.ajax({
+        type: 'post',
+        url: "/index/bloc",
+        data: {id: $bloc.attr('id')},
+        success: function(data) {
+            $bloc.find(".panel-body").html(data);
+            $container.packery('fit', $bloc.get(0));
+            bindEtsMarquee($bloc);
+            bindEtsPopup($bloc);
+            $bloc.removeClass('loading').addClass('loaded');
+        }
+    });
+}

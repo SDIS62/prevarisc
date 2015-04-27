@@ -835,6 +835,14 @@ text-decoration: none;
   cursor: move;
 }
 
+.dashboard .panel.empty .icon {
+  cursor: pointer;
+}
+
+.dashboard .panel.empty .panel-heading {
+  margin-bottom: -15px;
+}
+
 .dashboard .grid-gutter {
   width:  2%;
 }
