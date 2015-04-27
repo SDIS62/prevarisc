@@ -432,7 +432,7 @@
 </div>
 
 <!-- Boite de construction d'adresse-->
-<form id="adresse-modal" class="modal hide adresse fase" action='#' method='post' >
+<form id="adresse-modal" class="modal hide adresse fase" action='#' method='post'>
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -481,14 +481,18 @@
             
             <dt>Longitude</dt>
             <dd>
-                 <input type='text' name='lon' />
+                 <input id="addressLongitude" type='text' name='lon' />
             </dd>
             
             <dt>Latitude</dt>
             <dd>
-                 <input type='text' name='lat' />
+                 <input id="addressLatitude" type='text' name='lat' />
             </dd>
         </dl>
+        <?php if($this->key_ign != null): ?>
+            <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.0.3/GeoportalExtended.js"></script>
+            <div id='geoportail-container' style="height: 400px"></div>
+        <?php endif ?>
     </div>
 
     <div class="modal-footer">
@@ -915,44 +919,176 @@
             $(this).val("");
             $("#adresse-modal input[name='numero'], #adresse-modal input[name='complement']").val("").attr("disabled", true).blur();
         });
+        
+        <?php if($this->key_ign != null): ?>
+            viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
+                lon: -1.638023,
+                lat: 48.134198999999995
+            }, 17, OpenLayers.Util.extend({
+                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
+                language:'fr',
+                displayProjection: 'EPSG:4326',
+                projection: 'EPSG:4326',
+                proxyUrl: '/proxy',
+                onView: function() {
+                    
+                    // removes the marker
+                    var vectorLayers = viewer.getViewer().getMap().getLayersByClass('OpenLayers.Layer.Vector');
+                    if (vectorLayers.length > 0) {
+                        var vectorLayer = vectorLayers[0];
+                        if (vectorLayer.features.length > 0) {
+                            vectorLayer.features[0].destroy();
+                        }
+                    }
+                    
+                    viewer.getViewer().getMap().events.register("moveend", viewer.getViewer().getMap(), function(e) { 
+                        if (geolocalizing) {
+                            geolocalizing = false;
+                            var map = viewer.getViewer().getMap();
+                            var center = map.getCenter().transform(map.getProjection(), 'EPSG:4326');
+                            if(center && center.lon && center.lat) {
+                                $("span.result").text("Géolocalisée IGN");
+                                $("input[name='lon']").val(center.lon);
+                                $("input[name='lat']").val(center.lat);
+                                putMarkerAt(map.getCenter(), map.getProjection());
+                            }
+                            else {
+                                $("span.result").text("Introuvable");
+                                $("input[name='lon']").val(0);
+                                $("input[name='lat']").val(0);
+                            }
+                        }
+                    });
+                    
+                    OpenLayers.Control.Click= OpenLayers.Class( OpenLayers.Control, {
+                        defaultHandlerOptions:{
+                            'single': true,
+                            'double': false,
+                            'pixelTolerance': 0,
+                            'stopSingle': false,
+                            'stopDouble': false
+                        },
 
-        // Géolocalisation de l'adresse
-        $('#adresse-modal #geolocme').click(function() {
-            element = $(this);
-            $.ajax({
-                url: "//nominatim.openstreetmap.org/search",
-                dataType: 'json',
-                timeout: 10000,
-                data: {
-                    format: "json",
-                    limit: 1,
-                    countrycodes: "FR",
-                    street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
-                    city: $("input[name='commune_ac']").val(),
-                    postalcode: $("input[name='code_postal']").val()
-                },
-                beforeSend: function() {
-                    element.text("Géolocalisation en cours ...");
-                },
-                success: function(geolocations) {
-                    element.text("Géolocaliser cette adresse");
-                    if(geolocations.length > 0) {
-                        $("span.result").text("OK");
-                        $("input[name='lon']").val(geolocations[0].lon);
-                        $("input[name='lat']").val(geolocations[0].lat);
-                    }
-                    else {
-                        $("span.result").text("Introuvable");
-                        $("input[name='lon']").val(0);
-                        $("input[name='lat']").val(0);
-                    }
-                },
-                error: function() {
-                    element.text("Serveur de géolocalisation introuvable").attr('disabled', true);
+                        /**
+                         * Constructor
+                         */
+                        initialize: function(options) {
+                            OpenLayers.Control.prototype.initialize.apply(this,arguments);
+                            this.handlerOptions= OpenLayers.Util.extend({},this.defaultHandlerOptions);
+                            this.handler= new OpenLayers.Handler.Click(
+                                this, {'click': this.trigger}, this.handlerOptions);
+                        },
+
+                        /**
+                         * APIMethod: trigger
+                         */
+                        trigger: function(e) {
+                            var lonlat = this.map.getLonLatFromViewPortPx(e.xy).transform(
+                                this.map.getProjection(), OpenLayers.Projection.CRS84
+                            );
+                    
+                            $("span.result").text("Manuel par clic sur la carte");
+                            $("input[name='lon']").val(lonlat.lon);
+                            $("input[name='lat']").val(lonlat.lat);
+                    
+                            // update map
+                            putMarkerAt(this.map.getLonLatFromViewPortPx(e.xy), this.map.getProjection());  
+                        }
+                    });
+
+                    // création et insertion du nouveau contrôleur
+                    var monClic= new OpenLayers.Control.Click({
+                        autoActivate:true
+                    });
+                    this.getViewer().getMap().addControl(monClic);
                 }
+            }));
+            
+            geolocalizing = false;
+            $('#adresse-modal #geolocme').click(function(e) {
+                e.preventDefault();
+                var adresse = "";
+                var numero = $("input[name='numero']").val().trim();
+                var voie = $("input[name='voie_ac']").val().trim();
+                var codepostal = $("input[name='code_postal']").val();
+                var commune = $("input[name='commune_ac']").val();
+                if (!commune) {
+                    $("span.result").text("Pas de commune renseignée");
+                    return false;
+                }
+                if (!voie) {
+                    $("span.result").text("Pas de voie renseignée");
+                    return false;
+                }
+                if (numero) {
+                    adresse += numero + ", ";
+                }
+                adresse += voie + ", " + codepostal +  " " + commune;
+                $("span.result").text("Géolocalisation en cours...");
+                
+                geolocalizing = true;
+                viewer.setCenterAtLocation({
+                    address: adresse
+                });
+                
+                return false;
             });
+            
+            function putMarkerAt(point, sourceProjection) {
+                var map = viewer.getViewer().getMap();
+                var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
+                if (vectorLayers.length > 0) {
+                    var vectorLayer = vectorLayers[0];
+                    if (vectorLayer.features.length > 0) {
+                        vectorLayer.features[0].destroy();
+                    }
+                    var lonlat = point.transform(
+                        sourceProjection, vectorLayer.projection.toString()
+                    );
+                    point = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat);
+                    vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point)]);
+                }
+            }
+            
+        <?php else: ?>
+            // Géolocalisation de l'adresse
+            $('#adresse-modal #geolocme').click(function() {
+                element = $(this);
+                $.ajax({
+                    url: "//nominatim.openstreetmap.org/search",
+                    dataType: 'json',
+                    timeout: 10000,
+                    data: {
+                        format: "json",
+                        limit: 1,
+                        countrycodes: "FR",
+                        street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
+                        city: $("input[name='commune_ac']").val(),
+                        postalcode: $("input[name='code_postal']").val()
+                    },
+                    beforeSend: function() {
+                        element.text("Géolocalisation en cours ...");
+                    },
+                    success: function(geolocations) {
+                        element.text("Géolocaliser cette adresse");
+                        if(geolocations.length > 0) {
+                            $("span.result").text("OK");
+                            $("input[name='lon']").val(geolocations[0].lon);
+                            $("input[name='lat']").val(geolocations[0].lat);
+                        }
+                        else {
+                            $("span.result").text("Introuvable");
+                            $("input[name='lon']").val(0);
+                            $("input[name='lat']").val(0);
+                        }
+                    },
+                    error: function() {
+                        element.text("Serveur de géolocalisation introuvable").attr('disabled', true);
+                    }
+                });
 
-            return false;
-        });
+                return false;
+            });
+        <?php endif ?>
     });
 </script>
