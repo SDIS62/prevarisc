@@ -86,11 +86,7 @@ foreach($this->informationsMembre as $val => $membre){
 				//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 				//Generation du segment pour l'affichage des différentes infos du dossier
 				//Zend_Debug::dump($this->dossierComm);
-<<<<<<< HEAD
 				$infosDoss = $villeODF->infosDoss;
-=======
-                                
->>>>>>> Evolution :
 				foreach($this->dossierComm as $val => $dossierInfos){
 					if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
 						//echo $dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']." - ".$commune[0];
@@ -98,14 +94,8 @@ foreach($this->informationsMembre as $val => $membre){
 							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
 							if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
 							{
-<<<<<<< HEAD
                                 retrieveInfoDossier($infosDoss, $dossierInfos);
                             }else{
-=======
-                                                            retrieveInfoDossier($villeODF->infosDoss, $dossierInfos);
-                                                            $villeODF->infosDoss->merge();
-                                                        }else{
->>>>>>> Evolution :
 								//cas membre n'a pas les droits
 							}
 						}
