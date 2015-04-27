@@ -16,7 +16,7 @@ class AdminController extends Zend_Controller_Action
         $this->view->third_party_plugins = implode(', ', explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS')));
 
         $service_search = new Service_Search;
-        $users = $service_search->users(null, null, null, true, 100)['results'];
+        $users = $service_search->users(null, null, null, true, 1000)['results'];
         $this->view->users = array();
 
         foreach ($users as $user) {
