@@ -474,16 +474,17 @@
 
             <dt>Géolocalisation</dt>
             <dd>
-                <button id="geolocme" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse</button>
+                <?php if($this->key_ign != null) : ?><button id="geolocme" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse (Geoportail)</button><?php endif ?>
+                <button id="geolocme_nominatim" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse (Nominatim)</button>
                 <br/>
                 <small>Résultat : <span class='result'>Inconnu</span></small>
             </dd>
-            
+
             <dt>Longitude</dt>
             <dd>
                  <input id="addressLongitude" type='text' name='lon' />
             </dd>
-            
+
             <dt>Latitude</dt>
             <dd>
                  <input id="addressLatitude" type='text' name='lat' />
@@ -919,7 +920,7 @@
             $(this).val("");
             $("#adresse-modal input[name='numero'], #adresse-modal input[name='complement']").val("").attr("disabled", true).blur();
         });
-        
+
         <?php if($this->key_ign != null): ?>
             viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
                 lon: -1.638023,
@@ -931,7 +932,7 @@
                 projection: 'EPSG:4326',
                 proxyUrl: '/proxy',
                 onView: function() {
-                    
+
                     // removes the marker
                     var vectorLayers = viewer.getViewer().getMap().getLayersByClass('OpenLayers.Layer.Vector');
                     if (vectorLayers.length > 0) {
@@ -940,8 +941,8 @@
                             vectorLayer.features[0].destroy();
                         }
                     }
-                    
-                    viewer.getViewer().getMap().events.register("moveend", viewer.getViewer().getMap(), function(e) { 
+
+                    viewer.getViewer().getMap().events.register("moveend", viewer.getViewer().getMap(), function(e) {
                         if (geolocalizing) {
                             geolocalizing = false;
                             var map = viewer.getViewer().getMap();
@@ -959,7 +960,7 @@
                             }
                         }
                     });
-                    
+
                     OpenLayers.Control.Click= OpenLayers.Class( OpenLayers.Control, {
                         defaultHandlerOptions:{
                             'single': true,
@@ -986,13 +987,13 @@
                             var lonlat = this.map.getLonLatFromViewPortPx(e.xy).transform(
                                 this.map.getProjection(), OpenLayers.Projection.CRS84
                             );
-                    
+
                             $("span.result").text("Manuel par clic sur la carte");
                             $("input[name='lon']").val(lonlat.lon);
                             $("input[name='lat']").val(lonlat.lat);
-                    
+
                             // update map
-                            putMarkerAt(this.map.getLonLatFromViewPortPx(e.xy), this.map.getProjection());  
+                            putMarkerAt(this.map.getLonLatFromViewPortPx(e.xy), this.map.getProjection());
                         }
                     });
 
@@ -1003,7 +1004,7 @@
                     this.getViewer().getMap().addControl(monClic);
                 }
             }));
-            
+
             geolocalizing = false;
             $('#adresse-modal #geolocme').click(function(e) {
                 e.preventDefault();
@@ -1025,15 +1026,15 @@
                 }
                 adresse += voie + ", " + codepostal +  " " + commune;
                 $("span.result").text("Géolocalisation en cours...");
-                
+
                 geolocalizing = true;
                 viewer.setCenterAtLocation({
                     address: adresse
                 });
-                
+
                 return false;
             });
-            
+
             function putMarkerAt(point, sourceProjection) {
                 var map = viewer.getViewer().getMap();
                 var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
@@ -1049,46 +1050,52 @@
                     vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point)]);
                 }
             }
-            
-        <?php else: ?>
-            // Géolocalisation de l'adresse
-            $('#adresse-modal #geolocme').click(function() {
-                element = $(this);
-                $.ajax({
-                    url: "//nominatim.openstreetmap.org/search",
-                    dataType: 'json',
-                    timeout: 10000,
-                    data: {
-                        format: "json",
-                        limit: 1,
-                        countrycodes: "FR",
-                        street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
-                        city: $("input[name='commune_ac']").val(),
-                        postalcode: $("input[name='code_postal']").val()
-                    },
-                    beforeSend: function() {
-                        element.text("Géolocalisation en cours ...");
-                    },
-                    success: function(geolocations) {
-                        element.text("Géolocaliser cette adresse");
-                        if(geolocations.length > 0) {
-                            $("span.result").text("OK");
-                            $("input[name='lon']").val(geolocations[0].lon);
-                            $("input[name='lat']").val(geolocations[0].lat);
-                        }
-                        else {
-                            $("span.result").text("Introuvable");
-                            $("input[name='lon']").val(0);
-                            $("input[name='lat']").val(0);
-                        }
-                    },
-                    error: function() {
-                        element.text("Serveur de géolocalisation introuvable").attr('disabled', true);
-                    }
-                });
 
-                return false;
-            });
         <?php endif ?>
+
+        // Géolocalisation de l'adresse
+        $('#adresse-modal #geolocme_nominatim').click(function() {
+            element = $(this);
+            $.ajax({
+                url: "//nominatim.openstreetmap.org/search",
+                dataType: 'json',
+                timeout: 10000,
+                data: {
+                    format: "json",
+                    limit: 1,
+                    countrycodes: "FR",
+                    street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
+                    city: $("input[name='commune_ac']").val(),
+                    postalcode: $("input[name='code_postal']").val()
+                },
+                beforeSend: function() {
+                    element.text("Géolocalisation en cours ...");
+                },
+                success: function(geolocations) {
+                    element.text("Géolocaliser cette adresse");
+                    if(geolocations.length > 0) {
+                        $("span.result").text("OK");
+                        $("input[name='lon']").val(geolocations[0].lon);
+                        $("input[name='lat']").val(geolocations[0].lat);
+                        <?php if($this->key_ign != null) : ?>
+                            var lonlat = new OpenLayers.LonLat(geolocations[0].lon, geolocations[0].lat);
+                            putMarkerAt(lonlat, viewer.getViewer().getMap().getProjection());
+                            viewer.getViewer().getMap().setCenter(lonlat, 17);
+                        <?php endif ?>
+                    }
+                    else {
+                        $("span.result").text("Introuvable");
+                        $("input[name='lon']").val(0);
+                        $("input[name='lat']").val(0);
+                    }
+                },
+                error: function() {
+                    element.text("Serveur de géolocalisation introuvable").attr('disabled', true);
+                }
+            });
+
+            return false;
+        });
+
     });
 </script>
