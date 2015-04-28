@@ -1006,15 +1006,15 @@
 				$("#chargement").html("<img src='/images/load.gif' />");
 			},
 			success: function(affichageResultat){
-				var idDossier = affichageResultat.replace(' ', '');
-				idDossier.replace("\ufeff", "");
-                try {
-                    parseInt(idDossier);
-                    window.location='/dossier/index/id/'+idDossier;
+				try {
+					affichageResultat = affichageResultat.replace(" ", "");
+				    affichageResultat = affichageResultat.replace("\ufeff", "");
+				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
+				    parseInt(affichageResultat);
+                    window.location='/dossier/index/id/'+affichageResultat;
                 } catch(e) {
                     window.location.reload();
                 }
-
 			},
 			error: function(){
 				return false;
@@ -1069,7 +1069,10 @@
 			},
 			success: function(affichageResultat){
 				try {
-					var affichageResultat = affichageResultat.replace("\ufeff", "");
+					affichageResultat = affichageResultat.replace(" ", "");
+				    affichageResultat = affichageResultat.replace("\ufeff", "");
+				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
+				    parseInt(affichageResultat);
                     window.location='/dossier/index/id/'+affichageResultat;
                 } catch(e) {
                     window.location.reload();
