@@ -1094,7 +1094,7 @@ class DossierController extends Zend_Controller_Action
                             $dateAncienAvis = new Zend_Date($dateAncienAvis, Zend_Date::DATES);
                             $dateNewAvis = new Zend_Date($dateNewAvis, Zend_Date::DATES);
 
-                            if($dateNewAvis > $dateAncienAvis){
+                            if($dateNewAvis > $dateAncienAvis || $dateNewAvis == $dateAncienAvis){
                                 $MAJEtab = 1;
                             }else{
                                 $MAJEtab = 0;
@@ -1113,10 +1113,12 @@ class DossierController extends Zend_Controller_Action
                             {
                                 $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
                                 foreach ($etablissementInfos["etablissement_lies"] as $etabEnfant) {
-                                    $etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
-                                    $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-                                    $etabToEdit->save();
-                                    $cache->remove('etablissement_id_'.$etabEnfant['ID_ETABLISSEMENT']);
+                                    if($etabEnfant['ID_STATUT'] == "2"){
+                                        $etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+                                        $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
+                                        $etabToEdit->save();
+                                        $cache->remove('etablissement_id_'.$etabEnfant['ID_ETABLISSEMENT']);
+                                    }
                                 }
                             }
 
@@ -1789,6 +1791,10 @@ class DossierController extends Zend_Controller_Action
         /RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
         /
         ******/
+        $service_etablissement = new Service_Etablissement;
+        $this->view->etablissementInfos = $service_etablissement->get($idEtab);
+        Zend_Debug::dump($this->view->etablissementInfos);
+
 
         $model_etablissement = new Model_DbTable_Etablissement();
         $etablissement = $model_etablissement->find($idEtab)->current();
@@ -2058,6 +2064,9 @@ class DossierController extends Zend_Controller_Action
             $this->view->idPieceJointe = $this->view->idRapportPj['MAX(ID_PIECEJOINTE)'] + 1;
         }
 
+        $dateComm = new Zend_Date($this->view->infosDossier['DATECOMM_DOSSIER'], Zend_Date::DATES);
+        $this->view->dateCommEntete = $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+
         //récuperation de la date de passage en commission
         $dbAffectDossier = new Model_DbTable_DossierAffectation();
         $affectDossier = $dbAffectDossier->find(null,$idDossier)->current();
@@ -2066,10 +2075,13 @@ class DossierController extends Zend_Controller_Action
         //Concernant cette affectation on récupere les infos sur la commission (date aux différents format)
         $dbDateComm = new Model_DbTable_DateCommission();
         $dateComm = $dbDateComm->find($affectDossier['ID_DATECOMMISSION_AFFECT'])->current();
+        
+        /*
         if ($dateComm['DATE_COMMISSION'] != '') {
             $date = new Zend_Date($dateComm['DATE_COMMISSION'], Zend_Date::DATES);
             $this->view->dateCommEntete = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
         }
+        */
 
         //Récupération de la (ou des) date(s) de visite
         //VISITE OU GROUPE DE VISITE
@@ -2099,9 +2111,9 @@ class DossierController extends Zend_Controller_Action
                 $this->view->idDateVisiteAffect = $ue['ID_DATECOMMISSION'];
             }
             if ($nbDateDecompte > 1) {
-                $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR).", ";
+                $listeDateInput .= $date->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR).", ";
             } elseif (1 == $nbDateDecompte) {
-                $listeDateInput .= $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                $listeDateInput .= $date->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
             }
             $listeHeureInput[] = substr($ue['HEUREDEB_COMMISSION'], 0, 5). ' à ' .substr($ue['HEUREFIN_COMMISSION'], 0, 5);
 
@@ -2181,22 +2193,22 @@ class DossierController extends Zend_Controller_Action
             //Conversion de la date de dépot en mairie pour l'afficher
             if ($this->view->infosDossier['DATEMAIRIE_DOSSIER'] != '') {
                 $date = new Zend_Date($this->view->infosDossier['DATEMAIRIE_DOSSIER'], Zend_Date::DATES);
-                $this->view->DATEMAIRIE = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                $this->view->DATEMAIRIE = $date->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
             }
             //Conversion de la date de dépot en secrétariat pour l'afficher
             if ($this->view->infosDossier['DATESECRETARIAT_DOSSIER'] != '') {
                 $date = new Zend_Date($this->view->infosDossier['DATESECRETARIAT_DOSSIER'], Zend_Date::DATES);
-                $this->view->DATESECRETARIAT = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                $this->view->DATESECRETARIAT = $date->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
             }
             //Conversion de la date de réception SDIS
             if ($this->view->infosDossier['DATEINSERT_DOSSIER'] != '') {
                 $date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
-                $this->view->DATEINSERTDOSSIER = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                $this->view->DATEINSERTDOSSIER = $date->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
             }
             //Conversion de la date de création du dossier
             if ($this->view->infosDossier['DATESDIS_DOSSIER'] != '') {
                 $date = new Zend_Date($this->view->infosDossier['DATESDIS_DOSSIER'], Zend_Date::DATES);
-                $this->view->DATESDIS = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                $this->view->DATESDIS = $date->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
             }
 
         $dateDuJour = new Zend_Date();
@@ -2237,7 +2249,7 @@ class DossierController extends Zend_Controller_Action
 
             if ($dateLastVP['maxdate'] != NULL) {
                 $ZendDateLastVP = new Zend_Date($dateLastVP['maxdate'], Zend_Date::DATES);
-                $this->view->dateLastVP = $ZendDateLastVP->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+                $this->view->dateLastVP = $ZendDateLastVP->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
                 $avisLastVP =  $DBdossier->getAvisDossier($dateLastVP['ID_DOSSIER']);
                 $this->view->avisLastVP = $avisLastVP['LIBELLE_AVIS'];
             } else {
