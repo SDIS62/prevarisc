@@ -60,8 +60,7 @@
                             "NB_ENFANTS" => new Zend_Db_Expr("( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
                                 FROM etablissement
                                 INNER JOIN etablissementlie ON etablissement.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT
-                                WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"),
-                            "SIGNED_LABEL" => new Zend_Db_Expr("(CAST(etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS as SIGNED))")
+                                WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)")
                          ))
                          ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                          ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER"))
@@ -77,8 +76,8 @@
                          ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
                          ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
                          ->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
-                         ->order("SIGNED_LABEL ASC")
-                         ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
+                         ->order("CAST(etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS AS UNSIGNED)")
+                         ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS")
                          ->group("e.ID_ETABLISSEMENT");
 
                     break;
@@ -117,7 +116,16 @@
                          ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
                          ->joinLeft("dossierpreventionniste", "dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER", null)
                          ->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = dossierpreventionniste.ID_PREVENTIONNISTE", "ID_UTILISATEUR")
-                         ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )", "LIBELLE_ETABLISSEMENTINFORMATIONS")
+                         //->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )", "LIBELLE_ETABLISSEMENTINFORMATIONS")
+                         ->joinLeft("etablissementinformations", "
+                            e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT
+                            AND (
+                                (d.DATECOMM_DOSSIER IS NOT NULL AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATECOMM_DOSSIER)) OR
+                                (d.DATEVISITE_DOSSIER IS NOT NULL AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEVISITE_DOSSIER)) OR
+                                (d.DATEINSERT_DOSSIER IS NOT NULL AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEINSERT_DOSSIER)) OR
+                                (etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (SELECT MIN(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT))
+                            )
+                         ", "LIBELLE_ETABLISSEMENTINFORMATIONS")
                          ->group("d.ID_DOSSIER");
                     break;
 
@@ -139,7 +147,7 @@
 
             return $this;
         }
-        
+
         public function joinEtablissementDossier() {
             $this->select
                     ->joinLeft("etablissementdossier", "etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT")
@@ -163,10 +171,10 @@
                         $string .= " OR ";
                     }
                 }
-                
+
             } else if(is_null($value)) {
                 $string = $key;
-                
+
             } else {
 
                 $string = $key . (( $exact ) ? "=" : " LIKE ") . $this->getAdapter()->quote((( $exact ) ? "" : "%") . $value . (( $exact ) ? "" : "%"));
@@ -198,14 +206,14 @@
 
             return $this;
         }
-        
+
         public function columns( $array )
         {
             $this->select->columns( $array );
 
             return $this;
         }
-        
+
         public function having( $value )
         {
             $this->select->having( $value );
