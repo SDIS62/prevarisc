@@ -1793,7 +1793,6 @@ class DossierController extends Zend_Controller_Action
         ******/
         $service_etablissement = new Service_Etablissement;
         $this->view->etablissementInfos = $service_etablissement->get($idEtab);
-        Zend_Debug::dump($this->view->etablissementInfos);
 
 
         $model_etablissement = new Model_DbTable_Etablissement();
