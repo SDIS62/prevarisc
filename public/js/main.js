@@ -20,7 +20,7 @@ function bindContainerSize() {
         $('.main-container-fluid').css("width","100%");
         $('.main-container-fluid').css("display","block");
     }
-    
+
     $('.menu-trigger').click(function() {
         if ($('.ios_menu_style').is(':visible') > 0) {
             $('.ios_menu_style').hide();
@@ -51,7 +51,7 @@ function bindEtsMarquee($elem) {
         }
     });
 }
-    
+
 function bindEtsPopup($elem) {
 
     // Bulle ETS
@@ -67,6 +67,7 @@ function bindEtsPopup($elem) {
                 var ets_type = data.response.informations.LIBELLE_TYPE_PRINCIPAL;
                 var ets_statut = data.response.informations.LIBELLE_STATUT;
                 var ets_cat = data.response.informations.LIBELLE_CATEGORIE;
+                var ets_adresse = data.response.adresses[0];
                 data.response.parents.forEach(function(element, index, array) {
                     array[index] = element.LIBELLE_ETABLISSEMENTINFORMATIONS;
                 });
@@ -74,7 +75,7 @@ function bindEtsPopup($elem) {
                 data.response.adresses.forEach(function(element, index, array) {
                     array[index] = element.LIBELLE_COMMUNE;
                 });
-                
+
                 if(data.response.informations.ID_GENRE == 1) {
                     var ets_adresses = "";
                     data.response.etablissement_lies.forEach(function(element, index, array) {
@@ -109,6 +110,8 @@ function bindEtsPopup($elem) {
                 }
 
                 if(ets_cat != null && ets_type != null) html += "<br><span>" + ets_cat + " - " + ets_type + "</span>";
+
+                if(ets_adresse != null) html += "<br><span>" + (ets_adresse.NUMERO_ADRESSE == null ? '' : ets_adresse.NUMERO_ADRESSE) + " " + ets_adresse.LIBELLE_RUE + " " + ets_adresse.CODEPOSTAL_COMMUNE + " " + ets_adresse.LIBELLE_COMMUNE + "</span>";
 
                 html += "<br><br>";
                 html += "<a href='/etablissement/index/id/" + ets_id + "' class='btn btn-small btn-primary btn-block'>Voir la fiche</a>";
