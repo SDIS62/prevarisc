@@ -105,7 +105,7 @@
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
                                 INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                                WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                                WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)")
                          ))
                          ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
                          ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
@@ -116,16 +116,18 @@
                          ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
                          ->joinLeft("dossierpreventionniste", "dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER", null)
                          ->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = dossierpreventionniste.ID_PREVENTIONNISTE", "ID_UTILISATEUR")
-                         //->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )", "LIBELLE_ETABLISSEMENTINFORMATIONS")
-                         ->joinLeft("etablissementinformations", "
-                            e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT
-                            AND (
-                                (d.DATECOMM_DOSSIER IS NOT NULL AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATECOMM_DOSSIER)) OR
-                                (d.DATEVISITE_DOSSIER IS NOT NULL AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEVISITE_DOSSIER)) OR
-                                (d.DATEINSERT_DOSSIER IS NOT NULL AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEINSERT_DOSSIER)) OR
-                                (etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (SELECT MIN(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT))
-                            )
-                         ", "LIBELLE_ETABLISSEMENTINFORMATIONS")
+                         ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS =
+                            IFNULL(
+                                (CASE
+                                WHEN d.DATECOMM_DOSSIER IS NOT NULL THEN (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEINSERT_DOSSIER)
+                                WHEN d.DATEVISITE_DOSSIER IS NOT NULL THEN (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEVISITE_DOSSIER)
+                                WHEN d.DATEINSERT_DOSSIER IS NOT NULL THEN (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEINSERT_DOSSIER)
+                                ELSE (SELECT MIN(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)
+                                END),
+                                (SELECT MIN(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)
+                            )",
+                            "LIBELLE_ETABLISSEMENTINFORMATIONS"
+                         )
                          ->group("d.ID_DOSSIER");
                     break;
 
