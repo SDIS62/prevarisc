@@ -66,7 +66,7 @@ function bindEtsPopup($elem) {
                 var ets_genre = data.response.informations.LIBELLE_GENRE;
                 var ets_type = data.response.informations.LIBELLE_TYPE_PRINCIPAL;
                 var ets_statut = data.response.informations.LIBELLE_STATUT;
-                var ets_cat = data.response.informations.LIBELLE_CATEGORIE;
+                var ets_cat = data.response.informations.ID_GENRE == 3 ? data.response.parents[0].LIBELLE_CATEGORIE : data.response.informations.LIBELLE_CATEGORIE;
                 var ets_adresse = data.response.adresses[0];
                 data.response.parents.forEach(function(element, index, array) {
                     array[index] = element.LIBELLE_ETABLISSEMENTINFORMATIONS;
