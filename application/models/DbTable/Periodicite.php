@@ -3,11 +3,11 @@
     class Model_DbTable_Periodicite extends Zend_Db_Table_Abstract
     {
         protected $_name= "periodicite"; // Nom de la base
-        protected $_primary = array("ID_CATEGORIE", "ID_TYPE", "LOCALSOMMEIL_PERIODICITE"); // Clé primaire
+        protected $_primary = array("ID_CATEGORIE", "ID_TYPE", "LOCALSOMMEIL_PERIODICITE"); // Clï¿½ primaire
 
         public function gn4($categorie, $type, $local_sommeil)
         {
-            // On check la périodicité par rapport au GE4
+            // On check la pï¿½riodicitï¿½ par rapport au GE4
             $select = $this->select()
                 ->setIntegrityCheck(false)
                 ->from("periodicite", "PERIODICITE_PERIODICITE")
@@ -15,10 +15,37 @@
                 ->where("ID_TYPE = ?", $type)
                 ->where("LOCALSOMMEIL_PERIODICITE = ?", $local_sommeil);
 
-            // Retourne le résultat
+            // Retourne le rï¿½sultat
             $result = $this->getAdapter()->fetchOne($select);
 
             return $result === false ? "0" : $result;
+        }
+
+        public function apply()
+        {
+            $sql = "UPDATE etablissementinformations
+                    INNER JOIN periodicite ON periodicite.ID_CATEGORIE = etablissementinformations.ID_CATEGORIE AND periodicite.ID_TYPE = etablissementinformations.ID_TYPE AND periodicite.LOCALSOMMEIL_PERIODICITE = etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS
+                    SET PERIODICITE_ETABLISSEMENTINFORMATIONS = periodicite.PERIODICITE_PERIODICITE
+                    WHERE etablissementinformations.ID_ETABLISSEMENTINFORMATIONS IN (
+                        SELECT * FROM (
+                            SELECT ID_ETABLISSEMENTINFORMATIONS
+                            FROM etablissementinformations
+                            INNER JOIN etablissement ON etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
+                            WHERE etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT)
+                        ) AS X
+                    )";
+
+            $db = Zend_Db_Table::getDefaultAdapter();
+            $db->beginTransaction();
+
+            try {
+                $db->query($sql);
+                $db->commit();
+            }
+            catch(Exception $e) {
+                $db->rollBack();
+                throw $e;
+            }
         }
 
     }

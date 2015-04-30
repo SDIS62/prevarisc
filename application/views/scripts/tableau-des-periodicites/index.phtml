@@ -10,9 +10,9 @@
             $localsommeil_types = explode(';',getenv('PREVARISC_LOCAL_SOMMEIL_TYPES'));
         } else $localsommeil_types = array(7,11);
         ?>
-        
+
 	<!-- Tableaux -->
-           
+
 	<?php foreach( array_chunk($this->array_types, 7) as $array_types ) : ?>
 	<table class='table table-bordered table-condensed periodicite' >
 		<thead>
@@ -33,11 +33,11 @@
 			<?php foreach( $this->array_categories as $categorie) : ?>
 			<tr>
 				<td style='width: 150px;' ><?php echo $categorie["LIBELLE_CATEGORIE"] ?></td>
-				
+
 				<?php foreach( $array_types as $type) : ?>
-				
+
 					<?php $periodicite = $this->tableau[$categorie["ID_CATEGORIE"]][$type["ID_TYPE"]]; ?>
-				
+
 					<td style='text-align: center' >
 						<?php if(!in_array($type["ID_TYPE"], $localsommeil_types)) : ?>
 							<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[0]) ) ? $periodicite[0] : 0 ?>' name='<?php echo $categorie["ID_CATEGORIE"]."_".$type["ID_TYPE"]."_0" ?>' />
@@ -45,18 +45,18 @@
 							<input type='text' size='3' style='visibility: hidden' />
 						<?php endif ?>
 					</td>
-					
+
 					<td style='text-align: center' >
 							<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[1]) ) ? $periodicite[1] : 0 ?>' name='<?php echo $categorie["ID_CATEGORIE"]."_".$type["ID_TYPE"]."_1" ?>' />
 					</td>
-					
+
 				<?php endforeach ?>
 			</tr>
 			<?php endforeach ?>
 		</tbody>
 	</table>
 	<?php endforeach ?>
-	
+
 	<h3>IGH</h3>
 	<table class='table table-bordered table-condensed periodicite' >
 		<thead>
@@ -69,21 +69,24 @@
 		<tbody>
 			<tr>
 				<?php foreach( $this->array_classes as $classe) : ?>
-				
+
 					<?php $periodicite = $this->tableau[0][$classe["ID_CLASSE"]]; ?>
-				
+
 					<td style='text-align: center' >
 						<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[0]) ) ? $periodicite[0] : 0 ?>' name='<?php echo "0_".$classe["ID_CLASSE"]."_0" ?>' />
 					</td>
-					
+
 				<?php endforeach ?>
 			</tr>
 		</tbody>
 	</table>
-	
-	
-    <p class='text-center'><input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' /></p>
-	
+
+
+    <p class='text-center'>
+		<input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' />
+		<a href="/tableau-des-periodicites/apply" class='btn btn-success'>Appliquer sur TOUS les établissements</a>
+	</p>
+
 </form>
 
 <script type="text/javascript">
@@ -95,5 +98,5 @@
 			$(this).css("opacity", 1);
 		}
 	}).change();
-	
+
 </script>

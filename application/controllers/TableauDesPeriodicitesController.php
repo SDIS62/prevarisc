@@ -78,4 +78,28 @@ class TableauDesPeriodicitesController extends Zend_Controller_Action
         // Redirection
         $this->_helper->redirector('index');
     }
+
+    public function applyAction()
+    {
+        try {
+            // Model des périodicités
+            $perio_model = new Model_DbTable_Periodicite();
+            $perio_model->apply();
+
+            $this->_helper->flashMessenger(array(
+                'context' => 'success',
+                'title' => 'OKAY!',
+                'message' => 'Le tableau des périodicités a bien été appliqué'
+            ));
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => 'Erreur lors de la sauvegarde du tableau des périodicités',
+                'message' => $e->getMessage()
+            ));
+        }
+
+        // Redirection
+        $this->_helper->redirector('index');
+    }
 }
