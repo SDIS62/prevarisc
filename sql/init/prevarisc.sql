@@ -1662,7 +1662,7 @@ CREATE TABLE `famille` (
 
 LOCK TABLES `famille` WRITE;
 /*!40000 ALTER TABLE `famille` DISABLE KEYS */;
-INSERT INTO `famille` VALUES (1,'Aucune'),(2,'1ère famille'),(3,'2ème famille'),(4,'2ème famille collective'),(5,'3ème famille A'),(6,'3ème famille B'),(7,'4ème famille');
+INSERT INTO `famille` VALUES (1,'Aucune'),(2,'1ère famille'),(3,'2ème famille'),(4,'2ème famille collective'),(5,'3ème famille A'),(6,'3ème famille B'),(7,'4ème famille'),(8,'Logements-foyers pour personne autres que personnes âgées et handicapés physique'),(9,'Logements-foyers pour personnes âgées'),(10,'Logements –foyers pour handicapés physiques ayant leur autonomie');
 /*!40000 ALTER TABLE `famille` ENABLE KEYS */;
 UNLOCK TABLES;
 
