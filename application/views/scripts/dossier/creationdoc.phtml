@@ -29,6 +29,9 @@ addChamp($odf, 'objetDossier',$this->infosDossier['OBJET_DOSSIER']);
 addChamp($odf, 'analyseRisque',$this->infosDossier['ANOMALIE_DOSSIER']);
 addChamp($odf, 'descriptifDossier',$this->infosDossier['DESCRIPTIF_DOSSIER']);
 
+addChamp($odf, 'dateRvrat',$this->dateRvrat);
+addChamp($odf, 'dateDelaipresc',$this->dateDelaipresc);
+
 if($this->infosDossier['HORSDELAI_DOSSIER'] == 0){
 		$horsdelai = "Non";
 	}else{
