@@ -252,10 +252,10 @@ function addPrescription($listePrescription,$type,$odf){
 
         }else{
             if($type != 0){
-                $prescription->setVars('num', '', true, 'UTF-8');
+                addChamp($prescription,'num', '');
             }
-            $prescription->setVars('libelle', '', true, 'UTF-8');
-            $prescription->setVars('textearticle','',true,'UTF-8');
+            addChamp($prescription,'libelle', '');
+            addChamp($prescription,'textearticle', '');
             $prescription->merge();
         }
         $odf->mergeSegment($prescription);
