@@ -109,6 +109,8 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->add = true;
+        
+        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
         $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
