@@ -33,7 +33,7 @@ class Model_DbTable_DossierNature extends Zend_Db_Table_Abstract
 
     public function getDossierNaturesId($idDossier)
     {
-        $select = "SELECT ID_DOSSIERNATURE
+        $select = "SELECT ID_DOSSIERNATURE,ID_NATURE
             FROM dossiernature
             WHERE ID_DOSSIER = '".$idDossier."'
         ;";

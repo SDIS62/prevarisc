@@ -6,19 +6,6 @@
 
         public function getDossierLie( $idDossier)
         {
-            /*
-            $select = "SELECT *
-                FROM dossierlie, dossier, dossiertype, dossiernature, dossiernatureliste, etablissementdossier, etablissementinformations
-                WHERE dossier.TYPE_DOSSIER = dossiertype.ID_DOSSIERTYPE
-                AND dossiernature.ID_DOSSIER = dossier.ID_DOSSIER
-                AND dossiernature.ID_NATURE = dossiernatureliste.ID_DOSSIERNATURE
-                AND etablissementdossier.ID_DOSSIER = dossier.ID_DOSSIER
-                AND etablissementinformations.ID_ETABLISSEMENT = etablissementdossier.ID_ETABLISSEMENT
-                AND dossier.ID_DOSSIER != ".$idDossier."
-                AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = etablissementdossier.ID_ETABLISSEMENT )
-                GROUP BY ID_DOSSIERLIE
-            ";
-            */
             $select = "
                 SELECT *
                 FROM dossierlie
