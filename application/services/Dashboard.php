@@ -143,8 +143,8 @@ class Service_Dashboard
         'leveePresc' => array(
             'service' => 'Service_Dashboard',
             'method'  => 'getLeveePresc',
-            'acl'     => null,
-            'title'   => 'Dossiers avec date de levée des prescriptions',
+            'acl'     => array('dashboard', 'view_doss_levee_prescriptions'),
+            'title'   => 'Dossiers avec une date de levée des prescriptions',
             'type'    => 'dossiers',
             'height'  => 'small',
             'width'   => 'small',
