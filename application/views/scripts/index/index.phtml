@@ -113,12 +113,20 @@
         $(".panel-heading .icon").click(function() {
             var $self = $(this);
             var $panel = $self.parents('.panel');
+            $panel.toggleClass('folded');
             if ($self.hasClass('icon-chevron-right')) {
                 $self.removeClass('icon-chevron-right').addClass('icon-chevron-down');
                 if ($panel.hasClass('empty') && !$panel.hasClass('loading')) {
                     $panel.find('.panel-body img').show();
                     loadBloc($panel);
+                } else {
+                    $panel.find('.panel-body').show();
+                    $container.packery('fit', $panel.get(0));
                 }
+            } else {
+                $self.removeClass('icon-chevron-down').addClass('icon-chevron-right');
+                $panel.find('.panel-body').hide();
+                $container.packery('fit', $panel.get(0));
             }
         });
 
