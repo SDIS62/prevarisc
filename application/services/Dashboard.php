@@ -129,7 +129,6 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-
         // autres blocs
         'feeds' => array(
             'service' => 'Service_Feed',
@@ -140,7 +139,16 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-
+        // bloc levée prescriptions
+        'leveePresc' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getLeveePresc',
+            'acl'     => array('dashboard', 'view_doss_levee_prescriptions'),
+            'title'   => 'Dossiers avec une date de levée des prescriptions',
+            'type'    => 'dossiers',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
     );
     
     public function __construct($options = array()) {
@@ -356,6 +364,37 @@ class Service_Dashboard
         
         $dossiers = $search->run(false, null, false)->toArray();
         
+        return $dossiers;
+    }
+
+
+    public function getLeveePresc()
+    {
+        $DBdossierLie = new Model_DbTable_DossierLie;
+        $DBdossierNautre = new Model_DbTable_DossierNature;
+
+        $search = new Model_DbTable_Search;
+        $search->setItem("dossier");
+        $search->setCriteria("DELAIPRESC_DOSSIER IS NOT NULL");
+        $dossiers = $search->run(false, null, false)->toArray();
+
+        $valCpt = 0;
+
+        foreach($dossiers as $dossier){
+            $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
+            foreach( $listeDossiersLies as $lien){
+                if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
+                    $idLien = $lien['ID_DOSSIER2'];
+                }else{
+                    $idLien = $lien['ID_DOSSIER1'];
+                }
+                $idNature = $DBdossierNautre->getDossierNaturesId($idLien)['ID_NATURE'];
+                if($idNature == 19 || $idNature == 7 || $idNature == 46){
+                    unset($dossiers[$valCpt]);
+                }
+            }
+            $valCpt++;
+        }
         return $dossiers;
     }
 }
