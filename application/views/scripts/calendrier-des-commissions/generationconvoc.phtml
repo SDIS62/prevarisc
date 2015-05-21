@@ -253,7 +253,7 @@ function retrieveInfoDossier($segment, $dossierInfos) {
     $listePreventioniste = array();
     $listeTelPreventioniste = array();
     foreach($dossierInfos["preventionnistes"] as $va => $preventioniste){
-	$listePreventioniste[] = $preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
+	$listePreventioniste[] = $preventioniste['GRADE_UTILISATEURINFORMATIONS']. " " .$preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
         $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
     }
     setVars($segment, 'preventionnistes', implode(', ', $listePreventioniste));
