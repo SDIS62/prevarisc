@@ -2414,6 +2414,7 @@ INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(109
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(110,"view_ets_avis_defavorable_suivis", "Voir les établissements défavorables suivis",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(111,"view_next_commissions", "Voir les prochaines commissions",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(112,"view_next_commissions_odj", "Voir les odj des prochaines commissions",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(113,"view_doss_levee_prescriptions", "Date de levée des prescriptions",100);
 /*!40000 ALTER TABLE `privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
