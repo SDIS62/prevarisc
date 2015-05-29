@@ -204,28 +204,7 @@ $(document).ready(function(){
 				//affichageResultat.insertAfter(".divDoc:last");
 				$("#libelleNewDoc").attr('value','');
 				$("#dossier_Pdroite").activeCheck('qsd');
-				/*
-				$(".validDoc").button({
-					icons: {
-						primary: 'ui-icon-check'
-					},
-					text: false
-				});
-				
-				$(".cancelDoc").button({
-					icons: {
-						primary: 'ui-icon-close'
-					},
-					text: false
-				});
-				
-				$(".editDoc").button({
-					icons: {
-						primary: 'ui-icon-pencil'
-					},
-					text: false
-				});
-				*/
+
 				return false;
 			},
 			error: function(){
@@ -256,6 +235,9 @@ $(document).ready(function(){
 		 
 		$("#modif_"+nom).hide();
 		$("#valid_"+nom).fadeIn();
+
+		$("#libelleView_"+nom).hide();
+		$("#libelle_"+nom).show();
 
 		$("#dossier_Pdroite").hideModif(nom);
 		$("#dossier_Pdroite").blockCheck(nom); 

@@ -28,13 +28,18 @@
 			if($date == "00/00/0000")
 				$date = "";
 
-            return "
+            $return = "
                 <li class='divDoc row-fluid span12' name='divDoc' id='".$natureId."_".$id.$type."' style='display: block; margin: 0 15px 15px 15px;'>
                     <div style='float:left;' class='span1'>
                         <input type='checkbox' ".$styleChecked." ".$etatCheck." name='check_".$natureId."_".$id.$type."' id='check_".$natureId."_".$id.$type."' ".( ( $verrou == 1)?"disabled='disabled'":"" )." />
                     </div>
                     <div class='span4 libelle' >
-                        <strong>".nl2br($libelle)."</strong>
+            ";
+                    if($type){
+                        $return .= "<textarea name='libelle_".$natureId."_".$id.$type."' id='libelle_".$natureId."_".$id.$type."' rows='3' style='display:none;width:100%;'>".nl2br($libelle)."</textarea>";
+                    }
+            $return .= "
+                        <strong ".( ($type)? "id='libelleView_".$natureId."_".$id.$type."'" : "").">".nl2br($libelle)."</strong>
                     </div>
                     <div id='div_input_".$natureId."_".$id.$type."' class='span7' style='".$styleInput."'>
                         <div class='span4'>
@@ -59,6 +64,8 @@
                 </li>
 				<br class='clear'/>
             ";
+
+            return $return;
         }
 
     }

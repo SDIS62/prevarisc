@@ -835,7 +835,7 @@
 					$("#AVIS_COMMISSION").hide();
 					$("#HORSDELAI").hide();
 					$("#DATECOMM").hide();
-				}else if (horsdelai || absquorum || npsp || differeavis){
+				}else if (horsdelai || absquorum || npsp){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
 					$("#DATECOMM").hide();
@@ -1563,8 +1563,8 @@ echo "
 						<input type='checkbox' class='differeavis' name='DIFFEREAVIS_DOSSIER' disabled ".(($this->infosDossier['DIFFEREAVIS_DOSSIER']) ? "checked" : "").">
 					</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
-						<input type='checkbox' class='differeavis hideavis' name='DIFFEREAVIS_DOSSIER' ".(($this->infosDossier['DIFFEREAVIS_DOSSIER']) ? "checked" : "")." ".(($this->avisExploitationEtab != 1) ? "disabled='disabled'" : "").">
-						".(($this->avisExploitationEtab != 1) ? "<span style='font-size:smaller;'>(Disponible uniquement lorsque l'avis d'exploitation de l'établissement est favorable)</span>" : "")."
+						<input type='checkbox' class='differeavis' name='DIFFEREAVIS_DOSSIER' ".(($this->infosDossier['DIFFEREAVIS_DOSSIER']) ? "checked" : "")." ".(($this->lastAvisEtab != '' && $this->lastAvisEtab != "Favorable") ? "disabled='disabled'" : "").">
+						".(($this->lastAvisEtab != '' && $this->lastAvisEtab != "Favorable") ? "<span style='font-size:smaller;'>(Disponible uniquement lorsque l'avis d'exploitation de l'établissement est favorable)</span>" : "")."
 					</div>
 				</li>
 				<li class='row-fluid' id='NPSP' style='".(($action != 'new' && in_array('NPSP', $this->afficherChamps) && $this->infosDossier['NPSP_DOSSIER'] != NULL && $this->infosDossier['NPSP_DOSSIER'] != 0) ? "" : "display:none;")."margin-bottom:20px;'>

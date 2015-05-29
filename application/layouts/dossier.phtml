@@ -114,11 +114,11 @@ endif; ?>
                 </a>
             ";
             if(isset($etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS']) && $etablissementInfos['general']['ID_DOSSIER_DONNANT_AVIS'] != null){
-                if($this->avisExploitationEtab  == 1){
-                    echo "<span class='avis F'>Favorable</span>&nbsp;";
-                }else if($this->avisExploitationEtab  == 2){
-                    echo "<span class='avis D'>Défavorable</span>&nbsp;";
-                }else if($etablissementInfos['presence_avis_differe']){
+                if($etablissementInfos['avisExploitation']['LIBELLE_AVIS'] == "Favorable"){
+                    echo "<span class='avis F'>".$etablissementInfos['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+                }else if($etablissementInfos['avisExploitation']['LIBELLE_AVIS'] == "Défavorable"){
+                    echo "<span class='avis D'>".$etablissementInfos['avisExploitation']['LIBELLE_AVIS']."</span>&nbsp;";
+                }else if($etablissementInfos['infosEtab']['presence_avis_differe']){
                     echo "<span class='label label-info'>Avis différé</span>&nbsp;";
                 }else{
                     echo "<span class='avis'>Avis indisponible</span>&nbsp;";

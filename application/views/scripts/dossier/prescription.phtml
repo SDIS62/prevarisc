@@ -404,7 +404,7 @@ $(document).ready(function(){
 							dialogRecupPresc.html("Veuillez patienter pendant la reprise des prescriptions <img src='/images/load.gif' />");
 						},
 						success: function(msg){							
-							window.location.reload();
+							window.location='/dossier/prescription/id/'+$("#idDossier").val();
 						}
 					});
 				}else{
@@ -452,7 +452,7 @@ $(document).ready(function(){
 					url: "/dossier/prescriptioneditsave",
 					data: $("#formPrescriptionEdit").serialize(),
 					success: function(msg){
-						window.location.reload();
+						window.location='/dossier/prescription/id/'+$("#idDossier").val();
 					}
 				});
 				return false;
@@ -505,7 +505,7 @@ $(document).ready(function(){
 			data: "&idPrescDossier="+idPrescDossier+"&idDossier="+$("#idDossier").val(),
 			success: function(msg){
 				$("#prescriptionDossier_"+idPrescDossier).remove();
-				window.location.reload();
+				window.location='/dossier/prescription/id/'+$("#idDossier").val();
 			}
 		});		
 		return false;
