@@ -209,9 +209,11 @@ function savePj($dateCommId, $membreNom){
 
 function retrieveInfoDossier($segment, $dossierInfos) {
     setVars($segment, 'nomEtab',$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
+    $nomPere = "";
     if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"])) {
-        setVars($segment, 'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
+        $nomPere = $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"];
     }
+    setVars($segment, 'nomPereEtab', $nomPere);
     setVars($segment, 'idDossier', $dossierInfos["ID_DOSSIER"]);
     setVars($segment, 'numWinPrev', $dossierInfos['infosEtab']['general']['NUMEROID_ETABLISSEMENT']);
     setVars($segment, 'mailEtab', $dossierInfos['infosEtab']['general']["COURRIEL_ETABLISSEMENT"]);
@@ -252,9 +254,11 @@ function retrieveInfoDossier($segment, $dossierInfos) {
 
     $listePreventioniste = array();
     $listeTelPreventioniste = array();
-    foreach($dossierInfos["preventionnistes"] as $va => $preventioniste){
-	$listePreventioniste[] = $preventioniste['GRADE_UTILISATEURINFORMATIONS']. " " .$preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
-        $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
+    if (isset($dossierInfos["preventionnistes"])) {
+        foreach($dossierInfos["preventionnistes"] as $va => $preventioniste){
+            $listePreventioniste[] = $preventioniste['GRADE_UTILISATEURINFORMATIONS']. " " .$preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
+            $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
+        }
     }
     setVars($segment, 'preventionnistes', implode(', ', $listePreventioniste));
     setVars($segment, 'listeTelPreventioniste', implode(', ', $listeTelPreventioniste));

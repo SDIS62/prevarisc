@@ -152,6 +152,12 @@ function retrieveInfoDoss($segment, $dossierInfos) {
     if(isset($dossierInfos['infosEtab']['parents'][0]) && $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"] != NULL) {
         addChamp($segment->infosDoss, 'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
     }
+    $nomPere = "";
+    if(isset($dossierInfos['infosEtab']['parents'][0]) && $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"] != NULL) {
+        $nomPere = $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"];
+    }
+    addChamp($segment->infosDoss, 'nomPereEtab', $nomPere);
+    
     addChamp($segment->infosDoss, 'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
     addChamp($segment->infosDoss, 'objetDossier', $dossierInfos["OBJET_DOSSIER"]);
     $commune = "";
@@ -190,9 +196,11 @@ function retrieveInfoDoss($segment, $dossierInfos) {
     addChamp($segment->infosDoss, 'typeDossierCourt', $typeDossierCourt);
     $listePreventioniste = array();
     $listeTelPreventioniste = array();
-    foreach($dossierInfos["preventionnistes"] as $va => $preventioniste){
-	$listePreventioniste[] = $preventioniste['GRADE_UTILISATEURINFORMATIONS']. " ".$preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
-        $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
+    if (isset($dossierInfos["preventionnistes"])) {
+        foreach($dossierInfos["preventionnistes"] as $va => $preventioniste){
+            $listePreventioniste[] = $preventioniste['GRADE_UTILISATEURINFORMATIONS']. " ".$preventioniste['NOM_UTILISATEURINFORMATIONS']. " ".$preventioniste['PRENOM_UTILISATEURINFORMATIONS'];
+            $listeTelPreventioniste[] = $preventioniste['TELFIXE_UTILISATEURINFORMATIONS'];
+        }
     }
     addChamp($segment->infosDoss, 'preventionnistes', implode(', ', $listePreventioniste));
     addChamp($segment->infosDoss, 'listeTelPreventioniste', implode(', ', $listeTelPreventioniste)); 
