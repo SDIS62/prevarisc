@@ -269,6 +269,7 @@ class DossierController extends Zend_Controller_Action
             } else {
                 $this->view->avisExploitationEtab = 3;
             }
+            $historiqueEtab = $service_etablissement->getHistorique($this->_getParam("id_etablissement"));
         } elseif ((int) $this->_getParam("id")) {
             $tabEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
             $this->view->listeEtablissement = $tabEtablissement;
@@ -288,13 +289,21 @@ class DossierController extends Zend_Controller_Action
                 } else {
                     $this->view->avisExploitationEtab = 3;
                 }
+                $historiqueEtab = $service_etablissement->getHistorique($idEtablissement);
             }
+        }
+
+        if(isset($historiqueEtab['avis'])){
+            $nbAvisEtab = count($historiqueEtab['avis']);
+            $this->view->lastAvisEtab = $historiqueEtab['avis'][$nbAvisEtab - 1]["valeur"];
         }
 
         if (isset($commissionEtab)) {
             $this->view->commissionEtab = $commissionEtab;
         }
+        
         $genreInfo = $this->view->genre;
+
         if (isset($idEtablissement)) {
             $this->view->idEtablissement = $idEtablissement;
         }
@@ -1044,14 +1053,13 @@ class DossierController extends Zend_Controller_Action
             //On met le champ ID_DOSSIER_DONNANT_AVIS de établissement avec l'ID du dossier que l'on vient d'enregistrer dans les cas suivant
             if ($this->_getParam("AVIS_DOSSIER_COMMISSION") && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)) {
                 $MAJEtab = 0;
-
-                if ($this->_getParam("TYPE_DOSSIER") == 1 && in_array($idNature, array(19, 7, 17))) {
+               if ($this->_getParam("TYPE_DOSSIER") == 1 && $this->_getParam("DATECOMM_DOSSIER") != "" && in_array($idNature, array(19, 7, 17))) {
                     //Cas d'une étude uniquement dans le cas d'une levée de reserve
                     $MAJEtab = 1;
-                } elseif ($this->_getParam("TYPE_DOSSIER") == 2 && (21 == $idNature || 23 == $idNature || 24 == $idNature || 47 == $idNature)) {
+                } elseif ($this->_getParam("TYPE_DOSSIER") == 2 && $this->_getParam("DATEVISITE_DOSSIER") != "" &&(21 == $idNature || 23 == $idNature || 24 == $idNature || 47 == $idNature)) {
                     //Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
                     $MAJEtab = 1;
-                } elseif ($this->_getParam("TYPE_DOSSIER") == 3 && (26 == $idNature || 28 == $idNature || 29 == $idNature || 48 == $idNature)) {
+                } elseif ($this->_getParam("TYPE_DOSSIER") == 3 && $this->_getParam("DATECOMM_DOSSIER") != "" && (26 == $idNature || 28 == $idNature || 29 == $idNature || 48 == $idNature)) {
                     //Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
                     $MAJEtab = 1;
                 }
@@ -1069,9 +1077,7 @@ class DossierController extends Zend_Controller_Action
                     }
 
                     foreach ($listeEtab as $val => $ue) {
-
                         $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
-
                         //Avant la mise à jour du champ ID_DOSSIER_DONNANT_AVIS on s'assure que la date de l'avis est plus récente
                         if(isset($etabToEdit->ID_DOSSIER_DONNANT_AVIS) && $etabToEdit->ID_DOSSIER_DONNANT_AVIS != NULL) {
                             $dossierAncienAvis = $DBdossier->find($etabToEdit->ID_DOSSIER_DONNANT_AVIS)->current();
@@ -1089,15 +1095,12 @@ class DossierController extends Zend_Controller_Action
                                 }else{
                                     $dateNewAvis = $nouveauDossier->DATEINSERT_DOSSIER;
                                 }
-
                             }else if($dossierAncienAvis->TYPE_DOSSIER == 2){
-
                                 if($dossierAncienAvis->DATEVISITE_DOSSIER != NULL && $dossierAncienAvis->DATEVISITE_DOSSIER != ''){
                                     $dateAncienAvis = $dossierAncienAvis->DATEVISITE_DOSSIER;
                                 }else{
                                     $dateAncienAvis = $dossierAncienAvis->DATEINSERT_DOSSIER;
                                 }
-
                                 if($nouveauDossier->DATEVISITE_DOSSIER != NULL && $nouveauDossier->DATEVISITE_DOSSIER != ''){
                                     $dateNewAvis = $nouveauDossier->DATEVISITE_DOSSIER;
                                 }else{
@@ -1617,6 +1620,7 @@ class DossierController extends Zend_Controller_Action
                 $date = "0000-00-00";
             }
             $ref = str_replace("\"","''",$_POST['ref_'.$idValid]);
+            $libelle =  $_POST['libelle_'.$idValid];
 
             //on définit s'il sagid d'un doc ajouté ou nom
             $tabNom = explode("_",$idValid);
@@ -1633,7 +1637,7 @@ class DossierController extends Zend_Controller_Action
                     $liste->DATE_CONSULTE = $date;
                 } else {
                     //si AUCUN enregistrement existe
-                     $liste = $dblistedoc->createRow();
+                    $liste = $dblistedoc->createRow();
                     $liste->ID_DOC = $tabNom[1];
                     $liste->ID_DOSSIER = $id_dossier;
                     $liste->ID_NATURE = $tabNom[0];
@@ -1643,13 +1647,13 @@ class DossierController extends Zend_Controller_Action
                 }
                 $liste->save();
             } else {
-                //Cas d'une liste ajoutée Doc ajout
                 //On commence par isoler l'id de "_aj"
                 $idDocAjout = explode("_",$this->_getParam("id"));
                 $dblistedocajout = new Model_DbTable_ListeDocAjout();
 
                 $docAjout = $dblistedocajout->find($idDocAjout[1])->current();
 
+                $docAjout->LIBELLE_DOCAJOUT = $libelle;
                 $docAjout->REF_DOCAJOUT = $ref;
                 $docAjout->DATE_DOCAJOUT = $date;
                 $docAjout->ID_DOSSIER = $id_dossier;

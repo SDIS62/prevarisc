@@ -95,6 +95,9 @@ $('.divDocConsulte input:checkbox').live('click',function(){
 		$("#div_input_"+nom).fadeIn();				
 		$("#tmp").attr('value','new');
 
+		$("#libelleView_"+nom).hide();
+		$("#libelle_"+nom).show();
+
 		$("#dossier_Pdroite").hideModif(nom);
 		$("#dossier_Pdroite").blockCheck(nom);
 	}else{
@@ -112,12 +115,7 @@ $(".validDoc").live('click',function(){
 		
 	var ref = $(this).parent().parent().prev().prev().children("input");
 	var date = $(this).parent().parent().prev().children("input");
-	/*
-	if(date.val() == ''){
-		date.focus();
-		return false;
-	}
-	*/
+
 	var data = $("#docConsulteForm").serialize();
 	var idTab = $(this).parent().attr('id').split('_');
 	
@@ -150,6 +148,12 @@ $(".validDoc").live('click',function(){
 			
 			$("#tmpRef").attr('value','');
 			$("#tmpDate").attr('value','');
+
+			var libelle = $("#libelle_"+idValid).val();
+			$("#libelleView_"+idValid).html(libelle);
+			$("#libelleView_"+idValid).show();
+			$("#libelle_"+idValid).hide();
+
 			return false;
 		},
 		error: function(){
