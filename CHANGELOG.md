@@ -67,6 +67,8 @@ Corrections :
 * Correction du bloc "dossiers suivi du préventionniste" qui affichait trop de dossiers avec le retrait du verrouillage. On n'affiche plus que les courriers et études.
 * Correction générale sur les blocs du dashboard : les dossiers sont enregistrés avec un avis commission = 0 !!! et non null
 * Correction sur les convocations pour les maires : partie dossiersInfos KO
+* Correction de l'avis toujours indisponible lorsque le dossier est créé, et conséquence sur la possibilité de différer l'avis
+* Correction sur la génération des ODJ et convocation : la balise nomPereEtab reprenait le nom du précédent établissement père
 
 ## 2.3
 
