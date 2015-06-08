@@ -27,6 +27,7 @@ addChamp($odf, 'date_commEntete',$this->dateCommEntete);
 addChamp($odf, 'numWinPrev',$this->numWinPrev);
 addChamp($odf, 'objetDossier',$this->infosDossier['OBJET_DOSSIER']);
 addChamp($odf, 'analyseRisque',$this->infosDossier['ANOMALIE_DOSSIER']);
+addChamp($odf, 'observationDossier',$this->infosDossier['OBSERVATION_DOSSIER']);
 addChamp($odf, 'descriptifDossier',$this->infosDossier['DESCRIPTIF_DOSSIER']);
 
 addChamp($odf, 'dateRvrat',$this->dateRvrat);
@@ -163,17 +164,15 @@ try{
     foreach($this->listeDocsAjout as $documentAjout){
         addChamp($docAjout, 'exist', "X");
         addChamp($docAjout, 'libelledoc', $documentAjout['LIBELLE_DOCAJOUT']);
-        addChamp($docAjout, 'refdoc', $documentAjout['REF_DOCAJOUT']);
+        addChamp($docAjout, 'refdoc', $documentAjout['REF_DOCAJOUT']); 
         if ($documentAjout['DATE_DOCAJOUT']) {
-            if ($date) {
-                if($date != "0000-00-00"){
-                    $date = new Zend_Date($documentAjout['DATE_DOCAJOUT'], Zend_Date::DATES);
-                    $date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
-                }else{
-                    $date = "";
-                }
+            if($documentAjout['DATE_DOCAJOUT'] != "0000-00-00"){
+                $date = new Zend_Date($documentAjout['DATE_DOCAJOUT'], Zend_Date::DATES);
+                $date = $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
+            }else{
+                $date = "";
             }
-        }
+        } 
         addChamp($docAjout, 'datedoc', $date);
         $docAjout->merge();
     }
