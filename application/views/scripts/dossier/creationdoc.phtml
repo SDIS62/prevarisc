@@ -356,15 +356,25 @@ function addPrescriptionCC($listePrescription,$type,$odf){
 }
 
 if($this->id_typeactivite == 29){
-    $cellulesPresc = $odf->setSegment('cellulesPresc');
-    foreach($this->celluleDossier as $cellulesInfos => $cellule){
-        addChamp($cellulesPresc, 'libelleCellule', $cellule['LIBELLE_ETABLISSEMENTINFORMATIONS']);
-        addPrescriptionCC($cellule['regl'],0,$cellulesPresc);
-        addPrescriptionCC($cellule['exploit'],1,$cellulesPresc);
-        addPrescriptionCC($cellule['amelio'],2,$cellulesPresc);
-        $cellulesPresc->merge();
+    try{
+        $cellulesPresc = $odf->setSegment('cellulesPresc');
+        foreach($this->celluleDossier as $cellulesInfos => $cellule){
+            addChamp($cellulesPresc, 'libelleCellule', $cellule['LIBELLE_ETABLISSEMENTINFORMATIONS']);
+            if($this->idDossier == $cellule['ID_DOSSIER']){
+                addPrescriptionCC($cellule['regl'],0,$cellulesPresc);    
+            }else{
+                $val = array();
+                addPrescriptionCC($val,0,$cellulesPresc);    
+            }
+            
+            addPrescriptionCC($cellule['exploit'],1,$cellulesPresc);
+            addPrescriptionCC($cellule['amelio'],2,$cellulesPresc);
+            $cellulesPresc->merge();
+        }
+        $odf->mergeSegment($cellulesPresc);
+    } catch (OdfException $e) {
+        echo "<span class='label label-warning'>Le document que vous avez sélectionné pour la génération ne correspond pas à un centre commercial</span><br/><br/>";
     }
-    $odf->mergeSegment($cellulesPresc);
 }else{
     addPrescription($this->prescriptionReglDossier,0,$odf);
     addPrescription($this->prescriptionExploitation,1,$odf);

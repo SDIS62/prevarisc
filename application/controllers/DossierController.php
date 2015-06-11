@@ -2150,6 +2150,7 @@ class DossierController extends Zend_Controller_Action
         //suivant le type on récup la liste des docs
         $dblistedoc = new Model_DbTable_DossierListeDoc();
 
+
         if (2 == $dossierType['TYPE_DOSSIER'] || 3 == $dossierType['TYPE_DOSSIER']) {
             if (20 == $dossierNature["ID_NATURE"] || 25 == $dossierNature["ID_NATURE"]) {
                 //cas d'un groupe de visite d'une récption de travaux
@@ -2182,7 +2183,9 @@ class DossierController extends Zend_Controller_Action
         /*
         PARTIE PRESCRIPTION
         */
-        if($this->view->id_typeactivite == 29){
+        //Pour les centres commerciaux les dossiers (id = 29) ayant pour nature VP,VI et VC
+        $natureCC = array(21,26,24,29,23,28);
+        if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC)){
             //cas d'un centre commercial on récupère toute les cellules
             $idDateCommAffect = $affectDossier['ID_DATECOMMISSION_AFFECT'];
             $listeDossierConcerne = $dbAffectDossier->getDossierNonAffect($idDateCommAffect);
