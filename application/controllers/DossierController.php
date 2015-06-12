@@ -1825,7 +1825,7 @@ class DossierController extends Zend_Controller_Action
         //Informations de l'établissement (catégorie, effectifs, activité / type principal)
         $object_informations = $model_etablissement->getInformations($idEtab);
         $this->view->entite = $object_informations;
-        //echo $this->view->entite['ID_ETABLISSEMENT'];
+
 
         $this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
         $this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
@@ -1937,6 +1937,8 @@ class DossierController extends Zend_Controller_Action
         //Récupération de tous les champs de la table dossier
         $DBdossier = new Model_DbTable_Dossier();
         $this->view->infosDossier = $DBdossier->find($idDossier)->current();
+
+
         //Récupération du type et de la nature du dossier
         $dbType = new Model_DbTable_DossierType();
         $typeDossier = $dbType->find($this->view->infosDossier['TYPE_DOSSIER'])->current();
@@ -2109,6 +2111,7 @@ class DossierController extends Zend_Controller_Action
         } else {
             $commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
         }
+
         //récupération de l'ensemble des dates liées
         $recupCommLiees = $dbDateComm->getCommissionsDateLieesMaster($commPrincipale);
         $nbDatesTotal = count($recupCommLiees);
@@ -2139,13 +2142,14 @@ class DossierController extends Zend_Controller_Action
 
         //PARTIE DOC CONSULTE
 
-            //récupération du type de dossier (etude / visite)
-            $dbdossier = new Model_DbTable_Dossier();
+        //récupération du type de dossier (etude / visite)
+        $dbdossier = new Model_DbTable_Dossier();
         $dossierType = $dbdossier->getTypeDossier((int) $idDossier);
         $dossierNature = $dbdossier->getNatureDossier((int) $idDossier);
 
-            //suivant le type on récup la liste des docs
-            $dblistedoc = new Model_DbTable_DossierListeDoc();
+        //suivant le type on récup la liste des docs
+        $dblistedoc = new Model_DbTable_DossierListeDoc();
+
 
         if (2 == $dossierType['TYPE_DOSSIER'] || 3 == $dossierType['TYPE_DOSSIER']) {
             if (20 == $dossierNature["ID_NATURE"] || 25 == $dossierNature["ID_NATURE"]) {
@@ -2163,23 +2167,41 @@ class DossierController extends Zend_Controller_Action
             $listeDocConsulte = 0;
         }
 
-            //on envoi la liste de base à la vue
-            $this->view->listeDocs = $listeDocConsulte;
+        //on envoi la liste de base à la vue
+        $this->view->listeDocs = $listeDocConsulte;
 
-            //on recup les docs ajouté pr le dossiers
-            $dblistedocAjout = new Model_DbTable_ListeDocAjout();
+        //on recup les docs ajouté pr le dossiers
+        $dblistedocAjout = new Model_DbTable_ListeDocAjout();
         $listeDocAjout = $dblistedocAjout->getDocAjout((int) $idDossier,$dossierNature['ID_NATURE']);
         $this->view->listeDocsAjout = $listeDocAjout;
 
         $this->view->dossierDocConsutle = $dblistedoc->recupDocDossier((int) $idDossier,$dossierNature['ID_NATURE']);
 
+        $service_dossier = new Service_Dossier();
+        $this->view->id_typeactivite = $object_informations['ID_TYPEACTIVITE'];
+        
         /*
         PARTIE PRESCRIPTION
         */
-        $service_dossier = new Service_Dossier();
-        $this->view->prescriptionReglDossier = $service_dossier->getPrescriptions((int) $idDossier,0);
-        $this->view->prescriptionExploitation = $service_dossier->getPrescriptions((int) $idDossier,1);
-        $this->view->prescriptionAmelioration = $service_dossier->getPrescriptions((int) $idDossier,2);
+        //Pour les centres commerciaux les dossiers (id = 29) ayant pour nature VP,VI et VC
+        $natureCC = array(21,26,24,29,23,28);
+        if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC)){
+            //cas d'un centre commercial on récupère toute les cellules
+            $idDateCommAffect = $affectDossier['ID_DATECOMMISSION_AFFECT'];
+            $listeDossierConcerne = $dbAffectDossier->getDossierNonAffect($idDateCommAffect);
+            $cptIdArray = 0;
+            foreach($listeDossierConcerne as $dossier){
+                $listeDossierConcerne[$cptIdArray]['regl'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],0);
+                $listeDossierConcerne[$cptIdArray]['exploit'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],1);
+                $listeDossierConcerne[$cptIdArray]['amelio'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],2);
+                $cptIdArray++;
+            }
+            $this->view->celluleDossier = $listeDossierConcerne;
+        }else{
+            $this->view->prescriptionReglDossier = $service_dossier->getPrescriptions((int) $idDossier,0);
+            $this->view->prescriptionExploitation = $service_dossier->getPrescriptions((int) $idDossier,1);
+            $this->view->prescriptionAmelioration = $service_dossier->getPrescriptions((int) $idDossier,2);
+        }
 
         // GESTION DES DATES
         //Conversion de la date de dépot en mairie pour l'afficher
