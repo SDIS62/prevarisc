@@ -873,6 +873,11 @@ class DossierController extends Zend_Controller_Action
     //Permet de faire les insertions de dossier en base de données et de rediriger vers le dossier/index/id/X => X = id du dossier qui vient d'être crée
     public function saveAction()
     {
+        header('Content-type: application/json');
+
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+        
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         try {
@@ -1423,7 +1428,9 @@ class DossierController extends Zend_Controller_Action
                 }
             }
             //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
-            echo trim($idDossier);
+            $idDossier = trim($idDossier);
+            $idDossierArray = array('id' => $idDossier);
+            echo json_encode($idDossierArray);
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',

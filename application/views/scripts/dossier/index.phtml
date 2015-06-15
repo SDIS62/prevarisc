@@ -999,7 +999,7 @@
 			url: "/dossier/savenew",
 			data: data,
 			type:"POST",
-			//async: false,
+			dateType: "json",
 			beforeSend: function(){
 				$("#annulModification").attr("disabled", "disabled");
 				$("#creationDossier").attr("disabled", "disabled");
@@ -1007,11 +1007,7 @@
 			},
 			success: function(affichageResultat){
 				try {
-					affichageResultat = affichageResultat.replace(" ", "");
-				    affichageResultat = affichageResultat.replace("\ufeff", "");
-				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
-				    parseInt(affichageResultat);
-                    window.location='/dossier/index/id/'+affichageResultat;
+                    window.location='/dossier/index/id/'+affichageResultat.id;
                 } catch(e) {
                     window.location.reload();
                 }
@@ -1060,6 +1056,7 @@
 		$.ajax({
 			url: "/dossier/save",
 			data: data,
+			dateType: "json",
 			type:"POST",
 			beforeSend: function(){
 				$("#annulModification").hide();
@@ -1069,12 +1066,8 @@
 			},
 			success: function(affichageResultat){
 				try {
-					affichageResultat = affichageResultat.replace(" ", "");
-				    affichageResultat = affichageResultat.replace("\ufeff", "");
-				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
-				    parseInt(affichageResultat);
-                    window.location='/dossier/index/id/'+affichageResultat;
-                } catch(e) {
+                    window.location='/dossier/index/id/'+affichageResultat.id;
+				} catch(e) {
                     window.location.reload();
                 }
 			},
