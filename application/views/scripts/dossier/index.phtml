@@ -999,7 +999,7 @@
 			url: "/dossier/savenew",
 			data: data,
 			type:"POST",
-			//async: false,
+			dateType: "json",
 			beforeSend: function(){
 				$("#annulModification").attr("disabled", "disabled");
 				$("#creationDossier").attr("disabled", "disabled");
