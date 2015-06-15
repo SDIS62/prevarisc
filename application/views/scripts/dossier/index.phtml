@@ -1010,8 +1010,8 @@
 					affichageResultat = affichageResultat.replace(" ", "");
 				    affichageResultat = affichageResultat.replace("\ufeff", "");
 				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
-				    parseInt(affichageResultat);
-                    window.location='/dossier/index/id/'+affichageResultat;
+				    var idInfos = JSON.parse(affichageResultat);
+                    window.location='/dossier/index/id/'+idInfos.id;
                 } catch(e) {
                     window.location.reload();
                 }
@@ -1072,9 +1072,9 @@
 					affichageResultat = affichageResultat.replace(" ", "");
 				    affichageResultat = affichageResultat.replace("\ufeff", "");
 				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
-				    parseInt(affichageResultat);
-                    window.location='/dossier/index/id/'+affichageResultat;
-                } catch(e) {
+				    var idInfos = JSON.parse(affichageResultat);
+                    window.location='/dossier/index/id/'+idInfos.id;
+				} catch(e) {
                     window.location.reload();
                 }
 			},

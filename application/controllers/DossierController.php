@@ -1423,7 +1423,9 @@ class DossierController extends Zend_Controller_Action
                 }
             }
             //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
-            echo trim($idDossier);
+            $idDossier = trim($idDossier);
+            $idDossierArray = array('id' => $idDossier);
+            echo json_encode($idDossierArray);
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
