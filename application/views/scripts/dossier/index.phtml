@@ -1007,11 +1007,7 @@
 			},
 			success: function(affichageResultat){
 				try {
-					affichageResultat = affichageResultat.replace(" ", "");
-				    affichageResultat = affichageResultat.replace("\ufeff", "");
-				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
-				    var idInfos = JSON.parse(affichageResultat);
-                    window.location='/dossier/index/id/'+idInfos.id;
+                    window.location='/dossier/index/id/'+affichageResultat.id;
                 } catch(e) {
                     window.location.reload();
                 }
@@ -1060,6 +1056,7 @@
 		$.ajax({
 			url: "/dossier/save",
 			data: data,
+			dateType: "json",
 			type:"POST",
 			beforeSend: function(){
 				$("#annulModification").hide();
@@ -1069,11 +1066,7 @@
 			},
 			success: function(affichageResultat){
 				try {
-					affichageResultat = affichageResultat.replace(" ", "");
-				    affichageResultat = affichageResultat.replace("\ufeff", "");
-				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
-				    var idInfos = JSON.parse(affichageResultat);
-                    window.location='/dossier/index/id/'+idInfos.id;
+                    window.location='/dossier/index/id/'+affichageResultat.id;
 				} catch(e) {
                     window.location.reload();
                 }
