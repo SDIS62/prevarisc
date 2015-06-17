@@ -873,10 +873,17 @@ class DossierController extends Zend_Controller_Action
     //Permet de faire les insertions de dossier en base de données et de rediriger vers le dossier/index/id/X => X = id du dossier qui vient d'être crée
     public function saveAction()
     {
+        header('Content-type: application/json');
+
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         try {
-            $this->_helper->viewRenderer->setNoRender();
+
+
             $DBdossier = new Model_DbTable_Dossier();
             $DBdossierNature = new Model_DbTable_DossierNature();
             if ($this->_getParam('do') == 'new') {
@@ -895,8 +902,8 @@ class DossierController extends Zend_Controller_Action
                 $arrayT1 = array(24,21,23,29,26,28);
                 $arrayT2 = array(20,47,25,48);
 
-                $dbDocConsulte = new Model_DbTable_DossierDocConsulte();
-                $dbDocAjout = new Model_DbTable_ListeDocAjout();
+                $dbDocConsulte = new Model_DbTable_DossierDocConsulte;
+                $dbDocAjout = new Model_DbTable_ListeDocAjout;
 
                 if( in_array($oldNature, $arrayT1) && in_array($newNature, $arrayT1)){
                     //On conserve les documents consultés
@@ -1071,7 +1078,7 @@ class DossierController extends Zend_Controller_Action
                     if ($this->_getParam('do') == 'new') {
                         $listeEtab = array(array(
                             'ID_ETABLISSEMENT' => $this->_getParam('idEtablissement'),
-                        ));
+                        )); 
                     } else {
                         $listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
                     }
@@ -1421,9 +1428,11 @@ class DossierController extends Zend_Controller_Action
                         $dateDelete->delete();
                     }
                 }
-            }
+            }           
             //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
-            echo trim($idDossier);
+            $idArray = array('id'=>$nouveauDossier->ID_DOSSIER);
+            echo json_encode($idArray);
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',

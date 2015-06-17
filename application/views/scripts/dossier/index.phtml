@@ -1007,11 +1007,7 @@
 			},
 			success: function(affichageResultat){
 				try {
-					affichageResultat = affichageResultat.replace(" ", "");
-				    affichageResultat = affichageResultat.replace("\ufeff", "");
-				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
-				    parseInt(affichageResultat);
-                    window.location='/dossier/index/id/'+affichageResultat;
+					window.location='/dossier/index/id/'+affichageResultat.id;
                 } catch(e) {
                     window.location.reload();
                 }
@@ -1061,6 +1057,7 @@
 			url: "/dossier/save",
 			data: data,
 			type:"POST",
+			dataType: "json",
 			beforeSend: function(){
 				$("#annulModification").hide();
 				$("#validModification").hide();
@@ -1069,16 +1066,13 @@
 			},
 			success: function(affichageResultat){
 				try {
-					affichageResultat = affichageResultat.replace(" ", "");
-				    affichageResultat = affichageResultat.replace("\ufeff", "");
-				    affichageResultat = affichageResultat.replace("%EF%BB%BF", "");
-				    parseInt(affichageResultat);
-                    window.location='/dossier/index/id/'+affichageResultat;
+					window.location='/dossier/index/id/'+affichageResultat.id;
                 } catch(e) {
                     window.location.reload();
                 }
 			},
-			error: function(){
+			error: function(xhr, ajaxOptions, thrownError) {
+		        alert(xhr.status+" - "+thrownError);
 				return false;
 			}
 		});
