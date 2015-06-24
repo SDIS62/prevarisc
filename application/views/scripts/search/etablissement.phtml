@@ -6,9 +6,9 @@
             <div class="input-append pull-left">
                 <input type="text" name='label' class="input-xlarge search-query" placeholder="Libellé de l'établissement ou son #ID ..." value='<?php if(isset($_GET["label"])) echo $_GET["label"] ?>' />
                 <input type='submit' class="btn btn_search" value="Rechercher" disabled />
-                <input type='hidden' name='page' value="1" />   
+                <input type='hidden' name='page' value="1" />
             </div>
-            
+
             <div class="pull-left" style='margin: 9px 0 0 5px'>
                 <small>
                     <a href="/search/etablissement?label=&page=1">
@@ -16,7 +16,7 @@
                     </a>
                 </small>
             </div>
-            
+
 	    <p class='pull-right' style='margin: 9px 0 0 5px'>
                 <small>
                     Zone de recherche :
@@ -32,7 +32,7 @@
 	        </small>
 	    </p>
 	</div>
-        
+
         <div id="filterContainer" class="well span12" style="margin-left: 0;">
             <div>
                 <select name='statuts[]' multiple>
@@ -86,7 +86,9 @@
             <span id='type_span' class='hide'>
                 <select name='types_activites[]' multiple>
                     <?php foreach( $this->DB_typeactivite as $type ) : ?>
-                        <option value='<?php echo $type["ID_TYPEACTIVITE"] ?>' <?php if(array_key_exists('types_activites', $_GET) && in_array($type["ID_TYPEACTIVITE"], (array) $_GET["types_activites"])) echo 'selected' ?>><?php echo $type["LIBELLE_TYPE"] . ' - ' . $type["LIBELLE_ACTIVITE"] ?></option>
+						<optgroup label="<?php echo $type["LIBELLE_TYPE"] ?>">
+	                        <option value='<?php echo $type["ID_TYPEACTIVITE"] ?>' <?php if(array_key_exists('types_activites', $_GET) && in_array($type["ID_TYPEACTIVITE"], (array) $_GET["types_activites"])) echo 'selected' ?>><?php echo $type["LIBELLE_TYPE"] . ' - ' . $type["LIBELLE_ACTIVITE"] ?></option>
+						</optgroup>
                     <?php endforeach ?>
                 </select>
             </span>
@@ -196,7 +198,7 @@
             e.preventDefault();
             $('#zone_de_recherche_modal').modal();
         });
-        
+
          $('#zone_de_recherche_reset').click(function(e){
             e.preventDefault();
             $("input[name='zone_de_recherche_text']").val("Département");
@@ -205,7 +207,7 @@
             $("input[name='city']").val("");
             $("input[name='street']").val("");
         });
-        
+
 
 		// Auto complétion de la ville
         $("form#zone_de_recherche_modal input[name='commune_ac']").autocomplete("/api/1.0/adresse/get_communes", {
