@@ -87,6 +87,9 @@
                     $this->select
                          ->from(array("d" => "dossier"))
                          ->columns(array(
+                             "NB_PJ" => new Zend_Db_Expr("(SELECT COUNT(dossierpj.ID_DOSSIER)
+                                 FROM dossierpj
+                                 WHERE dossierpj.ID_DOSSIER = d.ID_DOSSIER)"),
                             "NB_DOSS_LIES" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
