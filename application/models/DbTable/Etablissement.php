@@ -283,7 +283,7 @@
             $search = new Model_DbTable_Search;
             $search->setItem("etablissement");
             $search->setCriteria("avis.ID_AVIS", 2);
-            $search->setCriteria("etablissementinformations.ID_GENRE", array(2,3));
+            $search->setCriteria("etablissementinformations.ID_GENRE", array(2));
             $search->setCriteria("etablissementinformations.ID_STATUT", 2);
             if ($numInseeCommune) {
                 $search->setCriteria("etablissementadresse.NUMINSEE_COMMUNE", $numInseeCommune);
@@ -305,7 +305,7 @@
             $search->setCriteria("utilisateur.ID_UTILISATEUR IS NULL");
             $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
              //etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
-            return $search->run(false, null, false)->toArray(); 
+            return $search->run(false, null, false)->toArray();
         }
 
         public function listeErpOuvertsSansProchainesVisitePeriodiques($idsCommission)
@@ -331,10 +331,10 @@
             }
             $search->having("nextvisiteyear < YEAR(NOW())");
              //etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
-            $etablissements_isoles = $search->run(false, null, false)->toArray(); 
-            
+            $etablissements_isoles = $search->run(false, null, false)->toArray();
+
             return $etablissements_isoles;
-            
+
         }
 
 
