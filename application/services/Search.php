@@ -28,7 +28,7 @@ class Service_Search
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
-
+        
         // Identifiant de la recherche
         $search_id = 'search_etablissements_' . md5(serialize(func_get_args()));
 
@@ -70,9 +70,11 @@ class Service_Search
 
                 // Vincent MICHEL le 12/11/2014 : retrait de cette clause qui tue les performances
                 // sur la recherche. Je n'ai pas vu d'impact sur le retrait du group by.
-                //->group("e.ID_ETABLISSEMENT")
+                // Cyprien DEMAEGDT le 03/08/2015 : rétablissement de la clause pour résoudre le
+                // problème de duplicité d'établissements dans les résultats de recherche (#1300)
+                ->group("e.ID_ETABLISSEMENT")
                 ;
-
+            
             // Critères : nom de l'établissement
             if($label !== null) {
                 
