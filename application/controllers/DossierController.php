@@ -759,85 +759,6 @@ class DossierController extends Zend_Controller_Action
                 echo $this->_getParam('numPresc');
                 $dbPrescDossier = new Model_DbTable_PrescriptionDossier();
             break;
-            case 'showListeDossierEtab':
-                //On place dans un tableau chacun des idEtablissement liés au dossier
-                $listeEtab = explode("-", $this->_getParam('idListeEtab'));
-
-                //Pour chacun des établissement on va récuperer les dossiers concernés
-                $dbDossier = new Model_DbTable_Dossier();
-                $listeDossierEtab = array();
-                foreach ($listeEtab as $lib => $val) {
-                    $listeDossierEtab[$val] = $dbDossier->getDossierEtab($val,$this->_getParam('idDossier'));
-                }
-                $this->view->idDossier = $this->_getParam('idDossier');
-                $this->view->listeEtab = $listeEtab;
-                $this->view->listeDossierEtab = $listeDossierEtab;
-
-            break;
-            case 'showDossiersLies':
-                //On commence par récuperer les dossiers liés à celui dans lequel on est
-                $dbDossierLie = new Model_DbTable_DossierLie();
-                $this->listeDossierLies = $dbDossierLie->getDossierLie($this->_getParam('idDossier'));
-
-                $dbDossier = new Model_DbTable_Dossier();
-
-                foreach ($this->listeDossierLies as $numrez => $attr) {
-                    //on parcour chacun dossiers liers pour en récupérer les informations à afficher
-                    if ($this->_getParam('idDossier') == $attr['ID_DOSSIER1']) {
-                        $dossierToShow = $attr['ID_DOSSIER2'];
-                    } elseif ($this->_getParam('idDossier') == $attr['ID_DOSSIER2']) {
-                        $dossierToShow = $attr['ID_DOSSIER1'];
-                    }
-
-                    $infosEtabDossier = $dbDossier->getEtablissementDossier($dossierToShow);
-
-                    $infosDossier = $dbDossier->getDossierTypeNature($dossierToShow);
-
-                    $ligneDossierString = "
-                        <div class='grid_14 alpha'>
-                            <a href='/dossier/index/id/".$infosDossier[0]['ID_DOSSIER']."'>[
-                    ";
-                    $nbEtabConcerne = count($infosEtabDossier);
-
-                    foreach ($infosEtabDossier as $gne => $val) {
-                        $ligneDossierString .= $val["LIBELLE_ETABLISSEMENTINFORMATIONS"];
-                        if ($nbEtabConcerne > 1) {
-                            $ligneDossierString .= " / ";
-                        }
-                        $nbEtabConcerne--;
-                    }
-
-                    $ligneDossierString .= "
-                            ] ".$infosDossier[0]['OBJET_DOSSIER']." (".$infosDossier[0]['LIBELLE_DOSSIERTYPE']." / ".$infosDossier[0]['LIBELLE_DOSSIERNATURE'].") </a>
-                    ";
-                    $ligneDossierString .= "
-                            <input type='hidden' value='".$attr['ID_DOSSIERLIE']."' name='idDossierLie'>
-                            <span>
-                                <button class='deleteLienDossier' >Supprimer le lien avec ce dossier</button>
-                            </span>
-                            <span style='display:none;' >
-                                <button class='confirmDeleteLienDossier' >Supprimer le lien avec ce dossier</button>
-                                <button class='cancelDeleteLienDossier' >Annuler</button>
-                            </span>
-                        </div>
-
-                    ";
-                    echo $ligneDossierString;
-                }
-                echo "<br/><br/><br/><br/>";
-
-            break;
-            case 'liaisonDossier':
-                if (count($this->_getParam('idDossierLie')) > 0) {
-                    $dbDossier = new Model_DbTable_DossierLie();
-                    foreach ($this->_getParam('idDossierLie') as $lib => $id) {
-                        $newLien = $dbDossier->createRow();
-                        $newLien->ID_DOSSIER1 = $this->_getParam('idDossier');
-                        $newLien->ID_DOSSIER2 = $id;
-                        $newLien->save();
-                    }
-                }
-            break;
             case "pjPassageCommission":
                 //Permet de distinguer les prescriptions qui motivent un avis défavorable sur le dossier
                 $dbDossierPj = new Model_DbTable_DossierPj();
@@ -1442,7 +1363,7 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
-//Autocomplétion pour selection ABREVIATION
+    //Autocomplétion pour selection ABREVIATION
     public function selectionabreviationAction()
     {
         if (isset($_GET['q'])) {
@@ -1451,7 +1372,7 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
-//Autocomplétion pour selection ETABLISSEMENT
+    //Autocomplétion pour selection ETABLISSEMENT
     public function selectionetabAction()
     {
         //$this->_helper->viewRenderer->setNoRender();
@@ -1488,20 +1409,113 @@ class DossierController extends Zend_Controller_Action
     //Action permettant de lister les établissements et les dossiers liés
     public function lieesAction()
     {
+        $id_dossier = (int) $this->_getParam("id");
+        $this->view->id_dossier = $id_dossier;
+
         $DBdossier = new Model_DbTable_Dossier();
-        $this->view->infosDossier = $DBdossier->find((int) $this->_getParam("id"))->current();
+        $dbDossierLie = new Model_DbTable_DossierLie();
+
+        //Enregistrement des dossiers si necessaire
+        if ($this->_request->isPost()) {
+            try {
+                $post = $this->_request->getPost();
+                if($post['do'] == 'saveDossLink'){
+                    foreach($post['idDossierLie'] as $idDossLink){
+                        $newLink = $dbDossierLie->createRow();
+                        $newLink->ID_DOSSIER1 = $id_dossier;
+                        $newLink->ID_DOSSIER2 = $idDossLink;
+                        $newLink->save();
+                    }
+                }
+            } catch (Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription ('.$e->getMessage().')'));
+            }
+        }
+
+        
+        $this->view->infosDossier = $DBdossier->find($id_dossier)->current();
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
 
         $service_dossier = new Service_Dossier;
-        if($this->_getParam("id")){
-            $this->view->enteteEtab = $service_dossier->getEtabInfos($this->_getParam("id"));
+        if($id_dossier){
+            $this->view->enteteEtab = $service_dossier->getEtabInfos($id_dossier);
         }
 
         $service_etablissement = new Service_Etablissement();
         foreach ($this->view->listeEtablissement    as $etab => $val) {
             $this->view->listeEtablissement[$etab]['pereInfos'] = $service_etablissement->get($val['ID_ETABLISSEMENT']);
         }
+
+        
+        $listeDossierLies = $dbDossierLie->getDossierLie($id_dossier);
+
+        foreach ($listeDossierLies as $numrez => $attr) {
+            //on parcour chacun dossiers liers pour en récupérer les informations à afficher
+            if ($id_dossier == $attr['ID_DOSSIER1']) {
+                $dossierToShow = $attr['ID_DOSSIER2'];
+            } elseif ($id_dossier == $attr['ID_DOSSIER2']) {
+                $dossierToShow = $attr['ID_DOSSIER1'];
+            }
+
+            $listeDossierLies[$numrez]['etabInfo'] = $service_dossier->getEtabInfos($dossierToShow);
+            $listeDossierLies[$numrez]['dossierInfo'] = $DBdossier->getDossierTypeNature($dossierToShow);
+
+        }
+        $this->view->listeDossierLies = $listeDossierLies;
     }
+
+    public function lieesDossAction()
+    {
+        $service_dossier = new Service_Dossier;
+        $service_etablissement = new Service_Etablissement;
+
+        $dbEtablissement = new Model_DbTable_Etablissement;
+        $dbEtablissementDossier = new Model_DbTable_EtablissementDossier;
+
+
+        $idDossier = (int) $this->_getParam("id");
+        if($idDossier){
+            $this->view->enteteEtab = $service_dossier->getEtabInfos($idDossier);
+        }
+
+        
+        $listeEtablissementTest = $dbEtablissementDossier->getEtablissementListe($idDossier);
+
+        //On place dans un tableau chacun des idEtablissement liés au dossier
+        $listeEtab = array();
+        foreach($listeEtablissementTest as $etab){
+            array_push($listeEtab, $etab['ID_ETABLISSEMENT']);
+        }
+
+        //Pour chacun des établissement on va récuperer les dossiers concernés
+        $listeDossierEtab = array();
+
+        foreach ($listeEtab as $lib => $val) {
+            $etabInfo = $dbEtablissement->getInformations($val);
+
+            $listeDossierEtab[$val]['LIBELLE_ETABLISSEMENT'] = $etabInfo['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+            $listeDossierEtab[$val]['dossiers'] = $service_etablissement->getDossiers($val);
+        }
+
+        $this->view->idDossier = $idDossier;
+        $this->view->listeDossierEtab = $listeDossierEtab;
+        $this->view->listeEtab = $listeEtab;
+
+        $dbDossierLie = new Model_DbTable_DossierLie();
+        $this->listeDossierLies = $dbDossierLie->getDossierLie($idDossier);
+
+        $dejaLies = array();
+        foreach ($this->listeDossierLies as $numrez => $attr) {
+            //on parcour chacun dossiers liers pour en récupérer les informations à afficher
+            if ($idDossier  == $attr['ID_DOSSIER1']) {
+                array_push($dejaLies,$attr['ID_DOSSIER2']);
+            } elseif ($this->_getParam('idDossier') == $attr['ID_DOSSIER2']) {
+                array_push($dejaLies,$attr['ID_DOSSIER1']);
+            }
+        }
+        $this->view->dejaLies = $dejaLies;
+    }
+
 
     public function contactAction()
     {

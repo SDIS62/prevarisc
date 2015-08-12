@@ -6,49 +6,6 @@
 			//alert($(this).val());
 			$("#"+$(this).val()).remove();
 		});
-	
-		function loadDossierLies(){
-			//permet de chercher les dossier lier dynamiquement
-			$.ajax({
-				url: "/dossier/fonction",
-				data: "do=showDossiersLies&idDossier="+$("#idDossier").val(),
-				type:"POST",
-				beforeSend: function(){
-					$("#listeDossier").html("<img alt='chargement' src='/images/load.gif'>");
-				},
-				success: function(affichageResultat){
-					//alert(affichageResultat);
-					$("#listeDossier").html(affichageResultat);
-					//On affecte les images sur les bouttons
-					$(".deleteLienDossier").button({
-						icons: {
-							primary: 'ui-icon-trash'
-						},
-						text: false
-					});
-					$(".cancelDeleteLienDossier").button({
-						icons: {
-							primary: 'ui-icon-circle-close'
-						},
-						text: true
-					});
-					
-					$(".confirmDeleteLienDossier").button({
-						icons: {
-							primary: 'ui-icon-circle-check'
-						},
-						text: true
-					});					
-					return false;
-				},
-				error: function()	{
-					return false;
-				}
-				
-			});
-		};
-	
-		loadDossierLies();
 		
 		var dialogDossier = $('<div style="display:none"></div>').appendTo('body');
 		
@@ -87,79 +44,13 @@
 				
 			}
 		});	
-		
-		$("#add").button({
-			icons: {
-				primary: 'ui-icon-circle-plus'
-			},
-			text: true
-		});
-		
-	
-		$("#cancelAdd").button({
-			icons: {
-				primary: 'ui-icon-circle-close'
-			},
-			text: false
-		});
-			
-		$(".deleteChoix").button({
-			icons: {
-				primary: 'ui-icon-trash'
-			},
-			text: false
-		});
-		
-		$(".cancelDelete").button({
-			icons: {
-				primary: 'ui-icon-circle-close'
-			},
-			text: true
-		});
-		
-		$(".confirmDelete").button({
-			icons: {
-				primary: 'ui-icon-circle-check'
-			},
-			text: true
-		});
-		
-		$(".LinkToDossier").button({
-			icons: {
-				primary: 'ui-icon-circle-plus'
-			},
-			text: true
-		}).click(function(){
-			var numEtab = $("[name=idEtablissement]").length;
-			var idListeEtab = "";
-			
-			$("[name=idEtablissement]").each(function(){
-				idListeEtab += $(this).val();
-				numEtab--;
-				if(numEtab != 0)
-					idListeEtab += "-";
-			});
-			//alert(idListeEtab);
-			
-			$.ajax({
-				type: "POST",
-				url: "/dossier/fonction",
-				//data: "do=showListeDossierEtab&numDoc="+$("#NUM_DOCURBA").val()+"&idDossier="+$("#idDossier").val(),
-				data: "do=showListeDossierEtab&idDossier="+$("#idDossier").val()+"&idListeEtab="+idListeEtab,
-				success: function(msg){
-					dialogDossier.html(msg);
-					dialogDossier.dialog("open");
-				}
-			});
 
-		});
-		
 		$("#saisieEtab").toggleText("Saisissez le libelle de l'etablissement");
 		$("#saisieDossier").toggleText("Saisissez le libelle du dossier");
 		
 		function loadInfosEtabs(){
 			//recharge la page pour afficher les établissements correctement
-			window.location.reload();
+			window.location='/dossier/liees/id/'+$('#idDossier').val();
 		}
 		
 		$("#add").live('click',function(){
@@ -240,21 +131,25 @@
 			$(this).parent().hide();
 			$(this).parent().next().show();
 		});
+
+		$(".cancelDelete").live('click',function(){
+			$(this).parent().hide();
+			$(this).parent().prev().show();
+			return false;
+		});
 		
+		//Suppression lien dossier
 		$(".deleteLienDossier").live('click',function(){
 			//Lorsque l'on clique sur le boutton pour supprimer le lien avec le dossier
 			$(this).parent().hide();
 			$(this).parent().next().show();
+			return false;
 		});
-		
-		$(".cancelDelete").live('click',function(){
-			$(this).parent().hide();
-			$(this).parent().prev().show();
-		});
-		
+				
 		$(".cancelDeleteLienDossier").live('click',function(){
 			$(this).parent().hide();
 			$(this).parent().prev().show();
+			return false;
 		});
 		
 		
@@ -270,8 +165,7 @@
 					$(".btn").attr('disabled','disabled');
 				},
 				success: function(affichageResultat){
-					$(divDelete).parent().parent().remove();
-					loadInfosEtabs();
+					window.location='/dossier/liees/id/'+$('#idDossier').val();
 					return false;
 				},
 				error: function()	{
@@ -280,31 +174,28 @@
 			});
 		});
 		
-		$(".confirmDeleteLienDossier").live('click',function(){
+		$(".confirmDeleteLienDossier").click(function(){
 			//Suppression dans la base du lien avec le dossier
-			//alert('fuuuuuu on supp');
-			
-			var idLienDossier = $(this).parent().parent().children("[name=idDossierLie]").val();
-			var divDelete = $(this);
-			//alert(idLienDossier);
-
+			var idLienDossier = $(this).parent().parent().prev().children("[name=idDossierLie]").val();
+			var loadSpan = $(this).parent();
 			$.ajax({
 				url: "/dossier/deleteliendossier",
 				data: "idLienDossier="+idLienDossier,
 				type:"POST",
 				beforeSend: function(){
-					//$("#sortable").html("<img src='/images/template/load/load.gif' />");
+					$(".btn").attr('disabled','disabled');
+					loadSpan.html("<img src='/images/load.gif' />");
 				},
 				success: function(affichageResultat){
-					$(divDelete).parent().parent().remove();
-					loadDossierLies();
+					window.location='/dossier/liees/id/'+$('#idDossier').val();
 					return false;
 				},
 				error: function()	{
 					return false;
 				}
 			});
-
+			
+			return false;
 		});
 		
 		$("#save-liens").live('click',function(){
@@ -317,7 +208,7 @@
 					$(".btn").attr('disabled','disabled');
 				},
 				success: function(affichageResultat){
-					loadInfosEtabs();
+					window.location='/dossier/liees/id/'+$('#idDossier').val();
 					return false;
 				},
 				error: function()	{
@@ -382,11 +273,7 @@
 </script>
 
 <?php
-/*
 
-TRUNCATE TABLE  `etablissementdossier`;
-
-*/
 
 echo "
 	<div>
@@ -441,51 +328,110 @@ echo "
 				if(isset($this->etablissement))
 				{
 					echo $this->partialLoop('dossier/results/etablissement.phtml', $this->etablissement['etablissement_lies']);
+					echo "
+						</ul>
+						<button class='btn' id='save-liens' >Sauvegarder les liaisons</button>
+						</form>
+						<br/><br/><br/><br/>
+					";
 				}			
-				echo "
-					</ul>
-					<button class='btn' id='save-liens' >Sauvegarder les liaisons</button>
-					</form>
-					<br/><br/><br/><br/>
-				";
 			}
-			echo "
+		echo "
 		
 			<h2>Liste des dossiers liés au dossier</h2>
 			<div id='listeDossier'>
+			</div>
+			<div id='dossiersLies'>
+		";
 
+		foreach($this->listeDossierLies as $ref => $dossier){
+			echo "
+				<div class='row-fluid' style='margin-bottom:10px;'>
+                    <div class='span10'>
+                    	<a href='/dossier/index/id/".$dossier['dossierInfo'][0]['ID_DOSSIER']."'>
 			";
-			/*
-			foreach($this->listeDossier as $etab){
+			
+			if(isset($dossier['etabInfo']) && count($dossier['etabInfo']) > 0 ){
+				$nbEtabConcerne = count($dossier['etabInfo']);
+
+				foreach($dossier['etabInfo'] as $etab){
+					echo "[ ".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+					$nbEtabConcerne--;
+					if($nbEtabConcerne > 0)
+						echo ",";
+				}
+				echo " ]";
+			}
+
+			if(isset($dossier['dossierInfo']) && count($dossier['dossierInfo']) > 0){
+				echo " (".$dossier['dossierInfo'][0]['LIBELLE_DOSSIERTYPE']." / ".$dossier['dossierInfo'][0]['LIBELLE_DOSSIERNATURE'].") ";
+				echo $dossier['dossierInfo'][0]['OBJET_DOSSIER'];
+			}
+
+			echo "</a>";
+
+			if($dossier['dossierInfo'][0]['DATECOMM_DOSSIER'] != null)
+            {
+                $date = substr($dossier['dossierInfo'][0]['DATECOMM_DOSSIER'], 0, 10);
+                if($date != '0000-00-00'){
+                    $date = new DateTime(substr($dossier['dossierInfo'][0]['DATECOMM_DOSSIER'],0,10));
+                    $date = date_format($date, 'd/m/Y');
+                }else{
+                    $date = "00/00/0000";
+                }
+                $date_text = "ayant pour date de passage en commission le";
+            }
+            elseif($dossier['dossierInfo'][0]['DATEVISITE_DOSSIER'] != null)
+            {
+                $date = substr($dossier['dossierInfo'][0]['DATEVISITE_DOSSIER'], 0, 10);
+                if($date != '0000-00-00'){
+                    $date = new DateTime(substr($dossier['dossierInfo'][0]['DATEVISITE_DOSSIER'],0,10));
+                    $date = date_format($date, 'd/m/Y');
+                }else{
+                    $date = "00/00/0000";
+                }
+                $date_text = "ayant pour date de visite le";
+            }
+            else
+            {
+                $date = substr($dossier['dossierInfo'][0]['DATEINSERT_DOSSIER'], 0, 10);
+                if($date != '0000-00-00'){
+                    $date = new DateTime(substr($dossier['dossierInfo'][0]['DATEINSERT_DOSSIER'],0,10));
+                    $date = date_format($date, 'd/m/Y');
+                }else{
+                    $date = "00/00/0000";
+                }
+                $date_text = "créé le";
+            }
+            echo "<small class='muted'>" . $date_text . " " . $date . "</small>";
+
+			if($this->infosDossier['VERROU_DOSSIER'] == 0){
 				echo "
-					<div class='grid_14 alpha'>
-						<a href='/etablissement/index/id/".$etab['ID_ETABLISSEMENT']."' >".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']." &nbsp; ( ".$etab['LIBELLE_GENRE']." )</a>
-					<input type='hidden' name='idEtablissementDossier' value='".$etab['ID_ETABLISSEMENTDOSSIER']."' />
-					&nbsp;&nbsp;
-					<span>
-						<button class='deleteChoix' >Supprimer l'etablissement</button>
-					</span>
-					<span style='display:none;' >
-						<button class='confirmDelete' >Supprimer l'etablissement</button>
-						<button class='cancelDelete' >Annuler</button>
-					</span>
-					</div>
-					<hr class='clear'/>
+					<input type='hidden' value='".$dossier['ID_DOSSIERLIE']."' name='idDossierLie'>
+				</div>
+				<div class='span2'>
+                    <span>
+                        <button class='btn deleteLienDossier' ><i class='icon-trash'></i>&nbsp;Supprimer la liaison</button>
+                    </span>
+                    <span style='display:none;' >
+                        <button class='btn confirmDeleteLienDossier btn-warning' >Confirmer la suppression</button>
+                        <button class='btn cancelDeleteLienDossier' >Annuler</button>
+                    </span>
 				";
 			}
-			*/
-			echo "	
+			echo "
 				</div>
-			<br/>
+				</div>
 			";
+		}
+		echo "	
+			</div>
+			<br/>
+		";
 			if($this->infosDossier['VERROU_DOSSIER'] == 0){
 				echo "
 					<div class='grid_14 alpha form'>
-						<button class='LinkToDossier btn' >Lier à un dossier</button>
-						<!--
-						<input type='radio' name='linkType' value='dossier'>Dossier<br/><br/>
-						<input type='text' id='saisieDossier' value='' style='width:250px;display:none;' />
-						-->
+						<a class='btn' href='/dossier/liees-doss/id/".$this->infosDossier['ID_DOSSIER']."' >Lier à un dossier</a>
 					</div>
 				";
 			}

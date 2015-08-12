@@ -1,0 +1,88 @@
+﻿<div class='row' >
+<?php
+	echo "
+		<form name='listeDossierCheckBox' method='POST' action='/dossier/liees/id/".$this->idDossier."'>
+		<input type='hidden' name='do' id='do' value='saveDossLink' />
+		<div style='float:right;'>
+			<a class='btn' href='/dossier/liees/id/".$this->idDossier."'>Annuler</a>
+			<input type='submit' class='btn btn-success' name='saveLink' value='Sauvegarder les liaisons' />
+		</div>
+	";
+	echo "
+		<div class='span12'>
+			<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />
+	";
+		foreach($this->listeEtab as $lib => $val){			
+			echo "
+				<h3>". $this->listeDossierEtab[$val]['LIBELLE_ETABLISSEMENT']."</h3>
+				<div style='margin:10px;'>
+			";
+			if(count($this->listeDossierEtab[$val]["dossiers"]["visites"]) > 0){
+				echo "
+					Visite(s) <button  class='btn more'><i class='icon-plus'></i></button><button class='btn less' style='display:none;'><i class='icon-minus'></i></button>
+					<ul style='display:none;'>
+				";
+				echo $this->partialLoop('dossier/results/dossierEtab.phtml', $this->listeDossierEtab[$val]["dossiers"]["visites"]);
+				echo "</ul>";
+			}
+			echo "
+				</div>
+				<div style='margin:10px;'>
+			";
+			if(count($this->listeDossierEtab[$val]["dossiers"]["etudes"]) > 0){
+				echo "
+					Etude(s) <button  class='btn more'><i class='icon-plus'></i></button><button class='btn less' style='display:none;'><i class='icon-minus'></i></button>
+					<ul style='display:none;'>
+				";
+				echo $this->partialLoop('dossier/results/dossierEtab.phtml', $this->listeDossierEtab[$val]["dossiers"]["etudes"]);
+				echo "</ul>";
+			}
+			echo "
+				</div>
+				<div style='margin:10px;'>
+			";
+			if(count($this->listeDossierEtab[$val]["dossiers"]["autres"]) > 0){
+				echo "
+					Autre(s) <button  class='btn more'><i class='icon-plus'></i></button><button class='btn less' style='display:none;'><i class='icon-minus'></i></button>
+					<ul style='display:none;'>
+				";
+				echo $this->partialLoop('dossier/results/dossierEtab.phtml', $this->listeDossierEtab[$val]["dossiers"]["autres"]);
+				echo "</ul>";
+			}
+			echo "
+				</div>
+			";
+		}
+	echo "
+		</div>
+		</form>
+	";
+
+?>
+</div>
+	<script>
+		$('.more').click(function(){
+			$(this).hide();
+			$(this).next().show();
+			$(this).next().next().show();
+			return false;
+		});
+
+		$('.less').click(function(){
+			$(this).hide();
+			$(this).prev().show();
+			$(this).next().hide();
+			return false;
+		});
+
+		//on desactive les dossiers déjà liés et le dossier sur lequel on est
+		$("input:checkbox[value="+$('#idDossier').val()+"]").attr("disabled", "disabled");
+
+<?php
+	foreach($this->dejaLies as $idDoss){
+		?>
+			$("input:checkbox[value="+<?php echo $idDoss; ?>+"]").attr("disabled", "disabled");
+		<?php
+	}
+?>
+	</script>
