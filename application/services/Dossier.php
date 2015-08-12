@@ -716,8 +716,6 @@ class Service_Dossier
             return $this->listeEtablissement;
         }
 
-
-
     }
 
 }
