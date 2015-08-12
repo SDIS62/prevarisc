@@ -173,7 +173,10 @@ try{
                 $date = "";
             }
         } 
-        addChamp($docAjout, 'datedoc', $date);
+        if(isset($date) && $date != '')
+            addChamp($docAjout, 'datedoc', $date);
+        else
+            addChamp($docAjout, 'datedoc', '');
         $docAjout->merge();
     }
     $odf->mergeSegment($docAjout);
@@ -357,21 +360,38 @@ function addPrescriptionCC($listePrescription,$type,$odf){
 
 if($this->id_typeactivite == 29){
     try{
-        $cellulesPresc = $odf->setSegment('cellulesPresc');
-        foreach($this->celluleDossier as $cellulesInfos => $cellule){
-            addChamp($cellulesPresc, 'libelleCellule', $cellule['LIBELLE_ETABLISSEMENTINFORMATIONS']);
-            if($this->idDossier == $cellule['ID_DOSSIER']){
-                addPrescriptionCC($cellule['regl'],0,$cellulesPresc);    
-            }else{
-                $val = array();
-                addPrescriptionCC($val,0,$cellulesPresc);    
+        if(isset($this->celluleDossier)){
+            $cellulesPresc = $odf->setSegment('cellulesPresc');
+            foreach($this->celluleDossier as $cellulesInfos => $cellule){
+                addChamp($cellulesPresc, 'libelleCellule', $cellule['LIBELLE_ETABLISSEMENTINFORMATIONS']);
+                if($this->idDossier == $cellule['ID_DOSSIER']){
+                    addPrescriptionCC($cellule['regl'],0,$cellulesPresc);    
+                }else{
+                    $val = array();
+                    addPrescriptionCC($val,0,$cellulesPresc);    
+                }
+                
+                addPrescriptionCC($cellule['exploit'],1,$cellulesPresc);
+                addPrescriptionCC($cellule['amelio'],2,$cellulesPresc);
+                $cellulesPresc->merge();
             }
-            
-            addPrescriptionCC($cellule['exploit'],1,$cellulesPresc);
-            addPrescriptionCC($cellule['amelio'],2,$cellulesPresc);
-            $cellulesPresc->merge();
+            $odf->mergeSegment($cellulesPresc);
+        }else if(isset($this->celluleDossierLevee)){
+
+
+            $cellulesPresc = $odf->setSegment('cellulesPresc');
+            foreach($this->celluleDossierLevee as $celluleKey => $cellule){
+
+                addChamp($cellulesPresc, 'libelleCellule', $cellule['LIBELLE_ETABLISSEMENTINFORMATIONS']);
+                foreach($cellule['dossiers']['etudes'] as $dossierKey => $dossier){
+                    addPrescriptionCC($dossier['regl'],0,$cellulesPresc);
+                    addPrescriptionCC($dossier['exploit'],1,$cellulesPresc);
+                    addPrescriptionCC($dossier['amelio'],2,$cellulesPresc);
+                    $cellulesPresc->merge();
+                }
+            }
+            $odf->mergeSegment($cellulesPresc);
         }
-        $odf->mergeSegment($cellulesPresc);
     } catch (OdfException $e) {
         echo "<span class='label label-warning'>Le document que vous avez sélectionné pour la génération ne correspond pas à un centre commercial</span><br/><br/>";
     }

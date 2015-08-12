@@ -1813,14 +1813,9 @@ class DossierController extends Zend_Controller_Action
         $dateDuJour = new Zend_Date();
         $this->view->dateDuJour = $dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
 
-        /******
-        /
-        /RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
-        /
-        ******/
+        //RECUPERATIONS DES INFORMATIONS SUR L'ETABLISSEMENT
         $service_etablissement = new Service_Etablissement;
         $this->view->etablissementInfos = $service_etablissement->get($idEtab);
-
 
         $model_etablissement = new Model_DbTable_Etablissement();
         $etablissement = $model_etablissement->find($idEtab)->current();
@@ -1927,11 +1922,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->etablissementAdresse = $adresse;
         }
 
-        /******
-        /
-        /RECUPERATIONS DES INFORMATIONS SUR LE DOSSIER
-        /
-        ******/
+        //RECUPERATIONS DES INFORMATIONS SUR LE DOSSIER
 
         //Récupération des documents d'urbanisme
         $DBdossierDocUrba = new Model_DbTable_DossierDocUrba();
@@ -2188,24 +2179,75 @@ class DossierController extends Zend_Controller_Action
 
         $service_dossier = new Service_Dossier();
         $this->view->id_typeactivite = $object_informations['ID_TYPEACTIVITE'];
-        
-        /*
-        PARTIE PRESCRIPTION
-        */
-        //Pour les centres commerciaux les dossiers (id = 29) ayant pour nature VP,VI et VC
+
+        //PARTIE PRESCRIPTION
+        //Cas particulier pour les centres commerciaux (id_typeactivite = 29)
+        //Les dossiers ayant pour nature VP,VI et VC  21,26,24,29,23,28
         $natureCC = array(21,26,24,29,23,28);
+        //Les dossiers ayant pour nature LR et LP 7,19
+        $natureCCL = array(7,19);
+
         if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC)){
-            //cas d'un centre commercial on récupère toute les cellules
+            //On récupère toutes les cellules
             $idDateCommAffect = $affectDossier['ID_DATECOMMISSION_AFFECT'];
             $listeDossierConcerne = $dbAffectDossier->getDossierNonAffect($idDateCommAffect);
-            $cptIdArray = 0;
-            foreach($listeDossierConcerne as $dossier){
-                $listeDossierConcerne[$cptIdArray]['regl'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],0);
-                $listeDossierConcerne[$cptIdArray]['exploit'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],1);
-                $listeDossierConcerne[$cptIdArray]['amelio'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],2);
-                $cptIdArray++;
+            if(isset($affectDossier['ID_DATECOMMISSION_AFFECT']) && $affectDossier['ID_DATECOMMISSION_AFFECT'] != ''){
+                $cptIdArray = 0;
+                foreach($listeDossierConcerne as $dossier){
+                    $listeDossierConcerne[$cptIdArray]['regl'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],0);
+                    $listeDossierConcerne[$cptIdArray]['exploit'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],1);
+                    $listeDossierConcerne[$cptIdArray]['amelio'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],2);
+                    $cptIdArray++;
+                }
+                $this->view->celluleDossier = $listeDossierConcerne;
             }
-            $this->view->celluleDossier = $listeDossierConcerne;
+        }elseif($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCCL)){
+            $dateCommGen = $this->view->infosDossier['DATECOMM_DOSSIER'];
+            //On récupère toutes les cellules
+            $cellulesListe = $this->view->etablissementInfos['etablissement_lies'];
+            foreach($cellulesListe as $celluleKey => $cellule){
+                //Si la cellule n'a pas un statut : fermé ou erreur
+                if($cellule['ID_STATUT'] != 3 && $cellule['ID_STATUT'] != 99){
+                    //on récupère les dossiers de la cellule
+                    $dossiers = $service_etablissement->getDossiers($cellule['ID_ETABLISSEMENT']);
+                    $cellulesListe[$celluleKey]['dossiers'] = $dossiers;
+
+                    unset($cellulesListe[$celluleKey]['dossiers']['visites']);
+                    unset($cellulesListe[$celluleKey]['dossiers']['autres']);
+
+                    $nbEtude = 0;
+
+                    foreach($dossiers['etudes'] as $dossierKey => $dossier){
+                        //Si les natures correspondent
+                        if($dossier['ID_DOSSIERNATURE'] == $dossierNature["ID_NATURE"] && ( isset($dossier['DATECOMM_DOSSIER']) && $dossier['DATECOMM_DOSSIER'] != '')){
+                            if(substr($dossier['DATECOMM_DOSSIER'], 0,10) == $dateCommGen){
+                                $nbEtude++;
+                                //on pousse les prescriptions
+                                //echo "Y a bon ".$cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]['ID_DOSSIER'];
+                                $cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]['regl'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],0);
+                                $cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]['exploit'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],1);
+                                $cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]['amelio'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],2);
+                            }else{
+                                unset($cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]);
+                            }
+                            //echo substr($dossier['DATECOMM_DOSSIER'], 0,10)." : ".$dateCommGen."<br/>";
+                        }else{
+                            //on supprime du tableau les dossiers qui ne correspondent pas
+                            unset($cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]);
+                        }
+                    }
+
+
+                    if($nbEtude == 0){
+                        unset($cellulesListe[$celluleKey]);
+                    }
+
+                }else{
+                    //on supprime du tableau les cellules qui ne correspondent pas
+                    unset($cellulesListe[$celluleKey]);
+                }
+            }
+            $this->view->celluleDossierLevee = $cellulesListe;
         }else{
             $this->view->prescriptionReglDossier = $service_dossier->getPrescriptions((int) $idDossier,0);
             $this->view->prescriptionExploitation = $service_dossier->getPrescriptions((int) $idDossier,1);
@@ -2272,16 +2314,12 @@ class DossierController extends Zend_Controller_Action
         $linkPj->ID_PIECEJOINTE = $nouvellePJ->ID_PIECEJOINTE;
         $linkPj->save();
 
-        /*
-        PARTIE TEXTES APPLICABLES
-        */
+        //PARTIE TEXTES APPLICABLES
         //on recupere tout les textes applicables qui ont été cochés dans le dossier
         $dbDossierTextesAppl = new Model_DbTable_DossierTextesAppl();
         $this->view->listeTextesAppl = $dbDossierTextesAppl->recupTextesDossierGenDoc($this->_getParam('idDossier'));
 
-        /*
-        DATE DE LA DERNIERE VISITE PERIODIQUE
-        */
+        //DATE DE LA DERNIERE VISITE PERIODIQUE
         $dateVisite = $this->view->infosDossier["DATEVISITE_DOSSIER"];
         if ($dateVisite != '' && isset($dateVisite)) {
             $dateLastVP = $DBdossier->findLastVpCreationDoc($idEtab,$idDossier,$dateVisite);
