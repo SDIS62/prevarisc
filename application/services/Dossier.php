@@ -336,11 +336,15 @@ class Service_Dossier
             if ($ue['ID_PRESCRIPTION_TYPE']) {
                 //cas d'une prescription type
                 $assoc = $dbPrescDossierAssoc->getPrescriptionTypeAssoc($ue['ID_PRESCRIPTION_TYPE'],$ue['ID_PRESCRIPTION_DOSSIER']);
-                array_push($prescriptionArray, $assoc);
+                if(sizeof($assoc)>0){
+                    array_push($prescriptionArray, $assoc);
+                }
             } else {
                 //cas d'une prescription particulière
                 $assoc = $dbPrescDossierAssoc->getPrescriptionDossierAssoc($ue['ID_PRESCRIPTION_DOSSIER']);
-                array_push($prescriptionArray, $assoc);
+                if(sizeof($assoc)>0){
+                    array_push($prescriptionArray, $assoc);
+                }
             }
         }
 
