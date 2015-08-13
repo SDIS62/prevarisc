@@ -260,10 +260,7 @@ class Service_Search
                 ->joinLeft("datecommission","datecommission.ID_DATECOMMISSION = dossieraffectation.ID_DATECOMMISSION_AFFECT",null)
                 ->joinLeft("dossierpreventionniste","dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER",null)
                 ->joinLeft(array("ea" => "etablissementadresse"),"ea.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT",null)
-
-                // Vincent MICHEL le 12/11/2014 : retrait de cette clauses qui tuent les performances
-                // modification de la jointure avec etablissementinformations pour éviter les doublons
-                //->group("d.ID_DOSSIER")
+                ->group("d.ID_DOSSIER")
                 ;
 
             // Critères : numéro de doc urba
