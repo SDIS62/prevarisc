@@ -77,7 +77,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     // Dossier type "Visite de commission" et "Groupe de visite"
                 ->setCriteria("d.TYPE_DOSSIER", array(2,3))
                     // Dossier nature "périodique" et autres types donnant avis de type "Visite de commission" et "Groupe de visite"
-                ->setCriteria("ID_NATURE", array(21,23,24,26,28,29,47,48))
+                ->setCriteria("ID_NATURE", array(21,26,47,48))
                 ->order('DATEVISITE_DOSSIER DESC')
                 ->limit(1)
                 ->run(false, null, false)->toArray();
