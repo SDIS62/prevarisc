@@ -210,7 +210,6 @@ echo "
 ";
 
 foreach($this->listeNatures as $index => $nature){
-
 	echo "
 		<div id='".$nature["ID_NATURE"]."' class='nature row-fluid'>	
 			<h4 class='hideDocConsulte' >Liste des documents consultés concernant la nature '".$nature["LIBELLE_DOSSIERNATURE"]."'</h4>
@@ -219,7 +218,13 @@ foreach($this->listeNatures as $index => $nature){
 			<p class='span2'><strong>Date</strong></p>
 			<br class='clear' />
 			<ul id='listeDocs_".$nature["ID_NATURE"]."'>";
-	
+
+
+	//on boucle sur les documents ajoutés à afficher
+	foreach($this->listeDocsAjout[$nature["ID_NATURE"]] as $documentAjout)
+		echo $this->afficheDoc($this->infosDossier['VERROU_DOSSIER'],$nature["ID_NATURE"],$documentAjout['ID_DOCAJOUT'],$documentAjout['LIBELLE_DOCAJOUT'],$documentAjout['REF_DOCAJOUT'],$documentAjout['DATE_DOCAJOUT'],"_aj");
+
+
 	//on boucle sur les documents de base à afficher
 	if(count($this->listeDocs[$nature["ID_NATURE"]]) > 0)
 	{
@@ -244,9 +249,6 @@ foreach($this->listeNatures as $index => $nature){
 		}
 	}
 
-	//on boucle sur les documents ajoutés à afficher
-	foreach($this->listeDocsAjout[$nature["ID_NATURE"]] as $documentAjout)
-		echo $this->afficheDoc($this->infosDossier['VERROU_DOSSIER'],$nature["ID_NATURE"],$documentAjout['ID_DOCAJOUT'],$documentAjout['LIBELLE_DOCAJOUT'],$documentAjout['REF_DOCAJOUT'],$documentAjout['DATE_DOCAJOUT'],"_aj");
 
 	if($this->infosDossier['VERROU_DOSSIER'] == 0){
 		echo "</ul>
