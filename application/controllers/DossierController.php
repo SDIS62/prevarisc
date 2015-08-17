@@ -941,6 +941,19 @@ class DossierController extends Zend_Controller_Action
 
             $idNature = $this->_getParam("selectNature");
 
+            
+            //Si le dossier est une levée de prescription ou de reserve on ajoute 5 "documents consultés" de type : Attestation de
+            if($this->_getParam('do') == 'new' && ($idNature == 7 || $idNature == 19) ){
+                $dbListeDocAjout = new Model_DbTable_ListeDocAjout();
+                for($i = 0; $i <5; $i++){
+                    $docAttestation = $dbListeDocAjout->createRow();
+                    $docAttestation->LIBELLE_DOCAJOUT = "Attestation de";
+                    $docAttestation->ID_NATURE = $idNature;
+                    $docAttestation->ID_DOSSIER = $idDossier;
+                    $docAttestation->save();
+                }
+            }
+
             $DBetablissementDossier = new Model_DbTable_EtablissementDossier();
             if ($this->_getParam('do') == 'new') {
                 if (isset($_POST['idEtablissement']) &&  $_POST['idEtablissement'] != "") {
@@ -1115,17 +1128,6 @@ class DossierController extends Zend_Controller_Action
                 }
             }
 
-            //Si le dossier est une levée de prescription ou de reserve on ajoute 5 "documents consultés" de type : Attestation de
-            if($this->_getParam('do') == 'new' && ($idNature == 7 || $idNature == 19) ){
-                $dbListeDocAjout = new Model_DbTable_ListeDocAjout();
-                for($i = 0; $i <5; $i++){
-                    $docAttestation = $dbListeDocAjout->createRow();
-                    $docAttestation->LIBELLE_DOCAJOUT = "Attestation de";
-                    $docAttestation->ID_NATURE = $idNature;
-                    $docAttestation->ID_DOSSIER = $idDossier;
-                    $docAttestation->save();
-                }
-            }
             //GESTION DE LA RECUPERATION DES DOCUMENTS CONSULTES DE LA PRECEDENTE VP SI IL EN EXISTE UNE (UNIQUEMENT EN CREATION DE DOSSIER)
             if ((21 == $idNature || 26 == $idNature) &&  $_POST['idEtablissement'] != "" && $this->_getParam('do') == 'new') {
                 $lastVP = $DBdossier->findLastVp($this->_getParam("idEtablissement"));
@@ -1571,7 +1573,11 @@ class DossierController extends Zend_Controller_Action
                 }
             } elseif (1 == $dossierType['TYPE_DOSSIER']) {
                 //cas d'une etude
-                $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocEtude();
+                if($nature['ID_NATURE'] == 19){
+                    $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisite();
+                }else{
+                    $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocEtude();
+                }
             } else {
                 $listeDocConsulte = 0;
             }
