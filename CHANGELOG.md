@@ -77,6 +77,7 @@ Corrections :
 * Correction des simples quotes non gérées sur les coordonnées de groupements de communes et maires de communes
 * Correction de la disparition du groupement de commune de la liste après enregistrement
 * Correction de l'objet du dossier qui restait même après avoir changé de nature
+* Correction de la liaison d'un dossier à un établissement qui ne répercutait pas son avis
 
 ## 2.3
 
