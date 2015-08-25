@@ -801,6 +801,7 @@ class DossierController extends Zend_Controller_Action
 
 
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $service_dossier = new Service_Dossier();
 
         try {
 
@@ -989,115 +990,6 @@ class DossierController extends Zend_Controller_Action
                 $nature = $DBdossierNature->find($natureCheck['ID_DOSSIERNATURE'])->current();
                 $nature->ID_NATURE = $idNature;
                 $nature->save();
-            }
-
-            //On met le champ ID_DOSSIER_DONNANT_AVIS de établissement avec l'ID du dossier que l'on vient d'enregistrer dans les cas suivant
-            if ($this->_getParam("AVIS_DOSSIER_COMMISSION") && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)) {
-                $MAJEtab = 0;
-               if ($this->_getParam("TYPE_DOSSIER") == 1 && $this->_getParam("DATECOMM_DOSSIER") != "" && in_array($idNature, array(19, 7, 17))) {
-                    //Cas d'une étude uniquement dans le cas d'une levée de reserve
-                    $MAJEtab = 1;
-                } elseif ($this->_getParam("TYPE_DOSSIER") == 2 && $this->_getParam("DATEVISITE_DOSSIER") != "" &&(21 == $idNature || 23 == $idNature || 24 == $idNature || 47 == $idNature)) {
-                    //Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
-                    $MAJEtab = 1;
-                } elseif ($this->_getParam("TYPE_DOSSIER") == 3 && $this->_getParam("DATECOMM_DOSSIER") != "" && (26 == $idNature || 28 == $idNature || 29 == $idNature || 48 == $idNature)) {
-                    //Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
-                    $MAJEtab = 1;
-                }
-
-                $dbEtab = new Model_DbTable_Etablissement();
-                $service_etablissement = new Service_Etablissement();
-
-                if (1 == $MAJEtab) {
-                    if ($this->_getParam('do') == 'new') {
-                        $listeEtab = array(array(
-                            'ID_ETABLISSEMENT' => $this->_getParam('idEtablissement'),
-                        )); 
-                    } else {
-                        $listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
-                    }
-
-                    foreach ($listeEtab as $val => $ue) {
-                        $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
-                        //Avant la mise à jour du champ ID_DOSSIER_DONNANT_AVIS on s'assure que la date de l'avis est plus récente
-                        if(isset($etabToEdit->ID_DOSSIER_DONNANT_AVIS) && $etabToEdit->ID_DOSSIER_DONNANT_AVIS != NULL) {
-                            $dossierAncienAvis = $DBdossier->find($etabToEdit->ID_DOSSIER_DONNANT_AVIS)->current();
-
-                            if($dossierAncienAvis->TYPE_DOSSIER == 1 || $dossierAncienAvis->TYPE_DOSSIER == 3){
-
-                                if($dossierAncienAvis->DATECOMM_DOSSIER != NULL && $dossierAncienAvis->DATECOMM_DOSSIER != ''){
-                                    $dateAncienAvis = $dossierAncienAvis->DATECOMM_DOSSIER;
-                                }else{
-                                    $dateAncienAvis = $dossierAncienAvis->DATEINSERT_DOSSIER;
-                                }
-
-                                if($nouveauDossier->DATECOMM_DOSSIER != NULL && $nouveauDossier->DATECOMM_DOSSIER != ''){
-                                    $dateNewAvis = $nouveauDossier->DATECOMM_DOSSIER;
-                                }else{
-                                    $dateNewAvis = $nouveauDossier->DATEINSERT_DOSSIER;
-                                }
-                            }else if($dossierAncienAvis->TYPE_DOSSIER == 2){
-                                if($dossierAncienAvis->DATEVISITE_DOSSIER != NULL && $dossierAncienAvis->DATEVISITE_DOSSIER != ''){
-                                    $dateAncienAvis = $dossierAncienAvis->DATEVISITE_DOSSIER;
-                                }else{
-                                    $dateAncienAvis = $dossierAncienAvis->DATEINSERT_DOSSIER;
-                                }
-                                if($nouveauDossier->DATEVISITE_DOSSIER != NULL && $nouveauDossier->DATEVISITE_DOSSIER != ''){
-                                    $dateNewAvis = $nouveauDossier->DATEVISITE_DOSSIER;
-                                }else{
-                                    $dateNewAvis = $nouveauDossier->DATEINSERT_DOSSIER;
-                                }
-                            }
-
-                            $dateAncienAvis = new Zend_Date($dateAncienAvis, Zend_Date::DATES);
-                            $dateNewAvis = new Zend_Date($dateNewAvis, Zend_Date::DATES);
-
-                            if($dateNewAvis > $dateAncienAvis || $dateNewAvis == $dateAncienAvis){
-                                $MAJEtab = 1;
-                            }else{
-                                $MAJEtab = 0;
-                            }
-
-                        }else{
-                            $MAJEtab == 1;
-                        }
-
-                        if(  $MAJEtab == 1 ){
-                            $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-                            $etabToEdit->save();
-                            $cache->remove('etablissement_id_'.$ue['ID_ETABLISSEMENT']);
-
-                            if ($this->_getParam('repercuterAvis'))
-                            {
-                                $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
-                                foreach ($etablissementInfos["etablissement_lies"] as $etabEnfant) {
-                                    if($etabEnfant['ID_STATUT'] == "2"){
-                                        $etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
-                                        $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $idDossier;
-                                        $etabToEdit->save();
-                                        $cache->remove('etablissement_id_'.$etabEnfant['ID_ETABLISSEMENT']);
-                                    }
-                                }
-                            }
-
-                            // AVERTISSEMENT SUR L'OUVERTURE D'UN ETABLISSEMENT A EFFECTUER
-                            // Dans le cas d'une visite avant ouverture avec avis de commission positif
-                            if ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 && in_array($idNature, array(47, 48)))
-                            {
-                                $etabInformation = $dbEtab->getInformations($ue["ID_ETABLISSEMENT"]);
-                                // Si l'établissement est en statut projet, et uniquement ce cas
-                                if ($etabInformation && 1 == $etabInformation->ID_STATUT) {
-                                    $this->_helper->flashMessenger(array(
-                                        'context' => 'warning',
-                                        'title' => 'Avertissement',
-                                        'message' => "La visite d'avant ouverture étant favorable, vous devriez passer le statut de l'établissement <a title='Ouvrir' href='/etablissement/edit/id/".$ue["ID_ETABLISSEMENT"]."'>".$etabInformation["LIBELLE_ETABLISSEMENTINFORMATIONS"]."</a> à 'ouvert' (statut actuellement à 'projet').",
-                                    ));
-                                }
-                            }
-                        }
-                    }
-                }
-
             }
 
             //GESTION DE LA RECUPERATION DES TEXTES APPLICABLES DANS CERTAINS CAS
@@ -1351,7 +1243,44 @@ class DossierController extends Zend_Controller_Action
                         $dateDelete->delete();
                     }
                 }
-            }           
+            } 
+            
+            //On met le champ ID_DOSSIER_DONNANT_AVIS de établissement avec l'ID du dossier que l'on vient d'enregistrer dans les cas suivant
+            if ($this->_getParam("AVIS_DOSSIER_COMMISSION") 
+                    && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)
+                    && $service_dossier->isDossierDonnantAvis($nouveauDossier, $idNature)) {
+                
+                if ($this->_getParam('do') == 'new') {
+                    $listeEtab = array(array(
+                        'ID_ETABLISSEMENT' => $this->_getParam('idEtablissement'),
+                    ));
+                } else {
+                    $listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
+                }
+
+                $dbEtab = new Model_DbTable_Etablissement();
+
+                $updatedEtab = $service_dossier->saveDossierDonnantAvis($nouveauDossier, $listeEtab, $cache, $this->_getParam('repercuterAvis'));
+
+                // AVERTISSEMENT SUR L'OUVERTURE D'UN ETABLISSEMENT A EFFECTUER
+                // Dans le cas d'une visite avant ouverture avec avis de commission positif
+                if ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 && in_array($idNature, array(47, 48)))
+                {
+                    foreach ($updatedEtab as $val => $ue) {
+                        $etabInformation = $dbEtab->getInformations($ue["ID_ETABLISSEMENT"]);
+                        // Si l'établissement est en statut projet, et uniquement ce cas
+                        if ($etabInformation && 1 == $etabInformation->ID_STATUT) {
+                            $this->_helper->flashMessenger(array(
+                                'context' => 'warning',
+                                'title' => 'Avertissement',
+                                'message' => "La visite d'avant ouverture étant favorable, vous devriez passer le statut de l'établissement <a title='Ouvrir' href='/etablissement/edit/id/".$ue["ID_ETABLISSEMENT"]."'>".$etabInformation["LIBELLE_ETABLISSEMENTINFORMATIONS"]."</a> à 'ouvert' (statut actuellement à 'projet').",
+                            ));
+                        }
+                    }
+                }
+            }
+            
+            
             //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
             $idArray = array('id'=>$nouveauDossier->ID_DOSSIER);
             echo json_encode($idArray);
@@ -1702,7 +1631,24 @@ class DossierController extends Zend_Controller_Action
             $newEtabDossier->ID_ETABLISSEMENT = $this->_getParam("idSelect");
             $newEtabDossier->ID_DOSSIER = $this->_getParam("idDossier");
             $newEtabDossier->save();
-
+            
+            // on répercute l'avis du dossier sur l'établissement
+            // par exemple dans le cas des dossiers de levée d'avis défavorable
+            // qui impactent plusieurs établissement
+            $service_dossier = new Service_Dossier();
+            $DB_dossier = new Model_DbTable_Dossier();
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+            
+            $dossier = $DB_dossier->find($this->_getParam("idDossier"))->current();
+            $idNature = $DB_dossier->getNatureDossier($this->_getParam("idDossier"));
+            $idNature = isset($idNature['ID_NATURE']) ? $idNature['ID_NATURE'] : 0;
+            
+            if ($service_dossier->isDossierDonnantAvis($dossier, $idNature)) {
+                $service_dossier->saveDossierDonnantAvis($dossier, array(array(
+                            'ID_ETABLISSEMENT' => $this->_getParam('idSelect'),
+                )), $cache);
+            }
+            
             $this->view->libelleEtab = $this->_getParam("libelleSelect");
             $this->view->infosEtab = $newEtabDossier;
             $this->_helper->flashMessenger(array(

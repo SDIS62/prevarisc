@@ -659,8 +659,7 @@ class Service_Dossier
             }
         }
     }
-
-
+    
     public function changePosPrescription($tabId){
         $DBprescDossier = new Model_DbTable_PrescriptionDossier();
 
@@ -721,5 +720,84 @@ class Service_Dossier
         }
 
     }
+    
+    public function isDossierDonnantAvis($dossier, $idNature) {
+        
+        return 
+            //Cas d'une étude uniquement dans le cas d'une levée de reserve
+            in_array($idNature, array(19, 7, 17)) && $dossier->DATECOMM_DOSSIER
+            //Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
+            || in_array($idNature, array(21, 23, 24, 47)) && $dossier->DATEVISITE_DOSSIER
+            //Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
+            || in_array($idNature, array(26, 28, 29, 48)) && $dossier->DATECOMM_DOSSIER;  
+    }
+    
+    public function getDateDossier($dossier) {
+        
+        $date = $dossier->DATEINSERT_DOSSIER;
+        
+        if($dossier->TYPE_DOSSIER == 1 || $dossier->TYPE_DOSSIER == 3){
 
+            if($dossier->DATECOMM_DOSSIER != NULL && $dossier->DATECOMM_DOSSIER != ''){
+                $date = $dossier->DATECOMM_DOSSIER;
+            }
+            
+        } else if($dossier->TYPE_DOSSIER == 2) {
+            if($dossier->DATEVISITE_DOSSIER != NULL && $dossier->DATEVISITE_DOSSIER != ''){
+                $date = $dossier->DATEVISITE_DOSSIER;
+            }
+        }
+        
+        return new Zend_Date($date, Zend_Date::DATES);
+    }
+    
+    public function saveDossierDonnantAvis($nouveauDossier, $listeEtab, $cache, $repercuterAvis = false) {
+        $dbEtab = new Model_DbTable_Etablissement();
+        $DBdossier = new Model_DbTable_Dossier();
+        $service_etablissement = new Service_Etablissement();
+        $updatedEtab = array();
+        
+        foreach ($listeEtab as $val => $ue) {
+            $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
+            $MAJEtab = 0;
+            //Avant la mise à jour du champ ID_DOSSIER_DONNANT_AVIS on s'assure que la date de l'avis est plus récente
+            if(isset($etabToEdit->ID_DOSSIER_DONNANT_AVIS) && $etabToEdit->ID_DOSSIER_DONNANT_AVIS != NULL) {
+                $dossierAncienAvis = $DBdossier->find($etabToEdit->ID_DOSSIER_DONNANT_AVIS)->current();
+
+                $dateAncienAvis = $this->getDateDossier($dossierAncienAvis);
+                $dateNewAvis = $this->getDateDossier($nouveauDossier);
+
+                if($dateNewAvis > $dateAncienAvis || $dateNewAvis == $dateAncienAvis){
+                    $MAJEtab = 1;
+                }else{
+                    $MAJEtab = 0;
+                }
+
+            }else{
+                $MAJEtab = 1;
+            }
+
+            if ($MAJEtab == 1) {
+                $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $nouveauDossier->ID_DOSSIER;
+                $etabToEdit->save();
+                $cache->remove('etablissement_id_'.$ue['ID_ETABLISSEMENT']);
+                $updatedEtab[] = $etabToEdit;
+                
+                if ($repercuterAvis) {
+                    $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
+                    foreach ($etablissementInfos["etablissement_lies"] as $etabEnfant) {
+                        if($etabEnfant['ID_STATUT'] == "2"){
+                            $etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
+                            $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $nouveauDossier->ID_DOSSIER;
+                            $etabToEdit->save();
+                            $cache->remove('etablissement_id_'.$etabEnfant['ID_ETABLISSEMENT']);
+                            $updatedEtab[] = $etabToEdit;
+                        }
+                    }
+                }
+            }
+        }
+        return $updatedEtab;
+    }
+    
 }
