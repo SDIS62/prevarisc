@@ -22,7 +22,7 @@
 				<select id='type_groupement' name='type_groupement'>
 				<?php
 					foreach($this->types as $value)
-						echo "<option id='".$value["ID_GROUPEMENTTYPE"]."' value='".$value["ID_GROUPEMENTTYPE"]."' ".( ($value["ID_GROUPEMENTTYPE"] == $this->type)?"selected":"" )." >".$value["LIBELLE_GROUPEMENTTYPE"]."</option>";
+						echo '<option id="'.$value["ID_GROUPEMENTTYPE"].'" value="'.$value["ID_GROUPEMENTTYPE"].'" '.( ($value["ID_GROUPEMENTTYPE"] == $this->type)?"selected":"" )." >".$value["LIBELLE_GROUPEMENTTYPE"]."</option>";
 				?>
 				</select>
 			</dd>

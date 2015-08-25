@@ -69,6 +69,11 @@ Corrections :
 * Correction sur les convocations pour les maires : partie dossiersInfos KO
 * Correction de l'avis toujours indisponible lorsque le dossier est créé, et conséquence sur la possibilité de différer l'avis
 * Correction sur la génération des ODJ et convocation : la balise nomPereEtab reprenait le nom du précédent établissement père
+* Correction du préventionniste sans civilite qui n'apparaît pas sur les dossiers
+* Correction de la non apparition du type EM, EP, GEEM sur les activités des membres de commission
+* Correction de la taille des rubriques ICPE pour les petits écrans (supperposition gênante)
+* Correction des simples quotes non gérées sur les coordonnées de groupements de communes et maires de communes
+* Correction de la disparition du groupement de commune de la liste après enregistrement
 
 ## 2.3
 
