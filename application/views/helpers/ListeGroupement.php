@@ -34,7 +34,7 @@
 
             foreach ($array_groupements as $key => $groupements) {
                 if($id_type_groupement == null || ($id_type_groupement > 0 && $key == $id_type_groupement)) {
-                    echo '<optgroup id="gpt_$key" label="'.$groupements[0].'">';
+                    echo '<optgroup id="gpt_'.$key.'" label="'.$groupements[0].'">';
                     foreach( $groupements[1] as $groupement)
                         echo '<option value="'.$groupement["ID_GROUPEMENT"].'" '. ( ($groupement["ID_GROUPEMENT"] == $selected) ? "selected" : "" ) .">".$groupement["LIBELLE_GROUPEMENT"]."</option>";
                     echo "</optgroup>";
