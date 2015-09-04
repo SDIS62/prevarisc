@@ -391,6 +391,10 @@ if($this->id_typeactivite == 29){
                 }
             }
             $odf->mergeSegment($cellulesPresc);
+        }else{
+            addPrescription($this->prescriptionReglDossier,0,$odf);
+            addPrescription($this->prescriptionExploitation,1,$odf);
+            addPrescription($this->prescriptionAmelioration,2,$odf);
         }
     } catch (OdfException $e) {
         echo "<span class='label label-warning'>Le document que vous avez sélectionné pour la génération ne correspond pas à un centre commercial</span><br/><br/>";
