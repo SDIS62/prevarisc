@@ -6,7 +6,7 @@ $(document).ready(function(){
 
 	//JQuery UI Date picker
 	$('.date').live('click', function() {
-		$(this).datepicker({showOn:'focus', dateFormat: 'dd/mm/yy', firstDay: 1}).focus();
+		$(this).datepicker({showOn:'focus'}).focus();
 	});
 	
 	//Pour les heures
