@@ -1172,7 +1172,8 @@ class DossierController extends Zend_Controller_Action
             //Sauvegarde des informations concernant l'affectation d'un dossier à une commission
             $dbDossierAffectation = new Model_DbTable_DossierAffectation();
             $dbDateComm = new Model_DbTable_DateCommission();
-            if ($this->_getParam('COMMISSION_DOSSIER') == '') {
+            if ($this->_getParam('COMMISSION_DOSSIER') == '' 
+                    || !in_array('COMMISSION_DOSSIER', $this->listeChamps[$this->_getParam('selectNature')])) {
                 $dbDossierAffectation->deleteDateDossierAffect($idDossier);
             } else {
                 $listeDateDossAffect = $dbDossierAffectation->getDossierAffectAndType($idDossier);
