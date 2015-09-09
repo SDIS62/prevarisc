@@ -873,7 +873,8 @@ class DossierController extends Zend_Controller_Action
                     if ('AVIS_DOSSIER' == $libelle && 0 == $value) {
                         $value = null;
                     }
-
+                   //echo $this->_getParam('HORSDELAI_DOSSIER');
+                    
                     if ('' == $value) {
                         $value = null;
                     }
@@ -910,6 +911,10 @@ class DossierController extends Zend_Controller_Action
                 $nouveauDossier->CNE_DOSSIER = 0;
             } else {
                 $nouveauDossier->CNE_DOSSIER = 1;
+            }
+            
+            if (!in_array('OBJET', $this->listeChamps[$this->_getParam('selectNature')])) {
+                $nouveauDossier->OBJET_DOSSIER = null;
             }
 
             if (null != $this->_getParam('servInst')) {
