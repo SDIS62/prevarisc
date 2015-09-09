@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class Model_DbTable_DossierDocConsulte extends Zend_Db_Table_Abstract
 {
