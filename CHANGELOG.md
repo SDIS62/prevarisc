@@ -74,11 +74,6 @@ Corrections :
 * Correction du préventionniste sans civilite qui n'apparaît pas sur les dossiers
 * Correction de la non apparition du type EM, EP, GEEM sur les activités des membres de commission
 * Correction de la taille des rubriques ICPE pour les petits écrans (supperposition gênante)
-* Correction des simples quotes non gérées sur les coordonnées de groupements de communes et maires de communes
-* Correction de la disparition du groupement de commune de la liste après enregistrement
-* Correction de l'objet du dossier qui restait même après avoir changé de nature
-* Correction de la liaison d'un dossier à un établissement qui ne répercutait pas son avis
-* Correction des dates pickers à passer en français
 
 ## 2.3
 
