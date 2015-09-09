@@ -36,6 +36,8 @@ Evolutions :
 * Le bloc des établissements sans prochaines visites périodiques programmées tient maintenant compte les dossiers de type avant ouverture
 * Ajout de la possibilité de replier les blocs du tableau de bord
 * Ajout du grade dans la génération des PV et ODJ pour les préventionnistes attachés au dossier
+* Ajout d'un cache APC sur les métadonnées de l'ORM hors DEV
+* Auto-complétion des villes à partir de 2 caractères pour les communes à 2 caractères
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
@@ -69,6 +71,9 @@ Corrections :
 * Correction sur les convocations pour les maires : partie dossiersInfos KO
 * Correction de l'avis toujours indisponible lorsque le dossier est créé, et conséquence sur la possibilité de différer l'avis
 * Correction sur la génération des ODJ et convocation : la balise nomPereEtab reprenait le nom du précédent établissement père
+* Correction du préventionniste sans civilite qui n'apparaît pas sur les dossiers
+* Correction de la non apparition du type EM, EP, GEEM sur les activités des membres de commission
+* Correction de la taille des rubriques ICPE pour les petits écrans (supperposition gênante)
 
 ## 2.3
 
