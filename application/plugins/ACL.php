@@ -163,8 +163,8 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         $resource_imploded = implode($resource_exploded, '_');
                         $list_resources_finale =  array($resource_imploded);
-
-                        $resources = new ResourceContainer($list_resources_finale);
+                        
+			$resources = new ResourceContainer($list_resources_finale);
                         foreach($resources as $r) {
                             if(!$acl->has($r)) {
                                 $acl->add(new Zend_Acl_Resource($r));
@@ -177,7 +177,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                     $privileges = $privileges_dbtable->fetchAll('id_resource = ' . $resource['id_resource'] )->toArray();
 
-                    foreach($list_resources_finale as $resource_finale) {
+                    foreach($resources as $resource_finale) {
                         foreach($privileges as $privilege) {
                             if($acl->has($resource_finale)) {
                                 if(in_array($privilege['id_privilege'], $privileges_role)) {
