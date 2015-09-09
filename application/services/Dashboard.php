@@ -149,6 +149,26 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
+        // bloc absence de quorum
+        'absQuorum' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getAbsenceQuorum',
+            'acl'     => array('dashboard', 'view_doss_absence_quorum'),
+            'title'   => 'Dossiers ayant une absence de quorum',
+            'type'    => 'dossiers',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
+        // bloc npsp
+        'npsp' => array(
+            'service' => 'Service_Dashboard',
+            'method'  => 'getNpsp',
+            'acl'     => array('dashboard', 'view_doss_npsp'),
+            'title'   => 'Dossiers avec statut ne peut se prononcer',
+            'type'    => 'dossiers',
+            'height'  => 'small',
+            'width'   => 'small',
+        ),
     );
     
     public function __construct($options = array()) {
@@ -397,4 +417,64 @@ class Service_Dashboard
         }
         return $dossiers;
     }
+
+    public function getAbsenceQuorum(){
+        $search = new Model_DbTable_Search;
+        $DBdossier = new Model_DbTable_Dossier;
+        $DBdossierLie = new Model_DbTable_DossierLie;
+
+        $search->setItem("dossier");
+        $search->setCriteria("ABSQUORUM_DOSSIER = 1");
+        $dossiers = $search->run(false, null, false)->toArray();
+
+
+        $valCpt = 0;        
+        foreach($dossiers as $dossier){
+            $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
+            foreach( $listeDossiersLies as $lien){
+                if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
+                    $idLien = $lien['ID_DOSSIER2'];
+                }else{
+                    $idLien = $lien['ID_DOSSIER1'];
+                }
+                $tabType = $DBdossier->getTypeDossier($idLien);
+                if($tabType['TYPE_DOSSIER'] == 0 || $tabType['TYPE_DOSSIER'] == 5){
+                    unset($dossiers[$valCpt]);
+                }
+            }
+            $valCpt++;
+        }
+        return $dossiers;
+    }
+
+    public function getNpsp(){
+        $search = new Model_DbTable_Search;
+        $DBdossier = new Model_DbTable_Dossier;
+        $DBdossierLie = new Model_DbTable_DossierLie;
+
+        $search->setItem("dossier");
+        $search->setCriteria("NPSP_DOSSIER = 1");
+        $dossiers = $search->run(false, null, false)->toArray();
+
+
+        $valCpt = 0;        
+        foreach($dossiers as $dossier){
+            $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
+            foreach( $listeDossiersLies as $lien){
+                if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
+                    $idLien = $lien['ID_DOSSIER2'];
+                }else{
+                    $idLien = $lien['ID_DOSSIER1'];
+                }
+                $tabType = $DBdossier->getTypeDossier($idLien);
+                if($tabType['TYPE_DOSSIER'] == 0 || $tabType['TYPE_DOSSIER'] == 5){
+                    unset($dossiers[$valCpt]);
+                }
+            }
+            $valCpt++;
+        }
+        return $dossiers;   
+    }
+
+
 }
