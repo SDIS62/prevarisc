@@ -1,21 +1,21 @@
 <tr <?php if($this->rubrique === null ) echo "id='prototype_rubriques' class='hide prototypes'" ?> >
     <td>
-        <select name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][ID_RUBRIQUE]' style='width: 125px'>
+        <select class="input-medium champs_icpe_rubrique_id" name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][ID_RUBRIQUE]'>
             <option value='1' >Substance</option>
             <option value='2' <?php if( isset($this->rubrique["ID_RUBRIQUE"]) && $this->rubrique["ID_RUBRIQUE"] == 2 ) echo "selected" ?> >Activité</option>
         </select>
     </td>
     <td>
-        <input type='text' class="input-small" name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE]' value='<?php echo $this->rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?>' />
+        <input type='text' class="input-small champs_icpe_rubrique_no" name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE]' value='<?php echo $this->rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?>' />
     </td>
     <td>
-        <input type='text' name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE]' value='<?php echo htmlspecialchars($this->rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"], ENT_QUOTES) ?>' />
+        <input type='text' class="champs_icpe_rubrique_nom" name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE]' value='<?php echo htmlspecialchars($this->rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"], ENT_QUOTES) ?>' />
     </td>
     <td>
-        <input type='text' class="input-small" name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE]' value='<?php echo $this->rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?>' />
+        <input type='text' class="input-mini champs_icpe_rubrique_valeur" name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE]' value='<?php echo $this->rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?>' />
     </td>
     <td>
-        <select name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE]' style='width: 50px'>
+        <select class="input-mini champs_icpe_rubrique_classement" name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE]'>
             <option value='D' <?php if( $this->rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "D" ) echo "selected" ?> >D</option>
             <option value='DC' <?php if( $this->rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "DC" ) echo "selected" ?> >DC</option>
             <option value='EN' <?php if( $this->rubrique["CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE"] == "EN" ) echo "selected" ?> >EN</option>

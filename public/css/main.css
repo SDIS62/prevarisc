@@ -214,6 +214,20 @@ form#etablissement dt,
 form#etablissement dd {
 	line-height: 30px;
 }
+form#etablissement .champs_icpe_rubrique_no {
+    width: 50px;
+}
+
+@media screen and (max-width: 1500px) {
+    form#etablissement .champs_icpe_rubrique_id {
+        width:90px;
+    }
+    form#etablissement .champs_icpe_rubrique_nom {
+        width:160px;
+    }
+}
+
+
 
 /* Fil d'actualité */
 
