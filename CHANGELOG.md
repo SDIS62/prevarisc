@@ -36,6 +36,8 @@ Evolutions :
 * Le bloc des établissements sans prochaines visites périodiques programmées tient maintenant compte les dossiers de type avant ouverture
 * Ajout de la possibilité de replier les blocs du tableau de bord
 * Ajout du grade dans la génération des PV et ODJ pour les préventionnistes attachés au dossier
+* Ajout d'un cache APC sur les métadonnées de l'ORM hors DEV
+* Auto-complétion des villes à partir de 2 caractères pour les communes à 2 caractères
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
