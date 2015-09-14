@@ -334,7 +334,7 @@
 		if(typeDossier == 1)
 		{
 			//etude
-			if(natureDossier == 19 || natureDossier == 7 || natureDossier == 17)
+			if(natureDossier == 19 || natureDossier == 7 || natureDossier == 17 || natureDossier == 16)
 			{
 				//levée reserve et avis différé
 				addText = " à l'exploitation";
@@ -1603,7 +1603,7 @@ echo "
                     echo $this->AVIS_VALUE['LIBELLE_AVIS'];
                     if (1 == $this->infosDossier['TYPE_DOSSIER']) {
                         //etude
-                        if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7 || $this->natureConcerne[0]['ID_NATURE'] == 17) {
+                        if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7 || $this->natureConcerne[0]['ID_NATURE'] == 17 || $this->natureConcerne[0]['ID_NATURE'] == 16) {
                             echo " à l'exploitation";
                         } else {
                             echo " à l'étude";
@@ -1652,7 +1652,7 @@ echo "
                         echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
                         if (1 == $this->infosDossier['TYPE_DOSSIER']) {
                             //etude
-                            if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7 || $this->natureConcerne[0]['ID_NATURE'] == 17) {
+                            if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7 || $this->natureConcerne[0]['ID_NATURE'] == 17  || $this->natureConcerne[0]['ID_NATURE'] == 16) {
                                 echo " à l'exploitation";
                             } else {
                                 echo " à l'étude";
