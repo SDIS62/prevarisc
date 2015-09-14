@@ -34,7 +34,7 @@
                         break;
 
                     case 'int':
-                        echo "<input type='number' name='descriptifs_techniques[" . $value['key'] . "]' value='" . ($value['value'] == '' ? '0' : $value['value']) . "' max='2147483647' />";
+                        echo "<input type='number' name='descriptifs_techniques[" . $value['key'] . "]' value='" . ($value['value'] == '' ? '0' : $value['value']) . "' max='2147483647' required />";
                         break;
 
                     case 'text':
