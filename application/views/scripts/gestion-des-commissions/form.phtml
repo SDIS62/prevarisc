@@ -40,7 +40,7 @@
 			url: a.href,
 			success: function () {
 				$(a).parent().parent().remove();
-				$("#index-left ul li.active a").click();
+				window.location.reload();
 			}
 		});
 		return false;

@@ -50,14 +50,14 @@
 						data: $("#form-gdc").serialize(),
 						type: "POST",
 						success: function () {
-                            $("#dialog-gdc").html('');
+                                                        $("#dialog-gdc").html('');
 							dialog_gdc.dialog("destroy");
-							$("#index-left ul li.active a").click();
+							window.location.reload();
 						}
 					});
 				},
 				Cancel: function() {
-                    $("#dialog-gdc").html('');
+                                        $("#dialog-gdc").html('');
 					dialog_gdc.dialog("destroy");
 				}
 			}
