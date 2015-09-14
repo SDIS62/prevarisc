@@ -84,9 +84,9 @@
                 <?php endif ?>
             </span>
         <?php elseif($this->ID_AVIS == 1) : ?>
-        <span class="avis F">Favorable <?php echo in_array($this->ID_DOSSIERNATURE, array(19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
+        <span class="avis F">Favorable <?php echo in_array($this->ID_DOSSIERNATURE, array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
         <?php elseif($this->ID_AVIS == 2) : ?>
-        <span class="avis D">Défavorable <?php echo in_array($this->ID_DOSSIERNATURE, array(19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
+        <span class="avis D">Défavorable <?php echo in_array($this->ID_DOSSIERNATURE, array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
         <?php else : ?>
         <span class="avis">Avis indisponible</span>
         <?php endif ?>
