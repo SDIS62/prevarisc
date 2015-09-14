@@ -80,6 +80,7 @@ Corrections :
 * Correction de la liaison d'un dossier à un établissement qui ne répercutait pas son avis
 * Correction des dates pickers à passer en français
 * Correction de la réutilisation d'une étude ou visite programmé à un ODJ, reste programmé à l'ODJ
+* Correction du non rechargement des pages de gestion des commission à l'ajout ou suppression
 
 ## 2.3
 
