@@ -800,4 +800,8 @@ class Service_Dossier
         return $updatedEtab;
     }
     
+    public function getCommission($idDossier) {
+       $dbDossier = new Model_DbTable_Dossier;
+       return $dbDossier->getCommissionV2($idDossier);
+    }
 }
