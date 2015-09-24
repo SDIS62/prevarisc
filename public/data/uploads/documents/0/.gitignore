@@ -2,4 +2,5 @@
 *
 # Except this file
 !.gitignore
-!/0
+!liste_champs_fusion_rapport.odt
+!liste_champs_fusion_rapportCC.odt
