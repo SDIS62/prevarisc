@@ -34,11 +34,15 @@
                         break;
 
                     case 'int':
-                        echo "<input type='number' name='descriptifs_techniques[" . $value['key'] . "]' value='" . ($value['value'] == '' ? '0' : $value['value']) . "' />";
+                        echo "<input type='number' name='descriptifs_techniques[" . $value['key'] . "]' value='" . ($value['value'] == '' ? '0' : $value['value']) . "' max='2147483647' required />";
                         break;
 
                     case 'text':
-                        echo "<textarea name='descriptifs_techniques[" . $value['key'] . "]' cols='' rows='' style='width: 100%; height: 50px;' >" . $value['value'] . "</textarea>";
+                        echo "<textarea name='descriptifs_techniques[" . $value['key'] . "]' cols='' rows='' style='width: 100%; height: 50px;' maxlength='65535' >" . $value['value'] . "</textarea>";
+                        break;
+                    
+                    case 'char':
+                        echo "<input type='text' name='descriptifs_techniques[" . $value['key'] . "]' value='" . $value['value'] . "' maxlength='" . $value['length'] . "' />";
                         break;
 
                     default:

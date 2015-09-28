@@ -465,10 +465,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     case "DEFENSE": $title = "Défense incendie"; break;
                     case "RISQUES": $title = "Risques"; break;
                 }
-
+                
                 $champs_descriptif_technique[$title][array_key_exists($key, $translation_champs_des_tech) ? $translation_champs_des_tech[$key] : $key] = array(
                     'value' => $value,
                     'type' => $dbtable_info_etablissement['metadata'][$key]['DATA_TYPE'],
+                    'length' => $dbtable_info_etablissement['metadata'][$key]['LENGTH'],
                     'key' => $key
                 );
             }

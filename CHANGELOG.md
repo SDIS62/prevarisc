@@ -81,6 +81,7 @@ Corrections :
 * Correction des dates pickers à passer en français
 * Correction de la réutilisation d'une étude ou visite programmé à un ODJ, reste programmé à l'ODJ
 * Correction du non rechargement des pages de gestion des commission à l'ajout ou suppression
+* Correction du descriptif établissment avec les valeurs maximums
 
 ## 2.3
 
