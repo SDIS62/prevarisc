@@ -25,7 +25,6 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
         //Récupération des documents présents dans le dossier 0. Documents visibles après vérrouillage
         $pathVer = $this->path."/0";
-        echo $pathVer;
         $dirVer = opendir($pathVer) or die('Erreur de listage : le répertoire n\'existe pas');
         $fichierVer = array();
         $dossierVer = array();
