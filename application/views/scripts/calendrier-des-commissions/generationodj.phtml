@@ -158,6 +158,16 @@ function retrieveInfoDoss($segment, $dossierInfos) {
     }
     addChamp($segment->infosDoss, 'nomPereEtab', $nomPere);
     
+    $dateVisite = new Zend_Date($dossierInfos["DATEVISITE_DOSSIER"]);
+    try{
+        addChamp($segment->infosDoss, 'dateVisite', $dateVisite->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+    } catch (Exception $e){
+        addChamp($segment->infosDoss, 'dateVisite', '');
+    }
+    
+    addChamp($segment->infosDoss, 'categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"]);
+    addChamp($segment->infosDoss, 'typeLettreP', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"]);
+    
     addChamp($segment->infosDoss, 'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
     addChamp($segment->infosDoss, 'objetDossier', $dossierInfos["OBJET_DOSSIER"]);
     $commune = "";
