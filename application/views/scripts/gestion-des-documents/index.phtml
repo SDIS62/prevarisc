@@ -6,35 +6,102 @@
 <h3 class='page-header'>Gestion des documents</h3>
 <div id='infosGdd'></div>
 
-<?php if(empty($this->listeFichiers)) : ?>
-<p><strong>Aucun document disponible.</strong></p>
-<?php else : ?>
-<table id='documentType' class='table table-bordered'>
-    <thead>
-        <tr style='height:20px;'>
-            <th>
-                Nom du fichier
-            </th>
-            <th>
-                Actions
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach($this->listeFichiers as $lien) : ?>
-    <tr style='height:20px;'>
-        <td>
-            <a href="<?php echo $this->path . "/" . $lien ?>"><?php echo $lien ?></a>
-        </td>
-        <td>
-            <a href='#' class='supp' id="<?php echo $lien ?>">Suppression du document</a>
-        </td>
-    </tr>
-    <?php endforeach ?>
-    </tbody>
-</table>
-<?php endif ?>
 
+
+<?php
+	$nbFichier = count($this->fichierVer);
+	echo "<h2>Visible après vérrouillage  (".( ($nbFichier > 0)? "<a id='num_0' href='' >".$nbFichier."</a>" : "0").")</h2>" ;
+	echo "<div class='span12'>";
+	echo "
+    	<table id='file_0' class='table table-bordered' >
+		    <thead>
+		        <tr style='height:20px;'>
+		            <th>
+		                Nom du fichier
+		            </th>
+		            <th>
+		            </th>
+		        </tr>
+		    </thead>
+		    <tbody>
+    ";
+	if($nbFichier > 0){
+		foreach($this->fichierVer as $fichier){
+	        echo "
+	        	<tr style='height:20px;'>
+			        <td>
+			            <a href='".$this->path . DS ."0". DS . $fichier ."'>".$fichier."</a>
+			        </td>
+			        <td>
+			            <a href='#' class='supp' id='".$fichier."'>Suppression du document</a>
+			        </td>
+			    </tr>
+        	";
+		}
+	}else{
+    	echo "
+    		<tr>
+			        <td colspan='2'>
+			        	Aucun fichier
+			        </td>
+			    </tr>
+        	";
+    }
+    echo "
+    		</tbody>
+    		</table>
+    	</div>
+    ";
+
+	foreach($this->liste_commission as $commission){
+		if(!isset($id_type) || isset($id_type) && $id_type != $commission['ID_COMMISSIONTYPE']){
+			echo "<h2>".$commission['LIBELLE_COMMISSIONTYPE']." </h2>" ;
+			$id_type = $commission['ID_COMMISSIONTYPE'];
+		}
+
+        echo "<div class='span12'>";
+        $nbFichier = count($commission['listeFichier']);
+        if($nbFichier > 0){
+        	echo "<a href='' id='".$commission['ID_COMMISSION']."' class='commission'>".$commission['LIBELLE_COMMISSION']."</a> (<a id='num_".$commission['ID_COMMISSION']."' >".$nbFichier."</a>)";
+        }else{
+        	echo $commission['LIBELLE_COMMISSION'];
+        }
+        echo "</div><br/>";
+
+        if($nbFichier > 0){
+	        echo "
+	        	<table id='file_".$commission['ID_COMMISSION']."' class='table table-bordered' style='display:none;'>
+				    <thead>
+				        <tr style='height:20px;'>
+				            <th>
+				                Nom du fichier
+				            </th>
+				            <th>
+				            </th>
+				        </tr>
+				    </thead>
+				    <tbody>
+	        ";
+	        foreach($commission['listeFichier'] as $file){
+	        	echo "
+	        		
+	        			<tr style='height:20px;'>
+				        <td>
+				            <a href='".$this->path . DS . $commission['ID_COMMISSION']. DS . $file ."'>".$file."</a>
+				        </td>
+				        <td>
+				            <a href='#' class='supp' id='".$file."'>Suppression du document</a>
+				        </td>
+				    </tr>
+	        	";
+	        }
+	        echo "
+	        	</tbody>
+	        	</table>
+	        ";
+	    }
+    }
+?>
 
 <script type="text/javascript">
 
@@ -84,7 +151,7 @@ $(document).ready(function() {
 					
 				},
 				"Annuler": function() {
-					dialog_aud.dialog("destroy");
+					$(this).dialog('close'); 
 				}
 			}
 		});
@@ -118,21 +185,36 @@ $(document).ready(function() {
 			modal: true,
 			buttons: {
 				"Supprimer" : function() {
+					var infoComm = elementDoc.parent().parent().parent().parent().attr('id');
+					var tabIdComm = infoComm.split("_");
+					var idComm = tabIdComm[1];
+
+					//alert(infoComm);
+					
+					
+
 
 					$.ajax({
 						type: "POST",
 						url: "/gestion-des-documents/suppdoc",
 						data:{
-                                                    name:nomFichier
-                                                },
+                            name:nomFichier,
+                            idCommission:idComm
+                        },
 						success: function(msg){					
 							//suppression de la ligne
 							elementDoc.parent().parent().remove();
 							//alert(msg);
+							var num = $("#num_"+idComm).html();
+							if(num == 1){
+								$("#file_"+idComm).hide();
+								$("#num_"+idComm).html('0');
+							}else{
+								num--;
+								$("#num_"+idComm).html(num);
+							}
 						}
 					});
-
-
 					
 					dialog_supp.dialog("close");
                     $("#dialog-supp").html('');
@@ -147,6 +229,10 @@ $(document).ready(function() {
 
 	}
 	
+	$(".commission").click(function(){
+		$("#file_"+$(this).attr('id')).toggle();
+		return false;
+	})
 });
 
 // Si un fichier est bien uploadé, on l'ajoute à la liste
@@ -160,7 +246,7 @@ function callback(nomFich) {
 		type: "post",
 		success: function(result) {
 			// On détruit la fenetre de load
-			$("#load").remove();
+			//$("#load").remove();
 			
 			if( result.exists ) {
 				window.location.reload();

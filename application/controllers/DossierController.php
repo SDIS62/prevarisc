@@ -1745,23 +1745,83 @@ class DossierController extends Zend_Controller_Action
     }
 
 //GENERATION DOCUMENTS
-    public function dialoggenrapportAction()
-    {
-        $files = array();
-        $dirname = REAL_DATA_PATH.DS."uploads".DS."documents";
-        $dir = opendir($dirname);
-        while ($file = readdir($dir)) {
-            if (!in_array($file, array('.gitignore', '..', '.')) && !is_dir($dirname.DS.$file)) {
-                $files[$dirname.DS.$file] = $file;
+    public function rapportAction(){
+        $service_commission = new Service_Commission;
+        $service_dossier = new Service_Dossier;
+
+        //si on génére un document
+        if ($this->_request->isPost()) {
+            $idDossier = $this->_getParam("idDossier");
+            $commission = $this->_getParam("commission");
+            foreach ($this->_getParam("idEtab") as $etablissementId) {
+                $this->creationdocAction($idDossier,$etablissementId,$commission);
             }
         }
-        closedir($dir);
-        asort($files);
-        $this->view->files = $files;
 
-        //Permet de charger la liste des établissements liés au dossier pour la selection des rapports à generer
+        $idDossier = (int) $this->_getParam("id");
+
+        //informations sur le verrouillage
         $DBdossier = new Model_DbTable_Dossier();
-        $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("idDossier"));
+        $dossierInfos = $DBdossier->find($idDossier)->current();
+        $this->view->locked = $dossierInfos['VERROU_DOSSIER'];
+
+        $this->view->id_dossier = $idDossier;
+
+        if($idDossier){
+            $this->view->enteteEtab = $service_dossier->getEtabInfos($idDossier);
+        }
+
+        if(isset($idDossier) && $idDossier != ''){
+            $pathBase = REAL_DATA_PATH . DS . "uploads" . DS . "documents";
+
+            //Récupération des documents présents dans le dossier 0. Documents visibles après vérrouillage
+            $pathVer = $pathBase."/0";
+            $dirVer = opendir($pathVer) or die('Erreur de listage : le répertoire n\'existe pas');
+            $fichierVer = array();
+            $dossierVer = array();
+            while ($elementVer = readdir($dirVer)) {
+                if ($elementVer != '.' && $elementVer != '..') {
+                    if($elementVer != '.gitignore')
+                        if (!is_dir($pathVer.DS.$elementVer)) {$fichierVer[] = $elementVer;} else {$dossierVer[] = $elementVer;}
+                }
+            }
+            closedir($dirVer);
+            sort($fichierVer);
+
+            $this->view->fichierVer = $fichierVer;
+
+            $this->view->infosCommission = $service_dossier->getCommission($idDossier);
+            //liste des commissions pour le select
+            $liste_commission = $service_commission->getAll();
+
+            foreach($liste_commission as $var => $commission ){
+                
+                $path = $pathBase. DS .$commission['ID_COMMISSION'];
+                $dir = opendir($path) or die('Erreur de listage : le répertoire n\'existe pas'); // on ouvre le contenu du dossier courant
+                $fichier= array(); // on déclare le tableau contenant le nom des fichiers
+                $dossier= array(); // on déclare le tableau contenant le nom des dossiers
+
+                while ($element = readdir($dir)) {
+                    if ($element != '.' && $element != '..') {
+                        if($element != '.gitignore')
+                            if (!is_dir($path.DS.$element)) {$fichier[] = $element;} else {$dossier[] = $element;}
+                    }
+                }
+                closedir($dir);
+                sort($fichier);
+
+                $liste_commission[$var]['listeFichier'] = $fichier;
+
+            }
+
+            $this->view->pathBase = $pathBase;
+            $this->view->path = DATA_PATH . "/uploads/documents";
+
+            $this->view->liste_commission = $liste_commission;
+
+            $DBdossier = new Model_DbTable_Dossier();
+            $this->view->listeEtablissement = $DBdossier->getEtablissementDossier($idDossier);
+        }
     }
 
     public function generationrapportAction()
@@ -1770,17 +1830,19 @@ class DossierController extends Zend_Controller_Action
 
         $listeEtab = $this->_getParam("idEtab");
         $idDossier = $this->_getParam("idDossier");
+        $idCommission = $this->_getParam("idCommission");
 
         foreach ($this->_getParam("idEtab") as $etablissementId) {
-            $this->creationdocAction($idDossier,$etablissementId);
+            $this->creationdocAction($idDossier,$etablissementId,$idCommission);
         }
     }
 
-    public function creationdocAction($idDossier, $idEtab)
+    public function creationdocAction($idDossier, $idEtab, $commission)
     {
         $this->view->idDossier = $idDossier;
+        $this->view->idCommission = $commission;
 
-        $this->view->fichierSelect = $this->_getParam("fichierSelect");
+        $this->view->fichierSelect = $this->_getParam("file");
 
         $dateDuJour = new Zend_Date();
         $this->view->dateDuJour = $dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR);
@@ -1895,7 +1957,6 @@ class DossierController extends Zend_Controller_Action
         }
 
         //RECUPERATIONS DES INFORMATIONS SUR LE DOSSIER
-
         //Récupération des documents d'urbanisme
         $DBdossierDocUrba = new Model_DbTable_DossierDocUrba();
         $dossierDocUrba = $DBdossierDocUrba->getDossierDocUrba($idDossier);
@@ -2159,7 +2220,7 @@ class DossierController extends Zend_Controller_Action
         //Les dossiers ayant pour nature LR et LP 7,19
         $natureCCL = array(7,19);
 
-        if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC)){
+        if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC) && isset($affectDossier)){
             //On récupère toutes les cellules
             $idDateCommAffect = $affectDossier['ID_DATECOMMISSION_AFFECT'];
             $listeDossierConcerne = $dbAffectDossier->getDossierNonAffect($idDateCommAffect);
@@ -2278,6 +2339,7 @@ class DossierController extends Zend_Controller_Action
 
         $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
         $url =  $this->getHelper('url')->url(array('controller' => 'piece-jointe', 'id' => $idDossier, 'action' => 'get', 'idpj' => $nouvellePJ['ID_PIECEJOINTE'], 'type' => 'dossier'));
+
         echo "<a href='".$url."'>Ouvrir le rapport de l'établissement : ".$object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS']."<a/><br/><br/>";
 
         $DBsave = new Model_DbTable_DossierPj();
@@ -2305,7 +2367,6 @@ class DossierController extends Zend_Controller_Action
                 $this->view->dateLastVP = null;
             }
         }
-
         $this->render('creationdoc');
     }
 

@@ -133,6 +133,17 @@
             return $this->getAdapter()->fetchRow($select);
         }
 
+        public function getCommissionV2($idDossier){
+             $select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from(array("d" => "dossier"), "d.ID_DOSSIER")
+                ->join(array("c" => "commission") , "d.COMMISSION_DOSSIER = c.ID_COMMISSION")
+                ->join(array("ct" => "commissiontype"), "c.ID_COMMISSIONTYPE = ct.ID_COMMISSIONTYPE")
+                ->where("d.ID_DOSSIER = ?",$idDossier);
+            
+            return $this->getAdapter()->fetchRow($select);
+        }
+
         public function getGenerationInfos($id_dossier)
         {
             $select = "
