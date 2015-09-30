@@ -10,17 +10,17 @@
         </div>
         <div class='span10'>
             <?php
+                $idCommissionDossier = $this->infosCommission['ID_COMMISSION'];
                 if(!isset($idCommissionDossier))
                     echo "La commission du dossier n'est pas renseignée<br/><br/>";
                 else
                     echo $this->infosCommission['LIBELLE_COMMISSION']." (".$this->infosCommission['LIBELLE_COMMISSIONTYPE'].")<br/><br/>";
 
-                echo "<i>Vous pouvez utiliser le document d'une autre commission</i><br/>";
-                $idCommissionDossier = $this->infosCommission['ID_COMMISSION'];
+                echo "<i>Vous pouvez utiliser le document d'une autre commission</i><br/>";                
                 $nbCommission = count($this->liste_commission);
                 echo "
                     <select name='commission' id='commission' style='width:450px;'>
-                    <option value='0' ".( ( !isset($commission['ID_COMMISSION']) || $commission['ID_COMMISSION'] == '' || $this->locked == 1 )? "selected" : "")." >Fichiers disponibles après vérrouillage (".count($this->fichierVer).")</option>
+                    <option value='0' ".( ( !isset($commission['ID_COMMISSION']) || $commission['ID_COMMISSION'] == '' || $this->locked == 1 )? "selected" : "")." >Fichiers disponibles après verrouillage (".count($this->fichierVer).")</option>
                 ";
                 if($this->locked == 0 ){
                     foreach($this->liste_commission as $commission){
@@ -128,9 +128,10 @@
             $i=0;
             foreach($this->listeEtablissement as $etab){
                 echo "
-                    <input type='checkbox' class='etabCheck' name='idEtab[]' value='".$etab['ID_ETABLISSEMENT']."' >
+                    <input type='checkbox' class='etabCheck' name='idEtab[]' value='".$etab['ID_ETABLISSEMENT']."' ".( ($i == 0)? "checked" : "").">
                         &nbsp;[".$etab['LIBELLE_GENRE']."]&nbsp;".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']."&nbsp<br/>
                 ";
+                $i++;
             }
         ?>
         <hr class='clear'/>
