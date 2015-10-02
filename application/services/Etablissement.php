@@ -54,11 +54,15 @@ class Service_Etablissement implements Service_Interface_Etablissement
             // Récupération des parents de l'établissement
             $results = array();
             $id_enfant = $id_etablissement;
+            $parent_direct = null;
             do {
                 $parent = $model_etablissement->getParent($id_enfant);
                 if ($parent != null) {
                     $results[] = $parent;
                     $id_enfant = $parent["ID_ETABLISSEMENT"];
+                    if ($parent_direct == null) {
+                        $parent_direct = $parent;
+                    }
                 }
             } while($parent != null);
             $etablissement_parents = count($results) == 0 ? array() : array_reverse($results);
@@ -148,6 +152,15 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 $donnees_pratiques = array(
                     'NBPREV_ETABLISSEMENT' => null,
                     'DUREEVISITE_ETABLISSEMENT' => $duree_totale
+                );
+            }
+            else if ($informations->ID_GENRE == 3 && $parent_direct) {
+                // la catégorie d'une cellule est celle de l'établissement parent
+                $informations->ID_CATEGORIE = $parent_direct['ID_CATEGORIE'];
+                
+                $donnees_pratiques = array(
+                    'NBPREV_ETABLISSEMENT' => $general->NBPREV_ETABLISSEMENT,
+                    'DUREEVISITE_ETABLISSEMENT' => $general->DUREEVISITE_ETABLISSEMENT
                 );
             }
             else {

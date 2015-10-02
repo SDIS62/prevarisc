@@ -24,7 +24,7 @@
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3))) : ?>
                 <dt>Catégorie</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? end($this->etablissement['parents'])['LIBELLE_CATEGORIE'] : $this->etablissement['informations']['LIBELLE_CATEGORIE'] ?></p>
+                    <p><?php echo $this->etablissement['informations']['LIBELLE_CATEGORIE'] ?></p>
                 </dd>
                 <?php endif ?>
 

@@ -1869,13 +1869,6 @@ class DossierController extends Zend_Controller_Action
         $this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
         $this->view->numTotal = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
-        $dbCategorie = new Model_DbTable_Categorie();
-        if ($object_informations["ID_CATEGORIE"]) {
-            $categorie = $dbCategorie->getCategories($object_informations["ID_CATEGORIE"]);
-            $categorie = explode(" ",$categorie['LIBELLE_CATEGORIE']);
-            $this->view->categorieEtab = $categorie[0];
-        }
-
         $this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 
         $model_typeactivite = new Model_DbTable_TypeActivite();
@@ -1932,6 +1925,18 @@ class DossierController extends Zend_Controller_Action
             $idGenrePere = $this->view->infoPere['ID_GENRE'];
             $infosGenrePere = $dbGenre->find($idGenrePere)->current();
             $this->view->genrePere = $infosGenrePere['LIBELLE_GENRE'];
+        }
+        
+        // Catégorie
+        if (3 == $object_informations['ID_GENRE'] && $this->view->infoPere) {
+            $object_informations["ID_CATEGORIE"] = $this->view->infoPere['ID_CATEGORIE'];
+        }
+        
+        $dbCategorie = new Model_DbTable_Categorie();
+        if ($object_informations["ID_CATEGORIE"]) {
+            $categorie = $dbCategorie->getCategories($object_informations["ID_CATEGORIE"]);
+            $categorie = explode(" ",$categorie['LIBELLE_CATEGORIE']);
+            $this->view->categorieEtab = $categorie[0];
         }
 
         // Adresses
