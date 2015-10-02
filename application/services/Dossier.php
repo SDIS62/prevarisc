@@ -755,6 +755,7 @@ class Service_Dossier
         $dbEtab = new Model_DbTable_Etablissement();
         $DBdossier = new Model_DbTable_Dossier();
         $service_etablissement = new Service_Etablissement();
+
         $updatedEtab = array();
         
         foreach ($listeEtab as $val => $ue) {
@@ -780,7 +781,6 @@ class Service_Dossier
             if ($MAJEtab == 1) {
                 $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $nouveauDossier->ID_DOSSIER;
                 $etabToEdit->save();
-                $cache->remove('etablissement_id_'.$ue['ID_ETABLISSEMENT']);
                 $updatedEtab[] = $etabToEdit;
                 
                 if ($repercuterAvis) {
@@ -790,13 +790,20 @@ class Service_Dossier
                             $etabToEdit = $dbEtab->find($etabEnfant["ID_ETABLISSEMENT"])->current();
                             $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $nouveauDossier->ID_DOSSIER;
                             $etabToEdit->save();
-                            $cache->remove('etablissement_id_'.$etabEnfant['ID_ETABLISSEMENT']);
                             $updatedEtab[] = $etabToEdit;
                         }
                     }
                 }
             }
         }
+        
+        foreach($updatedEtab as $etablissement) {
+            $cache->remove(sprintf('etablissement_id_%d', $etablissement['ID_ETABLISSEMENT']));
+            if ($parent = $dbEtab->getParent($etablissement['ID_ETABLISSEMENT'])) {
+                $cache->remove(sprintf('etablissement_id_%d', $parent['ID_ETABLISSEMENT']));
+            }
+        }
+        
         return $updatedEtab;
     }
     
