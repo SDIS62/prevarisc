@@ -86,6 +86,7 @@ Corrections :
 * Correction de la fonction proprietaire manquante
 * Correction de la creation d'un ODJ la 1ère fois avec deplacement du dossier mal positionne
 * Correction des dates pickers à passer en français
+* Correction de la catégorie qui doit prendre celle du père pour les cellules au niveau de la popup et des docs générés
 
 ## 2.3
 
