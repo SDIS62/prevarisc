@@ -84,6 +84,7 @@ Corrections :
 * Correction du non rechargement des pages de gestion des commission à l'ajout ou suppression
 * Correction du descriptif établissment avec les valeurs maximums
 * Correction de la fonction proprietaire manquante
+* Correction de la creation d'un ODJ la 1ère fois avec deplacement du dossier mal positionne
 
 ## 2.3
 
