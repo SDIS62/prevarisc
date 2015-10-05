@@ -2,13 +2,6 @@
 
     "name": "SDIS62/prevarisc",
 
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/kdubuc/odtphp"
-        }
-    ],
-
     "require": {
         "php": ">=5.4.0",
         "zendframework/zendframework1": "~1.0",
