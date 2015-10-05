@@ -83,6 +83,7 @@ Corrections :
 * Correction de la réutilisation d'une étude ou visite programmé à un ODJ, reste programmé à l'ODJ
 * Correction du non rechargement des pages de gestion des commission à l'ajout ou suppression
 * Correction du descriptif établissment avec les valeurs maximums
+* Correction de la fonction proprietaire manquante
 
 ## 2.3
 
