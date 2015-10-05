@@ -39,6 +39,7 @@ Evolutions :
 * Ajout d'un cache APC sur les métadonnées de l'ORM hors DEV
 * Auto-complétion des villes à partir de 2 caractères pour les communes à 2 caractères
 * Ajout de balises dans l'ODJ
+* Ajout du support du cache nosql mysql
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
