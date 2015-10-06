@@ -862,7 +862,7 @@ text-decoration: none;
 }
 
 .dashboard .grid-gutter {
-  width:  2%;
+  width: 1%;
 }
 
 
@@ -1111,7 +1111,7 @@ a.list-group-item-danger.active:focus {
     background: url('../images/pdf.png') no-repeat;  
 }  
 
-#tabPieceJointe .doc{  
+#tabPieceJointe .doc, #tabPieceJointe .docx{  
     background: url('../images/word.png') no-repeat;  
 }  
 
