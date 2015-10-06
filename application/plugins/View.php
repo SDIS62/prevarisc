@@ -28,8 +28,8 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             }
 
             // Chargement des aides de vue
-            $view->registerHelper(new View_Helper_MinifyHeadLink, 'headLink');
-            $view->registerHelper(new View_Helper_MinifyInlineScript, 'inlineScript');
+            $view->registerHelper(new View_Helper_MinifyHeadLink($view->version_prevarisc), 'headLink');
+            $view->registerHelper(new View_Helper_MinifyInlineScript($view->version_prevarisc), 'inlineScript');
             $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
             $view->registerHelper(new View_Helper_AfficheDoc, 'afficheDoc');
             $view->registerHelper(new View_Helper_AgendaMois, 'agendaMois');

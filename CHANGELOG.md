@@ -39,6 +39,7 @@ Evolutions :
 * Ajout d'un cache APC sur les métadonnées de l'ORM hors DEV
 * Auto-complétion des villes à partir de 2 caractères pour les communes à 2 caractères
 * Ajout de balises dans l'ODJ
+* Ajout du versionning des ressources statiques pour forcer le vidage de cache
 * Ajout du support du cache nosql mysql
 
 Corrections :
@@ -84,6 +85,7 @@ Corrections :
 * Correction de la réutilisation d'une étude ou visite programmé à un ODJ, reste programmé à l'ODJ
 * Correction du non rechargement des pages de gestion des commission à l'ajout ou suppression
 * Correction du descriptif établissment avec les valeurs maximums
+* Correction de la fonction proprietaire manquante
 
 ## 2.3
 

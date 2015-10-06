@@ -24,6 +24,25 @@ class View_Helper_MinifyHeadLink extends Zend_View_Helper_HeadLink
 	 * @var array
 	 */
     protected $_cssExtensions = array(".css", ".css1", ".css2", ".css3");
+    
+    
+    /**
+     *
+     * @var type The application version
+     * @var string
+     */
+    protected $_version = null;
+    
+    /**
+     * Overrides default constructor to inject version
+     */
+    public function __construct($version = null)
+    {
+        parent::__construct();
+        $this->_version = $version;
+    }
+    
+    
     /**
 	 * Returns current object instance. Optionally, allows passing array of
 	 * values to build link.
@@ -72,6 +91,7 @@ class View_Helper_MinifyHeadLink extends Zend_View_Helper_HeadLink
                     $minStyles->type = 'text/css';
                     $minStyles->href = $this->getMinUrl() . '?f=' . implode(',', $styles);
                     if ($trimmedBaseUrl) $minStyles->href .= '&b=' . $trimmedBaseUrl;
+                    if ($this->_version) $minStyles->href .= '&v=' . $this->_version;
                     $minStyles->media = $media;
                     $minStyles->conditionalStylesheet = false;
                     if (in_array($this->itemToString($minStyles), $seen)) {

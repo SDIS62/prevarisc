@@ -18,6 +18,23 @@ class View_Helper_MinifyInlineScript extends Zend_View_Helper_InlineScript
 	 */
 //	protected $_regKey = 'RC_View_Helper_MinifyHeadScript';
 
+    
+    /**
+     *
+     * @var type The application version
+     * @var string
+     */
+    protected $_version = null;
+    
+    /**
+     * Overrides default constructor to inject version
+     */
+    public function __construct($version = null)
+    {
+        parent::__construct();
+        $this->_version = $version;
+    }
+    
     /**
 	 * Return headScript object
 	 *
@@ -120,6 +137,8 @@ class View_Helper_MinifyInlineScript extends Zend_View_Helper_InlineScript
         } else {
             $minScript->attributes['src'] = $this->getMinUrl() . '?b=' . $baseUrl . '&f=' . implode(',', $scripts);
         }
+        
+        if ($this->_version) $minScript->attributes['src'] .= '&v=' . $this->_version;
 
         return $this->itemToString($minScript, '', '', '');
     }

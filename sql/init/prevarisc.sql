@@ -1688,7 +1688,7 @@ CREATE TABLE `fonction` (
 
 LOCK TABLES `fonction` WRITE;
 /*!40000 ALTER TABLE `fonction` DISABLE KEYS */;
-INSERT INTO `fonction` VALUES (1,'Préfet'),(2,'Maire'),(3,'Maitre d\'ouvrage'),(4,'Maitre d\'oeuvre'),(5,'Pétitionnaire demandeur'),(6,'Controller technique (organisme agréé)'),(7,'Exploitant'),(8,'Directeur unique de sécurité'),(9,'Responsable de sécurité'),(10,'Participant'),(11,'Demandeur'),(12,'Simple utilisateur'),(13,'Préventionniste'),(15,'Secrétariat'),(16,'Service informatique'),(99,'Utilisateur spécial');
+INSERT INTO `fonction` VALUES (1,'Préfet'),(2,'Maire'),(3,'Maitre d\'ouvrage'),(4,'Maitre d\'oeuvre'),(5,'Pétitionnaire demandeur'),(6,'Controller technique (organisme agréé)'),(7,'Exploitant'),(8,'Directeur unique de sécurité'),(9,'Responsable de sécurité'),(10,'Participant'),(11,'Demandeur'),(12,'Simple utilisateur'),(13,'Préventionniste'),(15,'Secrétariat'),(16,'Service informatique'),(17,'Propriétaire'),(99,'Utilisateur spécial');
 /*!40000 ALTER TABLE `fonction` ENABLE KEYS */;
 UNLOCK TABLES;
 
