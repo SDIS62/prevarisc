@@ -3,7 +3,10 @@ if($this->do == 'new')
 	echo "<li id='article_".$this->article['ID_PRESCRIPTIONARTICLE']."'>";
 	
 echo "	
-	<span style='font-style:italic;'>".$this->article['LIBELLE_PRESCRIPTIONARTICLE']."</span>
+	<span style='font-style:italic;'>
+		<input type='hidden' name='article[]' value='".$this->article['ID_PRESCRIPTIONARTICLE']."' />
+		".$this->article['LIBELLE_PRESCRIPTIONARTICLE']."
+	</span>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<button class='showDetailArticle btn' id='showDetailArticle_".$this->article['ID_PRESCRIPTIONARTICLE']."' >Afficher les détails</button>
 	<button class='hideDetailArticle btn' id='hideDetailArticle_".$this->article['ID_PRESCRIPTIONARTICLE']."' style='display:none;'>Masquer les détails</button>

@@ -638,6 +638,10 @@ ul#gestionCommissionMenu li.active {
 	cursor: row-resize;
 }
 
+.classement li:hover {
+    cursor: row-resize;
+}
+
 .dossierODJ:hover{
 	cursor: row-resize;
 }

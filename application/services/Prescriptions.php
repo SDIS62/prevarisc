@@ -217,5 +217,38 @@ class Service_Prescriptions
             return $dbPrescAssoc->getPrescriptionReglAssoc($idPrescription);
         }
     } //FIN getPrescriptionInfo
+
+    public function setOrder($data,$type){
+        if($type == 'prescriptionType'){
+            $dbPrescType = new Model_DbTable_PrescriptionType();
+            foreach($data as $num => $presc ){
+                //echo $num." - ".$presc."<br/>";
+                $prescType = $dbPrescType->find($presc)->current();
+                $prescType->PRESCRIPTIONTYPE_NUM = $num;
+                $prescType->save();
+            }
+        }else if($type == 'categorie'){
+            $dbPrescCat = new Model_DbTable_PrescriptionCat();
+            foreach($data as $num => $cat){
+                $categorie = $dbPrescCat->find($cat)->current();
+                $categorie->NUM_PRESCRIPTION_CAT = $num;
+                $categorie->save();
+            }
+        }else if($type == 'texte'){
+            $dbPrescTexte = new Model_DbTable_PrescriptionTexte();
+            foreach($data as $num => $texte){
+                $categorie = $dbPrescTexte->find($texte)->current();
+                $categorie->NUM_PRESCRIPTIONTEXTE = $num;
+                $categorie->save();
+            }
+        }else if($type == 'article'){
+            $dbPrescArticle = new Model_DbTable_PrescriptionArticle();
+            foreach($data as $num => $article){
+                $categorie = $dbPrescArticle->find($article)->current();
+                $categorie->NUM_PRESCRIPTIONARTICLE = $num;
+                $categorie->save();
+            }
+        }
+    } //FIN setOrder
     
 } //FIN SERVICE
