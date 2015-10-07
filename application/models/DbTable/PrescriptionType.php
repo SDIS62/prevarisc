@@ -12,7 +12,8 @@ class Model_DbTable_PrescriptionType extends Zend_Db_Table_Abstract
 			->from(array("pt" => "prescriptiontype"))
 			->where("pt.PRESCRIPTIONTYPE_CATEGORIE = ?",$categorie)
 			->where("pt.PRESCRIPTIONTYPE_TEXTE = ?",$texte)
-			->where("pt.PRESCRIPTIONTYPE_ARTICLE = ?",$article);
+			->where("pt.PRESCRIPTIONTYPE_ARTICLE = ?",$article)
+			->order("pt.PRESCRIPTIONTYPE_NUM");
 			 
 		return $this->getAdapter()->fetchAll($select);	
 	}
