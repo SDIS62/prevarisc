@@ -1,11 +1,18 @@
 <?php
 	echo "<br/><br/>";	
 
-	echo "<ul class='prescriptionarticle_".$this->idTexte." unstyled'>";
+	echo "
+		<form id='FormPrescriptionarticle_".$this->idTexte."' >
+			<input type='hidden' name='type' value='article' />
+			<ul class='prescriptionarticle_".$this->idTexte." unstyled classement'>
+	";
 	foreach($this->listePrescriptionArticle as $val => $ue){
 		echo "
 			<li id='article_".$ue['ID_PRESCRIPTIONARTICLE']."'>
-				<span style='font-style:italic;'>".$ue['LIBELLE_PRESCRIPTIONARTICLE']."</span>
+				<span style='font-style:italic;'>
+					<input type='hidden' name='article[]' value='".$ue['ID_PRESCRIPTIONARTICLE']."' />
+					".$ue['LIBELLE_PRESCRIPTIONARTICLE']."
+				</span>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<button class='showDetailArticle btn' id='showDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' >Afficher les détails</button>
 				<button class='hideDetailArticle btn' id='hideDetailArticle_".$ue['ID_PRESCRIPTIONARTICLE']."' style='display:none;'>Masquer les détails</button>
@@ -20,7 +27,10 @@
 	echo "</ul>";
 	echo "
 		</ul>
-		<ul class='prescriptiontypeTexte_".$this->idTexte." unstyled'>
+		</form>
+		<form id='FormPrescriptiontypeTexte_".$this->idTexte."' >
+			<input type='hidden' name='type' value='prescriptionType' />
+			<ul class='prescriptiontypeTexte_".$this->idTexte." unstyled classement'>
 	";
 	$nbPrescType = count($this->prescriptionType);
 	for($i=0; $i < $nbPrescType; $i++)
@@ -45,7 +55,11 @@
 				";
 				if($cpt)
 				{
-					echo "<td rowspan='".$nbAssoc."' class='span5'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+					echo "
+						<td rowspan='".$nbAssoc."' class='span5'>
+							<input type='hidden' name='prescType[]' value='".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' />
+							".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."
+						</td>";
 					echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><a href='#myModal' role='button' class='editPrescriptionType btn' data-toggle='modal'>Editer</a></td>";
 					$cpt = false;
 				}
@@ -60,7 +74,8 @@
 		}
 	}	
 	echo "
-		</ul>
+			</ul>
+		</form>
 	";
 	echo "<br/>";	
 	echo "
@@ -70,3 +85,25 @@
 	";
 
 ?>
+
+<script type="text/javascript">
+
+	$(".classement").sortable({
+		update: function(event, ui) {
+			var formId = $(this).parent();
+			var data = formId.serialize();
+			$.ajax({
+				type: "POST",
+				url: "/gestion-prescriptions/move",
+				data: data,
+				beforeSend: function(){
+					$(this).disableSelection();
+				},
+				success: function(msg){
+					$(this).enableSelection();
+				}
+			});
+		}
+	});
+
+</script>
