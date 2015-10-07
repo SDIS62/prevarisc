@@ -1,12 +1,19 @@
 <?php
 	echo "<br/><br/>";	
 
-	echo "<ul class='prescriptiontexte unstyled' id='prescriptiontexte_".$this->idCategorie."' >";
+	echo "
+		<form id='FormPrescriptiontexte_".$this->idCategorie."' >
+			<input type='hidden' name='type' value='texte' />
+			<ul class='prescriptiontexte unstyled classement' id='prescriptiontexte_".$this->idCategorie."' >
+	";
 	
 	foreach($this->listePrescriptionTexte as $val => $ue){
 		echo "
 			<li id='texteid_".$ue['ID_PRESCRIPTIONTEXTE']."'>
-				<span style='font-size:15px;'>".$ue['LIBELLE_PRESCRIPTIONTEXTE']."</span>
+				<span style='font-size:15px;'>
+					<input type='hidden' name='texte[]' value='".$ue['ID_PRESCRIPTIONTEXTE']."' />
+					".$ue['LIBELLE_PRESCRIPTIONTEXTE']."
+				</span>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<button class='showDetailTexte btn' id='showarticle_".$ue['ID_PRESCRIPTIONTEXTE']."' >Afficher les détails</button>
 				<button class='hideDetailTexte btn' id='hidearticle_".$ue['ID_PRESCRIPTIONTEXTE']."' style='display:none;'>Masquer les détails</button>
@@ -19,10 +26,15 @@
 		";
 	}
 	
-	echo "</ul>";
 	echo "
 		</ul>
-		<ul id='prescriptiontypeCat_".$this->idCategorie."' class='unstyled'>
+		</form>
+	";
+	echo "
+		</ul>
+		<form id='FormPrescriptiontypeCat_".$this->idCategorie."' >
+			<input type='hidden' name='type' value='prescriptionType' />
+			<ul id='prescriptiontypeCat_".$this->idCategorie."' class='unstyled classement'>
 	";
 	$nbPrescType = count($this->prescriptionType);
 	for($i=0; $i < $nbPrescType; $i++)
@@ -47,7 +59,11 @@
 				";
 				if($cpt)
 				{
-					echo "<td rowspan='".$nbAssoc."' class='span5'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
+					echo "
+						<td rowspan='".$nbAssoc."' class='span5'>
+							<input type='hidden' name='prescType[]' value='".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' />
+							".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."
+						</td>";
 					echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><a href='#myModal' role='button' class='editPrescriptionType btn' data-toggle='modal'>Editer</a></td>";
 					$cpt = false;
 				}
@@ -62,7 +78,8 @@
 		}
 	}	
 	echo "
-		</ul>
+			</ul>
+		</form>
 	";
 	echo "<br/>";	
 	echo "
@@ -71,3 +88,25 @@
 		<a href='#myModal' role='button' class='prescription btn' id='addPrescriptionCat_".$this->idCategorie."' data-toggle='modal'>Ajouter une prescription à la catégorie</a>
 	";
 ?>
+
+<script type="text/javascript">
+
+	$(".classement").sortable({
+		update: function(event, ui) {
+			var formId = $(this).parent();
+			var data = formId.serialize();
+			$.ajax({
+				type: "POST",
+				url: "/gestion-prescriptions/move",
+				data: data,
+				beforeSend: function(){
+					$(this).disableSelection();
+				},
+				success: function(msg){
+					$(this).enableSelection();
+				}
+			});
+		}
+	});
+
+</script>
