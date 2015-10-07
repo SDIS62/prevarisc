@@ -542,4 +542,30 @@ class GestionPrescriptionsController extends Zend_Controller_Action
     public function prescriptionFormAction(){
         $this->_helper->layout->setLayout('menu_admin');
     }
+
+
+    public function moveAction(){
+        //action permettant la sauvegarde de l'ordre des prescriptions type
+        $this->_helper->viewRenderer->setNoRender();
+        if ( $this->_request->isPost() ) {
+            $service_prescription = new Service_Prescriptions;
+            try {
+                $post = $this->_request->getPost();
+                //Zend_Debug::dump($post);
+                if(isset($post['prescType'])){
+                    $service_prescription->setOrder($post['prescType'],$post['type']);
+                }elseif(isset($post['categorie'])){
+                    $service_prescription->setOrder($post['categorie'],$post['type']);
+                }elseif(isset($post['texte'])){
+                    $service_prescription->setOrder($post['texte'],$post['type']);
+                }elseif(isset($post['article'])){
+                    $service_prescription->setOrder($post['article'],$post['type']);
+                }
+
+            }catch (Exception $e) {
+
+            }
+        }
+
+    }
 }
