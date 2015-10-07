@@ -23,13 +23,18 @@
 	";
 	
 	echo "
-		<ul class='prescriptioncat unstyled'>
+		<form id='FormPrescriptioncat_".$this->idCategorie."' >
+			<input type='hidden' name='type' value='categorie' />
+			<ul class='prescriptioncat unstyled classement'>
 	";
 	foreach($this->listePrescriptionCat as $val => $ue)
 	{
 		echo "
 			<li id='categorie_".$ue['ID_PRESCRIPTION_CAT']."'>
-				<span style='font-size:17px;font-weight:bold;'>".$ue['LIBELLE_PRESCRIPTION_CAT']."</span>
+				<span style='font-size:17px;font-weight:bold;'>
+					<input type='hidden' name='categorie[]' value='".$ue['ID_PRESCRIPTION_CAT']."' />
+					".$ue['LIBELLE_PRESCRIPTION_CAT']."
+				</span>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<button class='showDetailCat btn' id='showtexte_".$ue['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
 				<button class='hideDetailCat btn' id='hidetexte_".$ue['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
@@ -43,7 +48,8 @@
 		";
 	}
 	echo "
-		</ul>
+			</ul>
+		</form>
 		<ul class='prescriptiontypeWithoutCat' class='unstyled'>
 	";
 	$nbPrescType = count($this->prescriptionType);
@@ -120,9 +126,11 @@ $(document).ready(function(){
 			success: function(msg){
 				$("#texte_"+idCat).html(msg);
 				$("#showtexte_"+idCat).hide();
-				$("#hidetexte_"+idCat).show();				
+				$("#hidetexte_"+idCat).show();
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	//Masque les textes appartenant à la catégorie
@@ -132,6 +140,7 @@ $(document).ready(function(){
 		$("#texte_"+idCat).html('');
 		$("#hidetexte_"+idCat).hide();
 		$("#showtexte_"+idCat).show();
+		return false;
 	});
 
 	$(".showDetailTexte").live('click',function(){
@@ -145,8 +154,10 @@ $(document).ready(function(){
 				$("#article_"+idTexte).html(msg);
 				$("#showarticle_"+idTexte).hide();
 				$("#hidearticle_"+idTexte).show();
+				return false;
 			}
 		});
+		return false;
 	});
 
 	$(".hideDetailTexte").live('click',function(){
@@ -155,6 +166,7 @@ $(document).ready(function(){
 		$("#article_"+idTexte).html('');
 		$("#hidearticle_"+idTexte).hide();
 		$("#showarticle_"+idTexte).show();
+		return false;
 	});
 
 	$(".showDetailArticle").live('click',function(){
@@ -169,8 +181,10 @@ $(document).ready(function(){
 				$("#articleDetail_"+idArticle).html(msg);
 				$("#showDetailArticle_"+idArticle).hide();
 				$("#hideDetailArticle_"+idArticle).show();
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	$(".hideDetailArticle").live('click',function(){
@@ -179,6 +193,7 @@ $(document).ready(function(){
 		$("#articleDetail_"+idArticle).html('');
 		$("#showDetailArticle_"+idArticle).show();
 		$("#hideDetailArticle_"+idArticle).hide();
+		return false;
 	});
 	//Gestion des catégories
 	//$(".prescriptioncat").sortable().disableSelection();
@@ -195,8 +210,10 @@ $(document).ready(function(){
 				//alert(msg);
 				dialogCategorie.html(msg);
 				dialogCategorie.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	$(".editCategorie").live('click',function(){
@@ -210,8 +227,10 @@ $(document).ready(function(){
 				//alert(msg);
 				dialogCategorie.html(msg);
 				dialogCategorie.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});	
 	
 	dialogCategorie.dialog({
@@ -264,8 +283,10 @@ $(document).ready(function(){
 				//alert(msg);
 				dialogTexte.html(msg);
 				dialogTexte.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	$(".editTexte").live('click',function(){
@@ -281,8 +302,10 @@ $(document).ready(function(){
 				//alert(msg);
 				dialogTexte.html(msg);
 				dialogTexte.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	dialogTexte.dialog({
@@ -337,8 +360,10 @@ $(document).ready(function(){
 				//alert(msg);
 				dialogArticle.html(msg);
 				dialogArticle.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 
 	dialogArticle.dialog({
@@ -396,8 +421,10 @@ $(document).ready(function(){
 				//alert(msg);
 				dialogArticle.html(msg);
 				dialogArticle.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 
 //Gestion des prescriptions type
@@ -425,11 +452,13 @@ $(document).ready(function(){
 					},
 					success: function(msg){
 						$("#selectEmplacement").html(msg);
+						return false;
 					}
 				});
 				//dialogPrescription.dialog("open");
 			}
 		});
+		return false;
 	});
 
 	$(".selectCategorie").live('click',function(){
@@ -586,6 +615,28 @@ $(document).ready(function(){
 				//dialogPrescription.dialog("open");
 			}
 		});
+		return false;
 	});
+
+
 });
+
+$(".classement").sortable({
+	update: function(event, ui) {
+		var formId = $(this).parent();
+		var data = formId.serialize();
+		$.ajax({
+			type: "POST",
+			url: "/gestion-prescriptions/move",
+			data: data,
+			beforeSend: function(){
+				$(this).disableSelection();
+			},
+			success: function(msg){
+				$(this).enableSelection();
+			}
+		});
+	}
+});
+
 </script>
