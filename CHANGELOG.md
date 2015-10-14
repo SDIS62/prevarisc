@@ -86,6 +86,11 @@ Corrections :
 * Correction de la fonction proprietaire manquante
 * Correction de la catégorie qui doit prendre celle du père pour les cellules au niveau de la popup et des docs générés
 * Correction des dates pickers à passer en français
+* Correction de la catégorie qui doit prendre celle du père pour les cellules au niveau de la popup et des docs générés
+* Correction du cache non vidé pour les parents des établissements lorsqu'un dossier donnant avis est modifié
+* Correction de la creation d'un ODJ la 1ère fois avec deplacement du dossier mal positionne
+* Correction de l'enregistrement d'une prescription type sans choisir de texte et d'article
+* Correction de l'espacement interbloc sur la HP qui décale tout sur 1 colonne sur certains types de petits écrans
 
 ## 2.3
 
