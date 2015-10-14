@@ -111,7 +111,7 @@
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
         }
 
-        public function getInformations( $id_etablissement )
+        public function getInformations($id_etablissement)
         {
             $DB_information = new Model_DbTable_EtablissementInformations;
 
@@ -121,15 +121,7 @@
                 ->where("ID_ETABLISSEMENT = '$id_etablissement'")
                 ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = '$id_etablissement' ) ");
 
-                //echo $select->__toString();
-				//Zend_Debug::dump($DB_information->fetchRow($select));
-            if ( $DB_information->fetchRow($select) != null ) {
-                $result = $DB_information->fetchRow($select)->toArray();
-
-                return $DB_information->find( $result["ID_ETABLISSEMENTINFORMATIONS"] )->current();
-            } else
-
-                return null;
+            return $DB_information->fetchRow($select);
         }
 
         public function getLibelle( $id_etablissement )
