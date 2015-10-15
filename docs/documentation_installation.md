@@ -130,6 +130,23 @@ PREVARISC_BRANCH | [FACULTATIF] Forcer la branche de l'installation prévarisc, 
 * Ouvrir Firefox et saisir http://prevarisc.sdis??.fr
 * A ce point vous devez être capable d'accéder à Prevarisc ! Le premier compte utilisateur est ```root```, mot de passe ```root``` (à désactiver le plus rapidement possible pour des raisons de sécurité).
 
+
+## Etape 6 (optionnelle) : installation d'un cache mysql (php>5.4) ##
+
+Pour les installations avec php > 5.4, APC n'est plus supporté. Il faut installer un cache alternatif, mysql par exemple :
+* download du module php memcache
+* Taper : ```tar -xvzf memcache-2.2.7.tgz```
+* Taper : ```cd memcache-2.2.7```
+* Taper : ```phpize```
+* Taper : ```./configure```
+* Taper : ```make```
+* Taper : ```sudo make install```
+* Vérifier que memcache est bien installé ```php -m | grep memcache``` sinon ajout de : ```extension=memcache.so``` dans le php.ini
+* Jouer le sql d'activation du cache, taper : ```mysql -u root -p prevarisc < sql/init/enable_mysql_cache.sql```
+* Taper : ```sudo /etc/init.d/mysql restart```
+* Modifier le vhost apache pour modifier les variables PREVARISC_CACHE_ADAPTER en "Cache_MySQLMemcached" voir PREVARISC_CACHE_HOST si le backend est installé sur une machine distante.
+* Taper : ```sudo /etc/init.d/httpd restart```
+
 # Mise à jour de la base de données de Prevarisc #
 
 Depuis un PC windows, installer le logiciel [MySQL WorkBench](http://www.mysql.fr/products/workbench/).
