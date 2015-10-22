@@ -57,6 +57,8 @@ class DossierController extends Zend_Controller_Action
         "62" => array("type","DATEINSERT","OBJET","NUMDOCURBA","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","SERVICEINSTRUC","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","COORDSSI","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
         // Demande d'organisation de manifestation temporaire - OK
         "63" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","ABSQUORUM","DEMANDEUR","INCOMPLET", "HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
+        // Déclassement / Reclassement - OK
+        "66" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","ABSQUORUM","DEMANDEUR","INCOMPLET", "HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
     //VISITE DE COMMISSION
         //Réception de travaux - OK
         "20" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","ABSQUORUM","NPSP","AVIS_COMMISSION","OBSERVATION","DATERVRAT","DELAIPRESC"),
@@ -70,6 +72,8 @@ class DossierController extends Zend_Controller_Action
         "23" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","DIFFEREAVIS","ABSQUORUM","AVIS_COMMISSION","OBSERVATION","DELAIPRESC"),
         //Inopinéee - OK
         "24" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","PREVENTIONNISTE","DIFFEREAVIS","ABSQUORUM","AVIS_COMMISSION","OBSERVATION","DELAIPRESC"),
+        //Visite conseil - OK
+        "64" => array("DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATEVISITE","COORDSSI","PREVENTIONNISTE","OBSERVATION","DELAIPRESC"),
     //GROUPE DE VISITE
         //Réception de travaux - OK
         "25" => array("type","DATEINSERT","OBJET","COMMISSION","DESCGEN","DESCEFF","DATECOMM","DATEVISITE","AVIS","COORDSSI","PREVENTIONNISTE","NPSP","ABSQUORUM","AVIS_COMMISSION","OBSERVATION","DATERVRAT","DELAIPRESC"),
@@ -113,6 +117,8 @@ class DossierController extends Zend_Controller_Action
         "50" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM","OBSERVATION"),
         //Demande de visite de réception
         "60" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM","OBSERVATION"),
+        //Autorisation de travaux
+        "65" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","PREVENTIONNISTE","DATEREP","DATEENVTRANSIT","PREVENTIONNISTE","DATESDIS","DEMANDEUR","DATETRANSFERTCOMM","DATERECEPTIONCOMM","OBSERVATION"),
     //INTERVENTION
         //Incendie - OK
         "37" => array("DATEINSERT","OBJET","OPERSDIS","RCCI","REX","NUMINTERV","DATEINTERV","DUREEINTERV","PREVENTIONNISTE","OBSERVATION"),
@@ -1869,13 +1875,6 @@ class DossierController extends Zend_Controller_Action
         $this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
         $this->view->numTotal = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
-        $dbCategorie = new Model_DbTable_Categorie();
-        if ($object_informations["ID_CATEGORIE"]) {
-            $categorie = $dbCategorie->getCategories($object_informations["ID_CATEGORIE"]);
-            $categorie = explode(" ",$categorie['LIBELLE_CATEGORIE']);
-            $this->view->categorieEtab = $categorie[0];
-        }
-
         $this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
 
         $model_typeactivite = new Model_DbTable_TypeActivite();
@@ -1932,6 +1931,18 @@ class DossierController extends Zend_Controller_Action
             $idGenrePere = $this->view->infoPere['ID_GENRE'];
             $infosGenrePere = $dbGenre->find($idGenrePere)->current();
             $this->view->genrePere = $infosGenrePere['LIBELLE_GENRE'];
+        }
+        
+        // Catégorie
+        if (3 == $object_informations['ID_GENRE'] && $this->view->infoPere) {
+            $object_informations["ID_CATEGORIE"] = $this->view->infoPere['ID_CATEGORIE'];
+        }
+        
+        $dbCategorie = new Model_DbTable_Categorie();
+        if ($object_informations["ID_CATEGORIE"]) {
+            $categorie = $dbCategorie->getCategories($object_informations["ID_CATEGORIE"]);
+            $categorie = explode(" ",$categorie['LIBELLE_CATEGORIE']);
+            $this->view->categorieEtab = $categorie[0];
         }
 
         // Adresses
