@@ -94,8 +94,9 @@ foreach($this->informationsMembre as $val => $membre){
 							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
 							if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
 							{
-                                retrieveInfoDossier($infosDoss, $dossierInfos);
-                            }else{
+                                                            retrieveInfoDossier($infosDoss, $dossierInfos);
+                                                            $villeODF->infosDoss->merge();
+                                                        }else{
 								//cas membre n'a pas les droits
 							}
 						}
