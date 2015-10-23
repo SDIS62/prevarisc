@@ -180,6 +180,7 @@ $(document).ready(function() {
 					var copiedEventObject = $.extend({}, originalEventObject);
 					// assign it the date that was reported
 					copiedEventObject.start = date;
+                                        copiedEventObject.end = new Date(date.getTime() + 5*60000);
 					copiedEventObject.url = "/dossier/index/id/"+idDossier;
 					copiedEventObject.allDay = allDay;
 					if(verrou == 1){
