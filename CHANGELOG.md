@@ -84,6 +84,8 @@ Corrections :
 * Correction du non rechargement des pages de gestion des commission à l'ajout ou suppression
 * Correction du descriptif établissment avec les valeurs maximums
 * Correction de la fonction proprietaire manquante
+* Correction de la creation d'un ODJ la 1ère fois avec deplacement du dossier mal positionne
+* Correction des dates pickers à passer en français
 * Correction de la catégorie qui doit prendre celle du père pour les cellules au niveau de la popup et des docs générés
 * Correction des dates pickers à passer en français
 * Correction de la catégorie qui doit prendre celle du père pour les cellules au niveau de la popup et des docs générés
@@ -91,6 +93,7 @@ Corrections :
 * Correction de la creation d'un ODJ la 1ère fois avec deplacement du dossier mal positionne
 * Correction de l'enregistrement d'une prescription type sans choisir de texte et d'article
 * Correction de l'espacement interbloc sur la HP qui décale tout sur 1 colonne sur certains types de petits écrans
+* Correction du cache non vidé pour les parents des établissements lorsqu'un dossier donnant avis est modifié
 * Correction de la génération des convocations qui ne faisait apparaitre que le dernier dossier pour les membres de types commune
 
 ## 2.3
