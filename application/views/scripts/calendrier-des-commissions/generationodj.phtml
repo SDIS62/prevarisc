@@ -45,8 +45,8 @@ foreach($this->membresFiles as $val => $membre){
 
 					addChamp($membreLoop,'commissionNom',$this->commissionInfos[0]['LIBELLE_COMMISSION']);
 					
-                    $dateDuJour = new Zend_Date();
-                    addChamp($membreLoop,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+                                        $dateDuJour = new Zend_Date();
+                                        addChamp($membreLoop,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 										
 					$dateComm = new Zend_Date($this->dateComm);
 					addChamp($membreLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
@@ -58,8 +58,8 @@ foreach($this->membresFiles as $val => $membre){
 					//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 					//Generation du segment pour l'affichage des différentes infos du dossier	
 					foreach($this->dossierComm as $val => $dossierInfos){
-                        retrieveInfoDoss($membreLoop, $dossierInfos);
-                        $membreLoop->infosDoss->merge(); 
+                                            retrieveInfoDoss($membreLoop, $dossierInfos);
+                                            $membreLoop->infosDoss->merge(); 
 					}
 					$membreLoop->merge();
 				}
