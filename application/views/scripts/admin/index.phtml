@@ -28,6 +28,17 @@
                 <dd>
                 <p><em><?php echo $this->dbname ?></em> sur <em><?php echo $this->db_url ?></em></p>
                 </dd>
+                
+                <dt>Cache</dt>
+                <dd>
+                <?php if ($this->cache_enabled): ?>
+                    <p><?php echo $this->cache_adapter ?></p>
+                    <p><?php echo $this->cache_url ?></p>
+                    <p><?php echo $this->cache_lifetime ?> sec de durée de vie</p>
+                <?php else: ?>
+                    <p>Désactivé</p>
+                <?php endif ?>
+                </dd>
 
                 <dt>HTTP API</dt>
                 <dd>

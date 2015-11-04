@@ -53,7 +53,14 @@ $application = new Zend_Application('production', array(
         'baseDn' => getenv('PREVARISC_LDAP_ENABLED') ? getenv('PREVARISC_LDAP_BASEDN') : '',
     ),
     'cache' => array(
-        'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
+        'adapter'       => getenv('PREVARISC_CACHE_ADAPTER') ? : 'APC',
+        'customAdapter' => getenv('PREVARISC_CACHE_ADAPTER') !== false,
+        'enabled'      => ((int) getenv('PREVARISC_CACHE_LIFETIME')) > 0,
+        'lifetime'      => (int) getenv('PREVARISC_CACHE_LIFETIME'),
+        'host'          => getenv('PREVARISC_CACHE_HOST'),
+        'port'          => (int) getenv('PREVARISC_CACHE_PORT'),
+        'write_control' => false,
+        'compression'   => false,
     ),
     'security' => array(
         'salt' => getenv('PREVARISC_SECURITY_SALT'),

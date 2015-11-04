@@ -2881,3 +2881,15 @@ CREATE TABLE IF NOT EXISTS `prescriptionreglassoc` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table`cache` 
+-- -----------------------------------------------------
+
+CREATE TABLE `cache` (
+  `ID_CACHE` varchar(250) NOT NULL,
+  `VALUE_CACHE` text,
+  `EXPIRE_CACHE` int,
+  PRIMARY KEY (`ID_CACHE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

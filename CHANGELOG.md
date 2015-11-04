@@ -40,6 +40,7 @@ Evolutions :
 * Auto-complétion des villes à partir de 2 caractères pour les communes à 2 caractères
 * Ajout de balises dans l'ODJ
 * Ajout du versionning des ressources statiques pour forcer le vidage de cache
+* Ajout du support du cache nosql mysql
 
 Corrections :
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
