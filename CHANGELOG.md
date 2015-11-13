@@ -96,6 +96,7 @@ Corrections :
 * Correction de l'espacement interbloc sur la HP qui décale tout sur 1 colonne sur certains types de petits écrans
 * Correction du cache non vidé pour les parents des établissements lorsqu'un dossier donnant avis est modifié
 * Correction de la génération des convocations qui ne faisait apparaitre que le dernier dossier pour les membres de types commune
+* Correction de la visibilité des dossiers sur les odj des membres communes
 
 ## 2.3
 
