@@ -55,7 +55,6 @@ $(document).ready(function() {
 
 				},
 				success: function(affichageResultat){
-					//alert('succes');
 					return false;
 				},
 				error: function()	{
@@ -75,7 +74,6 @@ $(document).ready(function() {
 			url: "/gestion-textes-applicables/formtexteappl",
 			data: "&id="+id,
 			success: function(msg){
-				//alert(msg);
 				dialogEditTexteAppl.html(msg);
 				dialogEditTexteAppl.dialog("open");
 			}
@@ -87,7 +85,6 @@ $(document).ready(function() {
 			type: "POST",
 			url: "/gestion-textes-applicables/formtexteappl",
 			success: function(msg){
-				//alert(msg);
 				dialogEditTexteAppl.html(msg);
 				dialogEditTexteAppl.dialog("open");
 			}
@@ -107,7 +104,6 @@ $(document).ready(function() {
 					url: "/gestion-textes-applicables/save",
 					data: $("#formTexteAppl").serialize(),
 					success: function(msg){
-						//alert(msg);
 						dialogEditTexteAppl.html("");
 						dialogEditTexteAppl.dialog("close");
 						if($("#gestionTextesAppl").length){

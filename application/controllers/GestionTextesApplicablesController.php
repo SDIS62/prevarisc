@@ -10,8 +10,6 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
         //on commence par afficher tous les texte applicables regroupés par leurs type
         $dbTextesAppl = new Model_DbTable_TextesAppl;
         $this->view->listeTextesAppl = $dbTextesAppl->recupTextesAppl();
-		//Zend_Debug::dump($this->view->listeTextesAppl);
-
     }
 
     public function formtexteapplAction()

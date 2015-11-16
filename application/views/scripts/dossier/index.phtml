@@ -478,7 +478,6 @@
 			select: function(start, end, allDay) {
 				var dateSelected = new Date(start);
 				// On empêche la selection d'un samedi ou d'un dimanche
-				//if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
 					// Boite de dialogue en ajoutant en callback le traitement du formulaire
 					var nomEtab = "";
 					if ($("#infosEtabs > .etab").length > 0) {
@@ -530,7 +529,6 @@
 												start: rez[i]['start'],
 												end: rez[i]['end'],
 												allDay: false,
-												//url: "/calendrier-des-commissions/view/id="+rez[i]['id']
 												url: "/commission/id/"+rez[i]['id']
 											});
 										}
@@ -544,7 +542,6 @@
 							}
 						});
 					});
-				//}
 			},
 			eventClick: function( event, jsEvent, view ) {
 				// Boite de dialogue
@@ -691,8 +688,6 @@
 			var tabDo = $(this).attr('id').split('_');
 			data = "do=supp_dateCom&idDateComm="+tabDo[2];
 			if(tabDo[2] == $("#dateCommission").val()){
-				//alert($("#listeDates").first("ul[id^=ligne_]").attr('id'));
-				//alert($("#listeDates ul:first").next("ul").attr('id'));
 
 			}
 			$.ajax({
@@ -999,7 +994,6 @@
 			url: "/dossier/savenew",
 			data: data,
 			type:"POST",
-			//async: false,
 			beforeSend: function(){
 				$("#annulModification").attr("disabled", "disabled");
 				$("#creationDossier").attr("disabled", "disabled");

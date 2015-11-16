@@ -50,7 +50,6 @@ echo "
 
 	function showPrescription($tabPrescriptions,$id_dossier,$verrou)
 	{
-		//Zend_Debug::dump($tabPrescriptions);
 		$listePrescr = $tabPrescriptions;
 		$nbPrescDossier = count($listePrescr);
 
@@ -140,7 +139,6 @@ $(document).ready(function(){
 				//on change le num de li
 				$(this).attr('num',num);
 				//on change le num affiché
-				//alert($(this).children().children().children().html());
 				$(this).children().children().children().children(".numPresc").html(num);
 				
 				//on recupere id du li en cours "presc_x"
@@ -157,7 +155,6 @@ $(document).ready(function(){
 				//on change le num de li
 				$(this).attr('num',num);
 				//on change le num affiché
-				//alert($(this).children().children().children().html());
 				$(this).children().children().children().children(".numPresc").html(num);
 				
 				//on recupere id du li en cours "presc_x"
@@ -173,7 +170,6 @@ $(document).ready(function(){
 				//on change le num de li
 				$(this).attr('num',num);
 				//on change le num affiché
-				//alert($(this).children().children().children().html());
 				$(this).children().children().children().children(".numPresc").html(num);
 				
 				//on recupere id du li en cours "presc_x"
@@ -192,7 +188,6 @@ $(document).ready(function(){
 
 				},
 				success: function(affichageResultat){
-					//alert('succes');
 					return false;
 				},
 				error: function()	{
@@ -230,7 +225,6 @@ $(document).ready(function(){
 			url: "/dossier/prescriptiontypeform",
 			data: "&action=dossier",
 			success: function(msg){
-				//alert(msg);
 				dialogPrescType.html(msg);
 				dialogPrescType.dialog("open");
 				$.ajax({
@@ -238,7 +232,6 @@ $(document).ready(function(){
 					url: "/dossier/emplacement",
 					data: $("#formPrescription").serialize(),
 					success: function(msg){
-						//alert(msg);
 						$("#selectEmplacement").html(msg);
 					}
 				});
@@ -308,7 +301,6 @@ $(document).ready(function(){
 		var id = tabId[1];
 
 		var typePresc = $("#TYPE_PRESCRIPTION_DOSSIER").val();
-		//alert(id);
 		//On enregistre la prescription associée au dossier puis on integre le tableau retourné dans le li class=listePrescriptions
 
 		$.ajax({
@@ -325,7 +317,7 @@ $(document).ready(function(){
 		return false;	
 	});
 
-//Ajout d'une prescription ordinaire
+	//Ajout d'une prescription ordinaire
 	var dialogPresc = $('<div style="display:none;"></div>').appendTo('body');
 	
 	dialogPresc.dialog({
@@ -384,7 +376,7 @@ $(document).ready(function(){
 		return false;
 	});
 	
-//Récupération des prescriptions d'un autre dossier
+	//Récupération des prescriptions d'un autre dossier
 	var dialogRecupPresc = $('<div style="display:none;"></div>').appendTo('body');
 
 	dialogRecupPresc.dialog({
@@ -436,7 +428,7 @@ $(document).ready(function(){
 		return false;
 	});
 	
-//Edition des prescriptions d'un dossier
+	//Edition des prescriptions d'un dossier
 	var dialogPrescEdit = $('<div style="display:none;"></div>').appendTo('body');
 	
 	dialogPrescEdit.dialog({
@@ -483,7 +475,7 @@ $(document).ready(function(){
 		return false;
 	});
 	
-//Suppression d'une prescription
+	//Suppression d'une prescription
 	$(".deletePrescDossier").live('click',function(){
 		$(this).hide();
 		$(".deleteOption").show();
