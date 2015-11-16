@@ -380,7 +380,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         $liste_textes = $service_prescTextes->getTextesListe();
 
         $this->view->liste_textes = $liste_textes;
-        //Zend_Debug::dump($liste_textes);
     }
 
     public function gestionTextesAddAction(){
@@ -446,7 +445,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         $liste_articles = $service_prescription->getArticlesListe();
 
         $this->view->liste_articles = $liste_articles;
-        //Zend_Debug::dump($liste_textes);
     }
 
     public function gestionArticlesAddAction(){
@@ -551,7 +549,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             $service_prescription = new Service_Prescriptions;
             try {
                 $post = $this->_request->getPost();
-                //Zend_Debug::dump($post);
                 if(isset($post['prescType'])){
                     $service_prescription->setOrder($post['prescType'],$post['type']);
                 }elseif(isset($post['categorie'])){

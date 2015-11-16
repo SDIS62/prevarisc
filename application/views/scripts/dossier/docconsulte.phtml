@@ -1,10 +1,8 @@
 <script type="text/javascript">
 
 $.fn.hideModif = function(idPasCacher) {
-	//alert('pad cacher : '+idPasCacher);
 	var idModif = "modif_"+idPasCacher;
 	$(".modif").each(function(){
-		//alert("#modif_"+$(this).attr('id')+"    -     "+idPasCacher);
 		if($(this).attr('id') != idModif){
 			$("#"+$(this).attr('id')).hide();
 		}
@@ -13,10 +11,8 @@ $.fn.hideModif = function(idPasCacher) {
 }
 
 $.fn.showModif = function(idPasCacher) {
-	//alert('first : '+idPasCacher);
 	var idModif = "modif_"+idPasCacher;
 	$(".modif").each(function(){
-		//alert("#modif_"+$(this).attr('id')+"    -     "+idPasCacher);
 		if($(this).attr('id') != idModif){
 			$("#"+$(this).attr('id')).show();
 		}
@@ -25,9 +21,7 @@ $.fn.showModif = function(idPasCacher) {
 }
 
 $.fn.blockCheck = function(idPasCacher) {
-	//alert('first : '+idPasCacher);
 	$(".divDocConsulte input:checkbox").each(function(){
-		//alert($(this).attr('id')+' et '+'check_'+idPasCacher+ $(this).attr('checked'));
 		if($(this).attr('id') != 'check_'+idPasCacher && $(this).attr('checked') == false){
 			$(this).attr('disabled','disabled');
 		}
@@ -44,24 +38,20 @@ $.fn.activeCheck = function(idPasCacher) {
 
 //permet l'enregistrement du document consulté ajouté
 $.fn.ajoutDocDialog = function(idNatureDoc) {
-	//alert($("#formNewDoc").serialize());
-	
 	$.ajax({
 		url: "/dossier/fonction",
 		data: "do=ajoutDocValid&idDossier="+$("#idDossier").val()+"&"+$("#formNewDoc").serialize(),
 		type:"POST",
 		beforeSend: function(){
-			//VERIFICATION SUR L'integrité des données &| chargement icone
+
 		},
 		success: function(affichageResultat){
-			//alert("#listeDocs_"+idNatureDoc);
 			if($("#listeDocs_"+idNatureDoc).html() != '')
 			{
 				$("#listeDocs_"+idNatureDoc+" > li:last").after(affichageResultat);
 			}else{
 				$("#listeDocs_"+idNatureDoc).append(affichageResultat);
 			}
-			
 
 			$("#libelleNewDoc").attr('value','');
 			$("#dossier_Pdroite").activeCheck('qsd');
@@ -76,9 +66,7 @@ $.fn.ajoutDocDialog = function(idNatureDoc) {
 }
 
 $('.divDocConsulte input:checkbox').live('click',function(){
-	//alert($(this).attr("id"));
 	var idcheckbox = $(this).attr("id");
-	//alert($(this).attr("id"));
 	var nomTab = $(this).attr('id').split('_');
 	
 	if(nomTab.length == 3){
@@ -86,7 +74,6 @@ $('.divDocConsulte input:checkbox').live('click',function(){
 	}else if(nomTab.length == 4){
 		var nom = nomTab[1]+"_"+nomTab[2]+"_aj";
 	}
-	//alert(nom);
 	if($(this).attr('checked'))
 	{
 		$("#ref_"+nom).removeAttr('readonly');
@@ -136,7 +123,6 @@ $(".validDoc").live('click',function(){
 			//VERIFICATION SUR L'integrité des données
 		},
 		success: function(affichageResultat){
-			//$("#tabs").tabs('load', $("#tabs").tabs('option', 'selected'));
 			$("#dossier_Pdroite").showModif(idValid);
 			$("#dossier_Pdroite").activeCheck(idValid);
 			
@@ -171,7 +157,6 @@ $(document).ready(function(){
 		var valeurDiv;
 		var idLi;
 		var idLiTab;
-		//alert();
 		if($(this).find("input:checkbox").prop('checked'))
 		{
 			idLi = "";
@@ -179,7 +164,6 @@ $(document).ready(function(){
 			
 			valeurDiv = $(this).html();
 			idLiTab = $(this).find("input:checkbox").attr('id').split("_");
-			//alert(idLiTab);
 			if(idLiTab.length == 3)
 			{
 				idLi = idLiTab[1]+"_"+idLiTab[2];			

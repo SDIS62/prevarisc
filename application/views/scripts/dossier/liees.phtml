@@ -3,7 +3,6 @@
 	$(document).ready(function(){
 				
 		$('#listeEtab :input[name=idEtablissement]').each(function(){
-			//alert($(this).val());
 			$("#"+$(this).val()).remove();
 		});
 		
@@ -16,7 +15,6 @@
 			autoOpen: false,
 			buttons: {
 				"Lier ce dossier aux dossiers selectionnés": function() {
-					//alert($('#listeDossierCheckBox').serialize());
 					$.ajax({
 						url: "/dossier/fonction",
 						data: "do=liaisonDossier&idDossier="+$("#idDossier").val()+"&"+$('#listeDossierCheckBox').serialize(),
@@ -25,7 +23,6 @@
 							$("#listeDossier").html("<img alt='chargement' src='/images/load.gif'>");
 						},
 						success: function(affichageResultat){
-							//alert(affichageResultat);
 							loadDossierLies();
 							return false;
 						},
@@ -57,14 +54,11 @@
 			//on récup le type (dossier ou etablissement)
 			var typeAdd = $('[name=linkType]').val();
 			if(typeAdd == 'etablissement'){
-				//alert("idDossier="+$("#idDossier").val()+"&idSelect="+$("#idSelect").val()+"&libelleSelect="+$("#saisieEtab").val());
-				
 				$.ajax({
 					url: "/dossier/addetablissement",
 					data: "idDossier="+$("#idDossier").val()+"&idSelect="+$("#idSelect").val()+"&libelleSelect="+$("#saisieEtab").val(),
 					type:"POST",
 					beforeSend: function(){
-						//$("#sortable").html("<img src='/images/template/load/load.gif' />");
 						$(".btn").attr('disabled','disabled');
 					},
 					success: function(affichageResultat){
@@ -161,7 +155,6 @@
 				data: "idEtabDossier="+idEtabDossier,
 				type:"POST",
 				beforeSend: function(){
-					//$("#sortable").html("<img src='/images/template/load/load.gif' />");
 					$(".btn").attr('disabled','disabled');
 				},
 				success: function(affichageResultat){
@@ -204,7 +197,6 @@
 				data: $("#listeEnfantEtab").serialize()+"&idDossier="+$("#idDossier").val(),
 				type:"POST",
 				beforeSend: function(){
-					//$("#sortable").html("<img src='/images/template/load/load.gif' />");
 					$(".btn").attr('disabled','disabled');
 				},
 				success: function(affichageResultat){

@@ -20,7 +20,6 @@
 					<input type='hidden' name='prescType[]' value='".$presc['ID_PRESCRIPTIONTYPE']."' />
 					".nl2br($presc['PRESCRIPTIONTYPE_LIBELLE'])."
 				</td>";
-			//echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
 			echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><a href='#myModal' role='button' class='editPrescriptionType btn' data-toggle='modal'>Editer</a></td>";
 			$cpt = false;
 		}
@@ -34,9 +33,3 @@
 	";
 
 ?>
-
-<script type="text/javascript">
-$(document).ready(function(){
-	
-});
-</script>

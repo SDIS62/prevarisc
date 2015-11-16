@@ -7,7 +7,6 @@ if (!function_exists('addChamp')) {
           $variable = "";
         }
         $odf->setVars($nomOdf,$variable, true,'UTF8');
-        #$segment->$nomOdf(utf8_decode($variable));
       } catch (Exception $e) {
 
       }
@@ -73,7 +72,6 @@ if($this->infosDossier['DATEINCOMPLET_DOSSIER']){
 }
 
 addChamp($odf, 'demandeurDossier',$this->infosDossier['DEMANDEUR_DOSSIER']);
-#addChamp($odf, 'servInstructeur',$this->servInstructeur);
 addChamp($odf, 'servInstructeur',$this->servInstructeur);
 addChamp($odf, 'servInstructeurPrenomContact',$this->servInstructeurPrenomContact);
 addChamp($odf, 'servInstructeurNomContact',$this->servInstructeurNomContact);
@@ -91,7 +89,6 @@ try{
     $preventionniste = $odf->setSegment('preventionnistes');
     $nbPrev = count($this->preventionnistes);
     foreach($this->preventionnistes as $prev){
-        //addChamp($preventionniste, 'civilite', $prev['LIBELLE_UTILISATEURCIVILITE']);
         addChamp($preventionniste, 'grade', $prev['GRADE_UTILISATEURINFORMATIONS']);
         addChamp($preventionniste, 'nom', $prev['NOM_UTILISATEURINFORMATIONS']);
         if($nbPrev > 1)

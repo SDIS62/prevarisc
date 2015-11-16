@@ -6,7 +6,6 @@ echo "
 		<ul class='unstyled classement prescriptiontypeArticle_".$this->idArticle."' >
 ";
 $nbPrescType = count($this->prescriptionType);
-//Zend_Debug::dump($this->prescriptionType);
 for($i=0; $i < $nbPrescType; $i++)
 {
 	if(isset($this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']))

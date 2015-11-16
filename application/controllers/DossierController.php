@@ -442,7 +442,6 @@ class DossierController extends Zend_Controller_Action
             }
             //Conversion de la date et l'heure d'intervention
             if ($this->view->infosDossier['DATEINTERV_DOSSIER'] != '') {
-                //echo $this->view->infosDossier['DATEINTERV_DOSSIER'];
                 $dateHeure = explode(" ",$this->view->infosDossier['DATEINTERV_DOSSIER']);
                 $date = new Zend_Date($dateHeure[0], Zend_Date::DATES);
                 $this->view->infosDossier['DATEINTERV_DOSSIER'] = $date->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR);
@@ -695,76 +694,6 @@ class DossierController extends Zend_Controller_Action
                     echo json_encode($afficherChamps);
                 }
             break;
-            case "editDossier":
-                $idDossier = $this->_getParam("idDossier");
-                $DBdossier = new Model_DbTable_Dossier();
-                $this->view->infosDossier = $DBdossier->find($idDossier)->current();
-
-                //Récupération tous les libellé des natures du dossier concerné
-                $DBdossierNature = new Model_DbTable_DossierNature();
-                $this->view->natureConcerne = $DBdossierNature->getDossierNaturesLibelle($idDossier);
-
-                //On récupère la liste de tous les champs que l'on doit afficher en fonction des natures
-                //Si il y à plusieurs natures on les fait une par une pour savoir tous les champs à afficher
-                $premiereNature = 1;
-                $afficherChamps = array();
-                foreach ($this->view->natureConcerne as $value) {
-                    if (1 == $premiereNature) {
-                        $afficherChamps = $this->listeChamps[$value['ID_DOSSIERNATURE']];
-                        $premiereNature = 0;
-                    } else {
-                        $tabTemp = $this->listeChamps[$value['ID_DOSSIERNATURE']];
-                        foreach ($tabTemp as $value) {
-                            //si la nature contient un champ n'étant pas dans le tableau principal on l'ajoute
-                            if (!in_array($value, $afficherChamps)) {
-                                array_push($afficherChamps, $value);
-                            }
-                        }
-                    }
-                }
-                echo json_encode($afficherChamps);
-            break;
-            case "addDocUrba":
-                //ajoute dans la base de données un document d'urbanisme au dossier (mode édition seulement)
-                if ($this->_getParam('numDoc') && $this->_getParam('idDossier')) {
-                    $DBdocUrba = new Model_DbTable_DossierDocUrba();
-                    $newDocUrba = $DBdocUrba->createRow();
-                    $newDocUrba->NUM_DOCURBA = $this->_getParam('numDoc');
-                    $newDocUrba->ID_DOSSIER = $this->_getParam('idDossier');
-                    $newDocUrba->save();
-                }
-            break;
-            case "deleteDocUrba":
-                //supprime un document d'urbanisme dans la base de données (en mode édition seulement)
-                $DBdocUrba = new Model_DbTable_DossierDocUrba();
-                $numDocSupp = $DBdocUrba->find($this->_getParam('idNumDoc'))->current();
-                $numDocSupp->delete();
-            break;
-            case 'ajoutDocValid':
-                $this->ajoutdocAction($this->id_dossier);
-            break;
-            case 'suppDoc':
-                //cas de la suppression d'un document qui avait été renseigné
-                $tabInfos = split("_",$this->_getParam('docInfos'));
-                $nature = $tabInfos[0];
-                $numdoc = $tabInfos[1];
-                if (count($tabInfos) == 2) {
-                    //cas d'un document existant
-                    $dbToUse = new Model_DbTable_DossierDocConsulte();
-                    $searchResult = $dbToUse->getGeneral($this->_getParam('idDossier'), $numdoc);
-                    $docDelete = $dbToUse->find($searchResult['ID_DOSSIERDOCCONSULTE'])->current();
-                    $docDelete->delete();
-                } elseif (count($tabInfos) == 3) {
-                    //cas d'un document ajouté
-                    $dbToUse = new Model_DbTable_ListeDocAjout();
-                    $searchResult = $dbToUse->find($numdoc)->current();
-                    $searchResult->delete();
-                }
-            break;
-            case 'showMadContent':
-                echo $this->_getParam('numPresc');
-                $dbPrescDossier = new Model_DbTable_PrescriptionDossier();
-            break;
             case "pjPassageCommission":
                 //Permet de distinguer les prescriptions qui motivent un avis défavorable sur le dossier
                 $dbDossierPj = new Model_DbTable_DossierPj();
@@ -880,7 +809,6 @@ class DossierController extends Zend_Controller_Action
                     if ('AVIS_DOSSIER' == $libelle && 0 == $value) {
                         $value = null;
                     }
-                   //echo $this->_getParam('HORSDELAI_DOSSIER');
                     
                     if ('' == $value) {
                         $value = null;
@@ -975,8 +903,6 @@ class DossierController extends Zend_Controller_Action
                     $saveEtabDossier->save();
                 }
                 //Sauvegarde des natures du dossier
-
-
                 $saveNature = $DBdossierNature->createRow();
                 $saveNature->ID_DOSSIER = $idDossier;
                 $saveNature->ID_NATURE = $_POST['selectNature'];
@@ -1292,7 +1218,6 @@ class DossierController extends Zend_Controller_Action
                 }
             }
             
-            
             //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
             $idArray = array('id'=>$nouveauDossier->ID_DOSSIER);
             echo json_encode($idArray);
@@ -1318,7 +1243,6 @@ class DossierController extends Zend_Controller_Action
     //Autocomplétion pour selection ETABLISSEMENT
     public function selectionetabAction()
     {
-        //$this->_helper->viewRenderer->setNoRender();
         // Création de l'objet recherche
         $search = new Model_DbTable_Search();
 
@@ -1374,7 +1298,6 @@ class DossierController extends Zend_Controller_Action
                 $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription ('.$e->getMessage().')'));
             }
         }
-
         
         $this->view->infosDossier = $DBdossier->find($id_dossier)->current();
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
@@ -2267,14 +2190,12 @@ class DossierController extends Zend_Controller_Action
                             if(substr($dossier['DATECOMM_DOSSIER'], 0,10) == $dateCommGen){
                                 $nbEtude++;
                                 //on pousse les prescriptions
-                                //echo "Y a bon ".$cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]['ID_DOSSIER'];
                                 $cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]['regl'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],0);
                                 $cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]['exploit'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],1);
                                 $cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]['amelio'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],2);
                             }else{
                                 unset($cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]);
                             }
-                            //echo substr($dossier['DATECOMM_DOSSIER'], 0,10)." : ".$dateCommGen."<br/>";
                         }else{
                             //on supprime du tableau les dossiers qui ne correspondent pas
                             unset($cellulesListe[$celluleKey]['dossiers']['etudes'][$dossierKey]);
