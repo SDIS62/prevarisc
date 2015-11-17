@@ -28,7 +28,7 @@ class Service_Search
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
-        
+
         // Identifiant de la recherche
         $search_id = 'search_etablissements_' . md5(serialize(func_get_args()));
 
@@ -74,12 +74,12 @@ class Service_Search
                 // problème de duplicité d'établissements dans les résultats de recherche (#1300)
                 ->group("e.ID_ETABLISSEMENT")
                 ;
-            
+
             // Critères : nom de l'établissement
             if($label !== null) {
-                
+
                 $cleanLabel = trim($label);
-                
+
                 // recherche par id
                 if (substr($cleanLabel, 0, 1) == "#") {
                     $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", substr($cleanLabel, 1), false);
@@ -87,7 +87,7 @@ class Service_Search
                 // on test si la chaine contient uniquement des caractères de type identifiant sans espace
                 } else  if (preg_match('/^[E0-9\/\-\.]+([0-9A-Z]{1,2})?$/', $cleanLabel) === 1) {
                     $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", $cleanLabel, false);
-                    
+
                 // cas par défaut
                 } else {
                   $this->setCriteria($select, "LIBELLE_ETABLISSEMENTINFORMATIONS", $cleanLabel, false);
@@ -165,8 +165,8 @@ class Service_Search
 
             // Critères : géolocalisation
             if($lon !== null && $lat !== null) {
-               $this->setCriteria($select, "LON_ETABLISSEMENTADRESSE", $lon);
-               $this->setCriteria($select, "LAT_ETABLISSEMENTADRESSE", $lat);
+               $this->setCriteria($select, "etablissementadresse.LON_ETABLISSEMENTADRESSE", $lon);
+               $this->setCriteria($select, "etablissementadresse.LAT_ETABLISSEMENTADRESSE", $lat);
             }
 
             // Critères : parent
@@ -272,9 +272,9 @@ class Service_Search
 
             // Critères : objet
             if($objet !== null) {
-                
+
                 $cleanObjet = trim($objet);
-                
+
                 // recherche par id
                 if (substr($cleanObjet, 0, 1) == "#") {
                     $select->having("NB_URBA like ?", "%".substr($cleanObjet, 1)."%");
