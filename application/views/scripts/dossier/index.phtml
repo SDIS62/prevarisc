@@ -178,8 +178,8 @@
 				}
 
 				$.ajax({
-					url: "/dossier/fonction",
-					data: "do=showNature&idType="+idType,
+					url: "/dossier/shownature",
+					data: "idType="+idType,
 					type:"POST",
 					beforeSend: function(){
 						$("#chargement").html("<img src='/images/load.gif' />");
@@ -801,8 +801,8 @@
 	$.fn.afficheChamps = function(listeNature) {
 		$("#InfosDossier > li").hide();
 		$.ajax({
-			url: "/dossier/fonction",
-			data: "do=showChamps&listeNature="+listeNature,
+			url: "/dossier/showchamps",
+			data: "listeNature="+listeNature,
 			type:"POST",
 			//async: false,
 			beforeSend: function(){
