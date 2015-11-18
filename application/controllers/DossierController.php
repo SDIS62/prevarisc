@@ -654,58 +654,41 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
-    public function fonctionAction()
-    {
-        $this->view->do = $this->_getParam("do");
-        switch ($this->view->do) {
-            case "showNature":
-                $idType = (int) $this->_getParam("idType");
+    public function shownatureAction(){
+        $idType = (int) $this->_getParam("idType");
 
-                //Récupération de la liste des natures
-                $DBdossiernatureliste = new Model_DbTable_DossierNatureliste();
-                $this->view->dossierNatureListe = $DBdossiernatureliste->getDossierNature($idType);
-            break;
-            case "showChamps":
-                $this->_helper->viewRenderer->setNoRender();
-                $listeNature = $this->_getParam("listeNature");
+        //Récupération de la liste des natures
+        $DBdossiernatureliste = new Model_DbTable_DossierNatureliste();
+        $this->view->dossierNatureListe = $DBdossiernatureliste->getDossierNature($idType);
+    }
 
-                //Si une liste de nature est envoyée on peux traiter les différents champs à afficher
-                if ($listeNature != '') {
-                    $tabListeIdNature = explode("_",$listeNature);
-                    $premiereNature = 1;
-                    $afficherChamps = array();
-                    //$afficherChamps = $this->listeChamps[$idNature];
+    public function showchampsAction(){
+        $this->_helper->viewRenderer->setNoRender();
+        $listeNature = $this->_getParam("listeNature");
 
-                    foreach ($tabListeIdNature as $idNature) {
-                        if (1 == $premiereNature) {
-                            $afficherChamps = $this->listeChamps[$idNature];
-                            $premiereNature = 0;
-                        } else {
-                            $tabTemp = $this->listeChamps[$idNature];
-                            foreach ($tabTemp as $value) {
-                                //si la nature contient un champ n'étant pas dans le tableau principal on l'ajoute
-                                if (!in_array($value, $afficherChamps)) {
-                                    array_push($afficherChamps, $value);
-                                }
-                            }
+        //Si une liste de nature est envoyée on peux traiter les différents champs à afficher
+        if ($listeNature != '') {
+            $tabListeIdNature = explode("_",$listeNature);
+            $premiereNature = 1;
+            $afficherChamps = array();
+            //$afficherChamps = $this->listeChamps[$idNature];
+
+            foreach ($tabListeIdNature as $idNature) {
+                if (1 == $premiereNature) {
+                    $afficherChamps = $this->listeChamps[$idNature];
+                    $premiereNature = 0;
+                } else {
+                    $tabTemp = $this->listeChamps[$idNature];
+                    foreach ($tabTemp as $value) {
+                        //si la nature contient un champ n'étant pas dans le tableau principal on l'ajoute
+                        if (!in_array($value, $afficherChamps)) {
+                            array_push($afficherChamps, $value);
                         }
                     }
-
-                    echo json_encode($afficherChamps);
                 }
-            break;
-            case "pjPassageCommission":
-                //Permet de distinguer les prescriptions qui motivent un avis défavorable sur le dossier
-                $dbDossierPj = new Model_DbTable_DossierPj();
-                $dossierPjEdit = $dbDossierPj->find($this->_getParam('idDossier'),$this->_getParam('idPjCommission'))->current();
+            }
 
-                if ($this->_getParam('checked') == 'true') {
-                    $dossierPjEdit->PJ_COMMISSION = 1;
-                } elseif ($this->_getParam('checked') == 'false') {
-                    $dossierPjEdit->PJ_COMMISSION = 0;
-                }
-                $dossierPjEdit->save();
-            break;
+            echo json_encode($afficherChamps);
         }
     }
 
