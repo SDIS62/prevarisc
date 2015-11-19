@@ -692,6 +692,11 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+    public function ajoutdocvalidAction()
+    {
+        $this->ajoutdocAction($this->id_dossier);
+    }
+
 	public function formdocmanquantAction()
 	{
 		$dbDocManquant = new Model_DbTable_DocManquant();

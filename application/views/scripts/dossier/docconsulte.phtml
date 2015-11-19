@@ -39,8 +39,8 @@ $.fn.activeCheck = function(idPasCacher) {
 //permet l'enregistrement du document consulté ajouté
 $.fn.ajoutDocDialog = function(idNatureDoc) {
 	$.ajax({
-		url: "/dossier/fonction",
-		data: "do=ajoutDocValid&idDossier="+$("#idDossier").val()+"&"+$("#formNewDoc").serialize(),
+		url: "/dossier/ajoutdocvalid",
+		data: "idDossier="+$("#idDossier").val()+"&"+$("#formNewDoc").serialize(),
 		type:"POST",
 		beforeSend: function(){
 
