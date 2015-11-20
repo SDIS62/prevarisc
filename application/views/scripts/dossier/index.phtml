@@ -1342,8 +1342,8 @@ echo "
 						<select id='year_visite' style='width:70px;'>
 					";
                     $annéeActuelle = date("Y");
-                    for ($i = $annéeActuelle; $i >= 1990; $i--) {
-                        echo "<option value='".$i."' >".$i."</option>";
+                    for ($i = $annéeActuelle + 2; $i >= 1990; $i--) {
+                        echo "<option value='".$i."' ".(($annéeActuelle == $i) ? "selected='selected'" : "")." >".$i."</option>";
                     }
                     echo "
 						</select>
@@ -1390,8 +1390,8 @@ echo "
 						<select id='year_comm' style='width:70px;'>
 					";
                     $annéeActuelle = date("Y");
-                    for ($i = $annéeActuelle; $i >= 1990; $i--) {
-                        echo "<option value='".$i."' >".$i."</option>";
+                    for ($i = $annéeActuelle + 2; $i >= 1990; $i--) {
+                        echo "<option value='".$i."' ".(($annéeActuelle == $i) ? "selected='selected'" : "")." >".$i."</option>";
                     }
                     echo "
 						</select>
