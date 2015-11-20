@@ -1738,6 +1738,8 @@ class DossierController extends Zend_Controller_Action
 
             $DBdossier = new Model_DbTable_Dossier();
             $this->view->listeEtablissement = $DBdossier->getEtablissementDossier($idDossier);
+
+            $this->view->idTypeActivitePrinc = $this->view->enteteEtab[0]["infosEtab"]["informations"]["ID_TYPEACTIVITE"];
         }
     }
 
@@ -2143,7 +2145,7 @@ class DossierController extends Zend_Controller_Action
         //Les dossiers ayant pour nature LR et LP 7,19
         $natureCCL = array(7,19);
 
-        if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC) && isset($affectDossier)){
+        if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC) && isset($affectDossier) && !$this->_getParam("repriseCC") ){
             //On récupère toutes les cellules
             $idDateCommAffect = $affectDossier['ID_DATECOMMISSION_AFFECT'];
             $listeDossierConcerne = $dbAffectDossier->getDossierNonAffect($idDateCommAffect);
@@ -2157,7 +2159,7 @@ class DossierController extends Zend_Controller_Action
                 }
                 $this->view->celluleDossier = $listeDossierConcerne;
             }
-        }elseif($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCCL)){
+        }elseif($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCCL) && !$this->_getParam("repriseCC")){
             $dateCommGen = $this->view->infosDossier['DATECOMM_DOSSIER'];
             //On récupère toutes les cellules
             $cellulesListe = $this->view->etablissementInfos['etablissement_lies'];

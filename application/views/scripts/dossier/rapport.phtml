@@ -142,6 +142,14 @@
     <div class="alert alert-success" id='successDiv' style='display:none;'></div>
     <div class="alert alert-danger" id='failDiv' style='display:none;'></div>
     <div class='row-flud'>
+    <?php
+        if($this->idTypeActivitePrinc == 29){
+            echo "Cochez la case si vous ne souhaitez pas reprendre les prescriptions des cellules <input type='checkbox' name='repriseCC' id='repriseCC'  ><br/>";
+        }
+    ?>
+    </div>
+    <br/>
+    <div class='row-flud'>
         <input type='generate' class='btn btn-success' id='test' value='Génerer le(s) document(s)' >
     </div>
 </form>
