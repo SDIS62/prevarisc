@@ -1772,6 +1772,7 @@ CREATE TABLE `groupe-privileges` (
 
 LOCK TABLES `groupe-privileges` WRITE;
 /*!40000 ALTER TABLE `groupe-privileges` DISABLE KEYS */;
+INSERT INTO `groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES ('1', '11');
 /*!40000 ALTER TABLE `groupe-privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
