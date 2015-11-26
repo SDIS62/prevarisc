@@ -38,23 +38,28 @@ class Model_DbTable_Groupement extends Zend_Db_Table_Abstract
     
     public function getByLibelle($libelle)
     {
+        $expLibelle = $this->getAdapter()->quote($libelle);
         $select = "SELECT groupement.*, groupementtype.LIBELLE_GROUPEMENTTYPE, utilisateurinformations.*
                     FROM groupement 
                     INNER JOIN groupementtype ON groupement.ID_GROUPEMENTTYPE = groupementtype.ID_GROUPEMENTTYPE 
                     LEFT JOIN utilisateurinformations ON utilisateurinformations.ID_UTILISATEURINFORMATIONS = groupement.ID_UTILISATEURINFORMATIONS 
-                    WHERE (groupement.LIBELLE_GROUPEMENT = '".$libelle."');";
+                    WHERE (groupement.LIBELLE_GROUPEMENT = " . $expLibelle . ");";
         //echo $select;
         //Zend_Debug::dump($DB_information->fetchRow($select));
+        
         return $this->getAdapter()->fetchAll($select);
     }
     
     public function getByLibelle2($libelle, $libelleGroupementType)
     {
+        $expLibelle = $this->getAdapter()->quote($libelle);
+        $expLibelleGroupementType = $this->getAdapter()->quote($libelleGroupementType);
         $select = "SELECT groupement.*, groupementtype.LIBELLE_GROUPEMENTTYPE, utilisateurinformations.*
                     FROM groupement 
                     INNER JOIN groupementtype ON groupement.ID_GROUPEMENTTYPE = groupementtype.ID_GROUPEMENTTYPE 
                     LEFT JOIN utilisateurinformations ON utilisateurinformations.ID_UTILISATEURINFORMATIONS = groupement.ID_UTILISATEURINFORMATIONS 
-                    WHERE (groupement.LIBELLE_GROUPEMENT = '".$libelle."' and groupementtype.LIBELLE_GROUPEMENTTYPE = '".$libelleGroupementType."');";
+                    WHERE (groupement.LIBELLE_GROUPEMENT = " . $expLibelle . " AND groupementtype.LIBELLE_GROUPEMENTTYPE = " . $expLibelleGroupementType . ");";
+       
        return $this->getAdapter()->fetchAll($select);
     }
 
