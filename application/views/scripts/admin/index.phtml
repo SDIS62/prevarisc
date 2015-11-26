@@ -6,7 +6,12 @@
             <dl class='dl-horizontal' >
                 <dt>Version</dt>
                 <dd>
-                <p><?php echo $this->version_prevarisc ?></p>
+                <p>
+                    <?php echo $this->version_prevarisc ?>
+                    <?php if($this->is_uptodate === false) : ?>
+                        <span class='avis' style='background-color: #3a87ad; font-size: .7em;'>Mise à jour disponible sur SDIS62/prevarisc</span>
+                    <?php endif ?>
+                </p>
                 </dd>
 
                 <dt>Clé IGN</dt>
@@ -28,7 +33,7 @@
                 <dd>
                 <p><em><?php echo $this->dbname ?></em> sur <em><?php echo $this->db_url ?></em></p>
                 </dd>
-                
+
                 <dt>Cache</dt>
                 <dd>
                 <?php if ($this->cache_enabled): ?>
