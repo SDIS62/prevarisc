@@ -319,7 +319,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
           $author = null;
 
           if($dossier->AVIS_DOSSIER_COMMISSION && ($dossier->AVIS_DOSSIER_COMMISSION == 1 || $dossier->AVIS_DOSSIER_COMMISSION == 2)) {
-            if( ($dossier->TYPE_DOSSIER == 1 && in_array($dossier->ID_DOSSIERNATURE, array(19))) || ($dossier->TYPE_DOSSIER == 2 && in_array($dossier->ID_DOSSIERNATURE, array(21, 23, 24, 47))) || ($dossier->TYPE_DOSSIER == 3 && in_array($dossier->ID_DOSSIERNATURE, array(26, 28, 29, 48)))) {
+            if( ($dossier->TYPE_DOSSIER == 1 && in_array($dossier->ID_DOSSIERNATURE, array(19, 7))) || ($dossier->TYPE_DOSSIER == 2 && in_array($dossier->ID_DOSSIERNATURE, array(21, 23, 24, 47))) || ($dossier->TYPE_DOSSIER == 3 && in_array($dossier->ID_DOSSIERNATURE, array(26, 28, 29, 48)))) {
               $value = $dossier->AVIS_DOSSIER_COMMISSION == 1 ? "Favorable" : "Défavorable";
             }
           }
