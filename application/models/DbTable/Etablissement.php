@@ -314,7 +314,7 @@
                     . "LEFT JOIN dossiernature dn ON dn.ID_DOSSIER = dos.ID_DOSSIER "
                     . "WHERE etabdoss.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT "
                     . "AND dos.TYPE_DOSSIER IN(2,3) "
-                    . "AND dn.ID_NATURE IN (21,26,47,48))");
+                    . "AND dn.ID_NATURE IN (21,23,24,26,28,29,47,48))");
             $search->setCriteria("etablissementinformations.ID_STATUT", 2);
             $search->setCriteria("etablissementinformations.ID_GENRE", 2);
             $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
