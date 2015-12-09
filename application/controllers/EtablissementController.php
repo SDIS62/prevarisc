@@ -19,6 +19,8 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->etablissement = $etablissement;
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
 
+        $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
     }
 
@@ -30,6 +32,8 @@ class EtablissementController extends Zend_Controller_Action
         $service_carto = new Service_Carto;
 
         $etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
         
         $this->view->etablissement = $etablissement;
 
@@ -147,6 +151,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
 
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $descriptifs = $service_etablissement->getDescriptifs($this->_request->id);
 
         $this->view->descriptif = $descriptifs['descriptif'];
@@ -183,6 +189,9 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->textes_applicables_de_etablissement = $service_etablissement->getAllTextesApplicables($this->_request->id);
     }
 
@@ -194,6 +203,9 @@ class EtablissementController extends Zend_Controller_Action
         $service_textes_applicables = new Service_TextesApplicables;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->textes_applicables_de_etablissement = $service_etablissement->getAllTextesApplicables($this->_request->id);
         $this->view->textes_applicables = $service_textes_applicables->getAll();
 
@@ -218,6 +230,9 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
         $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
     }
@@ -234,6 +249,9 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
         $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
 
@@ -292,6 +310,9 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $contacts_etablissements_parents = array();
 
         // Récupération des contacts des établissements parents
@@ -390,6 +411,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
 
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $dossiers = $service_etablissement->getDossiers($this->_request->id);
 
         $this->view->etudes = $dossiers['etudes'];
@@ -404,6 +427,8 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
         $this->view->historique = $service_etablissement->getHistorique($this->_request->id);
     }
