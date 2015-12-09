@@ -1300,9 +1300,16 @@ class Service_Etablissement implements Service_Interface_Etablissement
         
         $search = new Model_DbTable_Search;
         $dossierDiff = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.DIFFEREAVIS_DOSSIER", 1)->order("DATEINSERT_DOSSIER DESC")->run()->getAdapter()->getItems(0, 1)->toArray();
-        $dateInsertDossierDiffere = $dossierDiff[0]['DATEINSERT_DOSSIER'];
-        $dateInsertDossierDiffere = new Zend_Date($dateInsertDossierDiffere, Zend_Date::DATES);
+        
+        //Si l'etablissement ne comporte pas d'avis différé on prend l'avis correspondant à ID_DOSSIERDONNANTAVIS
+        if(count($dossierDiff) > 0){
+            $dateInsertDossierDiffere = $dossierDiff[0]['DATEINSERT_DOSSIER'];
+            $dateInsertDossierDiffere = new Zend_Date($dateInsertDossierDiffere, Zend_Date::DATES);
+        }else{
+            return "avisDoss";
+        }
 
+        //On compare la date de l'avis différé avec la date de l'avis d'exploitation le plus récent
         if($dateInsertDossierDonnantAvis->compare($dateInsertDossierDiffere) == 1){
             return "avisDoss";
         }else{
