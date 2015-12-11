@@ -1545,6 +1545,27 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+    public function suppdocAction()
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        //cas de la suppression d'un document qui avait été renseigné
+        $tabInfos = split("_",$this->_getParam('docInfos'));
+        $nature = $tabInfos[0];
+        $numdoc = $tabInfos[1];
+        if (count($tabInfos) == 2) {
+            //cas d'un document existant
+            $dbToUse = new Model_DbTable_DossierDocConsulte();
+            $searchResult = $dbToUse->getGeneral($this->_getParam('idDossier'), $numdoc);
+            $docDelete = $dbToUse->find($searchResult['ID_DOSSIERDOCCONSULTE'])->current();
+            $docDelete->delete();
+        } elseif (count($tabInfos) == 3) {
+            //cas d'un document ajouté
+            $dbToUse = new Model_DbTable_ListeDocAjout();
+            $searchResult = $dbToUse->find($numdoc)->current();
+            $searchResult->delete();
+        }
+    }
+
 //GESTION LIAISON ETABLISSMENTS
     public function addetablissementAction()
     {
