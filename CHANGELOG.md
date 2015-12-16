@@ -43,6 +43,9 @@ Evolutions :
 * Ajout du support du cache nosql mysql
 
 Corrections :
+* Ajout des dossiers de nature "Levée de prescriptions" dans les dossiers donnant avis en historique établissement.
+* Correction d'un problème sur les groupements ayant une quote dans leur libelle et/ou dans leur libelle de type de groupement
+* Correction d'un problème sur la remontée d'établissements sans VP dans l'année du à une liste de nature de dossier concerné différente de la fiche info d'un établissement
 * Impossibilité de créer des dossiers en décembre : mauvais validateur de date
 * Sur firefox, sur le tableau de bord, impossible de scroller sur les blocs sans déplacer le bloc avec
 * Ajout d'une image manquante sur tipsy
@@ -97,6 +100,8 @@ Corrections :
 * Correction du cache non vidé pour les parents des établissements lorsqu'un dossier donnant avis est modifié
 * Correction de la génération des convocations qui ne faisait apparaitre que le dernier dossier pour les membres de types commune
 * Correction de la visibilité des dossiers sur les odj des membres communes
+* Correction des communes à 2 caractères, on remonte en 1er celles dont la longueure est minimale
+* Correction du dossier, ajout de deux années pour l'affichage des calendriers
 
 ## 2.3
 

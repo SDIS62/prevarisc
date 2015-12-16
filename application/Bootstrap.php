@@ -59,7 +59,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 array_merge(array(
                     'caching'  => $options['enabled'],
                     'lifetime' => $options['lifetime'],
-                    'cache_id_prefix' => 'prevarisc_',
+                    'cache_id_prefix' => 'prevarisc_'.md5(getenv('PREVARISC_DB_DBNAME')).'_',
                     'write_control' => $options['write_control'],
                 ), $frontendOptions),
                 // backend options

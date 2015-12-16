@@ -87,8 +87,8 @@ $(document).ready(function(){
 			'Supprimer': function() {
 				//ici on supprime dans la base de données le document lié puis on reinitialise la ligne
 				$.ajax({
-					url: "/dossier/fonction",
-					data: "do=suppDoc&docInfos="+$("#docInfos").val()+"&idDossier="+$("#idDossier").val(),
+					url: "/dossier/suppdoc",
+					data: "docInfos="+$("#docInfos").val()+"&idDossier="+$("#idDossier").val(),
 					type:"POST",			
 					beforeSend: function(){
 						//VERIFICATION SUR L'integrité des données

@@ -48,7 +48,7 @@ class DossierController extends Zend_Controller_Action
         //Echéncier de travaux - OK
         "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
         //Déclaration préalable
-        "30" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
+        "30" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION","NUMDOCURBA"),
         //RVRMD diag sécu
         "33" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","ABSQUORUM","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
         //Autorisation d'une ICPE - OK
@@ -654,59 +654,47 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
-    public function fonctionAction()
-    {
-        $this->view->do = $this->_getParam("do");
-        switch ($this->view->do) {
-            case "showNature":
-                $idType = (int) $this->_getParam("idType");
+    public function shownatureAction(){
+        $idType = (int) $this->_getParam("idType");
 
-                //Récupération de la liste des natures
-                $DBdossiernatureliste = new Model_DbTable_DossierNatureliste();
-                $this->view->dossierNatureListe = $DBdossiernatureliste->getDossierNature($idType);
-            break;
-            case "showChamps":
-                $this->_helper->viewRenderer->setNoRender();
-                $listeNature = $this->_getParam("listeNature");
+        //Récupération de la liste des natures
+        $DBdossiernatureliste = new Model_DbTable_DossierNatureliste();
+        $this->view->dossierNatureListe = $DBdossiernatureliste->getDossierNature($idType);
+    }
 
-                //Si une liste de nature est envoyée on peux traiter les différents champs à afficher
-                if ($listeNature != '') {
-                    $tabListeIdNature = explode("_",$listeNature);
-                    $premiereNature = 1;
-                    $afficherChamps = array();
-                    //$afficherChamps = $this->listeChamps[$idNature];
+    public function showchampsAction(){
+        $this->_helper->viewRenderer->setNoRender();
+        $listeNature = $this->_getParam("listeNature");
 
-                    foreach ($tabListeIdNature as $idNature) {
-                        if (1 == $premiereNature) {
-                            $afficherChamps = $this->listeChamps[$idNature];
-                            $premiereNature = 0;
-                        } else {
-                            $tabTemp = $this->listeChamps[$idNature];
-                            foreach ($tabTemp as $value) {
-                                //si la nature contient un champ n'étant pas dans le tableau principal on l'ajoute
-                                if (!in_array($value, $afficherChamps)) {
-                                    array_push($afficherChamps, $value);
-                                }
-                            }
+        //Si une liste de nature est envoyée on peux traiter les différents champs à afficher
+        if ($listeNature != '') {
+            $tabListeIdNature = explode("_",$listeNature);
+            $premiereNature = 1;
+            $afficherChamps = array();
+            //$afficherChamps = $this->listeChamps[$idNature];
+
+            foreach ($tabListeIdNature as $idNature) {
+                if (1 == $premiereNature) {
+                    $afficherChamps = $this->listeChamps[$idNature];
+                    $premiereNature = 0;
+                } else {
+                    $tabTemp = $this->listeChamps[$idNature];
+                    foreach ($tabTemp as $value) {
+                        //si la nature contient un champ n'étant pas dans le tableau principal on l'ajoute
+                        if (!in_array($value, $afficherChamps)) {
+                            array_push($afficherChamps, $value);
                         }
                     }
-
-                    echo json_encode($afficherChamps);
                 }
-            break;
-            case "pjPassageCommission":
-                //Permet de distinguer les prescriptions qui motivent un avis défavorable sur le dossier
-                $dbDossierPj = new Model_DbTable_DossierPj();
-                $dossierPjEdit = $dbDossierPj->find($this->_getParam('idDossier'),$this->_getParam('idPjCommission'))->current();
+            }
 
-                if ($this->_getParam('checked') == 'true') {
-                    $dossierPjEdit->PJ_COMMISSION = 1;
-                } elseif ($this->_getParam('checked') == 'false') {
-                    $dossierPjEdit->PJ_COMMISSION = 0;
-                }
-                $dossierPjEdit->save();
-            break;
+            echo json_encode($afficherChamps);
         }
+    }
+
+    public function ajoutdocvalidAction()
+    {
+        $this->ajoutdocAction($this->id_dossier);
     }
 
 	public function formdocmanquantAction()
@@ -1557,6 +1545,27 @@ class DossierController extends Zend_Controller_Action
         }
     }
 
+    public function suppdocAction()
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        //cas de la suppression d'un document qui avait été renseigné
+        $tabInfos = split("_",$this->_getParam('docInfos'));
+        $nature = $tabInfos[0];
+        $numdoc = $tabInfos[1];
+        if (count($tabInfos) == 2) {
+            //cas d'un document existant
+            $dbToUse = new Model_DbTable_DossierDocConsulte();
+            $searchResult = $dbToUse->getGeneral($this->_getParam('idDossier'), $numdoc);
+            $docDelete = $dbToUse->find($searchResult['ID_DOSSIERDOCCONSULTE'])->current();
+            $docDelete->delete();
+        } elseif (count($tabInfos) == 3) {
+            //cas d'un document ajouté
+            $dbToUse = new Model_DbTable_ListeDocAjout();
+            $searchResult = $dbToUse->find($numdoc)->current();
+            $searchResult->delete();
+        }
+    }
+
 //GESTION LIAISON ETABLISSMENTS
     public function addetablissementAction()
     {
@@ -1750,6 +1759,8 @@ class DossierController extends Zend_Controller_Action
 
             $DBdossier = new Model_DbTable_Dossier();
             $this->view->listeEtablissement = $DBdossier->getEtablissementDossier($idDossier);
+
+            $this->view->idTypeActivitePrinc = $this->view->enteteEtab[0]["infosEtab"]["informations"]["ID_TYPEACTIVITE"];
         }
     }
 
@@ -1796,6 +1807,7 @@ class DossierController extends Zend_Controller_Action
 
         $this->view->numPublic = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"];
         $this->view->numPersonnel = $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
+        $this->view->numHeberge = $object_informations["EFFECTIFHEBERGE_ETABLISSEMENTINFORMATIONS"];
         $this->view->numTotal = $object_informations["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $object_informations["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
 
         $this->view->etablissementLibelle = $object_informations['LIBELLE_ETABLISSEMENTINFORMATIONS'];
@@ -2154,7 +2166,7 @@ class DossierController extends Zend_Controller_Action
         //Les dossiers ayant pour nature LR et LP 7,19
         $natureCCL = array(7,19);
 
-        if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC) && isset($affectDossier)){
+        if($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCC) && isset($affectDossier) && !$this->_getParam("repriseCC") ){
             //On récupère toutes les cellules
             $idDateCommAffect = $affectDossier['ID_DATECOMMISSION_AFFECT'];
             $listeDossierConcerne = $dbAffectDossier->getDossierNonAffect($idDateCommAffect);
@@ -2168,7 +2180,7 @@ class DossierController extends Zend_Controller_Action
                 }
                 $this->view->celluleDossier = $listeDossierConcerne;
             }
-        }elseif($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCCL)){
+        }elseif($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCCL) && !$this->_getParam("repriseCC")){
             $dateCommGen = $this->view->infosDossier['DATECOMM_DOSSIER'];
             //On récupère toutes les cellules
             $cellulesListe = $this->view->etablissementInfos['etablissement_lies'];

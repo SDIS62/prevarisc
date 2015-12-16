@@ -5,8 +5,22 @@ class AdminController extends Zend_Controller_Action
     public function indexAction()
     {
         $cache_config = $this->getInvokeArg('bootstrap')->getOption('cache');
-        
+
         $this->_helper->layout->setLayout('menu_admin');
+
+        if (getenv('PREVARISC_BRANCH') == false) {
+            try {
+                $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..');
+                $revision_prevarisc_local = end($git->getRevisions())['sha1'];
+                $client = new Zend_Http_Client();
+                $client->setUri('https://api.github.com/repos/SDIS62/prevarisc/git/refs/heads/2.x');
+                $client->setConfig(['maxredirects' => 0, 'timeout' => 3]);
+                $response = json_decode($client->request()->getBody());
+                $revision_prevarisc_github = $response->object->sha;
+                $this->view->is_uptodate = $revision_prevarisc_github == $revision_prevarisc_local;
+            }
+            catch(Exception $e) {}
+        }
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
         $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
@@ -16,7 +30,7 @@ class AdminController extends Zend_Controller_Action
         $this->view->api_enabled = getenv('PREVARISC_SECURITY_KEY') != "";
         $this->view->proxy_enabled = getenv('PREVARISC_PROXY_ENABLED');
         $this->view->third_party_plugins = implode(', ', explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS')));
-        
+
         $this->view->cache_adapter = $cache_config['adapter'];
         $this->view->cache_url = $cache_config['host']. ($cache_config['port'] ? ':'.$cache_config['port'] : '');
         $this->view->cache_lifetime = $cache_config['lifetime'];

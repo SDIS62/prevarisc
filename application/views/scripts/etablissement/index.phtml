@@ -234,7 +234,7 @@
                                 lat: <?php echo $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] ?>,
                                 lon: <?php echo $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] ?>
                             }, 17, OpenLayers.Util.extend({
-                                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
+                                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher(), new Geoportal.Control.GraphicScale()],
                                 onView: function() {
                                     <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
                                         viewer.getViewer().getMap().addLayer(
@@ -448,7 +448,7 @@
                 </dd>
 
                 <!-- Date de dernière visite -->
-                <?php if(!empty($this->etablissement['last_visite']) ) : ?>
+                <?php if(!empty($this->etablissement['last_visite'])) : ?>
                 <dt>Dernière VP</dt>
                 <dd><p><?php echo $this->etablissement['last_visite'] ?></p></dd>
                 <?php endif ?>

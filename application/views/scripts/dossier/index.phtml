@@ -1,4 +1,4 @@
-﻿<script type='text/javascript' >
+<script type='text/javascript' >
 
 	$(document).ready(function(){
 
@@ -178,8 +178,8 @@
 				}
 
 				$.ajax({
-					url: "/dossier/fonction",
-					data: "do=showNature&idType="+idType,
+					url: "/dossier/shownature",
+					data: "idType="+idType,
 					type:"POST",
 					beforeSend: function(){
 						$("#chargement").html("<img src='/images/load.gif' />");
@@ -553,7 +553,12 @@
 					if($("#TYPE_DOSSIER").val() == 1){
 						//Si une seule date on la renseinge aussi dans l'input date de passage en commission
 						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');
-						var date = new Date(event.end);
+						var dateEnd = new Date(event.end);
+                                                var dateStart = new Date(event.start);
+                                                var date = dateEnd;
+                                                if (date < dateStart) {
+                                                        date = dateStart;
+                                                }
 						dd = date.getUTCDate();
 						mm = date.getUTCMonth()+1;
 						aa = date.getUTCFullYear();
@@ -582,7 +587,12 @@
 									var rez = eval("("+affichageResultat+")");
 									if(rez.length == 1){
 										//Si une seule date on la renseinge aussi dans l'input date de passage en commission
-										var date = new Date(event.end);
+										var dateEnd = new Date(event.end);
+				                                                var dateStart = new Date(event.start);
+                                				                var date = dateEnd;
+				                                                if (date < dateStart) {
+                                				                        date = dateStart;
+                                                				}
 										dd = date.getUTCDate();
 										mm = date.getUTCMonth()+1;
 										aa = date.getUTCFullYear();
@@ -622,7 +632,12 @@
 								}
 							});
 						}else if(dateSelect == "DATECOMM"){
-							var date = new Date(event.end);
+							var dateEnd = new Date(event.end);
+                	                                var dateStart = new Date(event.start);
+        	                                        var date = dateEnd;
+	                                                if (date < dateStart) {
+                                                        	date = dateStart;
+                                                	}
 							dd = date.getUTCDate();
 							mm = date.getUTCMonth()+1;
 							aa = date.getUTCFullYear();
@@ -801,8 +816,8 @@
 	$.fn.afficheChamps = function(listeNature) {
 		$("#InfosDossier > li").hide();
 		$.ajax({
-			url: "/dossier/fonction",
-			data: "do=showChamps&listeNature="+listeNature,
+			url: "/dossier/showchamps",
+			data: "listeNature="+listeNature,
 			type:"POST",
 			//async: false,
 			beforeSend: function(){
@@ -1342,8 +1357,8 @@ echo "
 						<select id='year_visite' style='width:70px;'>
 					";
                     $annéeActuelle = date("Y");
-                    for ($i = $annéeActuelle; $i >= 1990; $i--) {
-                        echo "<option value='".$i."' >".$i."</option>";
+                    for ($i = $annéeActuelle + 2; $i >= 1990; $i--) {
+                        echo "<option value='".$i."' ".(($annéeActuelle == $i) ? "selected='selected'" : "")." >".$i."</option>";
                     }
                     echo "
 						</select>
@@ -1390,8 +1405,8 @@ echo "
 						<select id='year_comm' style='width:70px;'>
 					";
                     $annéeActuelle = date("Y");
-                    for ($i = $annéeActuelle; $i >= 1990; $i--) {
-                        echo "<option value='".$i."' >".$i."</option>";
+                    for ($i = $annéeActuelle + 2; $i >= 1990; $i--) {
+                        echo "<option value='".$i."' ".(($annéeActuelle == $i) ? "selected='selected'" : "")." >".$i."</option>";
                     }
                     echo "
 						</select>
