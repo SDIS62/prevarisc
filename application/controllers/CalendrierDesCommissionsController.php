@@ -1092,6 +1092,14 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 			}
 
 		}
+		//Zend_Debug::dump($listeDossiers);
+                $listeMembres = $model_membres->get($listeDossiers[0]["COMMISSION_DOSSIER"]);
+                //Zend_Debug::dump($listeMembres);
+                foreach($listeMembres as $var => $membre){
+                        $listeMembres[$var]['infosFiles'] = $model_membres->fetchAll("ID_COMMISSIONMEMBRE = " . $membre['id_membre']);
+                }
+
+                $this->view->informationsMembre = $listeMembres;
 		$this->view->listeCommunes = $tabCommune;
 		$this->view->dossierComm = $listeDossiers;
                 $this->view->dateComm = $listeDossiers[0]["DATE_COMMISSION"];
