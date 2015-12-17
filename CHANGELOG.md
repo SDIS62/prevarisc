@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5
+
+Corrections :
+* Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
+* Correction sur l'initialisation des listes d'articles / textes dans l'admin à 0px
+
 ## 2.4
 
 Evolutions :
