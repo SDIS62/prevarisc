@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5
+
+Evolutions :
+* Ajout des champs de fusion du maire dans la génération de documents
+
 ## 2.4
 
 Evolutions :

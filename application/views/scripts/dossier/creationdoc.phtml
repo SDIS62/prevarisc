@@ -457,6 +457,18 @@ addChamp($odf, 'prochaineVisite',$this->etablissementInfos['next_visite']);
 addChamp($odf, 'dateLastVP',$this->dateLastVP);
 addChamp($odf, 'avisLastVP',$this->avisLastVP);
 
+//Informations du maire de l'adresse de l'établissement
+addChamp($odf, 'nomMaire',$this->maire['NOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'prenomMaire',$this->maire['PRENOM_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'mailMaire',$this->maire['MAIL_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telFixeMaire',$this->maire['TELFIXE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'telPortMaire',$this->maire['TELPORTABLE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'numFaxMaire',$this->maire['TELFAX_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'numeroMaire',$this->maire['NUMEROADRESSE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'rueMaire',$this->maire['RUEADRESSE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'cpMaire',$this->maire['CPADRESSE_UTILISATEURINFORMATIONS']);
+addChamp($odf, 'villeMaire',$this->maire['VILLEADRESSE_UTILISATEURINFORMATIONS']);
+
 //Informations du DUS du dossier
 addChamp($odf, 'nomDus',$this->dusDossier['NOM_UTILISATEURINFORMATIONS']);
 addChamp($odf, 'prenomDus',$this->dusDossier['PRENOM_UTILISATEURINFORMATIONS']);

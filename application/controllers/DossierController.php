@@ -1862,7 +1862,8 @@ class DossierController extends Zend_Controller_Action
         // Adresses
         $model_adresse = new Model_DbTable_EtablissementAdresse();
         $array_adresses = $model_adresse->get($idEtab);
-
+        $service_adresse = new Service_Adresse();
+        
         if (count($array_adresses) > 0) {
             $this->view->communeEtab = $array_adresses[0]["LIBELLE_COMMUNE"];
             $adresse = "";
@@ -1878,6 +1879,7 @@ class DossierController extends Zend_Controller_Action
             if ($array_adresses[0]["LIBELLE_COMMUNE"] != '') {
                 $adresse .= strtoupper($array_adresses[0]["LIBELLE_COMMUNE"])." ";
             }
+            $this->view->maire = $service_adresse->getMaire($array_adresses[0]["NUMINSEE_COMMUNE"]);
             $this->view->etablissementAdresse = $adresse;
         }
 
