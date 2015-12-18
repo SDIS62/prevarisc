@@ -2245,7 +2245,7 @@ class DossierController extends Zend_Controller_Action
             $dateComm = new Zend_Date($this->view->infosDossier['DELAIPRESC_DOSSIER'], Zend_Date::DATES);
             $this->view->dateDelaipresc = $dateComm->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
         }else{
-            $this->view->dateDelaipresc = "DELAIPRESC_DOSSIER";
+            $this->view->dateDelaipresc = "Pas de date";
         }
 
         $dateDuJour = new Zend_Date();
