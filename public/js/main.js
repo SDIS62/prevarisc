@@ -151,4 +151,109 @@ function loadBloc($bloc) {
             $bloc.removeClass('loading').addClass('loaded');
         }
     });
+};
+
+function initViewer(divId, ignKey, points, wmsLayers, onView) {
+    if (points.length === 0) {
+        return ;
+    }
+    
+    var viewer = Geoportal.load(divId, ignKey, {
+            lat: points[0].lat,
+            lon: points[0].lon,
+        }, 17, OpenLayers.Util.extend({
+            controls: [new Geoportal.Control.GraphicScale(), new Geoportal.Control.ToolBox()],
+            language:'fr',
+            displayProjection: 'EPSG:4326',
+            projection: 'EPSG:4326',
+            onView: function() {
+                var map = viewer.getViewer().getMap();
+                
+                // Récupération de la toolbox pour l'identifiant
+                var toolBox= viewer.getViewer().getMap().getControlsByClass('Geoportal.Control.ToolBox')[0];
+
+                // Création de la barre de navigation
+                map.addControl(new Geoportal.Control.NavToolbar({
+                    // Div où la barre doit être ajoutée
+                    div: OpenLayers.Util.getElement(toolBox.id+'_navbar'),
+                    // Div où le resultat des mesures est affiché
+                    targetElement: OpenLayers.Util.getElement(toolBox.id+'_navbar')
+                })); 
+
+                // Création de la barre de mesure
+                map.addControl(new Geoportal.Control.MeasureToolbar({
+                    // Div où la barre doit être ajoutée
+                    div: OpenLayers.Util.getElement(toolBox.id+'_measure'),
+                    // Div où le resultat des mesures est affiché
+                    targetElement: OpenLayers.Util.getElement(toolBox.id+'_meares')
+                }));
+
+                // Création de la barre de zoom
+                map.addControl(new Geoportal.Control.ZoomBar({
+                    // Div où la barre doit être ajoutée
+                    div: OpenLayers.Util.getElement(toolBox.id+'_zoombar'),
+                    targetElement: OpenLayers.Util.getElement(toolBox.id+'_zoombar')
+                }));
+    
+                // Création de la barre de zoom
+                map.addControl(new Geoportal.Control.LayerSwitcher({
+                    // Div où la barre doit être ajoutée
+                    div: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher'),
+                    targetElement: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher')
+                }));
+                
+                
+                // Ajout des POI avec les adresses sur la carte
+                var markers = new OpenLayers.Layer.Markers("Adresses");
+                var icon = new OpenLayers.Icon('https://api.ign.fr/geoportail/api/js/2.1.2/theme/geoportal/img/marker-ign.png');
+                map.addLayer(markers);
+                for (var i = 0 ; i < points.length ; i++) {
+                    var longlat = new OpenLayers.LonLat(points[i].lat, points[i].lon);
+                    console.log(longlat);
+                    markers.addMarker(new OpenLayers.Marker(longlat),icon);
+                }
+                
+                // Ajout des couches WMS
+                for (var i = 0 ; i < wmsLayers.length ; i++) {
+                    map.addLayer(
+                        wmsLayers[i].type,
+                        wmsLayers[i].nom,
+                        wmsLayers[i].url, {
+                            layers: wmsLayers[i].type,
+                            format: wmsLayers[i].format,
+                            transparent: wmsLayers[i].transparent ? 'true' : 'false'
+                        }, {
+                            projection: 'EPSG:4326',
+                            singleTile: false,
+                            opacity: 1,
+                            visibility: true,
+                        }
+                    );
+                }
+                
+                onView();
+            },
+            proxyUrl: '/proxy'
+        })
+    );
+    
+    return viewer;
+    
+}
+
+
+function putMarkerAt(viewer, point, sourceProjection) {
+    var map = viewer.getViewer().getMap();
+    var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
+    if (vectorLayers.length > 0) {
+        var vectorLayer = vectorLayers[0];
+        if (vectorLayer.features.length > 0) {
+            vectorLayer.features[0].destroy();
+        }
+        var lonlat = point.transform(
+            sourceProjection, vectorLayer.projection.toString()
+        );
+        point = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat);
+        vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point)]);
+    }
 }

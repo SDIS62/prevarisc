@@ -58,7 +58,8 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
         $this->view->DB_classement = $service_classement->getAll();
-
+        
+        $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $this->view->add = false;
