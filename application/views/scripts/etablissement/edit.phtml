@@ -922,23 +922,11 @@
         });
 
         <?php if($this->key_ign != null): ?>
-            var wmsLayers = [];
-            <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
-                wmsLayers.push({
-                    type: "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
-                    nom: "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
-                    url: "<?php echo $couche_cartographique['URL_COUCHECARTO'] ?>",
-                    layers: "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>",
-                    format: "<?php echo $couche_cartographique['FORMAT_COUCHECARTO'] ?>",
-                    transparent: "<?php echo $couche_cartographique['TRANSPARENT_COUCHECARTO'] ? 'true' : 'false' ?>"
-                });
-            <?php endforeach ?>
-
             viewer = initViewer(
                 "geoportail-container", 
                 "<?php echo $this->key_ign ?>", 
-                [{lon: -1.638023, lat: 48.134198999999995}], 
-                wmsLayers,
+                [{lon: -1.638023, lat: 48.134198999999995, description: ""}], 
+                <?php echo json_encode($this->couches_cartographiques) ?>,
                 function() {
                     
                     // removes the marker
