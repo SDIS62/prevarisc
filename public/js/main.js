@@ -202,17 +202,6 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                     targetElement: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher')
                 }));
                 
-                
-                // Ajout des POI avec les adresses sur la carte
-                var markers = new OpenLayers.Layer.Markers("Adresses");
-                var icon = new OpenLayers.Icon('https://api.ign.fr/geoportail/api/js/2.1.2/theme/geoportal/img/marker-ign.png');
-                map.addLayer(markers);
-                for (var i = 0 ; i < points.length ; i++) {
-                    var longlat = new OpenLayers.LonLat(points[i].lat, points[i].lon);
-                    console.log(longlat);
-                    markers.addMarker(new OpenLayers.Marker(longlat),icon);
-                }
-                
                 // Ajout des couches WMS
                 for (var i = 0 ; i < wmsLayers.length ; i++) {
                     map.addLayer(
@@ -221,17 +210,40 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         wmsLayers[i].url, {
                             layers: wmsLayers[i].type,
                             format: wmsLayers[i].format,
-                            transparent: wmsLayers[i].transparent ? 'true' : 'false'
+                            transparent: wmsLayers[i].transparent === "true" ? 'true' : 'false'
                         }, {
                             projection: 'EPSG:4326',
                             singleTile: false,
                             opacity: 1,
-                            visibility: true,
+                            visibility: true
                         }
                     );
                 }
                 
-                onView();
+                // Suppression des markers par défaut
+                var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
+                if (vectorLayers.length > 0) {
+                    var vectorLayer = vectorLayers[0];
+                    if (vectorLayer.features.length > 0) {
+                        vectorLayer.features[0].destroy();
+                    }
+                }
+                
+                // Ajout des POI avec les adresses sur la carte
+                var markers = new OpenLayers.Layer.Markers("Etablissement");
+                var size = new OpenLayers.Size(30,30);
+                var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+                var icon = new OpenLayers.Icon('/images/red-dot.png', size, offset);
+                map.addLayer(markers);
+                for (var i = 0 ; i < points.length ; i++) {
+                    var longlat = new OpenLayers.LonLat(points[i].lon, points[i].lat);
+                    var marker = new OpenLayers.Marker(longlat,icon.clone());
+                    markers.addMarker(marker);
+                }
+                
+                if (onView !== undefined) {
+                    onView();
+                }
             },
             proxyUrl: '/proxy'
         })
@@ -242,8 +254,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
 }
 
 
-function putMarkerAt(viewer, point, sourceProjection) {
-    var map = viewer.getViewer().getMap();
+function putMarkerAt(map, point, sourceProjection) {
     var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
     if (vectorLayers.length > 0) {
         var vectorLayer = vectorLayers[0];

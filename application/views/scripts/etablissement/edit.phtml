@@ -959,7 +959,7 @@
                                 $("span.result").text("Géolocalisée IGN");
                                 $("input[name='lon']").val(center.lon);
                                 $("input[name='lat']").val(center.lat);
-                                putMarkerAt(viewer, map.getCenter(), map.getProjection());
+                                putMarkerAt(map, map.getCenter(), map.getProjection());
                             }
                             else {
                                 $("span.result").text("Introuvable");
@@ -1001,7 +1001,7 @@
                             $("input[name='lat']").val(lonlat.lat);
 
                             // update map
-                            putMarkerAt(this.map.getLonLatFromViewPortPx(e.xy), this.map.getProjection());
+                            putMarkerAt(this.map, this.map.getLonLatFromViewPortPx(e.xy), this.map.getProjection());
                         }
                     });
 
@@ -1009,7 +1009,7 @@
                     var monClic= new OpenLayers.Control.Click({
                         autoActivate:true
                     });
-                    this.getViewer().getMap().addControl(monClic);
+                    viewer.getViewer().getMap().addControl(monClic);
                 }
             );
 
@@ -1066,14 +1066,14 @@
                     element.text("Géolocalisation en cours ...");
                 },
                 success: function(geolocations) {
-                    element.text("Géolocaliser cette adresse");
+                    element.text("Géolocaliser cette adresse (Nominatim)");
                     if(geolocations.length > 0) {
                         $("span.result").text("OK");
                         $("input[name='lon']").val(geolocations[0].lon);
                         $("input[name='lat']").val(geolocations[0].lat);
                         <?php if($this->key_ign != null) : ?>
                             var lonlat = new OpenLayers.LonLat(geolocations[0].lon, geolocations[0].lat);
-                            putMarkerAt(viewer, lonlat, viewer.getViewer().getMap().getProjection());
+                            putMarkerAt(viewer.getViewer().getMap(), lonlat, viewer.getViewer().getMap().getProjection());
                             viewer.getViewer().getMap().setCenter(lonlat, 17);
                         <?php endif ?>
                     }
