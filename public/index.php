@@ -61,6 +61,8 @@ $application = new Zend_Application('production', array(
         'port'          => (int) getenv('PREVARISC_CACHE_PORT'),
         'write_control' => false,
         'compression'   => false,
+        'cache_dir'     => getenv('PREVARISC_CACHE_DIR'),
+        'read_control'  => false,
     ),
     'security' => array(
         'salt' => getenv('PREVARISC_SECURITY_SALT'),

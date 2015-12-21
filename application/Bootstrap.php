@@ -71,6 +71,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                         ),
                     ),
                     'compression' => $options['compression'],
+                    'read_control' => $options['read_control'],
+                    'cache_dir' => $options['cache_dir'],
+                    'cache_file_perm' => 0666,
+                    'hashed_directory_perm' => 0777,
                 ), $backendOptions),
                 // use a custom name for front
                 false,

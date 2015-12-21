@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5
+
+Evolutions :
+* Ajout de la prise en charge du cache filesystem
+
 ## 2.4
 
 Evolutions :

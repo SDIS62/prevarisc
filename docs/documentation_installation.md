@@ -65,6 +65,7 @@ PREVARISC_CACHE_LIFETIME | Durée de vie du cache, actif si valeur > 0 | Valeur 
 PREVARISC_CACHE_ADAPTER | Adapter backend de cache du cache lié à la factory Zend_Cache, default "APC" | Chaine de caractères
 PREVARISC_CACHE_HOST | Adresse IP du cache backend | Adresse IP
 PREVARISC_CACHE_PORT | Port du cache backend | Valeur numérique
+PREVARISC_CACHE_DIR | Répertoire des fichiers de cache si cache filesystem | Répertoire
 PREVARISC_SECURITY_SALT | Chaine utilisée pour le cryptage des mots de passe utilisateur | Chaine alphanumérique de longueur 32 (exemple : 7aec3ab8e8d025c19e8fc8b6e0d75227 salt utilisé par défaut)
 PREVARISC_LDAP_ENABLED | [FACULTATIF] Activation de la connexion des utilisateurs via LDAP | 1 ou 0
 PREVARISC_LDAP_HOST | [FACULTATIF] Adresse du serveur LDAP | Adresse IP
