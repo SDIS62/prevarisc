@@ -166,6 +166,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
             language:'fr',
             displayProjection: 'EPSG:4326',
             projection: 'EPSG:4326',
+            proxy: '/proxy?url=',
             onView: function() {
                 var map = viewer.getViewer().getMap();
                 
@@ -203,6 +204,19 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                 }));
                 
                 // Ajout des couches WMS
+                if (wmsLayers.length > 0) {
+                    $('#reponse-modal').dialog({
+                        resizable: true,
+                        title: 'WMS Information',
+                        height: '500',
+                        width: '800',
+                        autoOpen: false,
+                        close: function() {
+                           $(this).empty(); 
+                        },
+                        modal: false});
+                }
+                
                 for (var i = 0 ; i < wmsLayers.length ; i++) {
                     
                     // ajout de la couche sur la carte
@@ -228,7 +242,9 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                     });
             
                     infoFeature.events.register("getfeatureinfo", map, function(event) {
-                        alert(event.text);
+                        var $response = $(event.text);
+                        var time = (new Date()).getTime();
+                        $('#wms').append("<iframe id='wms-'>"+event.text+"</iframe>");
                     });
                     map.addLayer(layer);
                     map.addControl(infoFeature);
