@@ -641,11 +641,13 @@ class Service_Dossier
     {
         $dbPrescDossier = new Model_DbTable_PrescriptionDossier();
         $dbPrescDossierAssoc = new Model_DbTable_PrescriptionDossierAssoc();
+        $j = 0;
         foreach($prescriptionRegl as $val => $ue){
             $prescEdit = $dbPrescDossier->createRow();
             $prescEdit->ID_DOSSIER = $idDossier;
             $prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $ue[0]['PRESCRIPTIONREGL_LIBELLE'];
             $prescEdit->TYPE_PRESCRIPTION_DOSSIER = 0;
+            $prescEdit->NUM_PRESCRIPTION_DOSSIER = $j++;
             $prescEdit->save();
 
             $nombreAssoc = count($ue);

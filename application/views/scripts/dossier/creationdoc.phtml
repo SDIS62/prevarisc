@@ -251,13 +251,6 @@ if (!function_exists('addPrescription')) {
                     $prescription->merge();
                 }
 
-            }else{
-                if($type != 0){
-                    addChamp($prescription,'num', '');
-                }
-                addChamp($prescription,'libelle', '');
-                addChamp($prescription,'textearticle', '');
-                $prescription->merge();
             }
             $odf->mergeSegment($prescription);
         } catch (OdfException $e) {
