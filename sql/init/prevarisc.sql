@@ -2175,6 +2175,9 @@ CREATE TABLE `prescriptionarticleliste` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+INSERT INTO `prescriptionarticleliste` (`ID_ARTICLE`,`LIBELLE_ARTICLE`) VALUES (1,"");
+
 --
 -- Dumping data for table `prescriptionarticleliste`
 --
@@ -2306,6 +2309,8 @@ CREATE TABLE `prescriptiontexteliste` (
   PRIMARY KEY (`ID_TEXTE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+INSERT INTO `prescriptiontexteliste` (`ID_TEXTE`,`LIBELLE_TEXTE`) VALUES (1,"");
 
 --
 -- Dumping data for table `prescriptiontexteliste`

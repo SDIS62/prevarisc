@@ -937,10 +937,10 @@ class DossierController extends Zend_Controller_Action
             $service_dossier = new Service_Dossier;
             if($this->_getParam('do') == 'new'){
                 if($this->_getParam("TYPE_DOSSIER") == 1 ){
-                    $listePrescRegl = $service_prescription->getPrescriptions('etude');
+                    $listePrescRegl = $service_prescription->getPrescriptions('etude',true);
                      $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
                 }else if($this->_getParam("TYPE_DOSSIER") == 2 || $this->_getParam("TYPE_DOSSIER") == 3){
-                    $listePrescRegl = $service_prescription->getPrescriptions('visite');
+                    $listePrescRegl = $service_prescription->getPrescriptions('visite',true);
                     $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
                 }
             }

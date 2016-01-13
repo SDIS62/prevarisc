@@ -195,9 +195,9 @@ class Service_Prescriptions
         }
     } //FIN savePrescription
 
-    public function getPrescriptions($type){
+    public function getPrescriptions($type,$mode = null){
         $dbPrescRegl = new Model_DbTable_PrescriptionRegl();
-        $listePrescDossier = $dbPrescRegl->recupPrescRegl($type);
+        $listePrescDossier = $dbPrescRegl->recupPrescRegl($type,$mode);
         //Zend_Debug::dump($listePrescDossier);
 
         $dbPrescReglAssoc = new Model_DbTable_PrescriptionReglAssoc();
