@@ -3,6 +3,7 @@
 ## 2.5
 
 Evolutions :
+* Ajout de la prise en charge du cache filesystem
 * Ajout des champs de fusion du maire dans la génération de documents
 
 Corrections :
