@@ -9,3 +9,4 @@ vendor
 *.mwb.*
 /nbproject
 *.phar
+composer.lock
