@@ -73,7 +73,7 @@ class UsersController extends Zend_Controller_Action
                 $this->_helper->redirector('index', null, null);
             }
             catch(Exception $e) {
-                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'utilisateur n\'a pas ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'utilisateur n\'a pas été ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
             }
         }
 

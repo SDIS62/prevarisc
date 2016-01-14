@@ -89,13 +89,17 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $next_visite = null;
 
             if ($last_visite !== null && count($last_visite) > 0){
-                $tmp_date = new Zend_Date($last_visite[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
-                $last_visite =  $tmp_date->get( Zend_date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
+                if ($last_visite[0]['DATEVISITE_DOSSIER'] !== null) {
+                    $tmp_date = new Zend_Date($last_visite[0]['DATEVISITE_DOSSIER'], Zend_Date::DATES);
+                    $last_visite =  $tmp_date->get( Zend_date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
 
-                if($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS != 0) {
-                    $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
-                    $tmp_date->add($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
-                    $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
+                    if($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS != 0) {
+                        $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
+                        $tmp_date->add($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
+                        $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
+                    }    
+                } else {
+                    $last_visite = null;
                 }
             }
 
@@ -319,7 +323,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
           $author = null;
 
           if($dossier->AVIS_DOSSIER_COMMISSION && ($dossier->AVIS_DOSSIER_COMMISSION == 1 || $dossier->AVIS_DOSSIER_COMMISSION == 2)) {
-            if( ($dossier->TYPE_DOSSIER == 1 && in_array($dossier->ID_DOSSIERNATURE, array(19))) || ($dossier->TYPE_DOSSIER == 2 && in_array($dossier->ID_DOSSIERNATURE, array(21, 23, 24, 47))) || ($dossier->TYPE_DOSSIER == 3 && in_array($dossier->ID_DOSSIERNATURE, array(26, 28, 29, 48)))) {
+            if( in_array($dossier->ID_DOSSIERNATURE, array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28, 29, 48)) ) {
               $value = $dossier->AVIS_DOSSIER_COMMISSION == 1 ? "Favorable" : "Défavorable";
             }
           }
@@ -1283,6 +1287,33 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
             }
 
+        }
+    }
+
+    public function getAvisEtablissement($id_etablissement, $id_dossier_donnant_avis)
+    {
+        $idDossierDonnantAvis = $id_dossier_donnant_avis;
+        $DBdossier = new Model_DbTable_Dossier();
+        $infosDossierDonnantAvis = $DBdossier->find($idDossierDonnantAvis)->current();
+        $dateInsertDossierDonnantAvis = $infosDossierDonnantAvis['DATEINSERT_DOSSIER'];
+        $dateInsertDossierDonnantAvis = new Zend_Date($dateInsertDossierDonnantAvis, Zend_Date::DATES);
+        
+        $search = new Model_DbTable_Search;
+        $dossierDiff = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.DIFFEREAVIS_DOSSIER", 1)->order("DATEINSERT_DOSSIER DESC")->run()->getAdapter()->getItems(0, 1)->toArray();
+        
+        //Si l'etablissement ne comporte pas d'avis différé on prend l'avis correspondant à ID_DOSSIERDONNANTAVIS
+        if(count($dossierDiff) > 0){
+            $dateInsertDossierDiffere = $dossierDiff[0]['DATEINSERT_DOSSIER'];
+            $dateInsertDossierDiffere = new Zend_Date($dateInsertDossierDiffere, Zend_Date::DATES);
+        }else{
+            return "avisDoss";
+        }
+
+        //On compare la date de l'avis différé avec la date de l'avis d'exploitation le plus récent
+        if($dateInsertDossierDonnantAvis->compare($dateInsertDossierDiffere) == 1){
+            return "avisDoss";
+        }else{
+            return "avisDiff";
         }
     }
 }

@@ -13,7 +13,8 @@ class Model_DbTable_PrescriptionReglAssoc extends Zend_Db_Table_Abstract
 			->join(array("pra" => "prescriptionreglassoc") , "pr.ID_PRESCRIPTIONREGL = pra.ID_PRESCRIPTIONREGL")
 			->join(array("pal" => "prescriptionarticleliste"), "pal.ID_ARTICLE = pra.ID_ARTICLE")
 			->join(array("ptl" => "prescriptiontexteliste"), "ptl.ID_TEXTE = pra.ID_TEXTE")
-			->where("pr.ID_PRESCRIPTIONREGL = ?",$idPrescriptionRegl);
+			->where("pr.ID_PRESCRIPTIONREGL = ?",$idPrescriptionRegl)
+			->order("pra.NUM_PRESCRIPTIONASSOC");
 
 		return $this->getAdapter()->fetchAll($select);	
 	}

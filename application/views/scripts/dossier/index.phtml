@@ -1,4 +1,4 @@
-﻿<script type='text/javascript' >
+<script type='text/javascript' >
 
 	$(document).ready(function(){
 
@@ -553,7 +553,12 @@
 					if($("#TYPE_DOSSIER").val() == 1){
 						//Si une seule date on la renseinge aussi dans l'input date de passage en commission
 						var dateSelect = $(this).parent().parent().parent().parent().parent().prev().attr('id');
-						var date = new Date(event.end);
+						var dateEnd = new Date(event.end);
+                                                var dateStart = new Date(event.start);
+                                                var date = dateEnd;
+                                                if (date < dateStart) {
+                                                        date = dateStart;
+                                                }
 						dd = date.getUTCDate();
 						mm = date.getUTCMonth()+1;
 						aa = date.getUTCFullYear();
@@ -582,7 +587,12 @@
 									var rez = eval("("+affichageResultat+")");
 									if(rez.length == 1){
 										//Si une seule date on la renseinge aussi dans l'input date de passage en commission
-										var date = new Date(event.end);
+										var dateEnd = new Date(event.end);
+				                                                var dateStart = new Date(event.start);
+                                				                var date = dateEnd;
+				                                                if (date < dateStart) {
+                                				                        date = dateStart;
+                                                				}
 										dd = date.getUTCDate();
 										mm = date.getUTCMonth()+1;
 										aa = date.getUTCFullYear();
@@ -622,7 +632,12 @@
 								}
 							});
 						}else if(dateSelect == "DATECOMM"){
-							var date = new Date(event.end);
+							var dateEnd = new Date(event.end);
+                	                                var dateStart = new Date(event.start);
+        	                                        var date = dateEnd;
+	                                                if (date < dateStart) {
+                                                        	date = dateStart;
+                                                	}
 							dd = date.getUTCDate();
 							mm = date.getUTCMonth()+1;
 							aa = date.getUTCFullYear();

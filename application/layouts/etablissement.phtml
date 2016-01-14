@@ -41,20 +41,17 @@
             </span>
         <?php endif ?>
     </h2>
-    
-    
-    
 
     <!-- Avis -->
-    <?php if($this->etablissement['presence_avis_differe'] == true) : ?>
+    <?php if($this->etablissement['presence_avis_differe'] == true && $this->avis == "avisDiff") : ?>
         <p class='label label-info'>
             Présence d'un dossier avec avis differé
         </p>
     <?php elseif($this->etablissement['avis'] != null) : ?>
     
-         <?php if($this->etablissement['avis'] == 1) : ?>
+         <?php if($this->etablissement['avis'] == 1 && $this->avis == "avisDoss") : ?>
             <p class="avis F">Favorable <?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation " ?></p>
-         <?php elseif($this->etablissement['avis'] == 2) : ?>
+         <?php elseif($this->etablissement['avis'] == 2  && $this->avis == "avisDoss") : ?>
             <p class="avis D">
                Défavorable <?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation " ?>
                <?php if($this->etablissement['facteur_dangerosite'] > 0) : ?>

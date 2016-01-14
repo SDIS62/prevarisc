@@ -42,9 +42,9 @@ class Service_Prescriptions
 
         $prescType->PRESCRIPTIONTYPE_LIBELLE = $post['PRESCRIPTIONTYPE_LIBELLE'];
         
-        $prescType->PRESCRIPTIONTYPE_CATEGORIE = $post['PRESCRIPTIONTYPE_CATEGORIE'];
-        $prescType->PRESCRIPTIONTYPE_TEXTE = $post['PRESCRIPTIONTYPE_TEXTE'];
-        $prescType->PRESCRIPTIONTYPE_ARTICLE = $post['PRESCRIPTIONTYPE_ARTICLE'];
+        $prescType->PRESCRIPTIONTYPE_CATEGORIE = (int) $post['PRESCRIPTIONTYPE_CATEGORIE'];
+        $prescType->PRESCRIPTIONTYPE_TEXTE = (int) $post['PRESCRIPTIONTYPE_TEXTE'];
+        $prescType->PRESCRIPTIONTYPE_ARTICLE = (int) $post['PRESCRIPTIONTYPE_ARTICLE'];
 
         $prescType->save();
 
@@ -195,9 +195,9 @@ class Service_Prescriptions
         }
     } //FIN savePrescription
 
-    public function getPrescriptions($type){
+    public function getPrescriptions($type,$mode = null){
         $dbPrescRegl = new Model_DbTable_PrescriptionRegl();
-        $listePrescDossier = $dbPrescRegl->recupPrescRegl($type);
+        $listePrescDossier = $dbPrescRegl->recupPrescRegl($type,$mode);
         //Zend_Debug::dump($listePrescDossier);
 
         $dbPrescReglAssoc = new Model_DbTable_PrescriptionReglAssoc();
