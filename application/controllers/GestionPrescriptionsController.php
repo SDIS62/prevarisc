@@ -235,8 +235,8 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         $dbTexte = new Model_DbTable_PrescriptionTexteListe();
         $dbArticle = new Model_DbTable_PrescriptionArticleListe();
 
-        $this->view->listeTextes = $dbTexte->getAllTextes();
-        $this->view->listeArticles = $dbArticle->getAllArticles();
+        $this->view->listeTextes = $dbTexte->getAllTextes(1);
+        $this->view->listeArticles = $dbArticle->getAllArticles(1);
 
         $service_prescription = new Service_Prescriptions;
         if ($this->_getParam('idPrescType')) {
@@ -505,9 +505,9 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 
         //On envoi à la vue l'ensemble des textes et articles
         $dbTexte = new Model_DbTable_PrescriptionTexteListe();
-        $this->view->listeTextes = $dbTexte->getAllTextes();
+        $this->view->listeTextes = $dbTexte->getAllTextes(1);
         $dbArticle = new Model_DbTable_PrescriptionArticleListe();
-        $this->view->listeArticles = $dbArticle->getAllArticles();
+        $this->view->listeArticles = $dbArticle->getAllArticles(1);
 
         $this->view->action = 'add';
         $this->view->typeAction = 'rappel-reg';

@@ -48,7 +48,7 @@ class DossierController extends Zend_Controller_Action
         //Echéncier de travaux - OK
         "46" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
         //Déclaration préalable
-        "30" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
+        "30" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION","NUMDOCURBA"),
         //RVRMD diag sécu
         "33" => array("DATEINSERT","OBJET","NUMCHRONO","DATEMAIRIE","DATESECRETARIAT","COMMISSION","DESCGEN","DESCEFF","DATECOMM","AVIS","DATESDIS","PREVENTIONNISTE","ABSQUORUM","DEMANDEUR","INCOMPLET","HORSDELAI","AVIS_COMMISSION","OBSERVATION"),
         //Autorisation d'une ICPE - OK
@@ -937,10 +937,10 @@ class DossierController extends Zend_Controller_Action
             $service_dossier = new Service_Dossier;
             if($this->_getParam('do') == 'new'){
                 if($this->_getParam("TYPE_DOSSIER") == 1 ){
-                    $listePrescRegl = $service_prescription->getPrescriptions('etude');
+                    $listePrescRegl = $service_prescription->getPrescriptions('etude',true);
                      $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
                 }else if($this->_getParam("TYPE_DOSSIER") == 2 || $this->_getParam("TYPE_DOSSIER") == 3){
-                    $listePrescRegl = $service_prescription->getPrescriptions('visite');
+                    $listePrescRegl = $service_prescription->getPrescriptions('visite',true);
                     $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
                 }
             }
@@ -1542,6 +1542,27 @@ class DossierController extends Zend_Controller_Action
                 $docAjout->save();
             }
         } catch (Exception $e) {
+        }
+    }
+
+    public function suppdocAction()
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        //cas de la suppression d'un document qui avait été renseigné
+        $tabInfos = split("_",$this->_getParam('docInfos'));
+        $nature = $tabInfos[0];
+        $numdoc = $tabInfos[1];
+        if (count($tabInfos) == 2) {
+            //cas d'un document existant
+            $dbToUse = new Model_DbTable_DossierDocConsulte();
+            $searchResult = $dbToUse->getGeneral($this->_getParam('idDossier'), $numdoc);
+            $docDelete = $dbToUse->find($searchResult['ID_DOSSIERDOCCONSULTE'])->current();
+            $docDelete->delete();
+        } elseif (count($tabInfos) == 3) {
+            //cas d'un document ajouté
+            $dbToUse = new Model_DbTable_ListeDocAjout();
+            $searchResult = $dbToUse->find($numdoc)->current();
+            $searchResult->delete();
         }
     }
 
@@ -2245,7 +2266,7 @@ class DossierController extends Zend_Controller_Action
             $dateComm = new Zend_Date($this->view->infosDossier['DELAIPRESC_DOSSIER'], Zend_Date::DATES);
             $this->view->dateDelaipresc = $dateComm->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
         }else{
-            $this->view->dateDelaipresc = "DELAIPRESC_DOSSIER";
+            $this->view->dateDelaipresc = "Pas de date";
         }
 
         $dateDuJour = new Zend_Date();

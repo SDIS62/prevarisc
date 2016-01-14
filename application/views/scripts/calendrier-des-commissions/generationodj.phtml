@@ -5,12 +5,18 @@ if(count($this->membresFiles) == 0){
 	echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun membre n'a été renseigné pour la commission</span><br/><br/><br/>";
 	return false;
 }
-foreach($this->membresFiles as $val => $membre){
+foreach($this->informationsMembre as $val => $membre){
 	//On boucle sur les membres
-	if($membre->ID_GROUPEMENT == NULL){
+	if($membre['infosFiles'][0]['ID_GROUPEMENT'] == NULL) {
+            
 		//génération du document par commune pour les maires par exemple		
 		//si le document concernant ce membre existe alors on rentre dans la boucle
+<<<<<<< HEAD
 			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
+=======
+			$nomFichier = $membre['infosFiles'][0]['ID_COMMISSIONMEMBRE']."ODJ_".$membre['infosFiles'][0]['COURRIER_ODJ'];
+			//echo REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier;
+>>>>>>> cdcbdcc... * Correction de la visibilité des dossiers sur les odj des membres communes
 			if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
 				$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 				//Generation du segment membres
@@ -57,28 +63,42 @@ foreach($this->membresFiles as $val => $membre){
 
 					//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 					//Generation du segment pour l'affichage des différentes infos du dossier	
-					foreach($this->dossierComm as $val => $dossierInfos){
-                                            retrieveInfoDoss($membreLoop, $dossierInfos);
-                                            $membreLoop->infosDoss->merge(); 
-					}
+					//Zend_Debug::dump($this->dossierComm);
+                                        foreach($this->dossierComm as $val => $dossierInfos){
+                                                if( count($dossierInfos['infosEtab']['adresses']) > 0 ){
+                                                        //echo $dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']." - ".$commune[0];
+                                                        if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
+                                                                //ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
+                                                                if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
+                                                                {
+                                                                    retrieveInfoDoss($membreLoop, $dossierInfos);
+                                                                    $membreLoop->infosDoss->merge(); 
+                                                                }else{
+                                                                        //cas membre n'a pas les droits
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                        
+                                        
 					$membreLoop->merge();
 				}
 				$odf->mergeSegment($membreLoop);
-				$nouvellePJ = savePj($this->idComm,$membre->LIBELLE_COMMISSIONMEMBRE);
+				$nouvellePJ = savePj($this->idComm,$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']);
                                 $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
                                 $path = $store->getFilePath($nouvellePJ, 'dateCommission', $this->idComm, true);
 				$odf->saveToDisk($path);
-				echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré </span><br/><br/><br/>";
+				echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']." à bien été généré </span><br/><br/><br/>";
 
 			}else{
-				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
+				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']." n'a pas été renseigné</span><br/><br/><br/>";
 			}
 		
 	}else{
 		//génération du document par groupement de commune pour les gendarmerie/police par exemple
 
 			//si le membre du groupement en question posède un document le concernant on génére la convocation
-			$nomFichier = $membre->ID_COMMISSIONMEMBRE."ODJ_".$membre->COURRIER_ODJ;
+			$nomFichier = $membre['infosFiles'][0]['ID_COMMISSIONMEMBRE']."ODJ_".$membre['infosFiles'][0]['COURRIER_ODJ'];
 			if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
 				$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 
@@ -110,13 +130,13 @@ foreach($this->membresFiles as $val => $membre){
 				}
 				$grpLoop->merge();
 				$odf->mergeSegment($grpLoop);
-				$nouvellePJ = savePj($this->idComm,$membre->LIBELLE_COMMISSIONMEMBRE);
+				$nouvellePJ = savePj($this->idComm,$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']);
                                 $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
                                 $path = $store->getFilePath($nouvellePJ, 'dateCommission', $this->idComm, true);
 				$odf->saveToDisk($path);
-				echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." à bien été généré </span><br/><br/><br/>";
+				echo "<span id='notif' class='ui-state-highlight ui-corner-all' style='padding: 0.3em;'>L'ordre du jour pour le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']." à bien été généré </span><br/><br/><br/>";
 			}else{
-				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
+				echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre['infosFiles'][0]['LIBELLE_COMMISSIONMEMBRE']." n'a pas été renseigné</span><br/><br/><br/>";
 			}
 	}
 }
