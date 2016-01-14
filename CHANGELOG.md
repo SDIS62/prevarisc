@@ -4,6 +4,8 @@
 
 Evolutions :
 * Ajout de la prise en charge du cache filesystem
+* Ajout des champs de fusion du maire dans la génération de documents
+
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
 * Correction sur l'initialisation des listes d'articles / textes dans l'admin à 0px
