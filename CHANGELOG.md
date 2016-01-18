@@ -55,6 +55,8 @@ Evolutions :
 * Ajout du support du cache nosql mysql
 
 Corrections :
+* Correction des erreurs avec les dates de création/réception/réponse sur recherche de dossiers.
+* Affichage du numéro DocUrba pour les dossiers de nature "Déclaration préalable"
 * Ajout des dossiers de nature "Levée de prescriptions" dans les dossiers donnant avis en historique établissement.
 * Correction d'un problème sur les groupements ayant une quote dans leur libelle et/ou dans leur libelle de type de groupement
 * Correction d'un problème sur la remontée d'établissements sans VP dans l'année du à une liste de nature de dossier concerné différente de la fiche info d'un établissement
