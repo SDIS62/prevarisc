@@ -36,7 +36,7 @@
 	            if(!$value['value'] == null && !$value['value'] == 0)
 	            {
 	            	echo "<dt>".$key."</dt>";
-	                echo "<dd>" . $value['type'] == 'tinyint' ? ( $value['value'] == 1 ? 'Oui' : 'Non') : $value['value'] . "</dd>";
+                        echo "<dd>" . ($value['type'] == 'tinyint' ? ( $value['value'] == 1 ? 'Oui' : 'Non') : $value['value'] ). "</dd>";
 	                $j++;
 	            }
 	        }
