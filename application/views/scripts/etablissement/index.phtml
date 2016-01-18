@@ -218,9 +218,6 @@
                 <?php endif ?>
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
                     <li class='tabs-right' ><a href='#geoportail' data-toggle="tab">Carte IGN</a></li>
-                    <?php if(count($this->couches_cartographiques) > 0): ?>
-                        <li class='tabs-right' ><a href='#wms' data-toggle="tab">WMS</a></li>
-                    <?php endif ?>
                 <?php endif ?>
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->key_googlemap != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
                     <li class='tabs-right' ><a href='#googlemap' data-toggle="tab">Carte Google</a></li>
@@ -254,10 +251,6 @@
                     </script>
                 </div>
                 
-                <?php if(count($this->couches_cartographiques) > 0): ?>
-                    <div id='wms' class="tab-pane in"></div>
-                <?php endif ?>
-                    
                 <?php endif ?>
 
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->key_googlemap != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>

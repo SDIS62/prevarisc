@@ -160,7 +160,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
     
     var viewer = Geoportal.load(divId, ignKey, {
             lat: points[0].lat,
-            lon: points[0].lon,
+            lon: points[0].lon
         }, 17, OpenLayers.Util.extend({
             controls: [new Geoportal.Control.GraphicScale(), new Geoportal.Control.ToolBox()],
             language:'fr',
@@ -217,7 +217,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         modal: false});
                 }
                 
-                for (var i = 0 ; i < wmsLayers.length ; i++) {
+                /*for (var i = 0 ; i < wmsLayers.length ; i++) {
                     
                     // ajout de la couche sur la carte
                     var layer = new OpenLayers.Layer.WMS(
@@ -250,7 +250,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                     map.addControl(infoFeature);
                     infoFeature.activate();
                 }
-                
+                */
                 // Suppression des markers par défaut
                 var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
                 if (vectorLayers.length > 0) {
