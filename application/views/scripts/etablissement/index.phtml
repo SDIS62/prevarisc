@@ -50,10 +50,19 @@
                 <?php endif ?>
 
 
-                <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5))) : ?>
+                <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(1, 2, 3, 5)) && $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] !== null) : ?>
                 <dt>Périodicité</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? end($this->etablissement['parents'])['PERIODICITE_ETABLISSEMENTINFORMATIONS'] : $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois</p>
+                    <p>
+                        <?php if ($this->etablissement['informations']['ID_GENRE'] == 1): ?>
+                            <i class="icon-info-sign" title="Périodicité la plus contraignante des fils ERP"></i>
+                        <?php endif ?>
+                        <?php if (in_array($this->etablissement['informations']['ID_GENRE'], array(2, 5)) && $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] <> $this->default_periodicite): ?>
+                            <i class="icon-exclamation-sign" title="Periodicite non standard"></i>
+                        <?php endif ?>
+                        <?php echo $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois
+                    </p>
+                    
                 </dd>
                 <?php endif ?>
             </dl>
@@ -199,7 +208,24 @@
 
             <!-- Etablissement lié -->
             <?php if(count($this->etablissement['etablissement_lies']) > 0) : ?>
-            <h4 class='h4_subtitle'>Établissements liés <small><?php echo count($this->etablissement['etablissement_lies']) > 0 ? "(" . count($this->etablissement['etablissement_lies']) . " établissements)" : "" ?></small></h4>
+            <h4 class='h4_subtitle'>Établissements liés <small><?php echo count($this->etablissement['etablissement_lies']) > 0 ? "(" . count($this->etablissement['etablissement_lies']) . " établissements)" : "" ?></small>
+                <input type="text" class="pull-right" id="filterLinkedEts" placeholder="Filtrer les établissements" />
+                <script>
+                    $(document).ready(function(){
+                        $('#filterLinkedEts').keyup(function() {
+                            filterLinkedEtsRegExp = new RegExp($(this).val(), 'i');
+                            $(this).parent().next().find('li').each(function(i, elem) {
+                                var test = filterLinkedEtsRegExp.exec($(elem).text());
+                                if (test !== null && test.length > 0) {
+                                    $(elem).show();
+                                } else {
+                                    $(elem).hide();
+                                }
+                            });
+                        });
+                    });
+                </script>
+            </h4>
             <ul class='recherche_liste unstyled no_slide' style='max-height: 500px; overflow-y: scroll;'>
                 <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissement['etablissement_lies']); ?>
             </ul>

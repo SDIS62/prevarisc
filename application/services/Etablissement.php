@@ -193,6 +193,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     }
                     
                 }
+            } else if ($informations->ID_GENRE == 3 && $etablissement_parents) {
+                $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = end($etablissement_parents)['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
             }
             
             

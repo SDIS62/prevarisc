@@ -20,6 +20,16 @@
 
             return $result === false ? "0" : $result;
         }
+        
+        public function gn4ForEtablissement($etablissement)
+        {
+            $informations = $etablissement['informations'];
+            if (!in_array($informations['ID_GENRE'], array(2, 5))) {
+                return null;
+            }
+            
+            return $this->gn4($informations['ID_CATEGORIE'], $informations['ID_TYPE'], $informations['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] ? 1 : 0);
+        }
 
         public function apply()
         {
