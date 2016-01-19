@@ -217,7 +217,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         modal: false});
                 }
                 
-                /*for (var i = 0 ; i < wmsLayers.length ; i++) {
+                for (var i = 0 ; i < wmsLayers.length ; i++) {
                     
                     // ajout de la couche sur la carte
                     var layer = new OpenLayers.Layer.WMS(
@@ -234,7 +234,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         }
                     );
             
-                    var infoFeature = new OpenLayers.Control.WMSGetFeatureInfo({
+                    /*var infoFeature = new OpenLayers.Control.WMSGetFeatureInfo({
                         url: wmsLayers[i].URL_COUCHECARTO, 
                         title: 'Identify features by clicking',
                         layers: [layer],
@@ -245,12 +245,12 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         var $response = $(event.text);
                         var time = (new Date()).getTime();
                         $('#wms').append("<iframe id='wms-'>"+event.text+"</iframe>");
-                    });
+                    });*/
                     map.addLayer(layer);
-                    map.addControl(infoFeature);
-                    infoFeature.activate();
+                    //map.addControl(infoFeature);
+                    //infoFeature.activate();
                 }
-                */
+                
                 // Suppression des markers par défaut
                 var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
                 if (vectorLayers.length > 0) {
