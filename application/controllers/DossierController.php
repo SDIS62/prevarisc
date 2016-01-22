@@ -937,10 +937,10 @@ class DossierController extends Zend_Controller_Action
             $service_dossier = new Service_Dossier;
             if($this->_getParam('do') == 'new'){
                 if($this->_getParam("TYPE_DOSSIER") == 1 ){
-                    $listePrescRegl = $service_prescription->getPrescriptions('etude');
+                    $listePrescRegl = $service_prescription->getPrescriptions('etude',true);
                      $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
                 }else if($this->_getParam("TYPE_DOSSIER") == 2 || $this->_getParam("TYPE_DOSSIER") == 3){
-                    $listePrescRegl = $service_prescription->getPrescriptions('visite');
+                    $listePrescRegl = $service_prescription->getPrescriptions('visite',true);
                     $service_dossier->savePrescriptionRegl($idDossier,$listePrescRegl);
                 }
             }
@@ -1883,7 +1883,8 @@ class DossierController extends Zend_Controller_Action
         // Adresses
         $model_adresse = new Model_DbTable_EtablissementAdresse();
         $array_adresses = $model_adresse->get($idEtab);
-
+        $service_adresse = new Service_Adresse();
+        
         if (count($array_adresses) > 0) {
             $this->view->communeEtab = $array_adresses[0]["LIBELLE_COMMUNE"];
             $adresse = "";
@@ -1899,6 +1900,7 @@ class DossierController extends Zend_Controller_Action
             if ($array_adresses[0]["LIBELLE_COMMUNE"] != '') {
                 $adresse .= strtoupper($array_adresses[0]["LIBELLE_COMMUNE"])." ";
             }
+            $this->view->maire = $service_adresse->getMaire($array_adresses[0]["NUMINSEE_COMMUNE"]);
             $this->view->etablissementAdresse = $adresse;
         }
 
@@ -2266,7 +2268,7 @@ class DossierController extends Zend_Controller_Action
             $dateComm = new Zend_Date($this->view->infosDossier['DELAIPRESC_DOSSIER'], Zend_Date::DATES);
             $this->view->dateDelaipresc = $dateComm->get(Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
         }else{
-            $this->view->dateDelaipresc = "DELAIPRESC_DOSSIER";
+            $this->view->dateDelaipresc = "Pas de date";
         }
 
         $dateDuJour = new Zend_Date();

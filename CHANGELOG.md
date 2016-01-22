@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.5
+
+Evolutions :
+* Ajout de la prise en charge du cache filesystem
+* Ajout des champs de fusion du maire dans la génération de documents
+
+Corrections :
+* Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
+* Correction sur l'initialisation des listes d'articles / textes dans l'admin à 0px
+* Correction des puces pouvant apparaître dans les documents générés s'il n'y a aucune prescription type
+* Correction du champ de fusion {dateDelaipresc} qui affait DELAIPRESC_DOSSIER lorsqu'il n'y avait pas de date
+
 ## 2.4
 
 Evolutions :
