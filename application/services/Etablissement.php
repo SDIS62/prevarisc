@@ -301,14 +301,14 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $dossiers_merged = array_merge($dossiers_merged, $dossiers['autres']);
 
         @usort($dossiers_merged, function($a, $b) {
-
-          $date_a = @new Zend_Date($a->DATEVISITE_DOSSIER != null ? $a->DATEVISITE_DOSSIER : $a->DATECOMM_DOSSIER, Zend_Date::DATES);
-          $date_b = @new Zend_Date($b->DATEVISITE_DOSSIER != null ? $b->DATEVISITE_DOSSIER : $b->DATECOMM_DOSSIER, Zend_Date::DATES);
+          
+          $date_a = @new Zend_Date($a['DATEVISITE_DOSSIER'] != null ? $a['DATEVISITE_DOSSIER'] : $a['DATECOMM_DOSSIER'], Zend_Date::DATES);
+          $date_b = @new Zend_Date($b['DATEVISITE_DOSSIER'] != null ? $b['DATEVISITE_DOSSIER'] : $b['DATECOMM_DOSSIER'], Zend_Date::DATES);
 
           if ($date_a == $date_b || $a === null || $b === null) {
             return 0;
           }
-          else if ($date_a > $date_b) {
+          else if ($date_a < $date_b) {
             return -1;
           }
           else {

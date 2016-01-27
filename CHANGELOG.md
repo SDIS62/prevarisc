@@ -114,6 +114,8 @@ Corrections :
 * Correction de la visibilité des dossiers sur les odj des membres communes
 * Correction des communes à 2 caractères, on remonte en 1er celles dont la longueure est minimale
 * Correction du dossier, ajout de deux années pour l'affichage des calendriers
+* Correction des calendriers dans la fiche dossier : ajout de deux annees dans la liste deroulante
+* Correction de l'historique d'avis d'exploitation, qui triait mal les lignes d'historique
 
 ## 2.3
 
