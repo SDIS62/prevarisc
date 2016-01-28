@@ -803,7 +803,7 @@
                 <validdoc>
                     <controller>dossier</controller>
                     <action>validdoc</action>
-                    <privilege>view_doss</privilege>
+                    <privilege>edit_doss</privilege>
                 </validdoc>
                 <addetablissement>
                     <label>Ajouter Etablissement</label>

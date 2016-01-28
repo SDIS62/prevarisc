@@ -11,6 +11,8 @@ Corrections :
 * Correction sur l'initialisation des listes d'articles / textes dans l'admin à 0px
 * Correction des puces pouvant apparaître dans les documents générés s'il n'y a aucune prescription type
 * Correction du champ de fusion {dateDelaipresc} qui affait DELAIPRESC_DOSSIER lorsqu'il n'y avait pas de date
+* Correction d'un problème de droits sur l'action de validation des documents consultés lorsque l'utilisateur n'a accès qu'aux commissions
+* Correction du retrait d'une méthode dépréciée split
 
 ## 2.4
 
@@ -114,6 +116,8 @@ Corrections :
 * Correction de la visibilité des dossiers sur les odj des membres communes
 * Correction des communes à 2 caractères, on remonte en 1er celles dont la longueure est minimale
 * Correction du dossier, ajout de deux années pour l'affichage des calendriers
+* Correction des calendriers dans la fiche dossier : ajout de deux annees dans la liste deroulante
+* Correction de l'historique d'avis d'exploitation, qui triait mal les lignes d'historique
 
 ## 2.3
 
