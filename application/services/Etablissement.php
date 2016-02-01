@@ -80,6 +80,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 ->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)
                     // Dossier type "Visite de commission" et "Groupe de visite"
                 ->setCriteria("d.TYPE_DOSSIER", array(2,3))
+                        // Dossier ayant un avis de commission rendu
+                ->setCriteria("d.AVIS_DOSSIER_COMMISSION > 0")
                     // Dossier nature "périodique" et autres types donnant avis de type "Visite de commission" et "Groupe de visite"
                 ->setCriteria("ID_NATURE", array(21,26,47,48))
                 ->order('DATEVISITE_DOSSIER DESC')
@@ -174,6 +176,28 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 );
             }
 
+            // Periodicite
+            if($informations->ID_GENRE == 1) {
+                foreach($etablissement_lies as $etablissement) {
+                    if($etablissement['ID_GENRE'] != 2) {
+                        continue;
+                    } else if ($etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null
+                            || $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === 0) {
+                        continue;
+                    }
+                    
+                    if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null) {
+                        $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
+                    } else if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] < $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS']) {
+                        $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
+                    }
+                    
+                }
+            } else if ($informations->ID_GENRE == 3 && $etablissement_parents) {
+                $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = end($etablissement_parents)['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
+            }
+            
+            
             $commission = @$DB_commission->find($informations->ID_COMMISSION)->current();
             $etablissement = array(
                 'general' => $general->toArray(),

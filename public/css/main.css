@@ -443,6 +443,11 @@ h4.h4_subtitle {
 	margin: 1em 0 1em 0;
 }
 
+h4.h4_subtitle input {
+    margin-bottom: 0;
+    font-size: 0.7em;
+}
+
 .nav-tabs > li.tabs-right {
 	float: right;
 	margin-left: 10px;

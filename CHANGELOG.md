@@ -5,6 +5,9 @@
 Evolutions :
 * Ajout de la prise en charge du cache filesystem
 * Ajout des champs de fusion du maire dans la génération de documents
+* Ajout de la périodicité calculée pour les sites
+* Ajout d'un filtre sur la liste des cellules
+* Ajout d'un indicateur sur les périodicités non standards
 
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null

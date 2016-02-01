@@ -9,7 +9,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
         $service_groupement_communes = new Service_GroupementCommunes;
         $service_carto = new Service_Carto;
-
+        $DB_periodicite = new Model_DbTable_Periodicite;
         $etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->couches_cartographiques = $service_carto->getAll();
@@ -17,6 +17,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
 
         $this->view->etablissement = $etablissement;
+        $this->view->default_periodicite = $DB_periodicite->gn4ForEtablissement($etablissement);
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
 
         $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
