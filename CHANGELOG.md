@@ -14,6 +14,8 @@ Corrections :
 * Correction sur l'initialisation des listes d'articles / textes dans l'admin à 0px
 * Correction des puces pouvant apparaître dans les documents générés s'il n'y a aucune prescription type
 * Correction du champ de fusion {dateDelaipresc} qui affait DELAIPRESC_DOSSIER lorsqu'il n'y avait pas de date
+* Correction d'un problème de droits sur l'action de validation des documents consultés lorsque l'utilisateur n'a accès qu'aux commissions
+* Correction du retrait d'une méthode dépréciée split
 
 ## 2.4
 

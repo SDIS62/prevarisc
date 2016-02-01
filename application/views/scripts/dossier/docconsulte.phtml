@@ -117,7 +117,7 @@ $(".validDoc").live('click',function(){
 
 	$.ajax({
 		url: "/dossier/validdoc",
-		data: "do=validDoc&id="+idValid+"&"+data+"&idDossier="+$("#idDossier").val(),
+		data: "do=validDoc&idValid="+idValid+"&"+data+"&id="+$("#idDossier").val(),
 		type:"POST",			
 		beforeSend: function(){
 			//VERIFICATION SUR L'integrité des données

@@ -1486,8 +1486,8 @@ class DossierController extends Zend_Controller_Action
     {
         try {
             $this->_helper->viewRenderer->setNoRender();
-            $id_dossier = (int) $this->_getParam("idDossier");
-            $idValid = $this->_getParam("id");
+            $id_dossier = (int) $this->_getParam("id");
+            $idValid = $this->_getParam("idValid");
             $datePost = $this->_getParam("date_".$idValid);
 
             if ('' == $id_dossier || '' == $idValid) {
@@ -1549,7 +1549,7 @@ class DossierController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoRender();
         //cas de la suppression d'un document qui avait été renseigné
-        $tabInfos = split("_",$this->_getParam('docInfos'));
+        $tabInfos = explode("_",$this->_getParam('docInfos'));
         $nature = $tabInfos[0];
         $numdoc = $tabInfos[1];
         if (count($tabInfos) == 2) {
