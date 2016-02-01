@@ -74,7 +74,8 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
         // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
         else if ( !Zend_Auth::getInstance()->hasIdentity() && !in_array($request->getActionName(), array("login", "error")))  {
-            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default');
+            $redirect = $_SERVER['REQUEST_URI'] == '/' ? [] : ['redirect' => urlencode($_SERVER['REQUEST_URI'])];
+            $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default', $redirect);
         }
         else if(Zend_Auth::getInstance()->hasIdentity()) {
 
@@ -163,7 +164,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 
                         $resource_imploded = implode($resource_exploded, '_');
                         $list_resources_finale =  array($resource_imploded);
-                        
+
 			$resources = new ResourceContainer($list_resources_finale);
                         foreach($resources as $r) {
                             if(!$acl->has($r)) {

@@ -51,7 +51,7 @@ class SessionController extends Zend_Controller_Action
                 foreach ($adapters as $key => $adapter) {
                     if ($adapter->authenticate()->isValid()) {
                         $storage = Zend_Auth::getInstance()->getStorage()->write($user);
-                        $this->_helper->redirector->gotoUrl($this->view->url(array("controller" => "index", "action" => "index", "module" => "default")));
+                        $this->_helper->redirector->gotoUrl(empty($this->_request->getParams()["redirect"]) ? '/' : urldecode($this->_request->getParams()["redirect"]));
                     }
                 }
 
