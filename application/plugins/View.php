@@ -23,7 +23,9 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             } else {
                 $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..');
                 $view->branch_prevarisc = $git->getCurrentBranch();
-                $view->revision_prevarisc = end($git->getRevisions())['sha1'];
+                $revisions = $git->getRevisions();
+                $last_revision = end($revisions);
+                $view->revision_prevarisc = $last_revision['sha1'];
                 $view->version_prevarisc = $view->branch_prevarisc . '@' . substr((string) $view->revision_prevarisc, 0, 7);
             }
 
