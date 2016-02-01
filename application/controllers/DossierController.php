@@ -1529,7 +1529,7 @@ class DossierController extends Zend_Controller_Action
                 $liste->save();
             } else {
                 //On commence par isoler l'id de "_aj"
-                $idDocAjout = explode("_",$this->_getParam("id"));
+                $idDocAjout = explode("_",$this->_getParam("idValid"));
                 $dblistedocajout = new Model_DbTable_ListeDocAjout();
 
                 $docAjout = $dblistedocajout->find($idDocAjout[1])->current();
