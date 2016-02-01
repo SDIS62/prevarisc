@@ -6,7 +6,7 @@
         <input type='hidden' value='<?php echo $this->adresse["NUMERO_ADRESSE"] ?>' name='ADRESSES[<?php echo $this->adresse === null ? -1 : $this->adresse['ID_ADRESSE'] ?>][NUMERO_ADRESSE]' />
         <input type='hidden' value='<?php echo $this->adresse["ID_RUE"] ?>' name='ADRESSES[<?php echo $this->adresse === null ? -1 : $this->adresse['ID_ADRESSE'] ?>][ID_RUE]' />
         <input type='hidden' value='<?php echo $this->adresse["COMPLEMENT_ADRESSE"] ?>' name='ADRESSES[<?php echo $this->adresse === null ? -1 : $this->adresse['ID_ADRESSE'] ?>][COMPLEMENT_ADRESSE]' />
-        <span><?php echo strtolower($this->adresse["NUMERO_ADRESSE"]." ".$this->adresse["LIBELLE_RUE"]." ".$this->adresse["CODEPOSTAL_COMMUNE"]). " " .$this->adresse["LIBELLE_COMMUNE"] ?></span>
+        <span><?php echo strtolower($this->adresse["NUMERO_ADRESSE"]." ".$this->adresse["LIBELLE_RUE"]." ".$this->adresse["COMPLEMENT_ADRESSE"]." ".$this->adresse["CODEPOSTAL_COMMUNE"]). " " .$this->adresse["LIBELLE_COMMUNE"] ?></span>
     </td>
     <td>
         Adresse postale

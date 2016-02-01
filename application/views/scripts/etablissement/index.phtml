@@ -62,7 +62,7 @@
                         <?php endif ?>
                         <?php echo $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois
                     </p>
-                    
+
                 </dd>
                 <?php endif ?>
             </dl>
@@ -266,17 +266,17 @@
                                                 + "long=<?php echo $adresse['LON_ETABLISSEMENTADRESSE'] ?>, lat=<?php echo $adresse['LAT_ETABLISSEMENTADRESSE'] ?>"
                                 });
                             <?php endforeach ?>
-                            
+
                             viewer = initViewer(
-                                "geoportail-container", 
-                                "<?php echo $this->key_ign ?>", 
-                                points, 
+                                "geoportail-container",
+                                "<?php echo $this->key_ign ?>",
+                                points,
                                 <?php echo json_encode($this->couches_cartographiques) ?>
                             );
                         });
                     </script>
                 </div>
-                
+
                 <?php endif ?>
 
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->key_googlemap != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
@@ -391,7 +391,7 @@
                         <tbody>
                             <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
                                 <tr>
-                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"] ?></td>
+                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["COMPLEMENT_ADRESSE"]." ".$adresse["CODEPOSTAL_COMMUNE"])." ".$adresse["LIBELLE_COMMUNE"] ?></td>
                                     <td>Adresse postale</td>
                                 </tr>
                             <?php endforeach ?>
