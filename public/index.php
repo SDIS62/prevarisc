@@ -53,7 +53,7 @@ $application = new Zend_Application('production', array(
         'baseDn' => getenv('PREVARISC_LDAP_ENABLED') ? getenv('PREVARISC_LDAP_BASEDN') : '',
     ),
     'cache' => array(
-        'adapter'       => getenv('PREVARISC_CACHE_ADAPTER') ? : 'APC',
+        'adapter'       => getenv('PREVARISC_CACHE_ADAPTER') ? : 'File',
         'customAdapter' => getenv('PREVARISC_CACHE_ADAPTER') !== false,
         'enabled'      => ((int) getenv('PREVARISC_CACHE_LIFETIME')) > 0,
         'lifetime'      => (int) getenv('PREVARISC_CACHE_LIFETIME'),
@@ -61,7 +61,7 @@ $application = new Zend_Application('production', array(
         'port'          => (int) getenv('PREVARISC_CACHE_PORT'),
         'write_control' => false,
         'compression'   => false,
-        'cache_dir'     => getenv('PREVARISC_CACHE_DIR'),
+        'cache_dir'     => getenv('PREVARISC_CACHE_DIR') ? : APPLICATION_PATH.DS.'..'.DS.'cache',
         'read_control'  => false,
     ),
     'security' => array(
@@ -72,6 +72,6 @@ $application = new Zend_Application('production', array(
         'display_errors' => getenv('PREVARISC_DEBUG_ENABLED'),
     )
 ));
-    
+
 // Bootstrap et gooooo !
 $application->bootstrap()->run();
