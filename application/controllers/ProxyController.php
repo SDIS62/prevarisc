@@ -29,6 +29,7 @@ class ProxyController extends Zend_Controller_Action
         curl_setopt($ch, CURLOPT_VERBOSE, 1);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_REFERER']);
         
         // are we under a proxy?
         if (1 == getenv('PREVARISC_PROXY_ENABLED')) {

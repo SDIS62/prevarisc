@@ -491,7 +491,7 @@
             </dd>
         </dl>
         <?php if($this->key_ign != null): ?>
-            <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.0.3/GeoportalExtended.js"></script>
+            <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
             <div id='geoportail-container' style="height: 400px"></div>
         <?php endif ?>
     </div>
@@ -922,17 +922,13 @@
         });
 
         <?php if($this->key_ign != null): ?>
-            viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
-                lon: -1.638023,
-                lat: 48.134198999999995
-            }, 17, OpenLayers.Util.extend({
-                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
-                language:'fr',
-                displayProjection: 'EPSG:4326',
-                projection: 'EPSG:4326',
-                proxyUrl: '/proxy',
-                onView: function() {
-
+            viewer = initViewer(
+                "geoportail-container", 
+                "<?php echo $this->key_ign ?>", 
+                [{lon: -1.638023, lat: 48.134198999999995, description: ""}], 
+                <?php echo json_encode($this->couches_cartographiques) ?>,
+                function() {
+                    
                     // removes the marker
                     var vectorLayers = viewer.getViewer().getMap().getLayersByClass('OpenLayers.Layer.Vector');
                     if (vectorLayers.length > 0) {
@@ -951,7 +947,7 @@
                                 $("span.result").text("Géolocalisée IGN");
                                 $("input[name='lon']").val(center.lon);
                                 $("input[name='lat']").val(center.lat);
-                                putMarkerAt(map.getCenter(), map.getProjection());
+                                putMarkerAt(map, map.getCenter(), map.getProjection());
                             }
                             else {
                                 $("span.result").text("Introuvable");
@@ -961,7 +957,7 @@
                         }
                     });
 
-                    OpenLayers.Control.Click= OpenLayers.Class( OpenLayers.Control, {
+                    OpenLayers.Control.Click = OpenLayers.Class( OpenLayers.Control, {
                         defaultHandlerOptions:{
                             'single': true,
                             'double': false,
@@ -993,7 +989,7 @@
                             $("input[name='lat']").val(lonlat.lat);
 
                             // update map
-                            putMarkerAt(this.map.getLonLatFromViewPortPx(e.xy), this.map.getProjection());
+                            putMarkerAt(this.map, this.map.getLonLatFromViewPortPx(e.xy), this.map.getProjection());
                         }
                     });
 
@@ -1001,9 +997,9 @@
                     var monClic= new OpenLayers.Control.Click({
                         autoActivate:true
                     });
-                    this.getViewer().getMap().addControl(monClic);
+                    viewer.getViewer().getMap().addControl(monClic);
                 }
-            }));
+            );
 
             geolocalizing = false;
             $('#adresse-modal #geolocme').click(function(e) {
@@ -1035,21 +1031,7 @@
                 return false;
             });
 
-            function putMarkerAt(point, sourceProjection) {
-                var map = viewer.getViewer().getMap();
-                var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
-                if (vectorLayers.length > 0) {
-                    var vectorLayer = vectorLayers[0];
-                    if (vectorLayer.features.length > 0) {
-                        vectorLayer.features[0].destroy();
-                    }
-                    var lonlat = point.transform(
-                        sourceProjection, vectorLayer.projection.toString()
-                    );
-                    point = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat);
-                    vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point)]);
-                }
-            }
+            
 
         <?php endif ?>
 
@@ -1072,14 +1054,14 @@
                     element.text("Géolocalisation en cours ...");
                 },
                 success: function(geolocations) {
-                    element.text("Géolocaliser cette adresse");
+                    element.text("Géolocaliser cette adresse (Nominatim)");
                     if(geolocations.length > 0) {
                         $("span.result").text("OK");
                         $("input[name='lon']").val(geolocations[0].lon);
                         $("input[name='lat']").val(geolocations[0].lat);
                         <?php if($this->key_ign != null) : ?>
                             var lonlat = new OpenLayers.LonLat(geolocations[0].lon, geolocations[0].lat);
-                            putMarkerAt(lonlat, viewer.getViewer().getMap().getProjection());
+                            putMarkerAt(viewer.getViewer().getMap(), lonlat, viewer.getViewer().getMap().getProjection());
                             viewer.getViewer().getMap().setCenter(lonlat, 17);
                         <?php endif ?>
                     }
