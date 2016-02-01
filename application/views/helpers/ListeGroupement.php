@@ -16,9 +16,13 @@
 
             // Pour chaque type, on retouve les model_groupements
             foreach ($array_groupementstypes as $value) {
+                $select = $model_groupements
+                    ->select()
+                    ->where("ID_GROUPEMENTTYPE = ".$value["ID_GROUPEMENTTYPE"])
+                    ->order('LIBELLE_GROUPEMENT ASC');
                 $array_groupements[ $value["ID_GROUPEMENTTYPE"] ] = array(
                     0 => $value["LIBELLE_GROUPEMENTTYPE"],
-                    1 => $model_groupements->fetchAll("ID_GROUPEMENTTYPE = ".$value["ID_GROUPEMENTTYPE"])->toArray()
+                    1 => $model_groupements->fetchAll($select)->toArray()
                 );
             }
 
