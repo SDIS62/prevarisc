@@ -11,7 +11,9 @@ class AdminController extends Zend_Controller_Action
         if (getenv('PREVARISC_BRANCH') == false) {
             try {
                 $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..');
-                $revision_prevarisc_local = end($git->getRevisions())['sha1'];
+                $revisions = $git->getRevisions();
+                $last_revision = end($revisions);
+                $revision_prevarisc_local = $last_revision['sha1'];
                 $client = new Zend_Http_Client();
                 $client->setUri('https://api.github.com/repos/SDIS62/prevarisc/git/refs/heads/2.x');
                 $client->setConfig(['maxredirects' => 0, 'timeout' => 3]);
