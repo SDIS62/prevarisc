@@ -188,7 +188,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     
                     if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null) {
                         $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
-                    } else if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] < $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS']) {
+                    } else if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] > $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS']) {
                         $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
                     }
                     
