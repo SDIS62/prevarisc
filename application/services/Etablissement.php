@@ -184,6 +184,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     } else if ($etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null
                             || $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === 0) {
                         continue;
+                    } else if($etablissement['ID_STATUT'] != 2) {
+                        continue;
                     }
                     
                     if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null) {
