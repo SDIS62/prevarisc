@@ -8,6 +8,7 @@ Evolutions :
 * Ajout de la périodicité calculée pour les sites
 * Ajout d'un filtre sur la liste des cellules
 * Ajout d'un indicateur sur les périodicités non standards
+* Ajout du support de l'authentification CAS
 
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null

@@ -71,9 +71,31 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
         {
             return ;
         }
+        
+        if (getenv('PREVARISC_CAS_ENABLED') == 1) {
+                
+            if (getenv('PREVARISC_DEBUG_ENABLED') == 1) {
+                // Enable debugging
+                phpCAS::setDebug();
+                // Enable verbose error messages. Disable in production!
+                phpCAS::setVerbose(true);
+            }
+
+            // Initialize phpCAS
+            phpCAS::client(getenv('PREVARISC_CAS_VERSION') ?  : CAS_VERSION_2_0, getenv('PREVARISC_CAS_HOST'), (int) getenv('PREVARISC_CAS_PORT'), getenv('PREVARISC_CAS_CONTEXT'), false);
+
+            phpCAS::setLang(PHPCAS_LANG_FRENCH);
+
+            if (getenv('PREVARISC_CAS_NO_SERVER_VALIDATION') == 1) {
+                phpCAS::setNoCasServerValidation();
+            }
+
+            // force CAS authentication
+            phpCAS::forceAuthentication();
+        }
 
         // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
-        else if ( !Zend_Auth::getInstance()->hasIdentity() && !in_array($request->getActionName(), array("login", "error")))  {
+        if ( !Zend_Auth::getInstance()->hasIdentity() && !in_array($request->getActionName(), array("login", "error")))  {
             $redirect = $_SERVER['REQUEST_URI'] == '/' ? [] : ['redirect' => urlencode($_SERVER['REQUEST_URI'])];
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')->gotoSimple('login', 'session', 'default', $redirect);
         }
