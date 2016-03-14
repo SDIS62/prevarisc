@@ -13,10 +13,21 @@ class SessionController extends Zend_Controller_Action
         
         try {
             
+            $username = null;
+            $password = "";
+            
             // Adaptateur CAS
             if (getenv('PREVARISC_CAS_ENABLED') == 1) {
                 $username = phpCAS::getUser();
-                $password = "";
+                
+            } else if (getenv('PREVARISC_NTLM_ENABLED') == 1) {
+                if (!isset($_SERVER['REMOTE_USER'])) {
+                    error_log('ntlm auth with no REMOTE_USER set in server variables');
+                } else {
+                    $cred = explode('\\', $_SERVER['REMOTE_USER']); 
+                    if (count($cred) == 1) array_unshift($cred, null); 
+                    list($domain, $username) = $cred;
+                }
                 
             } else if ($this->_request->isPost()) {
                 
@@ -41,9 +52,9 @@ class SessionController extends Zend_Controller_Action
                 // Authentification adapters
                 $adapters = array();
 
-                // Adaptateur CAS noauth
-                if (getenv('PREVARISC_CAS_ENABLED') == 1) {
-                    $adapters['cas'] = new Service_PassAuthAdapater($username);
+                // Adaptateur SSO noauth
+                if (getenv('PREVARISC_CAS_ENABLED') == 1 || getenv('PREVARISC_NTLM_ENABLED') == 1 ) {
+                    $adapters['sso'] = new Service_PassAuthAdapater($username);
                 }
 
                 // Adaptateur principal (dbtable)
@@ -97,3 +108,4 @@ class SessionController extends Zend_Controller_Action
         }
     }
 }
+

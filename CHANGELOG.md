@@ -9,6 +9,7 @@ Evolutions :
 * Ajout d'un filtre sur la liste des cellules
 * Ajout d'un indicateur sur les périodicités non standards
 * Ajout du support de l'authentification CAS
+* Ajout du support de l'authentification NTLM 
 
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
