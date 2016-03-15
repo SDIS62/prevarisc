@@ -2,11 +2,21 @@
 <input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>'/>
 <ul class="nav nav-tabs nav-stacked menu_dashboard" >
     <li>
+        <a id='syncCom'  href='#' style="display:none">
+            <i class="icon-repeat"></i> Synchroniser le calendrier de cette commission
+        </a>
+    </li>
+    <li>
         <a id='exportCom'  href='#' style="display:none">
             <i class="icon-calendar"></i> Exporter pour Outlook
         </a>
     </li>
     <?php if($this->array_commissions): ?>
+        <li>
+            <a id='syncCal'  href='#'>
+                <i class="icon-repeat"></i> Synchroniser mon calendrier
+            </a>
+        </li>
         <?php foreach($this->array_commissions as $array_commission): ?>
             <?php if (isset($array_commission["ARRAY"]) && count($array_commission["ARRAY"]) > 0): ?>
                 <li class="nav-header">
@@ -59,6 +69,29 @@
                     $(".commissionLink[data-value='"+$("#idCommission").val()+"'").click();
                 }
     	});
+
+        $("#syncCom").click(function() {
+            $.ajax({
+                data: {"idComm": $("#commissionId").val()},
+                url: '/calendrier-des-commissions/synccalendar',
+                type:"POST",
+                success: function(result) {
+                    window.location.replace(result);
+                }
+            });
+            return false;
+        });
+
+        $("#syncCal").click(function() {
+            $.ajax({
+                url: '/calendrier-des-commissions/synccalendar',
+                type:"POST",
+                success: function(result) {
+                    window.location.replace(result);
+                }
+            });
+            return false;
+        });
 
 
 	// Selection de la commission
@@ -264,10 +297,10 @@
                             var view = $("#calendar").fullCalendar('getView');
                             var vueInfo = view.title;
                             vueInfo = vueInfo.split(" ");
-                            if(vueInfo.length == 2){
-                                    //permet d'empecher la modification en mode mois (Ajouter message d'indication si besoin)
-                                    $("#calendar").fullCalendar('refetchEvents');
-                                    return false;
+                            if (vueInfo.length == 2) {
+                                //permet d'empecher la modification en mode mois (Ajouter message d'indication si besoin)
+                                $("#calendar").fullCalendar('refetchEvents');
+                                return false;
                             }
                             $.ajax({
                                     data: "idComm="+event.id+"&fin="+event.end,
@@ -275,12 +308,15 @@
                                     type:"POST",
                             });
                         },
-                        viewRender: function( view, element ){
+                        viewRender: function (view, element) {
                             var date = $("#calendar").fullCalendar('getDate');
                             var month_int = date.getMonth()+1;
                             var year_int = date.getFullYear();
                             $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionId").val()+"/Mois/"+month_int+"/Annee/"+year_int);
                             $('#exportCom').show();
+                            var host = window.location.host;
+                            $('#syncCal').hide();
+                            $('#syncCom').show();
                         }
                     });
 		};

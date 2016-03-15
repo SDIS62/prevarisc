@@ -38,13 +38,13 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             $array_results = $model_commission->fetchAll("ID_COMMISSIONTYPE = " . $row_typeDeCommission->ID_COMMISSIONTYPE )->toArray();
             $array_results2 = array();
             foreach($array_results as $item) {
-              $array_results2[] = array(
-                "ID_COMMISSION" => $item["ID_COMMISSION"],
-                "LIBELLE_COMMISSION" => $item["LIBELLE_COMMISSION"],
-                "DOCUMENT_CR" => $item["DOCUMENT_CR"],
-                "ID_COMMISSIONTYPE" => $item["ID_COMMISSIONTYPE"],
-                "LIBELLE_COMMISSIONTYPE" => $row_typeDeCommission->LIBELLE_COMMISSIONTYPE
-              );
+                $array_results2[] = array(
+                    "ID_COMMISSION" => $item["ID_COMMISSION"],
+                    "LIBELLE_COMMISSION" => $item["LIBELLE_COMMISSION"],
+                    "DOCUMENT_CR" => $item["DOCUMENT_CR"],
+                    "ID_COMMISSIONTYPE" => $item["ID_COMMISSIONTYPE"],
+                    "LIBELLE_COMMISSIONTYPE" => $row_typeDeCommission->LIBELLE_COMMISSIONTYPE
+                );
             }
             $array_commissions[$row_typeDeCommission->ID_COMMISSIONTYPE] = array(
                 "LIBELLE" => $row_typeDeCommission->LIBELLE_COMMISSIONTYPE,
@@ -64,7 +64,7 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         $infosDateComm = $dbDateComm->find($this->_getParam('idDate'))->current();
 
         //Une fois les infos de la date récupérées on peux aller chercher les date liées à cette commission pour les afficher
-        if (!$infosDateComm['DATECOMMISSION_LIEES']) {
+        if ( ! $infosDateComm['DATECOMMISSION_LIEES']) {
             $commPrincipale = $this->_getParam('idDate');
         } else {
             $commPrincipale = $infosDateComm['DATECOMMISSION_LIEES'];
@@ -1188,9 +1188,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 		$model_adresseCommune = new Model_DbTable_AdresseCommune;
 		$model_utilisateurInfo = new Model_DbTable_UtilisateurInformations;
 
-		if($commissionInfo['GESTION_HEURES'] == 1){
+		if ($commissionInfo['GESTION_HEURES'] == 1){
 			$listeDossiers = $dbDateCommPj->TESTRECUPDOSSHEURE($dateCommId);
-		}else{
+		} else {
 			$listeDossiers = $dbDateCommPj->TESTRECUPDOSS($dateCommId);
 		}
 		
@@ -1378,6 +1378,24 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
             }
         }
         echo $ics;
+    }
+
+    public function synccalendarAction()
+    {
+        $this->view->layout()->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $userId = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
+
+        $url = sprintf("/api/1.0/calendar?userid=%s&key=%s", 
+                        $userId,
+                        getenv('PREVARISC_SECURITY_KEY'));
+
+        if ($this->_getParam("idComm")) {
+            $url .= sprintf("&commission=%s", $this->_getParam("idComm"));
+        }
+
+        echo 'webcal://' . $_SERVER["HTTP_HOST"] . $url;
     }
 
 
