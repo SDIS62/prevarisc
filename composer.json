@@ -21,7 +21,8 @@
         "michelf/php-markdown": "^1.0",
         "kdubuc/gd_resize": "^1.0",
         "SDIS62/toolbox": "^1.0",
-        "sebastian/git": "^2.0"
+        "sebastian/git": "^2.0",
+        "sabre/vobject": "~4"
     },
 
     "require-dev": {
