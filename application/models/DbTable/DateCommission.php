@@ -185,4 +185,31 @@
             }
         }
 
+        public function getEventInCommission($whereClause) 
+        {
+            $select = "SELECT * "
+                        . "FROM dossier AS doss "
+                        . "INNER JOIN dossieraffectation AS dossAffect "
+                        . "ON dossAffect.ID_DOSSIER_AFFECT = doss.ID_DOSSIER "
+                        . "INNER JOIN datecommission AS dateComm "
+                        . "ON dateComm.ID_DATECOMMISSION = dossAffect.ID_DATECOMMISSION_AFFECT "
+                        . "INNER JOIN commission AS comm "
+                        . "ON comm.ID_COMMISSION = dateComm.COMMISSION_CONCERNE "
+                        . "INNER JOIN etablissementdossier AS etabDoss "
+                        . "ON etabDoss.ID_DOSSIER = doss.ID_DOSSIER "
+                        . "INNER JOIN dossiernature AS dossNat "
+                        . "ON dossNat.ID_DOSSIER = doss.ID_DOSSIER "
+                        . "INNER JOIN dossiernatureliste AS dossNatListe "
+                        . "ON dossNatListe.ID_DOSSIERNATURE = dossNat.ID_NATURE "
+                        . "INNER JOIN dossiertype AS dossType "
+                        . "ON dossType.ID_DOSSIERTYPE = doss.TYPE_DOSSIER "
+                        . "INNER JOIN dossierpreventionniste AS dossPre "
+                        . "ON dossPre.ID_DOSSIER = doss.ID_DOSSIER "
+                        . "INNER JOIN utilisateur AS user "
+                        . "ON user.ID_UTILISATEUR = dossPre.ID_PREVENTIONNISTE "
+                        . "WHERE " . $whereClause;
+
+            return $this->getAdapter()->fetchAll($select);
+        }
+
     }
