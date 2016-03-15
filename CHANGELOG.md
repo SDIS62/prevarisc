@@ -16,6 +16,7 @@ Corrections :
 * Correction du champ de fusion {dateDelaipresc} qui affait DELAIPRESC_DOSSIER lorsqu'il n'y avait pas de date
 * Correction d'un problème de droits sur l'action de validation des documents consultés lorsque l'utilisateur n'a accès qu'aux commissions
 * Correction du retrait d'une méthode dépréciée split
+* Correction d'un problème d'affichage de la carto IGN sur IE11
 
 ## 2.4
 

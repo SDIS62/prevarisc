@@ -1146,3 +1146,8 @@ a.list-group-item-danger.active:focus {
 #tabPieceJointe .msg{  
     background: url('../images/msg.png') no-repeat;  
 }
+
+/* Fix provenant d'un problème IE11 / bootstrap*/
+#geoportail-container img {
+    max-width: none;
+}
