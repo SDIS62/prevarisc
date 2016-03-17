@@ -11,14 +11,14 @@ if(count($this->membresFiles) == 0){
 foreach($this->informationsMembre as $val => $membre){
 
 	$erreurFile = 0;
-	if($this->typeCommission == 1 || $this->typeCommission == 3){
+	if($this->typeCommission == 1){
 		if($membre['infosFiles'][0]['COURRIER_CONVOCATIONSALLE'] == NULL){
 			$erreurFile = 1;
 		}else{
 			//Salle
 			$nomFichier = $membre['infosFiles'][0]['ID_COMMISSIONMEMBRE']."CONVOCATIONSALLE_".$membre['infosFiles'][0]['COURRIER_CONVOCATIONSALLE'];
 		}
-	}else if($this->typeCommission == 2){
+	}else if($this->typeCommission == 2 || $this->typeCommission == 3){
 		if($membre['infosFiles'][0]['COURRIER_CONVOCATIONVISITE'] == NULL){
 			$erreurFile = 1;
 		}else{
