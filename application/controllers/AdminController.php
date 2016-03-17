@@ -35,7 +35,7 @@ class AdminController extends Zend_Controller_Action
         if (getenv('PREVARISC_CAS_ENABLED')) {
             $this->view->authentification = "CAS";
         } else if (getenv('PREVARISC_NTLM_ENABLED')) {
-            $this->view->authentification = "NTLM";
+            $this->view->authentification = "NTLM + BDD";
         } else if (getenv('PREVARISC_LDAP_ENABLED')) {
             $this->view->authentification = sprintf("LDAP + BDD : %s:%d/%s", 
                 getenv("PREVARISC_LDAP_HOST"), 

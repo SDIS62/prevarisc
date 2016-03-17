@@ -21,6 +21,7 @@ class SessionController extends Zend_Controller_Action
                 $username = phpCAS::getUser();
                 
             } else if (getenv('PREVARISC_NTLM_ENABLED') == 1) {
+                
                 if (!isset($_SERVER['REMOTE_USER'])) {
                     error_log('ntlm auth with no REMOTE_USER set in server variables');
                 } else {
@@ -29,7 +30,9 @@ class SessionController extends Zend_Controller_Action
                     list($domain, $username) = $cred;
                 }
                 
-            } else if ($this->_request->isPost()) {
+            }
+            
+            if ($this->_request->isPost()) {
                 
                 if (!$form->isValid($this->_request->getPost())) {
                     throw new Zend_Auth_Exception('Données invalides.');
