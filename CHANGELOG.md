@@ -8,6 +8,8 @@ Evolutions :
 * Ajout de la périodicité calculée pour les sites
 * Ajout d'un filtre sur la liste des cellules
 * Ajout d'un indicateur sur les périodicités non standards
+* Ajout du support de l'authentification CAS
+* Ajout du support de l'authentification NTLM 
 
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
@@ -17,6 +19,7 @@ Corrections :
 * Correction d'un problème de droits sur l'action de validation des documents consultés lorsque l'utilisateur n'a accès qu'aux commissions
 * Correction du retrait d'une méthode dépréciée split
 * Correction du port ldap par défaut qui n'est plus inséré par zend sur les connexions LDAP
+* Correction du modèle de convocation des groupes de visites qui n'utilisaient pas le modèle de document de visite
 
 ## 2.4
 
