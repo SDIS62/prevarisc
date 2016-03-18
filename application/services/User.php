@@ -343,4 +343,18 @@ class Service_User
         $privileges = $model_user->getGroupPrivileges($user);
         return $privileges;
     }
+
+    /**
+     * Récupération des utilisateurs pour les alertes
+     * 
+     * @param  int      $idChangement  L'id du type changement
+     * @param  array    $etablissement L'établissement concerné par le changement
+     * @return array    La liste des utilisateurs
+     */
+    public function getUtilisateursForAlterte($idChangement, $etablissement)
+    {
+        $dbUtilisateur = new Model_DbTable_Utilisateur;
+
+        return $dbUtilisateur->findUtilisateursForAlerte($idChangement, $etablissement);
+    }
 }

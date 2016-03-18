@@ -46,6 +46,9 @@
                 <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'groupement') echo "class='active'" ?> >
                     <a href='/groupement' ><i class="icon-th-list icon-black"></i> Groupements de communes</a>
                 </li>
+                <li <?php if(Zend_Controller_Front::getInstance()->getRequest()->getControllerName() == 'changement') echo "class='active'" ?> >
+                    <a href='/changement' ><i class="icon-th-list icon-black"></i> Messages des alertes</a>
+                </li>
            
     </ul>
         <?php $this->placeholder('lateral_navigation')->captureEnd(); ?>

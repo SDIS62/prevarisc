@@ -1,0 +1,20 @@
+<table class="table-balises">
+    <tr>
+        <th>
+            Balise
+        </th>
+        <th>
+            Description
+        </th>
+    </tr>
+    <?php foreach ($this->balises as $balise => $content) : ?>
+        <tr>
+            <td class="td-balise">
+                <?php echo $balise; ?>
+            </td>
+            <td>
+                <?php echo $content['description']; ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
