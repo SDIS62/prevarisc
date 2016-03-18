@@ -51,17 +51,21 @@ class Service_Mail
 
     public function sendAlerteMail($objet, $message, $destinataires)
     {
-        return $this->sendMail($message, $objet, null, $destinataires);
+        return $this->sendMail($message, $objet, null, $destinataires, true);
     }
 
 
-    public function sendMail($message, $objet = null, $to = null, $bcc = null) 
+    public function sendMail($message, $objet = null, $to = null, $bcc = null, $isHTML = false) 
     {
         $sent = true;
 
         $mail = new Zend_Mail('utf-8');
 
-        $mail->setBodyText($message);
+        if ($isHTML) {
+            $mail->setBodyHtml($message);
+        } else {
+            $mail->setBodyText($message);
+        }
         
         if ($objet) {
             $mail->setSubject($objet);
