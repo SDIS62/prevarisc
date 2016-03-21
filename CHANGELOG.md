@@ -19,6 +19,7 @@ Corrections :
 * Correction d'un problème de droits sur l'action de validation des documents consultés lorsque l'utilisateur n'a accès qu'aux commissions
 * Correction du retrait d'une méthode dépréciée split
 * Correction d'un problème d'affichage de la carto IGN sur IE11
+* Correction du port ldap par défaut qui n'est plus inséré par zend sur les connexions LDAP
 * Correction du modèle de convocation des groupes de visites qui n'utilisaient pas le modèle de document de visite
 
 ## 2.4
