@@ -70,6 +70,7 @@ PREVARISC_SECURITY_SALT | Chaine utilisée pour le cryptage des mots de passe ut
 PREVARISC_LDAP_ENABLED | [FACULTATIF] Activation de la connexion des utilisateurs via LDAP | 1 ou 0
 PREVARISC_LDAP_HOST | [FACULTATIF] Adresse du serveur LDAP | Adresse IP
 PREVARISC_LDAP_USERNAME | [FACULTATIF] Nom d'utilisateur à utiliser lors de la connexion au LDAP | Chaine de caractères
+PREVARISC_LDAP_PORT | [FACULTATIF] Port de connexion au LDAP | Entier
 PREVARISC_LDAP_PASSWORD | [FACULTATIF] Mot de passe de connexion au LDAP | Chaine de caractères
 PREVARISC_LDAP_BASEDN | [FACULTATIF] Chaine de selection afin de trouver les utilisateurs dans le LDAP | Chaine de caractères (exemple : DC=sdisxx,DC=fr)
 PREVARISC_LDAP_ACCOUNT_FORM | [FACULTATIF] Format des comptes LDAP à utiliser, par défaut domaine\login   | Entier voir class Zend_Ldap
