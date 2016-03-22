@@ -8,23 +8,34 @@ class Api_Service_Calendar
     public function sync($userid, $commission = null) 
     {
 
-        $request = $this->createRequestForWebcalEvent($userid, 
-                                                      $commission);
+        $dossierEvent = $this->createRequestForWebcalEvent($userid, 
+                                                           $commission);
 
-        $dbDateCommission = new Model_DbTable_DateCommission;
+        $calendrierNom = "Prévarisc";
+        if ($commission) {
+            $dbCommission = new Model_DbTable_Commission;
+            $resultLibelle = $dbCommission->getLibelleCommissions($commission);
+            if (count($resultLibelle) > 0) {
+                $calendrierNom .= " " . $resultLibelle[0]['LIBELLE_COMMISSION']; 
+            }
+        }
+
+        // Le refresh est par défaut à 5 minutes
+        $refreshTime = (getenv('PREVARISC_CALENDAR_REFRESH_TIME') 
+                        && getenv('PREVARISC_CALENDAR_REFRESH_TIME') !== '') ? 
+                        getenv('PREVARISC_CALENDAR_REFRESH_TIME') : 'PT5M';
 
         $calendar = new VObject\Component\VCalendar(array(
-            "NAME" => "Calendrier Prévarisc",
-            "X-WR-CALNAME" => "Calendrier Prévarisc",
-            "REFRESH-INTERVAL;VALUE=DURATION" => "PT5M",
-            "X-PUBLISHED-TTL" => "PT5M"
+            "NAME" => $calendrierNom,
+            "X-WR-CALNAME" => $calendrierNom,
+            "REFRESH-INTERVAL;VALUE=DURATION" => $refreshTime,
+            "X-PUBLISHED-TTL" => $refreshTime
         ));
 
         $vtimezone = $this->getVTimezoneComponent($calendar);
         $calendar->add($vtimezone);
 
-
-        foreach ($dbDateCommission->getEventInCommission($request) as $commissionEvent) {
+        foreach ($dossierEvent as $commissionEvent) {
             $event = $this->createICSEvent($commissionEvent);
             if ($event) {
                 $calendar->add("VEVENT", $event);    
@@ -62,19 +73,12 @@ class Api_Service_Calendar
      */
     private function createRequestForWebcalEvent($userid, $commission)
     {
-        $request = "ID_UTILISATEUR = " . $userid;
-
-        // Gestion des commissions concernés
-        if ($commission) {
-            $request .= " AND COMMISSION_CONCERNE = " . $commission;
-        } 
-        
-        // Gestion de la date (un an avant l'année actuelle)
         $today = new \DateTime();
         $yearBefore = $today->modify("-1 year")->format("Y");
-        $request .= " AND YEAR(DATE_COMMISSION) >= '" . $yearBefore . "'";
 
-        return $request;
+        $dbDateCommission = new Model_DbTable_DateCommission;
+
+        return $dbDateCommission->getEventInCommission($userid, $commission, $yearBefore);
     }
 
 
@@ -85,26 +89,46 @@ class Api_Service_Calendar
         if (is_array($commissionEvent)) {
             $etsService = new Service_Etablissement;
             $ets = $etsService->get($commissionEvent["ID_ETABLISSEMENT"]);
+
+            foreach($ets['parents'] as $parent) {
+                $parentsLibelle[] = $parent['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+            }
+
+            if (count($parentsLibelle) > 0) {
+                $parentsStr = implode(" ", $parentsLibelle);
+            } else {
+                $parentsStr = '';
+            }
+            if ($parentsStr !== '') {
+                $parentsStr .= ' - '; 
+            }
             // Cas d'une commission en salle
             if ($commissionEvent["ID_COMMISSIONTYPEEVENEMENT"] === 1) {
-                $summary = sprintf("%s %s - %s",
+                if ($commissionEvent["TYPE_DOSSIER"] === 3) {
+                    $libelleSum = $commissionEvent["LIBELLE_DATECOMMISSION"];
+                } else {
+                    $libelleSum = $commissionEvent["OBJET_DOSSIER"];
+                }
+                $summary = sprintf("%s%s %s - %s",
+                                $parentsStr,
                                 $commissionEvent["LIBELLE_DOSSIERTYPE"],
                                 $commissionEvent["LIBELLE_DOSSIERNATURE"],
-                                $commissionEvent["OBJET_DOSSIER"]);
-                $geo = $commissionEvent["LIBELLE_COMMISSION"];
+                                $libelleSum);
+                $geo = sprintf("Commission en salle de %s", $commissionEvent["LIBELLE_COMMISSION"]);
             // Cas d'une visite d'une commission ou d'un groupe de visite
             } else {
+                $summary = sprintf('%s%s', $parentsStr, $commissionEvent["LIBELLE_DATECOMMISSION"]);
                 $adresse = count($ets["adresses"]) > 0 ? $ets["adresses"][0] : null;
-                $summary = $commissionEvent["LIBELLE_DATECOMMISSION"];
-                $geo = $ets["informations"]["LIBELLE_ETABLISSEMENTINFORMATIONS"];
                 if ($adresse) {
-                    $geo .= sprintf(" %s %s %s %s %s",
+                    $geo = sprintf("%s %s %s, %s %s",
                         $adresse["NUMERO_ADRESSE"],
                         $adresse["LIBELLE_RUETYPE"],
                         $adresse["LIBELLE_RUE"],
                         $adresse["CODEPOSTAL_COMMUNE"],
                         $adresse["LIBELLE_COMMUNE"]
                     );
+                } else {
+                    $geo = '';
                 }
             }
             $dateStartHour = $commissionEvent["HEURE_DEB_AFFECT"] ? 
@@ -166,17 +190,29 @@ class Api_Service_Calendar
         $corpus = "Coordonnées des participants :\r\n";
 
         $dossierService = new Service_Dossier;
-        $contacts = $dossierService->getAllContacts(
+        $servEtab = new Service_Etablissement;
+        $contactsDossier = $dossierService->getAllContacts(
             $commissionEvent["ID_DOSSIER"]);
-        foreach ($contacts as $contact) {
-            $corpus .= $this->formatUtilisateurInformations($contact);
+        $contactsEts = $servEtab->getAllContacts($ets['general']['ID_ETABLISSEMENT']);
+        $contacts = array_merge($contactsDossier, $contactsEts);
+        if (count($contacts) > 0) {
+            foreach ($contacts as $contact) {
+                $corpus .= $this->formatUtilisateurInformations($contact);
+            }    
+        } else {
+            $corpus .= 'Aucun contact.';
         }
-        $corpus .= "\n";
+        
+        $corpus .= "\r\n\r\n";
 
         $adresseService = new Service_Adresse;
         $maire = $adresseService->getMaire($commissionEvent["NUMINSEE_COMMUNE"]);
-        $corpus .= sprintf("Coordonnées de la mairie :\r\n%s\r\n\r\n",
+        if ($maire && count($maire) > 0) {
+            $corpus .= sprintf("Coordonnées de la mairie :\r\n%s\r\n\r\n",
                     $this->formatUtilisateurInformations($maire));
+        } else {
+            $corpus .= 'Aucune coordonées pour la mairie.';
+        }
         
         if ($commissionEvent["ID_DOSSIERTYPE"] === 1) {
             if ($commissionEvent["TYPESERVINSTRUC_DOSSIER"] === "servInstCommune") {
@@ -188,14 +224,24 @@ class Api_Service_Calendar
                 $serviceInstruct = count($serviceInstruct) > 0 ?
                                     $serviceInstruct[0] : null;
             }
-            $corpus .= sprintf("Coordonnées du service instructeur :\n%s\n\n",
+            if ($maire && count($maire) > 0) {
+                $corpus .= sprintf("Coordonnées du service instructeur :\n%s\n\n",
                         $this->formatUtilisateurInformations($serviceInstruct));
+            } else {
+                $corpus .= 'Aucune coordonées pour le service instructeur.';
+            }
         }
         
-        $corpus .= sprintf("Date de la dernière visite périodique : %s\n\n",
-                            $ets["last_visite"]);
+        $lastVisite = new DateTime($ets["last_visite"]);
+        if ($lastVisite) {
+            $lastVisitestr = $lastVisite->format('d/m/Y');
+        } else {
+            $lastVisitestr = 'Aucune date.';
+        }
+        $corpus .= sprintf("Date de la dernière visite périodique : %s\r\n\r\n",
+                           $lastVisitestr);
 
-        $corpus .= sprintf("Avis d'exploitation de l'établissement : %s\n\n",
+        $corpus .= sprintf("Avis d'exploitation de l'établissement : %s",
                             $this->getAvisEtablissement($commissionEvent, $ets));
 
         return $corpus;
@@ -205,9 +251,8 @@ class Api_Service_Calendar
     {
         $str = "";
         if ($user && is_array($user)) {
-            if ($user["NOM_UTILISATEURINFORMATIONS"] 
-                    && $user["PRENOM_UTILISATEURINFORMATIONS"]) {
-                $str .= sprintf("- %s %s, ",
+            if ($user["NOM_UTILISATEURINFORMATIONS"]) {
+                $str .= sprintf("- %s %s",
                         $user["NOM_UTILISATEURINFORMATIONS"],
                         $user["PRENOM_UTILISATEURINFORMATIONS"]);
                 if ($user["NUMEROADRESSE_UTILISATEURINFORMATIONS"]
@@ -215,7 +260,7 @@ class Api_Service_Calendar
                         && $user["NUMEROADRESSE_UTILISATEURINFORMATIONS"]
                         && $user["CPADRESSE_UTILISATEURINFORMATIONS"]
                         && $user["VILLEADRESSE_UTILISATEURINFORMATIONS"]) {
-                    $str .= sprintf("%s %s %s %s, ",
+                    $str .= sprintf(", %s %s, %s %s",
                                 $user["NUMEROADRESSE_UTILISATEURINFORMATIONS"],
                                 $user["RUEADRESSE_UTILISATEURINFORMATIONS"],
                                 $user["CPADRESSE_UTILISATEURINFORMATIONS"],
@@ -223,15 +268,15 @@ class Api_Service_Calendar
                             );
                 }
                 if ($user["TELFIXE_UTILISATEURINFORMATIONS"]) {
-                    $str .= sprintf("%s, ", 
+                    $str .= sprintf(", %s", 
                         $user["TELFIXE_UTILISATEURINFORMATIONS"]);
                 }
                 if ($user["TELFAX_UTILISATEURINFORMATIONS"]) {
-                    $str .= sprintf("%s, ", 
+                    $str .= sprintf(", %s", 
                         $user["TELFAX_UTILISATEURINFORMATIONS"]);
                 }
                 if ($user["MAIL_UTILISATEURINFORMATIONS"]) {
-                    $str .= sprintf("%s, ", 
+                    $str .= sprintf(", %s", 
                         $user["MAIL_UTILISATEURINFORMATIONS"]);
                 }
                 $str .= "\n";

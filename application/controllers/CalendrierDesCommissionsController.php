@@ -51,6 +51,23 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
                 "ARRAY" => $array_results2
             );
         }
+
+        $userId = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
+
+        $url = sprintf("/api/1.0/calendar?userid=%s&key=%s", 
+                        $userId,
+                        getenv('PREVARISC_SECURITY_KEY'));
+
+        if ($this->_getParam("idComm")) {
+            $url .= sprintf("&commission=%s", $this->_getParam("idComm"));
+        }
+
+        $protocol = ( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'webcals': 'webcal';
+
+        //$this->_helper->getHelper('Redirector')->gotoUrl($protocol . '://' . $_SERVER["HTTP_HOST"] . $url);
+        //
+        $this->view->url_webcal = $protocol . '://' . $_SERVER["HTTP_HOST"] . $url;
+
         $this->view->array_commissions = $array_commissions;
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
@@ -1379,24 +1396,4 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         }
         echo $ics;
     }
-
-    public function synccalendarAction()
-    {
-        $this->view->layout()->disableLayout();
-        $this->_helper->viewRenderer->setNoRender(true);
-
-        $userId = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
-
-        $url = sprintf("/api/1.0/calendar?userid=%s&key=%s", 
-                        $userId,
-                        getenv('PREVARISC_SECURITY_KEY'));
-
-        if ($this->_getParam("idComm")) {
-            $url .= sprintf("&commission=%s", $this->_getParam("idComm"));
-        }
-
-        echo 'webcal://' . $_SERVER["HTTP_HOST"] . $url;
-    }
-
-
 }

@@ -185,30 +185,33 @@
             }
         }
 
-        public function getEventInCommission($whereClause) 
+        public function getEventInCommission($idUtilisateur = null, $idCommission = null, $start = null, $end = null) 
         {
-            $select = "SELECT * "
-                        . "FROM dossier AS doss "
-                        . "INNER JOIN dossieraffectation AS dossAffect "
-                        . "ON dossAffect.ID_DOSSIER_AFFECT = doss.ID_DOSSIER "
-                        . "INNER JOIN datecommission AS dateComm "
-                        . "ON dateComm.ID_DATECOMMISSION = dossAffect.ID_DATECOMMISSION_AFFECT "
-                        . "INNER JOIN commission AS comm "
-                        . "ON comm.ID_COMMISSION = dateComm.COMMISSION_CONCERNE "
-                        . "INNER JOIN etablissementdossier AS etabDoss "
-                        . "ON etabDoss.ID_DOSSIER = doss.ID_DOSSIER "
-                        . "INNER JOIN dossiernature AS dossNat "
-                        . "ON dossNat.ID_DOSSIER = doss.ID_DOSSIER "
-                        . "INNER JOIN dossiernatureliste AS dossNatListe "
-                        . "ON dossNatListe.ID_DOSSIERNATURE = dossNat.ID_NATURE "
-                        . "INNER JOIN dossiertype AS dossType "
-                        . "ON dossType.ID_DOSSIERTYPE = doss.TYPE_DOSSIER "
-                        . "INNER JOIN dossierpreventionniste AS dossPre "
-                        . "ON dossPre.ID_DOSSIER = doss.ID_DOSSIER "
-                        . "INNER JOIN utilisateur AS user "
-                        . "ON user.ID_UTILISATEUR = dossPre.ID_PREVENTIONNISTE "
-                        . "WHERE " . $whereClause;
-
+            $select = $this->select()
+                           ->setIntegrityCheck(false)
+                           ->from(array('d' => 'dossier'))
+                           ->join(array('da' => 'dossieraffectation'), 'da.ID_DOSSIER_AFFECT = d.ID_DOSSIER')
+                           ->join(array('dc' => 'datecommission'), 'dc.ID_DATECOMMISSION = da.ID_DATECOMMISSION_AFFECT')
+                           ->join(array('c' => 'commission'), 'c.ID_COMMISSION = dc.COMMISSION_CONCERNE')
+                           ->join(array('ed' => 'etablissementdossier'), 'ed.ID_DOSSIER = d.ID_DOSSIER')
+                           ->join(array('dn' => 'dossiernature'), 'dn.ID_DOSSIER = d.ID_DOSSIER')
+                           ->join(array('dnl' => 'dossiernatureliste'), 'dnl.ID_DOSSIERNATURE = dn.ID_NATURE')
+                           ->join(array('dt' => 'dossiertype'), 'dt.ID_DOSSIERTYPE = d.TYPE_DOSSIER')
+                           ->join(array('dp' => 'dossierpreventionniste'), 'dp.ID_DOSSIER = d.ID_DOSSIER')
+                           ->join(array('u' => 'utilisateur'), 'u.ID_UTILISATEUR = dp.ID_PREVENTIONNISTE');
+            if ($idUtilisateur !== null) {
+                $select->where('u.ID_UTILISATEUR =  ?', $idUtilisateur);
+            }
+            if ($idCommission !== null) {
+                $select->where('dc.COMMISSION_CONCERNE =  ?', $idCommission);
+            }
+            if ($start !== null) {
+                $select->where('YEAR(dc.DATE_COMMISSION) >= ?', $start);
+            }
+            if ($end !== null) {
+                $select->where('YEAR(dc.DATE_COMMISSION) <= ?', $end);   
+            }
+            
             return $this->getAdapter()->fetchAll($select);
         }
 
