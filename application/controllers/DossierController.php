@@ -1118,6 +1118,9 @@ class DossierController extends Zend_Controller_Action
                             //Dans le cas ou la date commission est différente de celle passée en paramètre alors on la met à jour
                             $dateEdit = $dbDossierAffectation->find($infosDateVisite['ID_DATECOMMISSION_AFFECT'],$idDossier)->current();
                             $dateEdit->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_VISITE');
+                            $dateEdit->HEURE_DEB_AFFECT = NULL;
+                            $dateEdit->HEURE_FIN_AFFECT = NULL;
+                            $dateEdit->NUM_DOSSIER = 0;
                             $dateEdit->save();
                         }
                     } else {
@@ -1148,6 +1151,9 @@ class DossierController extends Zend_Controller_Action
                             //Dans le cas ou la date commission est différente de celle passée en paramètre alors on la met à jour
                             $dateEdit = $dbDossierAffectation->find($infosDateSalle['ID_DATECOMMISSION_AFFECT'],$idDossier)->current();
                             $dateEdit->ID_DATECOMMISSION_AFFECT = $this->_getParam('ID_AFFECTATION_DOSSIER_COMMISSION');
+                            $dateEdit->HEURE_DEB_AFFECT = NULL;
+                            $dateEdit->HEURE_FIN_AFFECT = NULL;
+                            $dateEdit->NUM_DOSSIER = 0;
                             $dateEdit->save();
                         }
                     } else {
