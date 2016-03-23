@@ -1,6 +1,72 @@
 <script type='text/javascript' >
 
-	$(document).ready(function(){
+	$(document).ready(function() {
+
+        $(".alerte-link").click(function() {
+            var idEts = $(this).attr("data-ets");
+            var changement = $(this).attr("data-value");
+            var dialogAlerte = $('<div style="display:none;"></div>').appendTo('body');
+    
+            dialogAlerte.dialog({
+                title: "Alerte",
+                modal: true,
+                autoOpen: false,
+                width: 600,
+                height: 'auto',
+                buttons: [{
+                    text: "Envoyer",
+                    "id": "mail-button-envoi",
+                    click: function() {
+                        tinymce.triggerSave();
+                        if ($("#mail-button-envoi").text() === "Envoyer") {
+                            $.ajax({
+                                type: "POST",
+                                url: "/changement/sendmailalerte",
+                                data: $("#formAlerte").serialize()
+                            });
+                        }
+
+                        tinymce.remove();
+                        dialogAlerte.html("");
+                        dialogAlerte.dialog("close");
+                        dialogAlerte.remove();
+                    }
+                }],
+                close: function(event, ui){
+                    tinymce.remove();
+                    dialogAlerte.html("");
+                    dialogAlerte.dialog("close");
+                    dialogAlerte.remove();
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "/changement/alerteform",
+                data: { "id_etablissement": idEts, "changement": changement },
+                success: function(msg) {
+                    dialogAlerte.html(msg);
+                    tinymce.init({
+                        selector: '.tinyarea',
+                        height: 220,
+                        menubar: false,
+                        statusbar: false,
+                        toolbar: false,
+                        plugins: [
+                            'advlist autolink lists link image charmap print preview anchor',
+                            'searchreplace visualblocks code fullscreen',
+                            'insertdatetime media table contextmenu paste code'
+                        ],
+                        content_css: [
+                            '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+                            '//www.tinymce.com/css/codepen.min.css'
+                        ]
+                    });
+                    dialogAlerte.dialog("open");
+                },
+            });
+            return false;
+            
+        });
 
 		// Texte de l'auto complete utilisateurs
 		// Auto-complétion des préventionnistes

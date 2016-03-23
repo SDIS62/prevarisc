@@ -61,6 +61,14 @@ PREVARISC_DB_HOST | Adresse de la base de données | Adresse IP
 PREVARISC_DB_USERNAME | Nom d'utilisateur à utiliser lors de la connexion à la base de données | Chaine de caractères
 PREVARISC_DB_PASSWORD | Mot de passe de connexion à la base de données | Chaine de caractères
 PREVARISC_DB_DBNAME | Nom de la base de données | Chaine de caractères
+PREVARISC_MAIL_ENABLED | [FACULTATIF] Activation de la gestion du système d'alerte par mail | 1 ou 0
+PREVARISC_MAIL_TRANSPORT | [FACULTATIF] Système de transport des mails | "smtp" ou "Sendmail"
+PREVARISC_MAIL_HOST | [FACULTATIF] IP du serveur mails | Chaîne de charactères
+PREVARISC_MAIL_USERNAME | [FACULTATIF] Nom d'utilisateur ayant les droits de connexion au serveur Mail (peut-être vide si aucune authentification nécessaire) | Chaîne de caractères
+PREVARISC_MAIL_PASSWORD | [FACULTATIF] Mot de passe de l'utilisateur ayant les droits de connexion au serveur Mail | Chaîne de caractères
+SetEnv PREVARISC_MAIL_PORT | [FACULTATIF] Le port du serveur mail | Nombres (exmple : "25")
+PREVARISC_MAIL_SENDER | [FACULTATIF] Adresse email apparaissant sur les mails envoyés par l'application | Chaîne de caractères (format email, par exemple : "no-reply@sdis.fr")
+PREVARISC_MAIL_SENDER_NAME | [FACULTATIF] Nom associé à l'email définit précédemment et apparaissant sur les mails envoyés par l'application | Chaîne de caractères (exemple : "Prévarisc")
 PREVARISC_CACHE_LIFETIME | Durée de vie du cache, actif si valeur > 0 | Valeur numérique (secondes)
 PREVARISC_CACHE_ADAPTER | Adapter backend de cache du cache lié à la factory Zend_Cache, default "APC" | Chaine de caractères
 PREVARISC_CACHE_HOST | Adresse IP du cache backend | Adresse IP

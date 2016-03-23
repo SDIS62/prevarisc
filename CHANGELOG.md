@@ -4,6 +4,7 @@
 
 Evolutions :
 * Ajout de la synchronisation du calendrier Prévarisc
+* Ajout du système d'alerte lors de la modification d'un établissement
 * Ajout de la prise en charge du cache filesystem
 * Ajout des champs de fusion du maire dans la génération de documents
 * Ajout de la périodicité calculée pour les sites

@@ -245,4 +245,76 @@
             return $privileges;
         }
 
+        /**
+         * Retourne une liste d'utilisateur ayant les droits
+         * de recevoir les type d'alerte (changement de statut, avis, catégorie)
+         * et étant concerné par la commune ou le groupement de commune de l'établissement
+         * 
+         * @param  int      $idChangement   L'id du type de changement
+         * @param  array    $ets            L'établissement concerné par le changement
+         * @return array                    Liste d'utilisateur
+         */
+        public function findUtilisateursForAlerte($idChangement, $ets)
+        {
+            switch($idChangement) {
+                case "1":
+                    $privilege = "alerte_statut";
+                    break;
+                case "2":
+                    $privilege = "alerte_avis";
+                    break;
+                case "3":
+                    $privilege = "alerte_classement";
+                    break;
+                default:
+                    $privilege = "alerte_statut";
+            }
+
+            $numinsee = "";
+            if (count($ets['adresses']) > 0) {
+                $numinsee = $ets['adresses'][0]['NUMINSEE_COMMUNE'];
+            }
+
+            $selectPrivilegeQuery = $this->select()->setIntegrityCheck(false)
+                                         ->from(array('p' => 'privileges'), array('p.id_privilege'))
+                                         ->where('name = ?', $privilege)
+                                         ->limit(1);
+
+            $selectCommune = $this->select()->setIntegrityCheck(false)
+                                  ->from(array('u' => 'utilisateur'), array('ID_UTILISATEUR'))
+                                  ->join(array('ui' => 'utilisateurinformations'), 
+                                         'ui.ID_UTILISATEURINFORMATIONS = u.ID_UTILISATEURINFORMATIONS',
+                                         array('ui.NOM_UTILISATEURINFORMATIONS', 'ui.PRENOM_UTILISATEURINFORMATIONS',
+                                               'ui.MAIL_UTILISATEURINFORMATIONS'))
+                                  ->join(array('g' => 'groupe'), 'g.ID_GROUPE = u.ID_GROUPE', null)
+                                  ->join(array('gp' => 'groupe-privileges'), 'gp.ID_GROUPE = g.ID_GROUPE', null)
+                                  ->where('ui.MAIL_UTILISATEURINFORMATIONS IS NOT NULL')
+                                  ->where('ui.MAIL_UTILISATEURINFORMATIONS <> ?', '')
+                                  ->where('gp.id_privilege = (' . $selectPrivilegeQuery . ')')
+                                  ->where('u.NUMINSEE_COMMUNE = ?', $numinsee)
+                                  ->group('u.ID_UTILISATEUR');
+
+            $selectGroupement = $this->select()->setIntegrityCheck(false)
+                                     ->from(array('u' => 'utilisateur'), array('ID_UTILISATEUR'))
+                                     ->join(array('ui' => 'utilisateurinformations'), 
+                                            'ui.ID_UTILISATEURINFORMATIONS = u.ID_UTILISATEURINFORMATIONS',
+                                            array('ui.NOM_UTILISATEURINFORMATIONS', 'ui.PRENOM_UTILISATEURINFORMATIONS',
+                                                  'ui.MAIL_UTILISATEURINFORMATIONS'))
+                                     ->join(array('g' => 'groupe'), 'g.ID_GROUPE = u.ID_GROUPE', null)
+                                     ->join(array('gp' => 'groupe-privileges'), 'gp.ID_GROUPE = g.ID_GROUPE', null)
+                                     ->join(array('ug' => 'utilisateurgroupement'), 'ug.ID_UTILISATEUR = u.ID_UTILISATEUR', null)
+                                     ->join(array('gc' => 'groupementcommune'), 'gc.ID_GROUPEMENT = ug.ID_GROUPEMENT', null)
+                                     ->where('ui.MAIL_UTILISATEURINFORMATIONS IS NOT NULL')
+                                     ->where('ui.MAIL_UTILISATEURINFORMATIONS <> ?', '')
+                                     ->where('gp.id_privilege = (' . $selectPrivilegeQuery . ')')
+                                     ->where('gc.NUMINSEE_COMMUNE = ?', $numinsee)
+                                     ->group('u.ID_UTILISATEUR');
+
+             $selectUnion = $this->select()
+                                 ->union(array($selectCommune, $selectGroupement));
+
+
+            return $this->fetchAll($selectUnion)->toArray();
+        }
+
     }
