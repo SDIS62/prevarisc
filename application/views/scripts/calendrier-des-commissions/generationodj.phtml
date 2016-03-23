@@ -173,9 +173,10 @@ function retrieveInfoDoss($segment, $dossierInfos) {
     }
     addChamp($segment->infosDoss, 'nomPereEtab', $nomPere);
     
-    $dateVisite = new Zend_Date($dossierInfos["DATEVISITE_DOSSIER"]);
     try{
-        addChamp($segment->infosDoss, 'dateVisite', $dateVisite->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+        $date = new Zend_Date($dossierInfos["DATEVISITE_DOSSIER"]);
+        $dateVisite = $dossierInfos["DATEVISITE_DOSSIER"] ? $date->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR) : '';
+        addChamp($segment->infosDoss, 'dateVisite', $dateVisite);
     } catch (Exception $e){
         addChamp($segment->infosDoss, 'dateVisite', '');
     }
