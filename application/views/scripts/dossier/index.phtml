@@ -17,6 +17,7 @@
                     text: "Envoyer",
                     "id": "mail-button-envoi",
                     click: function() {
+                        tinymce.triggerSave();
                         if ($("#mail-button-envoi").text() === "Envoyer") {
                             $.ajax({
                                 type: "POST",

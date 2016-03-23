@@ -5,7 +5,7 @@ class Service_Mail
 
     public function __construct()
     {
-        if (getenv("PREVARISC_MAIL_ENABLED")) {
+        if (getenv("PREVARISC_MAIL_ENABLED") && getenv('PREVARISC_MAIL_ENABLED') == 1) {
 
             $transport = null;
             $config = array();
@@ -58,45 +58,48 @@ class Service_Mail
     public function sendMail($message, $objet = null, $to = null, $bcc = null, $isHTML = false) 
     {
         $sent = true;
+        if (getenv("PREVARISC_MAIL_ENABLED") && getenv('PREVARISC_MAIL_ENABLED') == 1) {
+            $mail = new Zend_Mail('utf-8');
 
-        $mail = new Zend_Mail('utf-8');
+            if ($isHTML) {
+                $mail->setBodyHtml($message);
+            } else {
+                $mail->setBodyText($message);
+            }
+            
+            if ($objet) {
+                $mail->setSubject($objet);
+            }
 
-        if ($isHTML) {
-            $mail->setBodyHtml($message);
+            if ($to) {
+                if (is_array($to)) {
+                    foreach ($to as $dest) {
+                        $mail->addTo($dest);
+                    }
+                } else {
+                    $mail->addTo($to);
+                }
+            }
+
+            if ($bcc) {
+                if (is_array($bcc)) {
+                    foreach($bcc as $cc) {
+                        $mail->addBcc($cc);
+                    }
+                } else {
+                    $mail->addBcc($bcc);
+                }
+            }
+
+            try {
+                $mail = $mail->send();
+            } catch (Zend_Mail_Transport_Exception $zmte) {
+                $sent = $zmte;
+            } catch (Zend_Mail_Protocol_Exception $zmpe) {
+                $sent = $zmpe;
+            }
         } else {
-            $mail->setBodyText($message);
-        }
-        
-        if ($objet) {
-            $mail->setSubject($objet);
-        }
-
-        if ($to) {
-            if (is_array($to)) {
-                foreach ($to as $dest) {
-                    $mail->addTo($dest);
-                }
-            } else {
-                $mail->addTo($to);
-            }
-        }
-
-        if ($bcc) {
-            if (is_array($bcc)) {
-                foreach($bcc as $cc) {
-                    $mail->addBcc($cc);
-                }
-            } else {
-                $mail->addBcc($bcc);
-            }
-        }
-
-        try {
-            $mail = $mail->send();
-        } catch (Zend_Mail_Transport_Exception $zmte) {
-            $sent = $zmte;
-        } catch (Zend_Mail_Protocol_Exception $zmpe) {
-            $sent = $zmpe;
+            $sent = false;
         }
         
         return $sent;   

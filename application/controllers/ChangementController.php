@@ -91,7 +91,7 @@ class ChangementController extends Zend_Controller_Action
             $arrayMails = explode(";", $tos);
             $object = $this->_getParam("alerte-objet");
             $message = $this->_getParam("alerte-message");
-
+            
             $serviceMail = new Service_Mail;
             $result = $serviceMail->sendAlerteMail($object, $message, $arrayMails);
         }
