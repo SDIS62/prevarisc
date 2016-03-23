@@ -1,5 +1,12 @@
 set names 'utf8';
 
+INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES (56,'alerte_email','Alertes');
+
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES 
+(60,'alerte_statut','Changement de statut',56),
+(61,'alerte_avis','Changement d''avis',56),
+(62,'alerte_classement','Changement de classement',56);
+
 DROP TABLE IF EXISTS `changement`;
 
 CREATE TABLE `changement` (
