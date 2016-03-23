@@ -67,6 +67,7 @@ PREVARISC_CACHE_HOST | Adresse IP du cache backend | Adresse IP
 PREVARISC_CACHE_PORT | Port du cache backend | Valeur numérique
 PREVARISC_CACHE_DIR | Répertoire des fichiers de cache si cache filesystem | Répertoire
 PREVARISC_SECURITY_SALT | Chaine utilisée pour le cryptage des mots de passe utilisateur | Chaine alphanumérique de longueur 32 (exemple : 7aec3ab8e8d025c19e8fc8b6e0d75227 salt utilisé par défaut)
+PREVARISC_CALENDAR_REFRESH_TIME | [FACULTATIF] L'intervale de temps entre chaque rafraichissement de la synchronisation des calendriers | durée en format ISO 8601 (exemple : "PT5M" utilisé par défaut pour un rafraichissement tous les 5 minutes)
 PREVARISC_LDAP_ENABLED | [FACULTATIF] Activation de la connexion des utilisateurs via LDAP | 1 ou 0
 PREVARISC_LDAP_HOST | [FACULTATIF] Adresse du serveur LDAP | Adresse IP
 PREVARISC_LDAP_USERNAME | [FACULTATIF] Nom d'utilisateur à utiliser lors de la connexion au LDAP | Chaine de caractères

@@ -185,4 +185,34 @@
             }
         }
 
+        public function getEventInCommission($idUtilisateur = null, $idCommission = null, $start = null, $end = null) 
+        {
+            $select = $this->select()
+                           ->setIntegrityCheck(false)
+                           ->from(array('d' => 'dossier'))
+                           ->join(array('da' => 'dossieraffectation'), 'da.ID_DOSSIER_AFFECT = d.ID_DOSSIER')
+                           ->join(array('dc' => 'datecommission'), 'dc.ID_DATECOMMISSION = da.ID_DATECOMMISSION_AFFECT')
+                           ->join(array('c' => 'commission'), 'c.ID_COMMISSION = dc.COMMISSION_CONCERNE')
+                           ->join(array('ed' => 'etablissementdossier'), 'ed.ID_DOSSIER = d.ID_DOSSIER')
+                           ->join(array('dn' => 'dossiernature'), 'dn.ID_DOSSIER = d.ID_DOSSIER')
+                           ->join(array('dnl' => 'dossiernatureliste'), 'dnl.ID_DOSSIERNATURE = dn.ID_NATURE')
+                           ->join(array('dt' => 'dossiertype'), 'dt.ID_DOSSIERTYPE = d.TYPE_DOSSIER')
+                           ->join(array('dp' => 'dossierpreventionniste'), 'dp.ID_DOSSIER = d.ID_DOSSIER')
+                           ->join(array('u' => 'utilisateur'), 'u.ID_UTILISATEUR = dp.ID_PREVENTIONNISTE');
+            if ($idUtilisateur !== null) {
+                $select->where('u.ID_UTILISATEUR =  ?', $idUtilisateur);
+            }
+            if ($idCommission !== null) {
+                $select->where('dc.COMMISSION_CONCERNE =  ?', $idCommission);
+            }
+            if ($start !== null) {
+                $select->where('YEAR(dc.DATE_COMMISSION) >= ?', $start);
+            }
+            if ($end !== null) {
+                $select->where('YEAR(dc.DATE_COMMISSION) <= ?', $end);   
+            }
+            
+            return $this->getAdapter()->fetchAll($select);
+        }
+
     }
