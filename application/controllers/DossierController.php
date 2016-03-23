@@ -1186,33 +1186,41 @@ class DossierController extends Zend_Controller_Action
                     $listeEtab = $DBetablissementDossier->getEtablissementListe($idDossier);
                 }
 
+                $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+                $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
                 $service_ets = new Service_Etablissement;
                 $arrayEtsAvis = array();
-                foreach($listeEtab as $etab) {
-                    $currentEts = $service_ets->get($etab['ID_ETABLISSEMENT']);
-                    if ($currentEts) {
-                        $arrayEtsAvis[$etab['ID_ETABLISSEMENT']]['avis'] = $currentEts['avis'];
-                        $arrayEtsAvis[$etab['ID_ETABLISSEMENT']]['libelle'] = 
-                            $currentEts['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+                if (unserialize($cache->load('acl'))->isAllowed($mygroupe, "alerte_email", "alerte_avis") 
+                    && getenv('PREVARISC_MAIL_ENABLED') && getenv('PREVARISC_MAIL_ENABLED') == 1) {
+                    foreach($listeEtab as $etab) {
+                        $currentEts = $service_ets->get($etab['ID_ETABLISSEMENT']);
+                        if ($currentEts) {
+                            $arrayEtsAvis[$etab['ID_ETABLISSEMENT']]['avis'] = $currentEts['avis'];
+                            $arrayEtsAvis[$etab['ID_ETABLISSEMENT']]['libelle'] = 
+                                $currentEts['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+                        }
                     }
                 }
 
                 $dbEtab = new Model_DbTable_Etablissement();
 
                 $updatedEtab = $service_dossier->saveDossierDonnantAvis($nouveauDossier, $listeEtab, $cache, $this->_getParam('repercuterAvis'));
-                $service_alerte = new Service_Alerte;
-                foreach($updatedEtab as $upEts) {
-                    if ($upEts['ID_DOSSIER_DONNANT_AVIS'] === $nouveauDossier['ID_DOSSIER']
-                        && $nouveauDossier['AVIS_DOSSIER_COMMISSION'] !== 
-                            $arrayEtsAvis[$upEts['ID_ETABLISSEMENT']]['avis']) {
-                        $options = $service_alerte->getLink(2, $upEts["ID_ETABLISSEMENT"]);    
-                        $this->_helper->flashMessenger(array(
-                        'context' => 'success',
-                        'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement '
-                        . $arrayEtsAvis[$upEts['ID_ETABLISSEMENT']]['libelle'] 
-                        . ' a bien été mis à jour.' . $options));    
+                if (unserialize($cache->load('acl'))->isAllowed($mygroupe, "alerte_email", "alerte_avis")
+                    && getenv('PREVARISC_MAIL_ENABLED') && getenv('PREVARISC_MAIL_ENABLED') == 1) {
+                    $service_alerte = new Service_Alerte;
+                    foreach($updatedEtab as $upEts) {
+                        if ($upEts['ID_DOSSIER_DONNANT_AVIS'] === $nouveauDossier['ID_DOSSIER']
+                            && $nouveauDossier['AVIS_DOSSIER_COMMISSION'] !== 
+                                $arrayEtsAvis[$upEts['ID_ETABLISSEMENT']]['avis']) {
+                            $options = $service_alerte->getLink(2, $upEts["ID_ETABLISSEMENT"]);    
+                            $this->_helper->flashMessenger(array(
+                            'context' => 'success',
+                            'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement '
+                            . $arrayEtsAvis[$upEts['ID_ETABLISSEMENT']]['libelle'] 
+                            . ' a bien été mis à jour.' . $options));    
+                        }
+                        
                     }
-                    
                 }
                 
                 // AVERTISSEMENT SUR L'OUVERTURE D'UN ETABLISSEMENT A EFFECTUER

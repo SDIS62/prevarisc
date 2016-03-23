@@ -78,14 +78,17 @@ class EtablissementController extends Zend_Controller_Action
             try {
                 $post = $this->_request->getPost();
                 $options = '';
-                $typeAlerte = $service_etablissement->checkAlerte($etablissement, $post);
+                if (getenv('PREVARISC_MAIL_ENABLED') && getenv('PREVARISC_MAIL_ENABLED') == 1) {
+                    $typeAlerte = $service_etablissement->checkAlerte($etablissement, $post);
 
-                if (unserialize($cache->load('acl'))->isAllowed($mygroupe, "alerte_email", "alerte_statut", "alerte_classement")) {
-                    if ($typeAlerte !== false) {
-                        $service_alerte = new Service_Alerte;
-                        $options = $service_alerte->getLink($typeAlerte);
-                    }
+                    if (unserialize($cache->load('acl'))->isAllowed($mygroupe, "alerte_email", "alerte_statut", "alerte_classement")) {
+                        if ($typeAlerte !== false) {
+                            $service_alerte = new Service_Alerte;
+                            $options = $service_alerte->getLink($typeAlerte);
+                        }
+                    }    
                 }
+                
                 $date = date("Y-m-d");
                 $service_etablissement->save($post['ID_GENRE'], $post, $this->_request->id, $date);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement a bien été mis à jour.' . $options));
