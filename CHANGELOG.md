@@ -22,6 +22,7 @@ Corrections :
 * Correction du port ldap par défaut qui n'est plus inséré par zend sur les connexions LDAP
 * Correction du modèle de convocation des groupes de visites qui n'utilisaient pas le modèle de document de visite
 * Correction de l'affectation d'un dossier à une autre commission, les heures de début et de fin restaient en place ce qui pouvait causer des problèmes lorsque les horaires différaient
+* Correction de la {dateVisite} sur les ODJ qui était positionnée à la date du jour par défaut si vide
 
 ## 2.4
 
