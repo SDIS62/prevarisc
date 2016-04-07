@@ -14,6 +14,8 @@ Evolutions :
 * Ajout du support de l'authentification NTLM 
 * Ajout de la possibilité d'ajouter rapidement une couche WMS IGN
 * Standardisation du viewer cartographique cote backoffice
+* Le bloc des ets sans prochaine visite cette année remonte à présent les ets en retard de l'année N-1
+* Ajout de la balise de {heureDeb1erDossier} pour les convocations de maires
 
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
@@ -28,6 +30,8 @@ Corrections :
 * Correction de l'affectation d'un dossier à une autre commission, les heures de début et de fin restaient en place ce qui pouvait causer des problèmes lorsque les horaires différaient
 * Correction de la {dateVisite} sur les ODJ qui était positionnée à la date du jour par défaut si vide
 * Correction de l'unité en mètres sur la mesure de distance cartographiques
+* Correction du non vidage de cache ets sur la partie contact (cf dus)
+* Correction de l'impossibilité de programmer un dossier de visite sur plusieurs journées
 
 ## 2.4
 
