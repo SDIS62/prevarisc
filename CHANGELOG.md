@@ -13,6 +13,7 @@ Evolutions :
 * Ajout du support de l'authentification CAS
 * Ajout du support de l'authentification NTLM 
 * Le bloc des ets sans prochaine visite cette année remonte à présent les ets en retard de l'année N-1
+* Ajout de la balise de {heureDeb1erDossier} pour les convocations de maires
 
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
