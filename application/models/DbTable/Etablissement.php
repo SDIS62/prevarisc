@@ -321,7 +321,7 @@
             if ($idsCommission) {
                 $search->setCriteria("etablissementinformations.ID_COMMISSION", (array) $idsCommission);
             }
-            $search->having("nextvisiteyear < YEAR(NOW())");
+            $search->having("nextvisiteyear <= YEAR(NOW())");
              //etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
             $etablissements_isoles = $search->run(false, null, false)->toArray();
 
