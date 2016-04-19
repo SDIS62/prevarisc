@@ -32,6 +32,7 @@ Corrections :
 * Correction de l'unité en mètres sur la mesure de distance cartographiques
 * Correction du non vidage de cache ets sur la partie contact (cf dus)
 * Correction de l'impossibilité de programmer un dossier de visite sur plusieurs journées
+* Correction de la balise {avisLastVP} qui disfonctionne ainsi que le calcul de la dernière VP
 
 ## 2.4
 
