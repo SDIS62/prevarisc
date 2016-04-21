@@ -931,9 +931,9 @@
                     
                     // removes the marker
                     var vectorLayers = viewer.getViewer().getMap().getLayersByClass('OpenLayers.Layer.Vector');
-                    if (vectorLayers.length > 0) {
+                    if (vectorLayers !== null && vectorLayers.length > 0) {
                         var vectorLayer = vectorLayers[0];
-                        if (vectorLayer.features.length > 0) {
+                        if (vectorLayer.features !== null && vectorLayer.features.length > 0) {
                             vectorLayer.features[0].destroy();
                         }
                     }
@@ -1008,7 +1008,7 @@
                 var numero = $("input[name='numero']").val().trim();
                 var voie = $("input[name='voie_ac']").val().trim();
                 var codepostal = $("input[name='code_postal']").val();
-                var commune = $("input[name='commune_ac']").val();
+                var commune = $("input[name='commune_ac']").val().replace(/\(.*\)/g, '');
                 if (!commune) {
                     $("span.result").text("Pas de commune renseignée");
                     return false;
@@ -1024,6 +1024,7 @@
                 $("span.result").text("Géolocalisation en cours...");
 
                 geolocalizing = true;
+                console.log('Geolocalising : '+adresse);
                 viewer.setCenterAtLocation({
                     address: adresse
                 });
