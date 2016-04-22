@@ -165,7 +165,6 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
             controls: [new Geoportal.Control.GraphicScale(), new Geoportal.Control.ToolBox()],
             language:'fr',
             displayProjection: 'EPSG:4326',
-            projection: 'EPSG:4326',
             proxy: '/proxy?url=',
             onView: function() {
                 var map = viewer.getViewer().getMap();
@@ -218,11 +217,11 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                 }
                 
                 for (var i = 0 ; i < wmsLayers.length ; i++) {
-                    
+                    console.log(wmsLayers[i].URL_COUCHECARTO);
                     // ajout de la couche sur la carte
                     var layer = new OpenLayers.Layer.WMS(
                         wmsLayers[i].NOM_COUCHECARTO,
-                        wmsLayers[i].URL_COUCHECARTO, {
+                        wmsLayers[i].URL_COUCHECARTO.replace('\{key\}', ignKey), {
                             layers: wmsLayers[i].LAYERS_COUCHECARTO,
                             format: wmsLayers[i].FORMAT_COUCHECARTO,
                             transparent: wmsLayers[i].TRANSPARENT_COUCHECARTO === 1 ? 'true' : 'false'
@@ -329,6 +328,6 @@ function putMarkerAt(map, point, sourceProjection) {
             sourceProjection, vectorLayer.projection.toString()
         );
         point = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat);
-        vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point)]);
+        vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point, {}, {externalGraphic: '/images/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  })]);
     }
 }
