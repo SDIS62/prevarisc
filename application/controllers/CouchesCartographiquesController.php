@@ -14,7 +14,8 @@ class CouchesCartographiquesController extends Zend_Controller_Action
     public function addAction()
     {
         $this->_helper->layout->setLayout('menu_admin');
-
+        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        
         $service_carto = new Service_Carto;
 
         if ($this->_request->isPost()) {
@@ -32,7 +33,8 @@ class CouchesCartographiquesController extends Zend_Controller_Action
     public function editAction()
     {
         $this->_helper->layout->setLayout('menu_admin');
-
+        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        
         $service_carto = new Service_Carto;
 
         $this->view->row = $service_carto->findById($this->getRequest()->getParam('id'));

@@ -1,12 +1,13 @@
 <form action="<?php echo $this->url(array('action' => $this->row ? "edit" : "add")) ?>" method="post">
 
 	<div class='pull-right btn-group' >
-		<a class='btn' href="<?php echo $this->url(array('action' => 'list')) ?>">Revenir sur la liste des couches cartographiques</a>
-		<input type='submit' class="btn btn-success" value="<?php echo $this->row ? "Modifier" : "Ajouter" ?> la couche" />
+            <a class='btn' href="<?php echo $this->url(array('action' => 'list')) ?>">Revenir sur la liste des couches cartographiques</a>
+            <input type='submit' class="btn btn-success" value="<?php echo $this->row ? "Modifier" : "Ajouter" ?> la couche" />
 	</div>
 
 	<h3><?php echo $this->row ? "Modification d'une couche cartographique" : "Ajout d'une couche cartographique" ?></h3>
-
+        
+        
 	<dl class='dl-horizontal'>
 
 		<dt>Type de la couche</dt>
@@ -15,7 +16,46 @@
 				<option value="WMS" <?php if(isset($this->row) && $this->row['TYPE_COUCHECARTO'] == 'WMS') echo "selected" ?> >WMS</option>
 			</select>
 		</dd>
-
+                
+                <?php if (isset($this->key_ign)): ?>
+                <dt></dt>
+		<dd>
+                    <div class='btn-group' style='margin-bottom:10px;'>
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" id='getIGNLayers'>
+                            Ajouter une couche IGN
+                        </button>
+                        <ul class="dropdown-menu" role="menu"></ul>
+                    </div>
+                    <script>
+                        $(document).ready(function(){
+                           $('#getIGNLayers').click(function() {
+                              var $menu = $(this).parent().find('.dropdown-menu').empty().append('<img src="/images/load.gif"/>')
+                              var type = $('select[name="TYPE_COUCHECARTO"]').val();
+                              $.get('https://wxs.ign.fr/<?php echo $this->key_ign ?>/autoconf', {}, function(xml) {
+                                  $menu.empty();
+                                  var $xml = $(xml);
+                                  $xml.find('Layer').each(function(i, layer) {
+                                     var $layer = $(layer);
+                                     
+                                     if ($layer.find('Server:first').attr('service') !== 'OGC:'+type) return ;
+                                     var url = $layer.find("gpp\\:Key").text() ? $layer.find("gpp\\:Key").text() : $layer.find("Key").text();
+                                     $menu.append('<li class="ignLayer" url="'+url+'" name="'+$layer.find('Name:first').text()+'"><a href="#">'+$layer.find('Title:first').text()+'</a></li>'); 
+                                  });
+                                  $('.ignLayer').click(function(e){
+                                     e.preventDefault();
+                                     $('input[name="NOM_COUCHECARTO"]').val($(this).text());
+                                     $('input[name="URL_COUCHECARTO"]').val($(this).attr('url').replace('<?php echo $this->key_ign ?>', '\{key\}'));
+                                     $('input[name="ISBASELAYER_COUCHECARTO"]').prop( "checked", false);
+                                     $('input[name="LAYERS_COUCHECARTO"]').val($(this).attr('name'));
+                                     $('input[name="TRANSPARENT_COUCHECARTO"]').prop( "checked", true );
+                                  });
+                              }, 'xml');
+                           });
+                        });
+                    </script>
+		</dd>
+                <?php endif ?>
+                
 		<dt>Nom de la couche</dt>
 		<dd>
 			<input type="text" name="NOM_COUCHECARTO" value="<?php echo $this->row ? $this->row['NOM_COUCHECARTO'] : "" ?>" />
@@ -29,14 +69,14 @@
 		<dt>Couche de base ?</dt>
 		<dd>
 			<p>
-            	<input type="hidden" name="ISBASELAYER_COUCHECARTO" value="0" />
+                                <input type="hidden" name="ISBASELAYER_COUCHECARTO" value="0" />
 				<input type="checkbox" name="ISBASELAYER_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row['ISBASELAYER_COUCHECARTO']) echo "checked" ?> />
 			</p>
 		</dd>
 
 		<dt>Nom de la couche dans le flux</dt>
 		<dd>
-            <input type="hidden" name="LAYERS_COUCHECARTO" value="0" />
+                        <input type="hidden" name="LAYERS_COUCHECARTO" value="0" />
 			<input type="text" name="LAYERS_COUCHECARTO" value="<?php echo isset($this->row) ? $this->row['LAYERS_COUCHECARTO'] : "" ?>" />
 		</dd>
 
