@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ERP global" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="fe5b73b2-38b5-4fe6-88bf-c62eb6b5d366">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="2.6573415000000016"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="Annee" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["\\subreports\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="Numero département SDIS" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select t.ID_TYPE, p.LOCALSOMMEIL_PERIODICITE,
 case p.LOCALSOMMEIL_PERIODICITE
@@ -72,7 +73,7 @@ type]]>
 					<textFieldExpression><![CDATA[$F{TYPE}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="86" y="0" width="62" height="18" uuid="6b480fea-c01f-40aa-80b9-cfbe6cc1da60"/>
+					<reportElement x="86" y="0" width="56" height="18" uuid="6b480fea-c01f-40aa-80b9-cfbe6cc1da60"/>
 					<box>
 						<pen lineWidth="0.75"/>
 						<topPen lineWidth="0.75"/>
@@ -84,7 +85,7 @@ type]]>
 					<textFieldExpression><![CDATA[$F{nb_type}]]></textFieldExpression>
 				</textField>
 				<subreport>
-					<reportElement mode="Opaque" x="148" y="0" width="62" height="18" uuid="68a9a313-65d4-40f2-8577-2a27bf399f2f"/>
+					<reportElement mode="Opaque" x="142" y="0" width="56" height="18" uuid="68a9a313-65d4-40f2-8577-2a27bf399f2f"/>
 					<subreportParameter name="LocalSommeil">
 						<subreportParameterExpression><![CDATA["AND p.LOCALSOMMEIL_PERIODICITE = " + $F{LOCALSOMMEIL_PERIODICITE}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -102,7 +103,7 @@ type]]>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "NbDossiers.jasper"]]></subreportExpression>
 				</subreport>
 				<subreport>
-					<reportElement mode="Opaque" x="315" y="0" width="62" height="18" uuid="96d0a3af-e689-4817-b6d6-c7f1d0f6b63f"/>
+					<reportElement mode="Opaque" x="309" y="0" width="56" height="18" uuid="96d0a3af-e689-4817-b6d6-c7f1d0f6b63f"/>
 					<subreportParameter name="LocalSommeil">
 						<subreportParameterExpression><![CDATA["AND p.LOCALSOMMEIL_PERIODICITE = " + $F{LOCALSOMMEIL_PERIODICITE}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -123,7 +124,7 @@ type]]>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "NbDossiers.jasper"]]></subreportExpression>
 				</subreport>
 				<subreport>
-					<reportElement mode="Opaque" x="420" y="0" width="62" height="18" uuid="e246d902-f0d0-486f-9d9c-6a8a33dd4ff2"/>
+					<reportElement mode="Opaque" x="420" y="0" width="56" height="18" uuid="e246d902-f0d0-486f-9d9c-6a8a33dd4ff2"/>
 					<subreportParameter name="LocalSommeil">
 						<subreportParameterExpression><![CDATA["AND p.LOCALSOMMEIL_PERIODICITE = " + $F{LOCALSOMMEIL_PERIODICITE}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -141,7 +142,7 @@ type]]>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "NbDossiers.jasper"]]></subreportExpression>
 				</subreport>
 				<subreport>
-					<reportElement mode="Opaque" x="253" y="0" width="62" height="18" uuid="68684143-0ec2-4b3b-abeb-2bda31a801da"/>
+					<reportElement mode="Opaque" x="253" y="0" width="56" height="18" uuid="68684143-0ec2-4b3b-abeb-2bda31a801da"/>
 					<subreportParameter name="LocalSommeil">
 						<subreportParameterExpression><![CDATA[$F{LOCALSOMMEIL_PERIODICITE}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -156,7 +157,7 @@ type]]>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "NbERP1erGroupe.jasper"]]></subreportExpression>
 				</subreport>
 				<textField evaluationTime="Band" pattern="###0.00">
-					<reportElement x="210" y="0" width="43" height="18" uuid="1e0d41ac-e1d1-4c6f-add3-61d6fd3396b2"/>
+					<reportElement x="198" y="0" width="55" height="18" uuid="1e0d41ac-e1d1-4c6f-add3-61d6fd3396b2"/>
 					<box>
 						<pen lineWidth="0.75"/>
 						<topPen lineWidth="0.75"/>
@@ -168,7 +169,7 @@ type]]>
 					<textFieldExpression><![CDATA[$V{NbVP}/$F{nb_type}*100]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Band" pattern="###0.00">
-					<reportElement x="377" y="0" width="43" height="18" uuid="5ef885de-f5e8-4aa4-a8e9-32852cd7033f"/>
+					<reportElement x="365" y="0" width="55" height="18" uuid="5ef885de-f5e8-4aa4-a8e9-32852cd7033f"/>
 					<box>
 						<pen lineWidth="0.75"/>
 						<topPen lineWidth="0.75"/>
@@ -189,7 +190,7 @@ type]]>
 		<band height="89">
 			<textField>
 				<reportElement x="7" y="0" width="100" height="28" uuid="f8c36f8c-5b1e-4e94-8d7a-d0fe2ff8afb4"/>
-				<textFieldExpression><![CDATA["SDIS 62\nChiffres "+$P{Annee}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SDIS " + $P{Numero département SDIS} + "\nChiffres "+$P{Annee}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="6" width="107" height="20" uuid="a958a5ac-dc56-4466-8b7a-c341b8868ac8"/>
@@ -207,7 +208,7 @@ type]]>
 				<reportElement mode="Transparent" x="0" y="0" width="555" height="28" backcolor="#CCCCCC" uuid="0afa4f29-15c7-4a69-a5b0-a95b64f25a17"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="86" y="69" width="62" height="20" uuid="878f944c-66d0-45a7-bf5c-466efcea5938"/>
+				<reportElement x="86" y="69" width="56" height="20" uuid="878f944c-66d0-45a7-bf5c-466efcea5938"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -219,7 +220,7 @@ type]]>
 				<text><![CDATA[Nb]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="148" y="69" width="62" height="20" uuid="1fce1349-6973-4ca5-8aeb-18507c6451e4"/>
+				<reportElement x="142" y="69" width="56" height="20" uuid="1fce1349-6973-4ca5-8aeb-18507c6451e4"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -231,7 +232,7 @@ type]]>
 				<text><![CDATA[Nb VP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="315" y="69" width="62" height="20" uuid="824529cc-085f-470a-842c-ce28ab7366f0"/>
+				<reportElement x="309" y="69" width="56" height="20" uuid="824529cc-085f-470a-842c-ce28ab7366f0"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -243,7 +244,7 @@ type]]>
 				<text><![CDATA[Nb VP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="420" y="69" width="62" height="20" uuid="08da104f-b212-418d-9b01-342507f1ece9"/>
+				<reportElement x="420" y="69" width="56" height="20" uuid="08da104f-b212-418d-9b01-342507f1ece9"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -279,7 +280,7 @@ type]]>
 				<text><![CDATA[Bilan 1er groupe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="253" y="69" width="62" height="20" uuid="12177df0-971c-4cd0-bb1b-c5ce19add894"/>
+				<reportElement x="253" y="69" width="56" height="20" uuid="12177df0-971c-4cd0-bb1b-c5ce19add894"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -291,7 +292,7 @@ type]]>
 				<text><![CDATA[Nb]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="210" y="69" width="43" height="20" uuid="9ab2a453-c0f9-4dec-b30d-d4e0e5ad28ad"/>
+				<reportElement x="198" y="69" width="55" height="20" uuid="9ab2a453-c0f9-4dec-b30d-d4e0e5ad28ad"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -303,7 +304,7 @@ type]]>
 				<text><![CDATA[%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="377" y="69" width="43" height="20" uuid="8369b790-06d2-49a1-8301-4e9fd7bf2a0b"/>
+				<reportElement x="365" y="69" width="55" height="20" uuid="8369b790-06d2-49a1-8301-4e9fd7bf2a0b"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -333,7 +334,7 @@ type]]>
 				<text><![CDATA[Totaux]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="86" y="0" width="62" height="18" uuid="7412149d-8641-4847-a6c5-ab16fec09bfe"/>
+				<reportElement x="86" y="0" width="56" height="18" uuid="7412149d-8641-4847-a6c5-ab16fec09bfe"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -345,7 +346,7 @@ type]]>
 				<textFieldExpression><![CDATA[$V{NbERPTotal}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="148" y="0" width="62" height="18" uuid="5c6e5cce-c176-4e32-9e70-67295c988e4c"/>
+				<reportElement x="142" y="0" width="56" height="18" uuid="5c6e5cce-c176-4e32-9e70-67295c988e4c"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -357,7 +358,7 @@ type]]>
 				<textFieldExpression><![CDATA[$V{NbVPTotal}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement x="210" y="0" width="43" height="18" uuid="4d929269-c6ac-4ac1-9116-ecbe54cbc6cb"/>
+				<reportElement x="198" y="0" width="55" height="18" uuid="4d929269-c6ac-4ac1-9116-ecbe54cbc6cb"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -369,7 +370,7 @@ type]]>
 				<textFieldExpression><![CDATA[$V{NbVPTotal}/$V{NbERPTotal}*100]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="253" y="0" width="62" height="18" uuid="781707bb-5e79-46c2-a8ac-96c313de6470"/>
+				<reportElement x="253" y="0" width="56" height="18" uuid="781707bb-5e79-46c2-a8ac-96c313de6470"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -381,7 +382,7 @@ type]]>
 				<textFieldExpression><![CDATA[$V{NbERP1erGpeTotal}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="315" y="0" width="62" height="18" uuid="9e93d4eb-ec79-4448-a259-1d29b31837e4"/>
+				<reportElement x="309" y="0" width="56" height="18" uuid="9e93d4eb-ec79-4448-a259-1d29b31837e4"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -393,7 +394,7 @@ type]]>
 				<textFieldExpression><![CDATA[$V{NbVP1erGpeTotal}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement x="377" y="0" width="43" height="18" uuid="f47c2bca-eada-4392-98dc-d2274c8610c9"/>
+				<reportElement x="365" y="0" width="55" height="18" uuid="f47c2bca-eada-4392-98dc-d2274c8610c9"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
@@ -405,7 +406,7 @@ type]]>
 				<textFieldExpression><![CDATA[$V{NbVP1erGpeTotal}/$V{NbERP1erGpeTotal}*100]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="420" y="0" width="62" height="18" uuid="fc344fab-ec8a-44cf-9993-93dbb54c6e6d"/>
+				<reportElement x="420" y="0" width="56" height="18" uuid="fc344fab-ec8a-44cf-9993-93dbb54c6e6d"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
