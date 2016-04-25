@@ -784,6 +784,10 @@ class DossierController extends Zend_Controller_Action
                     //Test pour voir s'il sagit d'une date pour la convertir au format ENG et l'inserer dans la base de données
                     if ("DATEMAIRIE_DOSSIER" == $libelle || "DATESECRETARIAT_DOSSIER" == $libelle || "DATEVISITE_DOSSIER" == $libelle || "DATECOMM_DOSSIER" == $libelle || "DATESDIS_DOSSIER" == $libelle || "DATEPREF_DOSSIER" ==  $libelle || "DATEREP_DOSSIER" ==  $libelle || "DATEREUN_DOSSIER" ==  $libelle || "DATEINTERV_DOSSIER" == $libelle || "DATESIGN_DOSSIER" == $libelle || "DATEINSERT_DOSSIER" == $libelle || "DATEENVTRANSIT_DOSSIER" == $libelle || "ECHEANCIERTRAV_DOSSIER" == $libelle || "DATETRANSFERTCOMM_DOSSIER" == $libelle || "DATERECEPTIONCOMM_DOSSIER" == $libelle || "DATERVRAT_DOSSIER" == $libelle || "DELAIPRESC_DOSSIER" == $libelle) {
                         if ($value) {
+                            if ("DATEVISITE_DOSSIER" == $libelle) {
+                                $dateTab = explode(", ", $value);
+                                $value = $dateTab[0];
+                            }
                             $dateTab = explode("/",$value);
                             $value = $dateTab[2]."-".$dateTab[1]."-".$dateTab[0];
                             if ("DATEINTERV_DOSSIER" == $libelle) {
@@ -2310,8 +2314,8 @@ class DossierController extends Zend_Controller_Action
         if ($dateVisite != '' && isset($dateVisite)) {
             $dateLastVP = $DBdossier->findLastVpCreationDoc($idEtab,$idDossier,$dateVisite);
 
-            if ($dateLastVP['maxdate'] != NULL) {
-                $ZendDateLastVP = new Zend_Date($dateLastVP['maxdate'], Zend_Date::DATES);
+            if ($dateLastVP) {
+                $ZendDateLastVP = new Zend_Date($dateLastVP['DATEVISITE_DOSSIER'], Zend_Date::DATES);
                 $this->view->dateLastVP = $ZendDateLastVP->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR);
                 $avisLastVP =  $DBdossier->getAvisDossier($dateLastVP['ID_DOSSIER']);
                 $this->view->avisLastVP = $avisLastVP['LIBELLE_AVIS'];

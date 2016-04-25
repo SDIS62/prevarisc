@@ -10,6 +10,8 @@ Evolutions :
 * Ajout d'un indicateur sur les périodicités non standards
 * Ajout du support de l'authentification CAS
 * Ajout du support de l'authentification NTLM 
+* Le bloc des ets sans prochaine visite cette année remonte à présent les ets en retard de l'année N-1
+* Ajout de la balise de {heureDeb1erDossier} pour les convocations de maires
 * Ajout de la 3ème famille d'habitation
 * Ajout de la possibilité d'ajouter rapidement une couche WMS IGN
 * Standardisation du viewer cartographique cote backoffice
@@ -26,6 +28,9 @@ Corrections :
 * Correction du modèle de convocation des groupes de visites qui n'utilisaient pas le modèle de document de visite
 * Correction de l'affectation d'un dossier à une autre commission, les heures de début et de fin restaient en place ce qui pouvait causer des problèmes lorsque les horaires différaient
 * Correction de la {dateVisite} sur les ODJ qui était positionnée à la date du jour par défaut si vide
+* Correction du non vidage de cache ets sur la partie contact (cf dus)
+* Correction de l'impossibilité de programmer un dossier de visite sur plusieurs journées
+* Correction de la balise {avisLastVP} qui disfonctionne ainsi que le calcul de la dernière VP
 * Correction de l'unité en mètres sur la mesure de distance cartographiques
 
 ## 2.4
