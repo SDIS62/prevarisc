@@ -10,6 +10,7 @@ Evolutions :
 * Ajout d'un indicateur sur les périodicités non standards
 * Ajout du support de l'authentification CAS
 * Ajout du support de l'authentification NTLM 
+* Ajout de la 3ème famille d'habitation
 * Ajout de la possibilité d'ajouter rapidement une couche WMS IGN
 * Standardisation du viewer cartographique cote backoffice
 
