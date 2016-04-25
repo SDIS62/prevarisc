@@ -87,8 +87,8 @@ $(document).ready(function(){
 			'Supprimer': function() {
 				//ici on supprime dans la base de données le document lié puis on reinitialise la ligne
 				$.ajax({
-					url: "/dossier/fonction",
-					data: "do=suppDoc&docInfos="+$("#docInfos").val()+"&idDossier="+$("#idDossier").val(),
+					url: "/dossier/suppdoc",
+					data: "docInfos="+$("#docInfos").val()+"&idDossier="+$("#idDossier").val(),
 					type:"POST",			
 					beforeSend: function(){
 						//VERIFICATION SUR L'integrité des données
@@ -204,28 +204,7 @@ $(document).ready(function(){
 				//affichageResultat.insertAfter(".divDoc:last");
 				$("#libelleNewDoc").attr('value','');
 				$("#dossier_Pdroite").activeCheck('qsd');
-				/*
-				$(".validDoc").button({
-					icons: {
-						primary: 'ui-icon-check'
-					},
-					text: false
-				});
-				
-				$(".cancelDoc").button({
-					icons: {
-						primary: 'ui-icon-close'
-					},
-					text: false
-				});
-				
-				$(".editDoc").button({
-					icons: {
-						primary: 'ui-icon-pencil'
-					},
-					text: false
-				});
-				*/
+
 				return false;
 			},
 			error: function(){
@@ -256,6 +235,9 @@ $(document).ready(function(){
 		 
 		$("#modif_"+nom).hide();
 		$("#valid_"+nom).fadeIn();
+
+		$("#libelleView_"+nom).hide();
+		$("#libelle_"+nom).show();
 
 		$("#dossier_Pdroite").hideModif(nom);
 		$("#dossier_Pdroite").blockCheck(nom); 

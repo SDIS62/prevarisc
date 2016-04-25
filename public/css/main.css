@@ -24,7 +24,7 @@ body {
     background-color: white;
     margin: 0 auto;  /* zéro ou une autre valeur */
     padding: 0;
-    width: 100%; 
+    width: 100%;
     min-height: 100%;
 }
 
@@ -65,6 +65,10 @@ h2.page-header {
     margin-top: 0px;
 }
 
+.ui-widget.ui-widget-content a {
+    color: #005580;
+}
+
 /* On règle la navbar en mode "super sleek"
 -------------------------------------------------- */
 
@@ -77,8 +81,15 @@ body > .navbar {
 }
 
 #research-input input {
-    width: 50%;
     font-size: 13px;
+    -webkit-transition: width 0.25s ease-in-out;
+    -moz-transition:width 0.25s ease-in-out;
+    -o-transition: width 0.25s ease-in-out;
+    transition: width 0.25s ease-in-out;
+}
+
+#research-input input:focus{
+    width: 300px;
 }
 
 #research-input a {
@@ -167,7 +178,7 @@ footer {
     background-color: #f4f4f4;
     padding: 10px 20px;
     margin-left:-20px;
-    margin-right:-20px; 
+    margin-right:-20px;
 }
 
 footer a {
@@ -203,6 +214,20 @@ form#etablissement dt,
 form#etablissement dd {
 	line-height: 30px;
 }
+form#etablissement .champs_icpe_rubrique_no {
+    width: 50px;
+}
+
+@media screen and (max-width: 1500px) {
+    form#etablissement .champs_icpe_rubrique_id {
+        width:90px;
+    }
+    form#etablissement .champs_icpe_rubrique_nom {
+        width:160px;
+    }
+}
+
+
 
 /* Fil d'actualité */
 
@@ -344,6 +369,10 @@ ul.recherche_liste li {
     padding: 6px;
 }
 
+ul.recherche_liste li.slide {
+    border-left: 3px dotted #aaa;
+}
+
 ul.recherche_liste li.slide + li.ui-helper-hidden {
     padding: 0;
     margin-left: 50px;
@@ -360,11 +389,11 @@ ul.recherche_liste li.slide:hover {
 }
 
 ul.no_slide li.slide:hover {
-    cursor: pointer;
+    cursor: default;
 }
 
-ul.no_slide li.slide .ui-icon {
-    display: none;
+ul.no_slide li.slide {
+    border-left: none;
 }
 
 ul.recherche_liste li .avis {
@@ -412,6 +441,11 @@ h4.h4_subtitle {
 	text-shadow: 1px 1px 0 white;
 	padding: .3em;
 	margin: 1em 0 1em 0;
+}
+
+h4.h4_subtitle input {
+    margin-bottom: 0;
+    font-size: 0.7em;
 }
 
 .nav-tabs > li.tabs-right {
@@ -609,6 +643,10 @@ ul#gestionCommissionMenu li.active {
 	cursor: row-resize;
 }
 
+.classement li:hover {
+    cursor: row-resize;
+}
+
 .dossierODJ:hover{
 	cursor: row-resize;
 }
@@ -679,7 +717,7 @@ text-decoration: none;
     *border:0;
     border-color:#e6e6e6 #e6e6e6 #bfbfbf;
     border-color:rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
-    border-bottom-color:#b3b3b3; 
+    border-bottom-color:#b3b3b3;
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffe6e6e6',GradientType=0);
     filter:progid:DXImageTransform.Microsoft.gradient(enabled=false);
     *zoom:1;
@@ -741,7 +779,7 @@ text-decoration: none;
 .ios_menu_style li, .ios_menu_style li a {
     text-decoration: none;
     list-style-type: none;
-    color: #ced4da;   
+    color: #ced4da;
 }
 
 .ios_menu_style-ul {
@@ -797,22 +835,41 @@ text-decoration: none;
   color: #555555;
 }
 
-.dashboard .grid-sizer {
-  width: 49%;
+#home .panel {
+    display: none;
 }
 
 .dashboard .panel {
   width:  49%;
   float: left;
+  margin-bottom: 0px;
+}
+
+.dashboard .panel.ui-draggable-dragging {
+    border-style: dashed;
+    border-width: 3px;
 }
 
 .dashboard .panel.w2 {
   width:  100%;
 }
 
-.dashboard .grid-gutter {
-  width: 2%;
+.dashboard .panel-heading {
+  cursor: move;
 }
+
+.dashboard .panel .icon {
+  cursor: pointer;
+}
+
+.dashboard .panel.folded .panel-heading {
+  margin-bottom: -15px;
+}
+
+.dashboard .grid-gutter {
+  width: 1%;
+}
+
 
 .sidebar {
   background-color: #f4f4f4;
@@ -835,7 +892,6 @@ text-decoration: none;
   margin-bottom: 0;
 }
 
-.menu_dashboard li.active a ,
 .menu_dashboard li:hover a
 {
   background: #f9f9f9;
@@ -999,16 +1055,16 @@ a.list-group-item-danger.active:focus {
 }
 
 .deconnexion{
-  color:#000; 
-  font-size:10px;  
-  text-decoration: underline;   
+  color:#000;
+  font-size:10px;
+  text-decoration: underline;
  }
- 
- .listcom{  
+
+ .listcom{
   margin-top: 10px;
  }
  .heurcom{
-  color:#08c;     
+  color:#08c;
  }
  .proch-com{
     padding: 10px 10px 10px 10px;
@@ -1023,3 +1079,75 @@ a.list-group-item-danger.active:focus {
    font-size:12px;
    color: #6E6D6D;
  }
+
+ #modal-desc{
+    width: 1000px;
+    margin-left: -500px;
+}
+
+.popover {
+    width: 350px;
+    max-width: none;
+}
+.dropdown-menu {
+    text-align: left;
+}
+
+.scroll-bloc-large {
+    max-height: 500px; 
+    overflow-y: scroll;
+}
+
+.scroll-bloc-medium {
+    max-height: 300px; 
+    overflow-y: scroll;
+}
+
+.scroll-bloc-small {
+    max-height: 150px; 
+    overflow-y: scroll;
+}
+
+#tabPieceJointe .file {
+    padding: 0 0 3px 22px;
+}
+
+#tabPieceJointe .pdf{  
+    background: url('../images/pdf.png') no-repeat;  
+}  
+
+#tabPieceJointe .doc, #tabPieceJointe .docx{  
+    background: url('../images/word.png') no-repeat;  
+}  
+
+#tabPieceJointe .odt{  
+    background: url('../images/libreoffice.png') no-repeat;  
+}  
+
+#tabPieceJointe .png,
+#tabPieceJointe .jpg,
+#tabPieceJointe .jpeg,
+#tabPieceJointe .gif,
+#tabPieceJointe .bmp
+{  
+    background: url('../images/image.png') no-repeat;  
+}
+
+#tabPieceJointe .zip,
+#tabPieceJointe .rar
+{  
+    background: url('../images/zip.png') no-repeat;  
+}  
+
+#tabPieceJointe .txt{  
+    background: url('../images/text.png') no-repeat;  
+}
+
+#tabPieceJointe .msg{  
+    background: url('../images/msg.png') no-repeat;  
+}
+
+/* Fix provenant d'un problème IE11 / bootstrap*/
+#geoportail-container img {
+    max-width: none;
+}

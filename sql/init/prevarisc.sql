@@ -822,6 +822,12 @@ CREATE TABLE `dossier` (
   `ABSQUORUM_DOSSIER` tinyint(4) DEFAULT NULL,
   `ECHEANCIERTRAV_DOSSIER` date DEFAULT NULL,
   `VERROU_DOSSIER` tinyint(1) DEFAULT '0',
+  `VERROU_USER_DOSSIER` bigint(20) DEFAULT NULL,
+  `DATETRANSFERTCOMM_DOSSIER` datetime DEFAULT NULL,
+  `DATERECEPTIONCOMM_DOSSIER` datetime DEFAULT NULL,
+  `OBSERVATION_DOSSIER` text,
+  `DATERVRAT_DOSSIER` date DEFAULT NULL,
+  `DELAIPRESC_DOSSIER` date DEFAULT NULL,
   PRIMARY KEY (`ID_DOSSIER`),
   KEY `fk_dossier_dossiertype1_idx` (`TYPE_DOSSIER`),
   KEY `fk_dossier_avis1_idx` (`AVIS_DOSSIER`),
@@ -939,6 +945,7 @@ CREATE TABLE `dossierdocmanquant` (
   `NUM_DOCSMANQUANT` varchar(45) NOT NULL,
   `DOCMANQUANT` text,
   `DATE_DOCSMANQUANT` date DEFAULT NULL,
+  `DATE_RECEPTION_DOC` date DEFAULT NULL,
   PRIMARY KEY (`ID_DOCMANQUANT`),
   UNIQUE KEY `ID_DOCMANQUANT_UNIQUE` (`ID_DOCMANQUANT`),
   KEY `fk_dossierdocmanquant_dossier1_idx` (`ID_DOSSIER`),
@@ -1061,7 +1068,24 @@ CREATE TABLE `dossiernatureliste` (
 
 LOCK TABLES `dossiernatureliste` WRITE;
 /*!40000 ALTER TABLE `dossiernatureliste` DISABLE KEYS */;
-INSERT INTO `dossiernatureliste` VALUES (1,'Permis de construire (PC)',1,2),(2,'Autorisation de travaux (AT)',1,1),(3,'Dérogation',1,11),(4,'Cahier des charges fonctionnel du SSI',1,12),(5,'Cahier des charges de type T',1,16),(6,'Salon type T',1,7),(7,'Levée de prescriptions',1,5),(8,'Documents divers',1,22),(9,'Changement de DUS (Directeur unique de sécurité)',1,8),(10,'Suivi organisme formation SSIAP',1,9),(11,'Demande de registre de sécurité CTS',1,15),(12,'Demande d\'implantation CTS < 6mois',1,6),(13,'Demande d\'implantation CTS > 6mois',1,14),(14,'Permis d\'aménager',1,18),(15,'Permis de démolir',1,19),(16,'CR de visite des organismes d\'inspection de sécurité incendie (GA)',1,17),(17,'Etude suite à un avis \"différé\"',1,13),(18,'Utilisation exceptionnelle de locaux',1,4),(19,'Levée de réserves suite à un avis défavorable',1,3),(20,'Réception de travaux',2,2),(21,'Périodique',2,1),(22,'Chantier',2,6),(23,'Contrôle',2,4),(24,'Inopinée',2,5),(25,'Réception de travaux',3,2),(26,'Périodique',3,1),(27,'Chantier',3,6),(28,'Contrôle',3,4),(29,'Inopinée',3,5),(30,'Déclaration préalable',1,20),(31,'Locaux SDIS',4,1),(32,'Extérieur SDIS',4,2),(33,'RVRMD (diag sécu)',1,21),(34,'Arrivée',5,1),(35,'Départ',5,2),(36,'En transit (gestion des dossiers en interne vers d\'autres structures, ect, ...)',5,3),(37,'Incendie',6,1),(38,'SAP',6,2),(39,'Inter. div.',6,3),(40,'Ouverture',7,1),(41,'Fermeture',7,2),(42,'Mise en demeure',7,3),(43,'Téléphonique',4,3),(44,'Utilisation exceptionnelle de locaux',7,4),(45,'Courrier',7,NULL),(46,'Echéancier de travaux',1,10),(47,'Avant ouverture',2,3),(48,'Avant ouverture',3,3);
+INSERT INTO `dossiernatureliste` VALUES (1,'Permis de construire (PC)',1,2),(2,'Autorisation de travaux (AT)',1,1),(3,'Dérogation',1,11),(4,'Cahier des charges fonctionnel du SSI',1,12),(5,'Cahier des charges de type T',1,16),(6,'Salon type T',1,7),(7,'Levée de prescriptions',1,5),(8,'Documents divers',1,22),(9,'Changement de DUS (Directeur unique de sécurité)',1,8),(10,'Suivi organisme formation SSIAP',1,9),(11,'Demande de registre de sécurité CTS',1,15),(12,'Demande d\'implantation CTS < 6mois',1,6),(13,'Demande d\'implantation CTS > 6mois',1,14),(14,'Permis d\'aménager',1,18),(15,'Permis de démolir',1,19),(16,'CR de visite des organismes d\'inspection de sécurité incendie (GA)',1,17),(17,'Etude suite à un avis \"différé\"',1,13),(18,'Utilisation exceptionnelle de locaux',1,4),(19,'Levée de réserves suite à un avis défavorable',1,3),(20,'Réception de travaux',2,2),(21,'Périodique',2,1),(22,'Chantier',2,6),(23,'Contrôle',2,4),(24,'Inopinée',2,5),(25,'Réception de travaux',3,2),(26,'Périodique',3,1),(27,'Chantier',3,6),(28,'Contrôle',3,4),(29,'Inopinée',3,5),(30,'Déclaration préalable',1,20),(31,'Locaux SDIS',4,1),(32,'Extérieur SDIS',4,2),(33,'RVRMD (diag sécu)',1,21),(37,'Incendie',6,1),(38,'SAP',6,2),(39,'Inter. div.',6,3),(40,'Ouverture',7,1),(41,'Fermeture',7,2),(42,'Mise en demeure',7,3),(43,'Téléphonique',4,3),(44,'Utilisation exceptionnelle de locaux',7,4),(45,'Courrier',7,NULL),(46,'Echéancier de travaux',1,10),(47,'Avant ouverture',2,3),(48,'Avant ouverture',3,3);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (52,"Lettre",5,1);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (55,"Mise en demeure",5,2);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (51,"Avis écrit motivé",5,3);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (53,"Consultation PLU",5,4);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (49,"Rapport d'organisme agréé",5,5);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (54,"Demande de renseignements",5,6);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (59,"Demande de visite périodique",5,7);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (57,"Demande de visite technique",5,8);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (58,"Demande de visite inopinée",5,9);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (50,"Demande de visite hors programme",5,10);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (60,"Demande de visite de réception",5,11);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (61,"Autorisation d'une ICPE",1,23);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (62,"Certificats d'urbanisme (CU)",1,24);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (63,"Demande d'organisation de manifestation temporaire",1,25);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (64,"Visite conseil",2,7);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (65,"Autorisation de travaux",5,12);
+INSERT INTO `dossiernatureliste` (`ID_DOSSIERNATURE`, `LIBELLE_DOSSIERNATURE`, `ID_DOSSIERTYPE`, `ORDRE`) VALUES (66,"Déclassement / Reclassement",1,26);
 /*!40000 ALTER TABLE `dossiernatureliste` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1250,6 +1274,8 @@ CREATE TABLE `etablissement` (
   `DESCRIPTIF_DEROGATIONS_ETABLISSEMENT` text,
   `DESCTECH_IMPLANTATION_SURFACETOTALE_ETABLISSEMENT` int(11) DEFAULT NULL,
   `DESCTECH_IMPLANTATION_SURFACEACCPUBLIC_ETABLISSEMENT` int(11) DEFAULT NULL,
+  `DESCTECH_RISQUES_NATURELS_ETABLISSEMENT` text,
+  `DESCTECH_RISQUES_TECHNOLOGIQUES_ETABLISSEMENT` text,
   PRIMARY KEY (`ID_ETABLISSEMENT`),
   KEY `fk_etablissement_dossier1_idx` (`ID_DOSSIER_DONNANT_AVIS`),
   CONSTRAINT `fk_etablissement_dossier1` FOREIGN KEY (`ID_DOSSIER_DONNANT_AVIS`) REFERENCES `dossier` (`ID_DOSSIER`) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -1368,6 +1394,7 @@ CREATE TABLE `etablissementinformations` (
   `ICPE_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
   `PERIODICITE_ETABLISSEMENTINFORMATIONS` tinyint(4) DEFAULT NULL,
   `R12320_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
+  `DROITPUBLIC_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
   `LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS` tinyint(1) DEFAULT NULL,
   `EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS` int(11) DEFAULT NULL,
   `EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS` int(11) DEFAULT NULL,
@@ -1379,6 +1406,7 @@ CREATE TABLE `etablissementinformations` (
   `ID_ETABLISSEMENT` bigint(20) unsigned NOT NULL,
   `ID_GENRE` int(2) unsigned NOT NULL,
   `ID_CLASSE` int(11) unsigned DEFAULT NULL,
+  `ID_CLASSEMENT` int(11) unsigned DEFAULT NULL,
   `ID_FAMILLE` int(11) DEFAULT NULL,
   `ID_CATEGORIE` int(1) unsigned DEFAULT NULL,
   `ID_TYPE` int(10) unsigned DEFAULT NULL,
@@ -1390,6 +1418,7 @@ CREATE TABLE `etablissementinformations` (
   KEY `fk_etablissementinformations_etablissement1_idx` (`ID_ETABLISSEMENT`),
   KEY `fk_etablissementinformations_genre1_idx` (`ID_GENRE`),
   KEY `fk_etablissementinformations_classe1_idx` (`ID_CLASSE`),
+  KEY `fk_etablissementinformations_classement1_idx` (`ID_CLASSEMENT`),
   KEY `fk_etablissementinformations_famille1_idx` (`ID_FAMILLE`),
   KEY `fk_etablissementinformations_categorie1_idx` (`ID_CATEGORIE`),
   KEY `fk_etablissementinformations_type1_idx` (`ID_TYPE`),
@@ -1398,6 +1427,7 @@ CREATE TABLE `etablissementinformations` (
   KEY `fk_etablissementinformations_statut1_idx` (`ID_STATUT`),
   CONSTRAINT `fk_etablissementinformations_categorie1` FOREIGN KEY (`ID_CATEGORIE`) REFERENCES `categorie` (`ID_CATEGORIE`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `fk_etablissementinformations_classe1` FOREIGN KEY (`ID_CLASSE`) REFERENCES `classe` (`ID_CLASSE`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `fk_etablissementinformations_classement1` FOREIGN KEY (`ID_CLASSEMENT`) REFERENCES `classement` (`ID_CLASSEMENT`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `fk_etablissementinformations_commission1` FOREIGN KEY (`ID_COMMISSION`) REFERENCES `commission` (`ID_COMMISSION`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `fk_etablissementinformations_etablissement1` FOREIGN KEY (`ID_ETABLISSEMENT`) REFERENCES `etablissement` (`ID_ETABLISSEMENT`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_etablissementinformations_famille1` FOREIGN KEY (`ID_FAMILLE`) REFERENCES `famille` (`ID_FAMILLE`) ON DELETE NO ACTION ON UPDATE CASCADE,
@@ -1426,7 +1456,7 @@ DROP TABLE IF EXISTS `etablissementinformationsplan`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `etablissementinformationsplan` (
   `ID_ETABLISSEMENTINFORMATIONSPLAN` bigint(20) NOT NULL AUTO_INCREMENT,
-  `NUMERO_ETABLISSEMENTPLAN` varchar(50) DEFAULT NULL,
+  `NUMERO_ETABLISSEMENTPLAN` text DEFAULT NULL,
   `DATE_ETABLISSEMENTPLAN` date NOT NULL,
   `MISEAJOUR_ETABLISSEMENTPLAN` tinyint(1) DEFAULT NULL,
   `ID_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned NOT NULL,
@@ -1487,7 +1517,7 @@ CREATE TABLE `etablissementinformationsrubrique` (
   `ID_RUBRIQUE` tinyint(4) NOT NULL,
   `NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE` int(11) NOT NULL,
   `VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE` float NOT NULL,
-  `NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE` varchar(150) NOT NULL,
+  `NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE` varchar(500) NOT NULL,
   `CLASSEMENT_ETABLISSEMENTINFORMATIONSRUBRIQUE` varchar(50) DEFAULT NULL,
   `ID_ETABLISSEMENTINFORMATIONS` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`ID_ETABLISSEMENTINFORMATIONSRUBRIQUE`),
@@ -1637,7 +1667,7 @@ CREATE TABLE `famille` (
 
 LOCK TABLES `famille` WRITE;
 /*!40000 ALTER TABLE `famille` DISABLE KEYS */;
-INSERT INTO `famille` VALUES (1,'Aucune'),(2,'1ère famille'),(3,'2ème famille'),(4,'2ème famille collective'),(5,'3ème famille A'),(6,'3ème famille B'),(7,'4ème famille');
+INSERT INTO `famille` VALUES (1,'Aucune'),(2,'1ère famille'),(3,'2ème famille'),(4,'2ème famille collective'),(5,'3ème famille A'),(6,'3ème famille B'),(7,'4ème famille'),(8,'Logements-foyers pour personne autres que personnes âgées et handicapés physique'),(9,'Logements-foyers pour personnes âgées'),(10,'Logements-foyers pour handicapés physiques ayant leur autonomie'),(11,"3ème famille (classement antérieur à l'A. du 31/01/1986 modifié)");
 /*!40000 ALTER TABLE `famille` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1661,7 +1691,7 @@ CREATE TABLE `fonction` (
 
 LOCK TABLES `fonction` WRITE;
 /*!40000 ALTER TABLE `fonction` DISABLE KEYS */;
-INSERT INTO `fonction` VALUES (1,'Préfet'),(2,'Maire'),(3,'Maitre d\'ouvrage'),(4,'Maitre d\'oeuvre'),(5,'Pétitionnaire demandeur'),(6,'Controller technique (organisme agréé)'),(7,'Exploitant'),(8,'Directeur unique de sécurité'),(9,'Responsable de sécurité'),(10,'Participant'),(11,'Demandeur'),(12,'Simple utilisateur'),(13,'Préventionniste'),(15,'Secrétariat'),(16,'Service informatique'),(99,'Utilisateur spécial');
+INSERT INTO `fonction` VALUES (1,'Préfet'),(2,'Maire'),(3,'Maitre d\'ouvrage'),(4,'Maitre d\'oeuvre'),(5,'Pétitionnaire demandeur'),(6,'Controller technique (organisme agréé)'),(7,'Exploitant'),(8,'Directeur unique de sécurité'),(9,'Responsable de sécurité'),(10,'Participant'),(11,'Demandeur'),(12,'Simple utilisateur'),(13,'Préventionniste'),(15,'Secrétariat'),(16,'Service informatique'),(17,'Propriétaire'),(99,'Utilisateur spécial');
 /*!40000 ALTER TABLE `fonction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1686,6 +1716,10 @@ CREATE TABLE `genre` (
 LOCK TABLES `genre` WRITE;
 /*!40000 ALTER TABLE `genre` DISABLE KEYS */;
 INSERT INTO `genre` VALUES (1,'Site'),(2,'Établissement'),(3,'Cellule'),(4,'Habitation'),(5,'IGH'),(6,'EIC');
+INSERT INTO `genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (7, 'Camping');
+INSERT INTO `genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (8, 'Manifestation Temporaire');
+INSERT INTO `genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (9, 'IOP');
+INSERT INTO `genre` (`ID_GENRE`, `LIBELLE_GENRE`) VALUES (10, 'Zone');
 /*!40000 ALTER TABLE `genre` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1738,6 +1772,7 @@ CREATE TABLE `groupe-privileges` (
 
 LOCK TABLES `groupe-privileges` WRITE;
 /*!40000 ALTER TABLE `groupe-privileges` DISABLE KEYS */;
+INSERT INTO `groupe-privileges` (`ID_GROUPE`, `id_privilege`) VALUES ('1', '11');
 /*!40000 ALTER TABLE `groupe-privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1919,8 +1954,9 @@ CREATE TABLE `listedocconsulte` (
   `ETUDE_DOC` tinyint(1) NOT NULL DEFAULT '0',
   `VISITERT_DOC` tinyint(1) NOT NULL DEFAULT '0',
   `VISITEVAO_DOC` tinyint(1) NOT NULL DEFAULT '0',
+  `ORDRE_DOC` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID_DOC`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=60 ;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1929,7 +1965,66 @@ CREATE TABLE `listedocconsulte` (
 
 LOCK TABLES `listedocconsulte` WRITE;
 /*!40000 ALTER TABLE `listedocconsulte` DISABLE KEYS */;
-INSERT INTO `listedocconsulte` VALUES (1,'Un courrier de',0,1,0,0),(2,'Un jeu de plans',0,1,0,0),(3,'Une notice de sécurité',0,1,0,0),(4,'Une notice descriptive',0,1,0,0),(5,'Un engagement solidité',0,1,0,0),(6,'Un rapport initial de contrôle technique',0,1,0,0),(7,'Une attestation du directeur unique de sécurité',0,1,0,0),(8,'Relevé de vérification du désenfumage (Art. DF 10)',1,0,0,0),(9,'RVRE triennal du désenfumage mécanique associé à un SSI A ou B',1,0,0,0),(10,'Relevé de vérification du chauffage-ventilation (Art. CH 58)',1,0,0,0),(11,'Attestation de ramonage ou visite des conduits (Art. CH 57)',1,0,0,0),(12,'Relevé de vérification du gaz (Art. GZ 30)',1,0,0,0),(13,'Relevé de vérification des fluides médicaux (Art. U 64 ou J 33)',1,0,0,0),(14,'Relevé ou RVRE des installations électriques et/ou des paratonnerres ou protection contre la foudre (Art. EL 19)',1,0,0,0),(15,'RVRE quinquennal des ascenseurs (Art. AS 9)',1,0,0,0),(16,'Relevé de vérification des ascenseurs (Art. AS 9) et/ou escaliers mécaniques et trottoirs roulants (Art. AS 10)',1,0,0,0),(17,'Contrat d’entretien des ascenseurs, escaliers mécaniques et trottoirs roulants (Art. AS 8)',1,0,0,0),(18,'Attestation de nettoyage du circuit d’extraction (Art. GC 21)',1,0,0,0),(19,'Relevé de vérification des appareils de cuisson (Art. GC 22)',1,0,0,0),(20,'Relevé de vérification des extincteurs (Art. MS 38)',1,0,0,0),(21,'Révision décennal des extincteurs (Art. MS 38)',1,0,0,0),(22,'Relevé de vérification des colonnes sèches (Art. MS 73)',1,0,0,0),(23,'Relevé de vérification des R.I.A. (Art. MS 73)',1,0,0,0),(24,'Relevé de vérification du système d’extinction automatique du type sprinkleur (Art. MS 29/73) ou déversoirs et rideaux d’eau (L 57)',1,0,0,0),(25,'RVRE triennal du sprinkleur (Art. MS 73)',1,0,0,0),(26,'RVRE triennal du SSI A ou B (Art. MS 73)',1,0,0,0),(27,'Relevé de vérification du SSI  ou  d’équipement  d’alarme,  détection,  portes, clapets coupe-feu (Art. MS 73)',1,0,0,0),(28,'Contrat d’entretien du Système de Sécurité Incendie (Art. MS 58)',1,0,0,0),(29,'Dossier d’identité du Système de Sécurité Incendie (Art. MS 73)',1,0,0,0),(30,'Attestation de vérification des communications radioélectriques (Art. MS 71)',1,0,0,0),(31,'RVRE triennal des moyens de communications radioélectriques mode relayés (Art. MS 71)',1,0,0,0),(32,'Relevé de vérification des poteaux d’incendie privés',1,0,0,0),(33,'Relevé de vérification des portes automatiques en façade (Art. GE 6)',1,0,0,0),(34,'Contrat d’entretien des portes automatiques en façade (Art. CO 48)',1,0,0,0),(35,'RVRE des équipements de levage des salles avec espace scénique (L 57)',1,0,0,0),(36,'RVRE triennal des salles de spectacles avec espace scénique (L 57)',1,0,0,0),(37,'Dossier technique amiante',1,0,0,0),(38,'Exercice d’évacuation réalisé',1,0,0,0),(39,'Formation des personnels à l’utilisation des moyens de secours',1,0,0,0),(40,'Cahier des charges fonctionnelles du SSI',0,1,0,0),(41,'Attestation de solidité',0,0,1,1),(42,'Attestation du maître d\'ouvrage',0,0,1,1),(43,'RVRAT',0,0,1,1),(44,'Attestation de réception des hydrants',0,0,1,1),(45,'Dossier d\'identité SSI',0,0,1,1),(46,'Rapport de réception technique du SSI',0,0,1,1),(47,'Mise à jour du dossier d\'identité du SSI',0,0,1,0),(48,'Attestation de réception de modification sprinkleur',0,0,1,0),(49,'Attestation de réception de modification de détection incendie',0,0,1,0);
+INSERT INTO `listedocconsulte` (`ID_DOC`, `LIBELLE_DOC`, `VISITE_DOC`, `ETUDE_DOC`, `VISITERT_DOC`, `VISITEVAO_DOC`, `ORDRE_DOC`) VALUES
+(1, 'Un courrier de', 0, 1, 0, 0, 0),
+(2, 'Un jeu de plans', 0, 1, 0, 0, 0),
+(3, 'Une notice de sécurité', 0, 1, 0, 0, 0),
+(4, 'Une notice descriptive', 0, 1, 0, 0, 0),
+(5, 'Un engagement solidité', 0, 1, 0, 0, 0),
+(6, 'Un rapport initial de contrôle technique', 0, 1, 0, 0, 0),
+(7, 'Une attestation du directeur unique de sécurité', 0, 1, 0, 0, 0),
+(8, 'Désenfumage mécanique : Tous les ans par un technicien compétent (DF 10)', 1, 0, 0, 0, 6),
+(9, 'Désenfumage mécanique : Organisme agréé 3 ans SSI A et B', 1, 0, 0, 0, 7),
+(10, 'Chauffage : Relevé de vérification du chauffage-ventilation (CH 58)', 1, 0, 0, 0, 8),
+(11, 'Ramonage : Attestation de ramonage ou visite des conduits (CH 57)', 1, 0, 0, 0, 10),
+(12, 'Gaz : Relevé de vérification du gaz (GZ 30) (GZ 29)', 1, 0, 0, 0, 12),
+(13, 'Gaz médicaux : Relevé de vérification des fluides médicaux (U 64 / J 33)', 1, 0, 0, 0, 37),
+(14, 'Électricité : Relevé ou RVRE des installations électriques et/ou des paratonnerres ou protection contre la foudre (EL 19)', 1, 0, 0, 0, 14),
+(15, 'Ascenseurs Monte-charges : RVRE quinquennal des ascenseurs (AS 9)', 1, 0, 0, 0, 18),
+(16, 'Ascenseurs Monte-charges : Tous les ans (AS 11)', 1, 0, 0, 0, 17),
+(17, 'Ascenseurs Monte-charges : Contrat d’entretien des ascenseurs, escaliers mécaniques et trottoirs roulants (AS 8)', 1, 0, 0, 0, 19),
+(18, 'Hotte : Attestation de nettoyage du circuit d’extraction (GC 21)', 1, 0, 0, 0, 22),
+(19, 'Appareils de cuisson : Relevé de vérification des appareils de cuisson (GC 22)', 1, 0, 0, 0, 21),
+(20, 'Extincteurs : Relevé de vérification des extincteurs (MS 38)', 1, 0, 0, 0, 30),
+(21, 'Extincteurs : Révision décennale des extincteurs (MS 38)', 1, 0, 0, 0, 31),
+(22, 'Autres installations : Relevé de vérification des colonnes sèches (MS 73)', 1, 0, 0, 0, 42),
+(23, 'RIA : Relevé de vérification des R.I.A. (MS 73)', 1, 0, 0, 0, 29),
+(24, 'Installation fixe d''extinction automatique à eau : Relevé de vérification du système d’extinction automatique du type sprinkleur (MS 29/73) ou déversoirs et rideaux d’eau (L 57)', 1, 0, 0, 0, 27),
+(25, 'Installation fixe d''extinction automatique à eau : RVRE triennal du sprinkleur (MS 73)', 1, 0, 0, 0, 28),
+(26, 'Système de sécurité Incendie Alarme Détection : RVRE triennal du SSI A ou B (MS 73)', 1, 0, 0, 0, 24),
+(27, 'Système de sécurité Incendie Alarme Détection : Relevé de vérification du SSI ou d’équipement d’alarme, détection, portes, clapets coupe-feu (MS 73)', 1, 0, 0, 0, 23),
+(28, 'Système de sécurité Incendie Alarme Détection :  Contrat d’entretien du Système de Sécurité Incendie (MS 58)', 1, 0, 0, 0, 25),
+(29, 'Système de sécurité Incendie Alarme Détection : Dossier d’identité du Système de Sécurité Incendie (MS 73)', 1, 0, 0, 0, 26),
+(30, 'Communication radioélectrique : Attestation de vérification des communications radioélectriques (MS 71)', 1, 0, 0, 0, 35),
+(31, 'Communication radioélectrique : RVRE triennal des moyens de communications radioélectriques mode relayés (MS 71)', 1, 0, 0, 0, 36),
+(32, 'Relevé de vérification des PI/BI (MS 73)', 1, 0, 0, 0, 34),
+(33, 'Portes automatiques : Relevé de vérification des portes automatiques en façade (CO 48)', 1, 0, 0, 0, 3),
+(34, 'Portes automatiques : Contrat d’entretien des portes automatiques en façade (CO 48)', 1, 0, 0, 0, 4),
+(35, 'Espaces scéniques : RVRE des équipements de levage des salles avec espace scénique (L 57)', 1, 0, 0, 0, 38),
+(36, 'Espaces scéniques : RVRE triennal des salles de spectacles avec espace scénique (L 57)', 1, 0, 0, 0, 39),
+(37, 'Dossier technique amiante', 1, 0, 0, 0, 2),
+(38, 'Formation Exercice : Exercice d’évacuation réalisé', 1, 0, 0, 0, 32),
+(39, 'Formation Exercice :  Formation des personnels à l’utilisation des moyens de secours', 1, 0, 0, 0, 33),
+(40, 'Cahier des charges fonctionnelles du SSI', 0, 1, 0, 0, 0),
+(41, 'Attestation de solidité', 0, 0, 1, 1, 0),
+(42, 'Attestation du maître d''ouvrage', 0, 0, 1, 1, 0),
+(43, 'RVRAT', 0, 0, 1, 1, 0),
+(44, 'Attestation de réception des hydrants', 0, 0, 1, 1, 0),
+(45, 'Dossier d''identité SSI', 0, 0, 1, 1, 0),
+(46, 'Rapport de réception technique du SSI', 0, 0, 1, 1, 0),
+(47, 'Mise à jour du dossier d''identité du SSI', 0, 0, 1, 0, 0),
+(48, 'Attestation de réception de modification sprinkleur', 0, 0, 1, 0, 0),
+(49, 'Attestation de réception de modification de détection incendie', 0, 0, 1, 0, 0),
+(50, 'Registre de sécurité', 1, 0, 0, 0, 1),
+(51, 'Désenfumage naturel : Tous les ans par un technicien compétent (DF 10)', 1, 0, 0, 0, 5),
+(52, 'Etanchéité (gaz liquide frigorigène) : Tous les ans par un technicien compétent (CH 58) (CH 57)', 1, 0, 0, 0, 9),
+(53, 'Traitement air VMC : Tous les ans par un technicien compétent (CH 58) (CH 57)', 1, 0, 0, 0, 11),
+(54, 'Groupe électrogène : TC/15j / 1/mois (EL18)', 1, 0, 0, 0, 13),
+(55, 'Installations extérieures de protection contre la foudre : Tous les ans par un technicien compétent (EL 19)', 1, 0, 0, 0, 15),
+(56, 'Éclairage : Tous les ans par un technicien compétent (EC 15)', 1, 0, 0, 0, 16),
+(57, 'Escaliers mécaniques : Annuel OA (AS 10)', 1, 0, 0, 0, 20),
+(58, 'Réglage luminosité et son : L 13 OA 1 an', 1, 0, 0, 0, 40),
+(59, '5ème avec hébergement : PE4 PO1 - 2 ans TC : SSI DF manuel CH GC GZ - 1 an TC : EL/détection + contrat', 1, 0, 0, 0, 41);
 /*!40000 ALTER TABLE `listedocconsulte` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2075,9 +2170,13 @@ DROP TABLE IF EXISTS `prescriptionarticleliste`;
 CREATE TABLE `prescriptionarticleliste` (
   `ID_ARTICLE` bigint(20) NOT NULL AUTO_INCREMENT,
   `LIBELLE_ARTICLE` varchar(255) NOT NULL,
+  `VISIBLE_ARTICLE` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`ID_ARTICLE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+INSERT INTO `prescriptionarticleliste` (`ID_ARTICLE`,`LIBELLE_ARTICLE`) VALUES (1,"");
 
 --
 -- Dumping data for table `prescriptionarticleliste`
@@ -2125,6 +2224,7 @@ CREATE TABLE `prescriptiondossier` (
   `NUM_PRESCRIPTION_DOSSIER` int(11) NOT NULL,
   `ID_PRESCRIPTION_TYPE` bigint(20) DEFAULT NULL,
   `LIBELLE_PRESCRIPTION_DOSSIER` text,
+  `TYPE_PRESCRIPTION_DOSSIER` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`ID_PRESCRIPTION_DOSSIER`),
   UNIQUE KEY `ID_PRESCRIPTION_DOSSIER_UNIQUE` (`ID_PRESCRIPTION_DOSSIER`),
   KEY `fk_prescriptiondossier_dossier1_idx` (`ID_DOSSIER`),
@@ -2205,9 +2305,12 @@ DROP TABLE IF EXISTS `prescriptiontexteliste`;
 CREATE TABLE `prescriptiontexteliste` (
   `ID_TEXTE` bigint(20) NOT NULL AUTO_INCREMENT,
   `LIBELLE_TEXTE` varchar(255) NOT NULL,
+  `VISIBLE_TEXTE` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`ID_TEXTE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+INSERT INTO `prescriptiontexteliste` (`ID_TEXTE`,`LIBELLE_TEXTE`) VALUES (1,"");
 
 --
 -- Dumping data for table `prescriptiontexteliste`
@@ -2231,6 +2334,7 @@ CREATE TABLE `prescriptiontype` (
   `PRESCRIPTIONTYPE_TEXTE` bigint(20) DEFAULT NULL,
   `PRESCRIPTIONTYPE_ARTICLE` bigint(20) DEFAULT NULL,
   `PRESCRIPTIONTYPE_LIBELLE` text,
+  `PRESCRIPTIONTYPE_NUM` int(3) DEFAULT 999,
   PRIMARY KEY (`ID_PRESCRIPTIONTYPE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2295,6 +2399,34 @@ CREATE TABLE `privileges` (
 
 LOCK TABLES `privileges` WRITE;
 /*!40000 ALTER TABLE `privileges` DISABLE KEYS */;
+INSERT INTO `privileges` VALUES (1,'docs','Gestion des documents',1),(2,'groupement_communes','Gestion des groupements de communes',1),(3,'gestion_prescriptions','Gestion des prescriptions',1),(4,'gestion_textes_applicables','Gestion des textes applicables',1),(5,'fil_actus','Écriture dans le fil d\'actualités',1),(6,'gestion_commissions','Gestion des commissions',1),(7,'lecture_commission','Lecture',2),(8,'ecriture_commission','Écriture',2),(9,'creation_commission','Création',2),(10,'modification_odj','Modification de l\'Ordre du Jour',2),(11,'admin','Accès à l\'administration',1),(12,'communes','Gestion des communes',1),(13,'periodicites','Gestion des périodicités',1),(14,'add_etablissement','Création d\'un établissement',3),(15,'add_dossier','Création d\'un dossier',3),(16,'generation_doc_com','Génération des documents de la commission',2),(17,'view_ets','Lecture',4),(18,'edit_ets','Modifier',4),(19,'view_ets','Lecture',5),(20,'edit_ets','Modifier',5),(21,'view_ets','Lecture',6),(22,'edit_ets','Modifier',6),(23,'view_ets','Lecture',7),(24,'edit_ets','Modifier',7),(25,'view_ets','Lecture',8),(26,'edit_ets','Modifier',8),(27,'view_doss','Lecture',9),(28,'edit_doss','Modifier',9),(29,'verrouillage_dossier','Verrouillage d\'un dossier',9);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(50,"edit_avis_com", "Modifier",50);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(51,"edit_statut", "Modifier",51);
+INSERT INTO `privileges` VALUES 
+(52,'view_ets','Lecture',52),
+(53,'edit_ets','Modifier',52),
+(54,'view_ets','Lecture',53),
+(55,'edit_ets','Modifier',53),
+(56,'view_ets','Lecture',54),
+(57,'edit_ets','Modifier',54),
+(58,'view_ets','Lecture',55),
+(59,'edit_ets','Modifier',55);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(100,"view_ets_avis_defavorable", "Voir les établissements sous avis défavorable",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(101,"view_doss_sans_avis", "Voir dossiers de commissions échus sans avis",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(102,"view_ets_ouverts_sans_prochaine_vp", "Voir ets sans prochaine visite périodique",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(103,"view_courrier_sans_reponse", "Voir les courriers sans réponse",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(104,"view_ets_sans_preventionniste", "Voir ets sans préventionniste",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(105,"view_doss_avis_differe", "Voir dossiers avec avis différés",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(106,"view_ets_avis_defavorable_sur_commune", "Voir ets défavorable sur commune utilisateur",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(107,"view_ets_suivis", "Voir ets suivis",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(108,"view_doss_suivis_unlocked", "Voir les dossiers suivis déverrouillés",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(109,"view_doss_suivis_sans_avis", "Voir les dossiers suivis sans avis",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(110,"view_ets_avis_defavorable_suivis", "Voir les établissements défavorables suivis",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(111,"view_next_commissions", "Voir les prochaines commissions",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(112,"view_next_commissions_odj", "Voir les odj des prochaines commissions",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(113,"view_doss_levee_prescriptions", "Date de levée des prescriptions",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(114,"view_doss_absence_quorum", "Dossier avec absence de quorum",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(115,"view_doss_npsp", "Dossiers avec statut ne peut se prononcer",100);
 /*!40000 ALTER TABLE `privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2319,6 +2451,14 @@ CREATE TABLE `resources` (
 
 LOCK TABLES `resources` WRITE;
 /*!40000 ALTER TABLE `resources` DISABLE KEYS */;
+INSERT INTO `resources` VALUES (1,'gestion_parametrages','Gestion et Paramétrages'),(2,'commission','Gestion des calendriers des commissions'),(3,'creations','Gestion des droits de création'),(4,'etablissement_erp_0_0_0_0_0','Établissement (Tous les types - Toutes les catégories - Ignorer les commissions - Ignorer les groupements - Ignorer la commune)'),(5,'etablissement_cell_0_0','Cellule (Tous les types - Toutes les catégories)'),(6,'etablissement_hab_0_0_0','Habitation (Toutes les familles - Ignorer les groupements - Ignorer la commune)'),(7,'etablissement_igh_0_0_0_0','IGH (Toutes les classes - Ignorer les commissions - Ignorer les groupements - Ignorer la commune)'),(8,'etablissement_eic_0_0','EIC (Ignorer les groupements - Ignorer la commune)'),(9,'dossier_0','Dossier (Toutes les natures)');
+INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(50,"avis_commission", "Gestion de l'avis de la commission");
+INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(51,"statut_etablissement", "Gestion du statut d'un établissement");
+INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(52,'etablissement_camp_0_0','Camping (Ignorer les groupements - Ignorer la commune)'),
+(53,'etablissement_temp_0_0','Manifestation temporaire (Ignorer les groupements - Ignorer la commune)'),
+(54,'etablissement_iop_0_0','IOP (Ignorer les groupements - Ignorer la commune)'),
+(55,'etablissement_zone_0_0_0','Zone (Toutes les classes - Ignorer les groupements - Ignorer la commune)');
+INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(100,"dashboard", "Tableau de bord");
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2421,7 +2561,10 @@ CREATE TABLE `typeactivite` (
 
 LOCK TABLES `typeactivite` WRITE;
 /*!40000 ALTER TABLE `typeactivite` DISABLE KEYS */;
-INSERT INTO `typeactivite` VALUES (1,'Châpiteau',1),(2,'Structures',1),(3,'Tentes',1),(4,'Bateaux en stationnement sur les eaux intérieures',2),(5,'Bateaux stationnaires',2),(6,'Etablissements flottants',2),(7,'Gares',5),(8,'Etablissements d’enseignement avec internat pour jeunes handicapés ou inadaptés',7),(9,'Etablissements d’hébergement pour adultes handicapés',7),(10,'Etablissements médico-éducatifs avec internat pour jeunes handicapés ou inadaptés',7),(11,'Structures d’accueil pour personnes âgées',7),(12,'Structures d’accueil pour personnes handicapées',7),(13,'Cabarets',8),(14,'Cinéma',8),(15,'Cirques non forains',8),(16,'Salles d\'audition',8),(17,'Salle de conférences',8),(18,'Salles de pari',8),(19,'Salles de projection',8),(20,'Salles de quartier (ou assimilée)',8),(21,'Salles de réunions',8),(22,'Salles de spectacles',8),(23,'Salles multimédia',8),(24,'Salles polyvalentes à dominante sportive, dont la superficie unitaire est supérieure ou égale à 1 200 m2',8),(25,'Salles polyvalentes non visée par le Type X (salle polyvalente qui n’a pas une destination unique)',8),(26,'Salles réservées aux associations',8),(27,'Aires de vente',9),(28,'Boutiques',9),(29,'Centres commerciaux',9),(30,'Locaux de vente',9),(31,'Magasin de vente',9),(32,'Bars',10),(33,'Brasseries',10),(34,'Cafétaria',10),(35,'Cafés',10),(36,'Cantines',10),(37,'Débits de boissons',10),(38,'Restaurants',10),(39,'Hôtels',11),(40,'Motels',11),(41,'Pensions de famille',11),(42,'Hôtels-restaurants d’altitude',12),(43,'Bals',13),(46,'Salles de danse',13),(47,'Salles de jeux',13),(48,'Arènes',14),(49,'Hippodromes',14),(50,'Piscines',14),(51,'Pistes de patinage',14),(52,'Stades',14),(53,'Terrains de sport',14),(54,'Parcs de stationnement couverts',16),(55,'Auberges de jeunesse (comprenant au moins un local collectif à sommeil)',17),(56,'Auto-écoles',17),(57,'Centres aérés',17),(58,'Centres de loisirs (sans hébergement)',17),(59,'Centres de vacances',17),(60,'Colonies de vacances',17),(61,'Crèches',17),(62,'Ecoles maternelles',17),(63,'Etablissements d’enseignement',17),(64,'Etablissements de formation',17),(65,'Haltes-garderies',17),(66,'Internats des établissements de l\'enseignement primaire et secondaire',17),(67,'Jardins d\'enfant',17),(68,'Lycee public',17),(69,'Refuges de montagne',18),(70,'Bibliothèques',19),(71,'Centres de documentation et de consultation d’archives',19),(72,'Structures gonflables',20),(73,'Etablissements à vocation commerciale destinés à des expositions',21),(74,'Foires-expositions',21),(75,'Salles d’exposition à caractère permanent n’ayant pas une vocation de foire ou de salons ',21),(76,'Salles d’expositions de véhicules automobiles, bateaux, machines et autres volumineux biens d’équipements assimilables',21),(77,'Salons à caractère temporaire',21),(78,'Etablissements de cure thermale ou de thalassothérapie',22),(79,'Etablissements de santé publics ou privés dispensant des soins de courte durée en médecine, chirurgie, obstétrique',22),(80,'Etablissements de santé publics ou privés dispensant des soins de psychiatrie, de suite ou de réadaptation, des soins de longue durée, à des personnes n\'ayant pas leur autonomie de vie dont l\'état nécessite une surveillance médicale constante',22),(81,'Etablissements de thalassothérapie',22),(82,'Pouponnières',22),(83,'Eglises',23),(84,'Mosquées',23),(85,'Synagogues',23),(86,'Temples',23),(87,'Administrations',24),(88,'Banques',24),(89,'Bureaux',24),(90,'Hôtels de ville',24),(91,'Manèges',25),(92,'Patinoires',25),(93,'Piscines couvertes, transformables et mixtes',25),(94,'Salles d\'éducation physique et sportive',25),(95,'Salles omnisports',25),(96,'Salles polyvalentes à dominante sportive, dont l\'aire d\'activité est inférieure à 1200 2 et la hauteur sous plafond supérieure ou égale à 6,50 mètres, etc',25),(97,'Salles sportives spécialisées',25),(98,'Musées',26),(99,'Salles destinées à recevoir des expositions à vocation culturelle, scientifique, technique, artistique, etc. ayant un caractère temporaire',26),(101,'Collège public',17),(103,'En attente de classement',27),(104,'Parc d\'attraction',14),(105,'Locaux à usage collectif d\'une surface unitaire supérieure à 50 mètres carrés des logements-foyers et de l\'habitat de loisirs à gestion collective',15),(106,'Bâtiments ou locaux à usage d\'hébergement qui ne relèvent d\'aucun type défini à l\'article GN 1 et qui permettent d\'accueillir plus de 15 et moins de 100 personnes n\'y élisant pas domicile',15),(107,'Hébergement de mineurs en dehors de leurs familles, le seuil de l\'effectif est fixé à 7 mineurs',15),(108,'Maisons d\'assistants maternels (MAM) dont les locaux accessibles au public sont strictement limités à un seul étage sur rez-de-chaussée et dont l\'effectif ne dépasse pas 16 enfants',15),(109,'Ecoles primaires',17),(110,'Lycee privé',17),(111,'Collège privé',17),(112,'Lycée agricole',17),(113,'Lycée maritime',17);
+INSERT INTO `typeactivite` VALUES (1,'Châpiteau',1),(2,'Structures',1),(3,'Tentes',1),(4,'Bateaux en stationnement sur les eaux intérieures',2),(5,'Bateaux stationnaires',2),(6,'Etablissements flottants',2),(7,'Gares',5),(8,'Etablissements d’enseignement avec internat pour jeunes handicapés ou inadaptés',7),(9,'Etablissements d’hébergement pour adultes handicapés',7),(10,'Etablissements médico-éducatifs avec internat pour jeunes handicapés ou inadaptés',7),(11,'Structures d’accueil pour personnes âgées',7),(12,'Structures d’accueil pour personnes handicapées',7),(13,'Cabarets',8),(14,'Cinéma',8),(15,'Cirques non forains',8),(16,'Salles d\'audition',8),(17,'Salle de conférences',8),(18,'Salles de pari',8),(19,'Salles de projection',8),(20,'Salles de quartier (ou assimilée)',8),(21,'Salles de réunions',8),(22,'Salles de spectacles',8),(23,'Salles multimédia',8),(24,'Salles polyvalentes à dominante sportive, dont la superficie unitaire est supérieure ou égale à 1 200 m2',8),(25,'Salles polyvalentes non visée par le Type X (salle polyvalente qui n’a pas une destination unique)',8),(26,'Salles réservées aux associations',8),(27,'Aires de vente',9),(28,'Boutiques',9),(29,'Centres commerciaux',9),(30,'Locaux de vente',9),(31,'Magasin de vente',9),(32,'Bars',10),(33,'Brasseries',10),(34,'Cafétaria',10),(35,'Cafés',10),(36,'Cantines',10),(37,'Débits de boissons',10),(38,'Restaurants',10),(39,'Hôtels',11),(40,'Motels',11),(41,'Pensions de famille',11),(42,'Hôtels-restaurants d’altitude',12),(43,'Bals',13),(46,'Salles de danse',13),(47,'Salles de jeux',13),(48,'Arènes',14),(49,'Hippodromes',14),(50,'Piscines',14),(51,'Pistes de patinage',14),(52,'Stades',14),(53,'Terrains de sport',14),(54,'Parcs de stationnement couverts',16),(55,'Auberges de jeunesse (comprenant au moins un local collectif à sommeil)',17),(56,'Auto-écoles',17),(57,'Centres aérés',17),(58,'Centres de loisirs (sans hébergement)',17),(59,'Centres de vacances',17),(60,'Colonies de vacances',17),(61,'Crèches',17),(62,'Ecoles maternelles',17),(63,'Etablissements d’enseignement',17),(64,'Etablissements de formation',17),(65,'Haltes-garderies',17),(66,'Internats des établissements de l\'enseignement primaire et secondaire',17),(67,'Jardins d\'enfant',17),(68,'Lycee public',17),(69,'Refuges de montagne',18),(70,'Bibliothèques',19),(71,'Centres de documentation et de consultation d’archives',19),(72,'Structures gonflables',20),(73,'Etablissements à vocation commerciale destinés à des expositions',21),(74,'Foires-expositions',21),(75,'Salles d’exposition à caractère permanent n’ayant pas une vocation de foire ou de salons ',21),(76,'Salles d’expositions de véhicules automobiles, bateaux, machines et autres volumineux biens d’équipements assimilables',21),(77,'Salons à caractère temporaire',21),(78,'Etablissements de cure thermale ou de thalassothérapie',22),(79,'Etablissements de santé publics ou privés dispensant des soins de courte durée en médecine, chirurgie, obstétrique',22),(80,'Etablissements de santé publics ou privés dispensant des soins de psychiatrie, de suite ou de réadaptation, des soins de longue durée, à des personnes n\'ayant pas leur autonomie de vie dont l\'état nécessite une surveillance médicale constante',22),(81,'Etablissements de thalassothérapie',22),(82,'Pouponnières',22),(83,'Eglises',23),(84,'Mosquées',23),(85,'Synagogues',23),(86,'Temples',23),(87,'Administrations',24),(88,'Banques',24),(89,'Bureaux',24),(90,'Hôtels de ville',24),(91,'Manèges',25),(92,'Patinoires',25),(93,'Piscines couvertes, transformables et mixtes',25),(94,'Salles d\'éducation physique et sportive',25),(95,'Salles omnisports',25),(96,'Salles polyvalentes à dominante sportive, dont l\'aire d\'activité est inférieure à 1200m² et la hauteur sous plafond supérieure ou égale à 6,50 mètres, etc',25),(97,'Salles sportives spécialisées',25),(98,'Musées',26),(99,'Salles destinées à recevoir des expositions à vocation culturelle, scientifique, technique, artistique, etc. ayant un caractère temporaire',26),(101,'Collège public',17),(103,'En attente de classement',27),(104,'Parc d\'attraction',14),(105,'Locaux à usage collectif d\'une surface unitaire supérieure à 50 mètres carrés des logements-foyers et de l\'habitat de loisirs à gestion collective',15),(106,'Bâtiments ou locaux à usage d\'hébergement qui ne relèvent d\'aucun type défini à l\'article GN 1 et qui permettent d\'accueillir plus de 15 et moins de 100 personnes n\'y élisant pas domicile',15),(107,'Hébergement de mineurs en dehors de leurs familles, le seuil de l\'effectif est fixé à 7 mineurs',15),(108,'Maisons d\'assistants maternels (MAM) dont les locaux accessibles au public sont strictement limités à un seul étage sur rez-de-chaussée et dont l\'effectif ne dépasse pas 16 enfants',15),(109,'Ecoles primaires',17),(110,'Lycee privé',17),(111,'Collège privé',17),(112,'Lycée agricole',17),(113,'Lycée maritime',17),(115, 'Parc de stationnement mixte', 16),(116, 'Parc de stationnement largement ventilé', 16),(117, 'Parc de stationnement à rangement automatisé', 16);
+INSERT INTO `typeactivite` VALUES (NULL,'EM',3);
+INSERT INTO `typeactivite` VALUES (NULL,'Établissements pénitentiaires',4);
+INSERT INTO `typeactivite` VALUES (NULL,'Grands établissements à exploitation multiple',6);
 /*!40000 ALTER TABLE `typeactivite` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2503,7 +2646,7 @@ CREATE TABLE `utilisateur` (
 
 LOCK TABLES `utilisateur` WRITE;
 /*!40000 ALTER TABLE `utilisateur` DISABLE KEYS */;
-INSERT INTO `utilisateur` VALUES (1,'root','b4b8daf4b8ea9d39568719e1e320076f',NULL,1,NULL,1,1);
+INSERT INTO `utilisateur` VALUES (1,'root','0ab182b5717693a278cd986898742e76',NULL,1,NULL,1,1);
 /*!40000 ALTER TABLE `utilisateur` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2612,6 +2755,7 @@ CREATE TABLE `utilisateurinformations` (
   `DATE_SID` timestamp NULL DEFAULT NULL,
   `ID_UTILISATEURCIVILITE` int(11) unsigned DEFAULT NULL,
   `ID_FONCTION` bigint(20) unsigned DEFAULT NULL,
+  `GRADE_UTILISATEURINFORMATIONS` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`ID_UTILISATEURINFORMATIONS`),
   KEY `fk_utilisateurinformations_utilisateurcivilite1_idx` (`ID_UTILISATEURCIVILITE`),
   KEY `fk_utilisateurinformations_fonction1_idx` (`ID_FONCTION`),
@@ -2626,8 +2770,77 @@ CREATE TABLE `utilisateurinformations` (
 
 LOCK TABLES `utilisateurinformations` WRITE;
 /*!40000 ALTER TABLE `utilisateurinformations` DISABLE KEYS */;
-INSERT INTO `utilisateurinformations` VALUES (1,'ROOT','ROOT',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,99);
+INSERT INTO `utilisateurinformations` VALUES (1,'ROOT','ROOT',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,99,NULL);
 /*!40000 ALTER TABLE `utilisateurinformations` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+-- -----------------------------------------------------
+-- Table `classement`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `classement` ;
+
+CREATE TABLE IF NOT EXISTS `classement` (
+  `ID_CLASSEMENT` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LIBELLE_CLASSEMENT` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`ID_CLASSEMENT`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+LOCK TABLES `classement` WRITE;
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(1, "Artisanale");
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(2, "Commerciale");
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(3, "Industrielle");
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(4, "Lotissement");
+INSERT INTO `classement`(`ID_CLASSEMENT`, `LIBELLE_CLASSEMENT`) VALUES(5, "Autre");
+UNLOCK TABLES;
+
+-- -----------------------------------------------------
+-- Table`etablissementclassement`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `etablissementclassement`;
+
+CREATE TABLE IF NOT EXISTS `etablissementclassement` (
+  `ID_ETABLISSEMENT` BIGINT(20) UNSIGNED NOT NULL,
+  `ID_CLASSEMENT` INT(11) UNSIGNED NOT NULL,
+  INDEX `fk_etablissementclassement_classement1_idx` (`ID_CLASSEMENT` ASC),
+  INDEX `fk_etablissementclassement_etablissement1_idx` (`ID_ETABLISSEMENT` ASC),
+  PRIMARY KEY (`ID_ETABLISSEMENT`),
+  CONSTRAINT `fk_etablissementclassement_classement1`
+    FOREIGN KEY (`ID_CLASSEMENT`)
+    REFERENCES `classement` (`ID_CLASSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `etablissementclassement_etablissement1`
+    FOREIGN KEY (`ID_ETABLISSEMENT`)
+    REFERENCES `etablissement` (`ID_ETABLISSEMENT`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+--
+-- Table structure for table `utilisateur`
+--
+
+DROP TABLE IF EXISTS `utilisateurpreferences`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `utilisateurpreferences` (
+  `ID_UTILISATEURPREFERENCES` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `ID_UTILISATEUR` bigint(20) unsigned NOT NULL,
+  `DASHBOARD_BLOCS` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`ID_UTILISATEURPREFERENCES`),
+  KEY `fk_utilisateurpreferences_utilisateur1_idx` (`ID_UTILISATEUR`),
+  CONSTRAINT `fk_utilisateurpreferences_utilisateur1` FOREIGN KEY (`ID_UTILISATEUR`) REFERENCES `utilisateur` (`ID_UTILISATEUR`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+LOCK TABLES `utilisateurpreferences` WRITE;
+/*!40000 ALTER TABLE `utilisateurpreferences` DISABLE KEYS */;
+INSERT INTO `utilisateurpreferences` VALUES (1,1,NULL);
+/*!40000 ALTER TABLE `utilisateurpreferences` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -2640,3 +2853,49 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2014-06-21 20:53:01
+
+
+-- -----------------------------------------------------
+-- Table`prescriptionregl`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `prescriptionregl` (
+  `ID_PRESCRIPTIONREGL` bigint(20) NOT NULL AUTO_INCREMENT,
+  `PRESCRIPTIONREGL_TYPE` tinyint(1) DEFAULT NULL,
+  `PRESCRIPTIONREGL_LIBELLE` text,
+  `PRESCRIPTIONREGL_VISIBLE` tinyint(1) DEFAULT 1,
+  PRIMARY KEY (`ID_PRESCRIPTIONREGL`)
+) 
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
+-- Table`prescriptionreglassoc`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `prescriptionreglassoc` (
+  `ID_PRESCRIPTIONREGL` bigint(20) NOT NULL,
+  `NUM_PRESCRIPTIONASSOC` int(11) NOT NULL,
+  `ID_TEXTE` bigint(20) NOT NULL,
+  `ID_ARTICLE` bigint(20) NOT NULL,
+  INDEX `fk_prescriptionreglassoc_prescriptionregl1_idx` (`ID_PRESCRIPTIONREGL`),
+  PRIMARY KEY (`ID_PRESCRIPTIONREGL`,`NUM_PRESCRIPTIONASSOC`),
+  CONSTRAINT `fk_prescriptionreglassoc_prescriptionregl1` 
+    FOREIGN KEY (`ID_PRESCRIPTIONREGL`)
+    REFERENCES `prescriptionregl` (`ID_PRESCRIPTIONREGL`) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table`cache` 
+-- -----------------------------------------------------
+
+CREATE TABLE `cache` (
+  `ID_CACHE` varchar(250) NOT NULL,
+  `VALUE_CACHE` text,
+  `EXPIRE_CACHE` int,
+  PRIMARY KEY (`ID_CACHE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

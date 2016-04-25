@@ -6,7 +6,7 @@ $(document).ready(function(){
 
 	//JQuery UI Date picker
 	$('.date').live('click', function() {
-		$(this).datepicker({showOn:'focus', dateFormat: 'dd/mm/yy', firstDay: 1}).focus();
+		$(this).datepicker({showOn:'focus'}).focus();
 	});
 	
 	//Pour les heures
@@ -46,9 +46,9 @@ $(document).ready(function(){
 		return false;
 	});
 
-	
+	/*
 	$("#AVIS_DOSSIER").live('change',function(){
-		
+		alert('');
 		var genre = $('#genreInfo').val();
 		var typeDossier = $("#TYPE_DOSSIER").val();
 		var natureDossier = $("#selectNature").val();
@@ -65,10 +65,9 @@ $(document).ready(function(){
 			$("#FACTDANGE").hide();
 		}
 	});
-	
-	/*
 		GESTION DES PRESCRIPTIONS MOTIVANT UN AVIS DEFAVORABLE
 	*/
+	/*
 	var dialogMAD = $('<div style="display:none"></div>').appendTo('body');
 	
 	dialogMAD.dialog({
@@ -88,6 +87,7 @@ $(document).ready(function(){
 			
 		}
 	});
+	
 	
 	$(".motiveAvisDef").live('click',function(){
 		//motive avis défavorable clickage de check
@@ -109,7 +109,7 @@ $(document).ready(function(){
 
 		}
 	});
-	
+	*/
 	
 }); //FIN DOCUMENT READY FUNCTION
 	

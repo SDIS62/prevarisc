@@ -2,7 +2,7 @@
 
 [Prevarisc](http://sdis62.github.io/prevarisc/) - Application web open-source gérant l'ensemble de l'activité du service prévention au sein d'un SDIS.
 
-![](https://www.dropbox.com/s/dcfsalor1tqcap9/Capture%20d%27%C3%A9cran%202014-06-20%2010.50.30.png?dl=1)
+![](http://sdis62.github.io/prevarisc/assets/img/screenshot.png)
 
 ## Caractéristiques
 
@@ -27,16 +27,17 @@ $ chmod –R 755 public/
 ```
 Ensuite vous pouvez créer un fichier secret.ini dans application/configs afin de configurer Prevarisc pour qu'il ait accès à la base de données (entre autres).
 Vous devez créer un Virtualhost pointant vers le dossier public de Prevarisc.
-Une documentation détaillée est disponible ici : [Documentation d'installation](https://github.com/SDIS62/prevarisc/blob/master/docs/documentation_installation.md).
+Une documentation détaillée est disponible ici : [Documentation d'installation](https://github.com/SDIS62/prevarisc/blob/2.x/docs/documentation_installation.md).
 
 ## Suivi du projet
 
 * [Travail en cours / jalons](https://github.com/SDIS62/prevarisc/issues/milestones) ;
-* [Suivi des bugs et corrections](https://github.com/SDIS62/prevarisc/issues).
+* [Suivi des bugs et corrections](https://github.com/SDIS62/prevarisc/issues);
+* [FAQ](https://github.com/SDIS62/prevarisc/issues?q=is%3Aissue+label%3Aquestion).
 
 ## Participation au projet
 
-Voir la [documentation de contribution](https://github.com/SDIS62/prevarisc/blob/master/CONTRIBUTING.md).
+Voir la [documentation de contribution](https://github.com/SDIS62/prevarisc/blob/2.x/CONTRIBUTING.md).
 
 Ps: Nous sommes régulièrement solicité sur l'ajout et/ou sur la suppression de certaines fonctionnalités. Si un changement peut avoir un impact positif sur l'ensemble des utilisateurs, nous serions heureux de l'examiner. 
 
