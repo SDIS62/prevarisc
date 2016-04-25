@@ -132,6 +132,19 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 					break;
 				}
 				addChamp($dossInfos,'avisDossier', $avis);
+				
+				switch($dossierInfos['AVIS_DOSSIER_COMMISSION']){
+					case 1:
+						$avis_commission = "Favorable";
+					break;
+					case 2:
+						$avis_commission = "Défavorable";
+					break;
+					default:
+						$avis_commission = "";
+					break;
+				}
+				addChamp($dossInfos,'avisDossierCommission', $avis_commission);
 
 				$listeDocUrba = "";
 				foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
