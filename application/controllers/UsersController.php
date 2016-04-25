@@ -9,8 +9,8 @@ class UsersController extends Zend_Controller_Action
         $service_user = new Service_User;
         $service_search = new Service_Search;
 
-        $this->view->users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, true, 100)['results'];
-        $this->view->inactives_users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, false, 100)['results'];
+        $this->view->users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, true, 1000)['results'];
+        $this->view->inactives_users = $service_search->users(null, null, $this->hasParam('gid') ? $this->_request->getParam('gid') : null, false, 1000)['results'];
 
         $this->view->groupes = $service_user->getAllGroupes();
     }
@@ -26,7 +26,7 @@ class UsersController extends Zend_Controller_Action
 
         $this->view->user = $service_user->find($this->_request->getParam('uid'));
         $this->view->commissions = $service_commission->getAll();
-        $this->view->groupements = $service_groupement->findAll();
+        $this->view->groupements = $service_groupement->findGroupementAndGroupementType();
         $this->view->fonctions = $service_user->getAllFonctions();
         $this->view->communes = $service_adresse->getAllCommunes();
         $this->view->groupes = $service_user->getAllGroupes();
@@ -57,7 +57,7 @@ class UsersController extends Zend_Controller_Action
         $service_adresse = new Service_Adresse;
 
         $this->view->commissions = $service_commission->getAll();
-        $this->view->groupements = $service_groupement->findAll();
+        $this->view->groupements = $service_groupement->findGroupementAndGroupementType();
         $this->view->fonctions = $service_user->getAllFonctions();
         $this->view->communes = $service_adresse->getAllCommunes();
         $this->view->groupes = $service_user->getAllGroupes();
@@ -73,7 +73,7 @@ class UsersController extends Zend_Controller_Action
                 $this->_helper->redirector('index', null, null);
             }
             catch(Exception $e) {
-                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'utilisateur n\'a pas ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'utilisateur n\'a pas été ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
             }
         }
 
@@ -113,6 +113,8 @@ class UsersController extends Zend_Controller_Action
                         }
                     }
                 }
+                $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+                $cache->remove('acl');
 
                 $this->_helper->flashMessenger(array(
                     'context' => 'success',
@@ -126,6 +128,7 @@ class UsersController extends Zend_Controller_Action
                     'message' => $e->getMessage()
                 ));
             }
+            
             // Redirection
             $this->_helper->redirector('matrice-des-droits');
         }
@@ -236,6 +239,7 @@ class UsersController extends Zend_Controller_Action
         unset($this->view->genres[0]);
         $this->view->resources = $model_resource->fetchAll();
         $this->view->familles = $service_famille->getAll();
+        $this->view->classements = $service_genre->getClassements();
         $this->view->classes = $service_classe->getAll();
     }
 
@@ -330,7 +334,7 @@ class UsersController extends Zend_Controller_Action
                                 }
 
                                 $text = 'Habitation (';
-                                $text .= (is_array($this->_request->types) ? 'Familles ' . implode($array, '-') : 'Toutes les familles') . ' - ';
+                                $text .= (is_array($this->_request->familles) ? 'Familles ' . implode($array, '-') : 'Toutes les familles') . ' - ';
                                 $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
                                 $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
                                 $text .= ')';
@@ -350,7 +354,7 @@ class UsersController extends Zend_Controller_Action
                                         $tmp_classes = $service_classe->getAll();
                                         $classes = array();
                                         foreach($tmp_classes as $t) {
-                                            $classes[$t['ID_TYPEACTIVITE']] = $t['LIBELLE_ACTIVITE'];
+                                            $classes[$t['ID_CLASSE']] = $t['LIBELLE_CLASSE'];
                                         }
                                         $array[$key] = $classes[$val];
                                     });
@@ -370,6 +374,65 @@ class UsersController extends Zend_Controller_Action
                                 $name .= $this->_request->commune;
 
                                 $text = 'EIC (';
+                                $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
+                                $text .= ')';
+                                break;
+                            
+                            case '7':
+                                $name = 'etablissement_camp_';
+                                $name .= $this->_request->groupements . '_';
+                                $name .= $this->_request->commune;
+                                
+                                $text = 'Camping (';
+                                $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
+                                $text .= ')';
+                                break;
+                            
+                            case '8':
+                                $name = 'etablissement_temp_';
+                                $name .= $this->_request->groupements . '_';
+                                $name .= $this->_request->commune;
+                                
+                                $text = 'Manifestation temporaire (';
+                                $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
+                                $text .= ')';
+                                break;
+                            
+                            case '9':
+                                $name = 'etablissement_iop_';
+                                $name .= $this->_request->groupements . '_';
+                                $name .= $this->_request->commune;
+                                
+                                $text = 'IOP (';
+                                $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
+                                $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
+                                $text .= ')';
+                                break;
+                            
+                            case '10':
+                                $name = 'etablissement_zone_';
+                                $name .= (is_array($this->_request->classements) ? implode($this->_request->classements, '-') : '0') . '_';
+                                $name .= $this->_request->groupements . '_';
+                                $name .= $this->_request->commune;
+                                
+                                if(is_array($this->_request->classements)) {
+                                    $array = $this->_request->classements;
+                                    array_walk($array, function(&$val, $key) use(&$array){
+                                        $service_genre = new Service_Genre;
+                                        $tmp_classement = $service_genre->getClassements();
+                                        $classement = array();
+                                        foreach($tmp_classement as $t) {
+                                            $classement[$t['ID_CLASSEMENT']] = $t['LIBELLE_CLASSEMENT'];
+                                        }
+                                        $array[$key] = $classement[$val];
+                                    });
+                                }
+                                
+                                $text = 'Zone (';
+                                $text .= (is_array($this->_request->classements) ? 'Classes ' . implode($array, '-') : 'Tous les classements') . ' - ';
                                 $text .= ($this->_request->groupements == 0 ? 'Ignorer les groupements' : 'Sur les groupements de l\'utilisateur') . ' - ';
                                 $text .= ($this->_request->commune == 0 ? 'Ignorer la commune' : 'Sur la commune de l\'utilisateur');
                                 $text .= ')';

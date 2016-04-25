@@ -1,7 +1,9 @@
 <?php
 echo "
 	<br/><br/>
-	<ul class='prescriptiontypeArticle_".$this->idArticle." unstyled'>
+	<form id='FormPrescriptiontypeArticle_".$this->idArticle."' >
+		<input type='hidden' name='type' value='prescriptionType' />
+		<ul class='unstyled classement prescriptiontypeArticle_".$this->idArticle."' >
 ";
 $nbPrescType = count($this->prescriptionType);
 for($i=0; $i < $nbPrescType; $i++)
@@ -26,8 +28,12 @@ for($i=0; $i < $nbPrescType; $i++)
 			";
 			if($cpt)
 			{
-				echo "<td rowspan='".$nbAssoc."' class='span5'>".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."</td>";
-				echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><button class='editPrescriptionType btn' id='' >Editer</button></td>";
+				echo "
+					<td rowspan='".$nbAssoc."' class='span5'>
+						<input type='hidden' name='prescType[]' value='".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' />
+						".nl2br($this->prescriptionType[$i][0]['PRESCRIPTIONTYPE_LIBELLE'])."
+					</td>";
+				echo "<td rowspan='".$nbAssoc."' class='span1' style='vertical-align:top;'><a href='#myModal' role='button' class='editPrescriptionType btn' data-toggle='modal'>Editer</a></td>";
 				$cpt = false;
 			}
 			echo "
@@ -41,14 +47,31 @@ for($i=0; $i < $nbPrescType; $i++)
 	}
 }	
 echo "
-	</ul>
+		</ul>
+	</form>
 	<br/>
-	<button class='prescription btn' id='addPrescriptionArticle_".$this->idArticle."'>Ajouter une prescription</button>
+	<a href='#myModal' role='button' class='prescription btn' id='addPrescriptionArticle_".$this->idArticle."' data-toggle='modal'>Ajouter une prescription</a>
 ";
 ?>
 
 <script type="text/javascript">
-$(document).ready(function(){
-	
-});
+
+	$(".classement").sortable({
+		update: function(event, ui) {
+			var formId = $(this).parent();
+			var data = formId.serialize();
+			$.ajax({
+				type: "POST",
+				url: "/gestion-prescriptions/move",
+				data: data,
+				beforeSend: function(){
+					$(this).disableSelection();
+				},
+				success: function(msg){
+					$(this).enableSelection();
+				}
+			});
+		}
+	});
+
 </script>

@@ -1,17 +1,40 @@
 <?php
 	echo "
+		<div class='row'>
+			<div class='span3'>
+				<!--
+					<a href='/gestion-prescriptions/gestion-rappel-reg' >Gestion des prescriptions type</a>
+				-->
+			</div>
+			<div class='span3'>
+				<a href='/gestion-prescriptions/gestion-rappel-reg' >Gestion des rappels réglementaires</a>
+			</div>
+			<div class='span2'>
+				<a href='/gestion-prescriptions/gestion-textes' >Gestion des textes</a>
+			</div>
+			<div class='span2'>
+				<a href='/gestion-prescriptions/gestion-articles' >Gestion des articles</a>
+			</div>
+			<div class='span2'>
+			</div>
+		</div>
 		<h3 class='page-header'>Gestion des prescriptions types</h3>
 		<br/>
 	";
 	
 	echo "
-		<ul class='prescriptioncat unstyled'>
+		<form id='FormPrescriptioncat_".$this->idCategorie."' >
+			<input type='hidden' name='type' value='categorie' />
+			<ul class='prescriptioncat unstyled classement'>
 	";
 	foreach($this->listePrescriptionCat as $val => $ue)
 	{
 		echo "
 			<li id='categorie_".$ue['ID_PRESCRIPTION_CAT']."'>
-				<span style='font-size:17px;font-weight:bold;'>".$ue['LIBELLE_PRESCRIPTION_CAT']."</span>
+				<span style='font-size:17px;font-weight:bold;'>
+					<input type='hidden' name='categorie[]' value='".$ue['ID_PRESCRIPTION_CAT']."' />
+					".$ue['LIBELLE_PRESCRIPTION_CAT']."
+				</span>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<button class='showDetailCat btn' id='showtexte_".$ue['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
 				<button class='hideDetailCat btn' id='hidetexte_".$ue['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
@@ -25,7 +48,8 @@
 		";
 	}
 	echo "
-		</ul>
+			</ul>
+		</form>
 		<ul class='prescriptiontypeWithoutCat' class='unstyled'>
 	";
 	$nbPrescType = count($this->prescriptionType);
@@ -69,6 +93,24 @@
 		<br/>
 	";
 ?>
+
+
+ 
+<!-- Modal -->
+<div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style='width:1000px;margin-left:-500px;' >
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Gestion prescription type</h3>
+	</div>
+	<div class="modal-body">
+	</div>
+	<div class="modal-footer">
+		<img id='loading' src='/images/load.gif' style='display:none;'/>
+		<button class="btn btn-primary savePrescription">Sauvegarder</button>
+		<button class="btn closemodal" data-dismiss="modal" aria-hidden="true">Annuler</button>	
+	</div>
+</div>
+
 <script type="text/javascript">
 
 $(document).ready(function(){
@@ -84,9 +126,11 @@ $(document).ready(function(){
 			success: function(msg){
 				$("#texte_"+idCat).html(msg);
 				$("#showtexte_"+idCat).hide();
-				$("#hidetexte_"+idCat).show();				
+				$("#hidetexte_"+idCat).show();
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	//Masque les textes appartenant à la catégorie
@@ -96,6 +140,7 @@ $(document).ready(function(){
 		$("#texte_"+idCat).html('');
 		$("#hidetexte_"+idCat).hide();
 		$("#showtexte_"+idCat).show();
+		return false;
 	});
 
 	$(".showDetailTexte").live('click',function(){
@@ -109,15 +154,25 @@ $(document).ready(function(){
 				$("#article_"+idTexte).html(msg);
 				$("#showarticle_"+idTexte).hide();
 				$("#hidearticle_"+idTexte).show();
+				return false;
 			}
 		});
+		return false;
+	});
+
+	$(".hideDetailTexte").live('click',function(){
+		var tabId = $(this).attr('id').split('_');
+		var idTexte = tabId[1];
+		$("#article_"+idTexte).html('');
+		$("#hidearticle_"+idTexte).hide();
+		$("#showarticle_"+idTexte).show();
+		return false;
 	});
 
 	$(".showDetailArticle").live('click',function(){
 		//requete ajax pour trouver les prescriptions faisant partie de cette catégorie
 		var tabId = $(this).attr('id').split('_');
 		var idArticle = tabId[1];
-		//alert(idArticle);
 		$.ajax({
 			type: "POST",
 			url: "/gestion-prescriptions/showarticlecontenu/idArticle/"+idArticle,
@@ -125,8 +180,10 @@ $(document).ready(function(){
 				$("#articleDetail_"+idArticle).html(msg);
 				$("#showDetailArticle_"+idArticle).hide();
 				$("#hideDetailArticle_"+idArticle).show();
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	$(".hideDetailArticle").live('click',function(){
@@ -135,9 +192,9 @@ $(document).ready(function(){
 		$("#articleDetail_"+idArticle).html('');
 		$("#showDetailArticle_"+idArticle).show();
 		$("#hideDetailArticle_"+idArticle).hide();
+		return false;
 	});
-//Gestion des catégories
-	//$(".prescriptioncat").sortable().disableSelection();
+	//Gestion des catégories
 	
 	var dialogCategorie = $('<div style="display:none;"></div>').appendTo('body');
 	
@@ -146,13 +203,13 @@ $(document).ready(function(){
 		$.ajax({
 			type: "POST",
 			url: "/gestion-prescriptions/formcategorie",
-			//data: "&id="+id,
 			success: function(msg){
-				//alert(msg);
 				dialogCategorie.html(msg);
 				dialogCategorie.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	$(".editCategorie").live('click',function(){
@@ -163,11 +220,12 @@ $(document).ready(function(){
 			url: "/gestion-prescriptions/formcategorie",
 			data: "&id="+id,
 			success: function(msg){
-				//alert(msg);
 				dialogCategorie.html(msg);
 				dialogCategorie.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});	
 	
 	dialogCategorie.dialog({
@@ -220,15 +278,16 @@ $(document).ready(function(){
 				//alert(msg);
 				dialogTexte.html(msg);
 				dialogTexte.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	$(".editTexte").live('click',function(){
 		//On ouvre la boite de dialogue
 		//On commence par récuperer l'id de la catégorie dans laquelle on va inserer le texte
 		var idTexte = $(this).attr('id');
-		//alert(idTexte);
 		$.ajax({
 			type: "POST",
 			url: "/gestion-prescriptions/formtexte",
@@ -237,8 +296,10 @@ $(document).ready(function(){
 				//alert(msg);
 				dialogTexte.html(msg);
 				dialogTexte.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 	
 	dialogTexte.dialog({
@@ -284,17 +345,17 @@ $(document).ready(function(){
 		//On commence par récuperer l'id de la catégorie dans laquelle on va inserer le texte
 		var tabId = $(this).parent().attr('id').split('_');
 		var idTexte = tabId[1];
-		//alert(idTexte);
 		$.ajax({
 			type: "POST",
 			url: "/gestion-prescriptions/formarticle",
 			data: "&idTexte="+idTexte,
 			success: function(msg){
-				//alert(msg);
 				dialogArticle.html(msg);
 				dialogArticle.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
 
 	dialogArticle.dialog({
@@ -310,21 +371,15 @@ $(document).ready(function(){
 					url: "/gestion-prescriptions/savearticle",
 					data: $("#formArticle").serialize(),
 					success: function(msg){
-						//alert($("#idTexte").val()+" "+$("#idArticle").val());
 						if($("#idTexte").val()){
 							//cas d'un création
-							//alert("creation");
 							$(".prescriptionarticle_"+$("#idTexte").val()).append(msg);
 						}else{
-							//cas d'une édition
-							//alert("edition");							
+							//cas d'une édition					
 							$("#article_"+$("#idArticle").val()).html(msg);
 						}
 						dialogArticle.html("");
 						dialogArticle.dialog("close");
-						//si edit on supprime la catégorie et on ajoute la nouvelle
-						
-						//si création on ajoute la catégorie dans la liste
 					}
 				});
 				return false;
@@ -343,23 +398,21 @@ $(document).ready(function(){
 		//On ouvre la boite de dialogue
 		//On commence par récuperer l'id de la catégorie dans laquelle on va inserer le texte
 		var idArticle = $(this).attr('id');
-		//alert(idTexte);
 		$.ajax({
 			type: "POST",
 			url: "/gestion-prescriptions/formarticle",
 			data: "&idArticle="+idArticle,
 			success: function(msg){
-				//alert(msg);
 				dialogArticle.html(msg);
 				dialogArticle.dialog("open");
+				return false;
 			}
 		});
+		return false;
 	});
+
 //Gestion des prescriptions type
-	var dialogPrescription = $('<div style="display:none;"></div>').appendTo('body');
-	
 	$(".prescription").live('click',function(){
-		//alert($(this).attr('id'));
 		var tabId = $(this).attr('id').split('_');
 		var typePresc = tabId[0];
 		var idEmpl = tabId[1];
@@ -367,23 +420,28 @@ $(document).ready(function(){
 			type: "POST",
 			url: "/gestion-prescriptions/formprescription",
 			data: "&typePresc="+typePresc+"&empl="+idEmpl,
+			beforeSend: function(){
+				$(".modal-body").html("<img src='/images/load.gif' />");
+			},
 			success: function(msg){
-				//alert(msg);
-				dialogPrescription.html(msg);
+				$(".modal-body").html(msg);
 				$.ajax({
 					type: "POST",
 					url: "/gestion-prescriptions/emplacement",
 					data: $("#formPrescription").serialize(),
+					beforeSend: function(){
+						$("#selectEmplacement").html("<img src='/images/load.gif' />");
+					},
 					success: function(msg){
-						//alert(msg);
 						$("#selectEmplacement").html(msg);
+						return false;
 					}
 				});
-				dialogPrescription.dialog("open");
 			}
 		});
+		return false;
 	});
-	
+
 	$(".selectCategorie").live('click',function(){
 		$("#PRESCRIPTIONTYPE_CATEGORIE").val($(this).attr('id'));
 		$.ajax({
@@ -391,7 +449,6 @@ $(document).ready(function(){
 			url: "/gestion-prescriptions/emplacement",
 			data: $("#formPrescription").serialize(),
 			success: function(msg){
-				//alert(msg);
 				$("#selectEmplacement").html(msg);
 			}
 		});
@@ -405,7 +462,6 @@ $(document).ready(function(){
 			url: "/gestion-prescriptions/emplacement",
 			data: $("#formPrescription").serialize(),
 			success: function(msg){
-				//alert(msg);
 				$("#selectEmplacement").html(msg);
 			}
 		});
@@ -419,7 +475,6 @@ $(document).ready(function(){
 			url: "/gestion-prescriptions/emplacement",
 			data: $("#formPrescription").serialize(),
 			success: function(msg){
-				//alert(msg);
 				$("#selectEmplacement").html(msg);
 			}
 		});
@@ -439,106 +494,67 @@ $(document).ready(function(){
 			url: "/gestion-prescriptions/emplacement",
 			data: $("#formPrescription").serialize(),
 			success: function(msg){
-				//alert(msg);
 				$("#selectEmplacement").html(msg);
 			}
 		});
 		return false;
 	});
-	
-	dialogPrescription.dialog({
-		title: "Gestion prescription type",
-		modal: true,
-		autoOpen: false,
-		width: 'auto',
-		height: 'auto',
-		buttons: {
-			"Sauvegarder": function() {
-				//alert('');
-				var compteurTA = 0;
-				$("input[name='texte[]']").each(function(){
-					compteurTA++;
-				});
-				//alert(compteurTA);
-				if(compteurTA > 0 && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
-				{
-					$.ajax({
-						type: "POST",
-						url: "/gestion-prescriptions/saveprescriptiontype",
-						data: $("#formPrescription").serialize(),
-						success: function(msg){
-							if($("#ID_PRESCRIPTIONTYPE").val() != '')
-							{
-								$("#prescriptiontype_"+$("#ID_PRESCRIPTIONTYPE").val()).remove();
-							}
-							
-							if($("#PRESCRIPTIONTYPE_CATEGORIE").val() == '')
-							{
-								//dans le cas ou la prescription n'appartient à aucune catégorie
-								$(".prescriptiontypeWithoutCat").append(msg);							
-							}
-							else if($("#PRESCRIPTIONTYPE_TEXTE").val() == '' && $("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
-							{
-								//dans le cas ou on ajouter une prescription dans une catégorie
-								if($("#texte_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val()).html())
-								{
-									//alert("#prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val());
-									$("#prescriptiontypeCat_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val()).append(msg);
-								}
-							}
-							else if($("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
-							{
-								//dans le cas ou on ajouter une prescription dans un texte
-								//alert("#article_"+$("#PRESCRIPTIONTYPE_TEXTE").val());
-								if($("#article_"+$("#PRESCRIPTIONTYPE_TEXTE").val()).html())
-								{
-									//alert("visible #prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_TEXTE").val());
-									$(".prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_TEXTE").val()).append(msg);
-								}
-							}
-							else
-							{
-								//cas ou on ajoute une prescription directement dans un article
-								//alert("#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val());
-								if($(".prescriptiontypeArticle_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).html())
-								{
-									//alert('visible '+"#articleDetail_"+$("#PRESCRIPTIONTYPE_ARTICLE").val());
-									$(".prescriptiontypeArticle_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).append(msg);
-								}
-							}
-							
-							
-							dialogPrescription.html("");
-							dialogPrescription.dialog("close");
-					
-							return false;
-						}
-					});
-				}
-				return false;
-			},
-			"Annuler": function() {
-				dialogPrescription.html("");
-				dialogPrescription.dialog("close");
-			}
-		},
-		close: function(event, ui){
-			
-		}
-	});
-	
-	$("#addAssoc").live('click',function(){
-		var texte = $("#LIBELLE_TEXTE").val();
-		var article = $("#LIBELLE_ARTICLE").val();
-		if(texte != '' || article != '')
+
+	$(".savePrescription").live('click',function(){
+		var compteurTA = 0;
+		$("input[name='texte[]']").each(function(){
+			compteurTA++;
+		});
+		var data = $("#formPrescription").serialize();
+		if(compteurTA > 0 && $("#LIBELLE_PRESCRIPTIONTYPE").val() != '')
 		{
-			var assoc = '';
-			assoc += '<tr><td><input type="hidden" name="texte[]" value="'+texte+'" />'+texte+'</td>';
-			assoc += '<td><input type="hidden" name="article[]" value="'+article+'" />'+article+'</td>';
-			assoc += '<td><a href="" class="suppAssoc">&times;</a></td></tr>';
-			$("#association").append(assoc);
-			$("#LIBELLE_TEXTE").val('');
-			$("#LIBELLE_ARTICLE").val('');
+			$.ajax({
+				type: "POST",
+				url: "/gestion-prescriptions/saveprescriptiontype",
+				data: data,
+				beforeSend: function(){
+					$("#loading").show();
+				},
+				success: function(msg){
+					if($("#ID_PRESCRIPTIONTYPE").val() != '')
+					{
+						$("#prescriptiontype_"+$("#ID_PRESCRIPTIONTYPE").val()).remove();
+					}
+					
+					if($("#PRESCRIPTIONTYPE_CATEGORIE").val() == '')
+					{
+						//dans le cas ou la prescription n'appartient à aucune catégorie
+						$(".prescriptiontypeWithoutCat").append(msg);							
+					}
+					else if($("#PRESCRIPTIONTYPE_TEXTE").val() == '' && $("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
+					{
+						//dans le cas ou on ajouter une prescription dans une catégorie
+						if($("#texte_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val()).html())
+						{
+							$("#prescriptiontypeCat_"+$("#PRESCRIPTIONTYPE_CATEGORIE").val()).append(msg);
+						}
+					}
+					else if($("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
+					{
+						//dans le cas ou on ajouter une prescription dans un texte
+						if($("#article_"+$("#PRESCRIPTIONTYPE_TEXTE").val()).html())
+						{
+							$(".prescriptiontypeTexte_"+$("#PRESCRIPTIONTYPE_TEXTE").val()).append(msg);
+						}
+					}
+					else
+					{
+						//cas ou on ajoute une prescription directement dans un article
+						if($(".prescriptiontypeArticle_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).html())
+						{
+							$(".prescriptiontypeArticle_"+$("#PRESCRIPTIONTYPE_ARTICLE").val()).append(msg);
+						}
+					}
+					$('.closemodal').click();
+					$("#loading").hide();
+					return false;
+				}
+			});
 		}
 		return false;
 	});
@@ -550,26 +566,51 @@ $(document).ready(function(){
 	
 	$(".editPrescriptionType").live('click',function(){
 		var tabId = $(this).parent().parent().parent().parent().parent().attr('id').split('_');
-		var idPrescType = tabId[1];		
+		var idPrescType = tabId[1];
 		$.ajax({
 			type: "POST",
 			url: "/gestion-prescriptions/formprescription",
 			data: "&idPrescType="+idPrescType,
+			beforeSend: function(){
+				$(".modal-body").html("<img src='/images/load.gif' />");
+			},
 			success: function(msg){
-				//alert(msg);
-				dialogPrescription.html(msg);
+				$(".modal-body").html(msg);
 				$.ajax({
 					type: "POST",
 					url: "/gestion-prescriptions/emplacement",
 					data: $("#formPrescription").serialize(),
+					beforeSend: function(){
+						$("#selectEmplacement").html("<img src='/images/load.gif' />");
+					},
 					success: function(msg){
-						//alert(msg);
-						$("#selectEmplacement").html(msg);
+						$("#selectEmplacement").html(msg);						
 					}
 				});
-				dialogPrescription.dialog("open");
 			}
 		});
+		return false;
 	});
+
+
 });
+
+$(".classement").sortable({
+	update: function(event, ui) {
+		var formId = $(this).parent();
+		var data = formId.serialize();
+		$.ajax({
+			type: "POST",
+			url: "/gestion-prescriptions/move",
+			data: data,
+			beforeSend: function(){
+				$(this).disableSelection();
+			},
+			success: function(msg){
+				$(this).enableSelection();
+			}
+		});
+	}
+});
+
 </script>

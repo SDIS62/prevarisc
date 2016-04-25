@@ -57,10 +57,10 @@
                     $this->select
                          ->from(array("e" => "etablissement"), array("NUMEROID_ETABLISSEMENT", "DUREEVISITE_ETABLISSEMENT", "NBPREV_ETABLISSEMENT"))
                          ->columns(array(
-                            "NB_ENFANTS" => "( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
+                            "NB_ENFANTS" => new Zend_Db_Expr("( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
                                 FROM etablissement
                                 INNER JOIN etablissementlie ON etablissement.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT
-                                WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"
+                                WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)")
                          ))
                          ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                          ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER"))
@@ -76,7 +76,8 @@
                          ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
                          ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
                          ->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
-                         ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
+                         ->order("CAST(etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS AS UNSIGNED)")
+                         ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS")
                          ->group("e.ID_ETABLISSEMENT");
 
                     break;
@@ -86,25 +87,28 @@
                     $this->select
                          ->from(array("d" => "dossier"))
                          ->columns(array(
-                            "NB_DOSS_LIES" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                             "NB_PJ" => new Zend_Db_Expr("(SELECT COUNT(dossierpj.ID_DOSSIER)
+                                 FROM dossierpj
+                                 WHERE dossierpj.ID_DOSSIER = d.ID_DOSSIER)"),
+                            "NB_DOSS_LIES" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
-                                WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)",
-                            "NB_URBA" => "( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
+                                WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                            "NB_URBA" => new Zend_Db_Expr("( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
                                 FROM dossier
                                 INNER JOIN dossierdocurba ON dossierdocurba.ID_DOSSIER = dossier.ID_DOSSIER
                                 WHERE dossier.ID_DOSSIER = d.ID_DOSSIER
-                                LIMIT 1)",
-                            "ALERTE_RECEPTION_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                                LIMIT 1)"),
+                            "ALERTE_RECEPTION_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
                                 INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                                WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)",
-                            "ECHEANCIER_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER1)
+                                WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                            "ECHEANCIER_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER1)
                                 FROM dossier
                                 INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
                                 INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                                WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)",
+                                WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)")
                          ))
                          ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
                          ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
@@ -113,6 +117,20 @@
                          ->joinLeft("dossierdocurba", "d.ID_DOSSIER = dossierdocurba.ID_DOSSIER", "NUM_DOCURBA")
                          ->joinLeft(array("e" => "etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
                          ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
+                         ->joinLeft("dossierpreventionniste", "dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER", null)
+                         ->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = dossierpreventionniste.ID_PREVENTIONNISTE", "ID_UTILISATEUR")
+                         ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS =
+                            IFNULL(
+                                (CASE
+                                WHEN d.DATECOMM_DOSSIER IS NOT NULL THEN (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEINSERT_DOSSIER)
+                                WHEN d.DATEVISITE_DOSSIER IS NOT NULL THEN (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEVISITE_DOSSIER)
+                                WHEN d.DATEINSERT_DOSSIER IS NOT NULL THEN (SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS <= d.DATEINSERT_DOSSIER)
+                                ELSE (SELECT MIN(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)
+                                END),
+                                (SELECT MIN(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)
+                            )",
+                            "LIBELLE_ETABLISSEMENTINFORMATIONS"
+                         )
                          ->group("d.ID_DOSSIER");
                     break;
 
@@ -135,8 +153,15 @@
             return $this;
         }
 
+        public function joinEtablissementDossier() {
+            $this->select
+                    ->joinLeft("etablissementdossier", "etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT")
+                    ->joinLeft(array('dossiers' => "dossier"), "dossiers.ID_DOSSIER = etablissementdossier.ID_DOSSIER")
+                    ->joinLeft("dossiernature", "dossiernature.ID_DOSSIER = dossiers.ID_DOSSIER");
+        }
+
         // Filtre
-        public function setCriteria( $key, $value, $exact = true, $clause = "where")
+        public function setCriteria( $key, $value = null, $exact = true, $clause = "where")
         {
             $string = null;
 
@@ -151,12 +176,23 @@
                         $string .= " OR ";
                     }
                 }
+
+            } else if(is_null($value)) {
+                $string = $key;
+
             } else {
 
                 $string = $key . (( $exact ) ? "=" : " LIKE ") . $this->getAdapter()->quote((( $exact ) ? "" : "%") . $value . (( $exact ) ? "" : "%"));
             }
 
             $this->select->$clause( $string );
+
+            return $this;
+        }
+
+        public function sup($key, $value)
+        {
+            $this->select->where($key . '>' . $this->getAdapter()->quote($value));
 
             return $this;
         }
@@ -172,6 +208,20 @@
         public function order( $value )
         {
             $this->select->order( $value );
+
+            return $this;
+        }
+
+        public function columns( $array )
+        {
+            $this->select->columns( $array );
+
+            return $this;
+        }
+
+        public function having( $value )
+        {
+            $this->select->having( $value );
 
             return $this;
         }

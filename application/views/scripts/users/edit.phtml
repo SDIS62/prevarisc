@@ -90,11 +90,16 @@
 			</select>
 		</dd>
 
+		<dt class='grade_user' >Grade</dt>
+		<dd class='grade_user' >
+			<input type='text' name='GRADE_UTILISATEURINFORMATIONS' value='<?php echo $this->user['infos']["GRADE_UTILISATEURINFORMATIONS"] ?>' />
+		</dd>
+
 		<dt>Téléphones</dt>
 		<dd>
 			<input type='text' name='TELFIXE_UTILISATEURINFORMATIONS' placeholder='Téléphone fixe ...' value='<?php echo $this->user['infos']["TELFIXE_UTILISATEURINFORMATIONS"] ?>' /><br/>
-			<input type='text' name='TELFAX_UTILISATEURINFORMATIONS' placeholder='Portable ...' value='<?php echo $this->user['infos']["TELFAX_UTILISATEURINFORMATIONS"] ?>' /><br/>
-			<input type='text' name='TELPORTABLE_UTILISATEURINFORMATIONS' placeholder='Fax ...' value='<?php echo $this->user['infos']["TELPORTABLE_UTILISATEURINFORMATIONS"] ?>' />
+			<input type='text' name='TELPORTABLE_UTILISATEURINFORMATIONS' placeholder='Portable ...' value='<?php echo $this->user['infos']["TELPORTABLE_UTILISATEURINFORMATIONS"] ?>' />
+			<input type='text' name='TELFAX_UTILISATEURINFORMATIONS' placeholder='Fax ...' value='<?php echo $this->user['infos']["TELFAX_UTILISATEURINFORMATIONS"] ?>' /><br/>
 		</dd>
 
 		<dt>Courriel</dt>
@@ -130,10 +135,23 @@
         <dt>Commissions</dt>
         <dd>
         	<p>
-	            <select name='commissions[]' multiple>
-	                <?php foreach($this->commissions as $commission) : ?>
-	                <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( $this->user['commissions'] != null && in_array($commission, $this->user['commissions']) ) echo "selected" ?>><?php echo $commission['LIBELLE_COMMISSIONTYPE'] . ' - ' . $commission['LIBELLE_COMMISSION'] ?></option>
+	            <select name='commissions[]' class="chosen input-xxlarge" data-placeholder="Commissions" multiple="multiple">
+	                <?php $previous_type = null ?>
+                        <?php foreach($this->commissions as $commission) : ?>
+                            <?php if (!$previous_type): ?>
+                                <optgroup label="<?php echo $commission['LIBELLE_COMMISSIONTYPE'] ?>">
+                            <?php elseif ($previous_type != $commission['ID_COMMISSIONTYPE']): ?>
+                                </optgroup>
+                                <optgroup label="<?php echo $commission['LIBELLE_COMMISSIONTYPE'] ?>">
+                            <?php endif ?>
+                            <option value="<?php echo $commission['ID_COMMISSION'] ?>" <?php if( $this->user['commissions'] != null && in_array($commission, $this->user['commissions']) ) echo "selected" ?>>
+                                <?php echo $commission['LIBELLE_COMMISSION'] . " (".$commission['LIBELLE_COMMISSIONTYPE'].")" ?>
+                            </option>
+                            <?php $previous_type = $commission['ID_COMMISSIONTYPE'] ?>
 	                <?php endforeach ?>
+                        <?php if ($previous_type): ?>
+                            </optgroup>
+                        <?php endif ?>
 	            </select>
             </p>
         </dd>
@@ -141,10 +159,32 @@
         <dt>Groupements</dt>
         <dd>
         	<p>
-	            <select name='groupements[]' multiple>
+	            <select name='groupements[]' class="chosen input-xxlarge" data-placeholder="Groupements" multiple="multiple">
+                        <?php $previous_type = null ?>
 	                <?php foreach($this->groupements as $groupement) : ?>
-	                <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php if( $this->user['groupements'] != null && in_array($groupement, $this->user['groupements']) ) echo "selected" ?>><?php echo $groupement['LIBELLE_GROUPEMENT'] ?></option>
+                            <?php $selected = false; ?>
+                            <?php if ($this->user['groupements'] != null): ?>
+                                <?php foreach($this->user['groupements'] as $user_groupement): ?>
+                                    <?php if ($groupement['ID_GROUPEMENT'] == $user_groupement['ID_GROUPEMENT']): ?>
+                                        <?php $selected = true; ?>
+                                        <?php break; ?>
+                                    <?php endif ?>
+                                <?php endforeach ?>
+                            <?php endif ?>
+                            <?php if (!$previous_type): ?>
+                                <optgroup label="<?php echo $groupement['LIBELLE_GROUPEMENTTYPE'] ?>">
+                            <?php elseif ($previous_type != $groupement['ID_GROUPEMENTTYPE']): ?>
+                                </optgroup>
+                                <optgroup label="<?php echo $groupement['LIBELLE_GROUPEMENTTYPE'] ?>">
+                            <?php endif ?>
+                            <option value="<?php echo $groupement['ID_GROUPEMENT'] ?>" <?php echo $selected ? "selected" : '' ?>>
+                                <?php echo $groupement['LIBELLE_GROUPEMENT'] . " (" . $groupement['LIBELLE_GROUPEMENTTYPE'] . ") " ?>
+                            </option>
+                            <?php $previous_type = $groupement['ID_GROUPEMENTTYPE'] ?>
 	                <?php endforeach ?>
+                        <?php if ($previous_type): ?>
+                            </optgroup>
+                        <?php endif ?>
 	            </select>
             </p>
         </dd>
@@ -156,9 +196,6 @@
 <script>
 	$(document).ready(function() {
 
-    	// Gestion des multiselects
-    	$("select[name='commissions[]']").multiselect({header: false, noneSelectedText: "Aucune commission"});
-    	$("select[name='groupements[]']").multiselect({header: false, noneSelectedText: "Aucun groupement"});
 
     	// Gestion du changement du mot de passe et de la case à cocher LDAP
     	$('#change_passwd').click(function() {
@@ -177,5 +214,21 @@
     			$('#change_passwd').click();
     		}
     	});
+
+		$("select[name='ID_FONCTION']").change(function() {
+			if($(this).find('option:selected').val() == "13") {
+				$('.grade_user').show();
+			}
+			else {
+				$('.grade_user').hide();
+				$('.grade_user').find('input').val(null);
+			}
+		}).change();
+
+        // Gestion des select et multiselect
+        $(".chosen").chosen({
+            search_contains : true
+        });
+
 	});
 </script>

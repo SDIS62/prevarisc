@@ -1,0 +1,78 @@
+<?php
+	echo "
+		<div class='row'>
+			<div class='span9' >
+				<a href='/gestion-prescriptions'>Gestion des prescriptions types</a> <i class='icon-chevron-right'></i> Gestion des rappels réglementaires
+			</div>
+			<div class='span3' style='float:right;'>
+				
+			</div>
+		</div>
+		<h3 class='page-header'>
+			Gestion des rappels réglementaires
+		</h3>
+		<div class='row'>
+			<div class='span12' style='text-align:right;'>
+				<a class='btn btn-default' href='/gestion-prescriptions/gestion-rappel-reg-add'><i class='icon-plus'></i>&nbsp;Ajouter une prescription</a>
+			</div>
+		</div>
+		<br/>
+		<h3>Pour les études</h3>
+	";
+	echo showPrescription($this->listePrescEtude);
+	echo "			
+		<br/>
+		<h3>Pour les visites</h3>
+	";
+	echo showPrescription($this->listePrescVisite);
+
+	function showPrescription($tabPrescriptions)
+	{
+		$listePrescr = $tabPrescriptions;
+		$nbPrescDossier = count($listePrescr);
+		for($i=0; $i < $nbPrescDossier; $i++)
+		{
+			if(isset($listePrescr[$i][0]['ID_PRESCRIPTIONREGL']))
+			{
+				echo "
+					<li class='table-responsive' id='prescriptionDossier_".$listePrescr[$i][0]['ID_PRESCRIPTIONREGL']."' style='list-style-type:none; margin-bottom:15px;'>
+						<table class='table'>
+				";
+				$nbAssoc = count($listePrescr[$i]);
+				$cpt = true;
+				for($j=0; $j < $nbAssoc; $j++)
+				{
+					$article = $listePrescr[$i][$j]['LIBELLE_ARTICLE'];
+					$texte = $listePrescr[$i][$j]['LIBELLE_TEXTE'];
+					echo "
+						<tr>
+							<td class='span2'>".$texte."</td>
+							<td class='span2'>".$article."</td>
+					";
+					if($cpt)
+					{
+						echo "
+							<td rowspan='".$nbAssoc."' class='span6'>
+								".nl2br($listePrescr[$i][0]['PRESCRIPTIONREGL_LIBELLE'])."
+							</td>
+							<td rowspan='".$nbAssoc."' class='span1 numPresc' >
+								".( ($listePrescr[$i][0]['PRESCRIPTIONREGL_VISIBLE'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."
+							</td>
+							<td class='span1' rowspan='".$nbAssoc."'>
+								<a class='btn' href='/gestion-prescriptions/gestion-rappel-reg-edit/id/".$listePrescr[$i][$j]['ID_PRESCRIPTIONREGL']."' >Modifier</a>
+							</td>
+						";
+						$cpt = false;
+					}
+					echo "
+						</tr>
+					";
+				}
+				echo "
+						</table>
+					</li>
+				";
+			}
+		}
+	}	//FIN fonction show prescriptions
+

@@ -1,0 +1,94 @@
+
+<?php if(count($this->data) > 0): ?>
+    <?php  
+    $jours = array ('Dimanche', 'Lundi', 'Mardi','Mercredi','Jeudi','Vendredi','Samedi');
+    $gardeAujourdhui = 0; 
+    $gardeDemain = 0; 
+    $numCommission = 0;
+    foreach($this->data as $commissiondujour)
+    {             
+        $datec = new DateTime($commissiondujour['DATE_COMMISSION']);
+        if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
+            $class="badge-info";
+            $message="En salle";
+        } else if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 2) {
+            $class="badge-success";
+            $message="Visite de sécurité";
+        } else {
+            $class="badge-warning";
+            $message="Groupe de visite";
+        }
+
+        ?>
+        <div class="listcom">        
+            <strong class="jourcom">       
+            <?php
+                $date = new DateTime($commissiondujour['DATE_COMMISSION']);
+                $aujourdhui = date('d/m/y');
+                $demain = date('d/m/y', strtotime('+1 day')); 
+                if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui == 0)
+                {    
+                    echo "Aujourd'hui";
+                    $gardeAujourdhui++;
+                }
+                else if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui != 0)
+                {
+                     $gardeAujourdhui++;
+                }
+                else if($demain == $date->format('d/m/y') && $gardeDemain == 0)
+                {
+                    echo "Demain";
+                    $gardeDemain++;
+                } 
+                else if($demain == $date->format('d/m/y') && $gardeDemain != 0)
+                {
+                    $gardeDemain++;
+                }
+                else
+                {   
+                    $passe = date ('w', mktime (0,0,0,$date->format('m'),$date->format('d'),$date->format('y')));
+                    echo "".$jours[$passe]." ".$date->format('d/m/y');  
+                }    
+            ?>
+            </strong>   
+            <?php $verrouilles = 0 ?>
+            <?php $total = 0 ?>
+            <?php foreach($commissiondujour['odj'] as $dossier): ?>
+                <?php $verrouilles += (int) $dossier['VERROU_DOSSIER']; ?>
+                <?php $total++; ?>
+            <?php endforeach ?>
+            <div class='proch-com'>
+                <span class='badge <?php echo $class ?>' style="margin-left:3px; float: right;">
+                    <?php echo $verrouilles . " / " . $total ?>
+                </span>
+                <span class='badge <?php echo $class ?>' style="float: right;"><?php echo $message ?></span>      
+                <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['id'];?>">
+                    <strong> 
+                        <?php echo $commissiondujour['LIBELLE_COMMISSION'].' - '.$commissiondujour['LIBELLE_DATECOMMISSION']; ?> 
+                    </strong>       
+                 </a>
+
+                <p class="heurcom">    
+                    <?php
+                      $HeureDebut = new DateTime($commissiondujour['HEUREDEB_COMMISSION']);
+                      $HeureFin = new DateTime($commissiondujour['HEUREFIN_COMMISSION']);
+                      echo "".$HeureDebut->format('H:i')." - ".$HeureFin->format('H:i');
+
+                     ?> 
+                </p>
+
+            </div>
+        </div>             
+        <?php
+        $numCommission++;
+    }
+?>
+<?php else: ?>
+    <p class='muted'><small>Aucune prochaine commission</small></p>
+<?php endif ?>  
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#<?php echo $this->id ?> .panel-heading").append(' (<?php echo count($this->data) ?>)');
+    });
+</script>
+

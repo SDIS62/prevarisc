@@ -8,26 +8,8 @@
 	<p style='text-align: right' ><a class='add-membre btn' href='/commission/add-membre?id_commission=<?php echo $_GET["id_commission"] ?>'>Ajouter un membre</a></p>
 
 	<form method='post' action='/commission/saveMembres?id_commission=<?php echo $_GET["id_commission"] ?>' >
-		
-		<script>
-			function check_dossier_nature(x, checked) {
 
-				$("."+x+"_nature_dossier li").hide();
-				$("."+x+"_nature_dossier li input").addClass('ignore_check');
 
-				$("."+x+"_type_dossier input:checked").each(function() {
-
-					$("."+x+"_DOSSIERNATURETYPE_" + $(this).val()).show();
-					$("."+x+"_DOSSIERNATURETYPE_" + $(this).val() + " input").removeClass('ignore_check');
-					
-					if(checked) {
-						$("."+x+"_DOSSIERNATURETYPE_" + $(this).val() + " input").attr("checked", checked);
-					}
-				});
-				
-				$("."+x+"_nature_dossier input.ignore_check").attr("checked", false);
-			}
-		</script>
 
 		<!-- Tableau contenant les membres -->
 		<table class='table table-condensed'>
@@ -36,8 +18,7 @@
 					<th rowspan="2" >Libellé du membre</th>
 					<th colspan="2" >ERP</th>
 					<th colspan="1" >IGH</th>
-					<th rowspan="2">Type de dossier</th>
-					<th rowspan="2">Nature de dossier</th>
+					<th rowspan="2">Type/nature de dossier</th>
 					<th></th>
 				</tr>
 				<tr>
@@ -46,33 +27,29 @@
 					<th>Classe</th>
 				</tr>
 			</thead>
-			
+
 			<tbody>
 				<?php echo $this->partialLoop("commission/partials/partial-ligne-membre-commission.phtml", $this->array_membres); ?>
 			</tbody>
-			
+
 		</table>
-	
+
 	</form>
-	
+
 	<div id="save_div" style="text-align: center" >
-		
+
 			<button class='save-membres save btn btn-success' >Sauvegarder les membres</button>
-			
+
 			<span id='<?php echo $_GET["id_commission"] ?>_membres_notification' class='ui-state-highlight ui-helper-hidden' style='padding: .5em;'>
 				Les membres de la commission ont bien été sauvegardés.
 			</span>
 	</div>
 
 <?php endif ?>
-	
+
 <div id="document"></div>
 
 <script type="text/javascript">
-	
-	$(".check_type_dossier").live('click', function() {
-		check_dossier_nature($(this).parent().parent().find('input[name=type_membre_value]').val(), true);
-	});
 
 	// Bouton de sauvegarde
 	$("#<?php echo $_GET["id_commission"] ?>_tabs .save-membres").button({
@@ -88,7 +65,7 @@
 			}
 		});
 	});
-	
+
 	// Lien pour ajouter un membre
 	$("#<?php echo $_GET["id_commission"] ?>_tabs .add-membre").click(function() {
 		var a = this;
@@ -101,7 +78,7 @@
 		});
 		return false;
 	});
-	
+
 	// Lien pour supprimer un membre
 	$("#<?php echo $_GET["id_commission"] ?>_tabs .delete-membre").click(function() {
 		var a = this;

@@ -111,7 +111,7 @@
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
         }
 
-        public function getInformations( $id_etablissement )
+        public function getInformations($id_etablissement)
         {
             $DB_information = new Model_DbTable_EtablissementInformations;
 
@@ -121,15 +121,7 @@
                 ->where("ID_ETABLISSEMENT = '$id_etablissement'")
                 ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = '$id_etablissement' ) ");
 
-                //echo $select->__toString();
-				//Zend_Debug::dump($DB_information->fetchRow($select));
-            if ( $DB_information->fetchRow($select) != null ) {
-                $result = $DB_information->fetchRow($select)->toArray();
-
-                return $DB_information->find( $result["ID_ETABLISSEMENTINFORMATIONS"] )->current();
-            } else
-
-                return null;
+            return $DB_information->fetchRow($select);
         }
 
         public function getLibelle( $id_etablissement )
@@ -276,55 +268,69 @@
 
             }
         }
-        
-        public function listeDesERPSousAvisDefavorable()
+
+
+        public function listeDesERPOuvertsSousAvisDefavorable($idsCommission = null, $numInseeCommune = null, $idUtilisateur = null)
         {
-                      
-            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS,DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) as PERIODE from  etablissementinformations,dossier,etablissement,etablissementdossier
-                   WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
-                   AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
-                   AND dossier.ID_DOSSIER  = etablissementdossier.ID_DOSSIER
-                   AND dossier.AVIS_DOSSIER_COMMISSION = 2
-                   AND DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) <= -10
-                   AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
-                   ";
-                 
-            return $this->getAdapter()->fetchAll($select);
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("avis.ID_AVIS", 2);
+            $search->setCriteria("etablissementinformations.ID_GENRE", array(2));
+            $search->setCriteria("etablissementinformations.ID_STATUT", 2);
+            if ($numInseeCommune) {
+                $search->setCriteria("etablissementadresse.NUMINSEE_COMMUNE", $numInseeCommune);
+            }
+            if ($idsCommission) {
+                $search->setCriteria("etablissementinformations.ID_COMMISSION", (array) $idsCommission);
+            }
+            if ($idUtilisateur) {
+                $search->setCriteria("utilisateur.ID_UTILISATEUR", $idUtilisateur);
+            }
+            return $search->run(false, null, false)->toArray();
         }
-        
-         public function listeERPSansPreventionniste()
+
+        public function listeERPSansPreventionniste()
         {
-                      
-            $select= "select LIBELLE_ETABLISSEMENTINFORMATIONS,etablissementinformations.ID_ETABLISSEMENT,DATE_ETABLISSEMENTINFORMATIONS from  etablissementinformations,etablissement
-                   WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
-                   AND etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
-                   AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT )
-                    GROUP BY ID_ETABLISSEMENT
-                   ";
-                 
-            return $this->getAdapter()->fetchAll($select);
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("etablissementinformations.ID_STATUT", 2);
+            $search->setCriteria("utilisateur.ID_UTILISATEUR IS NULL");
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
+             //etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
+            return $search->run(false, null, false)->toArray();
         }
-        
-        public function listeErpOuvertSansProchainesVisitePeriodiques()
+
+        public function listeErpOuvertsSansProchainesVisitePeriodiques($idsCommission)
         {
-            $select = "SELECT LIBELLE_ETABLISSEMENTINFORMATIONS,ei.ID_ETABLISSEMENT ,ed.ID_DOSSIER, MAX(DATE_ADD(c.DATE_COMMISSION, INTERVAL ei.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH)) AS DATECOM
-                      FROM etablissementinformations ei
-                      LEFT JOIN etablissementdossier ed ON ed.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT
-                      LEFT JOIN dossier d ON ed.ID_DOSSIER = d.ID_DOSSIER 
-                      LEFT JOIN dossiernature nd ON d.ID_DOSSIER = nd.ID_DOSSIER 
-                      LEFT JOIN dossieraffectation da ON da.ID_DOSSIER_AFFECT = d.ID_DOSSIER 
-                      LEFT JOIN datecommission c ON da.ID_DATECOMMISSION_AFFECT = c.ID_DATECOMMISSION
-                      WHERE d.TYPE_DOSSIER IN (2,3)
-                      AND nd.ID_NATURE IN (21,26) 
-                      AND ei.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations eii WHERE eii.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT )  
-                      AND ei.ID_STATUT = 2
-                      GROUP BY ei.ID_ETABLISSEMENT 
-                      ";
-             return $this->getAdapter()->fetchAll($select);
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->columns(array(
+                "nextvisiteyear" => new Zend_Db_Expr("YEAR(DATE_ADD(dossiers.DATEVISITE_DOSSIER, INTERVAL etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS MONTH))"),
+            ));
+            $search->joinEtablissementDossier();
+            $search->setCriteria("dossiers.DATEVISITE_DOSSIER = ( "
+                    . "SELECT MAX(dos.DATEVISITE_DOSSIER) FROM dossier as dos "
+                    . "LEFT JOIN etablissementdossier etabdoss ON etabdoss.ID_DOSSIER = dos.ID_DOSSIER "
+                    . "LEFT JOIN dossiernature dn ON dn.ID_DOSSIER = dos.ID_DOSSIER "
+                    . "WHERE etabdoss.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT "
+                    . "AND dos.TYPE_DOSSIER IN(2,3) "
+                    . "AND dn.ID_NATURE IN (21,23,24,26,28,29,47,48))");
+            $search->setCriteria("etablissementinformations.ID_STATUT", 2);
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
+            if ($idsCommission) {
+                $search->setCriteria("etablissementinformations.ID_COMMISSION", (array) $idsCommission);
+            }
+            $search->having("nextvisiteyear <= YEAR(NOW())");
+             //etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
+            $etablissements_isoles = $search->run(false, null, false)->toArray();
+
+            return $etablissements_isoles;
+
         }
-        
-        
-        
-          
+
+
+
+
 
     }

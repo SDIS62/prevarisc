@@ -1,0 +1,186 @@
+<?php
+echo "
+	<form name='formPrescription' id='formPrescription' action='/gestion-prescriptions/gestion-rappel-reg' method='POST'>
+
+	<input type='hidden' name='action' id='action' value='".$this->action."' />
+	<input type='hidden' name='typeAction' id='typeAction' value='".$this->typeAction."' />
+	<input type='hidden' name='idPrescription' id='idPrescription' value='".$this->idPrescription."' />
+	<div class='row'>
+				<div class='span12' >
+					<a href='/gestion-prescriptions'>Gestion des prescriptions types</a> <i class='icon-chevron-right'></i> <a href='/gestion-prescriptions/gestion-rappel-reg'>Gestion rappels réglementaires</a>
+					<i class='icon-chevron-right'></i>
+	";
+	if($this->action == 'add'){
+		echo "Ajout d'un nouveau rappel réglementaire";
+	}else if($this->action == 'edit'){
+		echo "Modification d'un rappel réglementaire existant";
+	}
+	echo "
+				</div>
+			</div>
+			<h3 class='page-header'>
+	";
+	if($this->action == 'add'){
+		echo "Ajout d'un nouveau rappel réglementaire";
+	}else if($this->action == 'edit'){
+		echo "Modification d'un rappel réglementaire existant";
+	}
+	echo "
+			</h3>
+	<div class='row'>
+		<div class='span12' style='text-align:right;'>
+			<a class='btn btn-default' href='/gestion-prescriptions/gestion-rappel-reg'>Annuler la modification</a>
+			<input type='submit' class='btn btn-success' value='Sauvegarder'>
+		</div>
+	</div>
+	<div class='row' id='alert' style='display:none;'>
+		<ul class='unstyled'>
+			<li class='alert alert-error' >
+				Veuillez spécifier au minimum un texte ou un article et un contenu avant la sauvegarde
+			</li>
+		</ul>
+	</div>
+	<br/>
+	<div class='row' ".( ($this->typeAction == 'rappel-reg')? "" : "style='display:none;'" ).">
+		<div class='span4'>
+			Ajouter cette prescription pour les &nbsp;
+		</div>
+		<div class='span8'>
+			<select id='PRESCRIPTIONREGL_TYPE' name='PRESCRIPTIONREGL_TYPE'>
+				<option value='1' ".( ($this->infosPrescription[0]['PRESCRIPTIONREGL_TYPE'] == 1)? "selected" : "" ).">Etudes</option>
+				<option value='2' ".( ($this->infosPrescription[0]['PRESCRIPTIONREGL_TYPE'] == 2)? "selected" : "" ).">Visites</option>
+			</select>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='span4'>
+			Ajouter par défaut à la création d'un nouveau dossier &nbsp;
+		</div>
+		<div class='span8'>
+			<select id='PRESCRIPTIONREGL_VISIBLE' name='PRESCRIPTIONREGL_VISIBLE'>
+				<option value='1' ".( ($this->infosPrescription[0]['PRESCRIPTIONREGL_VISIBLE'] == 1)? "selected" : "" ).">Oui</option>
+				<option value='0' ".( ($this->infosPrescription[0]['PRESCRIPTIONREGL_VISIBLE'] == 0)? "selected" : "" ).">Non</option>
+			</select>
+		</div>
+	</div>
+	<br/>
+	<div class='row'>
+		<div class='span4'>
+			Texte&nbsp;
+			<select style='width:80%;' id='LIBELLE_TEXTE' class='chosen'>
+";
+                foreach ($this->listeTextes as $val) {
+                    echo "<option value='".$val["ID_TEXTE"]."'>".$val['LIBELLE_TEXTE']."</option>";
+                }
+echo "
+			</select>
+		</div>
+		<div class='span4'>
+			Article&nbsp;
+			<select style='width:80%;' id='LIBELLE_ARTICLE' class='chosen'>
+";
+                foreach ($this->listeArticles as $val) {
+                    echo "<option value='".$val["ID_ARTICLE"]."'>".$val['LIBELLE_ARTICLE']."</option>";
+                }
+echo "
+			</select>
+
+		</div>
+		<div class='span4'>
+			<a class='btn btn-default' id='addAssoc' href=''>Ajouter l'association</a>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='span4' class='liste-textes'>
+		</div>
+		<div class='span4' class='liste-articles'>
+		</div>
+		<div class='span4'>
+		</div>
+	</div>
+";
+echo "
+	<div class='row'>
+		<div class='span12'>
+			<table class='table table-condensed champs_icpe champs rubrique' id='association' >
+				<thead>
+					<tr>
+						<th>Texte</th>
+						<th>Article</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+";
+if ($this->action != 'add') {
+    foreach ($this->infosPrescription as $val => $presc) {
+        echo "
+			<tr>
+				<td>".$presc['LIBELLE_TEXTE']."<input type='hidden' name='texte[]' value='".$presc['ID_TEXTE']."' /></td>
+				<td>".$presc['LIBELLE_ARTICLE']."<input type='hidden' name='article[]' value='".$presc['ID_ARTICLE']."' /></td>
+				<td><a onclick='$(this).parent().parent().remove(); return false;' href='#'>Retirer</a></td>
+			</tr>
+		";
+    }
+}
+echo "
+				</tbody>
+			</table>
+		</div>
+	</div>
+";
+
+echo "
+	<div class='row'>
+		<div class='span12'>
+			Contenu :
+			<textarea name='PRESCRIPTION_LIBELLE' id='PRESCRIPTION_LIBELLE' rows='10'>";
+echo $this->libelle;
+echo "</textarea>
+		</div>
+	</div>
+</form>
+";
+
+?>
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$(".chosen").chosen({allow_single_deselect: true});
+	
+	$("#formPrescription").submit(function(){
+		if( $("#association tbody tr").length <= 0 || $("#PRESCRIPTION_LIBELLE").val() == '' ){
+			$("#alert").show();
+			return false;
+		}
+	});
+
+	$("#addAssoc").click(function(){
+		var texte = $("#LIBELLE_TEXTE").val();
+		var article = $("#LIBELLE_ARTICLE").val();
+		if( ( texte != 1 && texte != null ) || ( article != 1 && article != null) ){
+			if(texte == null){
+				texte = 1;
+			}
+			if(article == null){
+				article = 1;
+			}
+			var assocAdd;
+			assocAdd += "<tr>";
+			assocAdd += "<td>"+$("#LIBELLE_TEXTE option:selected").text()+ "<input type='hidden' name='texte[]' value='"+texte+"' /></td>";
+			assocAdd += "<td>"+$("#LIBELLE_ARTICLE option:selected").text()+ "<input type='hidden' name='article[]' value='"+article+"' /></td>";
+			assocAdd += "<td><a onclick='$(this).parent().parent().remove(); return false;' href='#'>Retirer</a></td>";
+			assocAdd += "</tr>";
+
+			$("#association").append(assocAdd);
+
+			$("#LIBELLE_TEXTE").val('').trigger('chosen:updated');
+			$("#LIBELLE_ARTICLE").val('').trigger('chosen:updated');
+			$("#alert").hide();
+		}else{
+			$("#alert").show();
+		}
+		return false;
+	});
+});
+</script>

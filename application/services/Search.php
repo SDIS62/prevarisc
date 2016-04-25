@@ -11,7 +11,7 @@ class Service_Search
      * @param string|array $categorie
      * @param string|array $classe
      * @param string|array $famille
-     * @param string|array $types
+     * @param string|array $types_activites
      * @param bool $avis_favorable
      * @param string|array $statuts
      * @param bool $local_sommeil
@@ -20,11 +20,11 @@ class Service_Search
      * @param int $parent
      * @param string $city
      * @param int $street_id
-     * @param int $count Par défaut 10, max 100
+     * @param int $count Par défaut 10, max 1000
      * @param int $page par défaut = 1
      * @return array
      */
-    public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $city = null, $street_id = null, $count = 10, $page = 1)
+    public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types_activites = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $city = null, $street_id = null, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
@@ -40,36 +40,58 @@ class Service_Search
             // Requête principale
             $select->from(array("e" => "etablissement"), array("NUMEROID_ETABLISSEMENT", "DUREEVISITE_ETABLISSEMENT", "NBPREV_ETABLISSEMENT"))
                 ->columns(array(
-                    "NB_ENFANTS" => "( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
+                    "NB_ENFANTS" => new Zend_Db_Expr("( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
                         FROM etablissement
                         INNER JOIN etablissementlie ON etablissement.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT
-                        WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)",
-                    "PRESENCE_ECHEANCIER_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER1)
+                        WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"),
+                    "PRESENCE_ECHEANCIER_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER1)
                         FROM dossier
                         INNER JOIN etablissementdossier ON dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                        WHERE dossiernature.ID_NATURE = 46 AND etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"))
+                        WHERE dossiernature.ID_NATURE = 46 AND etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)")))
+                //->join(array("etablissementinformations" => new Zend_Db_Expr("(SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS), etablissementinformations.* FROM etablissementinformations group by ID_ETABLISSEMENT)")), "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT")
                 ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                 ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER", "DIFFEREAVIS_DOSSIER"))
                 ->joinLeft("avis", "dossier.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
                 ->joinLeft("type", "etablissementinformations.ID_TYPE = type.ID_TYPE", "LIBELLE_TYPE")
+                ->joinLeft("typeactivite", "etablissementinformations.ID_TYPEACTIVITE = typeactivite.ID_TYPEACTIVITE", "LIBELLE_ACTIVITE")
                 ->join("genre", "etablissementinformations.ID_GENRE = genre.ID_GENRE", "LIBELLE_GENRE")
                 ->joinLeft("etablissementlie", "e.ID_ETABLISSEMENT = etablissementlie.ID_FILS_ETABLISSEMENT", array("pere" => "ID_ETABLISSEMENT", "ID_FILS_ETABLISSEMENT"))
-                ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS = etablissementinformations.ID_ETABLISSEMENTINFORMATIONS", null)
-                ->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = etablissementinformationspreventionniste.ID_UTILISATEUR", "ID_UTILISATEUR")
+                //->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS = etablissementinformations.ID_ETABLISSEMENTINFORMATIONS", null)
+                //->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = etablissementinformationspreventionniste.ID_UTILISATEUR", "ID_UTILISATEUR")
                 ->joinLeft("etablissementadresse", "e.ID_ETABLISSEMENT = etablissementadresse.ID_ETABLISSEMENT", array("NUMINSEE_COMMUNE", "LON_ETABLISSEMENTADRESSE", "LAT_ETABLISSEMENTADRESSE", "ID_ADRESSE", "ID_RUE"))
                 ->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_DEFAULT")
+                ->joinLeft("adresserue", "adresserue.ID_RUE = etablissementadresse.ID_RUE", "LIBELLE_RUE")
                 ->joinLeft(array("etablissementadressesite" => "etablissementadresse"), "etablissementadressesite.ID_ETABLISSEMENT = (SELECT ID_FILS_ETABLISSEMENT FROM etablissementlie WHERE ID_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_SITE")
                 ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
                 ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
                 ->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
-                ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
-                ->group("e.ID_ETABLISSEMENT");
+
+                // Vincent MICHEL le 12/11/2014 : retrait de cette clause qui tue les performances
+                // sur la recherche. Je n'ai pas vu d'impact sur le retrait du group by.
+                // Cyprien DEMAEGDT le 03/08/2015 : rétablissement de la clause pour résoudre le
+                // problème de duplicité d'établissements dans les résultats de recherche (#1300)
+                ->group("e.ID_ETABLISSEMENT")
+                ;
 
             // Critères : nom de l'établissement
             if($label !== null) {
-               $this->setCriteria($select, "LIBELLE_ETABLISSEMENTINFORMATIONS", $label, false);
+
+                $cleanLabel = trim($label);
+
+                // recherche par id
+                if (substr($cleanLabel, 0, 1) == "#") {
+                    $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", substr($cleanLabel, 1), false);
+
+                // on test si la chaine contient uniquement des caractères de type identifiant sans espace
+                } else  if (preg_match('/^[E0-9\/\-\.]+([0-9A-Z]{1,2})?$/', $cleanLabel) === 1) {
+                    $this->setCriteria($select, "NUMEROID_ETABLISSEMENT", $cleanLabel, false);
+
+                // cas par défaut
+                } else {
+                  $this->setCriteria($select, "LIBELLE_ETABLISSEMENTINFORMATIONS", $cleanLabel, false);
+                }
             }
 
             // Critères : identifiant
@@ -98,8 +120,8 @@ class Service_Search
             }
 
             // Critères : type
-            if($types !== null) {
-               $this->setCriteria($select, "type.ID_TYPE", $types);
+            if($types_activites !== null) {
+               $this->setCriteria($select, "typeactivite.ID_TYPEACTIVITE", $types_activites);
             }
 
             // Critères : avis favorable
@@ -118,48 +140,33 @@ class Service_Search
             }
 
             // Critère : commune et rue
-            if($city !== null) {
-                if($genres !== null && count($genres) > 0) {
-                    foreach($genres as $genre) {
-                        switch($genre) {
-                            case "1":
-                                $this->setCriteria($select, "adressecommunesite.LIBELLE_COMMUNE", $city);
-                                if($street_id !== null) {
-                                    $this->setCriteria($select, "etablissementadressesite.ID_RUE", $street_id);
-                                }
-                                break;
-                            case "3":
-                                $this->setCriteria($select, "adressecommunecell.LIBELLE_COMMUNE", $city);
-                                if($street_id !== null) {
-                                    $this->setCriteria($select, "etablissementadressecell.ID_RUE", $street_id);
-                                }
-                                break;
-
-                            default:
-                                $this->setCriteria($select, "adressecommune.LIBELLE_COMMUNE", $city);
-                                if($street_id !== null) {
-                                    $this->setCriteria($select, "etablissementadresse.ID_RUE", $street_id);
-                                }
-                        }
-                    }
+            if($street_id !== null) {
+                $clauses = array();
+                $clauses[] = "etablissementadresse.ID_RUE = ".$select->getAdapter()->quote($street_id);
+                if($genres == null || in_array('1', $genres)) {
+                    $clauses[] = "etablissementadressesite.ID_RUE = ".$select->getAdapter()->quote($street_id);
                 }
-                else {
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_SITE", $city, true, "orHaving");
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_CELLULE", $city, true, "orHaving");
-                    $this->setCriteria($select, "LIBELLE_COMMUNE_ADRESSE_DEFAULT", $city, true, "orHaving");
-
-                    if($street_id !== null) {
-                        $this->setCriteria($select, "ID_RUE_SITE", $street_id, true, "orHaving");
-                        $this->setCriteria($select, "ID_RUE_CELL", $street_id, true, "orHaving");
-                        $this->setCriteria($select, "etablissementadresse.ID_RUE", $street_id, true, "orHaving");
-                    }
+                if($genres == null || in_array('3', $genres)) {
+                    $clauses[] = "etablissementadressecell.ID_RUE = ".$select->getAdapter()->quote($street_id);
                 }
+                $select->where('('.implode(' OR ', $clauses).')');
+            }
+            else if($city !== null) {
+                $clauses = array();
+                $clauses[] = "etablissementadresse.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                if($genres == null || in_array('1', $genres)) {
+                    $clauses[] = "etablissementadressesite.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                }
+                if($genres == null || in_array('3', $genres)) {
+                    $clauses[] = "etablissementadressecell.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+                }
+                $select->where('('.implode(' OR ', $clauses).')');
             }
 
             // Critères : géolocalisation
             if($lon !== null && $lat !== null) {
-               $this->setCriteria($select, "LON_ETABLISSEMENTADRESSE", $lon);
-               $this->setCriteria($select, "LAT_ETABLISSEMENTADRESSE", $lat);
+               $this->setCriteria($select, "etablissementadresse.LON_ETABLISSEMENTADRESSE", $lon);
+               $this->setCriteria($select, "etablissementadresse.LAT_ETABLISSEMENTADRESSE", $lat);
             }
 
             // Critères : parent
@@ -167,8 +174,14 @@ class Service_Search
                $select->where($parent == 0 ? "etablissementlie.ID_ETABLISSEMENT IS NULL" : "etablissementlie.ID_ETABLISSEMENT = ?", $parent);
             }
 
+            // Performance optimisation : avoid sorting on big queries, and sort only if
+            // there is at least one where part
+            if (count($select->getPart(Zend_Db_Select::WHERE)) > 0) {
+                $select->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC");
+            }
+
             // Gestion des pages et du count
-            $select->limitPage($page, $count > 100 ? 100 : $count);
+            $select->limitPage($page, $count > 1000 ? 1000 : $count);
 
             // Construction du résultat
             $rows_counter = new Zend_Paginator_Adapter_DbSelect($select);
@@ -199,7 +212,7 @@ class Service_Search
      * @param int $page par défaut = 1
      * @return array
      */
-    public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $avis_differe = null, $count = 10, $page = 1)
+    public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $avis_differe = null, $count = 10, $page = 1, $criterias = null)
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
@@ -215,32 +228,42 @@ class Service_Search
             // Requête principale
             $select->from(array("d" => "dossier"))
                 ->columns(array(
-                    "NB_DOSS_LIES" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                    "NB_DOSS_LIES" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                         FROM dossier
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
-                        WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)",
-                    "NB_URBA" => "( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
+                        WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                    "NB_URBA" => new Zend_Db_Expr("( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
                         FROM dossier
                         INNER JOIN dossierdocurba ON dossierdocurba.ID_DOSSIER = dossier.ID_DOSSIER
                         WHERE dossier.ID_DOSSIER = d.ID_DOSSIER
-                        LIMIT 1)",
-                    "ALERTE_RECEPTION_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                        LIMIT 1)"),
+                    "ALERTE_RECEPTION_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                         FROM dossier
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                        WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)",
-                    "ECHEANCIER_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER1)
+                        WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                    "ECHEANCIER_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER1)
                         FROM dossier
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                        WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)"))
+                        WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)")))
                 ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
+                ->joinLeft("commission", "d.COMMISSION_DOSSIER = commission.ID_COMMISSION","LIBELLE_COMMISSION")
                 ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
                 ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))
                 ->join("dossiertype", "dossiertype.ID_DOSSIERTYPE = dossiernatureliste.ID_DOSSIERTYPE", "LIBELLE_DOSSIERTYPE")
-                ->joinLeft(array("e" => "etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
+                ->joinLeft(array("e"=>"etablissementdossier"), "d.ID_DOSSIER = e.ID_DOSSIER", null)
+                ->joinLeft(array("ei" => new Zend_Db_Expr("(SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS), etablissementinformations.* FROM etablissementinformations group by ID_ETABLISSEMENT)")), "e.ID_ETABLISSEMENT = ei.ID_ETABLISSEMENT", array("LIBELLE_ETABLISSEMENTINFORMATIONS","ID_ETABLISSEMENT"))
+                ->joinLeft("type","type.ID_TYPE = ei.ID_TYPE",array("ID_TYPE","LIBELLE_TYPE"))
+                ->joinLeft("genre","genre.ID_GENRE = ei.ID_GENRE","LIBELLE_GENRE")
                 ->joinLeft("avis", "d.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
-                ->group("d.ID_DOSSIER");
+                ->joinLeft("dossierdocurba","dossierdocurba.ID_DOSSIER = d.ID_DOSSIER",null)
+                ->joinLeft("dossieraffectation","dossieraffectation.ID_DOSSIER_AFFECT = d.ID_DOSSIER",null)
+                ->joinLeft("datecommission","datecommission.ID_DATECOMMISSION = dossieraffectation.ID_DATECOMMISSION_AFFECT",null)
+                ->joinLeft("dossierpreventionniste","dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER",null)
+                ->joinLeft(array("ea" => "etablissementadresse"),"ea.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT",null)
+                ->group("d.ID_DOSSIER")
+                ;
 
             // Critères : numéro de doc urba
             if($num_doc_urba !== null) {
@@ -249,7 +272,19 @@ class Service_Search
 
             // Critères : objet
             if($objet !== null) {
-               $this->setCriteria($select, "OBJET_DOSSIER", $objet, false);
+
+                $cleanObjet = trim($objet);
+
+                // recherche par id
+                if (substr($cleanObjet, 0, 1) == "#") {
+                    $select->having("NB_URBA like ?", "%".substr($cleanObjet, 1)."%");
+                // on test si la chaine contient uniquement des caractères de type identifiant sans espace
+                } else  if (preg_match('/^[0-9A-Z\.]+$/', $cleanObjet) === 1) {
+                    $select->having("NB_URBA like ?", "%".$cleanObjet."%");
+                // cas par défaut
+                } else {
+                  $this->setCriteria($select, "OBJET_DOSSIER", $cleanObjet, false);
+                }
             }
 
             // Critères : parent
@@ -267,6 +302,64 @@ class Service_Search
                $this->setCriteria($select, "d.DIFFEREAVIS_DOSSIER", $avis_differe);
             }
 
+            // Critères : commissions
+            if (isset($criterias['commissions']) && $criterias['commissions'] !== null){
+                $this->setCriteria($select, "datecommission.COMMISSION_CONCERNE", $criterias['commissions']);
+            }
+
+            // Critères : avis commission
+            if (isset($criterias['avisCommission']) && $criterias['avisCommission'] !== null){
+                $this->setCriteria($select, "d.AVIS_DOSSIER_COMMISSION", $criterias['avisCommission']);
+            }
+
+            // Critères : avis rapporteur
+            if (isset($criterias['avisRapporteur']) && $criterias['avisRapporteur'] !== null){
+                $this->setCriteria($select, "d.AVIS_DOSSIER", $criterias['avisRapporteur']);
+            }
+
+            // Critères : permis
+            if (isset($criterias['permis']) && $criterias['permis'] !== null){
+                $this->setCriteria($select, "dossierdocurba.NUM_DOCURBA", $criterias['permis']);
+            }
+
+            // Critères : permis
+            if (isset($criterias['preventionniste']) && $criterias['preventionniste'] !== null){
+                $this->setCriteria($select, "dossierpreventionniste.ID_PREVENTIONNISTE", $criterias['preventionniste']);
+            }
+
+            if (isset($criterias['commune']) && $criterias['commune'] !== null){
+                    $this->setCriteria($select, "ea.NUMINSEE_COMMUNE", $criterias['commune']);
+            }
+
+            if (isset($criterias['voie']) && $criterias['voie'] !== null){
+                $this->setCriteria($select, "ea.ID_RUE", $criterias['voie']);
+            }
+
+            if (isset($criterias['dateCreationStart']) && $criterias['dateCreationStart'] !== null){
+                $select->where("d.DATEINSERT_DOSSIER >= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateCreationStart']);
+            }
+            if (isset($criterias['dateCreationEnd']) && $criterias['dateCreationEnd'] !== null){
+                $select->where("d.DATEINSERT_DOSSIER <= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateCreationEnd']);
+            }
+            if (isset($criterias['dateReceptionStart']) && $criterias['dateReceptionStart'] !== null){
+                $select->where("d.DATESDIS_DOSSIER >= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReceptionStart']);
+            }
+            if (isset($criterias['dateReceptionEnd']) && $criterias['dateReceptionEnd'] !== null){
+                $select->where("d.DATESDIS_DOSSIER <= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReceptionEnd']);
+            }
+            if (isset($criterias['dateReponseStart']) && $criterias['dateReponseStart'] !== null){
+                $select->where("d.DATEREP_DOSSIER >= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReponseStart']);
+            }
+            if (isset($criterias['dateReponseEnd']) && $criterias['dateReponseEnd'] !== null){
+                $select->where("d.DATEREP_DOSSIER <= STR_TO_DATE (? , '%d/%m/%Y')",$criterias['dateReponseEnd']);
+            }
+
+            // Performance optimisation : avoid sorting on big queries, and sort only if
+            // there is at least one where part
+            if (count($select->getPart(Zend_Db_Select::WHERE)) > 0) {
+                $select->order("d.DATEINSERT_DOSSIER DESC");
+            }
+
             // Gestion des pages et du count
             $select->limitPage($page, $count > 100 ? 100 : $count);
 
@@ -281,12 +374,61 @@ class Service_Search
                 )
             );
 
+            $newResults = array();
+            foreach ($results['results'] as $row){
+                $newResults[$row['ID_DOSSIER']] = $row;
+            }
+            $results['results'] = $newResults;
+
+            $sIDsTable = array();
+            foreach ($results['results'] as $row) {
+                array_push($sIDsTable, $row['ID_DOSSIER']);
+            }
+
+            // Si pas de dossier, pas de recherche
+            if (!empty($sIDsTable)){
+
+            // Recherche des préventionnistes associés aux dossiers
+            $selectPrev = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
+            $selectPrev->from(array("u" => "utilisateur"),'ID_UTILISATEUR')
+                    ->join(array("ui" =>"utilisateurinformations"),"u.ID_UTILISATEURINFORMATIONS = ui.ID_UTILISATEURINFORMATIONS",array("PRENOM_UTILISATEURINFORMATIONS","NOM_UTILISATEURINFORMATIONS"))
+                    ->join("dossierpreventionniste","dossierpreventionniste.ID_PREVENTIONNISTE = u.ID_UTILISATEUR","ID_DOSSIER");
+
+
+                $selectPrev->Where("dossierpreventionniste.ID_DOSSIER IN (?)",$sIDsTable);
+
+                $preventionnistes = $selectPrev->query()->fetchAll();
+                foreach ($preventionnistes as $prev) {
+                    if ($prev['ID_DOSSIER'] != null){
+                        if (!isset($results['results'][$prev['ID_DOSSIER']]['PREVENTIONNISTES'])) $results['results'][$prev['ID_DOSSIER']]['PREVENTIONNISTES'] = array();
+                        array_push($results['results'][$prev['ID_DOSSIER']]['PREVENTIONNISTES'], $prev);
+                    }
+                }
+
+
+                // Recherche des pièces jointes associés aux dossiers
+                $selectPj = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
+                $selectPj->from(array("pj" => "piecejointe"),array('NOM_PIECEJOINTE','EXTENSION_PIECEJOINTE'))
+                        ->join('dossierpj','dossierpj.ID_PIECEJOINTE = pj.ID_PIECEJOINTE','ID_DOSSIER');
+
+
+                $selectPj->Where("dossierpj.ID_DOSSIER IN (?)",$sIDsTable);
+
+                $piecesjointes = $selectPj->query()->fetchAll();
+                foreach ($piecesjointes as $pj) {
+                    if ($pj['ID_DOSSIER'] != null){
+                        if (!isset($results['results'][$pj['ID_DOSSIER']]['PIECESJOINTES'])) $results['results'][$pj['ID_DOSSIER']]['PIECESJOINTES'] = array();
+                        array_push($results['results'][$pj['ID_DOSSIER']]['PIECESJOINTES'], $pj);
+                    }
+                }
+            }
+
             $cache->save(serialize($results));
         }
-        
+
         return $results;
     }
-    
+
     /**
      * Recherche des courriers
      *
@@ -314,25 +456,25 @@ class Service_Search
             // Requête principale
             $select->from(array("d" => "dossier"))
                 ->columns(array(
-                    "NB_DOSS_LIES" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                    "NB_DOSS_LIES" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                         FROM dossier
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
-                        WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)",
-                    "NB_URBA" => "( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
+                        WHERE dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                    "NB_URBA" => new Zend_Db_Expr("( SELECT group_concat(dossierdocurba.NUM_DOCURBA, ', ')
                         FROM dossier
                         INNER JOIN dossierdocurba ON dossierdocurba.ID_DOSSIER = dossier.ID_DOSSIER
                         WHERE dossier.ID_DOSSIER = d.ID_DOSSIER
-                        LIMIT 1)",
-                    "ALERTE_RECEPTION_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER2)
+                        LIMIT 1)"),
+                    "ALERTE_RECEPTION_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER2)
                         FROM dossier
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER1
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                        WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)",
-                    "ECHEANCIER_TRAVAUX" => "(SELECT COUNT(dossierlie.ID_DOSSIER1)
+                        WHERE (dossiernature.ID_NATURE = 2 OR dossiernature.ID_NATURE = 1 OR dossiernature.ID_NATURE = 13 OR dossiernature.ID_NATURE = 12) AND dossier.ID_DOSSIER = d.ID_DOSSIER)"),
+                    "ECHEANCIER_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER1)
                         FROM dossier
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                        WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)"))
+                        WHERE dossiernature.ID_NATURE = 46 AND dossier.ID_DOSSIER = d.ID_DOSSIER)")))
                 ->joinLeft("dossierlie", "d.ID_DOSSIER = dossierlie.ID_DOSSIER2")
                 ->join("dossiernature", "dossiernature.ID_DOSSIER = d.ID_DOSSIER", null)
                 ->join("dossiernatureliste", "dossiernatureliste.ID_DOSSIERNATURE = dossiernature.ID_NATURE", array("LIBELLE_DOSSIERNATURE", "ID_DOSSIERNATURE"))
@@ -345,7 +487,7 @@ class Service_Search
             if($num_doc_urba !== null) {
                $this->setCriteria($select, "NUM_DOCURBA", $num_doc_urba);
             }
-            
+
             if (null !== $objet) {
                 $select->where("DEMANDEUR_DOSSIER LIKE '%{$objet}%' OR OBJET_DOSSIER LIKE '%{$objet}%'");
             }
@@ -371,7 +513,7 @@ class Service_Search
                 )
             );
 
-            $cache->save(serialize($results));
+            //$cache->save(serialize($results));
         }
 
         return $results;
@@ -405,6 +547,7 @@ class Service_Search
             $select->from(array("u" => "utilisateur"), array("uid" => "ID_UTILISATEUR", "*"))
                 ->join("utilisateurinformations", "u.ID_UTILISATEURINFORMATIONS = utilisateurinformations.ID_UTILISATEURINFORMATIONS")
                 ->join("fonction", "utilisateurinformations.ID_FONCTION = fonction.ID_FONCTION", "LIBELLE_FONCTION")
+                ->join("groupe", "u.ID_GROUPE = groupe.ID_GROUPE", "LIBELLE_GROUPE")
                 ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_UTILISATEUR = u.ID_UTILISATEUR")
                 ->joinLeft("etablissementinformations", "etablissementinformations.ID_ETABLISSEMENTINFORMATIONS = etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS")
                 ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(infos.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations as infos WHERE etablissementinformations.ID_ETABLISSEMENT = infos.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL")
@@ -421,13 +564,13 @@ class Service_Search
 
             // Critères : groupe
             if($groups !== null) {
-               $this->setCriteria($select, "ID_GROUPE", $groups);
+               $this->setCriteria($select, "groupe.ID_GROUPE", $groups);
             }
 
             // Critères : nom
             if($name !== null) {
-               $this->setCriteria($select, "NOM_UTILISATEURINFORMATIONS", $name, false);
-                $this->setCriteria($select, "PRENOM_UTILISATEURINFORMATIONS", $name, false, "orWhere");
+               $this->setCriteria($select, "(NOM_UTILISATEURINFORMATIONS", $name, false);
+                $this->setCriteria($select, "PRENOM_UTILISATEURINFORMATIONS)", $name, false, "orWhere");
             }
 
             // Critères : fonctions
@@ -436,7 +579,7 @@ class Service_Search
             }
 
             // Gestion des pages et du count
-            $select->limitPage($page, $count > 100 ? 100 : $count);
+            $select->limitPage($page, $count);
 
             // Construction du résultat
             $rows_counter = new Zend_Paginator_Adapter_DbSelect($select);
@@ -453,6 +596,23 @@ class Service_Search
         }
 
         return $results;
+    }
+
+     /**
+     * Recherche des préventionnistes actifs sur au moins un dossier
+     *
+     * @return array
+     */
+    public function listePrevActifs()
+    {
+        // Liste des préventionnistes pour les critères de recherche
+        $selectListePrev = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
+        $selectListePrev->from(array("ui" => "utilisateurinformations"),array('NOM_UTILISATEURINFORMATIONS','PRENOM_UTILISATEURINFORMATIONS'))
+                ->join('utilisateur','ui.ID_UTILISATEURINFORMATIONS = utilisateur.ID_UTILISATEURINFORMATIONS',null)
+                ->join('dossierpreventionniste','dossierpreventionniste.ID_PREVENTIONNISTE = utilisateur.ID_UTILISATEUR','ID_PREVENTIONNISTE')
+                ->order('NOM_UTILISATEURINFORMATIONS', 'ASC')
+                ->distinct();
+        return $selectListePrev->query()->fetchAll();
     }
 
     /**

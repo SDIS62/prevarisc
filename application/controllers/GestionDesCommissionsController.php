@@ -41,10 +41,14 @@ class GestionDesCommissionsController extends Zend_Controller_Action
                     $item->LIBELLE_COMMISSION = $_POST["nom_commission"][$i];
                     $item->save();
                 } else {
-                    $item = $model_commissions->createRow();
+                    $item = $model_commissions->createRow();    
                     $item->ID_COMMISSIONTYPE = $_POST["idtype_commission"][$i];
                     $item->LIBELLE_COMMISSION = $_POST["nom_commission"][$i];
                     $item->save();
+                }
+                $dossier = REAL_DATA_PATH.DS."uploads".DS."documents".DS.$item->ID_COMMISSION;                
+                if(!is_dir($dossier)){
+                   mkdir($dossier);
                 }
             }
 

@@ -7,54 +7,100 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     public function run()
     {
-        // Chargement et activation des plugins
+        // Chargement des plugins de base
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_View);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_ACL);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_XmlHttpRequest);
+        //Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_Security);
 
-        // Ajout des aides d'action
-        Zend_Controller_Action_HelperBroker::addPath(
-            APPLICATION_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR . "helpers",
-            "Application_Controller_Helper_"
-        );
+        // Chargement des plugins tiers
+        if (getenv('PREVARISC_THIRDPARTY_PLUGINS')) {
+            $thirdparty_plugins = explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS'));
+            foreach($thirdparty_plugins as $thirdparty_plugin) {
+                Zend_Controller_Front::getInstance()->registerPlugin(new $thirdparty_plugin);
+            }
+        }
 
         return parent::run();
     }
-
-    /**
-     * Initialisation du cache APC
-     */
-    protected function _initCache()
-    {
-        return Zend_Cache::factory('Core', 'APC', array(
-            'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
-            'cache_id_prefix' => 'prevarisc'
-        ));
-    }
-
-    /**
-     * Initialisation du cache APC spécial recherches
-     */
-    protected function _initCacheSearch()
-    {
-        return Zend_Cache::factory('Core', 'APC', array(
-            'lifetime' => getenv('PREVARISC_CACHE_LIFETIME'),
-            'cache_id_prefix' => 'prevarisc_search'
-        ));
-    }
-
+    
     /**
      * Initialisation de l'auto-loader
      */
     protected function _initAutoLoader()
     {
-        $autoloader = new Zend_Application_Module_Autoloader(array(
-            'basePath'    => APPLICATION_PATH,
-            'namespace'  => '',
-        ));
+        $autoloader = Zend_Loader_Autoloader::getInstance();
+
+        $autoloader_application = new Zend_Application_Module_Autoloader(array('basePath' => APPLICATION_PATH, 'namespace'  => null));
+        
+        $autoloader_application->addResourceType('cache', 'cache/', 'Cache');
+        
+        $autoloader->pushAutoloader($autoloader_application);
 
         return $autoloader;
     }
+    
+    /**
+     * Initialisation d'un cache standard
+     * @param array $frontendOptions surcharge des options de configuration du front
+     * @param array $backendOptions surcharge des options de configuration du back
+     * @return Cache une instance de cache
+     */
+    protected function getCache(array $frontendOptions = array(), array $backendOptions = array()) {
+        
+        $options = $this->getOption('cache');
+        
+        return Zend_Cache::factory(
+                // front adapter
+                'Core',
+                // back adapter
+                $options['adapter'], 
+                // frontend options
+                array_merge(array(
+                    'caching'  => $options['enabled'],
+                    'lifetime' => $options['lifetime'],
+                    'cache_id_prefix' => 'prevarisc_'.md5(getenv('PREVARISC_DB_DBNAME')).'_',
+                    'write_control' => $options['write_control'],
+                ), $frontendOptions),
+                // backend options
+                array_merge(array(
+                    'servers' => array(
+                        array(
+                            'host' => $options['host'], 
+                            'port' => $options['port'],
+                        ),
+                    ),
+                    'compression' => $options['compression'],
+                    'read_control' => $options['read_control'],
+                    'cache_dir' => $options['cache_dir'],
+                    'cache_file_perm' => 0666,
+                    'hashed_directory_perm' => 0777,
+                ), $backendOptions),
+                // use a custom name for front
+                false,
+                // use a custom name for back
+                $options['customAdapter'],
+                // use application's autoload if an adapter is not loaded
+                true);
+    }
+
+    /**
+     * Initialisation du cache objet de l'application
+     */
+    protected function _initCache()
+    {
+        return $this->getCache();
+    }
+
+    /**
+     * Initialisation du cache spécial recherches
+     */
+    protected function _initCacheSearch()
+    {
+        return $this->getCache();
+    }
+
+    
 
     /**
      * Initialisation de la vue
@@ -83,10 +129,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     }
 
     /**
-     * On force le stockage des sessions pour tous les modules
+     * Initialisation du data store à utiliser
      */
-    protected function _initSession()
+    public function _initDataStore()
     {
-        Zend_Session::setOptions(array());
+        $options = $this->getOption('resources');
+        $options = $options['dataStore'];
+        $className = $options['adapter'];
+
+        return new $className($options);
     }
+
 }

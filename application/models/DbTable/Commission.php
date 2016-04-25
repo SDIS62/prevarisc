@@ -64,7 +64,7 @@
 
             return $this->getAdapter()->fetchAll($select);
         }
-		
+
         public function getAllCommissions()
         {
             //Récupération de l'ensemble des commissions
@@ -75,7 +75,7 @@
 
             return $this->getAdapter()->fetchAll($select);
         }
-        
+
         public function getLibelleCommissions($id)
         {
             //Récupération de l'ensemble des commissions
@@ -84,8 +84,8 @@
                 WHERE ID_COMMISSION = '".$id."'";
             return $this->getAdapter()->fetchAll($select);
         }
-        
-          
+
+
 
         public function commissionPeriodicite($idCommission)
         {
@@ -103,7 +103,7 @@
             // Check de la sous commission / comunale / interco / arrondissement
             // R�cup�ration des types de commission
             $model_types = new Model_DbTable_CommissionType;
-            $array_typesCommission = $model_types->fetchAll()->toArray();
+            $array_typesCommission = $model_types->fetchAll(null, "ID_COMMISSIONTYPE DESC")->toArray();
 
             foreach ($array_typesCommission as $row_typeCommission) {
 
@@ -118,31 +118,34 @@
                     ->where("commissionreglecategorie.ID_CATEGORIE = ?", $categorie)
                     ->where("commissionregletype.ID_TYPE = ?", $type)
                     ->where("commissionreglelocalsommeil.LOCALSOMMEIL = ?", $localsommeil)
-                    ->where("commission.ID_COMMISSIONTYPE = ?", $row_typeCommission["ID_COMMISSIONTYPE"])
-                    ->limit(1);
+                    ->where("commission.ID_COMMISSIONTYPE = ?", $row_typeCommission["ID_COMMISSIONTYPE"]);
 
-                $result = $this->fetchRow($select);
+                $results = $this->fetchAll($select);
 
-                if ($result != null) {
+                if ($results != null) {
 
-                    if ($result->NUMINSEE_COMMUNE != null) {
-                        if ($result->NUMINSEE_COMMUNE == $commune) {
+                    foreach($results as $result) {
 
-                            $result = $this->find( $result->ID_COMMISSION )->toArray();
+                        if ($result->NUMINSEE_COMMUNE != null) {
+                            if ($result->NUMINSEE_COMMUNE == $commune) {
 
-                            return $result;
-                        }
-                    } elseif ($result->ID_GROUPEMENT) {
+                                $result = $this->find( $result->ID_COMMISSION )->toArray();
 
-                        $model_groupementCommune = new Model_DbTable_GroupementCommune;
-                        $row_groupement = $model_groupementCommune->fetchRow("ID_GROUPEMENT = '" . $result->ID_GROUPEMENT . "' AND NUMINSEE_COMMUNE = '" . $commune . "'");
+                                return $result;
+                            }
+                        } elseif ($result->ID_GROUPEMENT) {
 
-                        if (count($row_groupement) == 1) {
-                            $result = $this->find( $result->ID_COMMISSION )->toArray();
+                            $model_groupementCommune = new Model_DbTable_GroupementCommune;
+                            $row_groupement = $model_groupementCommune->fetchRow("ID_GROUPEMENT = '" . $result->ID_GROUPEMENT . "' AND NUMINSEE_COMMUNE = '" . $commune . "'");
 
-                            return $result;
+                            if (count($row_groupement) == 1) {
+                                $result = $this->find( $result->ID_COMMISSION )->toArray();
+
+                                return $result;
+                            }
                         }
                     }
+
                 }
 
             }
@@ -166,31 +169,33 @@
                     ->joinLeft("adressecommune", "adressecommune.NUMINSEE_COMMUNE = commissionregle.NUMINSEE_COMMUNE", null)
                     ->where("commissionregleclasse.ID_CLASSE = ?", $classe)
                     ->where("commissionreglelocalsommeil.LOCALSOMMEIL = ?", $localsommeil)
-                    ->where("commission.ID_COMMISSIONTYPE = ?", $row_typeCommission["ID_COMMISSIONTYPE"])
-                    ->limit(1);
+                    ->where("commission.ID_COMMISSIONTYPE = ?", $row_typeCommission["ID_COMMISSIONTYPE"]);
 
-                $result = $this->fetchRow($select);
+                $results = $this->fetchAll($select);
 
                 if ($result != null) {
 
-                    if ($result->NUMINSEE_COMMUNE != null) {
-                        if ($result->NUMINSEE_COMMUNE == $commune) {
+                    foreach($results as $result) {
+                        if ($result->NUMINSEE_COMMUNE != null) {
+                            if ($result->NUMINSEE_COMMUNE == $commune) {
 
-                            $result = $this->find( $result->ID_COMMISSION )->toArray();
+                                $result = $this->find( $result->ID_COMMISSION )->toArray();
 
-                            return $result;
-                        }
-                    } elseif ($result->ID_GROUPEMENT) {
+                                return $result;
+                            }
+                        } elseif ($result->ID_GROUPEMENT) {
 
-                        $model_groupementCommune = new Model_DbTable_GroupementCommune;
-                        $row_groupement = $model_groupementCommune->fetchRow("ID_GROUPEMENT = '" . $result->ID_GROUPEMENT . "' AND NUMINSEE_COMMUNE = '" . $commune . "'");
+                            $model_groupementCommune = new Model_DbTable_GroupementCommune;
+                            $row_groupement = $model_groupementCommune->fetchRow("ID_GROUPEMENT = '" . $result->ID_GROUPEMENT . "' AND NUMINSEE_COMMUNE = '" . $commune . "'");
 
-                        if (count($row_groupement) == 1) {
-                            $result = $this->find( $result->ID_COMMISSION )->toArray();
+                            if (count($row_groupement) == 1) {
+                                $result = $this->find( $result->ID_COMMISSION )->toArray();
 
-                            return $result;
+                                return $result;
+                            }
                         }
                     }
+
                 }
 
             }

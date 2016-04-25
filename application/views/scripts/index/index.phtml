@@ -1,326 +1,14 @@
-    <div class="panel panel-default">
-       <div class="panel-heading">
-       Alertes
-       </div>
-       <ul class="list-group">
-           <?php
-           $nbrAlert=0;
-                foreach($this->etablissementAvisDefavorable as $avis)
-                { ?>
-
-                  <li class="list-group-item">
-
-                   <span class="badge badge-important">Urgent</span>
-                   <a href='etablissement/index/id/<?php echo $avis['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>  
-                    <?php 
-                       if($avis['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
-                       {
-                        echo "L'établissement <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$avis['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
-                        $nbrAlert++;   
-                       }
-                       else 
-                       {
-                         $datedemodif = new DateTime($avis['DATE_ETABLISSEMENTINFORMATIONS']);    
-                         echo "L'établissement du <a href='etablissement/index/id/".$avis['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sous un avis défavorable depuis ".(-1)*$avis['PERIODE']." jours";
-                         $nbrAlert++;  
-                       }
-                       ?>  
-
-                  </li>   
-
-                <?php 
-
-                }
-            ?>
-            
-            <?php
-            foreach($this->erpSansPreventionniste as $erpsansprev)
-                { 
-                 ?>
-                   <li class="list-group-item">
-                   <a href='etablissement/index/id/<?php echo $erpsansprev['ID_ETABLISSEMENT'] ?>'><i class="icon-pencil icon-black" ></i></a>   
-                   <span class="badge badge-warning">Important</span>
-                   <?php
-                        if($erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
-                        {
-                            echo "L'établissement <a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'> &quot;".$erpsansprev['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> est sans préventionnistes";
-                            $nbrAlert++;  
-                        }
-
-                        else 
-                        {
-                            $datedemodif = new DateTime($erpsansprev['DATE_ETABLISSEMENTINFORMATIONS']);    
-                            echo "L'établissement du <a href='etablissement/index/id/".$erpsansprev['ID_ETABLISSEMENT']."'>&quot;".$datedemodif->format('d/m/y')."&quot;</a> est sans préventionnistes";
-                            $nbrAlert++;  
-                        }
-                      ?>   
-                   </li>   
-
-                   <?php 
-
-                }
-            ?>
-            
-            <?php
-            foreach($this->CourrierSansReponse as $courrier)
-                { ?>
-                <li class="list-group-item">
-                    
-                   <span class="badge badge-warning">Important</span>
-                    <a href='/dossier/index/id/<?php echo $courrier['ID_DOSSIER'] ?>'><i class="icon-pencil icon-black" ></i></a>   
-                  <?php
-                       if($courrier['DATEREP_DOSSIER']==null)
-                       { 
-                           echo "Le courrier/courriel  &quot;<a href='/dossier/index/id/".$courrier['ID_DOSSIER']."'>".$courrier['OBJET_DOSSIER']."</a>&quot; est sans réponse depuis ".($courrier['DATERETARDREPONSE'] * -1)." jours ";
-                           $nbrAlert++;                          
-                       }
-                        ?> 
-                   
-                </li>   
-        
-                <?php 
-         
-                }
-                ?>
-             
-            
-              <?php
-                foreach($this->dossierCommissionEchu as $dossier)
-                { ?>
-                  <li class="list-group-item">
-                  <a href='/dossier/index/id/<?php echo $dossier['ID_DOSSIER'] ?>'><i class="icon-pencil icon-black" ></i></a>   
-                  <span class="badge badge-info">Info</span>
-                  <?php
-                       if($dossier['OBJET_DOSSIER']!=null)
-                       {
-                       echo "Le dossier <a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>&quot;".$dossier['OBJET_DOSSIER']."&quot;</a> de la commission échue <a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>&quot;".$dossier['LIBELLE_DATECOMMISSION']."&quot;</a> est sans avis de la commission";
-                       $nbrAlert++;
-                       }
-                       else
-                       {
-                        $datecreation = new DateTime($dossier['DATEINSERT_DOSSIER']);
-                        echo "Le dossier du <a href='/dossier/index/id/".$dossier['ID_DOSSIER']."'>   ".$datecreation->format('d/m/y')."</a> (".$dossier['LIBELLE_DOSSIERTYPE'].") de la commission échue &quot;".$dossier['LIBELLE_DATECOMMISSION']."&quot; est sans avis de la commission";
-                        $nbrAlert++;
-                       }
-                       ?>      
-                  </li>   
-        
-                <?php 
-                }
-                if($nbrAlert==0)
-                {?>
-                 <li>Aucune alerte</li>   
-               <?php 
-                }
-                
-                foreach($this->ErpSansProchaineVisitePeriodeOuvert as $esp)
-                {?>
-                    <li class="list-group-item">
-                    <a href='<?php echo $this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $esp['ID_ETABLISSEMENT']), null, true) ?>'><i class="icon-pencil icon-black" ></i></a>   
-                    <span class="badge badge-info">Info</span>
-                <?php
-                    if($esp['LIBELLE_ETABLISSEMENTINFORMATIONS']!=null)
-                    {
-                    $datecom = new DateTime($esp['DATECOM']); 
-                    echo "La prochaine visite périodique l'établissement &quot;<a href='etablissement/index/id/".$esp['ID_ETABLISSEMENT']."'>".$esp['LIBELLE_ETABLISSEMENTINFORMATIONS']."&quot;</a> doit etre programmée avant le ".$datecom->format('d/m/y').":";
-                    echo "<a href='".$this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $esp['ID_ETABLISSEMENT']), null, true)."'> programmer une visite </a>";
-                    $nbrAlert++;  
-                    }   
-                }
-                ?>
-                    </li>
-        
-     </ul>  
-    </div>
-
-    <div class="panel panel-default">
-    <div class="panel-heading">
-    Prochaines commissions
-    </div>
-    <?php
-      $commissionsDossier = array();
-      foreach($this->NbrDossiersAffect as $nbrDossier)
-      {
-           $commissionsDossier[] = $nbrDossier;
-      }
-      ?>    
-    <?php  
-    if($this->prochainesCommission!=NULL)
-    { 
-            $jours = array ('Dimanche', 'Lundi', 'Mardi','Mercredi','Jeudi','Vendredi','Samedi');
-            $gardeAujourdhui = 0; 
-            $gardeDemain = 0; 
-            $numCommission = 0;
-            foreach($this->prochainesCommission as $commissiondujour)
-            {             
-                               
-                    $datec = new DateTime($commissiondujour['DATE_COMMISSION']);
-                    if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 1) {
-                        $class="badge-info";
-                        $message="En salle";
-                    } else if ($commissiondujour['ID_COMMISSIONTYPEEVENEMENT'] == 2) {
-                        $class="badge-success";
-                        $message="Visite de sécurité";
-                    } else {
-                        $class="badge-warning";
-                        $message="Groupe de visite";
-                    }
-                   
-                ?>
-                <div class="listcom">        
-                    <strong class="jourcom">       
-                    <?php
-
-                        $date = new DateTime($commissiondujour['DATE_COMMISSION']);
-                        $aujourdhui = date('d/m/y');
-                        $demain = date('d/m/y', strtotime('+1 day')); 
-                        if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui == 0)
-                        {    
-                            echo "Aujourd'hui";
-                            $gardeAujourdhui++;
-                        }
-                        else if($aujourdhui==$date->format('d/m/y') && $gardeAujourdhui != 0)
-                        {
-                             $gardeAujourdhui++;
-                        }
-                        else if($demain == $date->format('d/m/y') && $gardeDemain == 0)
-                        {
-                            echo "Demain";
-                            $gardeDemain++;
-                        } 
-                        else if($demain == $date->format('d/m/y') && $gardeDemain != 0)
-                        {
-                            $gardeDemain++;
-                        }
-                        else
-                        {   
-                            $passe = date ('w', mktime (0,0,0,$date->format('m'),$date->format('d'),$date->format('y')));
-                            echo "".$jours[$passe]." ".$date->format('d/m/y');  
-                        }    
-                    ?>
-                    </strong>   
-
-                    <div class='proch-com'>
-                        <span class='badge <?php echo $class ?>' style="margin-left:3px; float: right;"><?php  echo $commissionsDossier[$numCommission];  ?></span>
-                        <span class='badge <?php echo $class ?>' style="float: right;"><?php echo $message ?></span>      
-
-                        <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commissiondujour['ID_DATECOMMISSION'];?>">
-                            <strong> 
-                            <?php
-
-                               echo "".$commissiondujour['LIBELLE_COMMISSION'];
-                               echo '-'.$commissiondujour['LIBELLE_DATECOMMISSION'];
-                            ?> 
-                            </strong>       
-
-                         </a>
-                       
-                        <p class="heurcom">    
-                            <?php
-                              $HeureDebut = new DateTime($commissiondujour['HEUREDEB_COMMISSION']);
-                              $HeureFin = new DateTime($commissiondujour['HEUREFIN_COMMISSION']);
-                              echo "".$HeureDebut->format('H:i')." - ".$HeureFin->format('H:i');
-
-                             ?> 
-                        </p>
-
-                    </div>
-                </div>             
-                <?php
-                $numCommission++;
-            }  
-    }
-     else
-     {
-      ?>
-     <p class='well text-center pasnotification'>
-       <a>
-     <?php
-         echo 'Aucune commission'; 
-     ?>
-       </a>
-     </p>
-     <?php
-     }    
-     ?>
-                   
-    </div>
-
-<div class="grid-sizer"></div>
-<div class="grid-gutter"></div>
-
-
-<!-- Messages -->
-<div class="panel panel-default">
-  <div class="panel-heading">
-    Messages
-    <a class='btn btn-small pull-right' data-toggle="modal" data-target="#reponse-modal" href='<?php echo $this->url(array('controller' => 'news', 'action' => 'add')) ?>'>Ajouter un message</a>
-  </div>
-  <div class="panel-body">
-    <?php if( count($this->flux) == 0 ) : ?>
-        <p class='muted'><small>Aucun message disponible.</small></p>
-    <?php else : ?>
-        <table class='table table-condensed'>
-         <?php echo $this->partialLoop('news/partials/partial-display.phtml', $this->flux); ?>
-        </table>
-    <?php endif ?>
-  </div>
-</div>
-
-<!-- Etablissements suivis -->
-<?php if( count($this->etablissements) > 0 ) : ?>
-<div class="panel panel-default">
-  <div class="panel-heading">
-    Etablissements suivis
-  </div>
-  <div class="panel-body" style="font-size: .85em">
-      <ul class='recherche_liste unstyled no_slide'>
-      <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissements ) ?>
-      </ul>
-      <div style='clear: both'></div>
-      <?php echo $this->etablissements ?>
-  </div>
-</div>
-<?php endif ?>
-
-<!-- Dossiers avec un avis différé -->
-<?php if( count($this->dossiers) > 0 ) : ?>
-<div class="panel panel-default">
-  <div class="panel-heading">
-    Dossiers avec un avis différé
-  </div>
-  <div class="panel-body" style="font-size: .85em">
-      <ul class='recherche_liste unstyled no_slide'>
-      <?php echo $this->partialLoop('search/results/dossier.phtml', $this->dossiers ) ?>
-      </ul>
-      <div style='clear: both'></div>
-      <?php echo $this->dossiers ?>
-  </div>
-</div>
-<?php endif ?>
-
-<!-- Ordre du jour -->
-<?php if( count($this->commissions) > 0 ) : ?>
-<div class="panel panel-default w2">
-  <div class="panel-heading">
-    Ordre du jour
-  </div>
-  <div class="panel-body" style="font-size: .85em">
-    <?php foreach($this->commissions as $commission) : ?>
-      <p class="lead" style="font-size:1.2em; margin-bottom: 0px;"><?php echo strtoupper($commission["name"]) . " du " . $commission["date"] . " (" . $commission["heure"] . ")" ?></p>
-      <?php if(count($commission["odj"]) == 0 ) : ?>
-        <p class="muted">Pas de dossier affecté.</p>
-      <?php else : ?>
-        <ul class='recherche_liste unstyled no_slide'>
-          <?php echo $this->partialLoop('search/results/dossier.phtml', $commission["odj"] ) ?>
-        </ul>
-      <?php endif ?>
+<div id="home" class="dashboard">
+    <?php foreach($this->blocs as $id => $bloc): ?>
+        <?php echo $this->partial('index/partials/'.$bloc['type'].'_bloc.phtml', array_merge($bloc, array('id' => $id))) ?>
     <?php endforeach ?>
-    <div style='clear: both'></div>
+    <div class="grid-gutter"></div>
+
 </div>
-<?php endif ?>
 
 <div id="reponse-modal" class="modal hide fade" ></div>
+
+<br>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -332,18 +20,115 @@
             $(target).load(url);
         });
 
-        // Grid !
-        var $container = $('.dashboard');
-
-        $container.packery({
-          itemSelector: '.panel',
-          columnWidth: '.grid-sizer',
-          gutter: '.grid-gutter'
+        $container = $('.dashboard').packery({
+            itemSelector: '.panel',
+            gutter: '.grid-gutter',
+            // disable initial layout
+            isInitLayout: false
         });
 
-        var $itemElems = $( $container.packery('getItemElements') );
-        $itemElems.draggable();
+        var pckry = $container.data('packery');
+
+        // ----- initial sort ----- //
+        var sortOrder = []; // global variable for saving order, used later
+        var storedSortOrder = <?php echo json_encode($this->blocsOrder) ?>;
+        if ( storedSortOrder ) {
+            // create a hash of items by their tabindex
+            var itemsByTabIndex = {};
+            var tabIndex;
+            for (var i=0, len = pckry.items.length; i < len; i++ ) {
+                var item = pckry.items[i];
+                tabIndex = $( item.element ).attr('id');
+                itemsByTabIndex[tabIndex] = item;
+            }
+            // overwrite packery item order
+            i = 0; len = storedSortOrder.length;
+            var j = 0;
+            for (; i < len; i++) {
+                tabIndex = storedSortOrder[i];
+                if (itemsByTabIndex[tabIndex] !== undefined) {
+                   pckry.items[j] = itemsByTabIndex[tabIndex];
+                   j++;
+                }
+            }
+        }
+
+        // ----- packery setup ----- //
+        // optim de perf : on évite au navigateur de dessiner les blocs
+        // avant qu'ils aient pris leur place finale
+        $('.panel').show();
+
+        // trigger initial layout
+        $container.packery();
+
+        var $itemElems = $($container.packery('getItemElements') );
+        $itemElems.draggable({
+            handle: ".panel-heading",
+            containment: "parent"
+        });
         $container.packery( 'bindUIDraggableEvents', $itemElems );
+
+        var saveTimeout = null;
+        var saveTimeoutMilliseconds = 1000;
+
+        function orderItems() {
+
+            // First cancel previous timeouts
+            clearTimeout(saveTimeout);
+
+            var itemElems = pckry.getItemElements();
+            // reset / empty oder array
+            sortOrder.length = 0;
+            for (var i=0; i< itemElems.length; i++) {
+                sortOrder[i] = itemElems[i].getAttribute("id");
+            }
+
+            // Init a new timemout
+            if ($('.panel.loading').length == 0) {
+                saveTimeout = setTimeout(function() {
+                    $.post("/api/1.0/user/preferences", {
+                        id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
+                        preferences: {
+                            'DASHBOARD_BLOCS': sortOrder
+                        }
+                    });
+                }, saveTimeoutMilliseconds);
+            }
+        }
+
+        $container.packery( 'on', 'layoutComplete', orderItems );
+        //$container.packery( 'on', 'dragItemPositioned', orderItems );
+
+        $('#reinitBlocOrder').click(function() {
+            $.post("/api/1.0/user/preferences", {
+                id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
+                preferences: {
+                    'DASHBOARD_BLOCS': null
+                }
+            }, function() {
+                window.location.reload();
+            });
+        });
+
+        $(".panel-heading .icon").click(function() {
+            var $self = $(this);
+            var $panel = $self.parents('.panel');
+            $panel.toggleClass('folded');
+            if ($self.hasClass('icon-chevron-right')) {
+                $self.removeClass('icon-chevron-right').addClass('icon-chevron-down');
+                if ($panel.hasClass('empty') && !$panel.hasClass('loading')) {
+                    $panel.find('.panel-body img').show();
+                    loadBloc($panel);
+                } else {
+                    $panel.find('.panel-body').show();
+                    $container.packery('fit', $panel.get(0));
+                }
+            } else {
+                $self.removeClass('icon-chevron-down').addClass('icon-chevron-right');
+                $panel.find('.panel-body').hide();
+                $container.packery('fit', $panel.get(0));
+            }
+        });
 
     });
 </script>

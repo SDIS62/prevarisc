@@ -11,21 +11,21 @@ class Api_Service_Search
      * @param string|array $categorie
      * @param string|array $classe
      * @param string|array $famille
-     * @param string|array $types
+     * @param string|array $types_activites
      * @param bool $avis_favorable
      * @param string|array $statuts
      * @param bool $local_sommeil
      * @param float $lon
      * @param float $lat
      * @param int $parent
-     * @param int $count Par défaut 10, max 100
+     * @param int $count Par défaut 10, max 1000
      * @param int $page par défaut = 1
      * @return string
      */
-    public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $count = 10, $page = 1)
+    public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types_activites = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $count = 10, $page = 1)
     {
         $service_search = new Service_Search;
-        $results = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types, $avis_favorable, $statuts, $local_sommeil, $lon, $lat, $parent, null, null, $count, $page);
+        $results = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, $lon, $lat, $parent, null, null, $count, $page);
         return $results;
     }
 

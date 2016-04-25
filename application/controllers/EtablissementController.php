@@ -9,7 +9,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
         $service_groupement_communes = new Service_GroupementCommunes;
         $service_carto = new Service_Carto;
-
+        $DB_periodicite = new Model_DbTable_Periodicite;
         $etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->couches_cartographiques = $service_carto->getAll();
@@ -17,7 +17,12 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
 
         $this->view->etablissement = $etablissement;
+        $this->view->default_periodicite = $DB_periodicite->gn4ForEtablissement($etablissement);
         $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
+        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
     }
 
     public function editAction()
@@ -29,6 +34,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $etablissement = $service_etablissement->get($this->_request->id);
 
+        $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+        
         $this->view->etablissement = $etablissement;
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
@@ -43,6 +50,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_typesplan = new Service_TypePlan;
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
+        $service_classement = new Service_Classement;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -50,14 +58,20 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_activite = $service_typeactivite->getAll();
-        $this->view->DB_commission = $service_commission->getAll();
+        $this->view->DB_commission = $service_commission->getCommissionsAndTypes();
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
-
+        $this->view->DB_classement = $service_classement->getAll();
+        
+        $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $this->view->add = false;
+
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
+        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
         if($this->_request->isPost()) {
             try {
@@ -86,6 +100,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_typesplan = new Service_TypePlan;
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
+        $service_classement = new Service_Classement;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -93,12 +108,20 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_activite = $service_typeactivite->getAll();
-        $this->view->DB_commission = $service_commission->getAll();
+        $this->view->DB_commission = $service_commission->getCommissionsAndTypes();
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
+        $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->add = true;
+        
+        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
+        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
+
 
         if($this->_request->isPost()) {
             try {
@@ -129,6 +152,8 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
         $descriptifs = $service_etablissement->getDescriptifs($this->_request->id);
 
@@ -166,6 +191,9 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->textes_applicables_de_etablissement = $service_etablissement->getAllTextesApplicables($this->_request->id);
     }
 
@@ -177,6 +205,9 @@ class EtablissementController extends Zend_Controller_Action
         $service_textes_applicables = new Service_TextesApplicables;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->textes_applicables_de_etablissement = $service_etablissement->getAllTextesApplicables($this->_request->id);
         $this->view->textes_applicables = $service_textes_applicables->getAll();
 
@@ -201,7 +232,16 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
+        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+    }
+
+    public function getPieceJointeAction()
+    {
+        $this->forward('get', 'piece-jointe');
     }
 
     public function editPiecesJointesAction()
@@ -211,7 +251,12 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
+        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+
     }
 
     public function addPieceJointeAction()
@@ -224,7 +269,10 @@ class EtablissementController extends Zend_Controller_Action
         {
             try {
                 $post = $this->_request->getPost();
-                $service_etablissement->addPJ($this->_request->id, $_FILES['file'], $post['name'], $post['description'], $post['mise_en_avant']);
+                $name = isset($post['name']) ? $post['name'] : '';
+                $description = isset($post['description']) ? $post['description'] : '';
+                $mise_en_avant = isset($post['mise_en_avant']) ? $post['mise_en_avant'] : 0;
+                $service_etablissement->addPJ($this->_request->id, $_FILES['file'], $name, $description, $mise_en_avant);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'La pièce jointe a bien été ajoutée.'));
             }
             catch(Exception $e) {
@@ -264,6 +312,9 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $contacts_etablissements_parents = array();
 
         // Récupération des contacts des établissements parents
@@ -362,6 +413,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
 
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+
         $dossiers = $service_etablissement->getDossiers($this->_request->id);
 
         $this->view->etudes = $dossiers['etudes'];
@@ -376,6 +429,8 @@ class EtablissementController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
+
+        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
         $this->view->historique = $service_etablissement->getHistorique($this->_request->id);
     }

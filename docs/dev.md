@@ -172,13 +172,13 @@
 					<li>categories : Catégories des établissements recherchés.</li>
 					<li>classes : Catégories des établissements recherchés.</li>
 					<li>familles : Familles des établissements recherchés.</li>
-					<li>types : Type des établissements recherchés.</li>
+					<li>types_activites : Type d'activité des établissements recherchés.</li>
 					<li>avis_favorable : Inclure uniquement les établissements favorables quand le paramètre avis_favorable vaut true.</li>
 					<li>statuts : Statuts des établissements recherchés</li>
 					<li>local_sommeil : Inclure uniquement les établissements contenants des locaux à sommeil quand le paramètre local_sommeil vaut true.</li>
 					<li>lon : Longitude approximative de l'emplacement de l'établissement (A utiliser conjointement avec le paramètre lat).</li>
 					<li>lat : Latitude approximative de l'emplacement de l'établissement (A utiliser conjointement avec le paramètre lon).</li>
-					<li>count : Nombre maximum d'établissements dans le résultat. Défaut : 10, Maximum : 100.</li>
+					<li>count : Nombre maximum d'établissements dans le résultat. Défaut : 10, Maximum : 1000.</li>
 					<li>page : Numéro de page à afficher.</li>
 				</ul>
 			</td>

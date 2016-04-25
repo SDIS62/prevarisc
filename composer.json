@@ -1,22 +1,33 @@
 {
-  "name": "SDIS62/prevarisc",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/kdubuc/odtphp"
+
+    "name": "SDIS62/prevarisc",
+
+    "description": "Application web open-source gérant l'ensemble de l'activité du service prévention au sein d'un SDIS.",
+
+    "keywords": [
+        "sdis62",
+        "prevarisc",
+        "prevention"
+    ],
+
+    "homepage": "https://github.com/SDIS62/prevarisc",
+
+    "license": "CeCILL-B",
+
+    "require": {
+        "php": "^5.5|^7.0",
+        "zendframework/zendframework1": "^1.0",
+        "cybermonde/odtphp": "^1.0",
+        "michelf/php-markdown": "^1.0",
+        "kdubuc/gd_resize": "^1.0",
+        "SDIS62/toolbox": "^1.0",
+        "sebastian/git": "^2.0",
+        "jasig/phpcas": "^1.3"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "^4.0",
+        "fabpot/PHP-CS-Fixer": "^1.0"
     }
-  ],
-  "require": {
-    "php": ">5.4",
-    "ext-apc" : "*",
-    "ext-ldap" : "*",
-    "zendframework/zendframework1": "1.*",
-    "cybermonde/odtphp": "1.*",
-    "michelf/php-markdown": "1.*",
-    "kdubuc/gd_resize": "1.*",
-    "SDIS62/toolbox": "1.*"
-  },
-  "require-dev": {
-    "fabpot/PHP-CS-Fixer": "dev-master"
-  }
+
 }

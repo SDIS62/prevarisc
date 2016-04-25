@@ -3,7 +3,10 @@ if($this->do == 'new')
 	echo "<li id='categorie_".$this->categorie['ID_PRESCRIPTION_CAT']."'>";
 	
 echo "	
-	<span style='font-size:17px;font-weight:bold;'>".$this->categorie['LIBELLE_PRESCRIPTION_CAT']."</span>
+	<span style='font-size:17px;font-weight:bold;'>
+		<input type='hidden' name='categorie[]' value='".$this->categorie['ID_PRESCRIPTION_CAT']."' />
+		".$this->categorie['LIBELLE_PRESCRIPTION_CAT']."
+	</span>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<button class='showDetailCat btn' id='showtexte_".$this->categorie['ID_PRESCRIPTION_CAT']."' >Afficher les détails</button>
 	<button class='hideDetailCat btn' id='hidetexte_".$this->categorie['ID_PRESCRIPTION_CAT']."' style='display:none;'>Masquer les détails</button>
@@ -18,9 +21,3 @@ if($this->do == 'new')
 	echo "</li>";
 	
 ?>
-
-<script type="text/javascript">
-$(document).ready(function(){
-
-});
-</script>

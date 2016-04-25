@@ -8,6 +8,12 @@ echo "
 	<input type='hidden' name='PRESCRIPTIONTYPE_ARTICLE' id='PRESCRIPTIONTYPE_ARTICLE' value='".( ($this->do == 'edit' && $this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE'] != 0)?$this->assoc[0]['PRESCRIPTIONTYPE_ARTICLE']:"")."' />
 	<button id='emplacement' class='search btn' style='display:none;'>Rechercher les prescriptions  selon le classement</button>
 	<button id='word' class='search btn'>Rechercher les prescriptions par mots clés</button>
+	Cette prescription est
+	<select name='TYPE_PRESCRIPTION_DOSSIER' id='TYPE_PRESCRIPTION_DOSSIER'>
+		<option value='0'>Rappels réglementaires</option>
+		<option value='1'>Liée à l'exploitation</option>
+		<option value='2'>Liée à l'amélioration</option>
+	</select>
 	<br/><br/>
 ";
 echo '

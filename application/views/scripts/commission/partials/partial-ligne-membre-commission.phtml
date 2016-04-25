@@ -3,20 +3,20 @@
 		<div class='inner_scroll'>
             <!-- ID de la règle -->
             <input type='hidden' name='ID_COMMISSIONMEMBRE[]' value='<?php echo $this->id_membre ?>' />
-            
+
             <!-- Libellé du membre-->
             <input type='text' name='<?php echo $this->id_membre ?>_LIBELLE_COMMISSIONMEMBRE' value='<?php echo $this->libelle ?>' />
             <br/>
-            
+
             <!-- Obligatoire / facultatif / pour information -->
             <select name='<?php echo $this->id_membre ?>_PRESENCE_COMMISSIONMEMBRE' >
                 <option value='0' >Membre Obligatoire</option>
                 <option value='1' <?php if($this->presence == 1) echo "selected" ?>>Membre Facultatif</option>
                 <option value='2' <?php if($this->presence == 2) echo "selected" ?>>Membre Pour information</option>
             </select>
-            
+
             <hr/>
-            
+
             <!-- Type de membre -->
             <p>
                 <select name='<?php echo $this->id_membre ?>_typemembre'>
@@ -40,11 +40,11 @@
                     </select>
                 </span>
                 <?php endif ?>
-                
+
                 <script>
-                    
+
                     $("select[name=<?php echo $this->id_membre ?>_typemembre]").change(function() {
-        
+
                         $(".<?php echo $this->id_membre ?>_type-membre").hide();
 
                         switch( $(this).val() ) {
@@ -63,7 +63,7 @@
             </p>
         </div>
 	</td>
-	
+
 	<!-- Catégorie -->
 	<td class='checkbox_area' >
         <div class='inner_scroll'>
@@ -77,7 +77,7 @@
             </ul>
 		</div>
 	</td>
-	
+
 	<!-- Le type -->
 	<td class='checkbox_area' >
         <div class='inner_scroll'>
@@ -98,7 +98,7 @@
             </dl>
         </div>
 	</td>
-	
+
 	<!-- Classe -->
 	<td class='checkbox_area' >
 		<div class='inner_scroll'>
@@ -112,42 +112,43 @@
             </ul>
 		</div>
 	</td>
-	
+
 	<!-- Le type de dossier -->
-	<td class='checkbox_area <?php echo $this->id_membre ?>_type_dossier check_type_dossier' >
+	<td class='checkbox_area' >
 		<div class='inner_scroll'>
+
             <ul class='unstyled'>
+
                 <input type="hidden" name="type_membre_value" value="<?php echo $this->id_membre ?>" />
+
                 <?php foreach( $this->dossiertypes as $dossiertype ) : ?>
+
                     <li>
-                    <input name='<?php echo $this->id_membre ?>_ID_DOSSIERTYPE[]' type='checkbox' value='<?php echo $dossiertype["ID_DOSSIERTYPE"] ?>' <?php if( $dossiertype["ID_COMMISSIONMEMBRE"] != null ) echo "checked" ?> />
-                    <?php echo $dossiertype["LIBELLE_DOSSIERTYPE"] ?>
+
+                    	<input name='<?php echo $this->id_membre ?>_ID_DOSSIERTYPE[]' type='checkbox' value='<?php echo $dossiertype["ID_DOSSIERTYPE"] ?>' <?php if( $dossiertype["ID_COMMISSIONMEMBRE"] != null ) echo "checked" ?> onclick="if($(this).attr('checked')) $(this).next('ul').find('input').attr('checked', true); else $(this).next('ul').find('input').removeAttr('checked');" />
+
+                    	<?php echo $dossiertype["LIBELLE_DOSSIERTYPE"] ?>
+
+						<ul class='unstyled' style='margin-left: 1em;'>
+							<?php foreach( $this->dossiernatures as $dossiernature ) : ?>
+								<?php if($dossiernature["ID_DOSSIERTYPE"] == $dossiertype["ID_DOSSIERTYPE"]) : ?>
+									<li class='<?php echo $this->id_membre."_DOSSIERNATURETYPE_".$dossiernature["ID_DOSSIERTYPE"] ?>' >
+										<input name='<?php echo $this->id_membre ?>_ID_DOSSIERNATURE[]' type='checkbox' value='<?php echo $dossiernature["ID_DOSSIERNATURE"] ?>' <?php if( $dossiernature["ID_COMMISSIONMEMBRE"] != null ) echo "checked" ?> />
+										<?php echo $dossiernature["LIBELLE_DOSSIERNATURE"] ?>
+									</li>
+								<?php endif ?>
+							<?php endforeach ?>
+						</ul>
+
                     </li>
+
                 <?php endforeach ?>
+
             </ul>
+
 		</div>
 	</td>
-	
-	<!-- La nature du dossier -->
-	<td class='checkbox_area <?php echo $this->id_membre ?>_nature_dossier check_nature_dossier' >
-        <div class='inner_scroll'>
-            <ul class='unstyled'>
-                <?php foreach( $this->dossiernatures as $dossiernature ) : ?>
-                <li class='<?php echo $this->id_membre."_DOSSIERNATURETYPE_".$dossiernature["ID_DOSSIERTYPE"] ?> ui-helper-hidden' >
-                    <input name='<?php echo $this->id_membre ?>_ID_DOSSIERNATURE[]' type='checkbox' value='<?php echo $dossiernature["ID_DOSSIERNATURE"] ?>' <?php if( $dossiernature["ID_COMMISSIONMEMBRE"] != null ) echo "checked" ?> />
-                    <?php echo $dossiernature["LIBELLE_DOSSIERNATURE"] ?>
-                </li>
-                <?php endforeach ?>
-            </ul>
-        </div>
-        <script>
-            $(".<?php echo $this->id_membre ?>_type_dossier input").live('click', function() {
-                check_dossier_nature('<?php echo $this->id_membre ?>');
-            });
-            check_dossier_nature(<?php echo $this->id_membre ?>);
-        </script>
-	</td>
-	
+
 	<!-- Action -->
 	<td style='text-align: center;' >
 		<a class='delete-membre' href='/commission/delete-membre?id_membre=<?php echo $this->id_membre ?>' title='Supprimer' >

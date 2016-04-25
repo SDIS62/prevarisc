@@ -54,4 +54,21 @@ class Service_Adresse
         $DB_adresse = new Model_DbTable_EtablissementAdresse;
         return $DB_adresse->getVoies($code_insee, $q);
     }
+    
+    /**
+     * Retourne le maire de la commune concernée
+     * 
+     * @param int $numinsee le numéro insee de la commune
+     * @return array les informations de la fiche contact du maire
+     */
+    public function getMaire($numinsee) {
+        $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
+
+        $select->from("adressecommune")
+            ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = adressecommune.ID_UTILISATEURINFORMATIONS")
+            ->where("adressecommune.NUMINSEE_COMMUNE = ?", $numinsee)
+            ->limit(1);
+
+        return $select->query()->fetch();
+    }
 }

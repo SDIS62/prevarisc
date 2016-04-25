@@ -1,4 +1,4 @@
-<form id='etablissement' action='<?php echo $this->url(array('action' => $this->add ? 'add' : 'edit')) ?>' method='post' >
+<form id='etablissement' class="<?php echo $this->add ? 'add' : 'edit' ?>" action='<?php echo $this->url(array('action' => $this->add ? 'add' : 'edit')) ?>' method='post' >
 
     <?php if($this->add) : ?>
     <div class='pull-right' >
@@ -29,16 +29,22 @@
                     <dt>Identifiant</dt>
                     <dd>
                         <div>
-                             <input type='text' name='NUMEROID_ETABLISSEMENT' value='<?php echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"]?>' />
+                             <input type='text' name='NUMEROID_ETABLISSEMENT' id='NUMEROID_INPUT' value='<?php echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"]?>' />
                         </div>
                     </dd>
 
                     <!-- Statut de l'établissement -->
                     <dt>Statut</dt>
                     <dd>
-                        <select name='ID_STATUT'>
+                        <select name='ID_STATUT' <?php if (!$this->is_allowed_change_statut) echo "readonly" ?>>
                             <?php foreach( $this->DB_statut as $item ) : ?>
-                                <option value='<?php echo $item["ID_STATUT"] ?>' <?php if( $item["ID_STATUT"] == $this->etablissement['informations']["ID_STATUT"] ) echo "selected" ?> >
+                                <option value='<?php echo $item["ID_STATUT"] ?>'
+                                    <?php if($this->etablissement && $item["ID_STATUT"] == $this->etablissement['informations']["ID_STATUT"]): ?>
+                                        selected
+                                    <?php elseif (!$this->is_allowed_change_statut): ?>
+                                        disabled
+                                    <?php endif ?>
+                                >
                                     <?php echo $item["LIBELLE_STATUT"] ?>
                                 </option>
                             <?php endforeach ?>
@@ -74,6 +80,17 @@
                         <?php foreach( $this->DB_categorie as $item ) : ?>
                             <option value='<?php echo $item["ID_CATEGORIE"] ?>' <?php if( $item["ID_CATEGORIE"] == $this->etablissement['informations']["ID_CATEGORIE"] ) echo "selected" ?> >
                                 <?php echo $item["LIBELLE_CATEGORIE"] ?>
+                            </option>
+                        <?php endforeach ?>
+                    </select>
+                </dd>
+
+                <dt class="champ_classement champs">Classement</dt>
+                <dd class="champ_classement champs">
+                    <select name='ID_CLASSEMENT'>
+                        <?php foreach( $this->DB_classement as $item ) : ?>
+                            <option value='<?php echo $item["ID_CLASSEMENT"] ?>' <?php if( $item["ID_CLASSEMENT"] == $this->etablissement['informations']["ID_CLASSEMENT"] ) echo "selected" ?>>
+                                <?php echo $item["LIBELLE_CLASSEMENT"] ?>
                             </option>
                         <?php endforeach ?>
                     </select>
@@ -151,6 +168,15 @@
                     <p>
                         <input type='hidden' name='R12320_ETABLISSEMENTINFORMATIONS' value='0' />
                         <input type='checkbox' name='R12320_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["R12320_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
+                    </p>
+                </dd>
+
+                <!-- Relève du droit public -->
+                <dt class='champs champ_droitpublic'>R123-16 ?</dt>
+                <dd class='champs champ_droitpublic'>
+                    <p>
+                        <input type='hidden' name='DROITPUBLIC_ETABLISSEMENTINFORMATIONS' value='0' />
+                        <input type='checkbox' name='DROITPUBLIC_ETABLISSEMENTINFORMATIONS' value='1' <?php if( $this->etablissement['informations']["DROITPUBLIC_ETABLISSEMENTINFORMATIONS"] ) echo "checked" ?> />
                     </p>
                 </dd>
 
@@ -239,8 +265,8 @@
             </table>
 
             <!-- Etablissement lié -->
-            <h4 class='h4_subtitle'>Établissements liés <?php if($this->etablissement['general']) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>&libelle=<?php echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
-            <dl class='dl-horizontal' >
+            <h4 class='h4_subtitle etablissements_lies'>Établissements liés <?php if($this->etablissement['general']) : ?> <a id='add_etablissement' href='/etablissement/add?pere=<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>&libelle=<?php echo htmlspecialchars($this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES) ?>' class='edit' style='font-size: 0.85em; float: right; font-weight: normal;' >Créer un établissement enfant</a> <?php endif ?></h4>
+            <dl class='dl-horizontal etablissements_lies' >
                 <dt class="etablissement_pere">Père de l'établissement</dt>
                 <dd class="etablissement_pere">
                     Nom de l'établissement : <strong><?php if(count($this->etablissement['parents']) > 0) echo htmlspecialchars(end($this->etablissement['parents'])["LIBELLE_ETABLISSEMENTINFORMATIONS"], ENT_QUOTES); elseif( isset($_GET["libelle"]) ) echo htmlspecialchars($_GET["libelle"], ENT_QUOTES)  ?></strong><br/>
@@ -278,23 +304,6 @@
 
         <!-- Carte de l'emplacement de l'établissement / informations  -->
         <div class='span6'>
-            <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
-                <div id='geoportail-container' class='hide' style="height: 350px; max-height: 350px;"></div>
-                <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/latest/GeoportalExtended.js"></script>
-                <script>
-                    /*
-                    $(document).ready(function() {
-                        viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
-                            lat: <?php echo $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] ?>,
-                            lon: <?php echo $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] ?>
-                        }, 17, OpenLayers.Util.extend({
-                            controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
-                            proxyUrl: '/proxy'
-                        }));
-                    });
-                    */
-                </script>
-            <?php endif ?>
             <h4 class="champ_adresse champs h4_subtitle">Adresse <a style='font-size: 0.85em; float: right; font-weight: normal;' data-toggle="modal" data-backdrop="false" href="#adresse-modal">Ajouter une adresse</a></h4>
             <table id='adresses' class='table table-condensed champ_adresse champs'>
                 <thead>
@@ -307,9 +316,9 @@
                 <tbody>
                     <?php echo $this->partial('etablissement/partials/partial-adresse.phtml') ?>
                     <?php if($this->etablissement['adresses']) : ?>
-                    <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
-                        <?php echo $this->partial('etablissement/partials/partial-adresse.phtml', array('adresse' => $adresse)) ?>
-                    <?php endforeach ?>
+                        <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
+                            <?php echo $this->partial('etablissement/partials/partial-adresse.phtml', array('adresse' => $adresse)) ?>
+                        <?php endforeach ?>
                     <?php endif ?>
                 </tbody>
             </table>
@@ -340,9 +349,15 @@
                 <!-- Commission compétente -->
                 <dt class="champ_commission champs">Commission</dt>
                 <dd class="champ_commission champs">
-                    <select name='ID_COMMISSION' >
-                        <?php foreach( $this->DB_commission as $item ) : ?>
-                            <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->etablissement['informations']["ID_COMMISSION"] ) echo "selected" ?> ><?php echo $item["LIBELLE_COMMISSION"] ?></option>
+                    <select name='ID_COMMISSION' class="input-xlarge" >
+                        <?php foreach($this->DB_commission as $commission_type) : ?>
+                            <optgroup label="<?php echo $commission_type['LIBELLE'] ?>">
+                                <?php foreach($commission_type['ARRAY'] as $item ) : ?>
+                                    <option value='<?php echo $item["ID_COMMISSION"] ?>' <?php if( $item["ID_COMMISSION"] == $this->etablissement['informations']["ID_COMMISSION"] ) echo "selected" ?> >
+                                        <?php echo $item["LIBELLE_COMMISSION"] ?> (<?php echo $commission_type['LIBELLE'] ?>)
+                                    </option>
+                                <?php endforeach ?>
+                            </optgroup>
                         <?php endforeach ?>
                     </select>
                 </dd>
@@ -398,11 +413,6 @@
 
     <div class="modal-body">
         <dl>
-            <dt>Date d'enregistrement de la fiche d'informations</dt>
-            <dd id='confirm-modal-date'><span class='confirm-modal-input'></span> <span class='label label-info hide'>Fiche d'informations déjà existante</span></dd>
-        </dl>
-
-        <dl>
             <dt>Valeurs conseillées</dt>
             <dd>
                 <ul>
@@ -422,7 +432,7 @@
 </div>
 
 <!-- Boite de construction d'adresse-->
-<form id="adresse-modal" class="modal hide adresse fase" action='<?php echo $this->url(array('action' => 'add')) ?>' method='post' >
+<form id="adresse-modal" class="modal hide adresse fase" action='#' method='post'>
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -464,17 +474,31 @@
 
             <dt>Géolocalisation</dt>
             <dd>
-                Longitude: <span class='lon'>Inconnu</span>; Latitude: <span class='lat'>Inconnu</span>
-                <button id="geolocme" class='btn btn-small'>Géolocaliser cette adresse</button>
-                <input type='hidden' name='lon' />
-                <input type='hidden' name='lat' />
+                <?php if($this->key_ign != null) : ?><button id="geolocme" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse (Geoportail)</button><?php endif ?>
+                <button id="geolocme_nominatim" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse (Nominatim)</button>
+                <br/>
+                <small>Résultat : <span class='result'>Inconnu</span></small>
+            </dd>
+
+            <dt>Longitude</dt>
+            <dd>
+                 <input id="addressLongitude" type='text' name='lon' />
+            </dd>
+
+            <dt>Latitude</dt>
+            <dd>
+                 <input id="addressLatitude" type='text' name='lat' />
             </dd>
         </dl>
+        <?php if($this->key_ign != null): ?>
+            <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
+            <div id='geoportail-container' style="height: 400px"></div>
+        <?php endif ?>
     </div>
 
     <div class="modal-footer">
         <a href="#" data-dismiss="modal" class="btn">Annuler</a>
-        <input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' />
+        <a href="#" data-dismiss="modal" class="btn btn-success" id='submit-adresse'>Sauvegarder</a>
     </div>
 </form>
 
@@ -490,7 +514,7 @@
                 numinsee: $("#adresses").find('tr.adresse').first().find('input[type="hidden"]').first().val(),
                 type: $("select[name='ID_TYPE']").find('option:selected').val(),
                 categorie: $("select[name='ID_CATEGORIE']").find('option:selected').val(),
-                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").is(':checked'),
+                local_sommeil: $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']:checked").val(),
                 classe: $("select[name='ID_CLASSE']").find('option:selected').val(),
                 id_etablissement_pere: $("input[name='ID_PERE']").val(),
                 ids_etablissements_enfants: etablissements_enfants
@@ -500,16 +524,16 @@
                     // A l'apparition de la boite de confirmation on met à jour les valeurs saisies par l'utilisateur dans la boite
                     var preventionnistes = [];
                     var date = new Date($('input[name="date"]').val());
-                    $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text());
+                    var localSommeil = $('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"]:checked').val();
+                    $('#confirm-modal-commission .confirm-modal-input').text($('select[name="ID_COMMISSION"] option:selected').text().replace(/ \(.*\)/gi, ""));
                     $('#confirm-modal-periodicite .confirm-modal-input').text($('input[name="PERIODICITE_ETABLISSEMENTINFORMATIONS"]').val());
-                    $('#confirm-modal-localsommeil .confirm-modal-input').text($('input[name="LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS"][value=1]').is(':checked') ? 'Oui' : 'Non' );
+                    $('#confirm-modal-localsommeil .confirm-modal-input').text(localSommeil != undefined ? (localSommeil == 1 ? 'Oui' : 'Non') : '' );
                     $('table#preventionnistes tbody tr.preventionniste').each(function(index) { preventionnistes[index] = $(this).find('td').first().find('span').text(); });
                     $('#confirm-modal-preventionnistes .confirm-modal-input').text(preventionnistes.toString() == '' ? 'Aucuns' : preventionnistes.toString());
-                    $('#confirm-modal-date .confirm-modal-input').text(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
                     // On met à jour les valeurs par défauts
                     $('#confirm-modal-commission .confirm-modal-advisable').attr('id', data.response.commission ? data.response.commission.ID_COMMISSION : '').text(data.response.commission ? data.response.commission.LIBELLE_COMMISSION : '');
                     $('#confirm-modal-periodicite .confirm-modal-advisable').text(data.response.periodicite);
-                    $('#confirm-modal-localsommeil .confirm-modal-advisable').text(data.response.local_sommeil && data.response.local_sommeil == true ? 'Oui' : 'Non');
+                    $('#confirm-modal-localsommeil .confirm-modal-advisable').text(data.response.local_sommeil !== undefined ? (data.response.local_sommeil == true ? 'Oui' : 'Non') : '');
                     if(data.response.preventionnistes && data.response.preventionnistes.length > 0) {
                         var preventionnistes = [];
                         var preventionnistes_ids = [];
@@ -521,7 +545,7 @@
                     }
                     $('#confirm-modal').find('li').removeClass('confirm-modal-hide');
                     $('#confirm-modal').find('li').each(function(index) {
-                        if($(this).find('.confirm-modal-input').text() == $(this).find('.confirm-modal-advisable').text() || $(this).find('.confirm-modal-advisable').text() == '') {
+                        if($(this).find('.confirm-modal-input').text().trim() == $(this).find('.confirm-modal-advisable').text().trim() || $(this).find('.confirm-modal-advisable').text().trim() == '') {
                             $(this).addClass("confirm-modal-hide");
                         }
                     });
@@ -573,7 +597,7 @@
         });
 
         // Ajout d'une adresse
-        $("form.adresse input[type='submit']").live('click', function() {
+        $("form.adresse a#submit-adresse").live('click', function() {
             time = Date.now();
             node = $('#prototype_adresse').clone().prependTo( $('table.champ_adresse') ).removeClass('hide prototypes').addClass('adresse').attr('id', '');
             node.find('input[name="ADRESSES[-1][LON_ETABLISSEMENTADRESSE]"]').val($('form.adresse').find('input[name="lon"]').val());
@@ -598,7 +622,7 @@
         // Action sur le changement du genre (affichage des champs)
         $("select[name='ID_GENRE']").change(function() {
             $('.champs').hide();
-            $('.etablissement_pere, .etablissements_enfants').show();
+            $('.etablissement_pere, .etablissements_enfants, .etablissements_lies').show();
             switch($(this).find('option:selected').val()) {
                 // Site
                 case '1':
@@ -607,7 +631,7 @@
 
                 // Établissement
                 case '2':
-                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_localsommeil, .champ_donnees_pratiques').show();
+                    $('.champ_categorie, .champ_periodicite, .champ_types, .champ_effectifs, .champ_plans, .champ_adresse, .champ_commission, .champ_localsommeil, .champ_donnees_pratiques, .champ_droitpublic').show();
                     break;
 
                 // Cellule
@@ -635,15 +659,46 @@
                     $("input[name='ICPE_ETABLISSEMENTINFORMATIONS']").change();
                     $("input[name='LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'][value=1]").attr('checked', false).change();
                     break;
+
+                // Camping
+                case '7':
+                    $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
+                    $('.etablissements_enfants').hide();
+                    break;
+
+                // Manifestation Temporaire
+                case '8':
+                    $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
+                    $('.etablissements_enfants').hide();
+                    break;
+
+                // IOP
+                case '9':
+                    $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
+                    $('.etablissements_enfants').hide();
+                    break;
+
+                // Zone
+                case '10':
+                    $('.champ_classement, .champ_adresse').show();
+                    $('.etablissements_lies').hide();
+                    break;
             }
         }).change();
 
         // Actions sur le changement de type principal
-        $("select[name='ID_TYPE']").change(function() {
+        changementLibelleEffectifPublic = function(self) {
             // Si l'établissement est un parking, alors l'effectif public est le nombre de places de stationnement
-            if($(this).val() == '16') {
+            if($(self).val() == 16) {
                 $("dt.effectif_public").html('Places de stationnement');
             }
+            else {
+                $("dt.effectif_public").html('Public');
+            }
+        };
+
+        $("select[name='ID_TYPE']").change(function(){
+            changementLibelleEffectifPublic(this);
         }).change();
 
         // Actions sur le changement de catégorie
@@ -682,7 +737,7 @@
                     $(this).next().append($("<option />").val(activites[x]["ID_TYPEACTIVITE"]).text(activites[x]["LIBELLE_ACTIVITE"]));
                 }
             }
-        })
+        });
 
         // On choisit d'initialiser ou de remettre à 0 les activités en fonction du type
         $("select.type_select").each(function(index) {
@@ -830,7 +885,7 @@
 
         // Auto complétion de la ville
         $("input[name='commune_ac']").autocomplete("/api/1.0/adresse/get_communes", {
-            minChars: 3,
+            minChars: 2,
             parse: function(data) {
                 return $.map(data["response"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
             },
@@ -866,37 +921,155 @@
             $("#adresse-modal input[name='numero'], #adresse-modal input[name='complement']").val("").attr("disabled", true).blur();
         });
 
+        <?php if($this->key_ign != null): ?>
+            viewer = initViewer(
+                "geoportail-container", 
+                "<?php echo $this->key_ign ?>", 
+                [{lon: -1.638023, lat: 48.134198999999995, description: ""}], 
+                <?php echo json_encode($this->couches_cartographiques) ?>,
+                function() {
+                    
+                    // removes the marker
+                    var vectorLayers = viewer.getViewer().getMap().getLayersByClass('OpenLayers.Layer.Vector');
+                    if (vectorLayers !== null && vectorLayers.length > 0) {
+                        var vectorLayer = vectorLayers[0];
+                        if (vectorLayer.features !== null && vectorLayer.features.length > 0) {
+                            vectorLayer.features[0].destroy();
+                        }
+                    }
+
+                    viewer.getViewer().getMap().events.register("moveend", viewer.getViewer().getMap(), function(e) {
+                        if (geolocalizing) {
+                            geolocalizing = false;
+                            var map = viewer.getViewer().getMap();
+                            var center = map.getCenter().transform(map.getProjection(), 'EPSG:4326');
+                            if(center && center.lon && center.lat) {
+                                $("span.result").text("Géolocalisée IGN");
+                                $("input[name='lon']").val(center.lon);
+                                $("input[name='lat']").val(center.lat);
+                                putMarkerAt(map, map.getCenter(), map.getProjection());
+                            }
+                            else {
+                                $("span.result").text("Introuvable");
+                                $("input[name='lon']").val(0);
+                                $("input[name='lat']").val(0);
+                            }
+                        }
+                    });
+
+                    OpenLayers.Control.Click = OpenLayers.Class( OpenLayers.Control, {
+                        defaultHandlerOptions:{
+                            'single': true,
+                            'double': false,
+                            'pixelTolerance': 0,
+                            'stopSingle': false,
+                            'stopDouble': false
+                        },
+
+                        /**
+                         * Constructor
+                         */
+                        initialize: function(options) {
+                            OpenLayers.Control.prototype.initialize.apply(this,arguments);
+                            this.handlerOptions= OpenLayers.Util.extend({},this.defaultHandlerOptions);
+                            this.handler= new OpenLayers.Handler.Click(
+                                this, {'click': this.trigger}, this.handlerOptions);
+                        },
+
+                        /**
+                         * APIMethod: trigger
+                         */
+                        trigger: function(e) {
+                            var lonlat = this.map.getLonLatFromViewPortPx(e.xy).transform(
+                                this.map.getProjection(), OpenLayers.Projection.CRS84
+                            );
+
+                            $("span.result").text("Manuel par clic sur la carte");
+                            $("input[name='lon']").val(lonlat.lon);
+                            $("input[name='lat']").val(lonlat.lat);
+
+                            // update map
+                            putMarkerAt(this.map, this.map.getLonLatFromViewPortPx(e.xy), this.map.getProjection());
+                        }
+                    });
+
+                    // création et insertion du nouveau contrôleur
+                    var monClic= new OpenLayers.Control.Click({
+                        autoActivate:true
+                    });
+                    viewer.getViewer().getMap().addControl(monClic);
+                }
+            );
+
+            geolocalizing = false;
+            $('#adresse-modal #geolocme').click(function(e) {
+                e.preventDefault();
+                var adresse = "";
+                var numero = $("input[name='numero']").val().trim();
+                var voie = $("input[name='voie_ac']").val().trim();
+                var codepostal = $("input[name='code_postal']").val();
+                var commune = $("input[name='commune_ac']").val().replace(/\(.*\)/g, '');
+                if (!commune) {
+                    $("span.result").text("Pas de commune renseignée");
+                    return false;
+                }
+                if (!voie) {
+                    $("span.result").text("Pas de voie renseignée");
+                    return false;
+                }
+                if (numero) {
+                    adresse += numero + ", ";
+                }
+                adresse += voie + ", " + codepostal +  " " + commune;
+                $("span.result").text("Géolocalisation en cours...");
+
+                geolocalizing = true;
+                console.log('Geolocalising : '+adresse);
+                viewer.setCenterAtLocation({
+                    address: adresse
+                });
+
+                return false;
+            });
+
+            
+
+        <?php endif ?>
+
         // Géolocalisation de l'adresse
-        $('#adresse-modal #geolocme').click(function() {
+        $('#adresse-modal #geolocme_nominatim').click(function() {
             element = $(this);
             $.ajax({
-                url: "http://nominatim.openstreetmap.org/search",
+                url: "//nominatim.openstreetmap.org/search",
                 dataType: 'json',
                 timeout: 10000,
                 data: {
                     format: "json",
                     limit: 1,
-                    country: "France",
+                    countrycodes: "FR",
                     street: $("input[name='numero']").val() + " " + $("input[name='voie_ac']").val(),
                     city: $("input[name='commune_ac']").val(),
-                    postalcode: $("input[name='code_insee']").val().substring(0,2)
+                    postalcode: $("input[name='code_postal']").val()
                 },
                 beforeSend: function() {
                     element.text("Géolocalisation en cours ...");
                 },
                 success: function(geolocations) {
-                    element.text("Géolocaliser cette adresse");
+                    element.text("Géolocaliser cette adresse (Nominatim)");
                     if(geolocations.length > 0) {
+                        $("span.result").text("OK");
                         $("input[name='lon']").val(geolocations[0].lon);
-                        $("span.lon").text(geolocations[0].lon);
                         $("input[name='lat']").val(geolocations[0].lat);
-                        $("span.lat").text(geolocations[0].lat);
+                        <?php if($this->key_ign != null) : ?>
+                            var lonlat = new OpenLayers.LonLat(geolocations[0].lon, geolocations[0].lat);
+                            putMarkerAt(viewer.getViewer().getMap(), lonlat, viewer.getViewer().getMap().getProjection());
+                            viewer.getViewer().getMap().setCenter(lonlat, 17);
+                        <?php endif ?>
                     }
                     else {
+                        $("span.result").text("Introuvable");
                         $("input[name='lon']").val(0);
-                        $("span.lon").text("Introuvable");
                         $("input[name='lat']").val(0);
-                        $("span.lat").text("Introuvable");
                     }
                 },
                 error: function() {
@@ -906,5 +1079,6 @@
 
             return false;
         });
+
     });
 </script>

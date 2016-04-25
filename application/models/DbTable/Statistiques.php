@@ -22,15 +22,15 @@
                 ->setIntegrityCheck(false)
                 ->from(array("e" => "etablissement"), array("ID_ETABLISSEMENT"))
                 ->columns(array(
-                    "DATEVISITE_DOSSIER" => "( SELECT MAX( dossier.DATEVISITE_DOSSIER ) FROM etablissementdossier, dossier, dossiernature, etablissement
+                    "DATEVISITE_DOSSIER" => new Zend_Db_Expr("( SELECT MAX( dossier.DATEVISITE_DOSSIER ) FROM etablissementdossier, dossier, dossiernature, etablissement
                     WHERE dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
                     AND dossiernature.ID_DOSSIER = dossier.ID_DOSSIER
                     AND etablissementdossier.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT
                     AND etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT
                     AND dossiernature.ID_NATURE = '21'
                     AND ( dossier.TYPE_DOSSIER = '2' || dossier.TYPE_DOSSIER = '3')
-                    GROUP BY etablissement.ID_ETABLISSEMENT)",
-                    "ARRONDISSEMENT" => "(SELECT `groupement`.LIBELLE_GROUPEMENT FROM `groupement` INNER JOIN `groupementcommune` ON groupementcommune.ID_GROUPEMENT = groupement.ID_GROUPEMENT INNER JOIN `groupementtype` ON groupementtype.ID_GROUPEMENTTYPE = groupement.ID_GROUPEMENTTYPE WHERE (groupementcommune.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE AND groupementtype.ID_GROUPEMENTTYPE = 2) LIMIT 1)"
+                    GROUP BY etablissement.ID_ETABLISSEMENT)"),
+                    "ARRONDISSEMENT" =>  new Zend_Db_Expr("(SELECT `groupement`.LIBELLE_GROUPEMENT FROM `groupement` INNER JOIN `groupementcommune` ON groupementcommune.ID_GROUPEMENT = groupement.ID_GROUPEMENT INNER JOIN `groupementtype` ON groupementtype.ID_GROUPEMENTTYPE = groupement.ID_GROUPEMENTTYPE WHERE (groupementcommune.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE AND groupementtype.ID_GROUPEMENTTYPE = 2) LIMIT 1)")
                 ))
                 ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", array(
                     "LIBELLE_ETABLISSEMENTINFORMATIONS",
@@ -75,7 +75,7 @@
                 ->setIntegrityCheck(false)
                 ->from(array("e" => "etablissement"), array("ID_ETABLISSEMENT"))
                 ->columns(array(
-                    "DATEVISITE_DOSSIER" => "( SELECT MAX( dossier.DATEVISITE_DOSSIER ) FROM etablissementdossier, dossier, dossiernature, etablissement
+                    "DATEVISITE_DOSSIER" => new Zend_Db_Expr("( SELECT MAX( dossier.DATEVISITE_DOSSIER ) FROM etablissementdossier, dossier, dossiernature, etablissement
                     WHERE dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
                     AND DATEDIFF(dossier.DATEVISITE_DOSSIER,CURDATE()) > 0
                     AND dossiernature.ID_DOSSIER = dossier.ID_DOSSIER
@@ -83,8 +83,8 @@
                     AND etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT
                     AND dossiernature.ID_NATURE in (21,26) 
                     AND dossier.TYPE_DOSSIER in (2,3)
-                    GROUP BY etablissement.ID_ETABLISSEMENT)",
-                    "ARRONDISSEMENT" => "(SELECT `groupement`.LIBELLE_GROUPEMENT FROM `groupement` INNER JOIN `groupementcommune` ON groupementcommune.ID_GROUPEMENT = groupement.ID_GROUPEMENT INNER JOIN `groupementtype` ON groupementtype.ID_GROUPEMENTTYPE = groupement.ID_GROUPEMENTTYPE WHERE (groupementcommune.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE AND groupementtype.ID_GROUPEMENTTYPE = 2) LIMIT 1)"
+                    GROUP BY etablissement.ID_ETABLISSEMENT)"),
+                    "ARRONDISSEMENT" => Zend_Db_Expr("(SELECT `groupement`.LIBELLE_GROUPEMENT FROM `groupement` INNER JOIN `groupementcommune` ON groupementcommune.ID_GROUPEMENT = groupement.ID_GROUPEMENT INNER JOIN `groupementtype` ON groupementtype.ID_GROUPEMENTTYPE = groupement.ID_GROUPEMENTTYPE WHERE (groupementcommune.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE AND groupementtype.ID_GROUPEMENTTYPE = 2) LIMIT 1)")
                 ))
                 ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", array(
                     "LIBELLE_ETABLISSEMENTINFORMATIONS",
@@ -162,7 +162,7 @@
                 $this->etablissements->where("dossier.AVIS_DOSSIER_COMMISSION = 2"); // AND SCHEMAMISESECURITE_ETABLISSEMENTINFORMATIONS != 1
 
                 $this->etablissements->columns(array(
-                    "NBJOURS_DEFAVORABLE" => "(
+                    "NBJOURS_DEFAVORABLE" => new Zend_Db_Expr("(
                     SELECT DATEDIFF('" . $this->getDate($this->ets_date) . "', MAX(DATE_ETABLISSEMENTINFORMATIONS))
                     FROM etablissementinformations
                     WHERE
@@ -171,7 +171,7 @@
                         etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL
                     GROUP BY ID_ETABLISSEMENT
                     )
-                    "
+                    ")
 
                 ));
 

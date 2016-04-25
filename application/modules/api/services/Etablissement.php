@@ -47,11 +47,11 @@ class Api_Service_Etablissement
      * @param int $id
      * @return string
      */
-	public function getTextesApplicables($id)
-	{
-		$service_etablissement = new Service_Etablissement;
-		$textes_applicables = $service_etablissement->getAllTextesApplicables($id);
-        return $textes_applicables;
+    public function getTextesApplicables($id)
+    {
+            $service_etablissement = new Service_Etablissement;
+            $textes_applicables = $service_etablissement->getAllTextesApplicables($id);
+            return $textes_applicables;
     }
 
     /**
@@ -60,12 +60,38 @@ class Api_Service_Etablissement
      * @param int $id
      * @return string
      */
-	public function getPiecesJointes($id)
-	{
-		$service_etablissement = new Service_Etablissement;
-		$pieces_jointes = $service_etablissement->getAllPJ($id);
+    public function getPiecesJointes($id)
+    {
+        $service_etablissement = new Service_Etablissement;
+        $pieces_jointes = $service_etablissement->getAllPJ($id);
         return $pieces_jointes;
     }
+    
+    /**
+     * Retourne les pièces jointes d'un établissement identifié par le paramètre id.
+     *
+     * @param int $id
+     * @return string
+     */
+    public function getPiecesJointesContent($id)
+    {
+        $service_etablissement = new Service_Etablissement;
+        $pieces_jointes = $service_etablissement->getAllPJ($id);
+        
+        $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $pieces_jointes_content = array();
+        
+        foreach($pieces_jointes as $pieces_jointe) {
+            $path = $store->getFilePath($pieces_jointe, 'etablissement', $id);
+            $pieces_jointes_content[] = array(
+                'ID_PIECE_JOINTE' =>  $pieces_jointe['ID_PIECEJOINTE'],
+                'IMAGE' => base64_encode(file_get_contents($path))
+            );  
+        }
+
+        return $pieces_jointes_content;
+    }
+
 
     /**
      * Retourne lles contacts d'un établissement identifié par le paramètre id.

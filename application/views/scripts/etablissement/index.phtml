@@ -24,7 +24,7 @@
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3))) : ?>
                 <dt>Catégorie</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? end($this->etablissement['parents'])['LIBELLE_CATEGORIE'] : $this->etablissement['informations']['LIBELLE_CATEGORIE'] ?></p>
+                    <p><?php echo $this->etablissement['informations']['LIBELLE_CATEGORIE'] ?></p>
                 </dd>
                 <?php endif ?>
 
@@ -42,10 +42,27 @@
                 </dd>
                 <?php endif ?>
 
-                <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5))) : ?>
+                <?php if($this->etablissement['informations']['ID_GENRE'] == 10) : ?>
+                <dt>Classement</dt>
+                <dd>
+                    <p><?php echo $this->etablissement['informations']['LIBELLE_CLASSEMENT'] ?></p>
+                </dd>
+                <?php endif ?>
+
+
+                <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(1, 2, 3, 5)) && $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] !== null) : ?>
                 <dt>Périodicité</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] == 3 ? end($this->etablissement['parents'])['PERIODICITE_ETABLISSEMENTINFORMATIONS'] : $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois</p>
+                    <p>
+                        <?php if ($this->etablissement['informations']['ID_GENRE'] == 1): ?>
+                            <i class="icon-info-sign" title="Périodicité la plus contraignante des fils ERP"></i>
+                        <?php endif ?>
+                        <?php if (in_array($this->etablissement['informations']['ID_GENRE'], array(2, 5)) && $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] <> $this->default_periodicite): ?>
+                            <i class="icon-exclamation-sign" title="Periodicite non standard"></i>
+                        <?php endif ?>
+                        <?php echo $this->etablissement['informations']['PERIODICITE_ETABLISSEMENTINFORMATIONS'] ?> mois
+                    </p>
+
                 </dd>
                 <?php endif ?>
             </dl>
@@ -75,6 +92,11 @@
                     </ul>
                     <?php if($this->etablissement['informations']['R12320_ETABLISSEMENTINFORMATIONS']) : ?>
                         <p>Le <strong>R123-20</strong> est appliqué sur cet établissement.</p>
+                    <?php endif ?>
+                    <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2))) : ?>
+                        <?php if($this->etablissement['informations']['DROITPUBLIC_ETABLISSEMENTINFORMATIONS']) : ?>
+                            <p>Le <strong>R123-16</strong> est appliqué sur cet établissement (droit public).</p>
+                        <?php endif ?>
                     <?php endif ?>
                 </dd>
             </dl>
@@ -186,8 +208,25 @@
 
             <!-- Etablissement lié -->
             <?php if(count($this->etablissement['etablissement_lies']) > 0) : ?>
-            <h4 class='h4_subtitle'>Établissements liés <small><?php echo count($this->etablissement['etablissement_lies']) > 0 ? "(" . count($this->etablissement['etablissement_lies']) . " établissements)" : "" ?></small></h4>
-            <ul class='recherche_liste unstyled'>
+            <h4 class='h4_subtitle'>Établissements liés <small><?php echo count($this->etablissement['etablissement_lies']) > 0 ? "(" . count($this->etablissement['etablissement_lies']) . " établissements)" : "" ?></small>
+                <input type="text" class="pull-right" id="filterLinkedEts" placeholder="Filtrer les établissements" />
+                <script>
+                    $(document).ready(function(){
+                        $('#filterLinkedEts').keyup(function() {
+                            filterLinkedEtsRegExp = new RegExp($(this).val(), 'i');
+                            $(this).parent().next().find('li').each(function(i, elem) {
+                                var test = filterLinkedEtsRegExp.exec($(elem).text());
+                                if (test !== null && test.length > 0) {
+                                    $(elem).show();
+                                } else {
+                                    $(elem).hide();
+                                }
+                            });
+                        });
+                    });
+                </script>
+            </h4>
+            <ul class='recherche_liste unstyled no_slide' style='max-height: 500px; overflow-y: scroll;'>
                 <?php echo $this->partialLoop('search/results/etablissement.phtml', $this->etablissement['etablissement_lies']); ?>
             </ul>
             <?php endif ?>
@@ -210,41 +249,34 @@
                     <li class='tabs-right' ><a href='#googlemap' data-toggle="tab">Carte Google</a></li>
                 <?php endif ?>
             </ul>
+            <div id="reponse-modal" class="modal hide fade"></div>
             <div class="tab-content">
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->key_ign != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
                 <div id='geoportail' class="tab-pane in" style="height: 350px; max-height: 350px;">
                     <div id='geoportail-container'  style="height: 100%; max-height: 100%;"></div>
-                    <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/2.0.3/GeoportalExtended.js"></script>
+                    <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
                     <script>
                         $(document).ready(function() {
-                            viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
-                                lat: <?php echo $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] ?>,
-                                lon: <?php echo $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] ?>
-                            }, 17, OpenLayers.Util.extend({
-                                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
-                                onView: function() {
-                                    <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
-                                        viewer.getViewer().getMap().addLayer(
-                                            "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
-                                            "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
-                                            "<?php echo $couche_cartographique['URL_COUCHECARTO'] ?>", {
-                                                layers: "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>",
-                                                format: "<?php echo $couche_cartographique['FORMAT_COUCHECARTO'] ?>",
-                                                transparent: "<?php echo $couche_cartographique['TRANSPARENT_COUCHECARTO'] ? 'true' : 'false' ?>"
-                                            }, {
-                                                projection: 'EPSG:4326',
-                                                singleTile: false,
-                                                opacity: 1,
-                                                visibility: true
-                                            }
-                                        );
-                                    <?php endforeach ?>
-                                },
-                                proxyUrl: '/proxy'
-                            }));
+                            var points = [];
+                            <?php foreach($this->etablissement['adresses'] as $adresse): ?>
+                                points.push({
+                                    lat: <?php echo $adresse['LAT_ETABLISSEMENTADRESSE'] ?>,
+                                    lon: <?php echo $adresse['LON_ETABLISSEMENTADRESSE'] ?>,
+                                    description: "<?php echo htmlentities(strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"])." <br />" ?>"
+                                                + "long=<?php echo $adresse['LON_ETABLISSEMENTADRESSE'] ?>, lat=<?php echo $adresse['LAT_ETABLISSEMENTADRESSE'] ?>"
+                                });
+                            <?php endforeach ?>
+
+                            viewer = initViewer(
+                                "geoportail-container",
+                                "<?php echo $this->key_ign ?>",
+                                points,
+                                <?php echo json_encode($this->couches_cartographiques) ?>
+                            );
                         });
                     </script>
                 </div>
+
                 <?php endif ?>
 
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->key_googlemap != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
@@ -293,7 +325,11 @@
                         <div class="carousel-inner" style="background-color: #333">
                             <?php foreach($this->etablissement['diapo'] as $key => $item) : ?>
                             <div class="item <?php if($key == 0 ) echo 'active' ?>"  >
-                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                                <?php $item['EXTENSION_PIECEJOINTE'] = '.jpg'; ?>
+                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;"
+                                     src="<?php echo $this->store->getURLPath($item, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']) ?>"
+                                     alt="<?php echo htmlentities($item['NOM_PIECEJOINTE']) ?>"
+                                     />
                                 <div class="carousel-caption">
                                   <h4><?php echo $item['NOM_PIECEJOINTE'] ?></h4>
                                   <p><?php echo $item['DESCRIPTION_PIECEJOINTE'] ?></p>
@@ -320,7 +356,11 @@
                         <div class="carousel-inner" style="background-color: #333">
                             <?php foreach($this->etablissement['diapo_plans'] as $key => $item) : ?>
                             <div class="item <?php if($key == 0 ) echo 'active' ?>" >
-                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;" src="/data/uploads/pieces-jointes/miniatures/<?php echo $item["ID_PIECEJOINTE"].".jpg" ?>" alt="" />
+                                <?php $item['EXTENSION_PIECEJOINTE'] = '.jpg'; ?>
+                                <img style="margin: 0 auto; width: auto; height: 350px; max-height: 350px;"
+                                     src="<?php echo $this->store->getURLPath($item, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']) ?>"
+                                     alt="<?php echo htmlentities($item['NOM_PIECEJOINTE']) ?>"
+                                     />
                                 <div class="carousel-caption">
                                   <h4><?php echo $item['NOM_PIECEJOINTE'] ?></h4>
                                   <p><?php echo $item['DESCRIPTION_PIECEJOINTE'] ?></p>
@@ -351,7 +391,7 @@
                         <tbody>
                             <?php foreach( $this->etablissement['adresses'] as $adresse ) : ?>
                                 <tr>
-                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["CODEPOSTAL_COMMUNE"]). " " .$adresse["LIBELLE_COMMUNE"] ?></td>
+                                    <td><?php echo strtolower($adresse["NUMERO_ADRESSE"]." ".$adresse["LIBELLE_RUE"]." ".$adresse["COMPLEMENT_ADRESSE"]." ".$adresse["CODEPOSTAL_COMMUNE"])." ".$adresse["LIBELLE_COMMUNE"] ?></td>
                                     <td>Adresse postale</td>
                                 </tr>
                             <?php endforeach ?>
@@ -411,7 +451,7 @@
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 5))) : ?>
                 <dt>Commission</dt>
                 <dd>
-                    <p><?php echo $this->etablissement['informations']['LIBELLE_COMMISSION'] ?></p>
+                    <p><?php echo $this->etablissement['informations']['LIBELLE_COMMISSION'] ?> (<?php echo $this->etablissement['informations']['LIBELLE_COMMISSION_TYPE'] ?>)</p>
                 </dd>
                 <?php endif ?>
 
@@ -427,7 +467,7 @@
                 </dd>
 
                 <!-- Date de dernière visite -->
-                <?php if(!empty($this->etablissement['last_visite']) ) : ?>
+                <?php if(!empty($this->etablissement['last_visite'])) : ?>
                 <dt>Dernière VP</dt>
                 <dd><p><?php echo $this->etablissement['last_visite'] ?></p></dd>
                 <?php endif ?>
@@ -443,6 +483,10 @@
                 <dt>Date PC Initial</dt>
                 <dd><p><?php echo $this->etablissement['pc_initial'] ?></p></dd>
                 <?php endif ?>
+
+                <!-- Présence DUS -->
+                <dt>Présence d'un DUS</dt>
+                <dd><p><?php echo $this->etablissement['presence_dus'] ? 'Oui' : 'Non' ?></p></dd>
 
                 <!-- Données pratiques -->
                 <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(1, 2, 3, 5))) : ?>
@@ -470,23 +514,5 @@
     $(document).ready(function() {
         // Par défaut, on montre le premier onglet disponible (carte, diapo, ou plans) sinon rien
         $('#menu_nav a:last').tab('show');
-
-        // Slide des établissements enfants contenant d'autres établissements
-        $("ul.recherche_liste li.slide").live("click", function() {
-            var container = this;
-            if( $(this).hasClass("active") ) {
-                $(this).next().slideUp(400, function() {$(container).next().remove()});
-                $(this).toggleClass("active");
-            }
-            else {
-                $(container).find(".load").show();
-                $.getJSON("/api/1.0/search/etablissements", {parent: $(this).attr("id"), count: 100}, function(data) {
-                    $(container).toggleClass("active").find(".load").hide();
-                    $.post("/search/display-ajax-search", {items: 'etablissement', data: data.response.results}, function(html) {
-                        $(container).after("<li class='ui-helper-hidden' >" + html + "</li>").next().slideDown();
-                    });
-                });
-            }
-        });
     });
 </script>

@@ -10,51 +10,39 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         $ajaxContext->addActionContext('selectiontexte', 'json')
                         ->addActionContext('selectionarticle', 'json')
                         ->initContext();
+
+        $this->_helper->layout->setLayout('menu_admin');
     }
 
     public function indexAction()
     {
         $this->_helper->layout->setLayout('menu_admin');
 
-        $dbPrescriptionCat = new Model_DbTable_PrescriptionCat;
-        $listePrescriptionCat = $dbPrescriptionCat->recupPrescriptionCat();
+        $service_prescription = new Service_Prescriptions;
 
-        $this->view->listePrescriptionCat = $listePrescriptionCat;
+        $this->view->listePrescriptionCat = $service_prescription->getCategories();
 
         //on recupere les prescriptions qui n'ont ni catégories, ni texte, ni article
-        $this->showprescriptionTypeAction(0,0,0);
-    }
-
-    public function showprescriptionTypeAction($categorie,$texte,$article)
-    {
-        $dbPrescType = new Model_DbTable_PrescriptionType;
-        $listePrescType = $dbPrescType->getPrescriptionType($categorie,$texte,$article);
-
-        $dbPrescAssoc = new Model_DbTable_PrescriptionTypeAssoc;
-        $prescriptionArray = array();
-
-        foreach ($listePrescType as $val => $ue) {
-            $assoc = $dbPrescAssoc->getPrescriptionAssoc($ue['ID_PRESCRIPTIONTYPE']);
-            array_push($prescriptionArray, $assoc);
-        }
-
-        $this->view->prescriptionType = $prescriptionArray;
+        $this->view->prescriptionType = $service_prescription->showPrescriptionType(0,0,0);
     }
 
     public function showprescriptiontexteAction()
     {
+        $service_prescription = new Service_Prescriptions;
         if ($this->_getParam('id')) {
             //ici on affiche les textes appartenant à la catégorie dont on passe l'id en param
             $idCategorie = $this->_getParam('id');
             $dbPrescripionTexte = new Model_DbTable_PrescriptionTexte;
             $this->view->idCategorie = $idCategorie;
             $this->view->listePrescriptionTexte = $dbPrescripionTexte->recupPrescriptionTexte($idCategorie);
-            $this->showprescriptionTypeAction($this->_getParam('id'),0,0);
+
+            $this->view->prescriptionType = $service_prescription->showPrescriptionType($this->_getParam('id'),0,0);
         }
     }
 
     public function showprescriptionarticleAction()
     {
+        $service_prescription = new Service_Prescriptions;
         if ($this->_getParam('idTexte')) {
             $this->view->idTexte = $this->_getParam('idTexte');
             //ici on affiche les textes appartenant à la catégorie dont on passe l'id en param
@@ -65,23 +53,25 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             $dbPrescripionTexte = new Model_DbTable_PrescriptionTexte;
             $idCategorie = $dbPrescripionTexte->find($idTexte)->current()->toArray();
             $idCategorie = $idCategorie['ID_PRESCRIPTIONCAT'];
-            $this->showprescriptionTypeAction($idCategorie,$this->_getParam('idTexte'),0);
+            $this->view->prescriptionType = $service_prescription->showPrescriptionType($idCategorie,$this->_getParam('idTexte'),0);
         }
     }
 
     public function showarticlecontenuAction()
     {
         //On affiche les prescriptions contenues dans la catégorie d'article selectionnée
+        $service_prescription = new Service_Prescriptions;
         if ($this->_getParam('idArticle')) {
             $dbArticle = new Model_DbTable_PrescriptionArticle;
             $article = $dbArticle->find($this->_getParam('idArticle'))->current();
             $dbTexte = new Model_DbTable_PrescriptionTexte;
             $texte = $dbTexte->find($article['ID_PRESCRIPTIONTEXTE'])->current();
-            $this->showprescriptionTypeAction($texte['ID_PRESCRIPTIONCAT'],$article['ID_PRESCRIPTIONTEXTE'],$this->_getParam('idArticle'));
+            $this->view->prescriptionType = $service_prescription->showPrescriptionType($texte['ID_PRESCRIPTIONCAT'],$article['ID_PRESCRIPTIONTEXTE'],$this->_getParam('idArticle'));
             $this->view->idArticle = $this->_getParam('idArticle');
         }
     }
 
+/* GESTION CATEGORIES */
     public function formcategorieAction()
     {
         if ($this->_getParam('id')) {
@@ -127,6 +117,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         }
     }
 
+/* GESTION TEXTES */
     public function formtexteAction()
     {
         if ($this->_getParam('idCat')) {
@@ -182,6 +173,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         }
     }
 
+/* GESTION ARTICLES */
     public function formarticleAction()
     {
         if ($this->_getParam('idTexte')) {
@@ -237,13 +229,21 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         }
     }
 
+
     public function formprescriptionAction()
-    {
+    {  
+        $dbTexte = new Model_DbTable_PrescriptionTexteListe();
+        $dbArticle = new Model_DbTable_PrescriptionArticleListe();
+
+        $this->view->listeTextes = $dbTexte->getAllTextes(1);
+        $this->view->listeArticles = $dbArticle->getAllArticles(1);
+
+        $service_prescription = new Service_Prescriptions;
         if ($this->_getParam('idPrescType')) {
             $this->view->idPrescType = $this->_getParam('idPrescType');
             $this->view->do = 'edit';
-            $dbPrescTypeAssoc = new Model_DbTable_PrescriptionTypeAssoc;
-            $this->view->assoc = $dbPrescTypeAssoc->getPrescriptionAssoc($this->_getParam('idPrescType'));
+
+            $this->view->assoc = $service_prescription->getPrescriptionTypeDetail($this->_getParam('idPrescType'));            
         } else {
             $this->view->do = 'new';
             $dbCategorie = new Model_DbTable_PrescriptionCat;
@@ -259,7 +259,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
                     $texteInfo = $dbPrescTexte->find($this->_getParam('empl'))->current();
                     $this->view->categorie = $texteInfo->ID_PRESCRIPTIONCAT;
                     $this->view->texte = $this->_getParam('empl');
-
                 break;
                 case "addPrescriptionArticle":
                     //cas d'une prescription dans un article
@@ -326,129 +325,244 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         }
     }
 
-    //Autocomplétion pour selection TEXTE
-    public function selectiontexteAction()
-    {
-        if (isset($_GET['q'])) {
-            $DBprescTexte = new Model_DbTable_PrescriptionTexteListe;
-            $this->view->selectTexte = $DBprescTexte->fetchAll('LIBELLE_TEXTE LIKE "%'.$_GET['q'].'%"')->toArray();
-        }
-    }
-
-    //Autocomplétion pour selection ARTICLE
-    public function selectionarticleAction()
-    {
-        if (isset($_GET['q'])) {
-            $DBprescArticle = new Model_DbTable_PrescriptionArticleListe;
-            $this->view->selectArticle = $DBprescArticle->fetchAll('LIBELLE_ARTICLE LIKE "%'.$_GET['q'].'%"')->toArray();
-        }
-    }
-
     public function saveprescriptiontypeAction()
     {
-        try {
-            $dbPrescType = new Model_DbTable_PrescriptionType;
-            $dbTexte = new Model_DbTable_PrescriptionTexteListe;
-            $dbArticle = new Model_DbTable_PrescriptionArticleListe;
-            $dbPresTypeAssoc = new Model_DbTable_PrescriptionTypeAssoc;
-            if ($this->_getParam('ID_PRESCRIPTIONTYPE') != '') {
-                //Lorsque l'on édite une prescription type on la supprime ainsi que les assoc (via CASCADE) puis on l'enregistre à nouveau
-                $prescToDelete = $dbPrescType->find($this->_getParam('ID_PRESCRIPTIONTYPE'))->current();
-                $prescToDelete->delete();
-                $this->view->do = 'edit';
-            } else {
-                $this->view->do = 'new';
-            }
+        if ($this->_request->isPost()) {
+            try {
+                $post = $this->_request->getPost();
+                $service_prescription = new Service_Prescriptions;
 
-            //Lorsque l'on crée une prescription TYPE
-            $prescType = $dbPrescType->createRow();
-            $prescType->PRESCRIPTIONTYPE_CATEGORIE = $this->_getParam('PRESCRIPTIONTYPE_CATEGORIE');
-            $prescType->PRESCRIPTIONTYPE_TEXTE = $this->_getParam('PRESCRIPTIONTYPE_TEXTE');
-            $prescType->PRESCRIPTIONTYPE_ARTICLE = $this->_getParam('PRESCRIPTIONTYPE_ARTICLE');
-            $prescType->PRESCRIPTIONTYPE_LIBELLE = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-            $prescType->save();
-            //on recupere l'id de la prescription que l'on vient d'enregistrer
-            $idPrescType = $prescType->ID_PRESCRIPTIONTYPE;
-
-            //on s'occupe de verifier les textes et articles pour les inserer ou récuperer l'id si besoin puis on insert dans assoc
-            $texteArray = array();
-            $articleArray = array();
-
-            foreach ($_POST['article'] as $libelle => $value) {
-                array_push($articleArray, $value);
-            }
-
-            foreach ($_POST['texte'] as $libelle => $value) {
-                array_push($texteArray, $value);
-            }
-
-
-            $numAssoc = 1;
-
-            for ($i = 0; $i < count($articleArray); $i++) {
-                //pour chacun des articles et des textes on verifie leurs existance ou non
-                if ($articleArray[$i] != '') {
-                    $article = $dbArticle->fetchAll('LIBELLE_ARTICLE LIKE "'.$articleArray[$i].'"')->toArray();
-                    if (count($article) == 0) {
-                        //l'article n'existe pas donc on l'enregistre
-                        $article = $dbArticle->createRow();
-                        $article->LIBELLE_ARTICLE = $articleArray[$i];
-                        $article->save();
-                        $idArticle = $article->ID_ARTICLE;
-                    } elseif (count($article) == 1) {
-                        //l'article existe donc on récupere son ID
-                        $idArticle = $article[0]['ID_ARTICLE'];
-                    }
-                } else {
-                    $idArticle = 1;
+                if( $post['ID_PRESCRIPTIONTYPE'] != ''){
+                    $idPrescriptionType = $service_prescription->savePrescriptionType($post,$post['ID_PRESCRIPTIONTYPE']);
+                }else{
+                    $idPrescriptionType = $service_prescription->savePrescriptionType($post);
                 }
 
-                if ($texteArray[$i] != '') {
-                    $texte = $dbTexte->fetchAll('LIBELLE_TEXTE LIKE "'.$texteArray[$i].'"')->toArray();
-                    if (count($texte) == 0) {
-                        //le texte n'existe pas donc on l'enregistre
-                        $texte = $dbTexte->createRow();
-                        $texte->LIBELLE_TEXTE = $texteArray[$i];
-                        $texte->save();
-                        $idTexte = $texte->ID_TEXTE;
-                    } elseif (count($texte) == 1) {
-                        //le texte existe donc on récupere son ID
-                        $idTexte = $texte[0]['ID_TEXTE'];
-                    }
-                } else {
-                    $idTexte = 1;
-                }
-                $prescTypeAssoc = $dbPresTypeAssoc->createRow();
-                $prescTypeAssoc->ID_PRESCRIPTIONTYPE = $idPrescType;
-                $prescTypeAssoc->NUM_PRESCRIPTIONASSOC = $numAssoc;
+                $this->view->prescriptionType = $service_prescription->getPrescriptionTypeDetail($idPrescriptionType);
+                $this->view->idPrescriptionType = $this->view->prescriptionType[0]['ID_PRESCRIPTIONTYPE'];
 
-                $prescTypeAssoc->ID_TEXTE = $idTexte;
-
-                $prescTypeAssoc->ID_ARTICLE = $idArticle;
-                $prescTypeAssoc->save();
-                $idArticle = NULL;
-                $idTexte = NULL;
-                $numAssoc++;
+                
+            } catch (Exception $e) {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Erreur lors de la sauvegarde de la prescription',
+                    'message' => $e->getMessage()
+                ));
             }
-            $this->view->idPrescriptionType = $prescType['ID_PRESCRIPTIONTYPE'];
-            $this->view->textes = $texteArray;
-            $this->view->articles = $articleArray;
-            $this->view->libelle = $this->_getParam('PRESCRIPTIONTYPE_LIBELLE');
-
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'La prescription a bien été sauvegardée',
-                'message' => ''
-            ));
-
-        } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de la sauvegarde de la prescription',
-                'message' => $e->getMessage()
-            ));
         }
     }
 
+
+/* GESTION DES TEXTES */
 	
+    public function gestionTextesAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        $service_prescTextes = new Service_Prescriptions();
+        if ( $this->_request->isPost() ) {
+            try {
+                $post = $this->_request->getPost();
+                if($post['action'] == 'add'){
+                    $service_prescTextes->saveTexte($post);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'La texte a bien été enregistré'));
+                }else if($post['action'] == 'edit'){
+                    $service_prescTextes->saveTexte($post,$post['id_texte']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Modification effectuée.', 'message' => 'La texte a bien été enregistré'));
+                }else if($post['action'] == 'replace'){
+                    $service_prescTextes->replaceTexte($post['id_texte'],$post['idTexteReplace']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression effectuée.', 'message' => 'Le texte a bien été supprimé'));
+                }
+
+            } catch (Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription ('.$e->getMessage().')'));
+            }
+        }
+
+        $liste_textes = $service_prescTextes->getTextesListe();
+
+        $this->view->liste_textes = $liste_textes;
+    }
+
+    public function gestionTextesAddAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        $this->_helper->viewRenderer->setNoRender();
+        
+        $this->view->action = 'add';
+
+        $this->render('gestion-textes-edit');
+    }
+
+    public function gestionTextesEditAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        
+        $this->view->action = 'edit';
+        
+        $service_prescTextes = new Service_Prescriptions();
+        $texteInfo = $service_prescTextes->getTexte($this->_getParam('id'));
+        $this->view->texteInfo = $texteInfo;
+    }
+
+    public function gestionTextesReplaceAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+
+        $this->view->action = 'replace';
+
+        $service_prescTextes = new Service_Prescriptions();
+        $texteInfo = $service_prescTextes->getTexte($this->_getParam('id'));
+        $this->view->texteInfo = $texteInfo;
+
+        $liste_textes = $service_prescTextes->getTextesListe($this->_getParam('id'));
+        $this->view->liste_textes = $liste_textes;
+    }
+
+
+/* GESTION DES ARTICLES */
+
+    public function gestionArticlesAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        //1 On affiche tous les textes accessible dans les prescriptions
+        $service_prescription = new Service_Prescriptions();
+
+
+        if ( $this->_request->isPost() ) {
+            try {
+                $post = $this->_request->getPost();
+                if($post['action'] == 'add'){
+                    $service_prescription->saveArticle($post);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'L\'article a bien été enregistré'));
+                }else if($post['action'] == 'edit'){
+                    $service_prescription->saveArticle($post,$post['id_article']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Modification effectuée.', 'message' => 'L\'article a bien été enregistré'));
+                }else if($post['action'] == 'replace'){
+                    $service_prescription->replaceArticle($post['id_article'],$post['idArticleReplace']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Suppression effectuée.', 'message' => 'L\'article a bien été supprimé'));
+                }
+
+            } catch (Exception $e) {
+                //$this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription ('.$e->getMessage().')'));
+            }
+        }
+
+        $liste_articles = $service_prescription->getArticlesListe();
+
+        $this->view->liste_articles = $liste_articles;
+    }
+
+    public function gestionArticlesAddAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        $this->_helper->viewRenderer->setNoRender();
+        
+        $this->view->action = 'add';
+
+        $this->render('gestion-articles-edit');
+    }
+
+    public function gestionArticlesEditAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+        
+        $this->view->action = 'edit';
+        
+        $service_prescription = new Service_Prescriptions();
+        $articleInfo = $service_prescription->getArticle($this->_getParam('id'));
+        $this->view->articleInfo = $articleInfo;
+    }
+
+    public function gestionArticlesReplaceAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+
+        $this->view->action = 'replace';
+
+        $service_prescription = new Service_Prescriptions();
+        $articleInfo = $service_prescription->getArticle($this->_getParam('id'));
+        $this->view->articleInfo = $articleInfo;
+
+        $liste_articles = $service_prescription->getArticlesListe();
+        $this->view->liste_articles = $liste_articles;
+    }
+
+/* GESTION DES RAPPELS REGLEMENTAIRES */
+
+    public function gestionRappelRegAction(){
+        $service_prescription = new Service_Prescriptions();
+        
+        if ($this->_request->isPost()) {
+                $post = $this->_request->getPost();
+
+                if($post['action'] == 'add'){
+                    $service_prescription->savePrescription($post);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Enregistrement effectué.', 'message' => 'Le rappel réglementaire a bien été enregistré'));
+                }else if($post['action'] == 'edit'){
+                    $service_prescription->savePrescription($post,$post['idPrescription']);
+                    $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Rappel réglementaire modifié.', 'message' => 'Le rappel réglementaire a bien été modifié'));
+                }
+        }
+
+        $this->view->listePrescEtude = $service_prescription->getPrescriptions('etude');
+        $this->view->listePrescVisite = $service_prescription->getPrescriptions('visite');        
+    }
+
+    public function gestionRappelRegAddAction(){
+        $this->_forward('prescription-form');
+
+        //On envoi à la vue l'ensemble des textes et articles
+        $dbTexte = new Model_DbTable_PrescriptionTexteListe();
+        $this->view->listeTextes = $dbTexte->getAllTextes(1);
+        $dbArticle = new Model_DbTable_PrescriptionArticleListe();
+        $this->view->listeArticles = $dbArticle->getAllArticles(1);
+
+        $this->view->action = 'add';
+        $this->view->typeAction = 'rappel-reg';
+    }
+
+    public function gestionRappelRegEditAction(){
+        $this->_forward('prescription-form');
+
+        $dbTexte = new Model_DbTable_PrescriptionTexteListe();
+        $dbArticle = new Model_DbTable_PrescriptionArticleListe();
+
+        $this->view->listeTextes = $dbTexte->getAllTextes();
+        $this->view->listeArticles = $dbArticle->getAllArticles();
+
+        
+        $idPrescription = $this->_getParam('id');
+        $typeAction = 'rappel-reg';
+
+        $service_prescription = new Service_Prescriptions();        
+        $prescriptionInfo = $service_prescription->getPrescriptionInfo($this->_getParam('id'),$typeAction);
+
+        $this->view->infosPrescription = $prescriptionInfo;
+        $this->view->idPrescription = $idPrescription;
+        $this->view->action = 'edit';
+        $this->view->typeAction = $typeAction;
+        $this->view->libelle = $prescriptionInfo[0]["PRESCRIPTIONREGL_LIBELLE"];
+    }
+/* FORMULAIRE DE PRESCRIPTIONS */
+    
+    public function prescriptionFormAction(){
+        $this->_helper->layout->setLayout('menu_admin');
+    }
+
+
+    public function moveAction(){
+        //action permettant la sauvegarde de l'ordre des prescriptions type
+        $this->_helper->viewRenderer->setNoRender();
+        if ( $this->_request->isPost() ) {
+            $service_prescription = new Service_Prescriptions;
+            try {
+                $post = $this->_request->getPost();
+                if(isset($post['prescType'])){
+                    $service_prescription->setOrder($post['prescType'],$post['type']);
+                }elseif(isset($post['categorie'])){
+                    $service_prescription->setOrder($post['categorie'],$post['type']);
+                }elseif(isset($post['texte'])){
+                    $service_prescription->setOrder($post['texte'],$post['type']);
+                }elseif(isset($post['article'])){
+                    $service_prescription->setOrder($post['article'],$post['type']);
+                }
+
+            }catch (Exception $e) {
+
+            }
+        }
+
+    }
 }

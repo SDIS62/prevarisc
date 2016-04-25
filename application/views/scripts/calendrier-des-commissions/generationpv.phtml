@@ -1,5 +1,101 @@
 <?php
 
+function addChamp($odf,$nomOdf, $variable){
+  try{
+    $odf->setVars($nomOdf,$variable, true,'UTF8');
+    #$segment->$nomOdf(utf8_decode($variable));
+  } catch (Exception $e) {
+
+  }
+}
+
+// PARTIE PRESCRIPTION
+function addPrescription($listePrescription,$type,$odf){
+    //TYPE_PRESCRIPTION_DOSSIER
+    if($type == 0){
+		try{
+			$prescription = $odf->listeReg;
+		} catch (Exception $e) {
+
+		}
+    }else if ($type == 1){
+        try{
+			$prescription = $odf->listeExploitation;
+		} catch (Exception $e) {
+
+		}
+    }else if ($type == 2){
+        try{
+			$prescription = $odf->listeAmelioration;
+		} catch (Exception $e) {
+
+		}
+    }
+
+    $nbPrescDossier = count($listePrescription);
+
+    if( isset($prescription) ){
+
+        if($nbPrescDossier)
+        {
+            for($i=0; $i < $nbPrescDossier; $i++)
+            {
+                $nbAssoc = count($listePrescription[$i]);
+                $cpt = true;
+                $article = '';
+                $texte = '';
+                $textearticle = '';
+                $nbCpt = $nbAssoc;
+                for($j=0; $j < $nbAssoc; $j++)
+                {
+                    $articleT = $listePrescription[$i][$j]['LIBELLE_ARTICLE'];
+                    $texteT = $listePrescription[$i][$j]['LIBELLE_TEXTE'];
+
+                    if($texteT != ''){
+                        $textearticle .= $texteT." - ";
+                    }else{
+                        $textearticle .= " - ";
+                    }
+                    if($nbCpt > 1){
+                        if($articleT != ''){
+                            $textearticle .= $articleT.", ";
+                        }else{
+                            $textearticle .= ", ";
+                        }
+                    }else{
+                        if($articleT != ''){
+                            $textearticle .= $articleT." ";
+                        }else{
+                            $textearticle .= " ";
+                        }
+                    }
+                    if($cpt)
+                    {
+                        if($type != 0){
+                            $prescription->setVars('num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+                        }
+
+                        if( $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
+                        {
+                            $prescription->setVars('libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
+                        }else{
+                            $prescription->setVars('libelle', $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+                        }
+                        $cpt = false;
+                    }
+                    $nbCpt--;
+                }
+                $prescription->setVars('textearticle',$textearticle,true,'UTF-8');
+                $prescription->merge();
+            }
+
+        }
+    }
+
+}
+
+
+
 $consonne = array("a", "e", "i", "o", "u", "y", "A", "E", "I", "O", "U", "Y");
 if(count($this->membresFiles) == 0){
 	echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Aucun membre n'a été renseigné pour la commission</span><br/><br/><br/>";
@@ -7,143 +103,149 @@ if(count($this->membresFiles) == 0){
 }
 foreach($this->membresFiles as $val => $membre){
 	//On boucle sur les membres
-	if($membre->ID_GROUPEMENT == NULL && $membre->ID_UTILISATEURINFORMATIONS == NULL){
+	if($membre->ID_GROUPEMENT == NULL){
 		$nomFichier = $membre->ID_COMMISSIONMEMBRE."PV_".$membre->COURRIER_PV;
-		
+
 		if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier)){
-		
+
 			$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 			$dossInfos = $odf->setSegment('dossierInfos');
-			
+
 			foreach($this->dossierComm as $val => $dossierInfos){
-				try{
-					$dossInfos->setVars('commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION'], true, 'UTF-8');
-					if(isset($dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"])){
-						$dossInfos->setVars('communeDossier', $dossierInfos["infosEtab"]["adresses"][0]["LIBELLE_COMMUNE"], true, 'UTF-8');
-					}
-					$dossInfos->setVars('natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"], true, 'UTF-8');
-
-					$dateComm = new Zend_Date($this->dateComm);				
-					$dossInfos->setVars('dateCommission', $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR), true, 'UTF-8');
-
-					if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
-						$dossInfos->setVars('nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-						
-					$dossInfos->setVars('nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"], true, 'UTF-8');
-					
-					switch($dossierInfos['AVIS_DOSSIER']){
-						case 1:
-							$avis = "Favorable";
-						break;
-						case 2:
-							$avis = "Défavorable";
-						break;
-						default:
-							$avis = "";
-						break;					
-					}
-					$dossInfos->setVars('avisDossier', $avis, true, 'UTF-8');
-					
-					$dossInfos->setVars('categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"], true, 'UTF-8');
-					$dossInfos->setVars('typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"], true, 'UTF-8');
-					
-					$listeDocUrba = "";
-					foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
-						$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
-					}
-					$dossInfos->setVars('numDocUrba', $listeDocUrba, true, 'UTF-8');
-					
-					//Prescription des dossiers
-					if(isset($dossierInfos['prescription']) && count($dossierInfos['prescription']) > 0){
-						$nbPrescDossier = count($dossierInfos['prescription']);
-						for($i=0; $i < $nbPrescDossier; $i++)
-						{
-							$nbAssoc = count($dossierInfos['prescription'][$i]);
-							$cpt = true;
-							$article = '';
-							$texte = '';
-							
-							for($j=0; $j < $nbAssoc; $j++)
-							{
-								$articleT = $dossierInfos['prescription'][$i][$j]['LIBELLE_ARTICLE'];
-								$texteT = $dossierInfos['prescription'][$i][$j]['LIBELLE_TEXTE'];
-
-							
-								if($texteT != ''){
-									$texte .= $texteT."\n";
-								}else{
-									$texte .= "\n";
-								}
-								
-								if($articleT != ''){
-									$article .= $articleT."\n";
-								}else{
-									$article .= "\n";
-								}
-								if($cpt)
-								{
-									$dossInfos->listePrescription->setVars('num',$dossierInfos['prescription'][$i][0]['NUM_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-									//$prescription->setVars('num', $this->prescriptionDossier[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-									if( $dossierInfos['prescription'][$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
-									{
-										$dossInfos->listePrescription->setVars('libelle',$dossierInfos['prescription'][$i][0]['PRESCRIPTIONTYPE_LIBELLE'],true,'UTF-8');
-										//$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
-									}else{
-										$dossInfos->listePrescription->setVars('libelle',$dossierInfos['prescription'][$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-										//$prescription->setVars('libelle', $this->prescriptionDossier[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-									}
-									$cpt = false;
-								}
-							}
-							
-							$dossInfos->listePrescription->setVars('texte',$texte,true,'UTF-8');
-							$dossInfos->listePrescription->setVars('article',$article,true,'UTF-8');
-							
-							$dossInfos->listePrescription->merge();
-							
-						}
-						
-						
-						/*
-						echo "ID : ".$dossierInfos['ID_DOSSIER']." / ".count($dossierInfos['prescription'])."<br/>";
-						foreach($dossierInfos['prescription'] as $presc => $value){
-							$dossInfos->listePrescription->setVars('texte',$value[0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-							$dossInfos->listePrescription->setVars('article',$value[0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-							$dossInfos->listePrescription->setVars('',$value[0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-							$dossInfos->listePrescription->setVars('',$value[0]['LIBELLE_PRESCRIPTION_DOSSIER'],true,'UTF-8');
-							echo "<br/>".$value[0]['LIBELLE_PRESCRIPTION_DOSSIER']."<br/>";
-						}
-						*/
-					}
-
-
-
-					//Informations de l'exploitant du dossier
-					$dossInfos->setVars('nomExploitant',$this->exploitantDossier['exploitantInfos'][0]['NOM_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$dossInfos->setVars('prenomExploitant',$this->exploitantDossier['exploitantInfos'][0]['PRENOM_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$dossInfos->setVars('mailExploitant',$this->exploitantDossier['exploitantInfos'][0]['MAIL_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$dossInfos->setVars('telFixeExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELFIXE_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$dossInfos->setVars('telPortExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELPORTABLE_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$dossInfos->setVars('numFaxExploitant',$this->exploitantDossier['exploitantInfos'][0]['TELFAX_UTILISATEURINFORMATIONS'],true,'UTF8');
-					$dossInfos->setVars('societeExploitant',$this->exploitantDossier['exploitantInfos'][0]['SOCIETE_UTILISATEURINFORMATIONS'],true,'UTF8');
-					
-					$dossInfos->merge(); 
-					//echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'><a href='/data/uploads/pieces-jointes/".$idPj.".odt' >Le PV : ".$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." (".$dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"].")  a été généré</a></span><br/><br/>";
-				} catch (Exception $e){
-
+				if(isset($dossierInfos['infosEtab'])){
+					$nbAdresse = count($dossierInfos['infosEtab']['adresses']);
+				}else{
+					$nbAdresse = 0;
 				}
-				
+
+				if($nbAdresse != 0){
+					foreach($dossierInfos['infosEtab']['adresses'] as $commune){
+						addChamp($dossInfos,'commissionNom', $this->commissionInfos[0]['LIBELLE_COMMISSION']);
+
+						if(isset($commune["LIBELLE_COMMUNE"])){
+							addChamp($dossInfos,'communeDossier', $commune["LIBELLE_COMMUNE"]);
+						}
+
+						addChamp($dossInfos,'objetDossier', $dossierInfos['OBJET_DOSSIER']);
+						addChamp($dossInfos,'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
+
+						$dateComm = new Zend_Date($this->dateComm);
+						addChamp($dossInfos,'dateCommission', $dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
+
+						if(isset($dossierInfos["DATEVISITE_DOSSIER"]) && $dossierInfos["DATEVISITE_DOSSIER"] != NULL){
+							$dateVisite = new Zend_Date($dossierInfos["DATEVISITE_DOSSIER"]);
+						}else if(isset($dossierInfos['infosEtab']["last_visite"]) && $dossierInfos['infosEtab']["last_visite"] != NULL){
+							$dateVisite = new Zend_Date($dossierInfos['infosEtab']["last_visite"]);
+						}
+
+						if(isset($dateVisite) && $dateVisite != ""){
+							addChamp($dossInfos,'dateVisite', $dateVisite->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
+						}else{
+							addChamp($dossInfos,'dateVisite', "");
+						}
+
+						//DEBUT Adresse
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["LIBELLE_RUE"]))
+							addChamp($dossInfos,'libelleRue', $dossierInfos['infosEtab']['adresses'][0]["LIBELLE_RUE"]);
+						else
+							addChamp($dossInfos,'libelleRue', '');
+
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["CODEPOSTAL_COMMUNE"]))
+							addChamp($dossInfos,'codePostal', $dossierInfos['infosEtab']['adresses'][0]["CODEPOSTAL_COMMUNE"]);
+						else
+							addChamp($dossInfos,'codePostal', '');
+
+						if(isset($dossierInfos['infosEtab']['adresses'][0]["LIBELLE_COMMUNE"]))
+							addChamp($dossInfos,'libelleCommune', $dossierInfos['infosEtab']['adresses'][0]["LIBELLE_COMMUNE"]);
+						else
+							addChamp($dossInfos,'libelleCommune','');
+						//FIN Adresse
+
+						//DEBUT Effectif total
+						$effectifTotal = $dossierInfos['infosEtab']['informations']["EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS"] + $dossierInfos['infosEtab']['informations']["EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS"];
+
+						if($effectifTotal == 0)
+							addChamp($dossInfos,'effectifTotal', "non renseigné");
+						else
+							addChamp($dossInfos,'effectifTotal', $effectifTotal);
+						//FIN Effectif total
+
+						switch($dossierInfos['TYPE_DOSSIER']){
+							case 1:
+								$type = "Étude";
+							break;
+							case 2:
+								$type = "Visite de commission";
+							break;
+							case 3:
+								$type = "Groupe de visite";
+							break;
+							default:
+								$type = "";
+							break;
+						}
+						addChamp($dossInfos,'typeDossier', $type);
+
+						if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]))
+							addChamp($dossInfos,'nomPereEtab', $dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
+						else
+							addChamp($dossInfos,'nomPereEtab', '');
+
+
+
+						if(isset($dossierInfos['infosEtab']['informations'])){
+							addChamp($dossInfos,'nomEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
+							addChamp($dossInfos,'categorieEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_CATEGORIE"]);
+							addChamp($dossInfos,'typeEtab', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"]);
+						}else{
+							addChamp($dossInfos,'nomEtab', '');
+							addChamp($dossInfos,'categorieEtab', '');
+							addChamp($dossInfos,'typeEtab', '');
+						}
+
+
+						switch($dossierInfos['AVIS_DOSSIER']){
+							case 1:
+								$avis = "Favorable";
+							break;
+							case 2:
+								$avis = "Défavorable";
+							break;
+							default:
+								$avis = "";
+							break;
+						}
+						addChamp($dossInfos,'avisDossier', $avis);
+
+						$listeDocUrba = "";
+						foreach($dossierInfos["listeDocUrba"] as $va => $docurb){
+							$listeDocUrba .= $docurb['NUM_DOCURBA']."    ";
+						}
+						addChamp($dossInfos,'numDocUrba', $listeDocUrba);
+
+						addPrescription($dossierInfos['prescriptionReglDossier'],0,$dossInfos);
+						addPrescription($dossierInfos['prescriptionExploitation'],1,$dossInfos);
+						addPrescription($dossierInfos['prescriptionAmelioration'],2,$dossInfos);
+
+						$dossInfos->merge();
+					}
+				}else{
+					//dossier sans adresse indiquer le dossier en question
+				}
+
 			}
 			$odf->mergeSegment($dossInfos);
-			$idPj = savePj($this->idComm,"Le pv a bien été généré");
-			$odf->saveToDisk(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."pieces-jointes".DIRECTORY_SEPARATOR.$idPj.".odt");	
+			$nouvellePJ = savePj($this->idComm,"Le pv a bien été généré");
+            $store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+            $path = $store->getFilePath($nouvellePJ, 'dateCommission', $this->idComm, true);
+			$odf->saveToDisk($path);
 			//$odf->mergeSegment($dossierLoop);
 			echo "<span id='notif' class='ui-state-highlight' style='padding: 0.3em;'>Le PV a été généré avec succes</span><br/><br/><br/>";
 		}else{
 			echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 		}
 	}else{
-		//echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
+		echo "<span id='notif' class='ui-state-error' style='padding: 0.3em;'>Le fichier pour le membre : ".$membre->LIBELLE_COMMISSIONMEMBRE." n'a pas été renseigné</span><br/><br/><br/>";
 	}
 }
 
@@ -165,7 +267,7 @@ function savePj($dateCommId,$libelleDocument){
 	$linkPj->ID_PIECEJOINTE = $nouvellePJ->ID_PIECEJOINTE;
 	$linkPj->save();
 
-	return $nouvellePJ->ID_PIECEJOINTE;
+	return $nouvellePJ;
 }
-	
+
 ?>

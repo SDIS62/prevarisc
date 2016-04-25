@@ -1,0 +1,203 @@
+<form name='etabRapport' id='etabRapport' action='/dossier/rapport/id/<?php echo $this->id_dossier; ?>' method='POST'>
+    <input type='hidden' name='idDossier' value='<?php echo $this->id_dossier; ?>' />
+    <input type='hidden' name='idCommission' value='<?php echo $this->infosCommission['ID_COMMISSION']; ?>' />
+    <div id='dossierInfos' class='row-fluid'>    
+        <h4>Informations sur le dossier</h4>
+    </div>
+    <div class='row-fluid'>
+        <div class='span2'>
+            Commission concernée
+        </div>
+        <div class='span10'>
+            <?php
+                $idCommissionDossier = $this->infosCommission['ID_COMMISSION'];
+                if(!isset($idCommissionDossier))
+                    echo "La commission du dossier n'est pas renseignée<br/><br/>";
+                else
+                    echo $this->infosCommission['LIBELLE_COMMISSION']." (".$this->infosCommission['LIBELLE_COMMISSIONTYPE'].")<br/><br/>";
+
+                echo "<i>Vous pouvez utiliser le document d'une autre commission</i><br/>";                
+                $nbCommission = count($this->liste_commission);
+                echo "
+                    <select name='commission' id='commission' style='width:450px;'>
+                    <option value='0' ".( ( !isset($commission['ID_COMMISSION']) || $commission['ID_COMMISSION'] == '' || $this->locked == 1 )? "selected" : "")." >Fichiers disponibles après verrouillage (".count($this->fichierVer).")</option>
+                ";
+                if($this->locked == 0 ){
+                    foreach($this->liste_commission as $commission){
+                        $nbFichier = count($commission['listeFichier']);
+                        if(isset($id_type) && $id_type != $commission['ID_COMMISSIONTYPE']){
+                            echo "</optgroup>";
+                        }
+                        if(!isset($id_type) || isset($id_type) && $id_type != $commission['ID_COMMISSIONTYPE']){
+                            echo '<optgroup label="'.$commission['LIBELLE_COMMISSIONTYPE'].'">';
+                            $id_type = $commission['ID_COMMISSIONTYPE'];
+                        }
+
+                        echo "<option value='".$commission['ID_COMMISSION']."' ".( ( $idCommissionDossier == $commission['ID_COMMISSION'])? "selected" : "")." >".$commission['LIBELLE_COMMISSION']." (".$nbFichier.")</option>";
+                        
+                        $nbCommission--;
+                        if($nbCommission == 0){
+                            echo "</optgroup>";
+                        }
+                    }
+                }
+                echo "</select>";
+            ?>
+        </div>
+    </div>
+    <div id='dossierInfos' class='row-fluid'>    
+        <h4>Fichiers de la commission</h4>
+    </div>
+    <div class='row-fluid'>
+        <div class='span2'>
+            Choisissez un document
+        </div>
+        <div class='span10'>
+        <?php
+            echo "
+                    <table id='file_0' class='table table-bordered' style='".( (!isset($idCommissionDossier) || $this->locked == 1 )? "" : "display:none" ).";'>
+                        <thead>
+                            <tr style='height:20px;'>
+                                <th>
+                                    Nom du fichier
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                ";
+            foreach($this->fichierVer as $fichierVer){
+                echo "
+                    <tr style='height:20px;'>
+                        <td>
+                            <input type='radio' name='file'  value='". $this->pathBase . DS ."0". DS . $fichierVer ."' >
+                            <a href='".$this->path . DS ."0". DS . $fichierVer ."'>".$fichierVer."</a>
+                        </td>
+                    </tr>
+                ";
+            }
+            echo "
+                        <tr ".( (count($this->fichierVer) != 0)?"style='display:none;'": "").">
+                            <td>Aucun fichier pour cette commission</td>
+                        </tr>
+                    </tbody>
+                </table>
+            ";
+
+            foreach($this->liste_commission as $commission){
+                $nbFichier = count($commission['listeFichier']);
+                echo "
+                    <table id='file_".$commission['ID_COMMISSION']."' class='table table-bordered' style='".( ($commission['ID_COMMISSION'] == $idCommissionDossier && $this->locked != 1 )? "" : "display:none" ).";'>
+                        <thead>
+                            <tr style='height:20px;'>
+                                <th>
+                                    Nom du fichier
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                ";
+                foreach($commission['listeFichier'] as $file){
+                    echo "
+                        
+                            <tr style='height:20px;'>
+                            <td>
+                                <input type='radio' name='file'  value='". $this->pathBase . DS . $commission['ID_COMMISSION']. DS . $file ."' >
+                                <a href='".$this->path . DS . $commission['ID_COMMISSION']. DS . $file ."'>".$file."</a>
+                            </td>
+                        </tr>
+                    ";
+                }
+                echo "
+                            <tr ".( ($nbFichier != 0)?"style='display:none;'": "").">
+                                <td>Aucun fichier pour cette commission</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                ";
+               
+
+            }
+        ?>
+        </div>
+    </div>
+    <div id='dossierInfos' class='row-fluid'>    
+        <h4>Etablissement(s) concerné(s) pour la génération du rapport</h4>
+    </div>
+    <div>
+        <?php
+            $i=0;
+            foreach($this->listeEtablissement as $etab){
+                echo "
+                    <input type='checkbox' class='etabCheck' name='idEtab[]' value='".$etab['ID_ETABLISSEMENT']."' ".( ($i == 0)? "checked" : "").">
+                        &nbsp;[".$etab['LIBELLE_GENRE']."]&nbsp;".$etab['LIBELLE_ETABLISSEMENTINFORMATIONS']."&nbsp<br/>
+                ";
+                $i++;
+            }
+        ?>
+        <hr class='clear'/>
+    </div>
+    <div class="alert alert-warning" id='alertDiv' style='display:none;'>
+        <strong>Attention!</strong> Vous devez selectionner un fichier et au moin un établissement.
+    </div>
+    <div class="alert alert-success" id='successDiv' style='display:none;'></div>
+    <div class="alert alert-danger" id='failDiv' style='display:none;'></div>
+    <div class='row-flud'>
+    <?php
+        if($this->idTypeActivitePrinc == 29){
+            echo "Cochez la case si vous ne souhaitez pas reprendre les prescriptions des cellules <input type='checkbox' name='repriseCC' id='repriseCC'  ><br/>";
+        }
+    ?>
+    </div>
+    <br/>
+    <div class='row-flud'>
+        <input type='generate' class='btn btn-success' id='test' value='Génerer le(s) document(s)' >
+    </div>
+</form>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#commission").change(function() {
+            $(".table").hide();
+            $("#file_"+$(this).val()).show();
+            $('input[name=file]:checked').removeAttr('checked');
+        });
+
+        $("#test").click(function(){
+            if($('input[name=file]:checked').length == 0 || $("input[name='idEtab[]']:checked").length == 0){
+                //Si il n'y a pas de fichier ou d'établissement sélectionné
+                $(".alert").hide();
+                $("#alertDiv").show();
+                return false;
+            }else{
+                $("#alertDiv").hide();
+                $.ajax({
+                    url: "/dossier/generationrapport",
+                    data: $("#etabRapport").serialize(),
+                    type:"POST",
+                    beforeSend: function(){
+                        $("#successDiv").html("Génération en cours ... <img src='/images/load.gif' />").show();
+                        $("#test").attr('disabled','disabled');
+                    },
+                    success: function(affichageResultat){
+                        var successMess = "<h3>Génération effectuée avec succès</h3><br/>";
+                        $("#successDiv").html(successMess+affichageResultat);
+                        $("#successDiv").append("Vous pouvez retrouver ce(s) document(s) dans la partie pièces jointes");
+                        $("#test").removeAttr('disabled');
+                    },
+                    error: function(){
+                        $("#failDiv").html("<h3>Erreur lors de la génération du rapport</h3><br/>Si le problème persiste veuillez contacter votre administrateur");
+                        $("#test").removeAttr('disabled');
+                        return false;
+                    }
+                }); 
+            }
+        });
+
+    });
+</script>
+
+
+
+

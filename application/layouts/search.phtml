@@ -1,8 +1,8 @@
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
+<?php $action_name = Zend_Controller_Front::getInstance()->getRequest()->getActionName() ?>
 <ul class="nav nav-tabs nav-stacked menu_dashboard" >
-    <li class="active"><a href='/search/etablissement?label=&page=1'><i class="icon-home icon-black"></i>   Établissements</a></li>
-    <li><a href='/search/dossier?objet=&page=1'><i class="icon-folder-open icon-black"></i>   Dossiers</a></li>
-    <li><a href='/search/courriers?objet=&page=1'><i class="icon-envelope icon-black"></i>   Courriers</a></li>
+    <li class="<?php echo $action_name == 'etablissement' ? 'active' : '' ?>"><a href='/search/etablissement?label=&page=1'><i class="icon-home icon-black"></i>   Établissements</a></li>
+    <li class="<?php echo $action_name == 'dossier' ? 'active' : '' ?>"><a href='/search/dossier?objet=&page=1'><i class="icon-folder-open icon-black"></i>   Dossiers</a></li>
     <li><a href='../etablissement/add'><i class="icon-plus"></i> Ajouter un établissement</a></li>
     <li><a href='../dossier/add'><i class="icon-plus"></i> Ajouter un dossier</a></li>
 </ul>

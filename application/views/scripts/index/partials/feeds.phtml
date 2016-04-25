@@ -1,0 +1,41 @@
+<?php if(count($this->data) > 0 ) : ?>
+    <?php 
+    $actual = new Zend_Date();
+    $in = array(
+            '`((?:https?|ftp)://\S+[[:alnum:]]/?)`si',
+            '`((?<!//)(www\.\S+[[:alnum:]]/?))`si'
+    );
+    $out = array(
+            '<a href="$1">$1</a>',
+            '<a href="http://$1">$1</a>'
+    );
+    ?>
+    <table class='table table-condensed'>
+        <?php foreach($this->data as $message): ?>
+            <?php
+                   $d = new Zend_Date($message['ID_NEWS'], Zend_Date::TIMESTAMP);
+                   $text_news_filtered = preg_replace($in, $out, $message['TEXTE_NEWS']);
+                   $date = ( $d->get(Zend_Date::DATES) != $actual->get(Zend_Date::DATES) ) ? $d->get(Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT)." ".$d->get(Zend_Date::TIME_SHORT) : $d->get(Zend_Date::TIME_SHORT);
+            ?>
+
+            <tr>
+                <td style='width: 80px; vertical-align: top; border: none;'>
+                    <?php $this->avatar($message['ID_UTILISATEUR'], 'medium', array('style' => "float: left; width: 40px; border: 1px solid #dfdfdf; border-radius: 50%; margin-right: 15px;")) ?>
+                </td>
+
+                <td style="border: none">
+                    <small class='muted pull-right'><?php echo $date ?> - <?php echo $message['TYPE_NEWS'] ?> - <a href='<?php echo $this->url(array('controller' => 'index', 'action' => 'delete-message', 'id' => $message['ID_NEWS'])) ?>'>Supprimer</a></small>
+                    <a href="#"><strong><?php echo $message['PRENOM_UTILISATEURINFORMATIONS'] . ' ' . $message['NOM_UTILISATEURINFORMATIONS'] ?></strong></a><br>
+                    <p><?php echo $text_news_filtered ?></p>
+                </td>
+            </tr>
+        <?php endforeach ?>
+    </table>
+<?php else: ?>
+  <small class='muted'>Aucun message disponible.</small>
+<?php endif ?>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#<?php echo $this->id ?> .panel-heading").append(' (<?php echo count($this->data) ?>)');
+    });
+</script>

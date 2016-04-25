@@ -1,81 +1,108 @@
-<li <?php if($this->NB_DOSS_LIES > 0) echo "class='slide'" ?> id="<?php echo $this->ID_DOSSIER ?>">
+<li class="dossier <?php if($this->NB_DOSS_LIES > 0) echo "slide" ?>" id="<?php echo $this->ID_DOSSIER ?>">
 
-    <!-- Icone représentant le dropdown des fils -->
+    <?php /* Icone représentant le dropdown des fils */ ?>
     <?php if($this->NB_DOSS_LIES > 0) : ?>
     <span class="icone_enfants" ><i class='ui-icon ui-icon-triangle-1-e' style='position: relative; left: -25px; float: left; margin-right: -25px;' ></i></span>
     <?php endif ?>
 
-    <!-- Nom du dossier -->
-    <span class="doss-nom">
-        <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . $this->OBJET_DOSSIER : ""), ENT_QUOTES) ?>'>
-            <?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . substr($this->OBJET_DOSSIER, 0, 70) . ( strlen($this->OBJET_DOSSIER) > 70 ? "(...)" : "" ) : "") . ( $this->NB_URBA != '' ? " - " . $this->NB_URBA : '') ?>
-        </a>
-    </span>
+    <div class="pull-left">
 
-    <!-- Date du dossier -->
-    <?php
-        if($this->DATEVISITE_DOSSIER != null)
-        {
-            $date = substr($this->DATEVISITE_DOSSIER, 0, 10);
-            if($date != '0000-00-00'){
-                $date = new DateTime(substr($this->DATEVISITE_DOSSIER,0,10));
-                $date = date_format($date, 'd/m/Y');
-            }else{
-                $date = "00/00/0000";
+        <span class="doss-nom">
+            <?php if ($this->VERROU_DOSSIER == 1): ?>
+                <i class="icon-lock"></i>
+            <?php endif ?>
+            <?php if($this->NB_PJ > 0) : ?>
+                <a href='/dossier/piece-jointe/id/<?php echo $this->ID_DOSSIER ?>'>
+                    <i class="icon-file"></i>
+                </a>
+            <?php endif ?>
+            <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . $this->OBJET_DOSSIER : ""), ENT_QUOTES) ?>'>
+                <?php if($this->LIBELLE_ETABLISSEMENTINFORMATIONS != null): ?>
+                    <?php echo '[' . $this->LIBELLE_ETABLISSEMENTINFORMATIONS . '] ' ?>
+                <?php endif ?>
+                <?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . substr($this->OBJET_DOSSIER, 0, 70) . ( strlen($this->OBJET_DOSSIER) > 70 ? "(...)" : "" ) : "") . ( $this->NB_URBA != '' ? " - " . $this->NB_URBA : '') ?>
+            </a>
+        </span>
+
+        <?php
+            if($this->DATECOMM_DOSSIER != null)
+            {
+                $date = substr($this->DATECOMM_DOSSIER, 0, 10);
+                if($date != '0000-00-00'){
+                    $date = new DateTime(substr($this->DATECOMM_DOSSIER,0,10));
+                    $date = date_format($date, 'd/m/Y');
+                }else{
+                    $date = "00/00/0000";
+                }
+                $date_text = "ayant pour date de passage en commission le";
             }
-            $date_text = "ayant pour date de visite le";
-        }
-        elseif($this->DATECOMM_DOSSIER != null)
-        {
-            $date = substr($this->DATECOMM_DOSSIER, 0, 10);
-            if($date != '0000-00-00'){
-                $date = new DateTime(substr($this->DATECOMM_DOSSIER,0,10));
-                $date = date_format($date, 'd/m/Y');
-            }else{
-                $date = "00/00/0000";
+            elseif($this->DATEVISITE_DOSSIER != null)
+            {
+                $date = substr($this->DATEVISITE_DOSSIER, 0, 10);
+                if($date != '0000-00-00'){
+                    $date = new DateTime(substr($this->DATEVISITE_DOSSIER,0,10));
+                    $date = date_format($date, 'd/m/Y');
+                }else{
+                    $date = "00/00/0000";
+                }
+                $date_text = "ayant pour date de visite le";
             }
-            $date_text = "ayant pour date de passage en commission le";
-        }
-        else
-        {
-            $date = substr($this->DATEINSERT_DOSSIER, 0, 10);
-            if($date != '0000-00-00'){
-                $date = new DateTime(substr($this->DATEINSERT_DOSSIER,0,10));
-                $date = date_format($date, 'd/m/Y');
-            }else{
-                $date = "00/00/0000";
+            else
+            {
+                $date = substr($this->DATEINSERT_DOSSIER, 0, 10);
+                if($date != '0000-00-00'){
+                    $date = new DateTime(substr($this->DATEINSERT_DOSSIER,0,10));
+                    $date = date_format($date, 'd/m/Y');
+                }else{
+                    $date = "00/00/0000";
+                }
+                $date_text = "créé le";
             }
-            $date_text = "créé le";
-        }
-        echo "<small class='muted'>" . $date_text . " " . $date . "</small>";
-    ?>
+            echo "<small class='muted'>" . $date_text . " " . $date . "</small>";
+        ?>
 
-    <!-- Icone de chargement des enfants (si il y'en a, et si on est en mode niveau -->
-    <?php if($this->NB_DOSS_LIES > 0) : ?>
-        <span class='load ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement ...' /></span>
-    <?php endif ?>
+        <?php /* Icone de chargement des enfants (si il y'en a, et si on est en mode niveau */ ?>
+        <?php if($this->NB_DOSS_LIES > 0) : ?>
+            <span class='load ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement ...' /></span>
+        <?php endif ?>
 
-    <!-- Avis du dossier -->
-    <?php if($this->INCOMPLET_DOSSIER == 1) : ?>
-    <span class='avis' style='background-color: #f89406;'>Dossier incomplet</span>
-    <?php elseif($this->DIFFEREAVIS_DOSSIER == 1) : ?>
-    <span class='avis' style='background-color: #3a87ad;'>Avis différé</span>
-    <?php elseif($this->ID_AVIS == 1) : ?>
-    <span class="avis F">Favorable <?php echo in_array($this->ID_DOSSIERNATURE, array(19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
-    <?php elseif($this->ID_AVIS == 2) : ?>
-    <span class="avis D">Défavorable <?php echo in_array($this->ID_DOSSIERNATURE, array(19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
-    <?php else : ?>
-    <span class="avis">Avis indisponible</span>
-    <?php endif ?>
+    </div>
 
-    <!-- Alerte sur la reception de travaux -->
-    <?php if($this->ALERTE_RECEPTION_TRAVAUX > 0) : ?>
-    <span class='avis' style='background-color: #3a87ad'>Présence d'un dossier de reception de travaux</span>
-    <?php endif ?>
+    <div class="pull-right">
 
-    <!-- Alerte sur le fait que la visite fait partie d'un échéancier de travaux -->
-    <?php if($this->ECHEANCIER_TRAVAUX > 0) : ?>
-    <span class='avis' style='background-color: #3a87ad'>Fait l'objet d'un échéancier de travaux</span>
-    <?php endif ?>
+        <?php /* Avis du dossier */ ?>
+        <?php if($this->INCOMPLET_DOSSIER == 1) : ?>
+        <span class='avis' style='background-color: #f89406;'>Dossier incomplet</span>
+        <?php elseif($this->DIFFEREAVIS_DOSSIER == 1) : ?>
+        <span class='avis' style='background-color: #3a87ad;'>Avis différé</span>
+        <?php elseif($this->TYPE_DOSSIER == 5 && !is_null($this->DATEREP_DOSSIER)) : ?>
+        <span class="avis F">Répondu</span>
+        <?php elseif($this->TYPE_DOSSIER == 5 && is_null($this->DATEREP_DOSSIER)) : ?>
+        <span class="avis">Réponse à faire
+                <?php if (!is_null($this->DATESDIS_DOSSIER)): ?>
+                    (<?php echo $this->formatDateDiff($this->DATESDIS_DOSSIER) ?>)
+                <?php endif ?>
+            </span>
+        <?php elseif($this->ID_AVIS == 1) : ?>
+        <span class="avis F">Favorable <?php echo in_array($this->ID_DOSSIERNATURE, array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
+        <?php elseif($this->ID_AVIS == 2) : ?>
+        <span class="avis D">Défavorable <?php echo in_array($this->ID_DOSSIERNATURE, array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28 ,29, 48)) ? ' à l\'exploitation' : '' ?></span>
+        <?php else : ?>
+        <span class="avis">Avis indisponible</span>
+        <?php endif ?>
+
+        <?php /* Alerte sur la reception de travaux */ ?>
+        <?php if($this->ALERTE_RECEPTION_TRAVAUX > 0) : ?>
+        <span class='avis' style='background-color: #3a87ad'>Présence d'un dossier de reception de travaux</span>
+        <?php endif ?>
+
+        <?php /* Alerte sur le fait que la visite fait partie d'un échéancier de travaux */ ?>
+        <?php if($this->ECHEANCIER_TRAVAUX > 0) : ?>
+        <span class='avis' style='background-color: #3a87ad'>Fait l'objet d'un échéancier de travaux</span>
+        <?php endif ?>
+
+    </div>
+
+    <div style='clear: both'></div>
 
 </li>

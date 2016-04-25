@@ -1,0 +1,24 @@
+<?php if(count($this->data) > 0 ) : ?>
+    <?php foreach($this->data as $commission) : ?>
+      <?php $dateFormatter = new DateTime($commission["DATE_COMMISSION"]); ?>
+      <p class="lead" style="font-size:1.2em; margin-bottom: 0px;">
+          <a href="/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $commission['id'] ?>">
+              <?php echo strtoupper($commission["LIBELLE_COMMISSION"] . ' - ' . $commission['LIBELLE_DATECOMMISSION']) ?>
+          </a>
+          <?php echo " du " . $dateFormatter->format('d/m/Y') . " (" . $commission["heure"] . ")" ?></p>
+      <?php if(count($commission["odj"]) == 0 ) : ?>
+        <p class="muted">Pas de dossier affecté.</p>
+      <?php else : ?>
+        <ul class='recherche_liste unstyled no_slide'>
+          <?php echo $this->partialLoop('search/results/dossier.phtml', $commission["odj"] ) ?>
+        </ul>
+      <?php endif ?>
+    <?php endforeach ?>
+<?php else: ?>
+    <p class='muted'><small>Aucune prochaine commission</small></p>
+<?php endif ?>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#<?php echo $this->id ?> .panel-heading").append(' (<?php echo count($this->data) ?>)');
+    });
+</script>

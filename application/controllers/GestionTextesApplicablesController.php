@@ -10,8 +10,6 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
         //on commence par afficher tous les texte applicables regroupés par leurs type
         $dbTextesAppl = new Model_DbTable_TextesAppl;
         $this->view->listeTextesAppl = $dbTextesAppl->recupTextesAppl();
-		//Zend_Debug::dump($this->view->listeTextesAppl);
-
     }
 
     public function formtexteapplAction()
@@ -47,6 +45,14 @@ class GestionTextesApplicablesController extends Zend_Controller_Action
                 $newRow['ID_TYPETEXTEAPPL'] = $this->_getParam("type");
 				$newRow['NUM_TEXTESAPPL'] = "99999";
                 $newRow->save();
+            }
+
+            if($this->_getParam("defPrescription") == "yes"){
+                //on enregistre le texte dans la table prescriptiontexteliste
+                $dbPrescTextes = new Model_DbTable_PrescriptionTexteListe;
+                $newTexte = $dbPrescTextes->createRow();
+                $newTexte->LIBELLE_TEXTE = $this->_getParam("libelle");
+                $newTexte->save();
             }
 
             $this->_helper->flashMessenger(array(

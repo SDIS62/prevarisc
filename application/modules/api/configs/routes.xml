@@ -31,6 +31,10 @@
                         <route>pieces_jointes</route>
                         <defaults method="getPiecesJointes" />
                     </pieces_jointes>
+                    <pieces_jointes_content type="Zend_Controller_Router_Route">
+                        <route>pieces_jointes_content</route>
+                        <defaults method="getPiecesJointesContent" />
+                    </pieces_jointes_content>
                     <contacts type="Zend_Controller_Router_Route">
                         <route>contacts</route>
                         <defaults method="getContacts" />
@@ -103,7 +107,51 @@
                 <route>test</route>
                 <defaults controller="test" method="test" />
             </test>
-
+             <!-- login -->
+            <login type="Zend_Controller_Router_Route">
+                <route>login</route>
+                <defaults controller="login" method="login" />
+            </login>
+            <!-- dossier -->
+            <dossier type="Zend_Controller_Router_Route">
+                <route>dossier</route>
+                <defaults controller="dossier" />
+                <chains>
+                    <get type="Zend_Controller_Router_Route">
+                        <route></route>
+                        <defaults method="get" />
+                    </get>
+                    <pieces_jointes type="Zend_Controller_Router_Route">
+                        <route>pieces_jointes</route>
+                        <defaults method="getPiecesJointes" />
+                    </pieces_jointes>
+                    <pieces_jointes_content type="Zend_Controller_Router_Route">
+                        <route>pieces_jointes_content</route>
+                        <defaults method="getPiecesJointesContent" />
+                    </pieces_jointes_content>
+                    <contacts type="Zend_Controller_Router_Route">
+                        <route>contacts</route>
+                        <defaults method="getContacts" />
+                    </contacts>
+                </chains>
+            </dossier>
+            
+            <!-- user -->
+            <user type="Zend_Controller_Router_Route">
+                <route>user</route>
+                <defaults controller="user" />
+                <chains>
+                    <get type="Zend_Controller_Router_Route">
+                        <route></route>
+                        <defaults method="get" />
+                    </get>
+                    <preferences type="Zend_Controller_Router_Route">
+                        <route>preferences</route>
+                        <defaults method="getPreferences" />
+                    </preferences>
+                </chains>
+            </user>
+            
         </chains>
     </api_1_0>
 

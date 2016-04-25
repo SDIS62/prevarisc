@@ -1,12 +1,15 @@
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
+<?php $action_name = Zend_Controller_Front::getInstance()->getRequest()->getActionName() ?>
    <ul class='nav nav-tabs nav-stacked menu_dashboard' >
-        <li><a href='<?php echo $this->url(array("action"=>"index")) ?>'><i class="icon-info-sign icon-black"></i> Général</a></li>
-        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?><li><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'><i class="icon-align-center icon-black"></i> Textes applicables</a></li><?php endif ?>
-        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != "Site" ) : ?><li><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'><i class="icon-book icon-black"></i> Descriptif</a></li><?php endif ?>
-        <li><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a></li>
-        <li><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'><i class="icon-user icon-black"></i> Contacts</a></li>
-        <li><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'><i class="icon-folder-open icon-black"></i> Dossiers</a></li>
-        <li><a class='sep' href='<?php echo $this->url(array("action"=>"historique")) ?>'><i class="icon-repeat icon-black"></i> Afficher l'historique</a></li>
+        <li class="<?php echo $action_name == 'index' ? 'active' : '' ?>"><a href='<?php echo $this->url(array("action"=>"index")) ?>'><i class="icon-info-sign icon-black"></i> Général</a></li>
+        <?php if($this->etablissement['informations']['LIBELLE_GENRE'] != 'Site' ) : ?>
+            <li class="<?php echo $action_name == 'textes-applicables' ? 'active' : '' ?>"><a href='<?php echo $this->url(array("action"=>"textes-applicables")) ?>'><i class="icon-align-center icon-black"></i> Textes applicables</a></li>
+            <li class="<?php echo $action_name == 'descriptif' ? 'active' : '' ?>"><a href='<?php echo $this->url(array("action"=>"descriptif")) ?>'><i class="icon-book icon-black"></i> Descriptif</a></li>
+        <?php endif ?>
+        <li class="<?php echo $action_name == 'pieces-jointes' ? 'active' : '' ?>"><a href='<?php echo $this->url(array("action"=>"pieces-jointes")) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a></li>
+        <li class="<?php echo $action_name == 'contacts' ? 'active' : '' ?>"><a href='<?php echo $this->url(array("action"=>"contacts")) ?>'><i class="icon-user icon-black"></i> Contacts</a></li>
+        <li class="<?php echo $action_name == 'dossiers' ? 'active' : '' ?>"><a href='<?php echo $this->url(array("action"=>"dossiers")) ?>'><i class="icon-folder-open icon-black"></i> Dossiers</a></li>
+        <li class="<?php echo $action_name == 'historique' ? 'active' : '' ?>"><a class='sep' href='<?php echo $this->url(array("action"=>"historique")) ?>'><i class="icon-repeat icon-black"></i> Afficher l'historique</a></li>
         <li class="nav-header">Actions</li>
         <li><a href='<?php echo $this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $this->etablissement['general']['ID_ETABLISSEMENT']), null, true)?> '><i class="icon-plus icon-black"></i> Ajouter un dossier</a></li>
     </ul>
@@ -23,25 +26,56 @@
     <h2 class="page-header">
         <?php if( $this->etablissement['parents'] > 0 ) : ?>
             <?php foreach($this->etablissement['parents'] as $etablissement) : ?>
-                <?php echo "<a href='/etablissement/index/id/" . $etablissement["ID_ETABLISSEMENT"] . "'>" . $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] . "</a> - "; ?>
+                <a href='/etablissement/index/id/<?php echo  $etablissement["ID_ETABLISSEMENT"] ?>'>
+                    <?php echo $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?>
+                </a> - 
             <?php endforeach ?>
         <?php endif ?>
         <?php echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' title='" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "' />" : ''; ?>
-        <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]." " ?>
+        <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?>
+        <?php if ($this->etablissement['general']['NUMEROID_ETABLISSEMENT']): ?>
+            <span class="pull-right">
+                <small>
+                    #<?php echo $this->etablissement['general']["NUMEROID_ETABLISSEMENT"] ?>
+                </small>
+            </span>
+        <?php endif ?>
     </h2>
 
     <!-- Avis -->
-    <?php if($this->etablissement['presence_avis_differe'] == true) : ?>
+    <?php if($this->etablissement['presence_avis_differe'] == true && $this->avis == "avisDiff") : ?>
         <p class='label label-info'>
             Présence d'un dossier avec avis differé
         </p>
     <?php elseif($this->etablissement['avis'] != null) : ?>
-        <p class='avis <?php echo $this->etablissement['avis'] == 1 ? 'F' : 'D' ?>'>
-            <?php echo ($this->etablissement['avis'] == 1 ? 'Favorable' : 'Défavorable') . ($this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation ") ?>
-            <?php if($this->etablissement['avis'] != 1 && $this->etablissement['facteur_dangerosite'] > 0) : ?>
-            · Facteur de criticité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
-            <?php endif ?>
+    
+         <?php if($this->etablissement['avis'] == 1 && $this->avis == "avisDoss") : ?>
+            <p class="avis F">Favorable <?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation " ?></p>
+         <?php elseif($this->etablissement['avis'] == 2  && $this->avis == "avisDoss") : ?>
+            <p class="avis D">
+               Défavorable <?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation " ?>
+               <?php if($this->etablissement['facteur_dangerosite'] > 0) : ?>
+                  &nbsp;-&nbsp;Facteur de criticité : <?php echo $this->etablissement['facteur_dangerosite'] ?>
+               <?php endif ?>
+            </p>
+         <?php else : ?>
+            <p class="avis">Avis d'exploitation indisponible</p>
+         <?php endif ?>
+        
+    <?php endif ?>
+    
+    <!-- Présence de risques naturels ou technologiques-->
+    <?php if(!empty($this->etablissement['general']['DESCTECH_RISQUES_NATURELS_ETABLISSEMENT'])) : ?>
+        <p class='label label-warning'>
+            Présence de risques naturels
         </p>
+        <br/>
+    <?php endif ?>
+    <?php if(!empty($this->etablissement['general']['DESCTECH_RISQUES_TECHNOLOGIQUES_ETABLISSEMENT'])) : ?>
+        <p class='label label-warning'>
+            Présence de risques technologiques
+        </p>
+        <br/>
     <?php endif ?>
 
     <!-- Présence d'un dossier échéancier de travaux -->
@@ -55,10 +89,6 @@
 
     <!-- Statut -->
     <p>Statut : <?php echo $this->etablissement['informations']['LIBELLE_STATUT'] ?></p>
-
-    <?php if(!empty($this->etablissement['general']['NUMEROID_ETABLISSEMENT'])) : ?>
-    <p style='float: right'><small>id: <?php echo $this->etablissement['general']['NUMEROID_ETABLISSEMENT'] ?></small></p>
-    <?php endif ?>
 
 </div>
 

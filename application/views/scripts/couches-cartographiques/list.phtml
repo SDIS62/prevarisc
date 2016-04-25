@@ -19,36 +19,24 @@
 
     <p class='text-right'><a class='btn' href='<?php echo $this->url(array('controller' => 'couches-cartographiques', 'action' => 'add'), null, true) ?>'>Ajouter une couche</a></p>
 
-    <div id='geoportail-container'  style="height: 250px; max-height: 250px;"></div>
-    <script type="text/javascript" src="http://api.ign.fr/geoportail/api/js/2.0.3/GeoportalExtended.js"></script>
+    <div id='geoportail-container'  style="height: 350px; max-height: 350px;"></div>
+    
+    <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
     <script>
         $(document).ready(function() {
-            viewer = Geoportal.load("geoportail-container", "<?php echo $this->key_ign ?>", {
+            var points = [];
+            points.push({
                 lat: 50.4727273438818,
-                lon: 2.71490430425517
-            }, 8, OpenLayers.Util.extend({
-                controls: [new OpenLayers.Control.NavToolbar(), new OpenLayers.Control.LayerSwitcher()],
-                overlays:{},
-                onView: function() {
-                    <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
-                        viewer.getViewer().getMap().addLayer(
-                            "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
-                            "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
-                            "<?php echo $couche_cartographique['URL_COUCHECARTO'] ?>", {
-                                layers: "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>",
-                                format: "<?php echo $couche_cartographique['FORMAT_COUCHECARTO'] ?>",
-                                transparent: "<?php echo $couche_cartographique['TRANSPARENT_COUCHECARTO'] ? 'true' : 'false' ?>"
-                            }, {
-                                projection: 'EPSG:4326',
-                                singleTile: false,
-                                opacity: 1,
-                                visibility: true
-                            }
-                        );
-                    <?php endforeach ?>
-                },
-                proxyUrl: '/proxy'
-            }));
+                lon: 2.71490430425517,
+                description: "Centre par défaut"
+            });
+
+            viewer = initViewer(
+                "geoportail-container",
+                "<?php echo $this->key_ign ?>",
+                points,
+                <?php echo json_encode($this->couches_cartographiques) ?>
+            );
         });
     </script>
 

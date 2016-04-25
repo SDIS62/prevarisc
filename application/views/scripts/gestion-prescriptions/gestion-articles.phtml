@@ -1,0 +1,40 @@
+<?php
+
+	echo "
+		<div class='row'>
+			<div class='span9' >
+				<a href='/gestion-prescriptions'>Gestion des prescriptions types</a> <i class='icon-chevron-right'></i> Gestion des articles
+			</div>
+			<div class='span3' style='float:right;'>
+				
+			</div>
+		</div>
+		<h3 class='page-header'>
+			Gestion des articles
+		</h3>
+		<div class='row'>
+			<div class='span12' style='text-align:right;'>
+				<a class='btn btn-default' href='/gestion-prescriptions/gestion-articles-add'><i class='icon-plus'></i>&nbsp;Ajouter un article</a>
+			</div>
+		</div>
+
+		
+		<br/>
+	";
+
+	foreach($this->liste_articles as $article)
+	{
+		if($article['ID_ARTICLE'] != 1)
+		{
+			echo "
+				<div class='row' >
+					<div class='span2' style='text-align:right;'>
+						".( ($article['VISIBLE_ARTICLE'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."
+						<a class='btn' href='/gestion-prescriptions/gestion-articles-edit/id/".$article['ID_ARTICLE']."' ><i class='icon-pencil'></i>&nbsp;Modifier</a>
+					</div>
+					<div class='span10' >".$article['LIBELLE_ARTICLE']."</div>					
+				</div>
+				<br/>
+			";
+		}
+	}

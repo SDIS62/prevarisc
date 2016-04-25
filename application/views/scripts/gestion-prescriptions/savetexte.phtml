@@ -3,7 +3,10 @@ if($this->do == 'new')
 	echo "<li id='texteid_".$this->texte['ID_PRESCRIPTIONTEXTE']."'>";
 	
 echo "	
-	<span style='font-size:15px;'>".$this->texte['LIBELLE_PRESCRIPTIONTEXTE']."</span>
+	<span style='font-size:15px;'>
+		<input type='hidden' name='texte[]' value='".$this->texte['ID_PRESCRIPTIONTEXTE']."' />
+		".$this->texte['LIBELLE_PRESCRIPTIONTEXTE']."
+	</span>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<button class='showDetailTexte btn' id='showarticle_".$this->texte['ID_PRESCRIPTIONTEXTE']."' >Afficher les détails</button>
 	<button class='hideDetailTexte btn' id='hidearticle_".$this->texte['ID_PRESCRIPTIONTEXTE']."' style='display:none;'>Masquer les détails</button>
@@ -17,9 +20,3 @@ if($this->do == 'new')
 	echo "</li>";
 	
 ?>
-
-<script type="text/javascript">
-$(document).ready(function(){
-
-});
-</script>

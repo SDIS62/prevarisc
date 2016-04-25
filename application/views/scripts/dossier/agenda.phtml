@@ -103,8 +103,6 @@ if(!isset($_POST['do']))
 			$tab_mois = array("","Janvier","Fevrier","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre");
 			if(isset($_GET['mois']) && $_GET['mois'] <= 12 && $_GET['mois'] >= 1){
 				$gestionDate = new Zend_Date($_GET['annee']."-".$_GET['mois']."-".$_POST['jour'],Zend_Date::DATES);
-				//$show = $_POST['jour']." ".$_GET['mois']." ".$_GET['annee'];
-				//$show= $_POST['jour']." ".$_GET['mois']." ".$_GET['annee'];
 			}else{
 				$gestionDate = new Zend_Date(date("Y")."-".date("m")."-".$_POST['jour'],Zend_Date::DATES);
 			}
