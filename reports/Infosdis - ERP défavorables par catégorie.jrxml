@@ -11,6 +11,9 @@
 		<defaultValueExpression><![CDATA["\\subreports\\"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Numero département SDIS" class="java.lang.String"/>
+	<parameter name="IMAGES_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\images\\"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select t.ID_TYPE, ei.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS,
 case ei.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS
@@ -578,7 +581,7 @@ type]]>
 		<band height="50">
 			<image>
 				<reportElement x="7" y="26" width="47" height="19" uuid="9417d12d-8b62-437d-b379-28c21df23026"/>
-				<imageExpression><![CDATA["C:\\Users\\adimpre.SDIS62\\Documents\\ireport\\infosdis.jpg"]]></imageExpression>
+				<imageExpression><![CDATA[$P{IMAGES_DIR} + "infosdis.jpg"]]></imageExpression>
 			</image>
 			<rectangle>
 				<reportElement mode="Transparent" x="0" y="22" width="555" height="28" backcolor="#CCCCCC" uuid="59a02cc7-7f11-47da-a643-9cd6d5c5b620"/>
