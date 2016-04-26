@@ -1,25 +1,25 @@
-# iReport - Procédure d'installation #
+# iReport - ProcÃ©dure d'installation #
 
-## Téléchargement de ireport 5.6 et java 7 ##
-Le téléchargement de ireport 5.6 se fait à partir de la page suivante : http://sourceforge.net/projects/ireport/files/iReport/iReport-5.6.0/
-De plus, il faut télécharger le JDK java 7 à partir de la page suivante : http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+## TÃ©lÃ©chargement de ireport 5.6 et java 7 ##
+Le tÃ©lÃ©chargement de ireport 5.6 se fait Ã  partir de la page suivante : http://sourceforge.net/projects/ireport/files/iReport/iReport-5.6.0/
+De plus, il faut tÃ©lÃ©charger le JDK java 7 Ã  partir de la page suivante : http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
 
 ## Configuration avant le premier lancement de iReport ##
-Après avoir installé ireport 5.6 et le JDK Java 7, il faut modifier le fichier « ireport.conf » dans le répertoire « C:\Program Files (x86)\Jaspersoft\iReport-5.6.0\etc\ » en mettant l’emplacement du jdk java :
-Exemple : jdkhome = « C:\Program Files\Java\jdk1.7.0_79 »
-Note : ne pas oublier d’enlever le # devant la ligne
-Puis lancer "iReport-5.6.0" sans problème (sans ce paramètre, ireport ne se lance pas mais il n'y a pas de message d'erreur)
+AprÃ¨s avoir installÃ© ireport 5.6 et le JDK Java 7, il faut modifier le fichier Â« ireport.conf Â» dans le rÃ©pertoire Â« C:\Program Files (x86)\Jaspersoft\iReport-5.6.0\etc\ Â» en mettant lâ€™emplacement du jdk java :
+Exemple : jdkhome = Â« C:\Program Files\Java\jdk1.7.0_79 Â»
+Note : ne pas oublier dâ€™enlever le # devant la ligne
+Puis lancer "iReport-5.6.0" sans problÃ¨me (sans ce paramÃ¨tre, ireport ne se lance pas mais il n'y a pas de message d'erreur)
 
-## Création de la connexion à la base de données ##
+## CrÃ©ation de la connexion Ã  la base de donnÃ©es ##
 Lors du premier lancement, vous arriver sur cette page :
-![](https://github.com/SDIS62/prevarisc/tree/2.x/docs/images/page_accueil.jpg)
+![](https://raw.githubusercontent.com/SDIS62/prevarisc/2.x/docs/images/page_accueil.JPG)
 
-Cliquer sur l’icône pour créer une connexion à une base de données : ![](https://github.com/SDIS62/prevarisc/tree/2.x/docs/images/icone_creation_connexion.jpg)
+Cliquer sur lâ€™icÃ´ne pour crÃ©er une connexion Ã  une base de donnÃ©es : ![](https://raw.githubusercontent.com/SDIS62/prevarisc/2.x/docs/images/icone_creation_connexion.JPG)
 
-Choisir « Database JDBC Connection » :
-![](https://github.com/SDIS62/prevarisc/tree/2.x/docs/images/JDBC_Connection.jpg)
+Choisir Â« Database JDBC Connection Â» :
+![](https://raw.githubusercontent.com/SDIS62/prevarisc/2.x/docs/images/JDBC_connection.jpg)
 
-Il faut saisir les informations nécessaires comme dans l’image ci-dessous en fonction de votre connexion :
-![](https://github.com/SDIS62/prevarisc/tree/2.x/docs/images/Exemple_Connection.jpg)
+Il faut saisir les informations nÃ©cessaires comme dans lâ€™image ci-dessous en fonction de votre connexion :
+![](https://raw.githubusercontent.com/SDIS62/prevarisc/2.x/docs/images/exemple_connection.jpg)
 
-Vous pouvez garder le nom « prevarisc » comme nom de connexion car les rapports existants sont paramétrés sur celui-ci.
+Vous pouvez garder le nom Â« prevarisc Â» comme nom de connexion car les rapports existants sont paramÃ©trÃ©s sur celui-ci.
