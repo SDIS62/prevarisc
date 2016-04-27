@@ -33,6 +33,7 @@ Corrections :
 * Correction du non vidage de cache ets sur la partie contact (cf dus)
 * Correction de l'impossibilité de programmer un dossier de visite sur plusieurs journées
 * Correction de la balise {avisLastVP} qui disfonctionne ainsi que le calcul de la dernière VP
+* Correction de l'impossibilité de faire du drag and drop sur le calendrier pour les weekends
 
 ## 2.4
 
