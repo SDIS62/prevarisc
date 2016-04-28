@@ -1625,19 +1625,48 @@ class DossierController extends Zend_Controller_Action
             $this->_helper->viewRenderer->setNoRender();
 
             $DBetablissementDossier = new Model_DbTable_EtablissementDossier();
-            //$deleteEtabDossier = $DBetablissementDossier->delete("ID_ETABLISSEMENTDOSSIER = " . $this->_getParam("idEtabDossier"));
+            $dbEtab = new Model_DbTable_Etablissement();
+            $service_dossier = new Service_Dossier;
+            $service_etablissement = new Service_Etablissement;
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+            
             $deleteEtabDossier = $DBetablissementDossier->find($this->_getParam("idEtabDossier"))->current();
+            $idEtablissement = $deleteEtabDossier['ID_ETABLISSEMENT'];
+            $idDossier  = $deleteEtabDossier['ID_DOSSIER'];
+            $etablissement = $dbEtab->find($idEtablissement)->current();
+            
             $deleteEtabDossier->delete();
 
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
-                'title' => 'L\'établissement a bien été supprimé',
+                'title' => "L'établissement n'est plus lié à ce dossier.",
                 'message' => '',
             ));
+            
+            if($etablissement->ID_DOSSIER_DONNANT_AVIS == $idDossier) {
+                
+                $newDossier = $service_etablissement->getDossierDonnantAvis($idEtablissement);
+                if ($newDossier && isset($newDossier['ID_DOSSIER'])) {
+                    $etablissement->ID_DOSSIER_DONNANT_AVIS = $newDossier['ID_DOSSIER'];
+                } else {
+                    $etablissement->ID_DOSSIER_DONNANT_AVIS = NULL;
+                }
+                
+                $etablissement->save();
+                $cache->remove(sprintf('etablissement_id_%d', $idEtablissement));
+                Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch')->clean(Zend_Cache::CLEANING_MODE_ALL);
+                
+                $this->_helper->flashMessenger(array(
+                    'context' => 'warning',
+                    'title' => "Attention, ce dossier donnait avis à l'établissement.",
+                    'message' => $etablissement->ID_DOSSIER_DONNANT_AVIS ? "Un nouveau dossier donne à présent avis." : "L'établissement n'a plus de dossier donnant avis."
+                ));
+            }
+            
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
-                'title' => 'Erreur lors de la suppression de l\'établissement',
+                'title' => "Erreur lors de la suppression du lien à l'établissement.",
                 'message' => $e->getMessage(),
             ));
         }

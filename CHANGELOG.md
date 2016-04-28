@@ -33,6 +33,7 @@ Corrections :
 * Correction de la balise {avisLastVP} qui disfonctionne ainsi que le calcul de la dernière VP
 * Correction de l'unité en mètres sur la mesure de distance cartographiques
 * Correction de l'impossibilité de faire du drag and drop sur le calendrier pour les weekends
+* Correction de la suppression d'un lien établissement - dossier qui ne changeait pas l'avis de l'établissement
 
 ## 2.4
 
