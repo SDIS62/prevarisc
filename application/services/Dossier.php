@@ -731,7 +731,7 @@ class Service_Dossier
             //Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
             || in_array($idNature, array(21, 23, 24, 47)) && $dossier->DATEVISITE_DOSSIER
             //Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
-            || in_array($idNature, array(26, 28, 29, 48)) && $dossier->DATECOMM_DOSSIER;  
+            || in_array($idNature, array(26, 28, 29, 48)) && $dossier->DATECOMM_DOSSIER;
     }
     
     public function getDateDossier($dossier) {

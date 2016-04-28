@@ -328,6 +328,20 @@
             return $etablissements_isoles;
 
         }
+        
+        public function getDossierDonnantAvis($id_etablissement)
+        {
+            $select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from("dossier", array("ID_DOSSIER", "DATECOMM_DOSSIER", "DATEVISITE_DOSSIER"))
+                ->join("etablissementdossier", "etablissementdossier.ID_DOSSIER = dossier.ID_DOSSIER")
+                ->join("dossiernature", "dossiernature.ID_DOSSIER = etablissementdossier.ID_DOSSIER", null)
+                ->where("etablissementdossier.ID_ETABLISSEMENT = ?", $id_etablissement)
+                ->where("dossiernature.ID_NATURE in (?)", array(19, 7, 17, 16, 21, 23, 24, 47, 26, 28, 29, 48))
+                ->order("IFNULL(dossier.DATECOMM_DOSSIER, dossier.DATEVISITE_DOSSIER) DESC");
+
+            return $this->fetchRow($select);
+        }
 
 
     }
