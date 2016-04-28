@@ -12,10 +12,11 @@ Evolutions :
 * Ajout d'un indicateur sur les périodicités non standards
 * Ajout du support de l'authentification CAS
 * Ajout du support de l'authentification NTLM 
-* Ajout de la possibilité d'ajouter rapidement une couche WMS IGN
-* Standardisation du viewer cartographique cote backoffice
 * Le bloc des ets sans prochaine visite cette année remonte à présent les ets en retard de l'année N-1
 * Ajout de la balise de {heureDeb1erDossier} pour les convocations de maires
+* Ajout de la 3ème famille d'habitation
+* Ajout de la possibilité d'ajouter rapidement une couche WMS IGN
+* Standardisation du viewer cartographique cote backoffice
 * Ajout de la balise de {avisDossierCommission} pour les PV de maires
 
 Corrections :
