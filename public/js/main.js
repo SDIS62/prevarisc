@@ -203,7 +203,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                 }));
                 
                 // Ajout des couches WMS
-                if (wmsLayers.length > 0) {
+                if (wmsLayers && wmsLayers.length > 0) {
                     $('#reponse-modal').dialog({
                         resizable: true,
                         title: 'WMS Information',
@@ -214,40 +214,41 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                            $(this).empty(); 
                         },
                         modal: false});
-                }
                 
-                for (var i = 0 ; i < wmsLayers.length ; i++) {
-                    console.log(wmsLayers[i].URL_COUCHECARTO);
-                    // ajout de la couche sur la carte
-                    var layer = new OpenLayers.Layer.WMS(
-                        wmsLayers[i].NOM_COUCHECARTO,
-                        wmsLayers[i].URL_COUCHECARTO.replace('\{key\}', ignKey), {
-                            layers: wmsLayers[i].LAYERS_COUCHECARTO,
-                            format: wmsLayers[i].FORMAT_COUCHECARTO,
-                            transparent: wmsLayers[i].TRANSPARENT_COUCHECARTO === 1 ? 'true' : 'false'
-                        }, {
-                            projection: 'EPSG:4326',
-                            singleTile: false,
-                            opacity: 1,
-                            visibility: true
-                        }
-                    );
-            
-                    /*var infoFeature = new OpenLayers.Control.WMSGetFeatureInfo({
-                        url: wmsLayers[i].URL_COUCHECARTO, 
-                        title: 'Identify features by clicking',
-                        layers: [layer],
-                        queryVisible: true
-                    });
-            
-                    infoFeature.events.register("getfeatureinfo", map, function(event) {
-                        var $response = $(event.text);
-                        var time = (new Date()).getTime();
-                        $('#wms').append("<iframe id='wms-'>"+event.text+"</iframe>");
-                    });*/
-                    map.addLayer(layer);
-                    //map.addControl(infoFeature);
-                    //infoFeature.activate();
+                    for (var i = 0 ; i < wmsLayers.length ; i++) {
+                        console.log(wmsLayers[i].URL_COUCHECARTO);
+                        // ajout de la couche sur la carte
+                        var layer = new OpenLayers.Layer.WMS(
+                            wmsLayers[i].NOM_COUCHECARTO,
+                            wmsLayers[i].URL_COUCHECARTO.replace('\{key\}', ignKey), {
+                                layers: wmsLayers[i].LAYERS_COUCHECARTO,
+                                format: wmsLayers[i].FORMAT_COUCHECARTO,
+                                transparent: wmsLayers[i].TRANSPARENT_COUCHECARTO === 1 ? 'true' : 'false'
+                            }, {
+                                projection: 'EPSG:4326',
+                                singleTile: false,
+                                opacity: 1,
+                                visibility: true
+                            }
+                        );
+
+                        /*var infoFeature = new OpenLayers.Control.WMSGetFeatureInfo({
+                            url: wmsLayers[i].URL_COUCHECARTO, 
+                            title: 'Identify features by clicking',
+                            layers: [layer],
+                            queryVisible: true
+                        });
+
+                        infoFeature.events.register("getfeatureinfo", map, function(event) {
+                            var $response = $(event.text);
+                            var time = (new Date()).getTime();
+                            $('#wms').append("<iframe id='wms-'>"+event.text+"</iframe>");
+                        });*/
+                        map.addLayer(layer);
+                        //map.addControl(infoFeature);
+                        //infoFeature.activate();
+                    }
+                
                 }
                 
                 // Suppression des markers par défaut
