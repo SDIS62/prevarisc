@@ -15,6 +15,7 @@ Evolutions :
 * Ajout de la 3ème famille d'habitation
 * Ajout de la possibilité d'ajouter rapidement une couche WMS IGN
 * Standardisation du viewer cartographique cote backoffice
+* Ajout de la balise de {avisDossierCommission} pour les PV de maires
 
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
