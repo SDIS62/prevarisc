@@ -32,6 +32,9 @@ Corrections :
 * Correction de l'impossibilité de programmer un dossier de visite sur plusieurs journées
 * Correction de la balise {avisLastVP} qui disfonctionne ainsi que le calcul de la dernière VP
 * Correction de l'unité en mètres sur la mesure de distance cartographiques
+* Correction de l'impossibilité de faire du drag and drop sur le calendrier pour les weekends
+* Correction de la suppression d'un lien établissement - dossier qui ne changeait pas l'avis de l'établissement
+* Correction d'un problème d'escapiing des quotes sur la recherche des ets
 
 ## 2.4
 

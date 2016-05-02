@@ -238,25 +238,19 @@
                             return false;
                         },
                         eventDrop: function( event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view ) {
-                                //Lorsque l'on déplace un élément
-                                var tabDateSelect = event.end;
-                                tabDateSelect = tabDateSelect.toString();
-                                tabDateSplited = tabDateSelect.split(" ");
+                            //Lorsque l'on déplace un élément
+                            var tabDateSelect = event.end;
+                            tabDateSelect = tabDateSelect.toString();
+                            tabDateSplited = tabDateSelect.split(" ");
 
-                                if(tabDateSplited[0] == "Sun" || tabDateSplited[0] == "Sat"){
-                                        $("#calendar").fullCalendar('refetchEvents');
-                                }else{
-                                        //alert("idComm="+event.id+"&debut="+event.start+"&fin="+event.end);
-                                        $.ajax({
-                                                data: "idComm="+event.id+"&debut="+event.start+"&fin="+event.end,
-                                                url: "/calendrier-des-commissions/deplacecommissiondate",
-                                                type:"POST",
-                                                success: function(affichageResultat){
-                                                        //$("#calendar").html(affichageResultat);
-                                                },
-                                        });
-
-                                }
+                            $.ajax({
+                                    data: "idComm="+event.id+"&debut="+event.start+"&fin="+event.end,
+                                    url: "/calendrier-des-commissions/deplacecommissiondate",
+                                    type:"POST",
+                                    success: function(affichageResultat){
+                                            //$("#calendar").html(affichageResultat);
+                                    }
+                            });
                         },
                         eventResize: function( event, jsEvent, ui, view ) {
 

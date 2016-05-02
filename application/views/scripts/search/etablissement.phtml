@@ -4,7 +4,7 @@
 
 	<div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
             <div class="input-append pull-left">
-                <input type="text" name='label' class="input-xlarge search-query" placeholder="Libellé de l'établissement ou son #ID ..." value='<?php if(isset($_GET["label"])) echo $_GET["label"] ?>' />
+                <input type="text" name='label' class="input-xlarge search-query" placeholder="Libellé de l'établissement ou son #ID ..." value="<?php if(isset($_GET["label"])) echo htmlentities($_GET["label"]) ?>" />
                 <input type='submit' class="btn btn_search" value="Rechercher" disabled />
                 <input type='hidden' name='page' value="1" />
             </div>
