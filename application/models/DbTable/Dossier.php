@@ -230,12 +230,14 @@
         {
             $select = $this->select()
                     ->setIntegrityCheck(false)
-                    ->from(array('d' => 'dossier'),"max(d.DATEVISITE_DOSSIER) as maxdate")
+                    ->from(array('d' => 'dossier'))
                     ->join(array('ed' => 'etablissementdossier') , "ed.ID_DOSSIER = d.ID_DOSSIER")
                     ->join(array("dn" => "dossiernature") , "d.ID_DOSSIER = dn.ID_DOSSIER")
                     ->where("ed.ID_ETABLISSEMENT = ?",$idEtab)
                     ->where("dn.ID_NATURE = 21 OR dn.ID_NATURE = 26")
-                    ->where("d.DATEVISITE_DOSSIER IS NOT NULL");
+                    ->where("d.DATEVISITE_DOSSIER IS NOT NULL")
+                    ->order("d.DATEVISITE_DOSSIER desc")
+                    ->limit(1);
 
             //echo $select->__toString();
             return $this->getAdapter()->fetchRow($select);	
@@ -246,14 +248,16 @@
         {
             $select = $this->select()
                     ->setIntegrityCheck(false)
-                    ->from(array('d' => 'dossier'),"max(d.DATEVISITE_DOSSIER) as maxdate")
+                    ->from(array('d' => 'dossier'))
                     ->join(array('ed' => 'etablissementdossier') , "ed.ID_DOSSIER = d.ID_DOSSIER")
                     ->join(array("dn" => "dossiernature") , "d.ID_DOSSIER = dn.ID_DOSSIER")
                     ->where("ed.ID_ETABLISSEMENT = ?",$idEtab)
                     ->where("ed.ID_DOSSIER <> ?",$idDossier)
                     ->where("dn.ID_NATURE = 21 OR dn.ID_NATURE = 26")
                     ->where("d.DATEVISITE_DOSSIER IS NOT NULL")
-                    ->where("d.DATEVISITE_DOSSIER < ?",$dateVisite);
+                    ->where("d.DATEVISITE_DOSSIER < ?",$dateVisite)
+                    ->order("d.DATEVISITE_DOSSIER desc")
+                    ->limit(1);
 
             //echo $select->__toString();
             return $this->getAdapter()->fetchRow($select);	

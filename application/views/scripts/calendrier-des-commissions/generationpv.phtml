@@ -216,6 +216,19 @@ foreach($this->membresFiles as $val => $membre){
 							break;
 						}
 						addChamp($dossInfos,'avisDossier', $avis);
+                                                
+                                                switch($dossierInfos['AVIS_DOSSIER_COMMISSION']){
+							case 1:
+								$avis = "Favorable";
+							break;
+							case 2:
+								$avis = "Défavorable";
+							break;
+							default:
+								$avis = "";
+							break;
+						}
+						addChamp($dossInfos,'avisDossierCommission', $avis);
 
 						$listeDocUrba = "";
 						foreach($dossierInfos["listeDocUrba"] as $va => $docurb){

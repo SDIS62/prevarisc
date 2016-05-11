@@ -1385,4 +1385,9 @@ class Service_Etablissement implements Service_Interface_Etablissement
             return "avisDiff";
         }
     }
+    
+    public function getDossierDonnantAvis($idEtablissement) {
+        $DBEtab = new Model_DbTable_Etablissement;
+        return $DBEtab->getDossierDonnantAvis($idEtablissement);
+    }
 }

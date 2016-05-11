@@ -57,7 +57,7 @@ $P!{Defavorable}]]>
 	<detail>
 		<band height="18" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="62" height="18" uuid="96c59d03-7733-4ba0-b98e-78c28ae2e4ba"/>
+				<reportElement x="0" y="0" width="56" height="18" uuid="96c59d03-7733-4ba0-b98e-78c28ae2e4ba"/>
 				<box>
 					<pen lineWidth="0.75"/>
 					<topPen lineWidth="0.75"/>
