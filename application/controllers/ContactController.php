@@ -114,6 +114,10 @@ class ContactController extends Zend_Controller_Action
             $contact->$key = $id_item;
             $contact->ID_UTILISATEURINFORMATIONS = $exist ? $_POST["ID_UTILISATEURINFORMATIONS"] : $id;
             $contact->save();
+            
+            // Suppression du cache de l'item
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+            $cache->remove($this->_request->item.'_id_' .$id_item);
 
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
@@ -137,13 +141,21 @@ class ContactController extends Zend_Controller_Action
                 unset($_POST["ID_UTILISATEURCIVILITE"]);
 
             $DB_informations = new Model_DbTable_UtilisateurInformations;
+            $DB_contact = new Model_DbTable_EtablissementContact;
             $row = $DB_informations->find( $this->_request->id )->current();
             $this->view->user_info = $row;
-
+            
             if ($_POST) {
                 $this->_helper->viewRenderer->setNoRender(); // On desactive la vue
-                var_dump(array_intersect_key($_POST, $DB_informations->info('metadata')));
                 $row->setFromArray(array_intersect_key($_POST, $DB_informations->info('metadata')))->save();
+                
+                // Suppression du cache des l'items associés
+                $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+                $items = $DB_contact->fetchAll("ID_UTILISATEURINFORMATIONS = " . $this->_request->id)->toArray();
+                foreach($items as $item) {
+                    $cache->remove('etablissement_id_' .$item['ID_ETABLISSEMENT']);
+                }
+                
             } else
                 $this->_forward("form");
 
@@ -153,7 +165,6 @@ class ContactController extends Zend_Controller_Action
                 'message' => ''
             ));
         } catch (Exception $e) {
-            var_dump($e);
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
                 'title' => 'Erreur lors de la modification du contact',
@@ -212,6 +223,10 @@ class ContactController extends Zend_Controller_Action
             } else {
                 $DB_current->delete("ID_UTILISATEURINFORMATIONS = " . $this->_request->id . " AND " . $primary . " = " . $this->_request->id_item); // Porteuse
             }
+            
+            
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+            $cache->remove($this->_request->item.'_id_' .$this->_request->id);
 
             $this->_helper->flashMessenger(array(
                 'context' => 'success',

@@ -11,14 +11,14 @@ if(count($this->membresFiles) == 0){
 foreach($this->informationsMembre as $val => $membre){
 
 	$erreurFile = 0;
-	if($this->typeCommission == 1 || $this->typeCommission == 3){
+	if($this->typeCommission == 1){
 		if($membre['infosFiles'][0]['COURRIER_CONVOCATIONSALLE'] == NULL){
 			$erreurFile = 1;
 		}else{
 			//Salle
 			$nomFichier = $membre['infosFiles'][0]['ID_COMMISSIONMEMBRE']."CONVOCATIONSALLE_".$membre['infosFiles'][0]['COURRIER_CONVOCATIONSALLE'];
 		}
-	}else if($this->typeCommission == 2){
+	}else if($this->typeCommission == 2 || $this->typeCommission == 3){
 		if($membre['infosFiles'][0]['COURRIER_CONVOCATIONVISITE'] == NULL){
 			$erreurFile = 1;
 		}else{
@@ -83,6 +83,26 @@ foreach($this->informationsMembre as $val => $membre){
 				$heureCommTab = explode(":",$this->heureDeb);
 				$heureComm = $heureCommTab[0].":".$heureCommTab[1];
 				setVars($villeODF,'heureDebutComm',$heureComm);
+                                
+                                $heureDebut = '';
+                                foreach($this->dossierComm as $val => $dossierInfos){
+					if(count($dossierInfos['infosEtab']['adresses']) > 0 ){
+						//echo $dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE']." - ".$commune[0];
+						if($dossierInfos['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'] == $commune[0]){
+							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
+							if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
+							{
+                                                            if(isset($dossierInfos["HEURE_DEB_AFFECT"])){
+                                                                $heureDebutTab = explode(":",$dossierInfos["HEURE_DEB_AFFECT"]);
+                                                                $heureDebut = $heureDebutTab[0].":".$heureDebutTab[1];
+                                                                break;
+                                                            }
+                                                        }
+						}
+					}
+				}
+                                setVars($villeODF, 'heureDeb1erDossier', $heureDebut);
+                                
 				//ICI FOREACH SUR LES DOSSIERS DE LA COMMUNE
 				//Generation du segment pour l'affichage des différentes infos du dossier
 				//Zend_Debug::dump($this->dossierComm);

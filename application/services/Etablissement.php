@@ -184,11 +184,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     } else if ($etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null
                             || $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === 0) {
                         continue;
+                    } else if($etablissement['ID_STATUT'] != 2) {
+                        continue;
                     }
                     
                     if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null) {
                         $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
-                    } else if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] < $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS']) {
+                    } else if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] > $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS']) {
                         $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
                     }
                     
@@ -1339,5 +1341,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
         }else{
             return "avisDiff";
         }
+    }
+    
+    public function getDossierDonnantAvis($idEtablissement) {
+        $DBEtab = new Model_DbTable_Etablissement;
+        return $DBEtab->getDossierDonnantAvis($idEtablissement);
     }
 }

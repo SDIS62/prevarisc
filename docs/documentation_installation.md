@@ -71,6 +71,7 @@ PREVARISC_CALENDAR_REFRESH_TIME | [FACULTATIF] L'intervale de temps entre chaque
 PREVARISC_LDAP_ENABLED | [FACULTATIF] Activation de la connexion des utilisateurs via LDAP | 1 ou 0
 PREVARISC_LDAP_HOST | [FACULTATIF] Adresse du serveur LDAP | Adresse IP
 PREVARISC_LDAP_USERNAME | [FACULTATIF] Nom d'utilisateur à utiliser lors de la connexion au LDAP | Chaine de caractères
+PREVARISC_LDAP_PORT | [FACULTATIF] Port de connexion au LDAP | Entier
 PREVARISC_LDAP_PASSWORD | [FACULTATIF] Mot de passe de connexion au LDAP | Chaine de caractères
 PREVARISC_LDAP_BASEDN | [FACULTATIF] Chaine de selection afin de trouver les utilisateurs dans le LDAP | Chaine de caractères (exemple : DC=sdisxx,DC=fr)
 PREVARISC_LDAP_ACCOUNT_FORM | [FACULTATIF] Format des comptes LDAP à utiliser, par défaut domaine\login   | Entier voir class Zend_Ldap
@@ -93,6 +94,13 @@ PREVARISC_DATA_PATH | [FACULTATIF] Préfixe des URL d'accès aux médias et piè
 PREVARISC_APPLICATION_PATH | [FACULTATIF] Répertoire racine de l'application Prévarisc | Chaine de caractères
 PREVARISC_REVISION | [FACULTATIF] Forcer la révision de l'installation prévarisc, <commit_git> sinon   | Chaine de caractères
 PREVARISC_BRANCH | [FACULTATIF] Forcer la branche de l'installation prévarisc, <branche_git> sinon   | Chaine de caractères
+PREVARISC_CAS_ENABLED | [FACULTATIF] Permet d'activer l'authentification CAS | 0 ou 1 pour l'activer
+PREVARISC_CAS_HOST | [FACULTATIF] Le hostname du serveur cas, ex: cas.example.com | Chaine de caractères
+PREVARISC_CAS_PORT | [FACULTATIF] Le port du serveur cas, normalement 443 | Entier
+PREVARISC_CAS_CONTEXT | [FACULTATIF] Le contexte, ou URI CAS, ex : 'cas' | Chaine de caractères
+PREVARISC_CAS_NO_SERVER_VALIDATION | [FACULTATIF] Désactive la vérification du certificat du serveur CAS | Chaine de caractères
+PREVARISC_CAS_VERSION | [FACULTATIF] Permet de préciser la version du protocol cas, 2.0 par défaut | 1.0, 2.0, 3.0
+PREVARISC_NTLM_ENABLED | [FACULTATIF] Permet d'activer l'authentification NTLM | 0 ou 1 pour l'activer
 
 
 * Taper :```/etc/init.d/apache2 restart```

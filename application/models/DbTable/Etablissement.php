@@ -321,12 +321,26 @@
             if ($idsCommission) {
                 $search->setCriteria("etablissementinformations.ID_COMMISSION", (array) $idsCommission);
             }
-            $search->having("nextvisiteyear < YEAR(NOW())");
+            $search->having("nextvisiteyear <= YEAR(NOW())");
              //etablissementinformations.ID_ETABLISSEMENTINFORMATIONS not in (SELECT ID_ETABLISSEMENTINFORMATIONS FROM etablissementinformationspreventionniste)
             $etablissements_isoles = $search->run(false, null, false)->toArray();
 
             return $etablissements_isoles;
 
+        }
+        
+        public function getDossierDonnantAvis($id_etablissement)
+        {
+            $select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from("dossier", array("ID_DOSSIER", "DATECOMM_DOSSIER", "DATEVISITE_DOSSIER"))
+                ->join("etablissementdossier", "etablissementdossier.ID_DOSSIER = dossier.ID_DOSSIER")
+                ->join("dossiernature", "dossiernature.ID_DOSSIER = etablissementdossier.ID_DOSSIER", null)
+                ->where("etablissementdossier.ID_ETABLISSEMENT = ?", $id_etablissement)
+                ->where("dossiernature.ID_NATURE in (?)", array(19, 7, 17, 16, 21, 23, 24, 47, 26, 28, 29, 48))
+                ->order("IFNULL(dossier.DATECOMM_DOSSIER, dossier.DATEVISITE_DOSSIER) DESC");
+
+            return $this->fetchRow($select);
         }
 
 
