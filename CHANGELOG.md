@@ -31,13 +31,14 @@ Corrections :
 * Correction du modèle de convocation des groupes de visites qui n'utilisaient pas le modèle de document de visite
 * Correction de l'affectation d'un dossier à une autre commission, les heures de début et de fin restaient en place ce qui pouvait causer des problèmes lorsque les horaires différaient
 * Correction de la {dateVisite} sur les ODJ qui était positionnée à la date du jour par défaut si vide
+* Correction de l'unité en mètres sur la mesure de distance cartographiques
 * Correction du non vidage de cache ets sur la partie contact (cf dus)
 * Correction de l'impossibilité de programmer un dossier de visite sur plusieurs journées
 * Correction de la balise {avisLastVP} qui disfonctionne ainsi que le calcul de la dernière VP
-* Correction de l'unité en mètres sur la mesure de distance cartographiques
 * Correction de l'impossibilité de faire du drag and drop sur le calendrier pour les weekends
 * Correction de la suppression d'un lien établissement - dossier qui ne changeait pas l'avis de l'établissement
 * Correction d'un problème d'escapiing des quotes sur la recherche des ets
+* Correction d'un problème de géolocalisation si aucune couche WMS n'est paramétrée
 
 ## 2.4
 
