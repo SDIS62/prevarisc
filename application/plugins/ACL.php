@@ -93,7 +93,6 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             phpCAS::forceAuthentication();
         }
 
-
         // Si l'utilisateur n'est pas connecté, alors on le redirige vers la page de login (si il ne s'y trouve pas encore)
         if ( !Zend_Auth::getInstance()->hasIdentity() && !in_array($request->getActionName(), array("login", "error")))  {
             $redirect = $_SERVER['REQUEST_URI'] == '/' ? [] : ['redirect' => urlencode($_SERVER['REQUEST_URI'])];
