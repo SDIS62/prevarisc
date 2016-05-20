@@ -90,6 +90,7 @@ class Api_Service_Calendar
             $etsService = new Service_Etablissement;
             $ets = $etsService->get($commissionEvent["ID_ETABLISSEMENT"]);
 
+            $parentsLibelle = array();
             foreach($ets['parents'] as $parent) {
                 $parentsLibelle[] = $parent['LIBELLE_ETABLISSEMENTINFORMATIONS'];
             }
