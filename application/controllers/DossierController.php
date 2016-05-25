@@ -1188,7 +1188,7 @@ class DossierController extends Zend_Controller_Action
                     && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)
                     && $service_dossier->isDossierDonnantAvis($nouveauDossier, $idNature)) {
                 
-                if ($this->_getParam('do') == 'new') {
+                if ($this->_getParam('do') == 'new' && $this->_getParam('idEtablissement')) {
                     $listeEtab = array(array(
                         'ID_ETABLISSEMENT' => $this->_getParam('idEtablissement'),
                     ));
