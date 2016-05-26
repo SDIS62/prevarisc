@@ -36,6 +36,9 @@ Corrections :
 * Correction de l'impossibilité de faire du drag and drop sur le calendrier pour les weekends
 * Correction de la suppression d'un lien établissement - dossier qui ne changeait pas l'avis de l'établissement
 * Correction d'un problème d'escapiing des quotes sur la recherche des ets
+* Correction d'un problème de géolocalisation si aucune couche WMS n'est paramétrée
+* Correction d'un problème de géolocalisation avec nominatim et du manque de couche WMS sur le viewer d'ajout d'un établissement
+* Correction de l'escaping des quotes sur les plans
 
 ## 2.4
 
