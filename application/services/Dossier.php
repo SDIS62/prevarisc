@@ -645,13 +645,15 @@ class Service_Dossier
         foreach($prescriptionRegl as $val => $ue){
             $prescEdit = $dbPrescDossier->createRow();
             $prescEdit->ID_DOSSIER = $idDossier;
-            $prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $ue[0]['PRESCRIPTIONREGL_LIBELLE'];
+            if (array_key_exists(0, $ue) && array_key_exists('PRESCRIPTIONREGL_LIBELLE', $ue[0])) {
+                $prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $ue[0]['PRESCRIPTIONREGL_LIBELLE'];    
+            } 
             $prescEdit->TYPE_PRESCRIPTION_DOSSIER = 0;
             $prescEdit->NUM_PRESCRIPTION_DOSSIER = $j++;
             $prescEdit->save();
 
             $nombreAssoc = count($ue);
-            for ($i = 0; $i< $nombreAssoc; $i ++) {
+            for ($i = 0; $i < $nombreAssoc; $i++) {
                 $newAssoc = $dbPrescDossierAssoc->createRow();
                 $newAssoc->NUM_PRESCRIPTION_DOSSIERASSOC = $i + 1;
                 $newAssoc->ID_PRESCRIPTION_DOSSIER = $prescEdit->ID_PRESCRIPTION_DOSSIER;

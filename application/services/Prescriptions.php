@@ -195,7 +195,8 @@ class Service_Prescriptions
         }
     } //FIN savePrescription
 
-    public function getPrescriptions($type,$mode = null){
+    public function getPrescriptions($type, $mode = null) 
+    {
         $dbPrescRegl = new Model_DbTable_PrescriptionRegl();
         $listePrescDossier = $dbPrescRegl->recupPrescRegl($type,$mode);
         //Zend_Debug::dump($listePrescDossier);
@@ -205,13 +206,15 @@ class Service_Prescriptions
 
         $prescriptionArray = array();
         foreach ($listePrescDossier as $val => $ue) {
-                $assoc = $dbPrescReglAssoc->getPrescriptionReglAssoc($ue['ID_PRESCRIPTIONREGL']);
-                array_push($prescriptionArray, $assoc);
+            $assoc = $dbPrescReglAssoc->getPrescriptionReglAssoc($ue['ID_PRESCRIPTIONREGL']);
+            array_push($prescriptionArray, $assoc);
         }
+
         return $prescriptionArray;
     } //FIN getPrescriptions
 
-    public function getPrescriptionInfo($idPrescription,$type){
+    public function getPrescriptionInfo($idPrescription,$type)
+    {
         if($type == 'rappel-reg'){
             $dbPrescAssoc = new Model_DbTable_PrescriptionReglAssoc();
             return $dbPrescAssoc->getPrescriptionReglAssoc($idPrescription);
