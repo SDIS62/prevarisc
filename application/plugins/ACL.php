@@ -67,8 +67,7 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
         // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token
-        if($request->getParam('key') === getenv('PREVARISC_SECURITY_KEY'))
-        {
+        if($request->getParam('key') === getenv('PREVARISC_SECURITY_KEY')) {
             return ;
         }
         

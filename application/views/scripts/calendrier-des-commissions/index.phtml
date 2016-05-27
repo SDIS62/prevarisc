@@ -1,17 +1,31 @@
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
 <input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>'/>
 <ul class="nav nav-tabs nav-stacked menu_dashboard" >
+    <?php if (getenv('PREVARISC_SECURITY_KEY') && getenv('PREVARISC_SECURITY_KEY') !== '') : ?>
+        <li>
+            <a id='syncCom'  href='<?php echo $this->url_webcal ?>' style="display:none">
+                <i class="icon-repeat"></i> Synchroniser le calendrier de cette commission
+            </a>
+        </li>
+    <?php endif ?>
     <li>
         <a id='exportCom'  href='#' style="display:none">
             <i class="icon-calendar"></i> Exporter pour Outlook
         </a>
     </li>
     <?php if($this->array_commissions): ?>
+        <?php if (getenv('PREVARISC_SECURITY_KEY') && getenv('PREVARISC_SECURITY_KEY') !== '') : ?>
+            <li>
+                <a id='syncCal'  href='<?php echo $this->url_webcal ?>'>
+                    <i class="icon-repeat"></i> Synchroniser le calendrier de toutes les commissions
+                </a>
+            </li>
+        <?php endif ?>
         <?php foreach($this->array_commissions as $array_commission): ?>
             <?php if (isset($array_commission["ARRAY"]) && count($array_commission["ARRAY"]) > 0): ?>
                 <li class="nav-header">
-                <?php echo htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES) ?>
-              </li>
+                    <?php echo htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES) ?>
+                </li>
                 <?php foreach($array_commission["ARRAY"] as $item) : ?>
                     <?php if($this->is_admin || (!$this->is_admin && is_array(Zend_Auth::getInstance()->getIdentity()["commissions"]) && in_array($item, Zend_Auth::getInstance()->getIdentity()["commissions"])))  : ?>
                     <li>
@@ -21,7 +35,8 @@
                     </li>
                   <?php endif ?>
                 <?php endforeach ?>
-                </li>            <?php endif ?>
+                </li>            
+            <?php endif ?>
         <?php endforeach ?>
     <?php endif ?>
 
@@ -60,7 +75,6 @@
                 }
     	});
 
-
 	// Selection de la commission
         $(".commissionLink").live('click',function(e) {
             e.preventDefault();
@@ -69,6 +83,8 @@
             $(".commissionLink").parent().removeClass('active');
             $self.parent().addClass('active');
             $("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + idCommission + "' />");
+            var syncComHref = $("#syncCal").attr("href") + "&commission=" + idCommission;
+            $("#syncCom").attr("href", syncComHref);
             $("#aff_calendar").button( "option", "disabled", false );
             $("#ordre_jour").button( "option", "disabled", false );
             $("h2.page-header").html('Calendrier de la '+$self.attr('data-type')+' de "'+$self.html().trim()+'"');
@@ -258,10 +274,10 @@
                             var view = $("#calendar").fullCalendar('getView');
                             var vueInfo = view.title;
                             vueInfo = vueInfo.split(" ");
-                            if(vueInfo.length == 2){
-                                    //permet d'empecher la modification en mode mois (Ajouter message d'indication si besoin)
-                                    $("#calendar").fullCalendar('refetchEvents');
-                                    return false;
+                            if (vueInfo.length == 2) {
+                                //permet d'empecher la modification en mode mois (Ajouter message d'indication si besoin)
+                                $("#calendar").fullCalendar('refetchEvents');
+                                return false;
                             }
                             $.ajax({
                                     data: "idComm="+event.id+"&fin="+event.end,
@@ -269,12 +285,15 @@
                                     type:"POST",
                             });
                         },
-                        viewRender: function( view, element ){
+                        viewRender: function (view, element) {
                             var date = $("#calendar").fullCalendar('getDate');
                             var month_int = date.getMonth()+1;
                             var year_int = date.getFullYear();
                             $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionId").val()+"/Mois/"+month_int+"/Annee/"+year_int);
                             $('#exportCom').show();
+                            var host = window.location.host;
+                            $('#syncCal').hide();
+                            $('#syncCom').show();
                         }
                     });
 		};

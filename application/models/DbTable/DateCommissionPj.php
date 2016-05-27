@@ -4,9 +4,9 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 {
 
     protected $_name="datecommissionpj"; // Nom de la base
-    protected $_primary = "ID_DATECOMMISSION";// Cl� primaire
+    protected $_primary = "ID_DATECOMMISSION";// Clé primaire
 
-    //r�cup�ration de la liste des dossiers pr�vu � la date de commission pass�e en param�tres
+    //récupération de la liste des dossiers prévu à la date de commission passée en paramètres
 /*
     public function getDossiersInfosOLD($dateCommId)
     {
@@ -138,4 +138,5 @@ class Model_DbTable_DateCommissionPj extends Zend_Db_Table_Abstract
 
 		return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
 	}
+
 }
