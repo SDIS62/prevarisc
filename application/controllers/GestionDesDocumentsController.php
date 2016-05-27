@@ -98,11 +98,11 @@ class GestionDesDocumentsController extends Zend_Controller_Action
             if (move_uploaded_file($_FILES['fichier']['tmp_name'], $this->path . DS. $this->_getParam('commission') .DS. $_FILES['fichier']['name'])) {
                 // Echappement des "backslashes" si le serveur est une machine Windows (Dossier\Fichier => DossierFichier)
                 $filePath = str_replace("\\", "\\\\", $this->_getParam('commission') . DS . $_FILES['fichier']['name']);
-                echo "
-                    <script type='text/javascript'>
-                        window.top.window.callback('" . $filePath . "');
+                echo '
+                    <script type="text/javascript">
+                        window.top.window.callback("'.$filePath.'");
                     </script>
-                ";
+                ';
             }
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
