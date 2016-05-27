@@ -151,6 +151,18 @@
                     </preferences>
                 </chains>
             </user>
+
+            <!-- Calendar -->
+            <calendar type="Zend_Controller_Router_Route">
+                <route>calendar</route>
+                <defaults controller="calendar" />
+                <chains>
+                    <get type="Zend_Controller_Router_Route">
+                        <route></route>
+                        <defaults method="sync" />
+                    </get>
+                </chains>
+            </calendar>
             
         </chains>
     </api_1_0>

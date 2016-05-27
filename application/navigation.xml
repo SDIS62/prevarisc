@@ -527,17 +527,22 @@
             <controller>calendrierdescommissions</controller>
             <resource>commission</resource>
             <pages>
-                                <index>
+                <index>
                     <label>Affichage</label>
                     <controller>calendrier-des-commissions</controller>
                     <action>index</action>
                     <privilege>lecture_commission</privilege>
                 </index>
-                                <exportoutlook>
+                <exportoutlook>
                     <label>Export Outlook</label>
                     <controller>calendrier-des-commissions</controller>
                     <action>exportoutlook</action>
                 </exportoutlook>
+                <syncoutlook>
+                    <label>Synchronisation Outlook</label>
+                    <controller>calendrier-des-commissions</controller>
+                    <action>syncoutlook</action>
+                </syncoutlook>
                 <recupdateliee>
                     <label>Date liée</label>
                     <controller>calendrier-des-commissions</controller>
@@ -1071,6 +1076,10 @@
                     <action>historique</action>
                     <privilege>view_ets</privilege>
                 </historique>
+                <alerteform>
+                    <controller>etablissement</controller>
+                    <action>alerteform</action>
+                </alerteform>
             </pages>
         </etablissement>
 

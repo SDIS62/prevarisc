@@ -244,4 +244,5 @@
 
             return $privileges;
         }
+
     }
