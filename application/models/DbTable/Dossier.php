@@ -89,7 +89,7 @@
             return $this->getAdapter()->fetchAll($select);
         }
 
-        //Fonction qui r�cup�re toutes les c�llules concern�es par le dossier
+        //Fonction qui récupère toutes les cellules concernées par le dossier
         public function getCelluleListe($id_dossier)
         {
             $select = "SELECT cellulelibelle.*, MAX(cellulelibelle.date_cellulelibelle)
