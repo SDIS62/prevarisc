@@ -884,6 +884,7 @@ class DossierController extends Zend_Controller_Action
                     $docAttestation->LIBELLE_DOCAJOUT = "Attestation de";
                     $docAttestation->ID_NATURE = $idNature;
                     $docAttestation->ID_DOSSIER = $idDossier;
+                    $docAttestation->DATE_DOCAJOUT = '0000-00-00';
                     $docAttestation->save();
                 }
             }
