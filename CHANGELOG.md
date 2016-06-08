@@ -45,6 +45,7 @@ Corrections :
 * Correction de la date du doc ajouté sur les levées d'avis défavorables
 * Correction du calcul de la périodicité des IGH et KO à l'insert de nouveaux IGH
 * Correction de la non-génération des documents consultés non manuels pour les dossiers de levées d'avis défavorables
+* Correction d'une fatal error sur la suppression d'un texte applicable non existant sur l'établissement
 
 ## 2.4
 
