@@ -44,6 +44,7 @@ Corrections :
 * Correction de l'escaping des noms de fichiers de la gestion des documents
 * Correction de la date du doc ajouté sur les levées d'avis défavorables
 * Correction du calcul de la périodicité des IGH et KO à l'insert de nouveaux IGH
+* Correction de la non-génération des documents consultés non manuels pour les dossiers de levées d'avis défavorables
 
 ## 2.4
 
