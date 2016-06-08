@@ -173,7 +173,7 @@
 
                 $results = $this->fetchAll($select);
 
-                if ($result != null) {
+                if ($results != null) {
 
                     foreach($results as $result) {
                         if ($result->NUMINSEE_COMMUNE != null) {

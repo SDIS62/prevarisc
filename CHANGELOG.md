@@ -43,6 +43,7 @@ Corrections :
 * Correction de l'escaping des quotes sur les plans
 * Correction de l'escaping des noms de fichiers de la gestion des documents
 * Correction de la date du doc ajouté sur les levées d'avis défavorables
+* Correction du calcul de la périodicité des IGH et KO à l'insert de nouveaux IGH
 
 ## 2.4
 
