@@ -101,6 +101,7 @@ class EtablissementController extends Zend_Controller_Action
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
         $service_classement = new Service_Classement;
+        $service_carto = new Service_Carto;
 
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
@@ -117,6 +118,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->add = true;
         
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->couches_cartographiques = $service_carto->getAll();
 
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
         $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
