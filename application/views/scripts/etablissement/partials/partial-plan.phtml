@@ -9,7 +9,7 @@
         </select>
     </td>
     <td>
-        <input type='text' name='PLANS[<?php echo $this->plan === null ? -1 : $this->plan['ID_ETABLISSEMENTINFORMATIONSPLAN'] ?>][NUMERO_ETABLISSEMENTPLAN]' value='<?php echo $this->plan["NUMERO_ETABLISSEMENTPLAN"] ?>' />
+        <input type='text' name='PLANS[<?php echo $this->plan === null ? -1 : $this->plan['ID_ETABLISSEMENTINFORMATIONSPLAN'] ?>][NUMERO_ETABLISSEMENTPLAN]' value="<?php echo htmlentities($this->plan["NUMERO_ETABLISSEMENTPLAN"]) ?>" />
     </td>
     <td>
         <input type='date' name='PLANS[<?php echo $this->plan === null ? -1 : $this->plan['ID_ETABLISSEMENTINFORMATIONSPLAN'] ?>][DATE_ETABLISSEMENTPLAN]' value='<?php echo $this->plan['DATE_ETABLISSEMENTPLAN'] !== null ? date("Y-m-d", strtotime($this->plan['DATE_ETABLISSEMENTPLAN'])) : date("Y-m-d")  ?>' />
