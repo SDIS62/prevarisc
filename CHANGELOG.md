@@ -18,6 +18,7 @@ Evolutions :
 * Ajout de la possibilité d'ajouter rapidement une couche WMS IGN
 * Standardisation du viewer cartographique cote backoffice
 * Ajout de la balise de {avisDossierCommission} pour les PV de maires
+* Ajout de la balise {familleEtab}
 
 Corrections :
 * Corrections sur l'enregistrement des prescriptions types : NUM_PRESCRIPTION_DOSSIER cannot be null
