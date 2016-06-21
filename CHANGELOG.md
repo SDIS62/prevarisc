@@ -40,6 +40,8 @@ Corrections :
 * Correction d'un problème de géolocalisation si aucune couche WMS n'est paramétrée
 * Correction d'un problème de géolocalisation avec nominatim et du manque de couche WMS sur le viewer d'ajout d'un établissement
 * Correction de l'escaping des quotes sur les plans
+* Correction de l'escaping des noms de fichiers de la gestion des documents
+* Correction de la date du doc ajouté sur les levées d'avis défavorables
 
 ## 2.4
 
