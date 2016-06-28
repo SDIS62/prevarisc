@@ -9,6 +9,7 @@
 
 
 <?php
+
 	$nbFichier = count($this->fichierVer);
 	echo "<h2>Visible après vérrouillage  (".( ($nbFichier > 0)? "<a id='num_0' href='' >".$nbFichier."</a>" : "0").")</h2>" ;
 	echo "<div class='span12'>";
@@ -30,10 +31,10 @@
 	        echo "
 	        	<tr style='height:20px;'>
 			        <td>
-			            <a href='".$this->path . DS ."0". DS . $fichier ."'>".$fichier."</a>
+			            <a href='".$this->path . DS ."0". DS . htmlspecialchars($fichier, ENT_QUOTES) ."'>".$fichier."</a>
 			        </td>
 			        <td>
-			            <a href='#' class='supp' id='".$fichier."'>Suppression du document</a>
+			            <a href='#' class='supp' id='".htmlspecialchars($fichier, ENT_QUOTES)."'>Suppression du document</a>
 			        </td>
 			    </tr>
         	";
@@ -87,10 +88,10 @@
 	        		
 	        			<tr style='height:20px;'>
 				        <td>
-				            <a href='".$this->path . DS . $commission['ID_COMMISSION']. DS . $file ."'>".$file."</a>
+				            <a href='".$this->path . DS . $commission['ID_COMMISSION']. DS . htmlspecialchars($file, ENT_QUOTES) ."'>".$file."</a>
 				        </td>
 				        <td>
-				            <a href='#' class='supp' id='".$file."'>Suppression du document</a>
+				            <a href='#' class='supp' id='".htmlspecialchars($file, ENT_QUOTES)."'>Suppression du document</a>
 				        </td>
 				    </tr>
 	        	";
@@ -178,7 +179,7 @@ $(document).ready(function() {
 		dialog_supp.html("Vous êtes sur le point de supprimer le fichier \""+nomFichier+"\".<br/> Une fois ce fichier supprimé il ne pourra plus être utilisé lors de la génération des rapports.");
 
 		dialog_supp.dialog({
-			title: "Suppresion document",
+			title: "Suppression document",
 			width: 650,
 			draggable: false,
 			resizable: false,
