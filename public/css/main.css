@@ -412,6 +412,10 @@ a.thumbnail + a.thumbnail {
     margin-left: 5px;
 }
 
+.thumbnail img {
+    width: 100%;
+}
+
 /* 8.Etablissements */
 #ligne_informations {
 
