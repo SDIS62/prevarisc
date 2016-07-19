@@ -42,6 +42,12 @@ Corrections :
 * Correction d'un problème de géolocalisation avec nominatim et du manque de couche WMS sur le viewer d'ajout d'un établissement
 * Correction de l'escaping des quotes sur les plans
 * Correction de l'escaping des noms de fichiers de la gestion des documents
+* Correction de la date du doc ajouté sur les levées d'avis défavorables
+* Correction du calcul de la périodicité des IGH et KO à l'insert de nouveaux IGH
+* Correction de la non-génération des documents consultés non manuels pour les dossiers de levées d'avis défavorables
+* Correction d'une fatal error sur la suppression d'un texte applicable non existant sur l'établissement
+* Correction de l'affichage des icônes des fichiers joints en cas d'extension en majuscule
+* Correction de l'image du préventionniste qui était trop grande dans le cas d'une carte IGN
 
 ## 2.4
 
