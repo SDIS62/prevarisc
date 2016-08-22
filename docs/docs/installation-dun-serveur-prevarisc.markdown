@@ -1,38 +1,38 @@
-# Documentation d'installation #
+---
+layout: default
+title: Documentation
+description: Guide d'installation et d'utilisation de Prevarisc
+---
 
-## Etape 1 : installation d'un serveur web Debian ##
+## Installation d'un serveur Prevarisc sous Debian
 
-Deux options s'offrent à vous :
-* soit une installation définitive sur un serveur dédié (voir étape 1a)
-* soit une installation de test sur un poste de travail (ordinateur de bureau ou portable) (voir étape 1b)
+Pré-requis  :
+* Installer VirtualBox [https://www.virtualbox.org/wiki/Downloads]();
+* Avoir une machine virtuelle sous Debian >=7 ([https://www.debian.org/distrib/]()) (à la selection des logiciels à installer proposés par l'utilitaire d'installation de Debian, choisir "serveur SSH" ainsi que "Utilitaires usuels du système") ;
+* La machine doit avoir sa propre adresse IP (différente de la machine hôte) ;
 
-### Etape 1a : installation d'un serveur Debian ###
+## Installation du serveur Web (apache, mysql, php)
 
-* Télécharger la version stable de Debian (classiquement version i386 avec interface xfce)
-* Installer le serveur de préférence en anglais
+### Installation des dépendances
 
-### Etape 1b : installation d'un serveur Debian sur Oracle VM VirtualBox ###
-
-* Télécharger Oracle VM VirtualBox et son pack d'extensions (https://www.virtualbox.org/wiki/Downloads)
-* Télécharger la version stable de Debian (classiquement version i386 avec interface xfce)
-* Installer Oracle VM VirtualBox et exécuter le programme
-* Aller dans le menu Fichiers->Paramètres puis Extension et ajouter l’Extension Pack
-* Dans Oracle VM VirtualBox, cliquer sur Nouvelle, saisir un nom de machine (ex : Debian) et cliquer plusieurs fois sur “Suivant”. Votre machine apparait “Eteinte” dans la partie gauche.
-* Effectuer un clic droit sur Debian, choisir Démarrer, cliquer sur le dossier avec une flèche verte, sélectionner le fichier debian-X.X.X-i386-xfce-CD-1.iso et cliquer sur “Démarrer”
-
-## Etape 2 : installation du serveur web ##
-
-* Ouvrir une invite de commande et taper “su” puis le mot de passe administrateur
-* Taper : ```aptitude install apache2 mysql-server php5 php5-gd php5-ldap php5-mysql php-apc mysql-workbench curl git p7zip-full```
-* A la demande, faire un clic droit sur le CD en bas pour remonter l’image debian-X.X.X-i386-xfce-CD-1.iso et appuyer sur “Enter”
+* Ouvrir une invite de commande et taper ```su``` puis le mot de passe administrateur
+* Taper : ```aptitude install apache2 mysql-server php5 php5-gd php5-ldap php5-mysql curl git```
 * Saisir le mot de passe “root” pour MySQL
+
+> Afin de tester si le serveur web répond bien, vous pouvez tenter un accès via un navigateur web sur http://ADRESSE_IP_DU_SERVEUR
+
+### Activation des modules
+
 * Taper : ```a2enmod rewrite```
 * Taper : ```a2enmod expires```
 * Taper : ```a2enmod include```
 
+### Ajout d'un virtualhost
+
 Votre serveur web est prêt à accueillir Prevarisc. Il faut maintenant configurer un VirtualHost afin de pouvoir d'une part y accéder via une URL bien définie, et d'autre part pour spécifier les valeurs de configuration.
 
-* Taper : ```nano /etc/apache2/apache2.conf```, insérer à la fin le code suivant :
+* Ajouter un fichier vide dans ```/etc/apache2/sites-available``` ("prevarisc.conf" par exemple).
+* Editer via ```nano /etc/apache2/sites-available/<VOTRE FICHIER>.conf```, et ajouter :
 ```
 <VirtualHost *:80>
     ServerName prevarisc.sdisxx.fr
@@ -86,7 +86,7 @@ PREVARISC_PROXY_PORT | [FACULTATIF] Le port du proxy | Nombres (exemple : 8080)
 PREVARISC_PROXY_USERNAME | [FACULTATIF] Le nom d'utilisateur du proxy si une authentification est nécessaire, laisser vide sinon | Chaine de caractères (exemple : myusername)
 PREVARISC_PROXY_PASSWORD | [FACULTATIF] Le mot de passe du proxy si une authentification est nécessaire, laisser vide sinon | Chaine de caractères (exemple : mypassword)
 PREVARISC_PROXY_REQUEST_FULLURI | [FACULTATIF] Effectuer les requêtes aux proxy en full URI et non relatives | Boolean : true ou false
-PREVARISC_COMMISSION_COMMUNALE_TYPE | [FACULTATIF] Identifiant de l'id du type de commission communale, par défaut "2" | Entier 
+PREVARISC_COMMISSION_COMMUNALE_TYPE | [FACULTATIF] Identifiant de l'id du type de commission communale, par défaut "2" | Entier
 PREVARISC_LOCAL_SOMMEIL_TYPES | [FACULTATIF] Identifiant des types d'activité obligatoirement en local à sommeil séparaés par un ";", par défaut "7;11" | Liste d'entiers séparés par ";"
 PREVARISC_DATASTORE_ADAPTER | [FACULTATIF] Permet de charger un plugin changeant le mode de stockage des pièces jointes établissement, dossier, et commissions | Classe PHP implémentant Plugin_Interface_DataStore
 PREVARISC_REAL_DATA_PATH | [FACULTATIF] Répertoire de stockage des fichiers de prévarisc | Chaine de caractères
@@ -102,76 +102,65 @@ PREVARISC_CAS_NO_SERVER_VALIDATION | [FACULTATIF] Désactive la vérification du
 PREVARISC_CAS_VERSION | [FACULTATIF] Permet de préciser la version du protocol cas, 2.0 par défaut | 1.0, 2.0, 3.0
 PREVARISC_NTLM_ENABLED | [FACULTATIF] Permet d'activer l'authentification NTLM | 0 ou 1 pour l'activer
 
+Afin d'activer un VirtualHost dont la configuration est stockée dans sites-available, il faut utiliser a2ensite (Apache 2 Enable Site).
 
-* Taper :```/etc/init.d/apache2 restart```
+* Exécuter ```a2ensite <VOTRE FICHIER>.conf```
+* Exécuter ```service apache2 restart```
 
-## Etape 3 : installation de Prevarisc ##
+### Installation de Prevarisc
 
-* Depuis le navigateur Iceweasel, télécharger le fichier compressé de prevarisc depuis “https://github.com/SDIS62/prevarisc” dans votre dossier “Downloads”
-* Taper : ```mv /home/$USER/Downloads/prevarisc-master.zip /var/www/``` ou $USER est votre nom d’utilisateur de la session
-* Taper : ```7z x prevarisc-master.zip```
-* Taper : ```mv prevarisc-master prevarisc```
-* Taper : ```chmod 755 prevarisc```
-* Taper : ```cd prevarisc```
-* Taper : ```curl https://getcomposer.org/installer | php```
-* Taper : ```php composer.phar install --prefer-source```
-* Taper : ```chown –R www-data:www-data *```
-* Taper : ```chmod –R 555 *```
-* Taper : ```chmod –R 755 public/```
+En ligne de commande, rendez-vous dans le dossier ```/var/www```.
 
-## Etape 4 : installation de la base de données ##
+* Taper la commande suivante : ```git clone https://github.com/SDIS62/prevarisc``` (ceci télécharge les sources de Prevarisc dans le répertoire courant depuis le dépôt officiel GitHub)
 
-* Ouvrir MySQL WorkBench dans le menu Development
-* Cliquer sur New Server Instance, cliquer sur Next, saisir le mot de passe “root”, choisir MySQL installation type “Debian”, Continue, Finish
-* Cliquer sur Manage Import/Export puis sur Data Import/Restore
-* Mot de passe : “root”
-* Choisir Import from Self-Contained file et sélectionner le fichier prevarisc.sql dans le dossier prevarisc/docs/db
-* Cliquer sur “Start Import” et fermer l’onglet quand l’opération est terminée
-* Fermer MySQL Workbench
+Prevarisc utilise un fichier composer.json qui liste l’ensemble des librairies PHP nécessaires à son fonctionnement. Pour installer ces dépendances :
 
-## Etape 5 : connexion d’un client Firefox ##
+* Se placer dans le repertoire prevarisc
+* ```curl -sS https://getcomposer.org/installer | php```
+* ```php composer.phar install --no-dev -o```
 
-* Ouvrir le gestionnaire de machine Oracle VM VirtualBox
-* Faire un clic droit sur Debian et choisir Configuration …
-* Cliquer sur Réseau et choisir un mode d’accès réseau “Accès par pont”
-* Ouvrir une invite de commande sur Debian, taper : ```su``` et le mot de passe, puis ```ifconfig``` et noter l’adresse IP eth0 (inet addr)
-* Fermer l’invite de commande
-* Sur le poste Windows, ouvrir le fichier C:\windows\system32\drivers\etc\hosts et ajouter la ligne avec l’adresse IP du serveur Debian suivi de “prevarisc.sdis??.fr” (ou sinon, faire un enregistrement DNS)
-* Ouvrir Firefox et saisir http://prevarisc.sdis??.fr
-* A ce point vous devez être capable d'accéder à Prevarisc ! Le premier compte utilisateur est ```root```, mot de passe ```root``` (à désactiver le plus rapidement possible pour des raisons de sécurité).
+Pour que Prevarisc puisse fonctionner convenablement, il est nécessaire de modifier les droits des fichiers.
+L’ensemble du dossier /var/www/prevarisc/public doit avoir pour propriétaire www-data (nom d’utilisateur attribué par défaut au service apache).
 
+* Se placer dans le repertoire prevarisc
+* ```chown -R www-data:www-data public```
+* ```chmod -R 555 .```
+* ```chmod -R 755 public```
 
-## Etape 6 (optionnelle) : installation d'un cache mysql (php>5.4) ##
+### Accéder à Prevarisc
 
-Pour les installations avec php > 5.4, APC n'est plus supporté. Il faut installer un cache alternatif, mysql par exemple :
-* download du module php memcache
-* Taper : ```tar -xvzf memcache-2.2.7.tgz```
-* Taper : ```cd memcache-2.2.7```
-* Taper : ```phpize```
-* Taper : ```./configure```
-* Taper : ```make```
-* Taper : ```sudo make install```
-* Vérifier que memcache est bien installé ```php -m | grep memcache``` sinon ajout de : ```extension=memcache.so``` dans le php.ini
-* Jouer le sql d'activation du cache, taper : ```mysql -u root -p prevarisc < sql/init/enable_mysql_cache.sql```
-* Taper : ```sudo /etc/init.d/mysql restart```
-* Modifier le vhost apache pour modifier les variables PREVARISC_CACHE_ADAPTER en "Cache_MySQLMemcached" voir PREVARISC_CACHE_HOST si le backend est installé sur une machine distante.
-* Taper : ```sudo /etc/init.d/httpd restart```
+Pour que vous puissiez accéder à Prevarisc, vous devez contacter le serveur par son nom.
+Lorsque vous êtes équipé d’un serveur DNS, il suffit d’y insérer une nouvelle entrée afin qu’il connaisse la relation entre l’adresse IP et le nom de la machine.
+Dans le cadre de cette documentation, nous allons simuler une résolution de nom grâce au fichier hosts de la machine locale hébergeant la VM.
 
-# Mise à jour de la base de données de Prevarisc #
+Chemin du fichier :
+* Pour Windows: C:\windows\system32\drivers\etc\hosts
+* Pour Linux/Max: /etc/hosts
 
-Depuis un PC windows, installer le logiciel [MySQL WorkBench](http://www.mysql.fr/products/workbench/).
-Vous pouvez maintenant ouvrir le fichier "docs/MCD Prevarisc avec Mysql Workbench.mwb".
+Pour que votre machine accède à votre serveur virtuel Prevarisc, il faut ajouter la ligne suivante dans le fichier hosts : ```<ADRESSE IP DU SERVEUR> prevarisc.sdisxx.fr```
 
-> Pourquoi utiliser ce logiciel ?
-> Cela nous permettra de simplifier les mises à jour de la base via une simple synchronisation.
+Maintenant, lorsque vous taperez prevarisc.sdisxx.fr dans votre navigateur web, le serveur web sera interrogé et le VirtualHost précédemment configuré nous redirigera sur le site Prevarisc
 
-Ce fichier représente le MCD complet de Prevarisc. Pour synchoniser votre serveur de base de données avec ce MCD, vous devez :
-* Menu Database > Synchronize model
-* Configurer la connexion vers votre base de données
-* Selectionner "prevarisc" et "next" jusqu'a l'intallation de la base de données
+### Déploiement de la base de données
 
-Pour ajouter les valeurs par défauts :
-* Menu Database > Forward engineer
-* Configurer la connexion vers votre base de données
-* Cocher "Generate INSERT statements for tables"
-* "next" jusqu'a l'insertion des données
+Le site Prevarisc est maintenant accessible mais non fonctionnel car nous n’avons pas encore crée la base de données.
+Cette étape va permettre la mise en place de la structure de la base de données (Tables et liaisons), ainsi que l’insertion des données de bases nécessaires au bon fonctionnement.
+
+* Se placer dans le repertoire prevarisc
+* ```mysql -u <username> -p```
+* Enter password: ********
+* ```CREATE DATABASE prevarisc;```
+* ```exit```
+* ```mysql -u <username> -p <databasename> < sql/init/prevarisc.sql```
+
+### Hourra !
+
+Vous pouvez maintenant vous connectez avec le login / mot de passe : root / root (à désactiver le plus rapidement possible dans la console d'administration).
+
+### Mettre à jour Prevarisc
+
+Pour mettre à jour prevarisc :
+
+* Se placer dans le repertoire prevarisc
+* ```git pull```
+* Si vous voyez dans les fichiers mis à jour une "migration" sql, vous devez l'exécuter avec ```mysql -u <username> -p <databasename> < sql/migrations/NOM DE LA MIGRATION.sql```

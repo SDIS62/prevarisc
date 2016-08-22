@@ -1,0 +1,43 @@
+{% if page.url == "/" | prepend: site.baseurl %}
+
+<div class="jumbotron jumbotron-home">
+    <div class="container">
+        <p>Prevarisc est un logiciel national open-source gérant l'ensemble de l'activité du service prévention au sein d'un SDIS.</p>
+        <p><a class='btn btn-primary btn-lg' href='https://github.com/SDIS62/prevarisc#guide-de-d%C3%A9marrage'>Utiliser Prevarisc</a></p>
+        <p class="last-post">
+            <a href="{{ site.posts.first.url | prepend: site.baseurl }}">
+                {% assign m = site.posts.first.date | date: "%-m" %}
+                    {{ site.posts.first.date | date: "%-d" }}
+                    {% case m %}
+                      {% when '1' %}janvier
+                      {% when '2' %}février
+                      {% when '3' %}mars
+                      {% when '4' %}avril
+                      {% when '5' %}mai
+                      {% when '6' %}juin
+                      {% when '7' %}juillet
+                      {% when '8' %}août
+                      {% when '9' %}septembre
+                      {% when '10' %}octobre
+                      {% when '11' %}novembre
+                      {% when '12' %}décembre
+                    {% endcase %}
+                {{ site.posts.first.date | date: "%Y" }} - {{ site.posts.first.title }}
+            </a>
+        </p>
+        <div class="screenshot">
+            <img src='{{ "/assets/img/screenshot.png" | prepend: site.baseurl }}' />
+        </div>
+    </div>
+</div>
+
+{% else %}
+
+<div class="jumbotron">
+    <div class="container">
+        <h1>{{ page.title }}</h1>
+        <p>{{ page.description }}</p>
+    </div>
+</div>
+
+{% endif %}
