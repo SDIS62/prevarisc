@@ -3,7 +3,7 @@
     <?php /* Lien de la pièce jointe */ ?>
     <td>
         <a 
-            class="file <?php echo substr($pj['EXTENSION_PIECEJOINTE'], 1, 3) ?>"
+            class="file <?php echo substr(strtolower($pj['EXTENSION_PIECEJOINTE']), 1, 3) ?>"
             href='<?php echo $this->url(array('controller' => 'piece-jointe', 'action' => 'get', 'id' => $this->id, 'idpj' => $pj['ID_PIECEJOINTE'], 'type' => $this->type)) ?>' <?php if ($pj['DESCRIPTION_PIECEJOINTE']): ?> title="<?php echo $pj['DESCRIPTION_PIECEJOINTE'] ?>" <?php endif ?> target='_blank' ><?php echo $pj['NOM_PIECEJOINTE'].$pj['EXTENSION_PIECEJOINTE'] ?></a>
     </td>
     
