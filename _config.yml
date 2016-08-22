@@ -13,3 +13,5 @@ encoding:       UTF-8
 baseurl:        "/prevarisc"
 
 exclude:        ["README.md"]
+
+gems:           ["jekyll-paginate"]
