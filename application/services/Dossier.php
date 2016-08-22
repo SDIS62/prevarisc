@@ -197,15 +197,19 @@ class Service_Dossier
         //On récupère le premier établissements afin de mettre à jour ses textes applicables lorsque l'on est dans une visite
         if (2 == $type || 3 == $type) {
             $tabEtablissement = $dbDossier->getEtablissementDossier($id_dossier);
-            $id_etablissement = $tabEtablissement[0]['ID_ETABLISSEMENT'];
+            $id_etablissement = isset($tabEtablissement[0]) ? $tabEtablissement[0]['ID_ETABLISSEMENT'] : null;
         }
 
         foreach ($textes_applicables as $id_texte_applicable => $is_active) {
             if (!$is_active) {
-                if ($dossierTexteApplicable->find($id_texte_applicable, $id_dossier)->current() !== null) {
-                    $dossierTexteApplicable->find($id_texte_applicable, $id_dossier)->current()->delete();
-                    if (2 == $type || 3 == $type) {
-                        $etsTexteApplicable->find($id_texte_applicable, $id_etablissement)->current()->delete();
+                $texte_applicable = $dossierTexteApplicable->find($id_texte_applicable, $id_dossier)->current();
+                if ($texte_applicable !== null) {
+                    $texte_applicable->delete();
+                    if ((2 == $type || 3 == $type) && $id_etablissement) {
+                        $texte_applicable = $etsTexteApplicable->find($id_texte_applicable, $id_etablissement)->current();
+                        if ($texte_applicable !== null) {
+				$texte_applicable->delete();
+			}
                     }
                 }
             } else {
@@ -214,7 +218,7 @@ class Service_Dossier
                     $row->ID_TEXTESAPPL = $id_texte_applicable;
                     $row->ID_DOSSIER = $id_dossier;
                     $row->save();
-                    if (2 == $type || 3 == $type) {
+                    if ((2 == $type || 3 == $type) && $id_etablissement) {
                         $exist = $etsTexteApplicable->find($id_texte_applicable,$id_etablissement)->current();
                         if (! $exist) {
                             $row = $etsTexteApplicable->createRow();
