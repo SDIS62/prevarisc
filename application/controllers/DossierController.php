@@ -1436,7 +1436,7 @@ class DossierController extends Zend_Controller_Action
                 }
             } elseif (1 == $dossierType['TYPE_DOSSIER']) {
                 //cas d'une etude
-                if($nature['ID_NATURE'] == 19){
+                if($nature['ID_NATURE'] == 19 || $nature['ID_NATURE'] == 7){
                     $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocVisite();
                 }else{
                     $listeDocConsulte[$nature["ID_NATURE"]] = $dblistedoc->getDocEtude();
@@ -2183,7 +2183,12 @@ class DossierController extends Zend_Controller_Action
                 $listeDocConsulte = $dblistedoc->getDocVisite();
             }
         } elseif (1 == $dossierType['TYPE_DOSSIER']) {
-            $listeDocConsulte = $dblistedoc->getDocEtude();
+            //cas d'une etude
+            if($dossierNature['ID_NATURE'] == 19 || $dossierNature['ID_NATURE'] == 7){
+                $listeDocConsulte = $dblistedoc->getDocVisite();
+            }else{
+                $listeDocConsulte = $dblistedoc->getDocEtude();
+            }
         } else {
             $listeDocConsulte = 0;
         }
