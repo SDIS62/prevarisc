@@ -21,7 +21,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
                 $view->revision_prevarisc = getenv('PREVARISC_REVISION');
                 $view->version_prevarisc = getenv('PREVARISC_BRANCH').'.'.getenv('PREVARISC_REVISION');
             } else {
-                $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..');
+                $git = new SebastianBergmann\Git(APPLICATION_PATH . DS . '..');
                 $view->branch_prevarisc = $git->getCurrentBranch();
                 $revisions = $git->getRevisions();
                 $last_revision = end($revisions);
