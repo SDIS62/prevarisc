@@ -11,8 +11,8 @@
             $select = $this->select()
                 ->setIntegrityCheck(false)
                 ->from("periodicite", "PERIODICITE_PERIODICITE")
-                ->where("ID_CATEGORIE = ?", $categorie)
-                ->where("ID_TYPE = ?", $type)
+                ->where("ID_CATEGORIE = ?", (int) $categorie)
+                ->where("ID_TYPE = ?", (int) $type)
                 ->where("LOCALSOMMEIL_PERIODICITE = ?", $local_sommeil);
 
             // Retourne le r�sultat
@@ -27,8 +27,8 @@
             if (!in_array($informations['ID_GENRE'], array(2, 5))) {
                 return null;
             }
-            
-            return $this->gn4($informations['ID_CATEGORIE'], $informations['ID_TYPE'], $informations['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] ? 1 : 0);
+            $type = $informations['ID_GENRE'] == 2 ? $informations['ID_TYPE'] : $informations['ID_CLASSE'];
+            return $this->gn4($informations['ID_CATEGORIE'], $type, $informations['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] ? 1 : 0);
         }
 
         public function apply()
