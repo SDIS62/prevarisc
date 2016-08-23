@@ -23,7 +23,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         return parent::run();
     }
-    
+
     /**
      * Initialisation de l'auto-loader
      */
@@ -32,14 +32,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $autoloader = Zend_Loader_Autoloader::getInstance();
 
         $autoloader_application = new Zend_Application_Module_Autoloader(array('basePath' => APPLICATION_PATH, 'namespace'  => null));
-        
+
         $autoloader_application->addResourceType('cache', 'cache/', 'Cache');
-        
+
         $autoloader->pushAutoloader($autoloader_application);
 
         return $autoloader;
     }
-    
+
     /**
      * Initialisation d'un cache standard
      * @param array $frontendOptions surcharge des options de configuration du front
@@ -47,14 +47,21 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      * @return Cache une instance de cache
      */
     protected function getCache(array $frontendOptions = array(), array $backendOptions = array()) {
-        
+
         $options = $this->getOption('cache');
-        
+
+		if(!empty($options) && $options['enabled'] && $options['adapter'] == 'File') {
+			$file = $options['cache_dir'];
+			if(!file_exists($file)) {
+				mkdir($file);
+			}
+		}
+
         return Zend_Cache::factory(
                 // front adapter
                 'Core',
                 // back adapter
-                $options['adapter'], 
+                $options['adapter'],
                 // frontend options
                 array_merge(array(
                     'caching'  => $options['enabled'],
@@ -66,7 +73,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 array_merge(array(
                     'servers' => array(
                         array(
-                            'host' => $options['host'], 
+                            'host' => $options['host'],
                             'port' => $options['port'],
                         ),
                     ),
@@ -100,7 +107,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         return $this->getCache();
     }
 
-    
+
 
     /**
      * Initialisation de la vue
