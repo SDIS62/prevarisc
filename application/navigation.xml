@@ -1083,24 +1083,6 @@
             </pages>
         </etablissement>
 
-        <!-- Listing -->
-        <listing>
-            <label>Listes</label>
-            <controller>Listing</controller>
-            <pages>
-                <etablissements>
-                    <label>Établissements</label>
-                    <controller>Listing</controller>
-                    <action>etablissements</action>
-                </etablissements>
-                <dossiers>
-                    <label>Dossiers</label>
-                    <controller>Listing</controller>
-                    <action>dossiers</action>
-                </dossiers>
-            </pages>
-        </listing>
-
         <!-- Recherche -->
         <search>
             <label>Recherche Prevarisc</label>
