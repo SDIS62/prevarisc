@@ -21,7 +21,6 @@
         "php": "^5.5|^7.0",
         "zendframework/zendframework1": "^1.0",
         "cybermonde/odtphp": "^1.0",
-        "michelf/php-markdown": "^1.0",
         "kdubuc/gd_resize": "^1.0",
         "SDIS62/toolbox": "dev-master",
         "sebastian/git": "^1.0",

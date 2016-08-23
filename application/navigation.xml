@@ -1141,33 +1141,5 @@
             </pages>
         </session>
 
-        <!-- A propos -->
-        <about>
-            <controller>about</controller>
-            <label>Prevarisc</label>
-            <pages>
-                <index>
-                    <label>A propos</label>
-                    <controller>about</controller>
-                    <action>index</action>
-                </index>
-                <tos>
-                    <label>Conditions d'utilisations</label>
-                    <controller>about</controller>
-                    <action>tos</action>
-                </tos>
-                <support>
-                    <label>Aide</label>
-                    <controller>about</controller>
-                    <action>support</action>
-                </support>
-                <dev>
-                    <label>Développeurs</label>
-                    <controller>about</controller>
-                    <action>dev</action>
-                </dev>
-            </pages>
-        </about>
-
     </nav>
 </configdata>
