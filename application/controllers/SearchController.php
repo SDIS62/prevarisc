@@ -114,35 +114,6 @@ class SearchController extends Zend_Controller_Action
         }
     }
 
-    public function utilisateurAction()
-    {
-        $this->_helper->layout->setLayout('layout');
-
-        $service_search = new Service_Search;
-        $service_user = new Service_User;
-
-        $this->view->DB_fonction = $service_user->getAllFonctions();
-
-        if($this->_request->isGet() && count($this->_request->getQuery()) > 0) {
-            try {
-                $parameters = $this->_request->getQuery();
-                $page = array_key_exists('page', $parameters) ? $parameters['page'] : 1;
-                $name = $parameters['name'];
-                $fonctions = array_key_exists('fonctions', $parameters) ? $parameters['fonctions'] : null;
-
-                $search = $service_search->users($fonctions, $name, null, true, 50, $page);
-
-                $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
-                $paginator->setItemCountPerPage(50)->setCurrentPageNumber($page)->setDefaultScrollingStyle('Elastic');
-
-                $this->view->results = $paginator;
-            }
-            catch(Exception $e) {
-                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage() . ')'));
-            }
-        }
-    }
-
     public function displayAjaxSearchAction()
     {
         $this->_helper->layout->disableLayout();
