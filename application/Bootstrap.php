@@ -7,6 +7,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     public function run()
     {
+        // Définit le décalage horaire par défaut de toutes les fonctions date/heure
+        // sur celui de Paris
+        date_default_timezone_set('Europe/Paris');
+
         // Chargement des plugins de base
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_View);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_ACL);
