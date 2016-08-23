@@ -99,7 +99,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                         $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
                         $tmp_date->add($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
                         $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
-                    }    
+                    }
                 } else {
                     $last_visite = null;
                 }
@@ -163,7 +163,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             else if ($informations->ID_GENRE == 3 && $parent_direct) {
                 // la catégorie d'une cellule est celle de l'établissement parent
                 $informations->ID_CATEGORIE = $parent_direct['ID_CATEGORIE'];
-                
+
                 $donnees_pratiques = array(
                     'NBPREV_ETABLISSEMENT' => $general->NBPREV_ETABLISSEMENT,
                     'DUREEVISITE_ETABLISSEMENT' => $general->DUREEVISITE_ETABLISSEMENT
@@ -187,19 +187,19 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     } else if($etablissement['ID_STATUT'] != 2) {
                         continue;
                     }
-                    
+
                     if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null) {
                         $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
                     } else if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] > $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS']) {
                         $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
                     }
-                    
+
                 }
             } else if ($informations->ID_GENRE == 3 && $etablissement_parents) {
                 $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = end($etablissement_parents)['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
             }
-            
-            
+
+
             $commission = @$DB_commission->find($informations->ID_COMMISSION)->current();
             $etablissement = array(
                 'general' => $general->toArray(),
@@ -327,7 +327,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $dossiers_merged = array_merge($dossiers_merged, $dossiers['autres']);
 
         @usort($dossiers_merged, function($a, $b) {
-          
+
           $date_a = @new Zend_Date($a['DATEVISITE_DOSSIER'] != null ? $a['DATEVISITE_DOSSIER'] : $a['DATECOMM_DOSSIER'], Zend_Date::DATES);
           $date_b = @new Zend_Date($b['DATEVISITE_DOSSIER'] != null ? $b['DATEVISITE_DOSSIER'] : $b['DATECOMM_DOSSIER'], Zend_Date::DATES);
 
@@ -508,7 +508,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     case "DEFENSE": $title = "Défense incendie"; break;
                     case "RISQUES": $title = "Risques"; break;
                 }
-                
+
                 $champs_descriptif_technique[$title][array_key_exists($key, $translation_champs_des_tech) ? $translation_champs_des_tech[$key] : $key] = array(
                     'value' => $value,
                     'type' => $dbtable_info_etablissement['metadata'][$key]['DATA_TYPE'],
@@ -898,7 +898,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
             }
 
-            Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch')->clean(Zend_Cache::CLEANING_MODE_ALL);
+            Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache')->clean(Zend_Cache::CLEANING_MODE_ALL);
             $cache->remove('etablissement_id_' . $id_etablissement);
             $db->commit();
         }
@@ -1323,10 +1323,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $infosDossierDonnantAvis = $DBdossier->find($idDossierDonnantAvis)->current();
         $dateInsertDossierDonnantAvis = $infosDossierDonnantAvis['DATEINSERT_DOSSIER'];
         $dateInsertDossierDonnantAvis = new Zend_Date($dateInsertDossierDonnantAvis, Zend_Date::DATES);
-        
+
         $search = new Model_DbTable_Search;
         $dossierDiff = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.DIFFEREAVIS_DOSSIER", 1)->order("DATEINSERT_DOSSIER DESC")->run()->getAdapter()->getItems(0, 1)->toArray();
-        
+
         //Si l'etablissement ne comporte pas d'avis différé on prend l'avis correspondant à ID_DOSSIERDONNANTAVIS
         if(count($dossierDiff) > 0){
             $dateInsertDossierDiffere = $dossierDiff[0]['DATEINSERT_DOSSIER'];
@@ -1342,7 +1342,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             return "avisDiff";
         }
     }
-    
+
     public function getDossierDonnantAvis($idEtablissement) {
         $DBEtab = new Model_DbTable_Etablissement;
         return $DBEtab->getDossierDonnantAvis($idEtablissement);

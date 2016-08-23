@@ -2,77 +2,15 @@
 
 class Plugin_ACL extends Zend_Controller_Plugin_Abstract
 {
-    private static $acl = null;
-
-    public static function getAcl() {
-
-        if (self::$acl == null) {
-            // Chargement du cache
-            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
-
-            // Chargement des ACL
-            if(($acl = unserialize($cache->load('acl'))) === false) {
-
-                // Liste des ressources
-                $resources_dbtable = new Model_DbTable_Resource;
-                $privileges_dbtable = new Model_DbTable_Privilege;
-                $groupes_dbtable = new Model_DbTable_Groupe;
-
-                // Création de l'ACL (sans les établissements et les dossiers)
-                $acl = new Zend_Acl();
-
-                // On assigne les roles, ressources et privilèges à l'ACL
-                foreach($groupes_dbtable->fetchAll() as $role) {
-
-                    if(!$acl->hasRole($role->LIBELLE_GROUPE)) {
-                        $acl->addRole($role->LIBELLE_GROUPE);
-                    }
-
-                    $privileges_role = $role->findModel_DbTable_PrivilegeViaModel_DbTable_GroupePrivilege()->toArray();
-                    array_walk($privileges_role, function(&$val, $key) use(&$privileges_role){ $val = $privileges_role[$key]['id_privilege']; });
-
-                    foreach($resources_dbtable->fetchAll()->toArray() as $resource) {
-
-                        if(explode('_', $resource['name'])[0] == 'etablissement') {
-                            continue;
-                        }
-
-                        if(!$acl->has($resource['name'])) {
-                            $acl->add(new Zend_Acl_Resource($resource['name']));
-                        }
-
-                        $privileges = $privileges_dbtable->fetchAll('id_resource = ' . $resource['id_resource'] )->toArray();
-
-                        foreach($privileges as $privilege) {
-                            if(in_array($privilege['id_privilege'], $privileges_role)) {
-                                $acl->allow($role->LIBELLE_GROUPE, $resource['name'], $privilege['name']);
-                            }
-                            else {
-                                $acl->deny($role->LIBELLE_GROUPE, $resource['name'], $privilege['name']);
-                            }
-                        }
-                    }
-
-                }
-
-                // Sauvegarde en cache
-                $cache->save(serialize($acl));
-            }
-            self::$acl = $acl;
-        }
-
-        return self::$acl;
-    }
-
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
         // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token
         if($request->getParam('key') === getenv('PREVARISC_SECURITY_KEY')) {
             return ;
         }
-        
+
         if (getenv('PREVARISC_CAS_ENABLED') == 1) {
-                
+
             if (getenv('PREVARISC_DEBUG_ENABLED') == 1) {
                 // Enable debugging
                 phpCAS::setDebug();

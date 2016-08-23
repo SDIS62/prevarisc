@@ -307,7 +307,7 @@ class DossierController extends Zend_Controller_Action
         if (isset($commissionEtab)) {
             $this->view->commissionEtab = $commissionEtab;
         }
-        
+
         $genreInfo = $this->view->genre;
 
         if (isset($idEtablissement)) {
@@ -803,7 +803,7 @@ class DossierController extends Zend_Controller_Action
                     if ('AVIS_DOSSIER' == $libelle && 0 == $value) {
                         $value = null;
                     }
-                    
+
                     if ('' == $value) {
                         $value = null;
                     }
@@ -841,7 +841,7 @@ class DossierController extends Zend_Controller_Action
             } else {
                 $nouveauDossier->CNE_DOSSIER = 1;
             }
-            
+
             if (!in_array('OBJET', $this->listeChamps[$this->_getParam('selectNature')])) {
                 $nouveauDossier->OBJET_DOSSIER = null;
             }
@@ -875,7 +875,7 @@ class DossierController extends Zend_Controller_Action
 
             $idNature = $this->_getParam("selectNature");
 
-            
+
             //Si le dossier est une levée de prescription ou de reserve on ajoute 5 "documents consultés" de type : Attestation de
             if($this->_getParam('do') == 'new' && ($idNature == 7 || $idNature == 19) ){
                 $dbListeDocAjout = new Model_DbTable_ListeDocAjout();
@@ -1099,7 +1099,7 @@ class DossierController extends Zend_Controller_Action
             //Sauvegarde des informations concernant l'affectation d'un dossier à une commission
             $dbDossierAffectation = new Model_DbTable_DossierAffectation();
             $dbDateComm = new Model_DbTable_DateCommission();
-            if ($this->_getParam('COMMISSION_DOSSIER') == '' 
+            if ($this->_getParam('COMMISSION_DOSSIER') == ''
                     || !in_array('COMMISSION', $this->listeChamps[$this->_getParam('selectNature')])) {
                 $dbDossierAffectation->deleteDateDossierAffect($idDossier);
             } else {
@@ -1182,13 +1182,13 @@ class DossierController extends Zend_Controller_Action
                         $dateDelete->delete();
                     }
                 }
-            } 
-            
+            }
+
             //On met le champ ID_DOSSIER_DONNANT_AVIS de établissement avec l'ID du dossier que l'on vient d'enregistrer dans les cas suivant
-            if ($this->_getParam("AVIS_DOSSIER_COMMISSION") 
+            if ($this->_getParam("AVIS_DOSSIER_COMMISSION")
                     && ($this->_getParam("AVIS_DOSSIER_COMMISSION") == 1 || $this->_getParam("AVIS_DOSSIER_COMMISSION") == 2)
                     && $service_dossier->isDossierDonnantAvis($nouveauDossier, $idNature)) {
-                
+
                 if ($this->_getParam('do') == 'new') {
                     $listeEtab = array(array(
                         'ID_ETABLISSEMENT' => $this->_getParam('idEtablissement'),
@@ -1218,7 +1218,7 @@ class DossierController extends Zend_Controller_Action
                     }
                 }
             }
-            
+
             //on envoi l'id à la vue pour qu'elle puisse rediriger vers la bonne page
             $idArray = array('id'=>$nouveauDossier->ID_DOSSIER);
             echo json_encode($idArray);
@@ -1299,7 +1299,7 @@ class DossierController extends Zend_Controller_Action
                 $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Erreur lors de l\'enregistrement.', 'message' => 'Une erreur s\'est produite lors de l\enregistrement de la prescription ('.$e->getMessage().')'));
             }
         }
-        
+
         $this->view->infosDossier = $DBdossier->find($id_dossier)->current();
         $this->view->listeEtablissement = $DBdossier->getEtablissementDossier((int) $this->_getParam("id"));
 
@@ -1313,7 +1313,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->listeEtablissement[$etab]['pereInfos'] = $service_etablissement->get($val['ID_ETABLISSEMENT']);
         }
 
-        
+
         $listeDossierLies = $dbDossierLie->getDossierLie($id_dossier);
 
         foreach ($listeDossierLies as $numrez => $attr) {
@@ -1345,7 +1345,7 @@ class DossierController extends Zend_Controller_Action
             $this->view->enteteEtab = $service_dossier->getEtabInfos($idDossier);
         }
 
-        
+
         $listeEtablissementTest = $dbEtablissementDossier->getEtablissementListe($idDossier);
 
         //On place dans un tableau chacun des idEtablissement liés au dossier
@@ -1588,24 +1588,24 @@ class DossierController extends Zend_Controller_Action
             $newEtabDossier->ID_ETABLISSEMENT = $this->_getParam("idSelect");
             $newEtabDossier->ID_DOSSIER = $this->_getParam("idDossier");
             $newEtabDossier->save();
-            
+
             // on répercute l'avis du dossier sur l'établissement
             // par exemple dans le cas des dossiers de levée d'avis défavorable
             // qui impactent plusieurs établissement
             $service_dossier = new Service_Dossier();
             $DB_dossier = new Model_DbTable_Dossier();
             $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
-            
+
             $dossier = $DB_dossier->find($this->_getParam("idDossier"))->current();
             $idNature = $DB_dossier->getNatureDossier($this->_getParam("idDossier"));
             $idNature = isset($idNature['ID_NATURE']) ? $idNature['ID_NATURE'] : 0;
-            
+
             if ($service_dossier->isDossierDonnantAvis($dossier, $idNature)) {
                 $service_dossier->saveDossierDonnantAvis($dossier, array(array(
                             'ID_ETABLISSEMENT' => $this->_getParam('idSelect'),
                 )), $cache);
             }
-            
+
             $this->view->libelleEtab = $this->_getParam("libelleSelect");
             $this->view->infosEtab = $newEtabDossier;
             $this->_helper->flashMessenger(array(
@@ -1632,7 +1632,7 @@ class DossierController extends Zend_Controller_Action
             $service_dossier = new Service_Dossier;
             $service_etablissement = new Service_Etablissement;
             $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
-            
+
             $deleteEtabDossier = $DBetablissementDossier->find($this->_getParam("idEtabDossier"))->current();
             if (!$deleteEtabDossier) {
                 $this->_helper->flashMessenger(array(
@@ -1642,7 +1642,7 @@ class DossierController extends Zend_Controller_Action
                 ));
                 return ;
             }
-            
+
             $idEtablissement = $deleteEtabDossier['ID_ETABLISSEMENT'];
             $idDossier  = $deleteEtabDossier['ID_DOSSIER'];
             $etablissement = $dbEtab->find($idEtablissement)->current();
@@ -1653,27 +1653,27 @@ class DossierController extends Zend_Controller_Action
                 'title' => "L'établissement n'est plus lié à ce dossier.",
                 'message' => '',
             ));
-            
+
             if($etablissement->ID_DOSSIER_DONNANT_AVIS == $idDossier) {
-                
+
                 $newDossier = $service_etablissement->getDossierDonnantAvis($idEtablissement);
                 if ($newDossier && isset($newDossier['ID_DOSSIER'])) {
                     $etablissement->ID_DOSSIER_DONNANT_AVIS = $newDossier['ID_DOSSIER'];
                 } else {
                     $etablissement->ID_DOSSIER_DONNANT_AVIS = NULL;
                 }
-                
+
                 $etablissement->save();
                 $cache->remove(sprintf('etablissement_id_%d', $idEtablissement));
-                Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch')->clean(Zend_Cache::CLEANING_MODE_ALL);
-                
+                Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache')->clean(Zend_Cache::CLEANING_MODE_ALL);
+
                 $this->_helper->flashMessenger(array(
                     'context' => 'warning',
                     'title' => "Attention, ce dossier donnait avis à l'établissement.",
                     'message' => $etablissement->ID_DOSSIER_DONNANT_AVIS ? "Un nouveau dossier donne à présent avis." : "L'établissement n'a plus de dossier donnant avis."
                 ));
             }
-            
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -1783,7 +1783,7 @@ class DossierController extends Zend_Controller_Action
             $liste_commission = $service_commission->getAll();
 
             foreach($liste_commission as $var => $commission ){
-                
+
                 $path = $pathBase. DS .$commission['ID_COMMISSION'];
                 $dir = opendir($path) or die('Erreur de listage : le répertoire n\'existe pas'); // on ouvre le contenu du dossier courant
                 $fichier= array(); // on déclare le tableau contenant le nom des fichiers
@@ -1917,12 +1917,12 @@ class DossierController extends Zend_Controller_Action
             $infosGenrePere = $dbGenre->find($idGenrePere)->current();
             $this->view->genrePere = $infosGenrePere['LIBELLE_GENRE'];
         }
-        
+
         // Catégorie
         if (3 == $object_informations['ID_GENRE'] && $this->view->infoPere) {
             $object_informations["ID_CATEGORIE"] = $this->view->infoPere['ID_CATEGORIE'];
         }
-        
+
         $dbCategorie = new Model_DbTable_Categorie();
         if ($object_informations["ID_CATEGORIE"]) {
             $categorie = $dbCategorie->getCategories($object_informations["ID_CATEGORIE"]);
@@ -1934,7 +1934,7 @@ class DossierController extends Zend_Controller_Action
         $model_adresse = new Model_DbTable_EtablissementAdresse();
         $array_adresses = $model_adresse->get($idEtab);
         $service_adresse = new Service_Adresse();
-        
+
         if (count($array_adresses) > 0) {
             $this->view->communeEtab = $array_adresses[0]["LIBELLE_COMMUNE"];
             $adresse = "";
@@ -2227,17 +2227,17 @@ class DossierController extends Zend_Controller_Action
             //On récupère toutes les cellules
             $idDateCommAffect = $affectDossier['ID_DATECOMMISSION_AFFECT'];
             $listeDossierConcerne = $dbAffectDossier->getDossierNonAffect($idDateCommAffect);
-            
+
             if(isset($affectDossier['ID_DATECOMMISSION_AFFECT']) && $affectDossier['ID_DATECOMMISSION_AFFECT'] != ''){
                 $cptIdArray = 0;
                 foreach($listeDossierConcerne as $dossier){
-                    
+
                     $listeDossierConcerne[$cptIdArray]['regl'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],0);
                     $listeDossierConcerne[$cptIdArray]['exploit'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],1);
                     $listeDossierConcerne[$cptIdArray]['amelio'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],2);
                     $cptIdArray++;
                 }
-                
+
                 $this->view->celluleDossier = $listeDossierConcerne;
             }
         }elseif($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCCL) && !$this->_getParam("repriseCC")){

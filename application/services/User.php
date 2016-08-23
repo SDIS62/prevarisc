@@ -20,11 +20,11 @@ class Service_User
             $model_groupe = new Model_DbTable_Groupe;
             $model_fonction = new Model_DbTable_Fonction;
             $model_preferences = new Model_DbTable_UtilisateurPreferences;
-            
+
             $user = $model_user->find($id_user)->current()->toArray();
             $user_groupements = $model_user->getGroupements($user['ID_UTILISATEUR']);
             $user_commissions = $model_user->getCommissions($user['ID_UTILISATEUR']);
-            
+
             $user = array_merge($user, array('uid' => $user['ID_UTILISATEUR']));
             $user = array_merge($user, array('infos' => $model_userinformations->find($user['ID_UTILISATEURINFORMATIONS'])->current()->toArray()));
             $user = array_merge($user, array('group' => $model_groupe->find($user['ID_GROUPE'])->current()->toArray()));
@@ -40,7 +40,7 @@ class Service_User
         return $user;
     }
 
-    
+
 
     /**
      * Récupération d'un utilisateur via son nom d'utilisateur
@@ -106,7 +106,7 @@ class Service_User
         $DB_groupementsUser = new Model_DbTable_UtilisateurGroupement;
         $DB_commissionsUser = new Model_DbTable_UtilisateurCommission;
         $DB_userPreferences = new Model_DbTable_UtilisateurPreferences;
-        
+
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         $db = Zend_Db_Table::getDefaultAdapter();
@@ -118,7 +118,7 @@ class Service_User
             }
             $user = $id_user == null ? $DB_user->createRow() : $DB_user->find($id_user)->current();
             $informations = $id_user == null ? $DB_informations->createRow() : $DB_informations->find($user->ID_UTILISATEURINFORMATIONS)->current();
-                
+
             $informations->NOM_UTILISATEURINFORMATIONS = $data['NOM_UTILISATEURINFORMATIONS'];
             $informations->PRENOM_UTILISATEURINFORMATIONS = $data['PRENOM_UTILISATEURINFORMATIONS'];
             $informations->GRADE_UTILISATEURINFORMATIONS = $data['GRADE_UTILISATEURINFORMATIONS'];
@@ -146,13 +146,13 @@ class Service_User
 
             $DB_groupementsUser->delete("ID_UTILISATEUR = " . $user->ID_UTILISATEUR);
             $DB_commissionsUser->delete("ID_UTILISATEUR = " . $user->ID_UTILISATEUR);
-            
+
             if ($id_user == null) {
                 $userPreferences = $DB_userPreferences->createRow();
                 $userPreferences->ID_UTILISATEUR = $user->ID_UTILISATEUR;
                 $userPreferences->save();
             }
-            
+
             if(array_key_exists('commissions', $data)) {
                 foreach($data["commissions"] as $id) {
                     $row = $DB_commissionsUser->createRow();
@@ -171,7 +171,7 @@ class Service_User
                 }
             }
 
-            Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch')->clean(Zend_Cache::CLEANING_MODE_ALL);
+            Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache')->clean(Zend_Cache::CLEANING_MODE_ALL);
             $db->commit();
 
             $cache->remove('user_id_' . $user->ID_UTILISATEUR);
@@ -194,27 +194,27 @@ class Service_User
 
         return $user->ID_UTILISATEUR;
     }
-    
+
     /**
      * Update users preferences
-     * 
+     *
      * @param int $id_utilisateur
      * @param array $preferences array of preferences
      * @return mixed false if failed or Model_DbTable_UtilisateurPreferences on success
      */
     public function savePreferences($id_utilisateur, array $preferences = array()) {
-        
+
         if (!$id_utilisateur) {
             return false;
         }
-        
+
         $DB_userPreferences = new Model_DbTable_UtilisateurPreferences;
         $DB_preferences = $DB_userPreferences->fetchRow(array('ID_UTILISATEUR = ?' => $id_utilisateur));
-        
+
         if (!$DB_preferences)  {
             return false;
         }
-        
+
         foreach($preferences as $name => $preference) {
             switch($name) {
                 case 'DASHBOARD_BLOCS':
@@ -225,14 +225,14 @@ class Service_User
                     break;
             }
         }
-        
+
         $DB_preferences->save();
-        
+
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
         $cache->remove('user_id_' . $id_utilisateur);
-        
+
         return $DB_preferences;
-        
+
     }
 
     /**
@@ -272,7 +272,7 @@ class Service_User
             $db->rollBack();
             throw $e;
         }
-        
+
         // if group exists, remove the cache
         if ($id_group) {
             $model_user = new Model_DbTable_Utilisateur;
@@ -283,9 +283,9 @@ class Service_User
             }
             $cache->remove('acl');
         }
-        
-        
-        
+
+
+
         return $group->ID_GROUPE;
     }
 
@@ -308,14 +308,14 @@ class Service_User
                 // récupération de tous les utilisateurs du groupe à supprimer
                 $all_users = $DB_user->fetchAll("ID_GROUPE = " . $id_group);
                 $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
-                
+
                 // On bouge les users du groupe à supprimer dans le groupe par défaut
                 if ($all_users != null) {
                     foreach ($all_users as $item) {
                         $user = $DB_user->find( $item->ID_UTILISATEUR )->current();
                         $user->ID_GROUPE = 1;
                         $user->save();
-                        
+
                         $cache->remove('user_id_'.$item->ID_UTILISATEUR);
                     }
                 }
