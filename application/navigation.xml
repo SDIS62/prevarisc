@@ -1128,36 +1128,6 @@
             </pages>
         </search>
 
-        <!-- Statistiques et extractions -->
-        <statistiques>
-            <label>Statistiques</label>
-            <controller>statistiques</controller>
-            <pages>
-                <index>
-                    <label>Statistiques</label>
-                    <controller>statistiques</controller>
-                    <action>index</action>
-                </index>
-                <ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
-                    <controller>statistiques</controller>
-                    <action>ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle</action>
-                </ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
-                <liste-erp-avec-visite-periodique-sur-un-an>
-                    <controller>statistiques</controller>
-                    <action>liste-erp-avec-visite-periodique-sur-un-an</action>
-                </liste-erp-avec-visite-periodique-sur-un-an>
-                <liste-des-erp-sous-avis-defavorable>
-                    <controller>statistiques</controller>
-                    <action>liste-des-erp-sous-avis-defavorable</action>
-                </liste-des-erp-sous-avis-defavorable>
-                <prochaines-visites-de-controle-periodique-a-faire-sur-une-commune>
-                    <label>Prochaine visite de controle periodique a faire sur une commmune</label>
-                    <controller>statistiques</controller>
-                    <action>prochaines-visites-de-controle-periodique-a-faire-sur-une-commune</action>
-                </prochaines-visites-de-controle-periodique-a-faire-sur-une-commune>
-            </pages>
-        </statistiques>
-
         <!-- Contrôle de la session -->
         <session>
             <controller>session</controller>
