@@ -10,7 +10,7 @@ class AdminController extends Zend_Controller_Action
 
         if (getenv('PREVARISC_BRANCH') == false) {
             try {
-                $git = new SebastianBergmann\Git\Git(APPLICATION_PATH . DS . '..');
+                $git = new SebastianBergmann\Git(APPLICATION_PATH . DS . '..');
                 $revisions = $git->getRevisions();
                 $last_revision = end($revisions);
                 $revision_prevarisc_local = $last_revision['sha1'];
