@@ -1116,11 +1116,6 @@
                     <controller>search</controller>
                     <action>dossier</action>
                 </dossier>
-                <utilisateur>
-                    <label>Utilisateurs</label>
-                    <controller>search</controller>
-                    <action>utilisateur</action>
-                </utilisateur>
                 <displayAjaxSearch>
                     <controller>search</controller>
                     <action>display-ajax-search</action>

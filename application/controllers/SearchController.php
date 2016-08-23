@@ -9,7 +9,7 @@ class SearchController extends Zend_Controller_Action
 
     public function etablissementAction()
     {
-        $this->_helper->layout->setLayout('search');
+        $this->_helper->layout->setLayout('layout');
 
         $service_search = new Service_Search;
 
@@ -61,7 +61,7 @@ class SearchController extends Zend_Controller_Action
 
     public function dossierAction()
     {
-        $this->_helper->layout->setLayout('search');
+        $this->_helper->layout->setLayout('layout');
 
         $service_search = new Service_Search;
         $service_commissions = new Service_Commission;
@@ -116,7 +116,7 @@ class SearchController extends Zend_Controller_Action
 
     public function utilisateurAction()
     {
-        $this->_helper->layout->setLayout('search');
+        $this->_helper->layout->setLayout('layout');
 
         $service_search = new Service_Search;
         $service_user = new Service_User;
