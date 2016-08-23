@@ -27,7 +27,7 @@ class Service_Search
     public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types_activites = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $city = null, $street_id = null, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         // Identifiant de la recherche
         $search_id = 'search_etablissements_' . md5(serialize(func_get_args()));
@@ -215,7 +215,7 @@ class Service_Search
     public function dossiers($types = null, $objet = null, $num_doc_urba = null, $parent = null, $avis_differe = null, $count = 10, $page = 1, $criterias = null)
     {
         // Récupération de la ressource cache à partir du bootstrap
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         // Identifiant de la recherche
         $search_id = 'search_dossiers_' . md5(serialize(func_get_args()));
@@ -443,7 +443,7 @@ class Service_Search
     public function courriers($objet = null, $num_doc_urba = null, $parent = null, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         // Identifiant de la recherche
         $search_id = 'search_dossiers_' . md5(serialize(func_get_args()));
@@ -533,7 +533,7 @@ class Service_Search
     public function users($fonctions = null, $name = null, $groups = null, $actif = true, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         // Identifiant de la recherche
         $search_id = 'search_users_' . md5(serialize(func_get_args()));

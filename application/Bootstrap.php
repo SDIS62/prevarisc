@@ -44,73 +44,61 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     }
 
     /**
-     * Initialisation d'un cache standard
-     * @param array $frontendOptions surcharge des options de configuration du front
-     * @param array $backendOptions surcharge des options de configuration du back
-     * @return Cache une instance de cache
-     */
-    protected function getCache(array $frontendOptions = array(), array $backendOptions = array()) {
-
-        $options = $this->getOption('cache');
-
-		if(!empty($options) && $options['enabled'] && $options['adapter'] == 'File') {
-			$file = $options['cache_dir'];
-			if(!file_exists($file)) {
-				mkdir($file);
-			}
-		}
-
-        return Zend_Cache::factory(
-                // front adapter
-                'Core',
-                // back adapter
-                $options['adapter'],
-                // frontend options
-                array_merge(array(
-                    'caching'  => $options['enabled'],
-                    'lifetime' => $options['lifetime'],
-                    'cache_id_prefix' => 'prevarisc_'.md5(getenv('PREVARISC_DB_DBNAME')).'_',
-                    'write_control' => $options['write_control'],
-                ), $frontendOptions),
-                // backend options
-                array_merge(array(
-                    'servers' => array(
-                        array(
-                            'host' => $options['host'],
-                            'port' => $options['port'],
-                        ),
-                    ),
-                    'compression' => $options['compression'],
-                    'read_control' => $options['read_control'],
-                    'cache_dir' => $options['cache_dir'],
-                    'cache_file_perm' => 0666,
-                    'hashed_directory_perm' => 0777,
-                ), $backendOptions),
-                // use a custom name for front
-                false,
-                // use a custom name for back
-                $options['customAdapter'],
-                // use application's autoload if an adapter is not loaded
-                true);
-    }
-
-    /**
-     * Initialisation du cache objet de l'application
-     */
+    * Initialisation du cache
+    */
     protected function _initCache()
     {
-        return $this->getCache();
+        $options = $this->getOption('cache');
+
+        if(!empty($options) && $options['enabled'] && $options['adapter'] == 'File') {
+            $file = $options['cache_dir'];
+            if(!file_exists($file)) {
+                mkdir($file);
+            }
+        }
+
+        return Zend_Cache::factory(
+
+            // front adapter
+            'Core',
+
+            // back adapter
+            $options['adapter'],
+
+            // frontend options
+            array(
+                'caching'  => $options['enabled'],
+                'lifetime' => $options['lifetime'],
+                'cache_id_prefix' => 'prevarisc_'.md5(getenv('PREVARISC_DB_DBNAME')).'_',
+                'write_control' => $options['write_control'],
+            ),
+
+            // backend options
+            array(
+                'servers' => array(
+                    array(
+                        'host' => $options['host'],
+                        'port' => $options['port'],
+                    ),
+                ),
+                'compression' => $options['compression'],
+                'read_control' => $options['read_control'],
+                'cache_dir' => $options['cache_dir'],
+                'cache_file_perm' => 0666,
+                'hashed_directory_perm' => 0777,
+            ),
+
+            // use a custom name for front
+            false,
+
+            // use a custom name for back
+            $options['customAdapter'],
+
+            // use application's autoload if an adapter is not loaded
+            true
+
+        );
     }
-
-    /**
-     * Initialisation du cache spécial recherches
-     */
-    protected function _initCacheSearch()
-    {
-        return $this->getCache();
-    }
-
-
 
     /**
      * Initialisation de la vue
