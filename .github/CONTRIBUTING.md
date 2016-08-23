@@ -2,7 +2,7 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/SDIS62/mobilcos).
+We accept contributions via Pull Requests on [Github](https://github.com/SDIS62/prevarisc).
 
 ## Pull Requests
 
