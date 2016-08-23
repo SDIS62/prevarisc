@@ -15,7 +15,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_View);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_ACL);
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_XmlHttpRequest);
-        //Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_Security);
 
         // Chargement des plugins tiers
         if (getenv('PREVARISC_THIRDPARTY_PLUGINS')) {
