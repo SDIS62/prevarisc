@@ -32,16 +32,16 @@
 ?>
 
 <!-- Onglets permettant de selectionner les entités à rechercher -->
-<h2 class="page-header">Dossiers</h2>
+<h2 class="page-header">Recherche de Dossiers</h2>
 <form method='get' class='row-fluid'>
 
-    <div class='navbar-form form-search well well-small span12' style='margin-bottom: 5px;'>
+    <div class='navbar-form form-search well well-small' style='margin-bottom: 5px;'>
             <div class="pull-left input-append">
                 <input type="text" name='objet' class="input-xlarge search-query" placeholder="Objet du dossier ..." value="<?php if(isset($_GET["objet"])) echo htmlentities($_GET["objet"]) ?>" />
                     <input type='submit' class="btn" value="Rechercher"  />
                     <input type='hidden' name='page' value="1" />
             </div>
-        
+
             <div class="pull-left" style='margin: 9px 0 0 5px'>
                 <small>
                     <a href="/search/dossier?label=&page=1">
@@ -49,12 +49,12 @@
                     </a>
                 </small>
             </div>
-        
+
     </div>
 
 
 
-    <div id='filterContainer' class='well span12' style="margin-left: 0;">
+    <div id='filterContainer' class='well' style="margin-left: 0;">
             <div class='row-fluid'>
                 <select name='types[]' class="span3 chosen" data-placeholder='Types' multiple>
                     <?php foreach( $this->DB_type as $type ) : ?>
