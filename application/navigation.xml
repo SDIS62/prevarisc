@@ -8,27 +8,6 @@
             <controller>index</controller>
         </index>
 
-        <!-- Gestion des messages -->
-        <news>
-            <controller>news</controller>
-            <pages>
-                <add>
-                    <label>Ajouter un message</label>
-                    <controller>news</controller>
-                    <action>add</action>
-                    <resource>gestion_parametrages</resource>
-                    <privilege>fil_actus</privilege>
-                </add>
-                <delete>
-                    <label>Supprimer un message</label>
-                    <controller>news</controller>
-                    <action>delete</action>
-                    <resource>gestion_parametrages</resource>
-                    <privilege>fil_actus</privilege>
-                </delete>
-            </pages>
-        </news>
-
         <!-- Administration -->
         <admin>
             <label>Administration</label>
