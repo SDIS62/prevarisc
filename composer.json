@@ -32,7 +32,8 @@
     },
 
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^1.11"
+        "friendsofphp/php-cs-fixer": "^1.11",
+        "phpmd/phpmd": "^2.4"
     }
 
 }
