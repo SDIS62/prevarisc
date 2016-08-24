@@ -16,23 +16,4 @@ class Model_DbTable_ListeDocAjout extends Zend_Db_Table_Abstract
         return $this->getAdapter()->fetchAll($select);
     }
 
-    public function getDocToDelete($id_dossier, $id_nature)
-    {
-        $select = "SELECT *
-        FROM listedocajout
-        WHERE id_dossier = '".$id_dossier."'
-        AND id_nature = '".$id_nature."'
-        ORDER BY ID_DOCAJOUT;";
-
-        return $this->getAdapter()->fetchAll($select);
-    }
-
-    public function getLastId()
-    {
-        $select = "SELECT MAX(ID_DOCAJOUT)
-        FROM listedocajout;";
-
-        return $this->getAdapter()->fetchRow($select);
-    }
-
 }

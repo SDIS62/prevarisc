@@ -91,14 +91,6 @@ class Model_DbTable_DossierAffectation extends Zend_Db_Table_Abstract
         return $this->delete("ID_DOSSIER_AFFECT = '".$idDossier."'");
     }
 
-	public function deleteDateDossierModifDateAffect($idDossier,$idDateComm)
-    {
-        $this->delete(array(
-			'ID_DOSSIER_AFFECT = ?' => $idDossier,
-			'ID_DATECOMMISSION_AFFECT <> ?' => $idDateComm
-		));
-    }
-
 	public function getDossierAffectAndType($idDossier)
     {
         //récupèration des affectations du dossier ainsi que le type d'affectation (salle / visite / visite de comm)

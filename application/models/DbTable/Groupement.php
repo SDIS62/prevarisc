@@ -50,26 +50,6 @@ class Model_DbTable_Groupement extends Zend_Db_Table_Abstract
         return $this->getAdapter()->fetchAll($select);
     }
 
-    public function getByLibelle2($libelle, $libelleGroupementType)
-    {
-        $expLibelle = $this->getAdapter()->quote($libelle);
-        $expLibelleGroupementType = $this->getAdapter()->quote($libelleGroupementType);
-        $select = "SELECT groupement.*, groupementtype.LIBELLE_GROUPEMENTTYPE, utilisateurinformations.*
-                    FROM groupement
-                    INNER JOIN groupementtype ON groupement.ID_GROUPEMENTTYPE = groupementtype.ID_GROUPEMENTTYPE
-                    LEFT JOIN utilisateurinformations ON utilisateurinformations.ID_UTILISATEURINFORMATIONS = groupement.ID_UTILISATEURINFORMATIONS
-                    WHERE (groupement.LIBELLE_GROUPEMENT = " . $expLibelle . " AND groupementtype.LIBELLE_GROUPEMENTTYPE = " . $expLibelleGroupementType . ");";
-
-       return $this->getAdapter()->fetchAll($select);
-    }
-
-    public function deleteGroupement($id)
-    {
-        $this->getAdapter()->query("DELETE FROM `groupementcommune` WHERE `groupementcommune`.`ID_GROUPEMENT` = $id;");
-        $this->getAdapter()->query("DELETE FROM `groupementpreventionniste` WHERE `groupementpreventionniste`.`ID_GROUPEMENT` = $id;");
-        $this->getAdapter()->query("DELETE FROM `groupement` WHERE `groupement`.`ID_GROUPEMENT` = $id;");
-    }
-
     public function getPreventionnistes($id)
     {
         $select = $this	->select()

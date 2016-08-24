@@ -55,7 +55,7 @@
                     break;
 
                 // Adresse par d�faut
-                default: 
+                default:
                     $select = $this->select()
                         ->setIntegrityCheck(false)
                         ->from("etablissementadresse")
@@ -65,22 +65,6 @@
                         ->where("etablissementadresse.ID_ETABLISSEMENT = '$id_etablissement'");
                     return $this->fetchAll($select)->toArray();
             }
-        }
-
-        // Donne la liste des rues
-        public function getTypeRue( $id = null )
-        {
-            $select = $this->select()
-                ->setIntegrityCheck(false)
-                ->from("adresseruetype");
-
-            if ($id != null) {
-                $select->where("ID_RUETYPE = $id");
-
-                return $this->fetchRow($select)->toArray();
-            } else
-
-                return $this->fetchAll($select)->toArray();
         }
 
         // Donne la liste de ville par rapport � un code postal

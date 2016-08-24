@@ -40,7 +40,7 @@ class Model_DbTable_DossierListeDoc extends Zend_Db_Table_Abstract
 
         return $this->getAdapter()->fetchAll($select);
     }
-	
+
 	public function getDocVisiteVAO()
     {
 		$select = $this->select()
@@ -62,20 +62,4 @@ class Model_DbTable_DossierListeDoc extends Zend_Db_Table_Abstract
 
         return $this->getAdapter()->fetchAll($select);
     }
-
-    //récupération des docconsulte après un changement de nature
-    public function recupDocDifNature($id_dossier, $id_nature)
-    {
-        echo $id_nature." ";
-
-        $select = $this->select()
-             ->setIntegrityCheck(false)
-             ->from(array('ddc' => 'dossierdocconsulte'))
-             ->where("ddc.ID_DOSSIER = ?", $id_dossier)
-             ->where("ddc.ID_NATURE");
-
-        return $this->getAdapter()->fetchAll($select);
-        
-    }
-
 }

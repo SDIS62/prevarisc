@@ -33,17 +33,6 @@
             return $new->ID_DATECOMMISSION;
         }
 
-        public function getFirstCommission($idCommission,$debut,$fin)
-        {
-            $select = "SELECT *
-                FROM datecommission
-                WHERE COMMISSION_CONCERNE = '".$idCommission."'
-                AND DATE_COMMISSION BETWEEN '".$debut."'	AND '".$fin."'
-            ";
-            //echo $select;
-
-            return $this->getAdapter()->fetchAll($select);
-        }
         public function getNextCommission($idsCommission, $date, $next_date)
         {
             $ids = (array) $idsCommission;
@@ -55,24 +44,13 @@
                 ORDER BY DATE_COMMISSION, HEUREDEB_COMMISSION";
             return $this->getAdapter()->fetchAll($select);
         }
-        
+
         public function getMonthCommission($mois,$annee,$idcom)
         {
             $select = "SELECT *
                 FROM datecommission
                 WHERE MONTH(DATE_COMMISSION) = '".$mois."'  AND   YEAR(DATE_COMMISSION) = '".$annee."'
                 AND COMMISSION_CONCERNE = '".$idcom."'";
-            return $this->getAdapter()->fetchAll($select);
-        }
-
-        public function getCommissionsLiees($idCommissionOrigine,$debut,$fin)
-        {
-            $select = "SELECT *
-                FROM datecommission
-                WHERE DATECOMMISSION_LIEES = '".$idCommissionOrigine."'
-                AND DATE_COMMISSION BETWEEN '".$debut."'	AND '".$fin."'
-            ";
-            //echo $select;
             return $this->getAdapter()->fetchAll($select);
         }
 
@@ -131,7 +109,7 @@
             //echo $select;
             return $this->getAdapter()->fetchAll($select);
         }
-		
+
 		public function getInfosVisite($idDossier)
 		{
 			//retourne la liste des catégories de prescriptions par ordre
@@ -141,10 +119,10 @@
 				 ->join(array("dc" => "datecommission") , "da.ID_DATECOMMISSION_AFFECT = dc.ID_DATECOMMISSION")
 				 ->where("da.ID_DOSSIER_AFFECT = ?",$idDossier)
 				 ->where("dc.ID_COMMISSIONTYPEEVENEMENT = 2 OR dc.ID_COMMISSIONTYPEEVENEMENT = 3");
-				 
+
 			return $this->getAdapter()->fetchRow($select);
 		}
-		
+
 		public function getDateLieesv2($idDateComm)
 		{
 			//retourne la liste des catégories de prescriptions par ordre
@@ -154,24 +132,24 @@
 				 ->where("dc.ID_DATECOMMISSION = ?",$idDateComm)
 				 ->orWhere("dc.DATECOMMISSION_LIEES = ?",$idDateComm)
 				 ->order("DATE_COMMISSION");
-				 
+
 			return $this->getAdapter()->fetchAll($select);
 		}
-                
+
         public function updateDependingDossierDates($datecommission)
         {
             $dbAffectDossier = new Model_DbTable_DossierAffectation();
             $dbDossier = new Model_DbTable_Dossier();
-            
+
             // on récupère les dossiers liés à la commission
             $dossiersAffecte = $dbAffectDossier->fetchAll('ID_DATECOMMISSION_AFFECT = '.$datecommission->ID_DATECOMMISSION);
             $dossiersAffecteIds = array();
             foreach($dossiersAffecte as $dossierAffecte) {
                 $dossiersAffecteIds[] = $dossierAffecte['ID_DOSSIER_AFFECT'];
             }
-            
+
             // si des dossiers sont liés, en fonction du type,
-            // on update les dates en text dans les différents fields du dossiers pour 
+            // on update les dates en text dans les différents fields du dossiers pour
             // des cohérences de données
             if ($dossiersAffecteIds) {
                 if (in_array($datecommission->ID_COMMISSIONTYPEEVENEMENT, array(1))) {
@@ -185,7 +163,7 @@
             }
         }
 
-        public function getEventInCommission($idUtilisateur = null, $idCommission = null, $start = null, $end = null) 
+        public function getEventInCommission($idUtilisateur = null, $idCommission = null, $start = null, $end = null)
         {
             $select = $this->select()
                            ->setIntegrityCheck(false)
@@ -209,9 +187,9 @@
                 $select->where('YEAR(dc.DATE_COMMISSION) >= ?', $start);
             }
             if ($end !== null) {
-                $select->where('YEAR(dc.DATE_COMMISSION) <= ?', $end);   
+                $select->where('YEAR(dc.DATE_COMMISSION) <= ?', $end);
             }
-            
+
             return $this->getAdapter()->fetchAll($select);
         }
 

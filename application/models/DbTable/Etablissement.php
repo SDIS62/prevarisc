@@ -17,100 +17,6 @@
             return $result == null ? null : $result->toArray();
         }
 
-        // NOTE : à faire après enregistrement d'un établissement
-        public function getIDWinprev($id)
-        {
-            $model_adresse = new Model_DbTable_EtablissementAdresse;
-
-            // Variables
-            $genre = $codecommune = $nbetscommune = $rangcell = $commission = null;
-
-            // Récupération des infos de l'établissement
-            $infos = $this->getInformations($id);
-            $adresses = $model_adresse->get($id);
-            $parent = $this->getParent($id);
-
-            // Vérifications
-            if ($infos == null) {
-                return false;
-            }
-
-            if ($infos->ID_GENRE == null || count($adresses) == 0) {
-                return false;
-            }
-
-            // Etape 1 : genre
-            switch ($infos->ID_GENRE) {
-                case 1: $genre = "S"; break;
-                case 2: $genre = "E"; break;
-                case 3: $genre = "B"; break;
-                case 4: $genre = "H"; break;
-                case 5: $genre = "G"; break;
-                case 6: $genre = "I"; break;
-            }
-
-            // Etape 2 : Code commune
-            if($genre != "S" || $genre != "C" || count($adresses) > 0)
-            {
-                $codecommune = str_pad($adresses[0]["NUMINSEE_COMMUNE"], 6, "0", STR_PAD_LEFT);
-            }
-            else
-            {
-                $codecommune = "000000";
-            }
-
-            // Etape 3 : Ordre sur la commune
-            if($genre != "S" || $genre != "C" || count($adresses) > 0)
-            {
-                $select = $this->select()
-                    ->setIntegrityCheck(false)
-                    ->distinct()
-                    ->from("adressecommune", null)
-                    ->join("etablissementadresse", "etablissementadresse.NUMINSEE_COMMUNE =adressecommune.NUMINSEE_COMMUNE", "etablissementadresse.ID_ETABLISSEMENT")
-                    ->join("etablissement", "etablissementadresse.ID_ETABLISSEMENT = etablissement.ID_ETABLISSEMENT", null)
-                    ->where("adressecommune.NUMINSEE_COMMUNE = ?", $adresses[0]["NUMINSEE_COMMUNE"])
-                    ->where("etablissement.DATEENREGISTREMENT_ETABLISSEMENT  <= ( SELECT etablissement.DATEENREGISTREMENT_ETABLISSEMENT FROM etablissement WHERE etablissement.ID_ETABLISSEMENT = '".($genre == "B" ? $parent["ID_ETABLISSEMENT"] : $id)."')");
-                $nbetscommune = str_pad(count($this->fetchAll($select)), 5, "0", STR_PAD_LEFT);
-            }
-            else
-            {
-                $nbetscommune = "00000";
-            }
-
-            // Etape 4 : Rang de la cellule
-            if ($genre == "B") {
-                $select = $this->select()
-                    ->setIntegrityCheck(false)
-                    ->from("etablissementlie")
-                    ->join("etablissement", "etablissement.ID_ETABLISSEMENT = etablissementlie.ID_FILS_ETABLISSEMENT", null)
-                    ->where("etablissementlie.ID_ETABLISSEMENT = ?", $parent["ID_ETABLISSEMENT"])
-                    ->where("etablissement.DATEENREGISTREMENT_ETABLISSEMENT  <= ( SELECT etablissement.DATEENREGISTREMENT_ETABLISSEMENT FROM etablissement WHERE etablissement.ID_ETABLISSEMENT = ?)", $id);
-                $result = $this->fetchAll($select);
-                $rangcell = str_pad($result == null ? 0 : count($result), 3, "0", STR_PAD_LEFT);
-            } else {
-                $rangcell = "000";
-            }
-
-            // Etape 5 : ID de la commission
-            $commission = $infos->ID_COMMISSION == null ? "0" : $infos->ID_COMMISSION;
-
-            return $genre . $codecommune . $nbetscommune . "-" . $rangcell  . "-" . $commission;
-        }
-
-        public function getByUser($id_user)
-        {
-            $select = $this->select()
-                ->setIntegrityCheck(false)
-                ->from(array("e" => "etablissement"), "ID_ETABLISSEMENT")
-                ->joinLeft("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", array("LIBELLE_ETABLISSEMENTINFORMATIONS", "PERIODICITE_ETABLISSEMENTINFORMATIONS"))
-                ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS = etablissementinformations.ID_ETABLISSEMENTINFORMATIONS", null)
-                ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = e.ID_ETABLISSEMENT ) ")
-                ->where("etablissementinformationspreventionniste.ID_UTILISATEUR = " . $id_user)
-                ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL");
-
-            return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
-        }
-
         public function getInformations($id_etablissement)
         {
             $DB_information = new Model_DbTable_EtablissementInformations;
@@ -132,36 +38,6 @@
                     ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", "LIBELLE_ETABLISSEMENTINFORMATIONS")
                     ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                     ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
-                    ->where("e.ID_ETABLISSEMENT = ?", $id_etablissement);
-
-            return ( $this->fetchRow( $select ) != null ) ? $this->fetchRow( $select )->toArray() : null;
-        }
-
-        public function getPeriodicite( $id_etablissement )
-        {
-            $select = $this->select()->setIntegrityCheck(false);
-
-            $select	->from(array("e" => "etablissement"), null)
-                    ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", "PERIODICITE_ETABLISSEMENTINFORMATIONS")
-                    ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
-                    ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
-                    ->where("e.ID_ETABLISSEMENT = ?", $id_etablissement);
-
-            if(null != ($row = $this->getAdapter()->fetchRow($select)))
-
-                return $row["PERIODICITE_ETABLISSEMENTINFORMATIONS"];
-            else
-                return null;
-        }
-
-        public function getGenre( $id_etablissement )
-        {
-            $select = $this->select()->setIntegrityCheck(false);
-
-            $select	->from(array("e" => "etablissement"), null)
-                    ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", "ID_GENRE")
-                    ->join("genre", "etablissementinformations.ID_GENRE = genre.ID_GENRE", "LIBELLE_GENRE")
-                    ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                     ->where("e.ID_ETABLISSEMENT = ?", $id_etablissement);
 
             return ( $this->fetchRow( $select ) != null ) ? $this->fetchRow( $select )->toArray() : null;
@@ -228,48 +104,6 @@
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
         }
 
-        // Recalcule les périod et cat des enfants d'un ets
-        public function recalcEnfants($id_ets, $id_info, $historique)
-        {
-            $search = new Model_DbTable_Search;
-            $etablissement_enfants = $search->setItem("etablissement")->setCriteria("etablissementlie.ID_ETABLISSEMENT", $id_ets)->run();
-            $model_etablissementInformations = new Model_DbTable_EtablissementInformations;
-            $etablissement = $model_etablissementInformations->find($id_info)->current();
-
-            foreach ($etablissement_enfants as $ets) {
-
-                // On récupère la fiche de l'établissement enfant
-                $row_etablissement = $this->getInformations($ets["ID_ETABLISSEMENT"]);
-
-                // Periodicité
-                if ($etablissement->PERIODICITE_ETABLISSEMENTINFORMATIONS != $row_etablissement->PERIODICITE_ETABLISSEMENTINFORMATIONS) {
-
-                    $row_etablissement->PERIODICITE_ETABLISSEMENTINFORMATIONS = $etablissement->PERIODICITE_ETABLISSEMENTINFORMATIONS;
-                }
-
-                // Catégorie
-                if ($etablissement->ID_CATEGORIE != $row_etablissement->ID_CATEGORIE) {
-
-                    $row_etablissement->ID_CATEGORIE = $etablissement->ID_CATEGORIE;
-                }
-
-                if ($historique) {
-
-                    $row_etablissement->ID_ETABLISSEMENTINFORMATIONS = null;
-                    $row_etablissement->DATE_ETABLISSEMENTINFORMATIONS = $etablissement->DATE_ETABLISSEMENTINFORMATIONS;
-
-                    $new_row = $model_etablissementInformations->createRow();
-                    $new_row->setFromArray($row_etablissement->toArray());
-                    $new_row->save();
-                } else {
-
-                    $row_etablissement->save();
-                }
-
-            }
-        }
-
-
         public function listeDesERPOuvertsSousAvisDefavorable($idsCommission = null, $numInseeCommune = null, $idUtilisateur = null)
         {
             $search = new Model_DbTable_Search;
@@ -328,7 +162,7 @@
             return $etablissements_isoles;
 
         }
-        
+
         public function getDossierDonnantAvis($id_etablissement)
         {
             $select = $this->select()

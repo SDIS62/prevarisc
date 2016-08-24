@@ -31,18 +31,6 @@ class Service_Adresse
     }
     
     /**
-     * Retourne les types de voie d'une commune identifiée par son code insee
-     *
-     * @param int $code_insee
-     * @return array
-     */
-    public function getTypesVoieParVille($code_insee)
-    {
-        $DB_adresse = new Model_DbTable_EtablissementAdresse;
-        return $DB_adresse->getTypesVoieByVille($code_insee);
-    }
-
-    /**
      * Retourne les voies par rapport à une ville
      *
      * @param int $code_insee
@@ -54,10 +42,10 @@ class Service_Adresse
         $DB_adresse = new Model_DbTable_EtablissementAdresse;
         return $DB_adresse->getVoies($code_insee, $q);
     }
-    
+
     /**
      * Retourne le maire de la commune concernée
-     * 
+     *
      * @param int $numinsee le numéro insee de la commune
      * @return array les informations de la fiche contact du maire
      */

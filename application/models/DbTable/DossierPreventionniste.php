@@ -16,11 +16,4 @@ class Model_DbTable_DossierPreventionniste extends Zend_Db_Table_Abstract
         return $this->getAdapter()->fetchAll($select);
     }
 	
-    public function delPrevsDossier($idDossier)
-    {
-        $select = "DELETE FROM dossierpreventionniste WHERE ID_DOSSIER = '".$idDossier."';";
-        //echo $select;
-        return $this->getAdapter()->exec($select);
-    }
-
 }
