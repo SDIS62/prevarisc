@@ -3,7 +3,7 @@
     /*
         Statut
 
-        Cette classe sert pour récupérer les Statuts, et les administrer
+        Cette classe sert pour rï¿½cupï¿½rer les Statuts, et les administrer
 
     */
 
@@ -11,23 +11,6 @@
     {
 
         protected $_name="statut"; // Nom de la base
-        protected $_primary = "ID_STATUT"; // Clé primaire
-
-        // Donne la liste des catégories
-        public function getStatuts( $id = null )
-        {
-            $select = $this->select()
-                ->setIntegrityCheck(false)
-                ->from("statut");
-
-            if ($id != null) {
-                $select->where("ID_STATUT = $id");
-
-                return $this->fetchRow($select)->toArray();
-            } else
-
-                return $this->fetchAll($select)->toArray();
-
-        }
+        protected $_primary = "ID_STATUT"; // Clï¿½ primaire
 
     }

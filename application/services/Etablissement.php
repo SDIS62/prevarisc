@@ -555,58 +555,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
     }
 
     /**
-     * On cherche l'ensemble des établissements correspondant au libellé donné qui satisfassent à la contrainte d'être enfant (ou parent) du genre donné
-     *
-     * @param string $libelle
-     * @param int $id_genre
-     * @param bool $enfants Optionnel
-     * @return array
-     */
-    public function findAll($libelle, $id_genre, $enfants = true)
-    {
-        // Création de l'objet recherche
-        $search = new Model_DbTable_Search;
-
-        // On set le type de recherche
-        $search->setItem("etablissement");
-        $search->limit(5);
-
-        // On recherche avec le libellé
-        $search->setCriteria("LIBELLE_ETABLISSEMENTINFORMATIONS", $libelle, false);
-
-        // On filtre par le genre
-        if (!$enfants) {
-            if($id_genre == 2)
-                $search->setCriteria("etablissementinformations.ID_GENRE", 1);
-            elseif($id_genre == 3)
-                $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        }
-
-        if ($enfants) {
-            if($id_genre == 1)
-                $search->setCriteria("etablissementinformations.ID_GENRE", array(2,4,5,6));
-            elseif($id_genre == 2)
-                $search->setCriteria("etablissementinformations.ID_GENRE", 3);
-        }
-
-        return $search->run()->getAdapter()->getItems(0, 99999999999)->toArray();
-    }
-
-    /**
-     * On vérifie si une fiche existe à la date donnée pour l'établissement
-     *
-     * @param int $id_etablissement
-     * @param string $date format Y-m-d
-     * @return array
-     */
-    public function ficheExiste($id_etablissement, $date)
-    {
-        $DB_information = new Model_DbTable_EtablissementInformations;
-
-        return (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $id_etablissement . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $date . "'"))) ? true : false;
-    }
-
-    /**
      * Sauvegarde d'un établissement
      *
      * @param int $id_genre

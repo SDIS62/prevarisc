@@ -4,26 +4,7 @@ class Service_Feed
 {
     /**
      * Récupération d'un flux de message pour un groupe d'utilisateurs
-     *
-     * int $id_groupe
-     * @return array
      */
-    public function get($id_group, $count = 5)
-    {
-        $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
-
-        $select->from("news")
-            ->join("newsgroupe", "news.ID_NEWS = newsgroupe.ID_NEWS", null)
-            ->join("utilisateur", "news.ID_UTILISATEUR = utilisateur.ID_UTILISATEUR")
-            ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = utilisateur.ID_UTILISATEURINFORMATIONS")
-            ->where("newsgroupe.ID_GROUPE = ?", $id_group)
-            ->group('ID_NEWS')
-            ->order("ID_NEWS DESC")
-            ->limit($count);
-
-        return $select->query()->fetchAll();
-    }
-    
     public function getFeeds($user, $count = 5)
     {
         $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
@@ -67,7 +48,7 @@ class Service_Feed
                 'ID_GROUPE' => $value
             ))->save();
         }
-        
+
         return $id_news;
     }
 

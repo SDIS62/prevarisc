@@ -4,7 +4,7 @@ class Model_DbTable_PrescriptionDossierAssoc extends Zend_Db_Table_Abstract
 {
     protected $_name="prescriptiondossierassoc"; // Nom de la base
     protected $_primary = array("ID_PRESCRIPTION_DOSSIER","NUM_PRESCRIPTION_DOSSIERASSOC"); // Clé primaire
-	
+
 	public function getPrescriptionDossierAssoc($idPrescriptionDossier)
 	{
 		$select = $this->select()
@@ -15,11 +15,11 @@ class Model_DbTable_PrescriptionDossierAssoc extends Zend_Db_Table_Abstract
 			->join(array("ptl" => "prescriptiontexteliste"), "ptl.ID_TEXTE = pda.ID_TEXTE")
 			->where("pda.ID_PRESCRIPTION_DOSSIER = ?",$idPrescriptionDossier)
 			->order("pda.NUM_PRESCRIPTION_DOSSIERASSOC");
-		
+
 		//echo $select->__toString();
-		return $this->getAdapter()->fetchAll($select);	
+		return $this->getAdapter()->fetchAll($select);
 	}
-	
+
 	public function getPrescriptionTypeAssoc($idPrescriptionType,$idPrescriptionDossier)
 	{
 		$select = $this->select()
@@ -33,19 +33,9 @@ class Model_DbTable_PrescriptionDossierAssoc extends Zend_Db_Table_Abstract
 			->where("pd.ID_PRESCRIPTION_DOSSIER = ?",$idPrescriptionDossier)
 			//->group("pta.NUM_PRESCRIPTIONASSOC")
 			->order("pta.NUM_PRESCRIPTIONASSOC");
-		
+
 		//echo $select->__toString();
-		return $this->getAdapter()->fetchAll($select);	
+		return $this->getAdapter()->fetchAll($select);
 	}
-	
-	public function deletePrescrionAssoc($idPrescriptionDossier)
-	{
-		$select = $this->select()
-			->setIntegrityCheck(false)
-			->from(array("pd" => "prescriptiondossierassoc"))
-			->where("pda.ID_PRESCRIPTION_DOSSIER = ?",$idPrescriptionDossier);
-		
-		//echo $select->__toString();
-		return $this->getAdapter()->fetchAll($select)->delete();	
-	}
+
 }

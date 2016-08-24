@@ -15,23 +15,4 @@
             return $this->fetchAll($select)->toArray();
         }
 
-        public function getMairieInformation($numinsee)
-        {
-            $select = "SELECT * "
-                    . "FROM adressecommune as commune "
-                    . "INNER JOIN utilisateurinformations as user "
-                    . "ON commune.ID_UTILISATEURINFORMATIONS = "
-                    . "user.ID_UTILISATEURINFORMATIONS "
-                    . "WHERE commune.NUMINSEE_COMMUNE = '" . $numinsee . "'";
-
-            $result = $this->getAdapter()->fetchAll($select);
-            if (count($result) > 0) {
-                $result = $result[0];
-            } else {
-                $result = null;
-            }
-
-            return $result;
-        }
-
     }

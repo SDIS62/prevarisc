@@ -42,40 +42,6 @@
 
         }
 
-        // Donne la liste des cat�gories
-        public function getCommissionsByType( $type )
-        {
-            $select = $this->select()
-                ->setIntegrityCheck(false)
-                ->from("commission")
-                ->join("commissiontype", "commissiontype.ID_COMMISSIONTYPE = commission.ID_COMMISSIONTYPE", null)
-                ->where("commission.ID_COMMISSIONTYPE = $type");
-
-            return $this->fetchAll($select)->toArray();
-        }
-
-        public function commissionListe($crit)
-        {
-            //Autocompl�tion sur la liste des commission
-            $select = "SELECT ID_COMMISSION, LIBELLE_COMMISSION
-                FROM commission
-                WHERE LIBELLE_COMMISSION LIKE '%".$crit."%';
-            ";
-
-            return $this->getAdapter()->fetchAll($select);
-        }
-
-        public function getAllCommissions()
-        {
-            //Récupération de l'ensemble des commissions
-            $select = "SELECT ID_COMMISSION, LIBELLE_COMMISSION
-                FROM commission
-                ORDER BY LIBELLE_COMMISSION
-            ";
-
-            return $this->getAdapter()->fetchAll($select);
-        }
-
         public function getLibelleCommissions($id)
         {
             //Récupération de l'ensemble des commissions
@@ -83,19 +49,6 @@
                 FROM commission
                 WHERE ID_COMMISSION = '".$id."'";
             return $this->getAdapter()->fetchAll($select);
-        }
-
-
-
-        public function commissionPeriodicite($idCommission)
-        {
-            $select = "SELECT commissiontype.FREQUENCE_COMMISSIONTYPE
-                FROM commissiontype, commission
-                WHERE commission.ID_COMMISSIONTYPE = commissiontype.ID_COMMISSIONTYPE
-                AND commission.ID_COMMISSION = '".$idCommission."';
-            ";
-            //echo $select;
-            return $this->getAdapter()->fetchRow($select);
         }
 
         public function getCommission( $commune, $categorie, $type, $localsommeil)
