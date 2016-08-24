@@ -138,4 +138,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         return new $className($options);
     }
 
+    /**
+    * Initialisation des ACL
+    */
+    protected function _initAcl()
+    {
+        $acl = new Zend_Acl;
+
+        return $acl;
+    }
 }
