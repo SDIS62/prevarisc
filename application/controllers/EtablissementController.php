@@ -35,7 +35,7 @@ class EtablissementController extends Zend_Controller_Action
         $etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-        
+
         $this->view->etablissement = $etablissement;
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
@@ -63,15 +63,15 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
         $this->view->DB_classement = $service_classement->getAll();
-        
+
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $this->view->add = false;
 
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
         $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
-        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
+        $this->view->is_allowed_change_statut = $acl->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
         if($this->_request->isPost()) {
             try {
@@ -116,13 +116,13 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->add = true;
-        
+
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
         $this->view->couches_cartographiques = $service_carto->getAll();
 
-        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
         $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
-        $this->view->is_allowed_change_statut = unserialize($cache->load('acl'))->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
+        $this->view->is_allowed_change_statut = $acl->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
 
         if($this->_request->isPost()) {

@@ -247,7 +247,8 @@ class DossierController extends Zend_Controller_Action
         // AUTORISATIONS CHANGEMENT AVIS DE LA COMMISSION
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
-        $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
+        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
+        $this->view->is_allowed_change_avis = $acl->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
 
         $service_etablissement = new Service_Etablissement();
 
