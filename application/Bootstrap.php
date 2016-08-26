@@ -17,12 +17,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         Zend_Controller_Front::getInstance()->registerPlugin(new Plugin_XmlHttpRequest);
 
         // Chargement des plugins tiers
-        if (getenv('PREVARISC_THIRDPARTY_PLUGINS')) {
-            $thirdparty_plugins = explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS'));
-            foreach($thirdparty_plugins as $thirdparty_plugin) {
-                Zend_Controller_Front::getInstance()->registerPlugin(new $thirdparty_plugin);
-            }
+        foreach($this->getOption('plugins') as $thirdparty_plugin) {
+            Zend_Controller_Front::getInstance()->registerPlugin(new $thirdparty_plugin);
         }
+
+        // Stockage des options dans un registre global
+        Zend_Registry::set('options', $this->getOptions());
 
         return parent::run();
     }
@@ -48,10 +48,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     */
     protected function _initCache()
     {
-        $options = $this->getOption('cache');
+        $options = $this->getOptions();
 
-        if(!empty($options) && $options['enabled'] && $options['adapter'] == 'File') {
-            $file = $options['cache_dir'];
+        $cache_options = $options['cache'];
+        $db_options = $options['resources']['db'];
+
+        if($cache_options['enabled'] && $cache_options['adapter'] == 'File') {
+            $file = $cache_options['cache_dir'];
             if(!file_exists($file)) {
                 mkdir($file);
             }
@@ -63,27 +66,27 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             'Core',
 
             // back adapter
-            $options['adapter'],
+            $cache_options['adapter'],
 
             // frontend options
             array(
-                'caching'  => $options['enabled'],
-                'lifetime' => $options['lifetime'],
-                'cache_id_prefix' => 'prevarisc_'.md5(getenv('PREVARISC_DB_DBNAME')).'_',
-                'write_control' => $options['write_control'],
+                'caching'  => $cache_options['enabled'],
+                'lifetime' => $cache_options['lifetime'],
+                'cache_id_prefix' => 'prevarisc_'.md5($db_options['params']['dbname']).'_',
+                'write_control' => $cache_options['write_control'],
             ),
 
             // backend options
             array(
                 'servers' => array(
                     array(
-                        'host' => $options['host'],
-                        'port' => $options['port'],
+                        'host' => $cache_options['host'],
+                        'port' => $cache_options['port'],
                     ),
                 ),
-                'compression' => $options['compression'],
-                'read_control' => $options['read_control'],
-                'cache_dir' => $options['cache_dir'],
+                'compression' => $cache_options['compression'],
+                'read_control' => $cache_options['read_control'],
+                'cache_dir' => $cache_options['cache_dir'],
                 'cache_file_perm' => 0666,
                 'hashed_directory_perm' => 0777,
             ),
@@ -92,7 +95,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             false,
 
             // use a custom name for back
-            $options['customAdapter'],
+            $cache_options['customAdapter'],
 
             // use application's autoload if an adapter is not loaded
             true

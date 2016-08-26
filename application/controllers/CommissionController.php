@@ -49,6 +49,10 @@
         {
             // Les modèles
             $model_regles = new Model_DbTable_CommissionRegle;
+
+            // Emplacement géographique (Si c'est une communale, c'est une commune sinon un groupement)
+            $this->view->id_type_commission_communale = Zend_Registry::get('options')['type_commission_communale'];
+
             // On récupère les règles de la commission
             $this->view->array_regles = $model_regles->get($this->_request->id_commission);
         }

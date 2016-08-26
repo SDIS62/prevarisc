@@ -10,6 +10,8 @@
                     <?php echo $this->version_prevarisc ?>
                     <?php if($this->is_uptodate === false) : ?>
                         <span class='avis' style='background-color: #3a87ad; font-size: .7em;'>Mise à jour disponible sur SDIS62/prevarisc</span>
+                    <?php elseif (empty($this->is_uptodate)) : ?>
+                        <span class='avis' style='background-color: red; font-size: .7em;'>Erreur lors de la récupération de la version courante</span>
                     <?php endif ?>
                 </p>
                 </dd>

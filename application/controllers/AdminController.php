@@ -4,60 +4,58 @@ class AdminController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-        $cache_config = $this->getInvokeArg('bootstrap')->getOption('cache');
-
         $this->_helper->layout->setLayout('menu_admin');
 
-        if (getenv('PREVARISC_BRANCH') == false) {
-            try {
-                $git = new SebastianBergmann\Git(APPLICATION_PATH . DS . '..');
-                $revisions = $git->getRevisions();
-                $last_revision = end($revisions);
-                $revision_prevarisc_local = $last_revision['sha1'];
-                $client = new Zend_Http_Client();
-                $client->setUri('https://api.github.com/repos/SDIS62/prevarisc/git/refs/heads/2.x');
-                $client->setConfig(['maxredirects' => 0, 'timeout' => 3]);
-                $response = json_decode($client->request()->getBody());
-                $revision_prevarisc_github = $response->object->sha;
-                $this->view->is_uptodate = $revision_prevarisc_github == $revision_prevarisc_local;
-            }
-            catch(Exception $e) {}
+        $options = Zend_Registry::get('options');
+
+        try {
+            $git = new SebastianBergmann\Git(APPLICATION_PATH . DS . '..');
+            $revisions = $git->getRevisions();
+            $last_revision = end($revisions);
+            $revision_prevarisc_local = $last_revision['sha1'];
+            $client = new Zend_Http_Client();
+            $client->setUri('https://api.github.com/repos/SDIS62/prevarisc/git/refs/heads/2.x');
+            $client->setConfig(['maxredirects' => 0, 'timeout' => 3]);
+            $response = json_decode($client->request()->getBody());
+            $revision_prevarisc_github = $response->object->sha;
+            $this->view->is_uptodate = $revision_prevarisc_github == $revision_prevarisc_local;
         }
+        catch(Exception $e) {}
 
-        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
-        $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
-        $this->view->dbname = getenv('PREVARISC_DB_DBNAME');
-        $this->view->db_url = getenv('PREVARISC_DB_HOST').(getenv('PREVARISC_DB_PORT') ? ':'.getenv('PREVARISC_DB_PORT') : '');
-        $this->view->api_enabled = getenv('PREVARISC_SECURITY_KEY') != "";
-        $this->view->proxy_enabled = getenv('PREVARISC_PROXY_ENABLED');
-        $this->view->third_party_plugins = implode(', ', explode(';', getenv('PREVARISC_THIRDPARTY_PLUGINS')));
+        $this->view->key_ign = $options['carto']['ign'];
+        $this->view->key_googlemap = $options['carto']['google'];
+        $this->view->dbname = $options['resources']['db']['params']['dbname'];
+        $this->view->db_url = $options['resources']['db']['params']['host'].($options['resources']['db']['params']['port'] ? ':'.$options['resources']['db']['params']['port'] : '');
+        $this->view->api_enabled = $options['security']['key'];
+        $this->view->proxy_enabled = $options['proxy']['enabled'];
+        $this->view->third_party_plugins = implode(', ', $options['plugins']);
 
-        if (getenv('PREVARISC_CAS_ENABLED')) {
+        if ($options['auth']['cas']['enabled']) {
             $this->view->authentification = "CAS";
-        } else if (getenv('PREVARISC_NTLM_ENABLED')) {
+        } else if ($options['auth']['ntlm']['enabled']) {
             $this->view->authentification = "NTLM + BDD";
-        } else if (getenv('PREVARISC_LDAP_ENABLED')) {
-            $this->view->authentification = sprintf("LDAP + BDD : %s:%d/%s", 
-                getenv("PREVARISC_LDAP_HOST"), 
-                getenv("PREVARISC_LDAP_PORT"),
-                getenv("PREVARISC_LDAP_BASEDN"));
+        } else if ($options['auth']['ldap']['enabled']) {
+            $this->view->authentification = sprintf("LDAP + BDD : %s:%d/%s",
+                $options['auth']['ldap']['host'],
+                $options['auth']['ldap']['port'],
+                $options['auth']['ldap']['baseDn']);
         } else {
             $this->view->authentification = "BDD";
         }
-        
-        $this->view->cache_adapter = $cache_config['adapter'];
-        $this->view->cache_url = $cache_config['host']. ($cache_config['port'] ? ':'.$cache_config['port'] : '');
-        $this->view->cache_lifetime = $cache_config['lifetime'];
-        $this->view->cache_enabled = $cache_config['enabled'];
+
+        $this->view->cache_adapter = $options['cache']['adapter'];
+        $this->view->cache_url = $options['cache']['host']. ($options['cache']['port'] ? ':'.$options['cache']['port'] : '');
+        $this->view->cache_lifetime = $options['cache']['lifetime'];
+        $this->view->cache_enabled = $options['cache']['enabled'];
 
         $service_search = new Service_Search;
         $users = $service_search->users(null, null, null, true, 1000)['results'];
         $this->view->users = array();
 
         foreach ($users as $user) {
-          if (time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime')) {
-            $this->view->users[] = $user;
-          }
+            if (time() - strtotime($user["LASTACTION_UTILISATEUR"]) < ini_get('session.gc_maxlifetime')) {
+                $this->view->users[] = $user;
+            }
         }
     }
 }

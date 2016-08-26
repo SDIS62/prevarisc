@@ -2,8 +2,7 @@
 
     <div class='well well-large text-center'>
         <p class='lead'>La clé IGN n'est pas renseignée.</p>
-        <p>Vous devez placer la clé IGN dans votre secret.ini comme ceci : </p>
-        <pre>ign.key = XXXXXXXXXXXX</pre>
+        <p>Vous devez placer la clé IGN dans votre configuration Prevarisc</p>
     </div>
 
 <?php elseif(count($this->couches_cartographiques) == 0) : ?>
@@ -20,7 +19,7 @@
     <p class='text-right'><a class='btn' href='<?php echo $this->url(array('controller' => 'couches-cartographiques', 'action' => 'add'), null, true) ?>'>Ajouter une couche</a></p>
 
     <div id='geoportail-container'  style="height: 350px; max-height: 350px;"></div>
-    
+
     <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
     <script>
         $(document).ready(function() {

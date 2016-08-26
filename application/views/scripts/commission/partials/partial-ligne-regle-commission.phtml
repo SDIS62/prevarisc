@@ -3,10 +3,8 @@
         <div class='inner_scroll'>
             <!-- ID de la règle -->
             <input type='hidden' name='ID_REGLE[]' value='<?php echo $this->id_regle ?>' />
-        
-            <!-- Emplacement géographique (Si c'est une communale, c'est une commune sinon un groupement) -->
-            <?php $id_type_commission_communale = getenv('PREVARISC_COMMISSION_COMMUNALE_TYPE') ? getenv('PREVARISC_COMMISSION_COMMUNALE_TYPE') : 2; ?>
-            <?php if($this->infos["ID_COMMISSIONTYPE"] == $id_type_commission_communale) : ?>
+
+            <?php if($this->infos["ID_COMMISSIONTYPE"] == $this->id_type_commission_communale) : ?>
                 <p>
                     Commune
                     <input type='text' class='commune' value='<?php echo $this->commune["LIBELLE_COMMUNE"] ?>' class='bigger' size=25 <?php if($this->commune["NUMINSEE_COMMUNE"]) echo "style='background-color: #EEE'" ?> />
@@ -21,7 +19,7 @@
             <?php endif ?>
         </div>
 	</td>
-	
+
 	<!-- Catégorie -->
 	<td class='checkbox_area'>
         <div class='inner_scroll'>
@@ -35,7 +33,7 @@
             </ul>
 		</div>
 	</td>
-	
+
 	<!-- Le type -->
 	<td class='checkbox_area' >
         <div class='inner_scroll'>
@@ -49,7 +47,7 @@
             </ul>
         </div>
 	</td>
-	
+
 	<!-- Classes -->
 	<td class='checkbox_area' >
         <div class='inner_scroll'>
@@ -63,7 +61,7 @@
             </ul>
         </div>
 	</td>
-	
+
 	<!-- Local sommeil ou non -->
 	<td  class='checkbox_area' >
         <div class='inner_scroll'>
@@ -79,7 +77,7 @@
             </ul>
         </div>
 	</td>
-	
+
 	<!-- Etude et/ou visite -->
 	<td class='checkbox_area' >
         <div class='inner_scroll'>
@@ -95,7 +93,7 @@
             </ul>
         </div>
 	</td>
-	
+
 	<!-- Action -->
 	<td style='text-align: center;' >
 		<a class='delete-regle' href='/commission/delete-regle?id_regle=<?php echo $this->id_regle ?>' title='Supprimer' >
