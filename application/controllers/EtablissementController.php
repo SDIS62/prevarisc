@@ -13,8 +13,8 @@ class EtablissementController extends Zend_Controller_Action
         $etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->couches_cartographiques = $service_carto->getAll();
-        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
-        $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
+        $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
+        $this->view->key_googlemap = Zend_Registry::get('options')['carto']['google'];
 
         $this->view->etablissement = $etablissement;
         $this->view->default_periodicite = $DB_periodicite->gn4ForEtablissement($etablissement);
@@ -22,7 +22,8 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
-        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $this->view->store = $this->getInvokeArg('bootstrap')->getResource('dataStore');
+
     }
 
     public function editAction()
@@ -38,7 +39,7 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->etablissement = $etablissement;
 
-        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
 
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
@@ -65,11 +66,11 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->couches_cartographiques = $service_carto->getAll();
-        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
 
         $this->view->add = false;
 
-        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
+        $acl = $this->getInvokeArg('bootstrap')->getResource('acl');
         $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
         $this->view->is_allowed_change_statut = $acl->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
@@ -117,10 +118,10 @@ class EtablissementController extends Zend_Controller_Action
 
         $this->view->add = true;
 
-        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
         $this->view->couches_cartographiques = $service_carto->getAll();
 
-        $acl = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl');
+        $acl = $this->getInvokeArg('bootstrap')->getResource('acl');
         $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
         $this->view->is_allowed_change_statut = $acl->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
 
@@ -238,7 +239,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
-        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $this->view->store = $this->getInvokeArg('bootstrap')->getResource('dataStore');
     }
 
     public function getPieceJointeAction()
@@ -257,7 +258,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
         $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
-        $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+        $this->view->store = $this->getInvokeArg('bootstrap')->getResource('dataStore');
 
     }
 

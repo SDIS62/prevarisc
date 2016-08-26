@@ -36,6 +36,9 @@ class TableauDesPeriodicitesController extends Zend_Controller_Action
 
         $this->view->tableau = $result;
 
+        // Types pour lesquels on ne définit pas la périodicité sans hebergement
+        $this->view->localsommeil_types = Zend_Registry::get('options')['types_sans_local_sommeil'];
+
     }
 
     public function saveAction()

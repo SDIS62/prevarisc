@@ -6,27 +6,31 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
     {
         $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
 
+        $options = Zend_Registry::get('options');
+
         // Les routes sans protection sont ignorées
         if (in_array($request->getControllerName(), array('error', 'session'))) {
             return;
         }
 
         // Si l'utilisateur est connecté avec l'application mobile, on utilise le partage d'un token
-        if($request->getParam('key') === getenv('PREVARISC_SECURITY_KEY')) {
+        $key = $options['security']['key'];
+        if($request->getParam('key') === $key) {
             return ;
         }
 
         // Gestion de l'auth CAS
-        if (getenv('PREVARISC_CAS_ENABLED') == 1) {
+        $cas = $options['auth']['cas'];
+        if ($cas['enabled'] == 1) {
             // Enable debugging
-            if (getenv('PREVARISC_DEBUG_ENABLED') == 1) {
+            if ($options['debug'] == 1) {
                 phpCAS::setDebug();
                 phpCAS::setVerbose(true);
             }
             // Initialize phpCAS
-            phpCAS::client(getenv('PREVARISC_CAS_VERSION') ?  : CAS_VERSION_2_0, getenv('PREVARISC_CAS_HOST'), (int) getenv('PREVARISC_CAS_PORT'), getenv('PREVARISC_CAS_CONTEXT'), false);
+            phpCAS::client($cas['version'] ?  : CAS_VERSION_2_0, $cas['host'], (int) $cas['port'], $cas['context'], false);
             phpCAS::setLang(PHPCAS_LANG_FRENCH);
-            if (getenv('PREVARISC_CAS_NO_SERVER_VALIDATION') == 1) {
+            if ($cas['no_server_validation'] == 1) {
                 phpCAS::setNoCasServerValidation();
             }
             // force CAS authentication

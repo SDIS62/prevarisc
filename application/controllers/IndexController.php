@@ -5,8 +5,24 @@ class IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
+        $options = Zend_Registry::get('options')['dashboard'];
+        $config = array();
+
+        // custom configurations
+        if ($options['next_commissions_days']) {
+            $config['next_commissions_days'] = (int) $options['next_commissions_days'];
+        }
+
+        if ($options['dossiers_sans_avis_days']) {
+            $config['dossiers_sans_avis_days'] = (int) $options['dossiers_sans_avis_days'];
+        }
+
+        if ($options['courrier_sans_reponse_days']) {
+            $config['courrier_sans_reponse_days'] = (int) $options['courrier_sans_reponse_days'];
+        }
+
         $service_user = new Service_User;
-        $service_dashboard = new Service_Dashboard;
+        $service_dashboard = new Service_Dashboard($config);
         $blocsConfig = $service_dashboard->getBlocConfig();
 
         $identity = Zend_Auth::getInstance()->getIdentity();

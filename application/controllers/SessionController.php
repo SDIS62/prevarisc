@@ -10,30 +10,32 @@ class SessionController extends Zend_Controller_Action
         $service_user = new Service_User;
         $username = null;
         $this->view->form = $form;
-        
+
+        $options = Zend_Registry::get('options');
+
         try {
-            
+
             $username = null;
             $password = "";
-            
+
             // Adaptateur CAS
-            if (getenv('PREVARISC_CAS_ENABLED') == 1) {
+            if ($options['auth']['cas']['enabled'] == 1) {
                 $username = phpCAS::getUser();
-                
-            } else if (getenv('PREVARISC_NTLM_ENABLED') == 1) {
-                
+
+            } else if ($options['auth']['ntlm']['enabled'] == 1) {
+
                 if (!isset($_SERVER['REMOTE_USER'])) {
                     error_log('ntlm auth with no REMOTE_USER set in server variables');
                 } else {
-                    $cred = explode('\\', $_SERVER['REMOTE_USER']); 
-                    if (count($cred) == 1) array_unshift($cred, null); 
+                    $cred = explode('\\', $_SERVER['REMOTE_USER']);
+                    if (count($cred) == 1) array_unshift($cred, null);
                     list($domain, $username) = $cred;
                 }
-                
+
             }
-            
+
             if ($this->_request->isPost()) {
-                
+
                 if (!$form->isValid($this->_request->getPost())) {
                     throw new Zend_Auth_Exception('Données invalides.');
                 }
@@ -41,9 +43,9 @@ class SessionController extends Zend_Controller_Action
                 $username = $this->_request->prevarisc_login_username;
                 $password = $this->_request->prevarisc_login_passwd;
             }
-            
+
             if ($username) {
-            
+
                 // Récupération de l'utilisateur
                 $user = $service_user->findByUsername($username);
 
@@ -56,19 +58,26 @@ class SessionController extends Zend_Controller_Action
                 $adapters = array();
 
                 // Adaptateur SSO noauth
-                if (getenv('PREVARISC_CAS_ENABLED') == 1 || getenv('PREVARISC_NTLM_ENABLED') == 1 ) {
+                if ($options['auth']['cas']['enabled'] == 1 || $options['auth']['ntlm']['enabled'] == 1 ) {
                     $adapters['sso'] = new Service_PassAuthAdapater($username);
                 }
 
                 // Adaptateur principal (dbtable)
                 $adapters['dbtable'] = new Zend_Auth_Adapter_DbTable(null, 'utilisateur', 'USERNAME_UTILISATEUR', 'PASSWD_UTILISATEUR');
-                $adapters['dbtable']->setIdentity($username)->setCredential(md5($username . getenv('PREVARISC_SECURITY_SALT') . $password));
+                $salt = $options['security']['salt'];
+                $adapters['dbtable']->setIdentity($username)->setCredential(md5($username . $salt . $password));
 
                 // Adaptateur LDAP
-                if (getenv('PREVARISC_LDAP_ENABLED') == 1) {
-                    $ldap = new Zend_Ldap(array('host' => getenv('PREVARISC_LDAP_HOST'), 'port' => getenv('PREVARISC_LDAP_PORT') ? : 389, 'username' => getenv('PREVARISC_LDAP_USERNAME'), 'password' => getenv('PREVARISC_LDAP_PASSWORD'), 'baseDn' => getenv('PREVARISC_LDAP_BASEDN')));
+                if ($options['auth']['ldap']['enabled'] == 1) {
+                    $ldap = new Zend_Ldap(array(
+                        'host' => $options['auth']['ldap']['host'],
+                        'port' => $options['auth']['ldap']['port'],
+                        'username' => $options['auth']['ldap']['username'],
+                        'password' => $options['auth']['ldap']['password'],
+                        'baseDn' => $options['auth']['ldap']['baseDn']
+                    ));
                     try {
-                        $accountForm = getenv('PREVARISC_LDAP_ACCOUNT_FORM') ? getenv('PREVARISC_LDAP_ACCOUNT_FORM') : Zend_Ldap::ACCTNAME_FORM_DN;
+                        $accountForm = $options['auth']['ldap']['account_form'] ? $options['auth']['ldap']['account_form'] : Zend_Ldap::ACCTNAME_FORM_DN;
                         $adapters['ldap'] = new Zend_Auth_Adapter_Ldap();
                         $adapters['ldap']->setLdap($ldap);
                         $adapters['ldap']->setUsername($ldap->getCanonicalAccountName($username, $accountForm));
@@ -86,7 +95,7 @@ class SessionController extends Zend_Controller_Action
 
                 throw new Exception('Les identifiants ne correspondent pas.');
             }
-            
+
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array('context' => 'danger', 'title' => 'Erreur d\'authentification', 'message' => $e->getMessage()));
         }
@@ -95,6 +104,7 @@ class SessionController extends Zend_Controller_Action
     public function logoutAction()
     {
         $auth = Zend_Auth::getInstance();
+        $options = Zend_Registry::get('options');
 
         if($auth->hasIdentity()) {
             $service_user = new Service_User;
@@ -103,12 +113,11 @@ class SessionController extends Zend_Controller_Action
 
             $auth->clearIdentity();
         }
-        
-        if (getenv('PREVARISC_CAS_ENABLED') == 1) {
+
+        if ($options['auth']['cas']['enabled'] == 1) {
             phpCAS::logout();
         } else {
             $this->_helper->redirector->gotoUrl($this->view->url(array("controller" => null, "action" => null)));
         }
     }
 }
-

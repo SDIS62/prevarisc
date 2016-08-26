@@ -1,7 +1,7 @@
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
 <input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>'/>
 <ul class="nav nav-tabs nav-stacked menu_dashboard" >
-    <?php if (getenv('PREVARISC_SECURITY_KEY') && getenv('PREVARISC_SECURITY_KEY') !== '') : ?>
+    <?php if (!empty($this->security_key)) : ?>
         <li>
             <a id='syncCom'  href='<?php echo $this->url_webcal ?>' style="display:none">
                 <i class="icon-repeat"></i> Synchroniser le calendrier de cette commission
@@ -14,7 +14,7 @@
         </a>
     </li>
     <?php if($this->array_commissions): ?>
-        <?php if (getenv('PREVARISC_SECURITY_KEY') && getenv('PREVARISC_SECURITY_KEY') !== '') : ?>
+        <?php if (!empty($this->security_key)) : ?>
             <li>
                 <a id='syncCal'  href='<?php echo $this->url_webcal ?>'>
                     <i class="icon-repeat"></i> Synchroniser le calendrier de toutes les commissions
@@ -35,7 +35,7 @@
                     </li>
                   <?php endif ?>
                 <?php endforeach ?>
-                </li>            
+                </li>
             <?php endif ?>
         <?php endforeach ?>
     <?php endif ?>

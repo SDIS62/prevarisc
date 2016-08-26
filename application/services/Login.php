@@ -22,12 +22,13 @@ class Service_Login
             $user = $model_utilisateur->fetchRow($model_utilisateur->select()->where('USERNAME_UTILISATEUR = ?', $username,'AND PASSWD_UTILISATEUR = ?',$password));
 
             // Si l'utilisateur n'est pas actif, on renvoie false
+            $salt = Zend_Registry::get('options')['security']['salt'];
             if ($user === null || !$user->ACTIF_UTILISATEUR) {
                 $reponse = 'non_autorise';
                 $results = array(
                     'reponse'=> $reponse
                 );
-            } elseif (md5($username . getenv('PREVARISC_SECURITY_SALT') . $password) !=$user->PASSWD_UTILISATEUR) {
+            } elseif (md5($username . $salt . $password) != $user->PASSWD_UTILISATEUR) {
                 $reponse = 'non_autorise';
                 $results = array(
                     'reponse'=> $reponse

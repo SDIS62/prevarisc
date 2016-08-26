@@ -4,15 +4,6 @@
 <form id='form_periodicite' action='/tableau-des-periodicites/save' method='post' >
 
 	<h3>ERP</h3>
-        <!-- Types pour lesquels on ne définit pas la périodicité sans hebergement -->
-        <?php
-        if (getenv('PREVARISC_LOCAL_SOMMEIL_TYPES') != false){
-            $localsommeil_types = explode(';',getenv('PREVARISC_LOCAL_SOMMEIL_TYPES'));
-        } else $localsommeil_types = array(7,11);
-        ?>
-
-	<!-- Tableaux -->
-
 	<?php foreach( array_chunk($this->array_types, 7) as $array_types ) : ?>
 	<table class='table table-bordered table-condensed periodicite' >
 		<thead>
@@ -39,7 +30,7 @@
 					<?php $periodicite = $this->tableau[$categorie["ID_CATEGORIE"]][$type["ID_TYPE"]]; ?>
 
 					<td style='text-align: center' >
-						<?php if(!in_array($type["ID_TYPE"], $localsommeil_types)) : ?>
+						<?php if(!in_array($type["ID_TYPE"], $this->localsommeil_types)) : ?>
 							<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[0]) ) ? $periodicite[0] : 0 ?>' name='<?php echo $categorie["ID_CATEGORIE"]."_".$type["ID_TYPE"]."_0" ?>' />
 						<?php else : ?>
 							<input type='text' size='3' style='visibility: hidden' />

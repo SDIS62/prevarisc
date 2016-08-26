@@ -902,9 +902,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 // Local à sommeil en fonction du type
                 if($type !== null) {
-                    if (getenv('PREVARISC_LOCAL_SOMMEIL_TYPES') != false){
-                        $concerned_types = explode(';',getenv('PREVARISC_LOCAL_SOMMEIL_TYPES'));
-                    } else $concerned_types = array(7,11);
+                    $concerned_types = Zend_Registry::get('options')['types_sans_local_sommeil'];
                     if(in_array($type, $concerned_types)) {
                         $results['local_sommeil'] = true;
                     }

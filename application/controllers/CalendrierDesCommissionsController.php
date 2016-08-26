@@ -54,9 +54,11 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
         $userId = Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'];
 
-        $url = sprintf("/api/1.0/calendar?userid=%s&key=%s",
-                        $userId,
-                        getenv('PREVARISC_SECURITY_KEY'));
+        $security_key = Zend_Registry::get('options')['security']['key'];
+
+        $this->view->security_key = $security_key;
+
+        $url = sprintf("/api/1.0/calendar?userid=%s&key=%s", $userId, $security_key);
 
         if ($this->_getParam("idComm")) {
             $url .= sprintf("&commission=%s", $this->_getParam("idComm"));

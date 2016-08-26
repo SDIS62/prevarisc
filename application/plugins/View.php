@@ -16,17 +16,16 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->headTitle(strip_tags($view->navigation()->breadcrumbs()->setMinDepth(0)->setSeparator(" / ")));
 
             // Envoi de la version en cours sur la vue
-            if (getenv('PREVARISC_BRANCH') != false) {
-                $view->branch_prevarisc = getenv('PREVARISC_BRANCH');
-                $view->revision_prevarisc = getenv('PREVARISC_REVISION');
-                $view->version_prevarisc = getenv('PREVARISC_BRANCH').'.'.getenv('PREVARISC_REVISION');
-            } else {
+            try {
                 $git = new SebastianBergmann\Git(APPLICATION_PATH . DS . '..');
                 $view->branch_prevarisc = $git->getCurrentBranch();
                 $revisions = $git->getRevisions();
                 $last_revision = end($revisions);
                 $view->revision_prevarisc = $last_revision['sha1'];
                 $view->version_prevarisc = $view->branch_prevarisc . '@' . substr((string) $view->revision_prevarisc, 0, 7);
+            }
+            catch(Exception $e) {
+                $view->version_prevarisc = date('YmdH');
             }
 
             // Chargement des aides de vue

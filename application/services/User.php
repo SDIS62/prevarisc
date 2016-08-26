@@ -139,7 +139,8 @@ class Service_User
             $user->ID_UTILISATEURINFORMATIONS = $informations->ID_UTILISATEURINFORMATIONS;
 
             if(array_key_exists('PASSWD_INPUT', $data)) {
-                $user->PASSWD_UTILISATEUR = $data['PASSWD_INPUT'] == '' ? null : md5($user->USERNAME_UTILISATEUR . getenv('PREVARISC_SECURITY_SALT') . $data['PASSWD_INPUT']);
+                $salt = Zend_Registry::get('options')['security']['salt'];
+                $user->PASSWD_UTILISATEUR = $data['PASSWD_INPUT'] == '' ? null : md5($user->USERNAME_UTILISATEUR . $salt . $data['PASSWD_INPUT']);
             }
 
             $user->save();
