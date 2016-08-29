@@ -1,18 +1,18 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
             <a class="brand" href="/" style="padding: 7px 15px 3px 20px"><img src='/favicon.ico' alt='Prevarisc' width="37px" /></a>
             <div class="nav-collapse collapse">
                 <ul class='nav'>
-                    <li><a href='/'><i class="icon-home grey-icn-plus" title="Accueil"></i></a></li>
+                    <li>
+                        <a href='/'>
+                            Tableau de bord
+                        </a>
+                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             Établissements
+                            <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href='/search/etablissement?label=&page=1'><i class="icon-th-list"></i> Rechercher</a></li>
@@ -22,6 +22,7 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             Dossiers
+                            <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href='/search/dossier?objet=&page=1'><i class="icon-th-list"></i> Rechercher</a></li>
@@ -39,6 +40,17 @@
                     </li>
                 </ul>
                 <ul class='nav pull-right'>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <?php echo $this->avatar(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR'], 'medium', array('style' => "width: 27px; border: 1px solid #dfdfdf; border-radius: 50%; margin-right: 5px;")) ?>
+                            <?php echo Zend_Auth::getInstance()->getIdentity()['infos']['PRENOM_UTILISATEURINFORMATIONS']." ".Zend_Auth::getInstance()->getIdentity()['infos']['NOM_UTILISATEURINFORMATIONS'] ?>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?php echo $this->url(array('controller' => 'session', 'action' => 'logout'), null, true) ?>"><i class="icon-off"></i> Déconnexion</a></li>
+                        </ul>
+                    </li>
+                    <li class="divider-vertical" style="height: 50px"></li>
                     <li class="li-searched">
                         <form class="navbar-search" action="/search/etablissement" method="get">
                             <div class="input-append" id="research-input">
@@ -88,9 +100,6 @@
                     default:
                         LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
                 }
-
-
-
                 return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
             }
         }).result(function(e, item) {
