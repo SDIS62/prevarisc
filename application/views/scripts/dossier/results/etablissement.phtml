@@ -3,19 +3,19 @@
     <?php if($this->NB_ENFANTS > 0) : ?>
     <span class="icone_enfants" ><i class='ui-icon ui-icon-triangle-1-e' style='position: relative; left: -25px; float: left; margin-right: -25px;' ></i></span>
     <?php endif ?>
-    
+
     <!-- Affichage du libellé du type -->
     <small style='display: inline-block; width: 65px'>
         <strong>
         <?php
             if($this->ID_TYPE) {
-                echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->LIBELLE_TYPE . '.png') ? "<img src='/images/types/b/icone-type-" . $this->LIBELLE_TYPE . ".png' title='" . $this->LIBELLE_TYPE . "' />&nbsp;-&nbsp;" : $this->LIBELLE_TYPE . "&nbsp;-&nbsp;";
+                echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->LIBELLE_TYPE . '.png') ? "<img src='/img/types/b/icone-type-" . $this->LIBELLE_TYPE . ".png' title='" . $this->LIBELLE_TYPE . "' />&nbsp;-&nbsp;" : $this->LIBELLE_TYPE . "&nbsp;-&nbsp;";
             }
             echo strtoupper(substr($this->LIBELLE_GENRE, 0 , 4));
         ?>
         </strong>
     </small>
-    
+
     <!-- nom de l'établissement -->
     <span class="nom-etablissement">
 		<?php
@@ -46,12 +46,12 @@
             </small>
         </a>
     </span>
-    
+
     <!-- Icone de chargement des enfants (si il y'en a, et si on est en mode niveau -->
     <?php if($this->NB_ENFANTS > 0) : ?>
-        <span class='load ui-helper-hidden' ><img src='/images/load.gif' alt='Chargement ...' /></span>
+        <span class='load ui-helper-hidden' ><img src='/img/load.gif' alt='Chargement ...' /></span>
     <?php endif ?>
-    
+
     <?php
         if($this->DATEVISITE_DOSSIER != null)
         {

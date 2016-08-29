@@ -3,6 +3,48 @@ document.addEventListener("DOMContentLoaded", function() {
     bindContainerSize();
     bindEtsMarquee($(document));
     bindEtsPopup($(document));
+
+    $('.date').live('click', function() {
+		$(this).datepicker({showOn:'focus'}).focus();
+	});
+
+	//Pour les heures
+	$('.time').live('focus', function() {
+		$(this).timeEntry($.timeEntry.regional['fr']);
+	});
+
+	$("#DATEINSERT_INPUT").mask("99/99/9999",{placeholder:" "});
+
+	$("#addNumDoc").live('click',function(){
+		if($("#NUM_DOCURBA").val() != ''){
+			$("#listeDocUrba").append("<div class='docurba' style=''><input type='hidden' name='docUrba[]' value='"+$("#docurbaVal").html()+$("#NUM_DOCURBA").val()+"' id='urba_"+$("#docurbaVal").html()+$("#NUM_DOCURBA").val()+"'/>"+$("#docurbaVal").html()+$("#NUM_DOCURBA").val()+" <a href='' idDocurba='"+$("#docurbaVal").html()+$("#selectNature").val()+"'class='suppDocUrba'>&times;</a></div>");
+			$("#NUM_DOCURBA").val('');
+		}
+		return false;
+	});
+
+	$(".suppDocUrba").live('click',function(){
+		$(this).parent().remove();
+		return false;
+	});
+
+
+	$("#OBJET_DOSSIER").blur(function(){
+		if($("#OBJET_DOSSIER").val() != ''){
+			$("#OBJET_DOSSIER").css("border-color","black");
+		}
+	});
+
+	//Permet de vider un input d'une date pour que celle-ci ne s'affiche plus
+	$(".suppDate").live('click',function(){
+		$(this).prev('.date').attr('value','');
+		return false;
+	});
+
+	$(".hideCalendar").live('click',function(){
+		return false;
+	});
+    
 }, false);
 
 function bindTitlePopup() {
@@ -59,7 +101,7 @@ function bindEtsPopup($elem) {
         over: function () {
             var id = $(this).attr('href').replace("/etablissement/index/id/", "");
             var e = $(this);
-            e.popover({html: true, content: "<p class='text-center'><img src='/images/load.gif'></p>"}).popover('show');
+            e.popover({html: true, content: "<p class='text-center'><img src='/img/load.gif'></p>"}).popover('show');
             $.getJSON("/api/1.0/etablissement?id=" + id, function(data) {
                 var ets_id = data.response.general.ID_ETABLISSEMENT;
                 var ets_libelle = data.response.informations.LIBELLE_ETABLISSEMENTINFORMATIONS;
@@ -91,7 +133,7 @@ function bindEtsPopup($elem) {
                 html = "";
                 if(ets_parents != '') html += "<span>" + ets_parents + "</span><br>";
                 html += "<span class='lead'><strong>";
-                if(ets_type != null) html+= "<img src='/images/types/b/icone-type-" + ets_type + ".png'>&nbsp;";
+                if(ets_type != null) html+= "<img src='/img/types/b/icone-type-" + ets_type + ".png'>&nbsp;";
                 html += ets_libelle + "</strong></span>";
                 html += "&nbsp;<span><small>" + ets_adresses + "</small></span>";
                 html += "<br /><span><small>#" + data.response.general.NUMEROID_ETABLISSEMENT + "</small></span>";
@@ -157,7 +199,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
     if (points.length === 0) {
         return ;
     }
-    
+
     var viewer = Geoportal.load(divId, ignKey, {
             lat: points[0].lat,
             lon: points[0].lon
@@ -168,7 +210,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
             proxy: '/proxy?url=',
             onView: function() {
                 var map = viewer.getViewer().getMap();
-                
+
                 // Récupération de la toolbox pour l'identifiant
                 var toolBox= viewer.getViewer().getMap().getControlsByClass('Geoportal.Control.ToolBox')[0];
 
@@ -178,7 +220,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                     div: OpenLayers.Util.getElement(toolBox.id+'_navbar'),
                     // Div où le resultat des mesures est affiché
                     targetElement: OpenLayers.Util.getElement(toolBox.id+'_navbar')
-                })); 
+                }));
 
                 // Création de la barre de mesure
                 map.addControl(new Geoportal.Control.MeasureToolbar({
@@ -194,14 +236,14 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                     div: OpenLayers.Util.getElement(toolBox.id+'_zoombar'),
                     targetElement: OpenLayers.Util.getElement(toolBox.id+'_zoombar')
                 }));
-    
+
                 // Création de la barre de zoom
                 map.addControl(new Geoportal.Control.LayerSwitcher({
                     // Div où la barre doit être ajoutée
                     div: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher'),
                     targetElement: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher')
                 }));
-                
+
                 // Ajout des couches WMS
                 if (wmsLayers && wmsLayers.length > 0) {
                     $('#reponse-modal').dialog({
@@ -211,10 +253,10 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         width: '800',
                         autoOpen: false,
                         close: function() {
-                           $(this).empty(); 
+                           $(this).empty();
                         },
                         modal: false});
-                
+
                     for (var i = 0 ; i < wmsLayers.length ; i++) {
                         console.log(wmsLayers[i].URL_COUCHECARTO);
                         // ajout de la couche sur la carte
@@ -233,7 +275,7 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         );
 
                         /*var infoFeature = new OpenLayers.Control.WMSGetFeatureInfo({
-                            url: wmsLayers[i].URL_COUCHECARTO, 
+                            url: wmsLayers[i].URL_COUCHECARTO,
                             title: 'Identify features by clicking',
                             layers: [layer],
                             queryVisible: true
@@ -248,9 +290,9 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         //map.addControl(infoFeature);
                         //infoFeature.activate();
                     }
-                
+
                 }
-                
+
                 // Suppression des markers par défaut
                 var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
                 if (vectorLayers.length > 0) {
@@ -259,26 +301,26 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
                         vectorLayer.features[0].destroy();
                     }
                 }
-                
+
                 // Ajout des POI avec les adresses sur la carte
                 var epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
                 var projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
-                
+
                 var vectorLayer = new OpenLayers.Layer.Vector("Etablissement");
-    
+
                 // Define markers as "features" of the vector layer:
                 for (var i = 0 ; i < points.length ; i++) {
-                    
+
                     var feature = new OpenLayers.Feature.Vector(
                         new OpenLayers.Geometry.Point(points[i].lon, points[i].lat).transform(epsg4326, projectTo),
                         {description:points[i].description} ,
-                        {externalGraphic: '/images/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  }
-                    );    
+                        {externalGraphic: '/img/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  }
+                    );
                     vectorLayer.addFeatures(feature);
                 }
-                
+
                 map.addLayer(vectorLayer);
-    
+
                 //Add a selector control to the vectorLayer with popup functions
                 var controls = {
                   selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
@@ -304,17 +346,17 @@ function initViewer(divId, ignKey, points, wmsLayers, onView) {
 
                 map.addControl(controls['selector']);
                 controls['selector'].activate();
-                
-                
+
+
                 if (onView !== undefined) {
                     onView();
                 }
             }
         })
     );
-    
+
     return viewer;
-    
+
 }
 
 
@@ -329,6 +371,6 @@ function putMarkerAt(map, point, sourceProjection) {
             sourceProjection, vectorLayer.projection.toString()
         );
         point = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat);
-        vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point, {}, {externalGraphic: '/images/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  })]);
+        vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point, {}, {externalGraphic: '/img/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  })]);
     }
 }

@@ -28,10 +28,10 @@
             <?php foreach($this->etablissement['parents'] as $etablissement) : ?>
                 <a href='/etablissement/index/id/<?php echo  $etablissement["ID_ETABLISSEMENT"] ?>'>
                     <?php echo $etablissement["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?>
-                </a> - 
+                </a> -
             <?php endforeach ?>
         <?php endif ?>
-        <?php echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'images' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/images/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' title='" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "' />" : ''; ?>
+        <?php echo file_exists(APPLICATION_PATH . DS . '..' . DS . 'public' . DS . 'img' . DS . 'types' . DS . 'b' . DS . 'icone-type-' . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . '.png') ? "<img src='/img/types/b/icone-type-" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . ".png' title='" . $this->etablissement['informations']['LIBELLE_TYPE_PRINCIPAL'] . "' />" : ''; ?>
         <?php echo $this->etablissement['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"] ?>
         <?php if ($this->etablissement['general']['NUMEROID_ETABLISSEMENT']): ?>
             <span class="pull-right">
@@ -48,7 +48,7 @@
             Présence d'un dossier avec avis differé
         </p>
     <?php elseif($this->etablissement['avis'] != null) : ?>
-    
+
          <?php if($this->etablissement['avis'] == 1 && $this->avis == "avisDoss") : ?>
             <p class="avis F">Favorable <?php echo $this->etablissement['informations']['ID_GENRE'] == 3 ? '' : " à l'exploitation " ?></p>
          <?php elseif($this->etablissement['avis'] == 2  && $this->avis == "avisDoss") : ?>
@@ -61,9 +61,9 @@
          <?php else : ?>
             <p class="avis">Avis d'exploitation indisponible</p>
          <?php endif ?>
-        
+
     <?php endif ?>
-    
+
     <!-- Présence de risques naturels ou technologiques-->
     <?php if(!empty($this->etablissement['general']['DESCTECH_RISQUES_NATURELS_ETABLISSEMENT'])) : ?>
         <p class='label label-warning'>

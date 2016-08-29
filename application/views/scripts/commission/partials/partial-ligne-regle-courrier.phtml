@@ -1,9 +1,9 @@
 <td style='text-align: center;' >
-		
+
 	<p style='line-height: 37px; padding-top: 16px;' >
-	
+
 		<?php if($this->name_courrier != null) : ?>
-			<span><img src='/images/file.gif' alt='' /></span>
+			<span><img src='/img/file.gif' alt='' /></span>
 			<span style='vertical-align: top;'>
 				<strong style='font-size: 1.3em;' >
 					<a href='/data/uploads/courriers/<?php echo $this->id_membre . $this->type . "_". $this->name_courrier ?>' style='color: #0174A7' ><?php echo $this->name_courrier ?></a>
@@ -15,12 +15,12 @@
 		<?php endif ?>
 	</p>
 
-	<p>	
+	<p>
 		<form class='courrier' action='/commission/add-courrier' enctype='multipart/form-data' method='post' target='iframe' >
 			<input id='add-file' type='file' name='COURRIER' />
 			<input type='hidden' name='type' value='<?php echo $this->type ?>' />
 			<input type='hidden' name='id_membre' value='<?php echo $this->id_membre ?>' />
 		</form>
 	</p>
-	
+
 </td>

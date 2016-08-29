@@ -133,19 +133,19 @@ $(document).ready(function(){
 			var listePrescriptionUpdateReg = new Array();
 			var listePrescriptionUpdate = new Array();
 			var num = 1;
-			
+
 			$("#prescRappelReg > li").each(function(){
 				//on parcour les li pour récolter les changements et mettre à jour dans la base
 				//on change le num de li
 				$(this).attr('num',num);
 				//on change le num affiché
 				$(this).children().children().children().children(".numPresc").html(num);
-				
+
 				//on recupere id du li en cours "presc_x"
 				var liId = $(this).attr('id');
 				var liId = liId.split('_');
 				listePrescriptionUpdateReg.push(liId[1]);
-				
+
 				num = num + 1;
 			});
 
@@ -156,12 +156,12 @@ $(document).ready(function(){
 				$(this).attr('num',num);
 				//on change le num affiché
 				$(this).children().children().children().children(".numPresc").html(num);
-				
+
 				//on recupere id du li en cours "presc_x"
 				var liId = $(this).attr('id');
 				var liId = liId.split('_');
 				listePrescriptionUpdate.push(liId[1]);
-				
+
 				num = num + 1;
 			});
 
@@ -171,12 +171,12 @@ $(document).ready(function(){
 				$(this).attr('num',num);
 				//on change le num affiché
 				$(this).children().children().children().children(".numPresc").html(num);
-				
+
 				//on recupere id du li en cours "presc_x"
 				var liId = $(this).attr('id');
 				var liId = liId.split('_');
 				listePrescriptionUpdate.push(liId[1]);
-				
+
 				num = num + 1;
 			});
 
@@ -200,7 +200,7 @@ $(document).ready(function(){
 <?php } ?>
 //Ajout prescription type
 	var dialogPrescType = $('<div style="display:none;"></div>').appendTo('body');
-	
+
 	dialogPrescType.dialog({
 		title: "Ajout d'une prescription type",
 		modal: true,
@@ -214,10 +214,10 @@ $(document).ready(function(){
 			}
 		},
 		close: function(event, ui){
-			
+
 		}
 	});
-	
+
 	$("#addPrescriptionType").live('click',function(){
 		//On ouvre la boite de dialogue
 		$.ajax({
@@ -239,7 +239,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	$(".selectCategorie").live('click',function(){
 		$("#PRESCRIPTIONTYPE_CATEGORIE").val($(this).attr('id'));
 		changeEmplacement();
@@ -251,13 +251,13 @@ $(document).ready(function(){
 		changeEmplacement();
 		return false;
 	});
-	
+
 	$(".selectArticle").live('click',function(){
 		$("#PRESCRIPTIONTYPE_ARTICLE").val($(this).attr('id'));
 		changeEmplacement();
 		return false;
 	});
-	
+
 	$(".retour").live('click',function(){
 		if($(this).attr('id') == 'retourCategorie'){
 			$("#PRESCRIPTIONTYPE_CATEGORIE").val('');
@@ -269,7 +269,7 @@ $(document).ready(function(){
 		changeEmplacement();
 		return false;
 	});
-	
+
 	function changeEmplacement()
 	{
 		$("#listePrescriptionType").html('');
@@ -283,7 +283,7 @@ $(document).ready(function(){
 			}
 		});
 	}
-	
+
 	function affichePrescription()
 	{
 		$.ajax({
@@ -295,7 +295,7 @@ $(document).ready(function(){
 			}
 		});
 	}
-	
+
 	$(".add").live('click',function(){
 		var tabId = $(this).attr('id').split('_');
 		var id = tabId[1];
@@ -308,18 +308,18 @@ $(document).ready(function(){
 			url: "/dossier/prescriptionaddtype",
 			data: "&idPrescType="+id+"&idDossier="+$("#idDossier").val()+"&typePrescriptionDossier="+typePresc,
 			beforeSend: function(){
-				$("#listePrescriptionType").html("<img src='/images/load.gif' />");
+				$("#listePrescriptionType").html("<img src='/img/load.gif' />");
 			},
 			success: function(msg){
 				window.location = '/dossier/prescription/id/'+$("#idDossier").val();
 			}
 		});
-		return false;	
+		return false;
 	});
 
 	//Ajout d'une prescription ordinaire
 	var dialogPresc = $('<div style="display:none;"></div>').appendTo('body');
-	
+
 	dialogPresc.dialog({
 		title: "Ajout d'une prescription",
 		modal: true,
@@ -353,10 +353,10 @@ $(document).ready(function(){
 			}
 		},
 		close: function(event, ui){
-			
+
 		}
 	});
-	
+
 	$("#addPrescription").live('click',function(){
 		//On ouvre la boite de dialogue
 		$.ajax({
@@ -370,12 +370,12 @@ $(document).ready(function(){
 		return false;
 	});
 
-	
+
 	$(".suppAssoc").live('click',function(){
 		$(this).parent().parent().remove();
 		return false;
 	});
-	
+
 	//Récupération des prescriptions d'un autre dossier
 	var dialogRecupPresc = $('<div style="display:none;"></div>').appendTo('body');
 
@@ -393,9 +393,9 @@ $(document).ready(function(){
 						url: "/dossier/recupprescription",
 						data: $("#selectionDossier").serialize(),
 						before: function(){
-							dialogRecupPresc.html("Veuillez patienter pendant la reprise des prescriptions <img src='/images/load.gif' />");
+							dialogRecupPresc.html("Veuillez patienter pendant la reprise des prescriptions <img src='/img/load.gif' />");
 						},
-						success: function(msg){							
+						success: function(msg){
 							window.location='/dossier/prescription/id/'+$("#idDossier").val();
 						}
 					});
@@ -413,7 +413,7 @@ $(document).ready(function(){
 
 		}
 	});
-	
+
 	$(".recupPrescDossier").live('click',function(){
 		//On ouvre la boite de dialogue
 		$.ajax({
@@ -427,10 +427,10 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	//Edition des prescriptions d'un dossier
 	var dialogPrescEdit = $('<div style="display:none;"></div>').appendTo('body');
-	
+
 	dialogPrescEdit.dialog({
 		title: "Ajout d'une prescription type",
 		modal: true,
@@ -455,10 +455,10 @@ $(document).ready(function(){
 			}
 		},
 		close: function(event, ui){
-			
+
 		}
 	});
-	
+
 	$(".edit").live('click',function(){
 		var tabId = $(this).attr('id').split('_');
 		var idPrescDossier = tabId[1];
@@ -474,14 +474,14 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	//Suppression d'une prescription
 	$(".deletePrescDossier").live('click',function(){
 		$(this).hide();
 		$(".deleteOption").show();
 		return false;
 	});
-	
+
 	$(".cancelDelete").live('click',function(){
 		$(".deleteOption").hide();
 		$(".deletePrescDossier").show();
@@ -499,7 +499,7 @@ $(document).ready(function(){
 				$("#prescriptionDossier_"+idPrescDossier).remove();
 				window.location='/dossier/prescription/id/'+$("#idDossier").val();
 			}
-		});		
+		});
 		return false;
 	});
 });

@@ -1,15 +1,15 @@
 <?php if($this->action != "add" && $this->do != "new" ) : ?>
 <?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
-<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='<?php echo $this->idUser; ?>' />	
+<input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='<?php echo $this->idUser; ?>' />
 <ul class="nav nav-tabs nav-stacked menu_dashboard" >
     <?php /*class="nav nav-tabs nav-stacked menu_dashboard"  */ ?>
-        
+
         <li class="<?php echo ( $this->action == "index" ) ? "active" : "read" ?>">
-            <a 
+            <a
                href='<?php echo $this->url(array("controller" => "dossier", "id" => $this->idDossier), false, true) ?>'><i class="icon-info-sign icon-black"></i> Informations générales</a>
         </li>
-        
-	<?php		
+
+	<?php
             if($this->idTypeDossier == 1 && $this->natureDossier != 3 && $this->natureDossier != 9) {
                 echo "<li class='".(( $this->action == "descriptif") ? "active" : "read" )."'>
                         <a "
@@ -38,12 +38,12 @@
                     </li>";
             }
 	?>
-		
+
         <li class='<?php echo ( $this->action == "liees" ) ? "active" : "read" ?>'>
-            <a  
+            <a
                 href='<?php echo $this->url(array("controller" => "dossier", "action"=>"liees", "id" => $this->idDossier), false, true) ?>'><i class="icon-folder-open icon-black"></i> Établissements et dossiers liés</a>
         </li>
-		
+
 	<?php
             if($this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44) {
                 echo "<li class='".( ( $this->action == "contact" ) ? "active" : "read" )."'>
@@ -52,18 +52,18 @@
                     </li>";
             }
 	?>
-        
+
         <li class='<?php echo ( $this->action == "piece-jointe" ) ? "active" : "read" ?>'>
-            <a 
+            <a
                href='<?php echo $this->url(array("controller" => "dossier", "action"=>"piece-jointe", "id" => $this->idDossier), false, true) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
-        </li> 
+        </li>
         <li class="nav-header">Actions</li>
         <?php
                 $verrou = true;
                 if ($this->verrou == 1  || (isset($action) && $action == 'new')) {
                         $label = "Déverrouiller";
                         $idLink = "DEVERROU";
-                } else { 
+                } else {
                         $label = "Verrouiller";
                         $idLink = "VERROU";
                         $verrou = false;
@@ -91,7 +91,7 @@ endif; ?>
 
 <?php $this->placeholder('page_header')->captureStart();  //$this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
 
-<?php 
+<?php
     if($this->action == "add" || $this->do == "new" ){
         //Cas d'ajout d'un nouveau dossier
         echo "
@@ -141,7 +141,7 @@ endif; ?>
                 }
                 echo ")</span>";
             }
-                
+
             echo " <span style='font-size:10px'>#".$etablissementInfos['general']['NUMEROID_ETABLISSEMENT']."</span>";
         }
         echo "
@@ -164,13 +164,13 @@ endif; ?>
         if($nbEtab > 0){
             if($nbEtab == 1 && $this->enteteEtab[0]["LIBELLE_GENRE"] == "Site"){
                 echo "Site concerné : &nbsp;";
-                
+
                 echo "
                     <a href='/etablissement/index/id/".$this->enteteEtab[0]['ID_ETABLISSEMENT']."' class='etab'>
-                        ".$this->enteteEtab[0]['LIBELLE_ETABLISSEMENTINFORMATIONS']." 
+                        ".$this->enteteEtab[0]['LIBELLE_ETABLISSEMENTINFORMATIONS']."
                     </a>
                 ";
-                        
+
                 echo " <span style='font-size:10px'>#".$this->enteteEtab[0]['infosEtab']['general']['NUMEROID_ETABLISSEMENT']."</span>";
             }else{
                 echo "Etablissement(s) concerné(s) : &nbsp;";
@@ -229,9 +229,9 @@ endif; ?>
                             }
                             echo ")</span>";
                         }
-                        
+
                                         echo " <span style='font-size:10px'>#".$value['infosEtab']['general']['NUMEROID_ETABLISSEMENT']."</span>";
-                                        
+
                         $i++;
                     }
                 }
@@ -273,7 +273,7 @@ endif; ?>
 <script>
 
 
-	
+
     $(document).ready(function(){
 
 		$("#VERROU").live('click',function(){
@@ -283,7 +283,7 @@ endif; ?>
 					type:"POST",
 					//async: false,
 					beforeSend: function(){
-						$("#chargement").html("<img src='/images/load.gif' />");
+						$("#chargement").html("<img src='/img/load.gif' />");
 					},
 					success: function(affichageResultat){
 						window.location= affichageResultat;
@@ -300,7 +300,7 @@ endif; ?>
 			});
 			return false;
 		});
-	
+
 		$("#DEVERROU").live('click',function(){
 			$.ajax({
 					url: "/dossier/deverrou",
@@ -308,7 +308,7 @@ endif; ?>
 					type:"POST",
 					//async: false,
 					beforeSend: function(){
-						$("#chargement").html("<img src='/images/load.gif' />");
+						$("#chargement").html("<img src='/img/load.gif' />");
 					},
 					success: function(affichageResultat){
 						window.location= affichageResultat;

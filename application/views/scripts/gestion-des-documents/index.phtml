@@ -85,7 +85,7 @@
 	        ";
 	        foreach($commission['listeFichier'] as $file){
 	        	echo "
-	        		
+
 	        			<tr style='height:20px;'>
 				        <td>
 				            <a href='".$this->path . DS . $commission['ID_COMMISSION']. DS . htmlspecialchars($file, ENT_QUOTES) ."'>".$file."</a>
@@ -107,19 +107,19 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-	
+
 	$("body").append("<iframe name='hiddeniframe' id='hiddeniframe' src='about:blank' style='width:0px; height:0px' >");
 
 	// Ajout d'un type
 	$("#button-aud").click(function() {
 		dialog_aud();
 	});
-	
+
 	function dialog_aud() {
 		$('#dialog-aud').html("");
 		$('#dialog-aud').dialog("destroy");
 		$("#dialog-aud").remove();
-		
+
 		var dialog_aud = $("<div id='dialog-aud'></div>").appendTo("body");
 
 		dialog_aud.dialog({
@@ -137,11 +137,11 @@ $(document).ready(function() {
 						$("#fichier").click();
 					}else{
 						$("#formDocType").submit();
-						
-						$(this).dialog('close'); 
-						
+
+						$(this).dialog('close');
+
 						// On ouvre la barre de chargement
-						$("<div id='load' style='text-align: center'><img src='/images/bar.gif' alt='Upload en cours' /></div>").dialog({
+						$("<div id='load' style='text-align: center'><img src='/img/bar.gif' alt='Upload en cours' /></div>").dialog({
 							resizable: false,
 							height: 28,
 							width: 250,
@@ -149,33 +149,33 @@ $(document).ready(function() {
 							dialogClass: 'noTitleStuff'
 						});
 					}
-					
+
 				},
 				"Annuler": function() {
-					$(this).dialog('close'); 
+					$(this).dialog('close');
 				}
 			}
 		});
 
 	}
-	
+
 	$(".supp").click(function(){
 		//alert($(this).attr('id'));
-		
+
 		dialog_supp($(this));
 		//alert($("#nnnn.jpg").attr('class'));
 		return false;
 	});
-	
-	
+
+
 	function dialog_supp(elementDoc) {
 		var nomFichier = elementDoc.attr('id');
-	
+
 		$('#dialog-supp').dialog("destroy");
 		$("#dialog-supp").remove();
 
 		var dialog_supp = $("<div id='dialog-supp'></div>").appendTo("body");
-		
+
 		dialog_supp.html("Vous êtes sur le point de supprimer le fichier \""+nomFichier+"\".<br/> Une fois ce fichier supprimé il ne pourra plus être utilisé lors de la génération des rapports.");
 
 		dialog_supp.dialog({
@@ -191,8 +191,8 @@ $(document).ready(function() {
 					var idComm = tabIdComm[1];
 
 					//alert(infoComm);
-					
-					
+
+
 
 
 					$.ajax({
@@ -202,7 +202,7 @@ $(document).ready(function() {
                             name:nomFichier,
                             idCommission:idComm
                         },
-						success: function(msg){					
+						success: function(msg){
 							//suppression de la ligne
 							elementDoc.parent().parent().remove();
 							//alert(msg);
@@ -216,7 +216,7 @@ $(document).ready(function() {
 							}
 						}
 					});
-					
+
 					dialog_supp.dialog("close");
                     $("#dialog-supp").html('');
 					return false;
@@ -229,7 +229,7 @@ $(document).ready(function() {
 		});
 
 	}
-	
+
 	$(".commission").click(function(){
 		$("#file_"+$(this).attr('id')).toggle();
 		return false;
@@ -248,11 +248,11 @@ function callback(nomFich) {
 		success: function(result) {
 			// On détruit la fenetre de load
 			//$("#load").remove();
-			
+
 			if( result.exists ) {
 				window.location.reload();
 			} else {
-				alert('fail');				
+				alert('fail');
 			}
 		}
 	});

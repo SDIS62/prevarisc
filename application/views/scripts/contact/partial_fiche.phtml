@@ -4,7 +4,7 @@
         <?php echo $this->NOM_UTILISATEURINFORMATIONS ." ".$this->PRENOM_UTILISATEURINFORMATIONS  ?>
         <?php if(!(array_key_exists('verrou', $_GET) && $_GET['verrou'] == 1)): ?>
             <span class="fiche_delete" title="Supprimer"><a class='contact-delete' href="/contact/delete?item=<?php echo $this->partialLoop()->view->item ?>&id=<?php echo $this->ID_UTILISATEURINFORMATIONS  ?>&id_item=<?php echo $this->partialLoop()->view->id ?>">&times;</a></span>
-            <span class="fiche_edit" title="Éditer"><a href="/contact/edit?id=<?php echo $this->ID_UTILISATEURINFORMATIONS  ?>"><img src="/images/pen.png" height="9" width="10" alt="Éditer" /></a></span>
+            <span class="fiche_edit" title="Éditer"><a href="/contact/edit?id=<?php echo $this->ID_UTILISATEURINFORMATIONS  ?>"><img src="/img/pen.png" height="9" width="10" alt="Éditer" /></a></span>
         <?php endif ?>
     </p>
 
