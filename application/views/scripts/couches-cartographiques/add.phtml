@@ -6,8 +6,8 @@
 	</div>
 
 	<h3><?php echo $this->row ? "Modification d'une couche cartographique" : "Ajout d'une couche cartographique" ?></h3>
-        
-        
+
+
 	<dl class='dl-horizontal'>
 
 		<dt>Type de la couche</dt>
@@ -16,7 +16,7 @@
 				<option value="WMS" <?php if(isset($this->row) && $this->row['TYPE_COUCHECARTO'] == 'WMS') echo "selected" ?> >WMS</option>
 			</select>
 		</dd>
-                
+
                 <?php if (isset($this->key_ign)): ?>
                 <dt></dt>
 		<dd>
@@ -29,17 +29,17 @@
                     <script>
                         $(document).ready(function(){
                            $('#getIGNLayers').click(function() {
-                              var $menu = $(this).parent().find('.dropdown-menu').empty().append('<img src="/images/load.gif"/>')
+                              var $menu = $(this).parent().find('.dropdown-menu').empty().append('<img src="/img/load.gif"/>')
                               var type = $('select[name="TYPE_COUCHECARTO"]').val();
                               $.get('https://wxs.ign.fr/<?php echo $this->key_ign ?>/autoconf', {}, function(xml) {
                                   $menu.empty();
                                   var $xml = $(xml);
                                   $xml.find('Layer').each(function(i, layer) {
                                      var $layer = $(layer);
-                                     
+
                                      if ($layer.find('Server:first').attr('service') !== 'OGC:'+type) return ;
                                      var url = $layer.find("gpp\\:Key").text() ? $layer.find("gpp\\:Key").text() : $layer.find("Key").text();
-                                     $menu.append('<li class="ignLayer" url="'+url+'" name="'+$layer.find('Name:first').text()+'"><a href="#">'+$layer.find('Title:first').text()+'</a></li>'); 
+                                     $menu.append('<li class="ignLayer" url="'+url+'" name="'+$layer.find('Name:first').text()+'"><a href="#">'+$layer.find('Title:first').text()+'</a></li>');
                                   });
                                   $('.ignLayer').click(function(e){
                                      e.preventDefault();
@@ -55,7 +55,7 @@
                     </script>
 		</dd>
                 <?php endif ?>
-                
+
 		<dt>Nom de la couche</dt>
 		<dd>
 			<input type="text" name="NOM_COUCHECARTO" value="<?php echo $this->row ? $this->row['NOM_COUCHECARTO'] : "" ?>" />
@@ -93,7 +93,7 @@
             <input type="hidden" name="TRANSPARENT_COUCHECARTO" value="0" />
 			<input type="checkbox" name="TRANSPARENT_COUCHECARTO" value="1" <?php if(isset($this->row) && $this->row['TRANSPARENT_COUCHECARTO']) echo "checked" ?> />
 		</dd>
-	
+
 	</dl>
 
 </form>

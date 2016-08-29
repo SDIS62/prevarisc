@@ -64,7 +64,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->headLink()->appendStylesheet('/css/bootstrap.min.css', 'all');
             $view->headLink()->appendStylesheet('/css/main.css', 'all');
             $view->headLink()->appendStylesheet('/css/login.css', 'all');
-            $view->headLink()->appendStylesheet('/css/components/panel.css', 'all');
+            $view->headLink()->appendStylesheet('/css/panel.css', 'all');
             $view->headLink()->appendStylesheet('/css/chosen.min.css', 'all');
             $view->headLink()->appendStylesheet('/css/jquery/jquery-ui-1.8.11.custom.css', 'all');
             $view->headLink()->appendStylesheet('/css/jquery/jquery.tablesorter.css', 'all');
@@ -74,7 +74,6 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->headLink()->appendStylesheet('/css/jquery/jquery.tipsy.css', 'all');
             $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
             $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
-            $view->headLink()->appendStylesheet('/css/dropzone/dropzone.css', 'all');
 
             // Définition du partial de vue à utiliser pour le rendu d'une recherche
             Zend_View_Helper_PaginationControl::setDefaultViewPartial('search' . DIRECTORY_SEPARATOR . 'pagination_control.phtml');

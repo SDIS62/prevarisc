@@ -583,7 +583,7 @@ table.periodicite:first-child {
 
 input.date {
 
-	background: url("images/calendar.gif") left no-repeat;
+	background: url("/img/calendar.gif") left no-repeat;
 	padding-left: 16px;
 	width: 83px;
 }
@@ -1098,17 +1098,17 @@ a.list-group-item-danger.active:focus {
 }
 
 .scroll-bloc-large {
-    max-height: 500px; 
+    max-height: 500px;
     overflow-y: scroll;
 }
 
 .scroll-bloc-medium {
-    max-height: 300px; 
+    max-height: 300px;
     overflow-y: scroll;
 }
 
 .scroll-bloc-small {
-    max-height: 150px; 
+    max-height: 150px;
     overflow-y: scroll;
 }
 
@@ -1116,39 +1116,39 @@ a.list-group-item-danger.active:focus {
     padding: 0 0 3px 22px;
 }
 
-#tabPieceJointe .pdf{  
-    background: url('../images/pdf.png') no-repeat;  
-}  
+#tabPieceJointe .pdf{
+    background: url('/img/pdf.png') no-repeat;
+}
 
-#tabPieceJointe .doc, #tabPieceJointe .docx{  
-    background: url('../images/word.png') no-repeat;  
-}  
+#tabPieceJointe .doc, #tabPieceJointe .docx{
+    background: url('/img/word.png') no-repeat;
+}
 
-#tabPieceJointe .odt{  
-    background: url('../images/libreoffice.png') no-repeat;  
-}  
+#tabPieceJointe .odt{
+    background: url('/img/libreoffice.png') no-repeat;
+}
 
 #tabPieceJointe .png,
 #tabPieceJointe .jpg,
 #tabPieceJointe .jpeg,
 #tabPieceJointe .gif,
 #tabPieceJointe .bmp
-{  
-    background: url('../images/image.png') no-repeat;  
+{
+    background: url('/img/image.png') no-repeat;
 }
 
 #tabPieceJointe .zip,
 #tabPieceJointe .rar
-{  
-    background: url('../images/zip.png') no-repeat;  
-}  
-
-#tabPieceJointe .txt{  
-    background: url('../images/text.png') no-repeat;  
+{
+    background: url('/img/zip.png') no-repeat;
 }
 
-#tabPieceJointe .msg{  
-    background: url('../images/msg.png') no-repeat;  
+#tabPieceJointe .txt{
+    background: url('/img/text.png') no-repeat;
+}
+
+#tabPieceJointe .msg{
+    background: url('/img/msg.png') no-repeat;
 }
 
 /* Fix provenant d'un problème IE11 / bootstrap*/

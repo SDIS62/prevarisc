@@ -142,7 +142,6 @@ class DossierController extends Zend_Controller_Action
     public function init()
     {
         $this->_helper->layout->setLayout('dossier');
-        $this->view->inlineScript()->appendFile('/js/dossier/dossierGeneral.js','text/javascript');
 
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
@@ -1397,7 +1396,6 @@ class DossierController extends Zend_Controller_Action
     //GESTION DOCUMENTS CONSULTES
     public function docconsulteAction()
     {
-        $this->view->inlineScript()->appendFile('/js/dossier/dossierDocConsulte.js','text/javascript');
 
         //récupération du type de dossier (etude / visite)
         $service_dossier = new Service_Dossier;

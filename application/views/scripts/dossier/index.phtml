@@ -182,7 +182,7 @@
 					data: "idType="+idType,
 					type:"POST",
 					beforeSend: function(){
-						$("#chargement").html("<img src='/images/load.gif' />");
+						$("#chargement").html("<img src='/img/load.gif' />");
 					},
 					success: function(affichageResultat){
 						$("#nature > .form").html(affichageResultat);
@@ -1012,7 +1012,7 @@
 			beforeSend: function(){
 				$("#annulModification").attr("disabled", "disabled");
 				$("#creationDossier").attr("disabled", "disabled");
-				$("#chargement").html("<img src='/images/load.gif' />");
+				$("#chargement").html("<img src='/img/load.gif' />");
 			},
 			success: function(affichageResultat){
 				try {
@@ -1071,7 +1071,7 @@
 				$("#annulModification").hide();
 				$("#validModification").hide();
 				$("#modificationDossier").show();
-				$("#chargement").html("<img src='/images/load.gif' />");
+				$("#chargement").html("<img src='/img/load.gif' />");
 			},
 			success: function(affichageResultat){
 				try {
@@ -1178,7 +1178,7 @@ echo "
 							</select>
 						</div>
 					</div>
-					<div id='loading' class='left span1' style='display:none;'><img src='/images/load.gif' alt='loading' ></div>
+					<div id='loading' class='left span1' style='display:none;'><img src='/img/load.gif' alt='loading' ></div>
 				</li>
 			</ul>
 			<!-- FIN UL Type/Nature -->

@@ -27,7 +27,7 @@ foreach($this->listeTextesAppl as $val => $ue){
 		<li class='row-fluid' style='margin-top:15px;margin-bottom:10px;' id='".$ue['ID_TEXTESAPPL']."'>
 			<div class='span10'>".nl2br($ue['LIBELLE_TEXTESAPPL'])."</div>
 			<div class='span1'><button class='editTexteAppl btn' id='".$ue['ID_TEXTESAPPL']."' ><i class='icon-pencil'></i>&nbsp;Editer</button></div>
-			<div class='span1'>".( ($ue['VISIBLE_TEXTESAPPL'] == 1 )? "<img src='/images/visible.gif' alt='visible' />" : "<img src='/images/nonvisible.gif' alt='non visible' />")."</div>
+			<div class='span1'>".( ($ue['VISIBLE_TEXTESAPPL'] == 1 )? "<img src='/img/visible.gif' alt='visible' />" : "<img src='/img/nonvisible.gif' alt='non visible' />")."</div>
 		</li>
 	";
 }
@@ -46,7 +46,7 @@ $(document).ready(function() {
 				var liId = $(this).attr('id');
 				listeOrder += liId+",";
 				listeTexteApplUpdate.push(liId);
-			});			
+			});
 			$.ajax({
 				url: "/gestion-textes-applicables/updateorder",
 				data: "tableUpdate="+listeTexteApplUpdate,
@@ -65,7 +65,7 @@ $(document).ready(function() {
 	});
 
 	var dialogEditTexteAppl = $('<div style="display:none"></div>').appendTo('body');
-	
+
 	$(".editTexteAppl").click(function(){
 		//On ouvre la boite de dialogue
 		var id = $(this).attr('id');
@@ -79,7 +79,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-	
+
 	$("#createTexteAppl").click(function(){
 		$.ajax({
 			type: "POST",
@@ -90,7 +90,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-	
+
 	dialogEditTexteAppl.dialog({
 		title: "Modification texte applicable",
 		modal: true,
@@ -111,7 +111,7 @@ $(document).ready(function() {
 						}else{
 							window.location='/gestion-textes-applicables';
 						}
-						
+
 					}
 				});
 				return false;
@@ -121,7 +121,7 @@ $(document).ready(function() {
 			}
 		},
 		close: function(event, ui){
-			
+
 		}
 
 	});

@@ -21,7 +21,7 @@
 		<h3 class='page-header'>Gestion des prescriptions types</h3>
 		<br/>
 	";
-	
+
 	echo "
 		<form id='FormPrescriptioncat_".$this->idCategorie."' >
 			<input type='hidden' name='type' value='categorie' />
@@ -85,7 +85,7 @@
 				</table>
 			</li>
 		";
-	}	
+	}
 	echo "
 		</ul>
 		<button class='categorie btn' >Ajouter</button>
@@ -95,7 +95,7 @@
 ?>
 
 
- 
+
 <!-- Modal -->
 <div id="myModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style='width:1000px;margin-left:-500px;' >
 	<div class="modal-header">
@@ -105,16 +105,16 @@
 	<div class="modal-body">
 	</div>
 	<div class="modal-footer">
-		<img id='loading' src='/images/load.gif' style='display:none;'/>
+		<img id='loading' src='/img/load.gif' style='display:none;'/>
 		<button class="btn btn-primary savePrescription">Sauvegarder</button>
-		<button class="btn closemodal" data-dismiss="modal" aria-hidden="true">Annuler</button>	
+		<button class="btn closemodal" data-dismiss="modal" aria-hidden="true">Annuler</button>
 	</div>
 </div>
 
 <script type="text/javascript">
 
 $(document).ready(function(){
-	
+
 //Affiche les textes appartenant à la catégorie
 	$(".showDetailCat").live('click',function(){
 		//requete ajax pour trouver les prescriptions faisant partie de cette catégorie
@@ -132,7 +132,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	//Masque les textes appartenant à la catégorie
 	$(".hideDetailCat").live('click',function(){
 		var tabId = $(this).attr('id').split('_');
@@ -185,7 +185,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	$(".hideDetailArticle").live('click',function(){
 		var tabId = $(this).attr('id').split('_');
 		var idArticle = tabId[1];
@@ -195,9 +195,9 @@ $(document).ready(function(){
 		return false;
 	});
 	//Gestion des catégories
-	
+
 	var dialogCategorie = $('<div style="display:none;"></div>').appendTo('body');
-	
+
 	$(".categorie").live('click',function(){
 		//On ouvre la boite de dialogue
 		$.ajax({
@@ -211,7 +211,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	$(".editCategorie").live('click',function(){
 		//On ouvre la boite de dialogue
 		var id = $(this).attr('id');
@@ -226,8 +226,8 @@ $(document).ready(function(){
 			}
 		});
 		return false;
-	});	
-	
+	});
+
 	dialogCategorie.dialog({
 		title: "Gestion",
 		modal: true,
@@ -258,13 +258,13 @@ $(document).ready(function(){
 			}
 		},
 		close: function(event, ui){
-			
+
 		}
 	});
-	
+
 //Gestion des textes
 	var dialogTexte = $('<div style="display:none;"></div>').appendTo('body');
-		
+
 	$(".addTexteCat").live('click',function(){
 		//On ouvre la boite de dialogue
 		//On commence par récuperer l'id de la catégorie dans laquelle on va inserer le texte
@@ -283,7 +283,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	$(".editTexte").live('click',function(){
 		//On ouvre la boite de dialogue
 		//On commence par récuperer l'id de la catégorie dans laquelle on va inserer le texte
@@ -301,7 +301,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	dialogTexte.dialog({
 		title: "Gestion texte",
 		modal: true,
@@ -333,10 +333,10 @@ $(document).ready(function(){
 			}
 		},
 		close: function(event, ui){
-			
+
 		}
 	});
-	
+
 //Gestion des articles
 	var dialogArticle = $('<div style="display:none;"></div>').appendTo('body');
 
@@ -375,7 +375,7 @@ $(document).ready(function(){
 							//cas d'un création
 							$(".prescriptionarticle_"+$("#idTexte").val()).append(msg);
 						}else{
-							//cas d'une édition					
+							//cas d'une édition
 							$("#article_"+$("#idArticle").val()).html(msg);
 						}
 						dialogArticle.html("");
@@ -390,10 +390,10 @@ $(document).ready(function(){
 			}
 		},
 		close: function(event, ui){
-			
+
 		}
 	});
-	
+
 	$(".editArticle").live('click',function(){
 		//On ouvre la boite de dialogue
 		//On commence par récuperer l'id de la catégorie dans laquelle on va inserer le texte
@@ -421,7 +421,7 @@ $(document).ready(function(){
 			url: "/gestion-prescriptions/formprescription",
 			data: "&typePresc="+typePresc+"&empl="+idEmpl,
 			beforeSend: function(){
-				$(".modal-body").html("<img src='/images/load.gif' />");
+				$(".modal-body").html("<img src='/img/load.gif' />");
 			},
 			success: function(msg){
 				$(".modal-body").html(msg);
@@ -430,7 +430,7 @@ $(document).ready(function(){
 					url: "/gestion-prescriptions/emplacement",
 					data: $("#formPrescription").serialize(),
 					beforeSend: function(){
-						$("#selectEmplacement").html("<img src='/images/load.gif' />");
+						$("#selectEmplacement").html("<img src='/img/load.gif' />");
 					},
 					success: function(msg){
 						$("#selectEmplacement").html(msg);
@@ -454,7 +454,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	$(".selectTexte").live('click',function(){
 		$("#PRESCRIPTIONTYPE_TEXTE").val($(this).attr('id'));
 		$.ajax({
@@ -467,7 +467,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	$(".selectArticle").live('click',function(){
 		$("#PRESCRIPTIONTYPE_ARTICLE").val($(this).attr('id'));
 		$.ajax({
@@ -480,7 +480,7 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
+
 	$(".retour").live('click',function(){
 		if($(this).attr('id') == 'retourCategorie'){
 			$("#PRESCRIPTIONTYPE_CATEGORIE").val('');
@@ -520,11 +520,11 @@ $(document).ready(function(){
 					{
 						$("#prescriptiontype_"+$("#ID_PRESCRIPTIONTYPE").val()).remove();
 					}
-					
+
 					if($("#PRESCRIPTIONTYPE_CATEGORIE").val() == '')
 					{
 						//dans le cas ou la prescription n'appartient à aucune catégorie
-						$(".prescriptiontypeWithoutCat").append(msg);							
+						$(".prescriptiontypeWithoutCat").append(msg);
 					}
 					else if($("#PRESCRIPTIONTYPE_TEXTE").val() == '' && $("#PRESCRIPTIONTYPE_ARTICLE").val() == '')
 					{
@@ -558,12 +558,12 @@ $(document).ready(function(){
 		}
 		return false;
 	});
-	
+
 	$(".suppAssoc").live('click',function(){
 		$(this).parent().parent().remove();
 		return false;
 	});
-	
+
 	$(".editPrescriptionType").live('click',function(){
 		var tabId = $(this).parent().parent().parent().parent().parent().attr('id').split('_');
 		var idPrescType = tabId[1];
@@ -572,7 +572,7 @@ $(document).ready(function(){
 			url: "/gestion-prescriptions/formprescription",
 			data: "&idPrescType="+idPrescType,
 			beforeSend: function(){
-				$(".modal-body").html("<img src='/images/load.gif' />");
+				$(".modal-body").html("<img src='/img/load.gif' />");
 			},
 			success: function(msg){
 				$(".modal-body").html(msg);
@@ -581,10 +581,10 @@ $(document).ready(function(){
 					url: "/gestion-prescriptions/emplacement",
 					data: $("#formPrescription").serialize(),
 					beforeSend: function(){
-						$("#selectEmplacement").html("<img src='/images/load.gif' />");
+						$("#selectEmplacement").html("<img src='/img/load.gif' />");
 					},
 					success: function(msg){
-						$("#selectEmplacement").html(msg);						
+						$("#selectEmplacement").html(msg);
 					}
 				});
 			}
