@@ -62,7 +62,6 @@ class IndexController extends Zend_Controller_Action
         $this->view->blocs = $blocs;
         $this->view->blocsOrder = $blocsOrder;
         $this->view->inlineScript()->appendFile("/js/jquery.packery.pkgd.min.js");
-        $this->_helper->layout->setLayout('index');
         $this->render('index');
     }
 

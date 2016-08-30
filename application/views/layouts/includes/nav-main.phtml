@@ -29,13 +29,47 @@
                             <li><a href='/dossier/add'><i class="icon-plus"></i> Ajouter</a></li>
                         </ul>
                     </li>
-                    <li><a href='/calendrier-des-commissions'>Calendrier</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Commissions <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <?php if(count($this->commissions) > 0): ?>
+                                <?php foreach($this->commissions as $commission): ?>
+                                    <?php if (isset($commission["ARRAY"]) && count($commission["ARRAY"]) > 0): ?>
+                                        <li class="nav-header">
+                                            <?php echo htmlspecialchars($commission["LIBELLE"], ENT_QUOTES) ?>
+                                        </li>
+                                        <?php foreach($commission["ARRAY"] as $item) : ?>
+                                            <?php if(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('acl')->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "gestion_parametrages", "gestion_commissions"))  : ?>
+                                                <li>
+                                                    <a href="/calendrier-des-commissions?idComm=<?php echo $item["ID_COMMISSION"] ?>" >
+                                                        <?php echo htmlspecialchars($item["LIBELLE_COMMISSION"], ENT_QUOTES) ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif ?>
+                                        <?php endforeach ?>
+                                    <?php endif ?>
+                                <?php endforeach ?>
+                            <?php endif ?>
+                        </ul>
+                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <i class="icon-plus grey-icn-plus" title="Plus"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href='/admin'>Administration</a></li>
+                            <li class="nav-header">Paramétrage</li>
+                            <li><a href='/tableau-des-periodicites'>Tableau des périodicités</a></li>
+                            <li><a href='/groupement'>Groupements de communes</a></li>
+                            <li class="nav-header">Gestion des entités</li>
+                            <li><a href='/couches-cartographiques/list'>Gestion des couches cartographiques</a></li>
+                            <li><a href='/users'>Gestion des utilisateurs</a></li>
+                            <li><a href='/gestion-des-communes'>Gestion des communes</a></li>
+                            <li><a href='/gestion-prescriptions'>Gestion des prescriptions</a></li>
+                            <li><a href='/gestion-des-commissions'>Gestion des commissions</a></li>
+                            <li><a href='/gestion-textes-applicables'>Gestion des textes applicables</a></li>
+                            <li><a href='/gestion-des-documents'>Gestion des documents</a></li>
+                            <li class="nav-header">Général</li>
+                            <li><a href='/admin'>À propos</a></li>
                         </ul>
                     </li>
                 </ul>

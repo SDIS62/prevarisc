@@ -1,95 +1,6 @@
-<?php if($this->action != "add" && $this->do != "new" ) : ?>
-<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
+<?php $this->placeholder('before_content')->captureStart(); // Capture du 'before_content' ?>
+
 <input type='hidden' name='ID_CREATEUR' id='ID_CREATEUR' value='<?php echo $this->idUser; ?>' />
-<ul class="nav nav-tabs nav-stacked menu_dashboard" >
-    <?php /*class="nav nav-tabs nav-stacked menu_dashboard"  */ ?>
-
-        <li class="<?php echo ( $this->action == "index" ) ? "active" : "read" ?>">
-            <a
-               href='<?php echo $this->url(array("controller" => "dossier", "id" => $this->idDossier), false, true) ?>'><i class="icon-info-sign icon-black"></i> Informations générales</a>
-        </li>
-
-	<?php
-            if($this->idTypeDossier == 1 && $this->natureDossier != 3 && $this->natureDossier != 9) {
-                echo "<li class='".(( $this->action == "descriptif") ? "active" : "read" )."'>
-                        <a "
-                        . "href='".$this->url(array("controller" => "dossier", "action"=>"descriptif", "id" => $this->idDossier), false, true)."'><i class=\"icon-book icon-black\"></i> Descriptif ".(( $this->natureDossier == 1 || $this->natureDossier == 2 ) ? " des travaux" : "")."</a>
-                    </li>";
-            }
-
-            if ($this->idTypeDossier == 1 || $this->idTypeDossier == 2 || $this->idTypeDossier == 3 ) {
-                echo "<li class='".( ( $this->action == "textes-applicables" ) ? "active" : "read" )."'>
-                        <a "
-                        . "href='".$this->url(array("controller" => "dossier", "action"=>"textes-applicables", "id" => $this->idDossier), false, true)."'><i class=\"icon-align-center icon-black\"></i> Textes applicables</a>
-                    </li>";
-            }
-
-            if ($this->idTypeDossier != 5) {
-                echo "<li class='".( ( $this->action == "docconsulte" ) ? "active" : "read" )."'>
-                        <a  "
-                            . "href='".$this->url(array("controller" => "dossier", "action"=>"docconsulte", "id" => $this->idDossier), false, true)."'><i class=\"icon-file icon-black\"></i> Documents consultés</a>
-                    </li>";
-            }
-
-            if($this->natureDossier != 3 && $this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44 && $this->natureDossier != 31 && $this->natureDossier != 32 && $this->idTypeDossier != 5) {
-                echo "<li class='".( ( $this->action == "prescription" ) ? "active" : "read" )."'>
-                        <a  "
-                        . "href='".$this->url(array("controller" => "dossier", "action"=>"prescription", "id" => $this->idDossier), false, true)."'><i class=\"icon-flag icon-black\"></i> Prescriptions</a>
-                    </li>";
-            }
-	?>
-
-        <li class='<?php echo ( $this->action == "liees" ) ? "active" : "read" ?>'>
-            <a
-                href='<?php echo $this->url(array("controller" => "dossier", "action"=>"liees", "id" => $this->idDossier), false, true) ?>'><i class="icon-folder-open icon-black"></i> Établissements et dossiers liés</a>
-        </li>
-
-	<?php
-            if($this->natureDossier != 40 && $this->natureDossier != 41 && $this->natureDossier != 42 && $this->natureDossier != 44) {
-                echo "<li class='".( ( $this->action == "contact" ) ? "active" : "read" )."'>
-                        <a  "
-                        . "href='".$this->url(array("controller" => "dossier", "action"=>"contact", "id" => $this->idDossier), false, true)."'><i class=\"icon-user icon-black\"></i> Contacts</a>
-                    </li>";
-            }
-	?>
-
-        <li class='<?php echo ( $this->action == "piece-jointe" ) ? "active" : "read" ?>'>
-            <a
-               href='<?php echo $this->url(array("controller" => "dossier", "action"=>"piece-jointe", "id" => $this->idDossier), false, true) ?>'><i class="icon-share icon-black"></i> Pièces jointes</a>
-        </li>
-        <li class="nav-header">Actions</li>
-        <?php
-                $verrou = true;
-                if ($this->verrou == 1  || (isset($action) && $action == 'new')) {
-                        $label = "Déverrouiller";
-                        $idLink = "DEVERROU";
-                } else {
-                        $label = "Verrouiller";
-                        $idLink = "VERROU";
-                        $verrou = false;
-                }
-        ?>
-        <li>
-            <a class="sep" id="<?php echo $idLink; ?>" style='cursor:pointer;'><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
-        </li>
-        <?php
-            echo "
-                <li class='".( ( $this->action == "rapport" ) ? "active" : "read" )."'>
-                    <a  "
-                    . "href='".$this->url(array("controller" => "dossier", "action"=>"rapport", "id" => $this->idDossier), false, true)."'><i class=\"icon-refresh icon-black\"></i> Rapport</a>
-                </li>
-            ";
-        ?>
-        <?php if (!$verrou && ($this->idDateCommissionAffect != null)) : ?>
-        <li>
-            <a class="sep" href='/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $this->idDateCommissionAffect; ?>'><i class='icon-calendar icon-black'></i> Afficher ordre du jour</a>
-        </li>
-        <?php endif; ?>
-    </ul>
-<?php $this->placeholder('lateral_navigation')->captureEnd();
-endif; ?>
-
-<?php $this->placeholder('page_header')->captureStart();  //$this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
 
 <?php
     if($this->action == "add" || $this->do == "new" ){
@@ -243,16 +154,42 @@ endif; ?>
         ";
     }
 ?>
+
+<?php if(!empty($this->idDossier)) : ?>
+<div style="text-align: right">
+
+    <?php
+    $verrou = true;
+    if ($this->verrou == 1  || (isset($action) && $action == 'new')) {
+            $label = "Déverrouiller";
+            $idLink = "DEVERROU";
+    } else {
+            $label = "Verrouiller";
+            $idLink = "VERROU";
+            $verrou = false;
+    }
+    ?>
+    <a class="sep btn btn-warning" id="<?php echo $idLink; ?>" style='cursor:pointer;'><i class="icon-lock icon-black"></i> <?php echo $label; ?></a>
+
+    <a class="btn btn-primary" href="<?php echo $this->url(array("controller" => "dossier", "action"=>"rapport", "id" => $this->idDossier), false, true)?>"><i class="icon-refresh icon-black"></i> Générer le rapport</a>
+
+    <?php if (!$verrou && ($this->idDateCommissionAffect != null)) : ?>
+        <a class="sep btn" href='/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $this->idDateCommissionAffect; ?>'><i class='icon-calendar icon-black'></i> Afficher ordre du jour</a>
+    <?php endif; ?>
+
+</div>
+<?php endif ?>
+
 <div class='grid_16' >
 
 <?php echo "<input type='hidden' name='idDossier' id='idDossier' value='".$this->idDossier."' />"; ?>
 
-<?php $this->placeholder('page_header')->captureEnd(); //$this->placeholder('before_content')->captureEnd() ?>
-
+<?php $this->placeholder('before_content')->captureEnd() ?>
 
 <?php $this->placeholder('after_content')->captureStart() // Capture du 'after_content' ?>
 
 </div>
+
     <!-- Modal -->
 	<div class="modal hide fade" tabindex="-1" id="modal-desc" >
 		<div class="modal-dialog">
@@ -270,10 +207,8 @@ endif; ?>
 			</div>
 		</div>
 	</div>
+
 <script>
-
-
-
     $(document).ready(function(){
 
 		$("#VERROU").live('click',function(){
@@ -327,6 +262,5 @@ endif; ?>
 		});
     });
 </script>
-<?php $this->placeholder('after_content')->captureEnd() ?>
 
-<?php echo $this->render('dashboard.phtml') // Rendu du layout par défaut avec les placeholders ?>
+<?php $this->placeholder('after_content')->captureEnd() ?>

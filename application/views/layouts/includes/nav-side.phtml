@@ -1,0 +1,14 @@
+<?php if(is_array($this->nav_side_items) && count($this->nav_side_items) > 0) : ?>
+
+  <div class="nav nav-list">
+
+    <?php foreach($this->nav_side_items as $item) : ?>
+      <a href="<?php echo $item['link'] ?>" class="list-group-item <?php if($item['link'] == $_SERVER['REQUEST_URI']) echo "active" ?>">
+        <?php if(array_key_exists('icon', $item)) : ?><span class="icon-<?php echo $item['icon'] ?>"></span>&nbsp;<?php endif ?>
+        <?php echo $item['text'] ?>
+      </a>
+    <?php endforeach ?>
+
+  </div>
+
+<?php endif ?>

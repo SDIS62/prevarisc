@@ -4,8 +4,6 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 {
     public function listAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_carto = new Service_Carto;
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
@@ -13,7 +11,6 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 
     public function addAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
         $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
 
         $service_carto = new Service_Carto;
@@ -32,7 +29,6 @@ class CouchesCartographiquesController extends Zend_Controller_Action
 
     public function editAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
         $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
 
         $service_carto = new Service_Carto;

@@ -16,8 +16,6 @@ class GroupementController extends Zend_Controller_Action
         // Titre
         $this->view->title = "Groupements de communes";
 
-        $this->_helper->layout->setLayout('menu_admin');
-
         // Liste des models
         $model_groupementstypes = new Model_DbTable_GroupementType;
 

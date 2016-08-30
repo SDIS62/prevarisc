@@ -7,8 +7,6 @@ class GestionDesCommissionsController extends Zend_Controller_Action
         // Titre
         $this->view->title = "Gestion des commissions";
 
-        $this->_helper->layout->setLayout('menu_admin');
-
         // Modèles de données
         $model_typesDesCommissions = new Model_DbTable_CommissionType;
 
@@ -41,12 +39,12 @@ class GestionDesCommissionsController extends Zend_Controller_Action
                     $item->LIBELLE_COMMISSION = $_POST["nom_commission"][$i];
                     $item->save();
                 } else {
-                    $item = $model_commissions->createRow();    
+                    $item = $model_commissions->createRow();
                     $item->ID_COMMISSIONTYPE = $_POST["idtype_commission"][$i];
                     $item->LIBELLE_COMMISSION = $_POST["nom_commission"][$i];
                     $item->save();
                 }
-                $dossier = REAL_DATA_PATH.DS."uploads".DS."documents".DS.$item->ID_COMMISSION;                
+                $dossier = REAL_DATA_PATH.DS."uploads".DS."documents".DS.$item->ID_COMMISSION;
                 if(!is_dir($dossier)){
                    mkdir($dossier);
                 }

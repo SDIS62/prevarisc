@@ -141,8 +141,6 @@ class DossierController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->_helper->layout->setLayout('dossier');
-
         // Actions à effectuées en AJAX
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('selectionabreviation', 'json')
@@ -180,6 +178,39 @@ class DossierController extends Zend_Controller_Action
             $this->view->idDossier = ($this->_getParam("id"));
 
             $this->view->verrou = $dossier->VERROU_DOSSIER;
+        }
+
+        if ($this->_request->id) {
+
+            $nav_side_items = array(
+                array("text" => "Général", "icon" => "info-sign", "link" => '/dossier/index/id/'.$this->_request->id)
+            );
+
+            if(in_array($dossier->TYPE_DOSSIER, [1, 2, 3])) {
+                $nav_side_items[] = array("text" => "Textes applicables", "icon" => "align-center", "link" => '/dossier/textes-applicables/id/'.$this->_request->id);
+            }
+
+            if($dossier->TYPE_DOSSIER == 1 && $dossier->TYPE_DOSSIER != 3 && $natureDossier[0]['ID_NATURE'] != 9) {
+                $nav_side_items[] = array("text" => "Descriptifs".(($natureDossier[0]['ID_NATURE'] == 1 || $natureDossier[0]['ID_NATURE'] == 2 ) ? " des travaux" : ""), "icon" => "align-center", "link" => '/dossier/descriptif/id/'.$this->_request->id);
+            }
+
+            if($natureDossier[0]['ID_NATURE'] != 40 && $natureDossier[0]['ID_NATURE'] != 41 && $natureDossier[0]['ID_NATURE'] != 42 && $natureDossier[0]['ID_NATURE'] != 44) {
+                $nav_side_items[] = array("text" => "Contacts", "icon" => "user", "link" => '/dossier/contact/id/'.$this->_request->id);
+            }
+
+            $nav_side_items[] = array("text" => "Établissements et dossiers liés", "icon" => "resize-small", "link" => '/dossier/liees/id/'.$this->_request->id);
+
+            if($natureDossier[0]['ID_NATURE'] != 3 && $natureDossier[0]['ID_NATURE'] != 40 && $natureDossier[0]['ID_NATURE'] != 41 && $natureDossier[0]['ID_NATURE'] != 42 && $natureDossier[0]['ID_NATURE'] != 44 && $natureDossier[0]['ID_NATURE'] != 31 && $natureDossier[0]['ID_NATURE'] != 32 && $dossier->TYPE_DOSSIER != 5) {
+                $nav_side_items[] = array("text" => "Prescriptions", "icon" => "flag", "link" => '/dossier/prescription/id/'.$this->_request->id);
+            }
+
+            if($dossier->TYPE_DOSSIER != 5) {
+                $nav_side_items[] = array("text" => "Documents consultés", "icon" => "file", "link" => '/dossier/docconsulte/id/'.$this->_request->id);
+            }
+
+            $nav_side_items[] = array("text" => "Pièces jointes", "icon" => "share", "link" => '/dossier/piece-jointe/id/'.$this->_request->id);
+
+            $this->view->nav_side_items = $nav_side_items;
         }
     }
 
@@ -2401,8 +2432,6 @@ class DossierController extends Zend_Controller_Action
 
     public function textesApplicablesAction()
     {
-        $this->_helper->layout->setLayout('dossier');
-
         $service_dossier = new Service_Dossier();
 
         if($this->_getParam("id")){

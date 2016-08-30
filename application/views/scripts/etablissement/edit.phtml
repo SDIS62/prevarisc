@@ -1,3 +1,5 @@
+<?php echo $this->render('etablissement/partials/header.phtml') ?>
+
 <form id='etablissement' class="<?php echo $this->add ? 'add' : 'edit' ?>" action='<?php echo $this->url(array('action' => $this->add ? 'add' : 'edit')) ?>' method='post' >
 
     <?php if($this->add) : ?>
@@ -923,12 +925,12 @@
 
         <?php if($this->key_ign != null): ?>
             viewer = initViewer(
-                "geoportail-container", 
-                "<?php echo $this->key_ign ?>", 
-                [{lon: -1.638023, lat: 48.134198999999995, description: ""}], 
+                "geoportail-container",
+                "<?php echo $this->key_ign ?>",
+                [{lon: -1.638023, lat: 48.134198999999995, description: ""}],
                 <?php echo json_encode($this->couches_cartographiques) ?>,
                 function() {
-                    
+
                     // removes the marker
                     var vectorLayers = viewer.getViewer().getMap().getLayersByClass('OpenLayers.Layer.Vector');
                     if (vectorLayers !== null && vectorLayers.length > 0) {
@@ -1032,7 +1034,7 @@
                 return false;
             });
 
-            
+
 
         <?php endif ?>
 
@@ -1061,7 +1063,7 @@
                         $("input[name='lon']").val(geolocations[0].lon);
                         $("input[name='lat']").val(geolocations[0].lat);
                         <?php if($this->key_ign != null) : ?>
-                            var map = viewer.getViewer().getMap(); 
+                            var map = viewer.getViewer().getMap();
                             var lonlat = new OpenLayers.LonLat(geolocations[0].lon, geolocations[0].lat);
                             lonlat = lonlat.transform('EPSG:4326', map.getProjection());
                             putMarkerAt(map, lonlat, map.getProjection());

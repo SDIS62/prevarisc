@@ -1,3 +1,5 @@
+<?php echo $this->render('etablissement/partials/header.phtml') ?>
+
 <div class='pull-right' >
     <a class='btn' href="<?php echo $this->url(array('action' => 'edit-pieces-jointes')) ?>">Gestion des pièces jointes</a>
 </div>
@@ -15,18 +17,18 @@
 
 	<h4>Documents</h4>
 
-	<table class='table table-bordered table-condensed table-striped'> 
-		<thead> 
+	<table class='table table-bordered table-condensed table-striped'>
+		<thead>
 			<tr>
-				<th>Nom</th> 
+				<th>Nom</th>
 				<th>Description</th>
 				<th>Date d'ajout</th>
-			</tr> 
-		</thead> 
+			</tr>
+		</thead>
 		<tbody>
 			<?php foreach ($this->pieces_jointes as $piecejointe) : ?>
 				<?php if(!in_array($piecejointe['EXTENSION_PIECEJOINTE'], array(".jpg", ".jpeg", ".png", ".gif"))) : ?>
-				<tr>   
+				<tr>
 					<td>
 						<a href='<?php echo $this->url(array('controller' => 'piece-jointe', 'action' => 'get', 'idpj' => $piecejointe['ID_PIECEJOINTE'], 'type' => 'etablissement')) ?>' target='_blank' >
 							<?php echo $piecejointe['NOM_PIECEJOINTE'].$piecejointe['EXTENSION_PIECEJOINTE']  ?>
@@ -51,7 +53,7 @@
 			<?php if(in_array($piecejointe['EXTENSION_PIECEJOINTE'], array(".jpg", ".jpeg", ".png", ".gif"))) : ?>
 			<li class="span3">
 				<a href='<?php echo $this->store->getURLPath($piecejointe, 'etablissement', $this->etablissement['general']['ID_ETABLISSEMENT']); ?>' class="thumbnail">
-                                        <?php $piecejointe['EXTENSION_PIECEJOINTE'] = '.jpg'; ?> 
+                                        <?php $piecejointe['EXTENSION_PIECEJOINTE'] = '.jpg'; ?>
 					<img src="<?php echo $this->store->getURLPath($piecejointe, 'etablissement_miniature', $this->etablissement['general']['ID_ETABLISSEMENT']); ?>" alt="">
 					<h5><?php echo $piecejointe['NOM_PIECEJOINTE'] ?></h5>
 					<p><?php echo $piecejointe['DESCRIPTION_PIECEJOINTE'] ?></p>
@@ -68,8 +70,8 @@
 		$('a[href$=png], a[href$=jpg], a[href$=jpeg]').fancybox({
             'transitionIn'	:	'elastic',
             'transitionOut'	:	'elastic',
-            'speedIn'		:	600, 
-            'speedOut'		:	200, 
+            'speedIn'		:	600,
+            'speedOut'		:	200,
         });
 	});
 </script>

@@ -1,20 +1,16 @@
-<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
-<input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>'/>
-<ul class="nav nav-tabs nav-stacked menu_dashboard" >
-    <?php if (!empty($this->security_key)) : ?>
-        <li>
-            <a id='syncCom'  href='<?php echo $this->url_webcal ?>' style="display:none">
-                <i class="icon-repeat"></i> Synchroniser le calendrier de cette commission
-            </a>
-        </li>
-    <?php endif ?>
-    <li>
-        <a id='exportCom'  href='#' style="display:none">
-            <i class="icon-calendar"></i> Exporter pour Outlook
-        </a>
-    </li>
+<ul class="inline" style="float: right; margin-top: 10px;">
+    <li><a><span class="label label-info">En salle</span></a></li>
+    <li><a><span class="label label-warning">Groupe de visite</span></a></li>
+    <li><a><span class="label label-success">Visite de sécurité</span></a></li>
+</ul>
+
+<h2 class="page-header">
+    Calendrier des commissions
+</h2>
+
+<ul class="nav nav-tabs nav-stacked menu_dashboard hide" >
     <?php if($this->array_commissions): ?>
-        <?php if (!empty($this->security_key)) : ?>
+        <?php if (getenv('PREVARISC_SECURITY_KEY') && getenv('PREVARISC_SECURITY_KEY') !== '') : ?>
             <li>
                 <a id='syncCal'  href='<?php echo $this->url_webcal ?>'>
                     <i class="icon-repeat"></i> Synchroniser le calendrier de toutes les commissions
@@ -39,24 +35,29 @@
             <?php endif ?>
         <?php endforeach ?>
     <?php endif ?>
-
-    <br>
-
-    <li class="nav-header">Légende</li>
-    <li><a><span class="label label-info">En salle</span></a></li>
-    <li><a><span class="label label-warning">Groupe de visite</span></a></li>
-    <li><a><span class="label label-success">Visite de sécurité</span></a></li>
 </ul>
-<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
-<?php $this->placeholder('page_header')->captureStart();  ?>
-    <h2 class="page-header">
-        Calendrier des commissions
-    </h2>
-<?php $this->placeholder('page_header')->captureEnd(); ?>
-<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
-<?php $this->placeholder('before_content')->captureEnd() ?>
+
 <input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>' />
 
+<div style="text-align: right">
+
+    <?php if (!empty($this->security_key)) : ?>
+    <a id='syncCom' href='<?php echo $this->url_webcal ?>' style="display:none" class="btn">
+        <i class="icon-repeat"></i> Synchroniser le calendrier de cette commission
+    </a>
+    <?php endif ?>
+
+    <a id='exportCom'  href='#' style="display:none" class="btn">
+        <i class="icon-calendar"></i> Exporter pour Outlook
+    </a>
+
+    <?php if (!empty($this->security_key)) : ?>
+        <a id='syncCal'  href='<?php echo $this->url_webcal ?>' class="btn">
+            <i class="icon-repeat"></i> Synchroniser le calendrier de toutes les commissions
+        </a>
+    <?php endif ?>
+
+</div>
 
 &nbsp;
 
