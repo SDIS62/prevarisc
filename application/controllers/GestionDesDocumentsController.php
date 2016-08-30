@@ -16,8 +16,6 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_commission = new Service_Commission;
 
         $liste_commission = $service_commission->getAll();
@@ -38,7 +36,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
         sort($fichierVer);
 
         $this->view->fichierVer = $fichierVer;
-        
+
         //Récupération de l'ensemble des documents des différentes commissions
         foreach($liste_commission as $var => $commission ){
             $path = $this->path. DS .$commission['ID_COMMISSION'];

@@ -4,8 +4,6 @@ class UsersController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_user = new Service_User;
         $service_search = new Service_Search;
 
@@ -17,8 +15,6 @@ class UsersController extends Zend_Controller_Action
 
     public function editAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_user = new Service_User;
         $service_groupement = new Service_GroupementCommunes;
         $service_commission = new Service_Commission;
@@ -30,7 +26,7 @@ class UsersController extends Zend_Controller_Action
         $this->view->fonctions = $service_user->getAllFonctions();
         $this->view->communes = $service_adresse->getAllCommunes();
         $this->view->groupes = $service_user->getAllGroupes();
-        $this->view->params = array("LDAP_ACTIF" => Zend_Registry::get('options')['ldap']['enabled']);
+        $this->view->params = array("LDAP_ACTIF" => Zend_Registry::get('options')['auth']['ldap']['enabled']);
 
         $this->view->add = false;
 
@@ -49,8 +45,6 @@ class UsersController extends Zend_Controller_Action
 
     public function addAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_user = new Service_User;
         $service_groupement = new Service_GroupementCommunes;
         $service_commission = new Service_Commission;
@@ -82,8 +76,6 @@ class UsersController extends Zend_Controller_Action
 
     public function matriceDesDroitsAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         // Modèles
         $model_groupes = new Model_DbTable_Groupe;
         $model_resource = new Model_DbTable_Resource;
@@ -136,8 +128,6 @@ class UsersController extends Zend_Controller_Action
 
     public function editGroupAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_user = new Service_User;
 
         $this->view->group = $service_user->getGroup($this->_request->gid);
@@ -159,8 +149,6 @@ class UsersController extends Zend_Controller_Action
 
     public function addGroupAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_user = new Service_User;
 
         $this->view->add = true;
@@ -182,8 +170,6 @@ class UsersController extends Zend_Controller_Action
 
     public function deleteGroupAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_user = new Service_User;
 
         $this->view->add = true;
@@ -202,8 +188,6 @@ class UsersController extends Zend_Controller_Action
 
     public function ressourcesSpecialiseesAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_categorie = new Service_Categorie;
         $service_type = new Service_TypeActivite;
         $service_dossier = new Service_Dossier;

@@ -1,3 +1,5 @@
+<?php echo $this->render('etablissement/partials/header.phtml') ?>
+
 <div class='pull-right' >
 	<div class='btn-group'>
 		<a href='<?php echo $this->url(array('action' => 'add-contact')) ?>' class="btn" data-toggle="modal" data-backdrop="false" data-target="#reponse-modal" >Ajouter un nouveau contact</a>
@@ -11,17 +13,17 @@
 <?php if(count($this->contacts) == 0) : ?>
     <p class='muted'>Il n'y a pas de contact.</p>
 <?php else : ?>
-<table class='table table-bordered table-condensed table-hover'> 
-	<thead> 
+<table class='table table-bordered table-condensed table-hover'>
+	<thead>
 		<tr>
-			<th>Fonction</th> 
+			<th>Fonction</th>
 			<th>Nom</th>
 			<th></th>
-		</tr> 
-	</thead> 
+		</tr>
+	</thead>
 	<tbody>
 		<?php foreach ($this->contacts as $contact) : ?>
-			<tr>   
+			<tr>
 				<td>
 					<?php echo $contact['LIBELLE_FONCTION'] ?>
 				</td>

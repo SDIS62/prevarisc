@@ -1,3 +1,5 @@
+<?php echo $this->render('dossier/partials/header.phtml') ?>
+
 <script type="text/javascript">
 $(document).ready(function(){
 	$("#contact-content").load("/contact?item=dossier&id=<?php echo $this->idDossier; ?>&verrou=<?php echo $this->infosDossier['VERROU_DOSSIER']; ?>");
@@ -9,4 +11,3 @@ $(document).ready(function(){
 <div id='contact-content'>
 </div>
 <br/>
-

@@ -1,41 +1,32 @@
-<?php $this->placeholder('lateral_navigation')->captureStart(); // Capture du 'lateral_navigation' ?>
-<input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>'/>
-<ul class="nav nav-tabs nav-stacked menu_dashboard" >
-    <li>
-        <a href="#" id='commissionPj'><i class="icon-share icon-black"></i> Pièces jointes</a>
-    </li>
-    <li class="nav-header">Actions</li>
-    <li>
-        <a id='exportCom'  href='/calendrier-des-commissions/exportoutlook/dateCommId/<?php echo $this->infosDateComm['ID_DATECOMMISSION']; ?>' ><i class='icon-calendar'></i> Exporter pour Outlook</a>
-    </li>
-    <li>
-        <a href="#" id='createConvoc'><i class="icon-file"></i> Générer Convocations</a>
-    </li>
-    <li>
-        <a href="#" id='createOdj'><i class="icon-list-alt"></i> Génerer l'ordre du jour</a>
-    </li>
-    <li>
-        <a href="#" id='createPv'><i class="icon-file"></i> Génerer PV</a>
-    </li>
-    <li>
-        <a href="#" id='creationCompteRendu'><i class="icon-book"></i> Génerer le compte rendu</a>
-    </li>
-    <li>
-        <?php if($this->infosDateComm['GESTION_HEURES'] == 1): ?>
-                <a href="#" class="heures" id='non' onclick="return confirm('Confirmez vous de ne pas prendre en compte les heures ?');"><i class="icon-time"></i> Ne pas prendre en compte les heures</a>
-        <?php else : ?>
-                <a href="#" class="heures" id='oui' onclick="return confirm('Confirmez vous de prendre en compte les heures ?');"><i class="icon-time"></i> Prendre en compte les heures</a>
-        <?php endif ?>
-    </li>
-</ul>
-<?php $this->placeholder('lateral_navigation')->captureEnd(); ?>
-<?php $this->placeholder('page_header')->captureStart();  ?>
-    <h2 class="page-header">
+<h2 class="page-header">
     Ordre du jour de la <?php echo $this->infosCommissionType['LIBELLE_COMMISSIONTYPE'] ?> de <a href='/calendrier-des-commissions?idComm=<?php echo $this->infosDateComm["COMMISSION_CONCERNE"] ?>' ><?php echo $this->infosCommission['LIBELLE_COMMISSION'] ?></a> du <?php echo $this->dateFr ?>
-    </h2>
-<?php $this->placeholder('page_header')->captureEnd(); ?>
-<?php $this->placeholder('before_content')->captureStart() // Capture du 'before_content' ?>
-<?php $this->placeholder('before_content')->captureEnd() ?>
+</h2>
+
+<input type='hidden' name='idCommission' id='idCommission' value='<?php if($this->idComm){ echo $this->idComm; } ?>'/>
+
+<div style="text-align: right">
+    <a href="#" id='commissionPj' class="btn"><i class="icon-share icon-black"></i> Pièces jointes</a>
+    <a id='exportCom' class="btn" href='/calendrier-des-commissions/exportoutlook/dateCommId/<?php echo $this->infosDateComm['ID_DATECOMMISSION']; ?>' ><i class='icon-calendar'></i> Exporter pour Outlook</a>
+
+    <div class="btn-group">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+            Générer ...
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="#" id='createConvoc'><i class="icon-file"></i> Générer Convocations</a></li>
+            <li><a href="#" id='createOdj'><i class="icon-list-alt"></i> Génerer l'ordre du jour</a></li>
+            <li><a href="#" id='createPv'><i class="icon-file"></i> Génerer PV</a></li>
+            <li><a href="#" id='creationCompteRendu'><i class="icon-book"></i> Génerer le compte rendu</a></li>
+        </ul>
+    </div>
+
+    <?php if($this->infosDateComm['GESTION_HEURES'] == 1): ?>
+            <a href="#" class="heures btn btn-warning" id='non' onclick="return confirm('Confirmez vous de ne pas prendre en compte les heures ?');"><i class="icon-time"></i> Ne pas prendre en compte les heures</a>
+    <?php else : ?>
+            <a href="#" class="heures btn btn-warning" id='oui' onclick="return confirm('Confirmez vous de prendre en compte les heures ?');"><i class="icon-time"></i> Prendre en compte les heures</a>
+    <?php endif ?>
+</div>
 
 <script type="text/javascript">
 $(document).ready(function() {

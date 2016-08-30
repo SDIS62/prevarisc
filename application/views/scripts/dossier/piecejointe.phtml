@@ -1,3 +1,5 @@
+<?php echo $this->render('dossier/partials/header.phtml') ?>
+
 <?php
 
 //Fonction permettant d'afficher les fichiers contenus dans un repertoire
@@ -5,12 +7,12 @@ function listing($repertoire,$id_dossier){
 
 	$fichier = array();
 	if (is_dir($repertoire)){
-	
+
 		$dir = opendir($repertoire);                              //ouvre le repertoire courant désigné par la variable
 		while(false!==($file = readdir($dir))){                             //on lit tout et on récupere tout les fichiers dans $file
-		
+
 			if(!in_array($file, array('.','..'))){            //on eleve le parent et le courant '. et ..'
-			
+
 				$page = $file;                            //sort l'extension du fichier
 				$page = explode('.', $page);
 				$nb = count($page);
@@ -52,8 +54,8 @@ function listing($repertoire,$id_dossier){
 					$classe= "pj_icon doc";
 				break;
 				default:
-				
-				break;				
+
+				break;
 			}
 			echo "
 				<li>
@@ -81,7 +83,7 @@ if( isset($_POST['upload']) ) // si formulaire soumis
 	{
 		mkdir ($content_dir, 0777);
 	}
-		
+
     $tmp_file = $_FILES['fichier']['tmp_name'];
     if( !is_uploaded_file($tmp_file) )
     {
@@ -97,7 +99,7 @@ if( isset($_POST['upload']) ) // si formulaire soumis
 
     // on copie le fichier dans le dossier de destination
     $name_file = $_FILES['fichier']['name'];
-    
+
 	if( !move_uploaded_file($tmp_file, $content_dir . $name_file) )
     {
         //exit("Impossible de copier le fichier dans $content_dir");
@@ -108,26 +110,26 @@ if( isset($_POST['upload']) ) // si formulaire soumis
 
 if( !isset($_POST['do']))
 {
-	
+
 ?>
 
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$("#bt_add_pj").click(function(){
 				$(this).hide();
-				$("#ajout_pj").slideDown();		
+				$("#ajout_pj").slideDown();
 			});
 			$("#bt_cancel_pj").click(function(){
 				$("#bt_add_pj").slideDown();
-				$("#ajout_pj").hide();		
+				$("#ajout_pj").hide();
 			});
-			
+
 			$(".supprimerPJ").click(function(){
 				var toHide = $(this).parents('li');
 				$.ajax({
 					data: "do=deletePj&section=pj&name="+$(this).attr('id'),
 					type:"POST",
-					async: false,	
+					async: false,
 					beforeSend: function(){
 						//VERIFICATION SUR L'integrité des données
 					},
@@ -144,7 +146,7 @@ if( !isset($_POST['do']))
 				});
 				return false;
 			});
-			
+
 		});//fin doc ready
 	</script>
 
@@ -170,11 +172,11 @@ if( !isset($_POST['do']))
 				<span class='pj_clssmnt_actn'><a class='pasFini' href='javascript:void(0);'>ordre alphabétique</a></span>
 				<span class='pj_clssmnt_actn'><a class='pasFini' href='javascript:void(0);'>date</a></span>
 			</div>
-	";	
-	
+	";
+
 	//$testHelper = $this->_helper->fctTest('DossierPj');
 	//$this->DossierPj('listing');
-	
+
 	//echo $this->listing();
 	echo listing("pj/dossier/".$this->id_dossier,$this->id_dossier);
 	echo "

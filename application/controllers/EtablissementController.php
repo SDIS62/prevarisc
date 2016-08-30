@@ -2,10 +2,24 @@
 
 class EtablissementController extends Zend_Controller_Action
 {
+    public function init()
+    {
+        if ($this->_request->id) {
+            $this->view->nav_side_items = array(
+                array("text" => "Général", "icon" => "info-sign", "link" => '/etablissement/index/id/'.$this->_request->id),
+                array("text" => "Textes applicables", "icon" => "align-center", "link" => '/etablissement/textes-applicables/id/'.$this->_request->id),
+                array("text" => "Descriptifs", "icon" => "book", "link" => '/etablissement/descriptif/id/'.$this->_request->id),
+                array("text" => "Pièces jointes", "icon" => "share", "link" => '/etablissement/pieces-jointes/id/'.$this->_request->id),
+                array("text" => "Contacts", "icon" => "user", "link" => '/etablissement/contacts/id/'.$this->_request->id),
+                array("text" => "Dossiers", "icon" => "folder-open", "link" => '/etablissement/dossiers/id/'.$this->_request->id),
+                array("text" => "Afficher l'historique", "icon" => "repeat", "link" => '/etablissement/historique/id/'.$this->_request->id),
+                array("text" => "Ajouter un dossier", "icon" => "plus", "link" => '/dossier/add/id_etablissement/'.$this->_request->id),
+            );
+        }
+    }
+
     public function indexAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
         $service_groupement_communes = new Service_GroupementCommunes;
         $service_carto = new Service_Carto;
@@ -28,8 +42,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function editAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
         $service_carto = new Service_Carto;
 
@@ -150,8 +162,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function descriptifAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
@@ -189,8 +199,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function textesApplicablesAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
@@ -202,8 +210,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function editTextesApplicablesAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
         $service_textes_applicables = new Service_TextesApplicables;
 
@@ -230,8 +236,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function piecesJointesAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
@@ -249,8 +253,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function editPiecesJointesAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
@@ -310,8 +312,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function contactsAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
 
         $etablissement = $service_etablissement->get($this->_request->id);
@@ -332,8 +332,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function editContactsAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
@@ -410,8 +408,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function dossiersAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);
@@ -427,8 +423,6 @@ class EtablissementController extends Zend_Controller_Action
 
     public function historiqueAction()
     {
-        $this->_helper->layout->setLayout('etablissement');
-
         $service_etablissement = new Service_Etablissement;
 
         $this->view->etablissement = $service_etablissement->get($this->_request->id);

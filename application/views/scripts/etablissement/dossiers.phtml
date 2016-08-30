@@ -1,3 +1,5 @@
+<?php echo $this->render('etablissement/partials/header.phtml') ?>
+
 <div class='pull-right' >
     <a class='btn' href="<?php echo $this->url(array('controller' => 'dossier', 'action' => 'add', 'id_etablissement' => $this->etablissement['general']['ID_ETABLISSEMENT']), null, true) ?>">Ajouter un dossier</a>
 </div>

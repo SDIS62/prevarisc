@@ -4,8 +4,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 {
     public function init()
     {
-
-        $this->_helper->layout->setLayout('dashboard');
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('commissionselection', 'json')
                     ->addActionContext('recupevenement', 'json')
@@ -66,8 +64,6 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
         $protocol = ( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'webcals': 'webcal';
 
-        //$this->_helper->getHelper('Redirector')->gotoUrl($protocol . '://' . $_SERVER["HTTP_HOST"] . $url);
-        //
         $this->view->url_webcal = $protocol . '://' . $_SERVER["HTTP_HOST"] . $url;
 
         $this->view->array_commissions = $array_commissions;

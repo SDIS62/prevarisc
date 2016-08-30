@@ -1,3 +1,5 @@
+<?php echo $this->render('etablissement/partials/header.phtml') ?>
+
 <div class='pull-right' >
     <a class='btn' href="<?php echo $this->url(array('action' => 'edit-descriptif')) ?>">Modifier les descriptifs</a>
 </div>
@@ -42,7 +44,7 @@
 	        }
 
 	        echo "</dl>";
-	       
+
 	        if($j == 0) {
 	        	echo "<p class='muted'>Aucune donnée disponible</p>";
 	        }
@@ -51,7 +53,7 @@
         	echo '</div>';
 
 	        $i++;
-            
+
             if($i == 3) {
             	echo "</div> <div class='row-fluid' >";
             	$i = 0;

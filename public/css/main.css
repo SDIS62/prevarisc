@@ -1155,3 +1155,37 @@ a.list-group-item-danger.active:focus {
 #geoportail-container img {
     max-width: none;
 }
+
+.nav-side {
+  background-color: #f5f5f5;
+  margin-top: -20px;
+  padding-top: 40px;
+  height: 100vh;
+  position: fixed;
+  box-shadow: inset -3px 0px 8px -4px rgba(0, 0, 0, 0.07);
+}
+
+.nav-side button {
+  text-align: left;
+}
+
+.nav-side footer {
+  margin-bottom: 20px;
+  font-size: .8em;
+  color: gray;
+  opacity: .7;
+  position: absolute;
+  bottom: 45px;
+}
+
+.nav-side footer:hover {
+  opacity: 1;
+}
+
+.nav-side a {
+  color: gray;
+}
+
+.nav-side + .span10 {
+  margin-left: 16.66666667%;
+}

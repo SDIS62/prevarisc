@@ -10,14 +10,10 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         $ajaxContext->addActionContext('selectiontexte', 'json')
                         ->addActionContext('selectionarticle', 'json')
                         ->initContext();
-
-        $this->_helper->layout->setLayout('menu_admin');
     }
 
     public function indexAction()
     {
-        $this->_helper->layout->setLayout('menu_admin');
-
         $service_prescription = new Service_Prescriptions;
 
         $this->view->listePrescriptionCat = $service_prescription->getCategories();
@@ -231,7 +227,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 
 
     public function formprescriptionAction()
-    {  
+    {
         $dbTexte = new Model_DbTable_PrescriptionTexteListe();
         $dbArticle = new Model_DbTable_PrescriptionArticleListe();
 
@@ -243,7 +239,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
             $this->view->idPrescType = $this->_getParam('idPrescType');
             $this->view->do = 'edit';
 
-            $this->view->assoc = $service_prescription->getPrescriptionTypeDetail($this->_getParam('idPrescType'));            
+            $this->view->assoc = $service_prescription->getPrescriptionTypeDetail($this->_getParam('idPrescType'));
         } else {
             $this->view->do = 'new';
             $dbCategorie = new Model_DbTable_PrescriptionCat;
@@ -341,7 +337,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
                 $this->view->prescriptionType = $service_prescription->getPrescriptionTypeDetail($idPrescriptionType);
                 $this->view->idPrescriptionType = $this->view->prescriptionType[0]['ID_PRESCRIPTIONTYPE'];
 
-                
+
             } catch (Exception $e) {
                 $this->_helper->flashMessenger(array(
                     'context' => 'error',
@@ -354,9 +350,8 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 
 
 /* GESTION DES TEXTES */
-	
+
     public function gestionTextesAction(){
-        $this->_helper->layout->setLayout('menu_admin');
         $service_prescTextes = new Service_Prescriptions();
         if ( $this->_request->isPost() ) {
             try {
@@ -383,26 +378,23 @@ class GestionPrescriptionsController extends Zend_Controller_Action
     }
 
     public function gestionTextesAddAction(){
-        $this->_helper->layout->setLayout('menu_admin');
         $this->_helper->viewRenderer->setNoRender();
-        
+
         $this->view->action = 'add';
 
         $this->render('gestion-textes-edit');
     }
 
     public function gestionTextesEditAction(){
-        $this->_helper->layout->setLayout('menu_admin');
-        
+
         $this->view->action = 'edit';
-        
+
         $service_prescTextes = new Service_Prescriptions();
         $texteInfo = $service_prescTextes->getTexte($this->_getParam('id'));
         $this->view->texteInfo = $texteInfo;
     }
 
     public function gestionTextesReplaceAction(){
-        $this->_helper->layout->setLayout('menu_admin');
 
         $this->view->action = 'replace';
 
@@ -418,7 +410,6 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 /* GESTION DES ARTICLES */
 
     public function gestionArticlesAction(){
-        $this->_helper->layout->setLayout('menu_admin');
         //1 On affiche tous les textes accessible dans les prescriptions
         $service_prescription = new Service_Prescriptions();
 
@@ -448,26 +439,23 @@ class GestionPrescriptionsController extends Zend_Controller_Action
     }
 
     public function gestionArticlesAddAction(){
-        $this->_helper->layout->setLayout('menu_admin');
         $this->_helper->viewRenderer->setNoRender();
-        
+
         $this->view->action = 'add';
 
         $this->render('gestion-articles-edit');
     }
 
     public function gestionArticlesEditAction(){
-        $this->_helper->layout->setLayout('menu_admin');
-        
+
         $this->view->action = 'edit';
-        
+
         $service_prescription = new Service_Prescriptions();
         $articleInfo = $service_prescription->getArticle($this->_getParam('id'));
         $this->view->articleInfo = $articleInfo;
     }
 
     public function gestionArticlesReplaceAction(){
-        $this->_helper->layout->setLayout('menu_admin');
 
         $this->view->action = 'replace';
 
@@ -483,7 +471,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
 
     public function gestionRappelRegAction(){
         $service_prescription = new Service_Prescriptions();
-        
+
         if ($this->_request->isPost()) {
                 $post = $this->_request->getPost();
 
@@ -497,7 +485,7 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         }
 
         $this->view->listePrescEtude = $service_prescription->getPrescriptions('etude');
-        $this->view->listePrescVisite = $service_prescription->getPrescriptions('visite');        
+        $this->view->listePrescVisite = $service_prescription->getPrescriptions('visite');
     }
 
     public function gestionRappelRegAddAction(){
@@ -522,11 +510,11 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         $this->view->listeTextes = $dbTexte->getAllTextes();
         $this->view->listeArticles = $dbArticle->getAllArticles();
 
-        
+
         $idPrescription = $this->_getParam('id');
         $typeAction = 'rappel-reg';
 
-        $service_prescription = new Service_Prescriptions();        
+        $service_prescription = new Service_Prescriptions();
         $prescriptionInfo = $service_prescription->getPrescriptionInfo($this->_getParam('id'),$typeAction);
 
         $this->view->infosPrescription = $prescriptionInfo;
@@ -536,9 +524,8 @@ class GestionPrescriptionsController extends Zend_Controller_Action
         $this->view->libelle = $prescriptionInfo[0]["PRESCRIPTIONREGL_LIBELLE"];
     }
 /* FORMULAIRE DE PRESCRIPTIONS */
-    
+
     public function prescriptionFormAction(){
-        $this->_helper->layout->setLayout('menu_admin');
     }
 
 
