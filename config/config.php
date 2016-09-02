@@ -8,6 +8,8 @@ return array(
 
     'debug' => getenv('PREVARISC_DEBUG_ENABLED'),
 
+    'git_folder' => APPLICATION_PATH . DS . '..',
+
     'resources' => array(
 
         'frontController' => array(
