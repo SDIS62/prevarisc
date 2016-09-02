@@ -19,24 +19,6 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             return ;
         }
 
-        // Gestion de l'auth CAS
-        $cas = $options['auth']['cas'];
-        if ($cas['enabled'] == 1) {
-            // Enable debugging
-            if ($options['debug'] == 1) {
-                phpCAS::setDebug();
-                phpCAS::setVerbose(true);
-            }
-            // Initialize phpCAS
-            phpCAS::client($cas['version'] ?  : CAS_VERSION_2_0, $cas['host'], (int) $cas['port'], $cas['context'], false);
-            phpCAS::setLang(PHPCAS_LANG_FRENCH);
-            if ($cas['no_server_validation'] == 1) {
-                phpCAS::setNoCasServerValidation();
-            }
-            // force CAS authentication
-            phpCAS::forceAuthentication();
-        }
-
         // Récupération de l'utilisateur connecté
         $utilisateur = Zend_Auth::getInstance()->getIdentity();
 
