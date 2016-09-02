@@ -6,6 +6,9 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
     {
         if($request->getModuleName() == 'default')
         {
+            // Récupération de la configuration
+            $options = Zend_Registry::get('options');
+
             // On récupère la vue
             $view = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('view');
 
@@ -16,21 +19,21 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->headTitle(strip_tags($view->navigation()->breadcrumbs()->setMinDepth(0)->setSeparator(" / ")));
 
             // Envoi de la version en cours sur la vue
+            $revision_prevarisc = date('YmdH');
             try {
-                $git = new SebastianBergmann\Git(APPLICATION_PATH . DS . '..');
-                $view->branch_prevarisc = $git->getCurrentBranch();
+                $git = new SebastianBergmann\Git($options['git_folder']);
+                $branch_prevarisc = explode('/', $git->getCurrentBranch());
+                $branch_prevarisc = end($branch_prevarisc);
                 $revisions = $git->getRevisions();
                 $last_revision = end($revisions);
-                $view->revision_prevarisc = $last_revision['sha1'];
-                $view->version_prevarisc = $view->branch_prevarisc . '@' . substr((string) $view->revision_prevarisc, 0, 7);
+                $revision_prevarisc = $last_revision['sha1'];
+                $view->version_prevarisc = $branch_prevarisc . '@' . substr((string) $revision_prevarisc, 0, 7);
             }
-            catch(Exception $e) {
-                $view->version_prevarisc = date('YmdH');
-            }
+            catch(Exception $e) {}
 
             // Chargement des aides de vue
-            $view->registerHelper(new View_Helper_MinifyHeadLink($view->version_prevarisc), 'headLink');
-            $view->registerHelper(new View_Helper_MinifyInlineScript($view->version_prevarisc), 'inlineScript');
+            $view->registerHelper(new View_Helper_MinifyHeadLink($revision_prevarisc), 'headLink');
+            $view->registerHelper(new View_Helper_MinifyInlineScript($revision_prevarisc), 'inlineScript');
             $view->registerHelper(new SDIS62_View_Helper_FlashMessenger, 'flashMessenger');
             $view->registerHelper(new View_Helper_AfficheDoc, 'afficheDoc');
             $view->registerHelper(new View_Helper_Dates, 'formatDateDiff');
@@ -73,7 +76,7 @@ class Plugin_View extends Zend_Controller_Plugin_Abstract
             $view->headLink()->appendStylesheet('/css/jquery/jquery.fancybox-1.3.4.css', 'all');
             $view->headLink()->appendStylesheet('/css/jquery/jquery.tipsy.css', 'all');
             $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
-            $view->headLink()->appendStylesheet('/css/dropzone/basic.css', 'all');
+            $view->headLink()->appendStylesheet('/css/dropzone/dropzone.css', 'all');
 
             // Définition du partial de vue à utiliser pour le rendu d'une recherche
             Zend_View_Helper_PaginationControl::setDefaultViewPartial('search' . DIRECTORY_SEPARATOR . 'pagination_control.phtml');
