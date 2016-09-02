@@ -1,79 +1,84 @@
 <!-- Titre -->
 <h3 class='page-header'>Tableau des périodicités</h3>
 
-<form id='form_periodicite' action='/tableau-des-periodicites/save' method='post' >
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#erp" data-toggle="tab">ERP</a></li>
+	<li><a href="#igh" data-toggle="tab">IGH</a></li>
+</ul>
 
-	<h3>ERP</h3>
-	<?php foreach( array_chunk($this->array_types, 7) as $array_types ) : ?>
-	<table class='table table-bordered table-condensed periodicite' >
-		<thead>
-			<tr>
-				<th rowspan="2"></th>
-				<?php foreach( $array_types as $type) : ?>
-					<th colspan='2' ><?php echo $type["LIBELLE_TYPE"] ?></th>
-				<?php endforeach ?>
-			</tr>
-			<tr>
-				<?php for($i = 0; $i < count($array_types); $i++) : ?>
-					<th style='height: 16px; background: url(/css/img/avec_sans_local.gif) center -13px no-repeat' ></th>
-					<th style='height: 16px; background: url(/css/img/avec_sans_local.gif) center 6px no-repeat' ></th>
-				<?php endfor ?>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach( $this->array_categories as $categorie) : ?>
-			<tr>
-				<td style='width: 150px;' ><?php echo $categorie["LIBELLE_CATEGORIE"] ?></td>
+<form id='form_periodicite' class="tab-content" action='/tableau-des-periodicites/save' method='post' >
 
-				<?php foreach( $array_types as $type) : ?>
+	<!-- ERP -->
+	<div class="tab-pane active" id="erp">
+		<?php foreach( array_chunk($this->array_types, 7) as $array_types ) : ?>
+		<table class='table table-bordered table-condensed periodicite' >
+			<thead>
+				<tr>
+					<th rowspan="2"></th>
+					<?php foreach( $array_types as $type) : ?>
+						<th colspan='2' ><?php echo $type["LIBELLE_TYPE"] ?></th>
+					<?php endforeach ?>
+				</tr>
+				<tr>
+					<?php for($i = 0; $i < count($array_types); $i++) : ?>
+						<th style='height: 16px; background: url(/img/avec_sans_local.gif) center -13px no-repeat' ></th>
+						<th style='height: 16px; background: url(/img/avec_sans_local.gif) center 6px no-repeat' ></th>
+					<?php endfor ?>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach( $this->array_categories as $categorie) : ?>
+				<tr>
+					<td style='width: 150px;' ><?php echo $categorie["LIBELLE_CATEGORIE"] ?></td>
 
-					<?php $periodicite = $this->tableau[$categorie["ID_CATEGORIE"]][$type["ID_TYPE"]]; ?>
+					<?php foreach( $array_types as $type) : ?>
 
-					<td style='text-align: center' >
-						<?php if(!in_array($type["ID_TYPE"], $this->localsommeil_types)) : ?>
-							<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[0]) ) ? $periodicite[0] : 0 ?>' name='<?php echo $categorie["ID_CATEGORIE"]."_".$type["ID_TYPE"]."_0" ?>' />
-						<?php else : ?>
-							<input type='text' size='3' style='visibility: hidden' />
-						<?php endif ?>
-					</td>
+						<?php $periodicite = $this->tableau[$categorie["ID_CATEGORIE"]][$type["ID_TYPE"]]; ?>
 
-					<td style='text-align: center' >
+						<td style='text-align: center' >
+							<?php if(!in_array($type["ID_TYPE"], $this->localsommeil_types)) : ?>
+								<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[0]) ) ? $periodicite[0] : 0 ?>' name='<?php echo $categorie["ID_CATEGORIE"]."_".$type["ID_TYPE"]."_0" ?>' />
+							<?php else : ?>
+								<input type='text' size='3' style='visibility: hidden' />
+							<?php endif ?>
+						</td>
+
+						<td style='text-align: center' >
 							<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[1]) ) ? $periodicite[1] : 0 ?>' name='<?php echo $categorie["ID_CATEGORIE"]."_".$type["ID_TYPE"]."_1" ?>' />
-					</td>
+						</td>
 
+					<?php endforeach ?>
+				</tr>
 				<?php endforeach ?>
-			</tr>
-			<?php endforeach ?>
-		</tbody>
-	</table>
-	<?php endforeach ?>
+			</tbody>
+		</table>
+		<?php endforeach ?>
+	</div>
 
-	<h3>IGH</h3>
-	<table class='table table-bordered table-condensed periodicite' >
-		<thead>
-			<tr>
-				<?php foreach($this->array_classes as $classe) : ?>
-					<th ><?php echo $classe["LIBELLE_CLASSE"] ?></th>
-				<?php endforeach ?>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<?php foreach( $this->array_classes as $classe) : ?>
+	<!-- IGH -->
+	<div class="tab-pane active" id="igh">
+		<table class='table table-bordered table-condensed periodicite' >
+			<thead>
+				<tr>
+					<?php foreach($this->array_classes as $classe) : ?>
+						<th ><?php echo $classe["LIBELLE_CLASSE"] ?></th>
+					<?php endforeach ?>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<?php foreach( $this->array_classes as $classe) : ?>
+						<?php $periodicite = $this->tableau[0][$classe["ID_CLASSE"]]; ?>
+						<td style='text-align: center' >
+							<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[0]) ) ? $periodicite[0] : 0 ?>' name='<?php echo "0_".$classe["ID_CLASSE"]."_0" ?>' />
+						</td>
+					<?php endforeach ?>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
-					<?php $periodicite = $this->tableau[0][$classe["ID_CLASSE"]]; ?>
-
-					<td style='text-align: center' >
-						<input type='text' size='3' maxlength='3' value='<?php echo ( isset($periodicite[0]) ) ? $periodicite[0] : 0 ?>' name='<?php echo "0_".$classe["ID_CLASSE"]."_0" ?>' />
-					</td>
-
-				<?php endforeach ?>
-			</tr>
-		</tbody>
-	</table>
-
-
-    <p class='text-center'>
+    <p class='text-center well'>
 		<input type='submit' id='submit' value='Sauvegarder' class='btn btn-success' />
 		<a href="/tableau-des-periodicites/apply" class='btn btn-success'>Appliquer sur TOUS les établissements</a>
 	</p>
@@ -83,11 +88,7 @@
 <script type="text/javascript">
 
 	$("input[type=text]").change(function() {
-		if($(this).val() == "0") {
-			$(this).css("opacity", .5);
-		}else {
-			$(this).css("opacity", 1);
-		}
+		$(this).css("opacity", $(this).val() == "0" ? .5 : 1);
 	}).change();
 
 </script>
