@@ -4,69 +4,34 @@ class ProxyController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-        $this->getHelper('viewRenderer')->setNoRender();
-        $this->_helper->layout()->disableLayout();
+        // Récupération de la configuration
+        $options = Zend_Registry::get('options');
+
+        // On annule le rendu des vues
         $this->_helper->viewRenderer->setNoRender(true);
 
+        // Paramètres de configuration du proxy
+        $config = array(
+            'adapter'    => $options['proxy']['enabled'] ? 'Zend_Http_Client_Adapter_Proxy' : 'Zend_Http_Client_Adapter_Socket',
+            'proxy_host' => $options['proxy']['host'],
+            'proxy_port' => $options['proxy']['port'],
+            'proxy_user' => $options['proxy']['username'],
+            'proxy_pass' => $options['proxy']['password']
+        );
 
-        // On forme la chaine de paramètres
+        // Formattage de l'URL
         $params = "";
-        foreach ($this->_request->getParams() as $key => $value) {
-
-            if(!in_array($key, array('url', 'controller', 'action', 'module')))
-                $params .= $key . '=' . str_replace( ' ', '+', $value)  . '&';
-        }
-
-        if ($params) {
-            $params = '?'.$params;
-        }
-
-        // Website url to open
-        $daurl = $this->_request->url . $params;
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $daurl);
-        curl_setopt($ch, CURLOPT_VERBOSE, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_REFERER']);
-
-        $options = Zend_Registry::get('options')['proxy'];
-
-        // are we under a proxy?
-        if (1 == $options['enabled']) {
-
-            curl_setopt($ch, CURLOPT_PROXYTYPE, $options['protocol']);
-            curl_setopt($ch, CURLOPT_PROXYPORT, $options['port']);
-            curl_setopt($ch, CURLOPT_PROXY, $options['host']);
-            if ($options['username']) {
-                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $options['username'].':'.$options['password']);
+        foreach($this->_request->getParams() as $key => $value) {
+            if(!in_array($key, array('url', 'controller', 'action', 'module'))) {
+                $params .= (empty($params) ? "?" : "&").$key.'='.str_replace(' ', '+', $value);
             }
         }
+        $url = $this->_request->url . $params;
 
-        $data = curl_exec($ch);
+        // Crée l'objet HTTP
+        $client = new Zend_Http_Client($url, $config);
 
-        if ($data === false) {
-            $body = curl_error($ch);
-        } else {
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $header = substr($data, 0, $header_size);
-            $headers = explode("\r\n", $header);
-            $body = substr($data, $header_size);
-
-            curl_close($ch);
-
-            foreach($headers as $header) {
-                if ($header) {
-                    if (preg_match('/^Content-Type/i', $header) !== 0) {
-                        $this->_response->setRawHeader($header);
-                    }
-                }
-            }
-        }
-
-
-
-        $this->_response->setBody($body);
+        // On récupère la réponse
+        $this->_response->setBody($client->request());
     }
 }
