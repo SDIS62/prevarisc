@@ -6,10 +6,10 @@
 
 <?php else : ?>
 
-<p>
+<p class="well">
 	<select id="choix_commune" class="bigger">
 		<?php foreach($this->rowset_communes as $row_commune) : ?>
-		<option value="<?php echo $row_commune->NUMINSEE_COMMUNE ?>"><?php echo $row_commune->LIBELLE_COMMUNE ?></option>
+		<option value="<?php echo $row_commune['NUMINSEE_COMMUNE'] ?>"><?php echo $row_commune['LIBELLE_COMMUNE'] ?></option>
 		<?php endforeach ?>
 	</select>
 </p>

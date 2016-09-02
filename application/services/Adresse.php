@@ -10,7 +10,58 @@ class Service_Adresse
     public function getAllCommunes()
     {
     	$model_commune = new Model_DbTable_AdresseCommune;
-    	return $model_commune->fetchAll()->toArray();
+    	return $model_commune->fetchAll(null, "LIBELLE_COMMUNE")->toArray();
+    }
+
+    /**
+     * Récupération d'une commune
+     *
+     * @return array
+     */
+    public function find($numinsee)
+    {
+        // Modèles de données
+        $DB_informations = new Model_DbTable_UtilisateurInformations;
+        $DB_communes = new Model_DbTable_AdresseCommune;
+
+        // On récupère la commune
+        $commune = $DB_communes->find($numinsee)->current();
+        $coordonnees = $DB_informations->find($commune->ID_UTILISATEURINFORMATIONS)->current();
+
+        return array(
+            'commune' => $commune,
+            'coord' => $coordonnees
+        );
+    }
+
+    /**
+     * Sauvegarde d'une commune
+     *
+     * @param array
+     */
+    public function save($numinsee, $request)
+    {
+        // Modèles de données
+        $DB_informations = new Model_DbTable_UtilisateurInformations;
+        $DB_communes = new Model_DbTable_AdresseCommune;
+
+        // On récupère la commune
+        $commune = $DB_communes->find($numinsee)->current();
+
+        if ($commune->ID_UTILISATEURINFORMATIONS == 0) {
+            $commune->ID_UTILISATEURINFORMATIONS = $DB_informations->insert(array_intersect_key($request, $DB_informations->info('metadata')));
+        } else {
+            $info = $DB_informations->find( $commune->ID_UTILISATEURINFORMATIONS )->current();
+
+            if ($info == null) {
+                $id = $DB_informations->insert(array_intersect_key($request, $DB_informations->info('metadata')));
+                $commune->ID_UTILISATEURINFORMATIONS = $id;
+            } else {
+                $info->setFromArray(array_intersect_key($request, $DB_informations->info('metadata')))->save();
+            }
+        }
+
+        $commune->save();
     }
 
     /**
@@ -29,7 +80,7 @@ class Service_Adresse
         $model_adresse = new Model_DbTable_AdresseCommune;
         return $model_adresse->get($q);
     }
-    
+
     /**
      * Retourne les voies par rapport à une ville
      *
