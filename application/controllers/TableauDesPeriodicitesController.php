@@ -4,102 +4,61 @@ class TableauDesPeriodicitesController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-        // Liste des types d'activité
-        $activite_model = new Model_DbTable_Type();
-        $this->view->array_types = $activite_model->fetchAll()->toArray();
+        // Récupération de la configuration
+        $options = Zend_Registry::get('options');
 
-        // Liste des catégorie
-        $cat_model = new Model_DbTable_Categorie();
-        $this->view->array_categories = $cat_model->fetchAll()->toArray();
+        // Initialisation des services
+        $service_type = new Service_Type();
+        $service_categorie = new Service_Categorie();
+        $service_classe = new Service_Classe();
+        $service_periodicite = new Service_Periodicite();
 
-        // Liste des classes
-        $classe_model = new Model_DbTable_Classe();
-        $this->view->array_classes = $classe_model->fetchAll()->toArray();
+        // Récupération des types / catégories / classes et tableau pour la vue
+        $array_types = $service_type->getAll();
+        $array_categories = $service_categorie->getAll();
+        $array_classes = $service_classe->getAll();
+        $tableau = $service_periodicite->getAll();
 
-        // Les périodicités
-        $perio_model = new Model_DbTable_Periodicite();
-        $tableau = $perio_model->fetchAll()->toArray();
-
-        $result = array();
-
-        for ($i=0; $i < count($tableau); $i++) {
-            // Sans local sommeil
-            $result[$tableau[$i]["ID_CATEGORIE"]][$tableau[$i]["ID_TYPE"]][$tableau[$i]["LOCALSOMMEIL_PERIODICITE"]] = $tableau[$i]["PERIODICITE_PERIODICITE"];
-
-            // Avec local (on exclu igh == categ à 0)
-            if($tableau[$i]["ID_CATEGORIE"] != 0)
-                $result[$tableau[$i++]["ID_CATEGORIE"]][$tableau[$i]["ID_TYPE"]][$tableau[$i]["LOCALSOMMEIL_PERIODICITE"]] = $tableau[$i]["PERIODICITE_PERIODICITE"];
-        }
-
-        $this->view->tableau = $result;
-
-        // Types pour lesquels on ne définit pas la périodicité sans hebergement
-        $this->view->localsommeil_types = Zend_Registry::get('options')['types_sans_local_sommeil'];
-
+        // On envoie sur la vue les données nécessaires
+        $this->view->tableau = $tableau;
+        $this->view->array_types = $array_types;
+        $this->view->array_categories = $array_categories;
+        $this->view->array_classes = $array_classes;
+        $this->view->localsommeil_types = $options['types_sans_local_sommeil'];
     }
 
     public function saveAction()
     {
+        // Initialisation des services
+        $service_periodicite = new Service_Periodicite();
+
+        // On tente la sauvegarde
         try {
-            // Model des périodicités
-            $perio_model = new Model_DbTable_Periodicite();
-
-            // Requests
-            $request = $this->getRequest();
-
-            foreach ( $request->getPost() as $key => $value ) {
-                $result = explode("_", $key);
-
-                if(  $item = $perio_model->find($result[0], $result[1], $result[2])->current() == null )
-                    $item = $perio_model->createRow();
-                else
-                    $item = $perio_model->find($result[0], $result[1], $result[2])->current();
-
-                $item->ID_CATEGORIE = $result[0];
-                $item->ID_TYPE = $result[1];
-                $item->LOCALSOMMEIL_PERIODICITE = $result[2];
-                $item->PERIODICITE_PERIODICITE = $value;
-                $item->save();
-
-                $this->_helper->flashMessenger(array(
-                    'context' => 'success',
-                    'title' => 'Le tableau des périodicités a bien été sauvegardé',
-                    'message' => ''
-                ));
-            }
+            // On sauvegarde le tableau des périodicités
+            $service_periodicite->save($this->_request->getPost());
+            $this->_helper->flashMessenger(array('context' => 'success','title' => 'Sauvegardé !','message' => 'Le tableau des périodicités a bien été sauvegardé'));
         } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de la sauvegarde du tableau des périodicités',
-                'message' => $e->getMessage()
-            ));
+            $this->_helper->flashMessenger(array('context' => 'error','title' => 'Erreur lors de la sauvegarde du tableau des périodicités','message' => $e->getMessage()));
         }
 
-        // Redirection
+        // On revient sur la page principale
         $this->_helper->redirector('index');
     }
 
     public function applyAction()
     {
-        try {
-            // Model des périodicités
-            $perio_model = new Model_DbTable_Periodicite();
-            $perio_model->apply();
+        // Initialisation des services
+        $service_periodicite = new Service_Periodicite();
 
-            $this->_helper->flashMessenger(array(
-                'context' => 'success',
-                'title' => 'OKAY!',
-                'message' => 'Le tableau des périodicités a bien été appliqué'
-            ));
+        // On tente d'appliquer le tableau des périodicités
+        try {
+            $service_periodicite->apply();
+            $this->_helper->flashMessenger(array('context' => 'success','title' => 'Tableau des périodicités appliqué!','message' => "Le tableau des périodicités a bien été appliqué sur l'ensemble des établissements de Prevarisc"));
         } catch (Exception $e) {
-            $this->_helper->flashMessenger(array(
-                'context' => 'error',
-                'title' => 'Erreur lors de la sauvegarde du tableau des périodicités',
-                'message' => $e->getMessage()
-            ));
+            $this->_helper->flashMessenger(array('context' => 'error','title' => 'Erreur lors de la sauvegarde du tableau des périodicités','message' => $e->getMessage()));
         }
 
-        // Redirection
+        // On revient sur la page principale
         $this->_helper->redirector('index');
     }
 }
