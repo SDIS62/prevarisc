@@ -146,7 +146,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     */
     protected function _initAcl()
     {
-        $acl = new Zend_Acl;
+        require 'Acl.php';
+
+        $acl = new Acl();
 
         return $acl;
     }
