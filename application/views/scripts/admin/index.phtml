@@ -1,21 +1,26 @@
-<h3 class='page-header'>Panneau d'administration</h3>
+<div style="text-align: center">
+
+    <p><img src="/favicon.ico" width="125px" /></p>
+
+    <?php if(!empty($this->version_prevarisc)) : ?>
+        <br>
+    <p class="lead">
+        Version
+        <?php echo $this->version_prevarisc ?>
+        <?php if(!empty($this->revision_prevarisc_local)) : ?>
+            <span id="update_available" class='avis' style='background-color: #3a87ad; font-size: .7em; display: none;'>Mise à jour disponible sur SDIS62/prevarisc</span>
+        <?php else : ?>
+            <span class='avis' style='background-color: red; font-size: .7em;'>Erreur lors de la récupération de la version courante</span>
+        <?php endif ?>
+    </p>
+    <?php endif ?>
+
+</div>
 
 <div class="panel panel-default" style="width: 100%; margin-bottom: 20px;">
-    <div class="panel-heading">Informations générales</div>
+    <div class="panel-heading">Configuration</div>
         <div class="panel-body">
             <dl class='dl-horizontal' >
-                <dt>Version</dt>
-                <dd>
-                <p>
-                    <?php echo $this->version_prevarisc ?>
-                    <?php if($this->is_uptodate === false) : ?>
-                        <span class='avis' style='background-color: #3a87ad; font-size: .7em;'>Mise à jour disponible sur SDIS62/prevarisc</span>
-                    <?php elseif (empty($this->is_uptodate)) : ?>
-                        <span class='avis' style='background-color: red; font-size: .7em;'>Erreur lors de la récupération de la version courante</span>
-                    <?php endif ?>
-                </p>
-                </dd>
-
                 <dt>Clé IGN</dt>
                 <dd>
                 <p><?php echo $this->key_ign != null ? $this->key_ign : 'Aucune clé' ?></p>
@@ -66,35 +71,14 @@
     </div>
 </div>
 
-<div class="panel panel-default" style="width: 100%">
-    <div class="panel-heading">Utilisateurs connectés</div>
-        <div class="panel-body">
-            <?php if($this->users == null) : ?>
-                <p><strong>Aucun résultat.</strong></p>
-            <?php else : ?>
-                <table class='table table-condensed table-striped tablesorter'>
-                    <thead>
-                        <tr>
-                            <th>Identifiant</th>
-                            <th>Nom et prénom</th>
-                            <th>Groupe</th>
-                            <th>Fonction</th>
-                            <th>Etat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach( $this->users as $user ) : ?>
-                            <tr>
-                                <td style='font-style: italic' ><?php echo $user["USERNAME_UTILISATEUR"] ?></td>
-                                <td><?php echo $user["NOM_UTILISATEURINFORMATIONS"] . " " . $user["PRENOM_UTILISATEURINFORMATIONS"] ?></td>
-                                <td><?php echo $user["LIBELLE_GROUPE"] ?></td>
-                                <td><?php echo $user["LIBELLE_FONCTION"] ?></td>
-                                <td><span class='label label-success'>En ligne</span></td>
-                            </tr>
-                        <?php endforeach ?>
-                    </tbody>
-                </table>
-            <?php endif ?>
-        </div>
-    </div>
-</div>
+<?php if(!empty($this->branch_prevarisc)) : ?>
+<script>
+    // On récupère la version actuelle et on la compare au dernier commit de la
+    // branche courante sur le dépôt Github.
+    $.getJSON("https://api.github.com/repos/SDIS62/prevarisc/git/refs/heads/<?php echo $this->branch_prevarisc ?>", function(data) {
+        if(data.object.sha != '<?php echo $this->revision_prevarisc_local ?>') {
+            $("#update_available").show();
+        }
+    });
+</script>
+<?php endif ?>
