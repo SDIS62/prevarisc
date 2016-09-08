@@ -2,23 +2,11 @@
 
     <div class='well well-large text-center'>
         <p class='lead'>La clé IGN n'est pas renseignée.</p>
-        <p>Vous devez placer la clé IGN dans votre secret.ini comme ceci : </p>
-        <pre>ign.key = XXXXXXXXXXXX</pre>
-    </div>
-
-<?php elseif(count($this->couches_cartographiques) == 0) : ?>
-
-    <p class='text-right'><a class='btn' href='<?php echo $this->url(array('controller' => 'couches-cartographiques', 'action' => 'add'), null, true) ?>'>Ajouter une couche</a></p>
-
-    <div class='well well-large text-center'>
-        <p class='lead'>Il n'y a pas de couche cartographique.</p>
-        <p><a href='<?php echo $this->url(array('action' => 'add')) ?>' class='btn btn-large'>Ajouter une couche cartographique</a></p>
+        <p>Vous devez placer la clé IGN dans votre configuration comme ceci : </p>
+        <pre>SetEnv PREVARISC_PLUGIN_IGNKEY XXXXXXXXXXXX</pre>
     </div>
 
 <?php else : ?>
-
-    <p class='text-right'><a class='btn' href='<?php echo $this->url(array('controller' => 'couches-cartographiques', 'action' => 'add'), null, true) ?>'>Ajouter une couche</a></p>
-
     <div id='geoportail-container'  style="height: 350px; max-height: 350px;"></div>
     
     <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
@@ -39,6 +27,19 @@
             );
         });
     </script>
+
+<?php endif ?>
+
+<?php if(count($this->couches_cartographiques) == 0) : ?>
+
+    <div class='well well-large text-center'>
+        <p class='lead'>Il n'y a pas de couche cartographique.</p>
+        <p><a href='<?php echo $this->url(array('action' => 'add')) ?>' class='btn btn-large'>Ajouter une couche cartographique</a></p>
+    </div>
+
+<?php else : ?>
+
+    <p class='text-right'><a class='btn' href='<?php echo $this->url(array('controller' => 'couches-cartographiques', 'action' => 'add'), null, true) ?>'>Ajouter une couche</a></p>
 
     <table class="table">
         <thead>
