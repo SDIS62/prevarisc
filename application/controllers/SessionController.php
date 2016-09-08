@@ -35,7 +35,7 @@ class SessionController extends Zend_Controller_Action
             if ($this->_request->isPost()) {
                 
                 if (!$form->isValid($this->_request->getPost())) {
-                    throw new Zend_Auth_Exception('Données invalides.');
+                    throw new Zend_Auth_Exception('Authentification invalide.');
                 }
                 // Identifiants
                 $username = $this->_request->prevarisc_login_username;
@@ -49,7 +49,7 @@ class SessionController extends Zend_Controller_Action
 
                 // Si l'utilisateur n'est pas actif, on renvoie false
                 if ($user === null || ($user !== null && !$user['ACTIF_UTILISATEUR'])) {
-                    throw new Exception('L\'utilisateur n\'existe pas ou n\'est pas actif.');
+                    throw new Zend_Auth_Exception('Authentification invalide.');
                 }
 
                 // Authentification adapters
@@ -84,7 +84,7 @@ class SessionController extends Zend_Controller_Action
                     }
                 }
 
-                throw new Exception('Les identifiants ne correspondent pas.');
+                throw new Zend_Auth_Exception('Authentification invalide.');
             }
             
         } catch (Exception $e) {
