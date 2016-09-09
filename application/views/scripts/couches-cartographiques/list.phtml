@@ -1,12 +1,4 @@
-<?php if($this->key_ign == null) : ?>
-
-    <div class='well well-large text-center'>
-        <p class='lead'>La clé IGN n'est pas renseignée.</p>
-        <p>Vous devez placer la clé IGN dans votre configuration comme ceci : </p>
-        <pre>SetEnv PREVARISC_PLUGIN_IGNKEY XXXXXXXXXXXX</pre>
-    </div>
-
-<?php else : ?>
+<?php if ($this->key_ign != null) : ?>
     <div id='geoportail-container'  style="height: 350px; max-height: 350px;"></div>
     
     <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
@@ -27,7 +19,69 @@
             );
         });
     </script>
+<?php elseif ($this->geoconcept_url != null) : ?>
+    <div id='geoconcept-container'  style="height: 350px; max-height: 350px;width: 100%"></div>
+    <script type="text/javascript" src="/js/geoconcept/OpenLayers.js"></script>
+    <script type="text/javascript" src="/js/geoconcept/proj4js.js"></script>
+    <script type="text/javascript" src="/js/geoconcept/htc-lite.js"></script>
+    <script type="text/javascript" src="/js/geoconcept/geoconcept.js"></script>
+    <link rel="stylesheet" href="/css/geoconcept/htc.css"/>
+    <script>
+        $(document).ready(function() {
+            <?php if ($token = getenv('PREVARISC_PLUGIN_GEOCONCEPT_TOKEN') && $app_id = getenv('PREVARISC_PLUGIN_GEOCONCEPT_APP_ID')): ?>
+                GCUI.Settings = {app_id:'<?php echo $app_id ?>', token:'<?php echo $token ?>'};
+            <?php endif ?>
+            var points = [];
+            points.push({
+                lat: 50.4727273438818,
+                lon: 2.71490430425517,
+                description: "Centre par défaut"
+            });
+            
+            map = initGeoConceptViewer('geoconcept-container', 
+                "<?php echo $this->geoconcept_url ?>",
+                "<?php echo getenv('PREVARISC_PLUGIN_GEOCONCEPT_LAYER') ?>",
+                points,
+                <?php echo json_encode($this->couches_cartographiques) ?>
+            );
+        });
+    </script>
+    
+    
+<?php elseif ($this->key_googlemap != null) : ?>
+    <div id='googlemap-container' style="height: 350px; max-height: 350px;"></div>
+    <script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=<?php echo $this->key_googlemap ?>&sensor=false">
+    </script>
+    <script type="text/javascript">
+        function initialize() {
+        var point = new google.maps.LatLng(50.4727273438818, 2.71490430425517);
+        var map = new google.maps.Map(document.getElementById("googlemap-container"), {
+            center: point,
+            zoom: 12
+        });
+          
+        var marker = new google.maps.Marker({
+            position: point,
+            map: map,
+            title: "<?php echo $this->etablissement['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS'] ?>"
+        });
 
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+     </script>
+     
+<?php else: ?>
+
+    <div class='well well-large text-center'>
+        <p class='lead'>Aucun player cartographique configuré.</p>
+        <p>Vous devez configurer comme ceci : </p>
+        <pre>SetEnv PREVARISC_PLUGIN_IGNKEY XXXXXXXXXXXX</pre>
+        <pre>SetEnv PREVARISC_PLUGIN_GOOGLEMAPKEY XXXXXXXXXXXX</pre>
+        <pre>SetEnv PREVARISC_PLUGIN_GEOCONCEPT_URL XXXXXXXXXXXX</pre>
+    </div>
+
+    
 <?php endif ?>
 
 <?php if(count($this->couches_cartographiques) == 0) : ?>

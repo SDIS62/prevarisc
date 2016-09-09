@@ -109,7 +109,11 @@ PREVARISC_CAS_CONTEXT | [FACULTATIF] Le contexte, ou URI CAS, ex : 'cas' | Chain
 PREVARISC_CAS_NO_SERVER_VALIDATION | [FACULTATIF] Désactive la vérification du certificat du serveur CAS | Chaine de caractères
 PREVARISC_CAS_VERSION | [FACULTATIF] Permet de préciser la version du protocol cas, 2.0 par défaut | 1.0, 2.0, 3.0
 PREVARISC_NTLM_ENABLED | [FACULTATIF] Permet d'activer l'authentification NTLM | 0 ou 1 pour l'activer
-
+PREVARISC_PLUGIN_GEOCONCEPT_URL | [FACULTATIF] URL du serveur Geoconcept couche WMTS | Chaine de caractères
+PREVARISC_PLUGIN_GEOCONCEPT_LAYER | [FACULTATIF] Nom de la couche WMTS de base | Chaine de caractères
+PREVARISC_PLUGIN_GEOCONCEPT_APP_ID | [FACULTATIF] App id si couches derrière authentification | Chaine de caractères
+PREVARISC_PLUGIN_GEOCONCEPT_TOKEN | [FACULTATIF] Token si couches derrière authentification| Chaine de caractères
+PREVARISC_PLUGIN_GEOCONCEPT_GEOCODER | [FACULTATIF] URL du géocoder | Chaine de caractères
 
 * Taper :```/etc/init.d/apache2 restart```
 

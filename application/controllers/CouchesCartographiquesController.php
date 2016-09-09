@@ -9,6 +9,8 @@ class CouchesCartographiquesController extends Zend_Controller_Action
         $service_carto = new Service_Carto;
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
+        $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
     }
 
     public function addAction()

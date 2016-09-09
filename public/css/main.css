@@ -1152,8 +1152,17 @@ a.list-group-item-danger.active:focus {
 }
 
 /* Fix provenant d'un problème IE11 / bootstrap*/
-#geoportail-container img {
+#geoportail-container img, #geoconcept-container img {
     max-width: none;
+}
+#geoconcept-container label {
+    display: inline;
+}
+
+#geoconcept-container .mapLayerControl {
+    right: 0;
+    background-color: #ccc;
+    border: 1px solid #ccc;
 }
 
 a.alerte-link:hover {
