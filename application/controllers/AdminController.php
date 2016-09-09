@@ -26,6 +26,14 @@ class AdminController extends Zend_Controller_Action
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
         $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
+        $this->view->geoconcept_infos = array(
+            'Url' => $this->view->geoconcept_url,
+            'Layer' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_LAYER'),
+            'App ID' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_APP_ID'),
+            'Token' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_TOKEN'),
+            'Geocoder Url' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_GEOCODER'),
+        );
         $this->view->dbname = getenv('PREVARISC_DB_DBNAME');
         $this->view->db_url = getenv('PREVARISC_DB_HOST').(getenv('PREVARISC_DB_PORT') ? ':'.getenv('PREVARISC_DB_PORT') : '');
         $this->view->api_enabled = getenv('PREVARISC_SECURITY_KEY') != "";

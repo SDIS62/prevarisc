@@ -15,6 +15,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
         $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
 
         $this->view->etablissement = $etablissement;
         $this->view->default_periodicite = $DB_periodicite->gn4ForEtablissement($etablissement);
@@ -39,6 +40,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->etablissement = $etablissement;
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
 
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
@@ -65,7 +67,6 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_classement = $service_classement->getAll();
         
         $this->view->couches_cartographiques = $service_carto->getAll();
-        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $this->view->add = false;
 

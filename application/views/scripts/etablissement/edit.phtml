@@ -475,6 +475,7 @@
             <dt>Géolocalisation</dt>
             <dd>
                 <?php if($this->key_ign != null) : ?><button id="geolocme" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse (Geoportail)</button><?php endif ?>
+                <?php if($this->geoconcept_url != null) : ?><button id="geolocme-geoconcept" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse (Geoconcept)</button><?php endif ?>
                 <button id="geolocme_nominatim" class='btn btn-small'><i class="icon-map-marker"></i> Géolocaliser cette adresse (Nominatim)</button>
                 <br/>
                 <small>Résultat : <span class='result'>Inconnu</span></small>
@@ -493,6 +494,15 @@
         <?php if($this->key_ign != null): ?>
             <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
             <div id='geoportail-container' style="height: 400px"></div>
+        <?php endif ?>
+        
+        <?php if($this->geoconcept_url != null) : ?>
+            <div id='geoconcept-container'  style="height: 400px; width: 100%"></div>
+            <script type="text/javascript" src="/js/geoconcept/OpenLayers.js"></script>
+            <script type="text/javascript" src="/js/geoconcept/proj4js.js"></script>
+            <script type="text/javascript" src="/js/geoconcept/htc-lite.js"></script>
+            <script type="text/javascript" src="/js/geoconcept/geoconcept.js"></script>
+            <link rel="stylesheet" href="/css/geoconcept/htc.css"/>
         <?php endif ?>
     </div>
 
@@ -855,7 +865,7 @@
                     data: {
                         name: query,
                         fonctions: 13,
-                        limit: 100,
+                        limit: 100
                     },
                     success: function (result) {
                         preventionnistes = [];
@@ -1035,6 +1045,114 @@
             
 
         <?php endif ?>
+        
+        <?php if( $this->geoconcept_url != null): ?>
+                
+            <?php if ($token = getenv('PREVARISC_PLUGIN_GEOCONCEPT_TOKEN') && $app_id = getenv('PREVARISC_PLUGIN_GEOCONCEPT_APP_ID')): ?>
+                initGeoConceptKey('<?php echo $app_id ?>', '<?php echo $token ?>');
+            <?php endif ?>
+                                
+            var map = initGeoConceptViewer('geoconcept-container', 
+                "<?php echo $this->geoconcept_url ?>",
+                "<?php echo getenv('PREVARISC_PLUGIN_GEOCONCEPT_LAYER') ?>",
+                [{lon: -1.638023, lat: 48.134198999999995, description: ""}],
+                <?php echo json_encode($this->couches_cartographiques) ?>,
+                function() {
+                    
+                    // removes the marker
+                    var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
+                    if (vectorLayers !== null && vectorLayers.length > 0) {
+                        var vectorLayer = vectorLayers[0];
+                        if (vectorLayer.features !== null && vectorLayer.features.length > 0) {
+                            vectorLayer.features[0].destroy();
+                        }
+                    }
+
+                    OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
+                        defaultHandlerOptions:{
+                            'single': true,
+                            'double': false,
+                            'pixelTolerance': 0,
+                            'stopSingle': false,
+                            'stopDouble': false
+                        },
+
+                        /**
+                         * Constructor
+                         */
+                        initialize: function(options) {
+                            OpenLayers.Control.prototype.initialize.apply(this,arguments);
+                            this.handlerOptions= OpenLayers.Util.extend({},this.defaultHandlerOptions);
+                            this.handler= new OpenLayers.Handler.Click(
+                                this, {'click': this.trigger}, this.handlerOptions);
+                        },
+
+                        /**
+                         * APIMethod: trigger
+                         */
+                        trigger: function(e) {
+                            var lonlat = map.getLonLatFromViewPortPx(e.xy).transform(
+                                map.getProjection(), new OpenLayers.Projection("EPSG:4326")
+                            );
+
+                            $("span.result").text("Manuel par clic sur la carte");
+                            $("input[name='lon']").val(lonlat.lon);
+                            $("input[name='lat']").val(lonlat.lat);
+
+                            // update map
+                            putMarkerAt(map, map.getLonLatFromViewPortPx(e.xy), map.getProjection());
+                        }
+                    });
+
+                    // création et insertion du nouveau contrôleur
+                    var monClic = new OpenLayers.Control.Click({
+                        autoActivate:true
+                    });
+                    map.addControl(monClic);
+                    
+                    map.updateSize();
+                }
+            );
+    
+            $('#adresse-modal #geolocme-geoconcept').click(function(e) {
+                e.preventDefault();
+                var geocoderUrl = "<?php echo getenv('PREVARISC_PLUGIN_GEOCONCEPT_GEOCODER') ?>";
+                var adresse = "";
+                var numero = $("input[name='numero']").val().trim();
+                var voie = $("input[name='voie_ac']").val().trim();
+                var codepostal = $("input[name='code_postal']").val();
+                var commune = $("input[name='commune_ac']").val().replace(/\(.*\)/g, '');
+                if (!commune) {
+                    $("span.result").text("Pas de commune renseignée");
+                    return false;
+                }
+                if (!voie) {
+                    $("span.result").text("Pas de voie renseignée");
+                    return false;
+                }
+                if (numero) {
+                    adresse += numero + ", ";
+                }
+                adresse += voie;
+                $("span.result").text("Géolocalisation en cours...");
+                console.log('Geolocalising : '+adresse + ", " + codepostal +  " " + commune);
+                geoConceptGeocode(geocoderUrl, map, adresse, codepostal, commune, function(result) {
+                    if (result) {
+                        $("span.result").text("Géolocalisée Geoconcept");
+                        $("input[name='lon']").val(result.x);
+                        $("input[name='lat']").val(result.y);
+                    }
+                    else {
+                        $("span.result").text("Introuvable");
+                        $("input[name='lon']").val(0);
+                        $("input[name='lat']").val(0);
+                    }
+                });
+
+                return false;
+            });
+
+        <?php endif ?>
 
         // Géolocalisation de l'adresse
         $('#adresse-modal #geolocme_nominatim').click(function() {
@@ -1067,6 +1185,12 @@
                             putMarkerAt(map, lonlat, map.getProjection());
                             viewer.setCenter(parseFloat(geolocations[0].lon), parseFloat(geolocations[0].lat));
                             viewer.setZoom(17);
+                        <?php elseif ($this->geoconcept_url): ?>
+                            var lonlat = new OpenLayers.LonLat(geolocations[0].lon, geolocations[0].lat);
+                            lonlat = lonlat.transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection(map.getProjection()));
+                            map.setCenter(lonlat);
+                            putMarkerAt(map, map.getCenter(), map.getProjection());
+                            map.updateSize();
                         <?php endif ?>
                     }
                     else {
