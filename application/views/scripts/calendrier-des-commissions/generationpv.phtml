@@ -22,13 +22,13 @@ function addPrescription($listePrescription,$type,$odf){
         try{
 			$prescription = $odf->listeExploitation;
 		} catch (Exception $e) {
-                    throw $e;
+                    
 		}
     }else if ($type == 2){
         try{
 			$prescription = $odf->listeAmelioration;
 		} catch (Exception $e) {
-                    throw $e;
+                    
 		}
     }
 
