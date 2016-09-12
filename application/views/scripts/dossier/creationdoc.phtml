@@ -236,10 +236,8 @@ if (!function_exists('addPrescription')) {
                         }
                         if($cpt)
                         {
-                            if($type != 0){
-                                addChamp($prescription, 'num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER']);
-                            }
-
+                            addChamp($prescription, 'num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER']);
+                            
                             if( $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
                             {
                                 addChamp($prescription, 'libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
@@ -327,30 +325,26 @@ if (!function_exists('addPrescriptionCC')) {
                         }
                         if($cpt)
                         {
-                            if($type != 0){
-                                $prescription->setVars('num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-                            }
+                            addChamp($prescription, 'num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER']);
 
                             if( $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
                             {
-                                $prescription->setVars('libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
+                                addChamp($prescription, 'libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
                             }else{
-                                $prescription->setVars('libelle', $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+                                addChamp($prescription, 'libelle', $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
                             }
                             $cpt = false;
                         }
                         $nbCpt--;
                     }
-                    $prescription->setVars('textearticle',$textearticle,true,'UTF-8');
+                    addChamp($prescription, 'textearticle', $textearticle);
                     $prescription->merge();
                 }
 
             }else{
-                if($type != 0){ 
-                    $prescription->setVars('num', '', true, 'UTF-8');
-                }
-                $prescription->setVars('libelle', '', true, 'UTF-8');
-                $prescription->setVars('textearticle','',true,'UTF-8');
+                addChamp($prescription, 'num', "");
+                addChamp($prescription, 'libelle', "");
+                addChamp($prescription, 'textearticle', "");
                 $prescription->merge();
             }
         }
