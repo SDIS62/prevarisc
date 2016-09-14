@@ -285,17 +285,20 @@
                 <?php endif ?>
                 
                 <?php if( count($this->etablissement['adresses']) > 0 && $this->geoconcept_url != null && $this->etablissement['adresses'][0]['LAT_ETABLISSEMENTADRESSE'] != null && $this->etablissement['adresses'][0]['LON_ETABLISSEMENTADRESSE'] != null) : ?>
-                <div id='geoconcept' class="tab-pane in" style="height: 350px; max-height: 350px;">
+                <div id='geoconcept' class="tab-pane in" style="height: 350px; max-height: 350px;width: 100%">
                     <div id='geoconcept-container'  style="height: 100%; max-height: 100%;width: 100%"></div>
                     <script type="text/javascript" src="/js/geoconcept/OpenLayers.js"></script>
                     <script type="text/javascript" src="/js/geoconcept/proj4js.js"></script>
                     <script type="text/javascript" src="/js/geoconcept/htc-lite.js"></script>
+                    <?php if ($projection = getenv('PREVARISC_PLUGIN_GEOCONCEPT_PROJECTION')): ?>
+                    <script type="text/javascript" src="/js/geoconcept/defs/<?php echo $projection ?>.js"></script>
+                    <?php endif ?>
                     <script type="text/javascript" src="/js/geoconcept/geoconcept.js"></script>
                     <link rel="stylesheet" href="/css/geoconcept/htc.css"/>
                     <script>
                         $(document).ready(function() {
                             <?php if ($token = getenv('PREVARISC_PLUGIN_GEOCONCEPT_TOKEN') && $app_id = getenv('PREVARISC_PLUGIN_GEOCONCEPT_APP_ID')): ?>
-                                GCUI.Settings = {app_id:'<?php echo $app_id ?>', token:'<?php echo $token ?>'};
+                                initGeoConceptKey('<?php echo $app_id ?>', '<?php echo $token ?>');
                             <?php endif ?>
                                 
                             var points = [];

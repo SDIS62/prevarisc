@@ -501,6 +501,9 @@
             <script type="text/javascript" src="/js/geoconcept/OpenLayers.js"></script>
             <script type="text/javascript" src="/js/geoconcept/proj4js.js"></script>
             <script type="text/javascript" src="/js/geoconcept/htc-lite.js"></script>
+            <?php if ($projection = getenv('PREVARISC_PLUGIN_GEOCONCEPT_PROJECTION')): ?>
+            <script type="text/javascript" src="/js/geoconcept/defs/<?php echo $projection ?>.js"></script>
+            <?php endif ?>
             <script type="text/javascript" src="/js/geoconcept/geoconcept.js"></script>
             <link rel="stylesheet" href="/css/geoconcept/htc.css"/>
         <?php endif ?>
@@ -935,7 +938,7 @@
             viewer = initViewer(
                 "geoportail-container", 
                 "<?php echo $this->key_ign ?>", 
-                [{lon: -1.638023, lat: 48.134198999999995, description: ""}], 
+                [{lat: <?php echo $default_lat ?>,lon: <?php echo $default_lon ?>, description: ""}], 
                 <?php echo json_encode($this->couches_cartographiques) ?>,
                 function() {
                     
@@ -1055,7 +1058,7 @@
             var map = initGeoConceptViewer('geoconcept-container', 
                 "<?php echo $this->geoconcept_url ?>",
                 "<?php echo getenv('PREVARISC_PLUGIN_GEOCONCEPT_LAYER') ?>",
-                [{lon: -1.638023, lat: 48.134198999999995, description: ""}],
+                [{lat: <?php echo $this->default_lat ?>,lon: <?php echo $this->default_lon ?>, description: ""}],
                 <?php echo json_encode($this->couches_cartographiques) ?>,
                 function() {
                     
@@ -1063,8 +1066,8 @@
                     var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
                     if (vectorLayers !== null && vectorLayers.length > 0) {
                         var vectorLayer = vectorLayers[0];
-                        if (vectorLayer.features !== null && vectorLayer.features.length > 0) {
-                            vectorLayer.features[0].destroy();
+                        for(var j = 0 ; j < vectorLayer.features.length ; j++) {
+                            vectorLayer.features[j].destroy();
                         }
                     }
 
@@ -1100,17 +1103,14 @@
                             $("input[name='lat']").val(lonlat.lat);
 
                             // update map
-                            putMarkerAt(map, map.getLonLatFromViewPortPx(e.xy), map.getProjection());
+                            geoConceptPutMarkerAt(map, map.getLonLatFromViewPortPx(e.xy));
                         }
                     });
-
-                    // création et insertion du nouveau contrôleur
-                    var monClic = new OpenLayers.Control.Click({
-                        autoActivate:true
-                    });
-                    map.addControl(monClic);
                     
-                    map.updateSize();
+                    // création et insertion du nouveau contrôleur
+                    map.addControl(new OpenLayers.Control.Click({
+                        autoActivate:true
+                    }));
                 }
             );
     
@@ -1188,8 +1188,8 @@
                         <?php elseif ($this->geoconcept_url): ?>
                             var lonlat = new OpenLayers.LonLat(geolocations[0].lon, geolocations[0].lat);
                             lonlat = lonlat.transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection(map.getProjection()));
-                            map.setCenter(lonlat);
-                            putMarkerAt(map, map.getCenter(), map.getProjection());
+                            map.moveTo(lonlat, 8);
+                            geoConceptPutMarkerAt(map, lonlat);
                             map.updateSize();
                         <?php endif ?>
                     }

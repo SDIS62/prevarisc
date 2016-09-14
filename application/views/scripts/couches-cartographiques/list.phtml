@@ -6,8 +6,8 @@
         $(document).ready(function() {
             var points = [];
             points.push({
-                lat: 50.4727273438818,
-                lon: 2.71490430425517,
+                lat: <?php echo $this->default_lat ?>,
+                lon: <?php echo $this->default_lon ?>,
                 description: "Centre par défaut"
             });
 
@@ -24,17 +24,20 @@
     <script type="text/javascript" src="/js/geoconcept/OpenLayers.js"></script>
     <script type="text/javascript" src="/js/geoconcept/proj4js.js"></script>
     <script type="text/javascript" src="/js/geoconcept/htc-lite.js"></script>
+    <?php if ($projection = getenv('PREVARISC_PLUGIN_GEOCONCEPT_PROJECTION')): ?>
+    <script type="text/javascript" src="/js/geoconcept/defs/<?php echo $projection ?>.js"></script>
+    <?php endif ?>
     <script type="text/javascript" src="/js/geoconcept/geoconcept.js"></script>
     <link rel="stylesheet" href="/css/geoconcept/htc.css"/>
     <script>
         $(document).ready(function() {
             <?php if ($token = getenv('PREVARISC_PLUGIN_GEOCONCEPT_TOKEN') && $app_id = getenv('PREVARISC_PLUGIN_GEOCONCEPT_APP_ID')): ?>
-                GCUI.Settings = {app_id:'<?php echo $app_id ?>', token:'<?php echo $token ?>'};
+                initGeoConceptKey('<?php echo $app_id ?>', '<?php echo $token ?>');
             <?php endif ?>
             var points = [];
             points.push({
-                lat: 50.4727273438818,
-                lon: 2.71490430425517,
+                lat: <?php echo $this->default_lat ?>,
+                lon: <?php echo $this->default_lon ?>,
                 description: "Centre par défaut"
             });
             
@@ -55,7 +58,7 @@
     </script>
     <script type="text/javascript">
         function initialize() {
-        var point = new google.maps.LatLng(50.4727273438818, 2.71490430425517);
+        var point = new google.maps.LatLng(<?php echo $this->default_lat ?>, <?php echo $this->default_lon ?>);
         var map = new google.maps.Map(document.getElementById("googlemap-container"), {
             center: point,
             zoom: 12

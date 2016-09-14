@@ -6,15 +6,14 @@ function initGeoConceptViewer(divId, url, layerName, points, wmsLayers, onView) 
     var map = new GCUI.Map(divId, {
         server: url,
         layer: layerName,
-        showSlider : false
+        scale : 3
     });
         
     /* Ajout des contrôles */
     map.addControl(new GCUI.Control.GraphicScale({
-            posx : 0,
-            posy : -1
-        }));
-    map.addControl(new GCUI.Control.ScaleSlider());
+        posx : 0,
+        posy : -1
+    }));
     map.addControl(new GCUI.Control.LayerSwitcher());
     geoConceptGeocoder = new GCUI.Control.GeoCode();
     map.addControl(geoConceptGeocoder);
@@ -88,10 +87,10 @@ function initGeoConceptViewer(divId, url, layerName, points, wmsLayers, onView) 
 
         map.addControl(controls['selector']);
         controls['selector'].activate();
-
+        
         /* On centre la carte sur le 1er point */
         var lonlat = new OpenLayers.LonLat(points[0].lon, points[0].lat);
-        map.moveTo(lonlat.transform(sourceProjection, mapProjection), 8);
+        map.moveTo(lonlat.transform(sourceProjection, mapProjection));
         map.updateSize(); /* Important sinon on a un blink blanc au déplacement */
 
         if (onView !== undefined) {
@@ -113,13 +112,27 @@ function geoConceptGeocode(url, map, address, postalCode, city, callback) {
             if (resp.geocodedAddresses.length > 0) {
                 var result = resp.geocodedAddresses[0];
                 var lonlat = new OpenLayers.LonLat(result.x, result.y);
-                lonlat = lonlat.transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection(map.getProjection()));
-                map.setCenter(lonlat);
-                putMarkerAt(map, map.getCenter(), map.getProjection());
+                var sourceProjection = new OpenLayers.Projection(result.projection);
+                var mapProjection = new OpenLayers.Projection(map.getProjection());
+                lonlat = lonlat.transform(sourceProjection, mapProjection);
+                map.moveTo(lonlat, 8);
+                geoConceptPutMarkerAt(map, lonlat);
                 map.updateSize(); /* Important sinon on a un blink blanc au déplacement */
             }
             callback(result);
         },
         url : url
     });
+}
+
+function geoConceptPutMarkerAt(map, lonlat) {
+    var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
+    if (vectorLayers.length > 0) {
+        var vectorLayer = vectorLayers[0];
+        for(var j = 0 ; j < vectorLayer.features.length ; j++) {
+            vectorLayer.features[j].destroy();
+        }
+        point = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat);
+        vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point, {}, {externalGraphic: '/images/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  })]);
+    }
 }
