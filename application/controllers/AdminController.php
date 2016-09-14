@@ -31,6 +31,7 @@ class AdminController extends Zend_Controller_Action
             'Url' => $this->view->geoconcept_url,
             'Layer' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_LAYER'),
             'App ID' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_APP_ID'),
+            'Projection' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_PROJECTION') ? : "Non paramétrée",
             'Token' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_TOKEN'),
             'Geocoder Url' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_GEOCODER'),
         );
@@ -47,7 +48,7 @@ class AdminController extends Zend_Controller_Action
         } else if (getenv('PREVARISC_LDAP_ENABLED')) {
             $this->view->authentification = sprintf("LDAP + BDD : %s:%d/%s", 
                 getenv("PREVARISC_LDAP_HOST"), 
-                getenv("PREVARISC_LDAP_PORT"),
+                getenv("PREVARISC_LDAP_PORT") ? : '389',
                 getenv("PREVARISC_LDAP_BASEDN"));
         } else {
             $this->view->authentification = "BDD";

@@ -9,13 +9,10 @@ class SessionController extends Zend_Controller_Action
         $form = new Form_Login;
         $service_user = new Service_User;
         $username = null;
+        $password = "";
         $this->view->form = $form;
         
         try {
-            
-            $username = null;
-            $password = "";
-            
             // Adaptateur CAS
             if (getenv('PREVARISC_CAS_ENABLED') == 1) {
                 $username = phpCAS::getUser();
@@ -35,6 +32,7 @@ class SessionController extends Zend_Controller_Action
             if ($this->_request->isPost()) {
                 
                 if (!$form->isValid($this->_request->getPost())) {
+                    error_log("Auth: requête invalide");
                     throw new Zend_Auth_Exception('Authentification invalide.');
                 }
                 // Identifiants
@@ -49,6 +47,7 @@ class SessionController extends Zend_Controller_Action
 
                 // Si l'utilisateur n'est pas actif, on renvoie false
                 if ($user === null || ($user !== null && !$user['ACTIF_UTILISATEUR'])) {
+                    error_log("Auth: utilisateur inexistant ou inactif '$username'");
                     throw new Zend_Auth_Exception('Authentification invalide.');
                 }
 
@@ -73,7 +72,9 @@ class SessionController extends Zend_Controller_Action
                         $adapters['ldap']->setLdap($ldap);
                         $adapters['ldap']->setUsername($ldap->getCanonicalAccountName($username, $accountForm));
                         $adapters['ldap']->setPassword($password);
-                    } catch (Exception $e) {}
+                    } catch (Exception $e) {
+                        error_log("Auth: ldap exception: ".$e->getMessage());
+                    }
                 }
 
                 // On lance le process d'identification avec les différents adaptateurs
@@ -84,6 +85,7 @@ class SessionController extends Zend_Controller_Action
                     }
                 }
 
+                error_log("Auth: password incorrect pour '$username'");
                 throw new Zend_Auth_Exception('Authentification invalide.');
             }
             
