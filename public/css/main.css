@@ -844,14 +844,14 @@ text-decoration: none;
 }
 
 .dashboard .panel {
-  width:  49%;
+  width:  49.5%;
   float: left;
   margin-bottom: 0px;
 }
 
 .dashboard .panel.ui-draggable-dragging {
-    border-style: dashed;
-    border-width: 3px;
+    z-index: 5;
+    opacity: .8;
 }
 
 .dashboard .panel.w2 {
@@ -874,6 +874,17 @@ text-decoration: none;
   width: 1%;
 }
 
+.dashboard .grid-sizer {
+    width: 49.5%;
+}
+
+.packery-drop-placeholder {
+    outline: 3px dashed #ddd;
+    outline-offset: -6px;
+    /* transition position changing */
+    -webkit-transition: -webkit-transform 0.2s;
+    transition: transform 0.2s;
+}
 
 .sidebar {
   background-color: #f4f4f4;
