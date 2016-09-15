@@ -16,6 +16,7 @@ Le logiciel de gestion de versions utilisé est Git, et le service web utilisé 
 Prevarisc est développé en PHP >= 5.5.
 
 La gestion des dépendances est effectuée avec [Composer](https://getcomposer.org). Du fait, les dépendances requises par l'application sont recensées dans le fichier [composer.json](https://github.com/SDIS62/prevarisc/blob/2.x/composer.json). Voici un résumé :
+
 * Zend Framework 1 : Base technique sur laquelle l'application s'appuie pour l'ensemble du routage, des vues, des injections de dépendances, etc ..
 * odtPHP : Librairie permettant de générer des fichiers .odt
 * gd_resize : Librairie permettant de manipuler des images (avatars, etc ..)
