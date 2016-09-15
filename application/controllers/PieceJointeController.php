@@ -25,7 +25,7 @@ class PieceJointeController extends Zend_Controller_Action
             $this->view->identifiant = $this->_request->id;
             $this->view->pjcomm = $this->_request->pjcomm;
             $listePj = $DBused->affichagePieceJointe("dossierpj", "dossierpj.ID_DOSSIER", $this->_request->id);
-			$this->view->verrou = $this->_request->verrou;
+            $this->view->verrou = $this->_request->verrou;
         }
 
         // Cas établissement
@@ -141,8 +141,11 @@ class PieceJointeController extends Zend_Controller_Action
             }
             
             // Extension du fichier
-            $extension = strrchr($_FILES['fichier']['name'], ".");
-
+            $extension = strtolower(strrchr($_FILES['fichier']['name'], "."));
+            if (in_array($extension, array('.php', '.php4', '.php5', '.sh', '.ksh', '.csh'))) {
+                throw new Exception("Ce type de fichier n'est pas autorisé en upload");
+            }
+            
             // Date d'aujourd'hui
             $dateNow = new Zend_Date();
 
