@@ -107,155 +107,129 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-	
-	$("body").append("<iframe name='hiddeniframe' id='hiddeniframe' src='about:blank' style='width:0px; height:0px' >");
 
-	// Ajout d'un type
-	$("#button-aud").click(function() {
-		dialog_aud();
-	});
-	
-	function dialog_aud() {
-		$('#dialog-aud').html("");
-		$('#dialog-aud').dialog("destroy");
-		$("#dialog-aud").remove();
-		
-		var dialog_aud = $("<div id='dialog-aud'></div>").appendTo("body");
+    $("body").append("<iframe name='hiddeniframe' id='hiddeniframe' src='about:blank' style='width:0px; height:0px' >");
 
-		dialog_aud.dialog({
-			title: "Ajouter un document type",
-			width: 650,
-			draggable: false,
-			resizable: false,
-			modal: true,
-			create: function() {
-				dialog_aud.load( "/gestion-des-documents/form" );
-			},
-			buttons: {
-				"Envoyer" : function() {
-					if(!$("#fichier").val()){
-						$("#fichier").click();
-					}else{
-						$("#formDocType").submit();
-						
-						$(this).dialog('close'); 
-						
-						// On ouvre la barre de chargement
-						$("<div id='load' style='text-align: center'><img src='/images/bar.gif' alt='Upload en cours' /></div>").dialog({
-							resizable: false,
-							height: 28,
-							width: 250,
-							modal: true,
-							dialogClass: 'noTitleStuff'
-						});
-					}
-					
-				},
-				"Annuler": function() {
-					$(this).dialog('close'); 
-				}
-			}
-		});
+    // Ajout d'un type
+    $("#button-aud").click(function() {
+        dialog_aud();
+    });
 
-	}
-	
-	$(".supp").click(function(){
-		//alert($(this).attr('id'));
-		
-		dialog_supp($(this));
-		//alert($("#nnnn.jpg").attr('class'));
-		return false;
-	});
-	
-	
-	function dialog_supp(elementDoc) {
-		var nomFichier = elementDoc.attr('id');
-	
-		$('#dialog-supp').dialog("destroy");
-		$("#dialog-supp").remove();
+    function dialog_aud() {
+        $('#dialog-aud').html("");
+        $('#dialog-aud').dialog("destroy");
+        $("#dialog-aud").remove();
 
-		var dialog_supp = $("<div id='dialog-supp'></div>").appendTo("body");
-		
-		dialog_supp.html("Vous êtes sur le point de supprimer le fichier \""+nomFichier+"\".<br/> Une fois ce fichier supprimé il ne pourra plus être utilisé lors de la génération des rapports.");
+        var dialog_aud = $("<div id='dialog-aud'></div>").appendTo("body");
 
-		dialog_supp.dialog({
-			title: "Suppression document",
-			width: 650,
-			draggable: false,
-			resizable: false,
-			modal: true,
-			buttons: {
-				"Supprimer" : function() {
-					var infoComm = elementDoc.parent().parent().parent().parent().attr('id');
-					var tabIdComm = infoComm.split("_");
-					var idComm = tabIdComm[1];
+        dialog_aud.dialog({
+            title: "Ajouter un document type",
+            width: 650,
+            draggable: false,
+            resizable: false,
+            modal: true,
+            create: function() {
+                dialog_aud.load( "/gestion-des-documents/form" );
+            },
+            buttons: {
+                "Envoyer" : function() {
+                    if(!$("#fichier").val()){
+                        $("#fichier").click();
+                    }else{
+                        $("#formDocType").submit();
 
-					//alert(infoComm);
-					
-					
+                        $(this).dialog('close'); 
+
+                        // On ouvre la barre de chargement
+                        $("<div id='load' style='text-align: center'><img src='/images/bar.gif' alt='Upload en cours' /></div>").dialog({
+                            resizable: false,
+                            height: 28,
+                            width: 250,
+                            modal: true,
+                            dialogClass: 'noTitleStuff'
+                        });
+                    }
+                },
+                "Annuler": function() {
+                        $(this).dialog('close'); 
+                }
+            }
+        });
+
+    }
+
+    $(".supp").click(function(){
+        //alert($(this).attr('id'));
+
+        dialog_supp($(this));
+        //alert($("#nnnn.jpg").attr('class'));
+        return false;
+    });
 
 
-					$.ajax({
-						type: "POST",
-						url: "/gestion-des-documents/suppdoc",
-						data:{
+    function dialog_supp(elementDoc) {
+        var nomFichier = elementDoc.attr('id');
+
+        $('#dialog-supp').dialog("destroy");
+        $("#dialog-supp").remove();
+
+        var dialog_supp = $("<div id='dialog-supp'></div>").appendTo("body");
+
+        dialog_supp.html("Vous êtes sur le point de supprimer le fichier \""+nomFichier+"\".<br/> Une fois ce fichier supprimé il ne pourra plus être utilisé lors de la génération des rapports.");
+
+        dialog_supp.dialog({
+            title: "Suppression document",
+            width: 650,
+            draggable: false,
+            resizable: false,
+            modal: true,
+            buttons: {
+                "Supprimer" : function() {
+                    var infoComm = elementDoc.parent().parent().parent().parent().attr('id');
+                    var tabIdComm = infoComm.split("_");
+                    var idComm = tabIdComm[1];
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/gestion-des-documents/suppdoc",
+                        data:{
                             name:nomFichier,
                             idCommission:idComm
                         },
-						success: function(msg){					
-							//suppression de la ligne
-							elementDoc.parent().parent().remove();
-							//alert(msg);
-							var num = $("#num_"+idComm).html();
-							if(num == 1){
-								$("#file_"+idComm).hide();
-								$("#num_"+idComm).html('0');
-							}else{
-								num--;
-								$("#num_"+idComm).html(num);
-							}
-						}
-					});
-					
-					dialog_supp.dialog("close");
-                    $("#dialog-supp").html('');
-					return false;
-				},
-				"Annuler": function() {
-					dialog_supp.dialog("close");
-                    $("#dialog-supp").html('');
-				}
-			}
-		});
+                        success: function(msg){
+                            
+                            if (msg != "") window.location.reload();
+                            
+                            //suppression de la ligne
+                            elementDoc.parent().parent().remove();
+                            
+                            var num = $("#num_"+idComm).html();
+                            if(num == 1){
+                                $("#file_"+idComm).hide();
+                                $("#num_"+idComm).html('0');
+                            }else{
+                                num--;
+                                $("#num_"+idComm).html(num);
+                            }
+                        }
+                    });
 
-	}
-	
-	$(".commission").click(function(){
-		$("#file_"+$(this).attr('id')).toggle();
-		return false;
-	})
+                    dialog_supp.dialog("close");
+                    $("#dialog-supp").html('');
+                    return false;
+                },
+                "Annuler": function() {
+                    dialog_supp.dialog("close");
+                    $("#dialog-supp").html('');
+                }
+            }
+        });
+
+    }
+
+    $(".commission").click(function(){
+        $("#file_"+$(this).attr('id')).toggle();
+        return false;
+    });
 });
-
-// Si un fichier est bien uploadé, on l'ajoute à la liste
-function callback(nomFich) {
-	$.ajax({
-		url: "/gestion-des-documents/check",
-		data: {
-			"format": "json",
-			"nomFich": nomFich
-		},
-		type: "post",
-		success: function(result) {
-			// On détruit la fenetre de load
-			//$("#load").remove();
-			
-			if( result.exists ) {
-				window.location.reload();
-			} else {
-				alert('fail');				
-			}
-		}
-	});
-}
-
 </script>
