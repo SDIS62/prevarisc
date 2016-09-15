@@ -16,9 +16,7 @@ class Service_GroupementCommunes
             return $model_groupement->getGroupementParVille($num_insee);
         }
 
-        $select = $model_groupement->select()->order('LIBELLE_GROUPEMENT ASC');
-
-        return $model_groupement->fetchAll($select)->toArray();
+        return $model_groupement->get()->toArray();
     }
 
     public function findGroupementAndGroupementType($num_insee = null)
@@ -28,6 +26,7 @@ class Service_GroupementCommunes
         if($num_insee !== null) {
             return $model_groupement->getGroupementParVille($num_insee);
         }
+
         return $model_groupement->getAllWithTypes();
     }
 
