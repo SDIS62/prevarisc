@@ -1788,7 +1788,7 @@ class DossierController extends Zend_Controller_Action
             $pathBase = REAL_DATA_PATH . DS . "uploads" . DS . "documents";
 
             //Récupération des documents présents dans le dossier 0. Documents visibles après vérrouillage
-            $pathVer = $pathBase."/0";
+            $pathVer = $pathBase. DS . "0";
             $dirVer = opendir($pathVer) or die('Erreur de listage : le répertoire n\'existe pas');
             $fichierVer = array();
             $dossierVer = array();
@@ -2252,14 +2252,17 @@ class DossierController extends Zend_Controller_Action
             //On récupère toutes les cellules
             $idDateCommAffect = $affectDossier['ID_DATECOMMISSION_AFFECT'];
             $listeDossierConcerne = $dbAffectDossier->getDossierNonAffect($idDateCommAffect);
+            
             if(isset($affectDossier['ID_DATECOMMISSION_AFFECT']) && $affectDossier['ID_DATECOMMISSION_AFFECT'] != ''){
                 $cptIdArray = 0;
                 foreach($listeDossierConcerne as $dossier){
+                    
                     $listeDossierConcerne[$cptIdArray]['regl'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],0);
                     $listeDossierConcerne[$cptIdArray]['exploit'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],1);
                     $listeDossierConcerne[$cptIdArray]['amelio'] = $service_dossier->getPrescriptions((int) $dossier['ID_DOSSIER'],2);
                     $cptIdArray++;
                 }
+                
                 $this->view->celluleDossier = $listeDossierConcerne;
             }
         }elseif($this->view->id_typeactivite == 29 && in_array($dossierNature["ID_NATURE"], $natureCCL) && !$this->_getParam("repriseCC")){
