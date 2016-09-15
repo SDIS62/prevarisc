@@ -3,7 +3,7 @@
         <?php echo $this->partial('index/partials/'.$bloc['type'].'_bloc.phtml', array_merge($bloc, array('id' => $id))) ?>
     <?php endforeach ?>
     <div class="grid-gutter"></div>
-
+    <div class="grid-sizer"></div>
 </div>
 
 <div id="reponse-modal" class="modal hide fade" ></div>
@@ -23,6 +23,9 @@
         $container = $('.dashboard').packery({
             itemSelector: '.panel',
             gutter: '.grid-gutter',
+            columnWidth: '.grid-sizer',
+            rowHeight: 44,
+            percentPosition: true,
             // disable initial layout
             isInitLayout: false
         });
