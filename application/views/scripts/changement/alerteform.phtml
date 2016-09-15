@@ -1,0 +1,73 @@
+<form name='formAlerte' id='formAlerte' action='' method='POST'>
+    <div class="bcc-rcpt">
+        <span class="bold">A : </span>
+        <?php echo $this->tos; ?>
+        <input type="hidden" name="mail-emails-dst" id="mail-emails-dst"
+            value="<?php echo $this->mails; ?>"/>
+    </div>
+    <hr />
+    <div class="mail-objet">
+        <span class="bold">Objet : </span>
+        <input type="text" class="mail-objet-input"
+        name="alerte-objet" id="alerte-objet" value="<?php echo htmlentities($this->objet); ?>" />
+    </div>
+    <hr />
+    <div class="mail-message">
+        <span class="bold">Message : </span>
+        <br />
+        <textarea name="alerte-message" id="alerte-message"
+            class="tinyarea"><?php echo $this->message; ?></textarea>
+    </div>
+</form>
+<div id="mail-no-bcc">
+    <h3>
+        Aucun destinataire pour l'envoi par mail de l'alerte.
+    </h3>
+    <p>
+        Pour y remédier, vérifier que les utilisateurs concernés ont les droits concernant les alertes par emails
+    </p>           
+    <p>
+        Si tous les destinataires ont été retiré, fermer cette popup, et recliquer sur "Alerter".
+    </p>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        function noDest()
+        {
+            $("#formAlerte").hide();
+            $("#mail-no-bcc").show();
+            $("#mail-button-envoi").text("Fermer");
+        }
+
+        if ($('#mail-emails-dst').val() === "") {
+            noDest();
+        }
+
+
+        $("#formAlerte").on({
+            click: function() {
+                var arrayHref = $(this).attr('href').split('/');
+                var idUser = arrayHref[0];
+                var mail = arrayHref[1];
+
+                var arrayMails = $('#mail-emails-dst').val().split(";")
+                arrayMails.splice(arrayMails.indexOf(mail), 1);
+                $('#mail-emails-dst').val(arrayMails.join(";"));
+                $('#dst_' + idUser).remove();
+                var commaClean = $('.bcc-rcpt').html()
+                                               .replace(", , ", ", ")
+                                               .replace(",  ", "")
+                                               .replace("  ,", "");
+                $('.bcc-rcpt').html(commaClean);
+
+                if (arrayMails.length === 0) {
+                    noDest();
+                }
+
+
+                return false;
+            }
+        }, ".remove-dst");
+    });
+</script>

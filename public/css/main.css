@@ -1155,3 +1155,49 @@ a.list-group-item-danger.active:focus {
 #geoportail-container img {
     max-width: none;
 }
+
+a.alerte-link:hover {
+    cursor: pointer;
+}
+
+.alerte-link i {
+    margin-right: 5px;
+}
+
+.table-balises {
+    width: 100%;
+}
+
+.table-balises, .table-balises th, .table-balises td {
+    border: 1px solid #ccc;
+}
+
+.table-balises th, .table-balises td {
+    padding: 5px 10px;
+}
+
+.td-balise {
+    color: #666;
+    font-style: italic;
+    width: 40%;
+}
+
+.mail-objet-input {
+    width: 85%;  
+}
+
+#formAlerte hr {
+    margin: 10px 0;
+}
+
+.remove-dst {
+    font-size: 10px;
+}
+
+#mail-no-bcc {
+    display: none;
+}
+
+#mail-no-bcc p {
+    font-style: italic;
+}

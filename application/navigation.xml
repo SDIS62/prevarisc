@@ -518,6 +518,15 @@
                         </save>
                     </pages>
                 </gestion-textes-applicables>
+                <changement>
+                    <label>Messages d'alertes</label>
+                    <controller>changement</controller>
+                    <action>index</action>
+                    <resource>alerte_email</resource>
+                    <privilege>alerte_statut</privilege>
+                    <privilege>alerte_avis</privilege>
+                    <privilege>alerte_classement</privilege>
+                </changement>
             </pages>
         </admin>
 
