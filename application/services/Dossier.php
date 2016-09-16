@@ -671,10 +671,12 @@ class Service_Dossier
 
         $numPresc = 1;
         foreach ($tabId as $idPrescDoss) {
-            $updatePrescDossier = $DBprescDossier->find($idPrescDoss)->current();
-            $updatePrescDossier->NUM_PRESCRIPTION_DOSSIER = $numPresc;
-            $updatePrescDossier->save();
-            $numPresc++;
+            if ($idPrescDoss) {
+                $updatePrescDossier = $DBprescDossier->find($idPrescDoss)->current();
+                $updatePrescDossier->NUM_PRESCRIPTION_DOSSIER = $numPresc;
+                $updatePrescDossier->save();
+                $numPresc++;
+            }
         }
     }
 
