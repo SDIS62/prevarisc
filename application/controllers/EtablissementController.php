@@ -4,6 +4,8 @@ class EtablissementController extends Zend_Controller_Action
 {
     public function init()
     {
+        // Gestion de la nav side, on l'affiche uniquement si un établissement est
+        // demandé.
         if ($this->_request->id) {
             $this->view->nav_side_items = array(
                 array("text" => "Général", "icon" => "info-sign", "link" => '/etablissement/index/id/'.$this->_request->id),
@@ -20,39 +22,43 @@ class EtablissementController extends Zend_Controller_Action
 
     public function indexAction()
     {
+        // Récupération de la configuration
+        $options = Zend_Registry::get('options');
+
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
         $service_groupement_communes = new Service_GroupementCommunes;
         $service_carto = new Service_Carto;
         $DB_periodicite = new Model_DbTable_Periodicite;
+
+        // Récupération des ressources
+        $store = $this->getInvokeArg('bootstrap')->getResource('dataStore');
+
+        // Récupération des données
         $etablissement = $service_etablissement->get($this->_request->id);
+        $couches_cartographiques = $service_carto->getAll();
+        $default_periodicite = $DB_periodicite->gn4ForEtablissement($etablissement);
+        $groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
+        $avis = $service_etablissement->getAvisEtablissement($this->_request->id, $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
-        $this->view->couches_cartographiques = $service_carto->getAll();
-        $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
-        $this->view->key_googlemap = Zend_Registry::get('options')['carto']['google'];
-
+        // On envoie sur la vue les données nécessaires
+        $this->view->couches_cartographiques = $couches_cartographiques;
+        $this->view->key_ign = $options['carto']['ign'];
+        $this->view->key_googlemap = $options['carto']['google'];
         $this->view->etablissement = $etablissement;
-        $this->view->default_periodicite = $DB_periodicite->gn4ForEtablissement($etablissement);
-        $this->view->groupements_de_communes = count($etablissement['adresses']) == 0 ? array() : $service_groupement_communes->findAll($etablissement['adresses'][0]["NUMINSEE_COMMUNE"]);
-
-        $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-
-        $this->view->store = $this->getInvokeArg('bootstrap')->getResource('dataStore');
-
+        $this->view->default_periodicite = $default_periodicite;
+        $this->view->groupements_de_communes = $groupements_de_communes;
+        $this->view->avis = $avis;
+        $this->view->store = $store;
     }
 
     public function editAction()
     {
+        // On effectue les mêmes actions que dans l'action index
+        $this->indexAction();
+
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
-        $service_carto = new Service_Carto;
-
-        $etablissement = $service_etablissement->get($this->_request->id);
-
-        $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-
-        $this->view->etablissement = $etablissement;
-
-        $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
-
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
         $service_avis = new Service_Avis;
@@ -65,29 +71,28 @@ class EtablissementController extends Zend_Controller_Action
         $service_classe = new Service_Classe;
         $service_classement = new Service_Classement;
 
+        // Récupération des ressources
+        $acl = $this->getInvokeArg('bootstrap')->getResource('acl');
+
+        // On envoie sur la vue les données nécessaires
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
         $this->view->DB_avis = $service_avis->getAll();
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_activite = $service_typeactivite->getAll();
-        $this->view->DB_commission = $service_commission->getCommissionsAndTypes();
+        $this->view->DB_commission = $service_commission->getAll();
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
         $this->view->DB_classement = $service_classement->getAll();
-
-        $this->view->couches_cartographiques = $service_carto->getAll();
-        $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
-
         $this->view->add = false;
+        $this->view->is_allowed_change_statut = $acl->isUserAllowed("statut_etablissement", "edit_statut");
 
-        $acl = $this->getInvokeArg('bootstrap')->getResource('acl');
-        $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
-        $this->view->is_allowed_change_statut = $acl->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
-
+        // Si un POST a été détecté, on sauvegarde l'établissement
         if($this->_request->isPost()) {
             try {
+                // On sauvegarde
                 $post = $this->_request->getPost();
                 $date = date("Y-m-d");
                 $service_etablissement->save($post['ID_GENRE'], $post, $this->_request->id, $date);
@@ -95,13 +100,14 @@ class EtablissementController extends Zend_Controller_Action
                 $this->_helper->redirector('index', null, null, array('id' => $this->_request->id));
             }
             catch(Exception $e) {
-                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'établissement n\'a pas été mis à jour. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Aie','message' => $e->getMessage()));
             }
         }
     }
 
     public function addAction()
     {
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
@@ -114,62 +120,64 @@ class EtablissementController extends Zend_Controller_Action
         $service_famille = new Service_Famille;
         $service_classe = new Service_Classe;
         $service_classement = new Service_Classement;
-        $service_carto = new Service_Carto;
 
+        // Récupération des ressources
+        $acl = $this->getInvokeArg('bootstrap')->getResource('acl');
+
+        // On envoie sur la vue les données nécessaires
         $this->view->DB_genre = $service_genre->getAll();
         $this->view->DB_statut = $service_statut->getAll();
         $this->view->DB_avis = $service_avis->getAll();
         $this->view->DB_categorie = $service_categorie->getAll();
         $this->view->DB_type = $service_type->getAll();
         $this->view->DB_activite = $service_typeactivite->getAll();
-        $this->view->DB_commission = $service_commission->getCommissionsAndTypes();
+        $this->view->DB_commission = $service_commission->getAll();
         $this->view->DB_typesplan = $service_typesplan->getAll();
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
         $this->view->DB_classement = $service_classement->getAll();
-
         $this->view->add = true;
+        $this->view->is_allowed_change_statut = $acl->isUserAllowed("statut_etablissement", "edit_statut");
 
-        $this->view->key_ign = Zend_Registry::get('options')['carto']['ign'];
-        $this->view->couches_cartographiques = $service_carto->getAll();
-
-        $acl = $this->getInvokeArg('bootstrap')->getResource('acl');
-        $mygroupe = Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'];
-        $this->view->is_allowed_change_statut = $acl->isAllowed($mygroupe, "statut_etablissement", "edit_statut");
-
-
+        // Si un POST a été détecté, on ajoute l'établissement
         if($this->_request->isPost()) {
             try {
+                // On sauvegarde
                 $post = $this->_request->getPost();
                 $id_etablissement = $service_etablissement->save($post['ID_GENRE'], $post);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Ajout réussi !', 'message' => 'L\'établissement a bien été ajouté.'));
 
+                // Si un site a été ajouté, on émet un warning sur le fait que le droit
+                // d'accès est défini par ses enfants.
                 if($post['ID_GENRE'] == 1 && count($post['ID_FILS_ETABLISSEMENT']) == 1) {
-                  $this->_helper->flashMessenger(array('context' => 'warning', 'title' => 'Ajout des établissements enfants', 'message' => "Les droits d'accès au site sont déterminés par les droits d'accès aux établissements qui le compose. Veillez à ajouter des établissements afin de garantir l'accès au site dans Prevarisc."));
-                  $this->_helper->redirector('edit', null, null, array('id' => $id_etablissement));
+                    $this->_helper->flashMessenger(array('context' => 'warning', 'title' => 'Ajout des établissements enfants', 'message' => "Les droits d'accès au site sont déterminés par les droits d'accès aux établissements qui le compose. Veillez à ajouter des établissements afin de garantir l'accès au site dans Prevarisc."));
+                    $this->_helper->redirector('edit', null, null, array('id' => $id_etablissement));
                 }
-                else {
-                  $this->_helper->redirector('index', null, null, array('id' => $id_etablissement));
-                }
+
+                // On redirige vers la fiche établissement créée
+                $this->_helper->redirector('index', null, null, array('id' => $id_etablissement));
             }
             catch(Exception $e) {
-                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'établissement n\'a pas été ajouté. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Aie','message' => $e->getMessage()));
             }
         }
 
+        // La vue rendue est la même que pour la vue d'édition
         $this->render('edit');
     }
 
     public function descriptifAction()
     {
+        // On effectue les mêmes actions que dans l'action index
+        $this->indexAction();
+
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
 
-        $this->view->etablissement = $service_etablissement->get($this->_request->id);
-
-        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-
+        // On récupère les données
         $descriptifs = $service_etablissement->getDescriptifs($this->_request->id);
 
+        // On envoie sur la vue les données nécessaires
         $this->view->descriptif = $descriptifs['descriptif'];
         $this->view->historique = $descriptifs['historique'];
         $this->view->derogations = $descriptifs['derogations'];
@@ -178,76 +186,90 @@ class EtablissementController extends Zend_Controller_Action
 
     public function editDescriptifAction()
     {
-        $service_etablissement = new Service_Etablissement;
-
+        // On effectue les mêmes actions que dans l'action descriptif
         $this->descriptifAction();
 
+        // Initialisation des services
+        $service_etablissement = new Service_Etablissement;
+
+        // Si un POST a été détecté, on édite les descriptifs
         if($this->_request->isPost())
         {
             try {
+                // On sauvegarde
                 $post = $this->_request->getPost();
                 $service_etablissement->saveDescriptifs($this->_request->id, $post['historique'], $post['descriptif'], $post['derogations'], $post['descriptifs_techniques']);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'Les descriptifs ont bien été mis à jour.'));
+                $this->_helper->redirector('descriptif', null, null, array('id' => $this->_request->id));
             }
             catch(Exception $e) {
-                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Mise à jour annulée', 'message' => 'Les descriptifs n\'ont pas été mis à jour. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+                $this->_helper->flashMessenger(array('context' => 'error', 'title' => 'Mise à jour annulée', 'message' => $e->getMessage()));
             }
-
-            $this->_helper->redirector('descriptif', null, null, array('id' => $this->_request->id));
         }
     }
 
     public function textesApplicablesAction()
     {
+        // On effectue les mêmes actions que dans l'action index
+        $this->indexAction();
+
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
 
-        $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        // On récupère les données
+        $textes_applicables = $service_etablissement->getAllTextesApplicables($this->_request->id);
 
-        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-
-        $this->view->textes_applicables_de_etablissement = $service_etablissement->getAllTextesApplicables($this->_request->id);
+        // On envoie sur la vue les données nécessaires
+        $this->view->textes_applicables_de_etablissement = $textes_applicables;
     }
 
     public function editTextesApplicablesAction()
     {
+        // On effectue les mêmes actions que dans l'action textes applicables
+        $this->textesApplicablesAction();
+
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
         $service_textes_applicables = new Service_TextesApplicables;
 
-        $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        // On récupère les données
+        $textes_applicables = $service_textes_applicables->getAll();
 
-        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
+        // On envoie sur la vue les données nécessaires
+        $this->view->textes_applicables = $textes_applicables;
 
-        $this->view->textes_applicables_de_etablissement = $service_etablissement->getAllTextesApplicables($this->_request->id);
-        $this->view->textes_applicables = $service_textes_applicables->getAll();
-
+        // Si un POST a été détecté, on édite les textes applicables
         if($this->_request->isPost()) {
             try {
                 $post = $this->_request->getPost();
                 $service_etablissement->saveTextesApplicables($this->_request->id, $post['textes_applicables']);
                 $this->_helper->flashMessenger(array('context' => 'success','title' => 'Mise à jour réussie !','message' => 'Les textes applicables ont bien été mis à jour.'));
+                $this->_helper->redirector('textes-applicables', null, null, array('id' => $this->_request->id));
             }
             catch(Exception $e) {
-                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Mise à jour annulée','message' => 'Les textes applicables n\'ont pas été mis à jour. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Mise à jour annulée','message' => $e->getMessage()));
             }
-
-            $this->_helper->redirector('textes-applicables', null, null, array('id' => $this->_request->id));
         }
     }
 
     public function piecesJointesAction()
     {
+        // On effectue les mêmes actions que dans l'action index
+        $this->indexAction();
+
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
 
-        $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        // On récupère les données
+        $pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
 
-        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-
-        $this->view->pieces_jointes = $service_etablissement->getAllPJ($this->_request->id);
-        $this->view->store = $this->getInvokeArg('bootstrap')->getResource('dataStore');
+        // On envoie sur la vue les données nécessaires
+        $this->view->pieces_jointes = $pieces_jointes;
     }
 
     public function getPieceJointeAction()
     {
+        // La gestion des pièces jointes est déléguée au controller PieceJointe
         $this->forward('get', 'piece-jointe');
     }
 
@@ -408,14 +430,16 @@ class EtablissementController extends Zend_Controller_Action
 
     public function dossiersAction()
     {
+        // On effectue les mêmes actions que dans l'action index
+        $this->indexAction();
+
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
 
-        $this->view->etablissement = $service_etablissement->get($this->_request->id);
-
-        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-
+        // On récupère les données
         $dossiers = $service_etablissement->getDossiers($this->_request->id);
 
+        // On envoie sur la vue les données nécessaires
         $this->view->etudes = $dossiers['etudes'];
         $this->view->visites = $dossiers['visites'];
         $this->view->autres = $dossiers['autres'];
@@ -423,12 +447,16 @@ class EtablissementController extends Zend_Controller_Action
 
     public function historiqueAction()
     {
+        // On effectue les mêmes actions que dans l'action index
+        $this->indexAction();
+
+        // Initialisation des services
         $service_etablissement = new Service_Etablissement;
 
-        $this->view->etablissement = $service_etablissement->get($this->_request->id);
+        // On récupère les données
+        $historique = $service_etablissement->getHistorique($this->_request->id);
 
-        $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-
-        $this->view->historique = $service_etablissement->getHistorique($this->_request->id);
+        // On envoie sur la vue les données nécessaires
+        $this->view->historique = $historique;
     }
 }
