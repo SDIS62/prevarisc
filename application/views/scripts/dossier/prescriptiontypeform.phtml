@@ -69,6 +69,13 @@ echo "</div>";
 
 $(document).ready(function(){
 	
+        $('#motscles').keypress(function(e){
+            if(e.keyCode==13) {
+                e.preventDefault();
+                $('#wordSearch').click();
+            }
+        });
+        
 	$("#wordSearch").live('click',function(){
 		$.ajax({
 			type: "POST",

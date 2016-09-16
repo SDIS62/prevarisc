@@ -1,40 +1,24 @@
-<?php
-if(!$this->edit)
-	echo "<li class='table-responsive' id='prescriptionDossier_".$this->idPrescriptionDossier."' style='list-style-type:none; margin-bottom:15px;'>";
-
-	echo "
-			<table class='table'>
-	";
-
-	$nbAssoc = count($this->textes);
-	$cpt = true;
-	for($j=0; $j < $nbAssoc; $j++)
-	{
-		$article = $this->articles[$j];
-		$texte = $this->textes[$j];
-		echo "
-			<tr>
-				<td class='span3'>".$texte."</td>
-				<td class='span2'>".$article."</td>
-		";
-		if($cpt)
-		{
-			if($this->typePrescDossier != 0){
-				echo "<td rowspan='".$nbAssoc."' class='span1 numPresc'>".$this->numPresc."</td>";			
-			}
-
-			echo "<td rowspan='".$nbAssoc."' class='".( ( $this->typePrescDossier != 0 )? "span5" :"span6" )."'>".nl2br($this->libelle)."</td>";
-			echo "<td class='span1' rowspan='".$nbAssoc."'><button class='btn' id='prescDossier_".$this->idPrescriptionDossier."'>Modifier</button></td>";
-			$cpt = false;
-		}
-		echo "
-			</tr>
-		";
-	}
-	echo "
-			</table>
-	";
-if(!$this->edit)
-	echo "</li>";
-
-?>
+<li class='table-responsive' id='prescriptionDossier_<?php echo $this->idPrescriptionDossier ?>' style='list-style-type:none; margin-bottom:15px;'>
+    <table class='table'>
+	<?php $nbAssoc = count($this->textes); ?>
+	<?php $cpt = true; ?>
+	<?php for($j=0; $j < $nbAssoc; $j++): ?>
+            <?php $article = $this->articles[$j]; ?>
+            <?php $texte = $this->textes[$j]; ?>
+            <tr>
+                <td class='span3'><?php echo $texte ?></td>
+                <td class='span2'><?php echo $article ?></td>
+		<?php if($cpt): ?>
+                    <?php if ($this->typePrescDossier > 0): ?>
+                        <td rowspan='<?php echo $nbAssoc ?>' class='span1 numPresc'><?php echo $this->numPresc ?></td>
+                    <?php endif ?>
+                    <td rowspan='<?php echo $nbAssoc ?>' class='span<?php echo $this->typePrescDossier > 0 ? 5 : 6 ?>'><?php echo nl2br($this->libelle) ?></td>
+                    <td class='span1' rowspan='<?php echo $nbAssoc ?>'>
+                        <a class='btn' href='<?php echo $this->url(array('controller' => 'dossier', 'action' => 'prescription-edit', 'id-prescription' => $this->idPrescriptionDossier, 'id' => $this->idDossier)) ?>' >Modifier</a>
+                    </td>
+                    <?php $cpt = false; ?>
+		<?php endif ?>
+            </tr>
+	<?php endfor ?>
+    </table>
+</li>

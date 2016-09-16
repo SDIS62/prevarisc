@@ -1210,3 +1210,18 @@ a.alerte-link:hover {
 #mail-no-bcc p {
     font-style: italic;
 }
+.highlight{
+    background-color: yellow;
+}
+
+#listePrescriptionTypeSearch > li, 
+#listePrescriptionType > li {
+    border: 1px solid #ddd;
+    border-left: 0 none;
+    border-right: 0 none;
+    list-style-type:none;
+}
+
+#listePrescriptionTypeSearch .noresult {
+    border: 0 none;
+}
