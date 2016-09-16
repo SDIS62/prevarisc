@@ -10,4 +10,4 @@ vendor
 /nbproject
 *.phar
 composer.lock
-cache
+/cache
