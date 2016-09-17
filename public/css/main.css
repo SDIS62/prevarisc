@@ -49,6 +49,12 @@ body.login input[type='submit'] {
     margin: 0 auto;
 }
 
+.login .errors {
+    list-style: none;
+    margin-left: 0;
+    font-style: italic;
+}
+
 h2{
     font-size: 20px;
 }
