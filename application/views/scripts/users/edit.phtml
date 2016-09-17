@@ -2,20 +2,20 @@
 
 <form enctype='multipart/form-data' method='post'>
 
-	<?php if($this->add) : ?>
-	<div class='pull-right' >
-	    <input type='submit' class="btn btn-success" value="Ajouter l'utilisateur">
-	</div>
-	<h4>Ajout d'un utilisateur</h4>
-	<?php else : ?>
-	<div class='pull-right' >
-	    <div class="btn-group">
-	        <a class='btn' href="<?php echo $this->url(array('action' => 'index')) ?>">Annuler la modification</a>
-	        <input type='submit' class="btn btn-success" value='Sauvegarder'>
-	    </div>
-	</div>
-	<h4>Modification de l'utilisateur <?php echo $this->user['infos']["NOM_UTILISATEURINFORMATIONS"] . ' ' . $this->user['infos']["PRENOM_UTILISATEURINFORMATIONS"] ?></h4>
-	<?php endif ?>
+    <?php if($this->add) : ?>
+        <div class='pull-right' >
+            <input type='submit' class="btn btn-success" value="Ajouter l'utilisateur">
+        </div>
+        <h4>Ajout d'un utilisateur</h4>
+    <?php else : ?>
+        <div class='pull-right' >
+            <div class="btn-group">
+                <a class='btn' href="<?php echo $this->url(array('action' => 'index')) ?>">Annuler la modification</a>
+                <input type='submit' class="btn btn-success" value='Sauvegarder'>
+            </div>
+        </div>
+        <h4>Modification de l'utilisateur <?php echo $this->user['infos']["NOM_UTILISATEURINFORMATIONS"] . ' ' . $this->user['infos']["PRENOM_UTILISATEURINFORMATIONS"] ?></h4>
+    <?php endif ?>
 
     <dl class='dl-horizontal well'>
     	<dt>Photo</dt>
@@ -35,16 +35,23 @@
 
         <dt>Mot de passe</dt>
         <dd>
-        	<p>
-	            <?php if( $this->add ) : ?>
-	            	<input placeholder='Mot de passe' name='PASSWD_INPUT' type='password' />
-	            	<?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via le LDAP ? <input type='checkbox' class='ldap' value='1' /><?php endif ?>
-	            <?php else : ?>
-	            	<input placeholder='Mot de passe' name='PASSWD_INPUT' type='password' disabled value='<?php echo $this->user["PASSWD_UTILISATEUR"] ?>' />
-	            	<a href='#' id='change_passwd' >Changer le mot de passe</a>
-	            	<?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via le LDAP ? <input type='checkbox' class='ldap' value='1' <?php if($this->user["PASSWD_UTILISATEUR"] == null) echo "checked"?> /><?php endif ?>
-	            <?php endif ?>
+            <p>
+                <?php if( $this->add ) : ?>
+                    <input placeholder='Mot de passe' name='PASSWD_INPUT' type='password' />
+                    <?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via LDAP/CAS/NTLM ? <input type='checkbox' class='ldap' value='1' /><?php endif ?>
+                <?php else : ?>
+                    <input placeholder='Mot de passe' name='PASSWD_INPUT' type='password' disabled value='<?php echo $this->user["PASSWD_UTILISATEUR"] ?>' />
+                    <a href='#' id='change_passwd' >Changer le mot de passe</a>
+                    <?php if($this->params["LDAP_ACTIF"]) : ?> Connexion via LDAP/CAS/NTLM ? <input type='checkbox' class='ldap' value='1' <?php if($this->user["PASSWD_UTILISATEUR"] == null) echo "checked"?> /><?php endif ?>
+                <?php endif ?>
             </p>
+            <?php if (getenv('PREVARISC_ENFORCE_SECURITY') == 1): ?>
+            <p id="password_instructions" style="<?php echo $this->add ? '' : 'display:none' ?>">
+                Le mot de passe doit contenir au moins 8 caractères 
+                dont 1 minuscule, 1 majuscule, 1 chiffre et 1 caractère spécial.
+            </p>
+            <?php endif ?>
+            
         </dd>
 
         <dt>Groupe</dt>
@@ -60,10 +67,25 @@
 
         <dt>Utilisateur actif ?</dt>
         <dd>
-        	<p>
-        		<input type='hidden' value='0' name='ACTIF_UTILISATEUR' />
-	            <input type='checkbox' name='ACTIF_UTILISATEUR' value='1' <?php if( !isset($this->user) || $this->user['ACTIF_UTILISATEUR'] ) echo "checked" ?> />
+            <p>
+                <input type='hidden' value='0' name='ACTIF_UTILISATEUR' />
+                <input type='checkbox' name='ACTIF_UTILISATEUR' value='1' <?php if( !isset($this->user) || $this->user['ACTIF_UTILISATEUR'] ) echo "checked" ?> />
             </p>
+        </dd>
+        
+        <dt>Dernière IP authentifiée</dt>
+        <dd>
+            <p>
+                <input type='text'  class="input-medium" name='IP_UTILISATEUR' pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" maxlength="15" value='<?php echo $this->user["IP_UTILISATEUR"] ?>' />
+            </p>
+        </dd>
+        
+        <dt>Connexions en échec</dt>
+        <dd>
+            <input type='number' min="0" class="input-mini" name='FAILED_LOGIN_ATTEMPTS_UTILISATEUR' value='<?php echo $this->user["FAILED_LOGIN_ATTEMPTS_UTILISATEUR"] ?>' />
+            <?php if(getenv('PREVARISC_ENFORCE_SECURITY') == 1 && $this->user["FAILED_LOGIN_ATTEMPTS_UTILISATEUR"] >= 2): ?>
+            <a href='#' id='unlock' >Débloquer</a> les connexions autres qu'avec l'IP ci-dessus.
+            <?php endif ?>
         </dd>
     </dl>
 
@@ -194,41 +216,50 @@
 
 
 <script>
-	$(document).ready(function() {
+    $(document).ready(function() {
 
 
     	// Gestion du changement du mot de passe et de la case à cocher LDAP
-    	$('#change_passwd').click(function() {
-    		$('input[name="PASSWD_INPUT"]').attr('disabled', false).val('').focus();
-    		$('input.ldap').attr('checked', false);
-    		$(this).hide();
+    	$('#change_passwd').click(function(e) {
+            e.preventDefault();
+            $('input[name="PASSWD_INPUT"]').attr('disabled', false).val('').focus();
+            $('input.ldap').attr('checked', false);
+            $(this).hide();
+            $('#password_instructions').show();
     	});
 
-    	$('input.ldap').change(function() {
-    		if( $(this).attr('checked') ) {
-    			$('input[name="PASSWD_INPUT"]').attr('disabled', false).val('').hide();
-    			$('#change_passwd').hide();
-    		}
-    		else {
-    			$('input[name="PASSWD_INPUT"]').show();
-    			$('#change_passwd').click();
-    		}
+    	$('input.ldap').change(function(e) {
+            if( $(this).attr('checked') ) {
+                $('input[name="PASSWD_INPUT"]').attr('disabled', false).val('').hide();
+                $('#change_passwd').hide();
+                $('#password_instructions').hide();
+            }
+            else {
+                $('input[name="PASSWD_INPUT"]').show();
+                $('#password_instructions').show();
+                $('#change_passwd').click();
+            }
     	});
 
-		$("select[name='ID_FONCTION']").change(function() {
-			if($(this).find('option:selected').val() == "13") {
-				$('.grade_user').show();
-			}
-			else {
-				$('.grade_user').hide();
-				$('.grade_user').find('input').val(null);
-			}
-		}).change();
+        $("select[name='ID_FONCTION']").change(function() {
+            if($(this).find('option:selected').val() == "13") {
+                $('.grade_user').show();
+            }
+            else {
+                $('.grade_user').hide();
+                $('.grade_user').find('input').val(null);
+            }
+        }).change();
 
         // Gestion des select et multiselect
         $(".chosen").chosen({
             search_contains : true
         });
+        
+        $('#unlock').click(function(e) {
+            e.preventDefault();
+            $('input[name="FAILED_LOGIN_ATTEMPTS_UTILISATEUR"]').val(0);
+    	});
 
-	});
+    });
 </script>

@@ -136,9 +136,16 @@ class Service_User
             $user->NUMINSEE_COMMUNE = array_key_exists('NUMINSEE_COMMUNE', $data) ? $data['NUMINSEE_COMMUNE'] : null;
             $user->ID_GROUPE = $data['ID_GROUPE'];
             $user->ACTIF_UTILISATEUR = $data['ACTIF_UTILISATEUR'];
+            $user->FAILED_LOGIN_ATTEMPTS_UTILISATEUR = $data['FAILED_LOGIN_ATTEMPTS_UTILISATEUR'];
+            $user->IP_UTILISATEUR = $data['IP_UTILISATEUR'];
             $user->ID_UTILISATEURINFORMATIONS = $informations->ID_UTILISATEURINFORMATIONS;
 
             if(array_key_exists('PASSWD_INPUT', $data)) {
+                if (getenv('PREVARISC_ENFORCE_SECURITY') == 1 && $data['PASSWD_INPUT'] != '') {
+                    if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z\d\W]{8,}$/', $data['PASSWD_INPUT']))
+                        throw new Exception("Votre mot de passe doit contenir au moins 8 caractères "
+                            . "dont 1 minuscule, 1 majuscule, 1 chiffre et 1 caractère spécial.");
+                }
                 $user->PASSWD_UTILISATEUR = $data['PASSWD_INPUT'] == '' ? null : md5($user->USERNAME_UTILISATEUR . getenv('PREVARISC_SECURITY_SALT') . $data['PASSWD_INPUT']);
             }
 
@@ -357,4 +364,48 @@ class Service_User
 
         return $dbUtilisateur->findUtilisateursForAlerte($idChangement, $etablissement);
     }
+    
+    /**
+     * Log les problèmes de login à un compte utilisateur
+     * @param array $user array définissant l'utilisateur
+     */
+    public function logFailedLogin($user) {
+        
+        if (!$user || !isset($user['ID_UTILISATEUR']) || !isset($user['FAILED_LOGIN_ATTEMPTS_UTILISATEUR'])) {
+            return ;
+        }
+        
+        $dbUtilisateur = new Model_DbTable_Utilisateur;
+        $dbUser = $dbUtilisateur->find($user['ID_UTILISATEUR']);
+        if (!$dbUser) return ;
+        $dbUser = $dbUser->current();
+        $dbUser->FAILED_LOGIN_ATTEMPTS_UTILISATEUR++;
+        $dbUser->save();
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $cache->remove('user_id_' . $user['ID_UTILISATEUR']);
+        $user['FAILED_LOGIN_ATTEMPTS_UTILISATEUR']++;
+        return $user;
+    }
+    
+    public function resetFailedLogin($user) {
+        if (!$user 
+                || !isset($user['ID_UTILISATEUR']) 
+                || !isset($user['FAILED_LOGIN_ATTEMPTS_UTILISATEUR'])
+        ) {
+            return ;
+        }
+        $dbUtilisateur = new Model_DbTable_Utilisateur;
+        $dbUser = $dbUtilisateur->find($user['ID_UTILISATEUR']);
+        if (!$dbUser) return ;
+        $dbUser = $dbUser->current();
+        $dbUser->FAILED_LOGIN_ATTEMPTS_UTILISATEUR = 0;
+        $dbUser->IP_UTILISATEUR = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        $dbUser->save();
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $cache->remove('user_id_' . $user['ID_UTILISATEUR']);
+        $user['FAILED_LOGIN_ATTEMPTS_UTILISATEUR'] = 0;
+        $user['IP_UTILISATEUR'] = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+        return $user;
+    }
+    
 }
