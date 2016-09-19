@@ -105,7 +105,6 @@ class SessionController extends Zend_Controller_Action
 
                 error_log("Auth: password incorrect pour '$username'");
                 throw new Zend_Auth_Exception('Authentification invalide.');
-/bin/bash: q : commande introuvable
             
         } catch (Exception $e) {
             $service_user->logFailedLogin($user);
