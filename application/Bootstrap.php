@@ -159,5 +159,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         );
         Zend_Validate_Abstract::setDefaultTranslator($translator);
     }
+    
+    public function _initAuth() {
+        $options = $this->getOption('cache');
+        $max_lifetime = isset($options['session_max_lifetime']) ? (int) $options['session_max_lifetime'] : 7200;
+        $namespace = new Zend_Session_Namespace('Zend_Auth');
+        $namespace->setExpirationSeconds($max_lifetime);
+        return $namespace;
+    }
 
 }
