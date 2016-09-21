@@ -938,7 +938,7 @@
             viewer = initViewer(
                 "geoportail-container", 
                 "<?php echo $this->key_ign ?>", 
-                [{lat: <?php echo $default_lat ?>,lon: <?php echo $default_lon ?>, description: ""}], 
+                [{lat: <?php echo $this->default_lat ?>,lon: <?php echo $this->default_lon ?>, description: ""}], 
                 <?php echo json_encode($this->couches_cartographiques) ?>,
                 function() {
                     
