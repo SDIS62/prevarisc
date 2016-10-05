@@ -82,7 +82,7 @@
         
         <dt>Connexions en échec</dt>
         <dd>
-            <input type='number' min="0" class="input-mini" name='FAILED_LOGIN_ATTEMPTS_UTILISATEUR' value='<?php echo $this->user["FAILED_LOGIN_ATTEMPTS_UTILISATEUR"] ?>' />
+            <input type='number' min="0" class="input-mini" name='FAILED_LOGIN_ATTEMPTS_UTILISATEUR' value='<?php echo $this->user["FAILED_LOGIN_ATTEMPTS_UTILISATEUR"] ? : '0' ?>' />
             <?php if(getenv('PREVARISC_ENFORCE_SECURITY') == 1 && $this->user["FAILED_LOGIN_ATTEMPTS_UTILISATEUR"] >= 2): ?>
             <a href='#' id='unlock' >Débloquer</a> les connexions autres qu'avec l'IP ci-dessus.
             <?php endif ?>
