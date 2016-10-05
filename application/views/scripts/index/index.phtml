@@ -1,137 +1,79 @@
-<div id="home" class="dashboard">
-    <?php foreach($this->blocs as $id => $bloc): ?>
-        <?php echo $this->partial('index/partials/'.$bloc['type'].'_bloc.phtml', array_merge($bloc, array('id' => $id))) ?>
-    <?php endforeach ?>
+<div id="dashboard">
     <div class="grid-gutter"></div>
     <div class="grid-sizer"></div>
 </div>
 
 <div id="reponse-modal" class="modal hide fade" ></div>
 
-<br>
-
 <script type="text/javascript">
-    $(document).ready(function() {
 
-        // Gestion des boites modales
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Gestion des boites modales (ajout d'un message)
         $("a[data-toggle='modal']").click(function() {
             var target = $(this).attr("data-target");
             var url = $(this).attr("href");
             $(target).load(url);
         });
 
-        $container = $('.dashboard').packery({
+        // On initialise le dashboard via packery
+        var dashboard = $('#dashboard').packery({
             itemSelector: '.panel',
             gutter: '.grid-gutter',
             columnWidth: '.grid-sizer',
             rowHeight: 44,
             percentPosition: true,
-            // disable initial layout
-            isInitLayout: false
+            transitionDuration: 0
         });
 
-        var pckry = $container.data('packery');
+        // On ajoute les blocs au dashboard de l'utilisateur dans l'ordre voulu
+        <?php foreach($this->blocs as $bloc) : ?>
+            var item = $('<?php echo json_encode($this->partial('index/partials/blocs/bloc.phtml', $bloc)); ?>');
+            dashboard.append(item).packery('appended', item);
+            item.draggable({handle: ".panel-heading", containment: "parent"});
+            dashboard.packery('bindUIDraggableEvents', item);
+        <?php endforeach ?>
 
-        // ----- initial sort ----- //
-        var sortOrder = []; // global variable for saving order, used later
-        var storedSortOrder = <?php echo json_encode($this->blocsOrder) ?>;
-        if ( storedSortOrder ) {
-            // create a hash of items by their tabindex
-            var itemsByTabIndex = {};
-            var tabIndex;
-            for (var i=0, len = pckry.items.length; i < len; i++ ) {
-                var item = pckry.items[i];
-                tabIndex = $( item.element ).attr('id');
-                itemsByTabIndex[tabIndex] = item;
-            }
-            // overwrite packery item order
-            i = 0; len = storedSortOrder.length;
-            var j = 0;
-            for (; i < len; i++) {
-                tabIndex = storedSortOrder[i];
-                if (itemsByTabIndex[tabIndex] !== undefined) {
-                   pckry.items[j] = itemsByTabIndex[tabIndex];
-                   j++;
-                }
-            }
-        }
-
-        // ----- packery setup ----- //
-        // optim de perf : on évite au navigateur de dessiner les blocs
-        // avant qu'ils aient pris leur place finale
-        $('.panel').show();
-
-        // trigger initial layout
-        $container.packery();
-
-        var $itemElems = $($container.packery('getItemElements') );
-        $itemElems.draggable({
-            handle: ".panel-heading",
-            containment: "parent"
+        // On réactive les transitions
+        var dashboard = $('#dashboard').packery({
+            transitionDuration: '0.4s'
         });
-        $container.packery( 'bindUIDraggableEvents', $itemElems );
 
-        var saveTimeout = null;
-        var saveTimeoutMilliseconds = 1000;
-
-        function orderItems() {
-
-            // First cancel previous timeouts
-            clearTimeout(saveTimeout);
-
-            var itemElems = pckry.getItemElements();
-            // reset / empty oder array
-            sortOrder.length = 0;
-            for (var i=0; i< itemElems.length; i++) {
-                sortOrder[i] = itemElems[i].getAttribute("id");
-            }
-
-            // Init a new timemout
-            if ($('.panel.loading').length == 0) {
-                saveTimeout = setTimeout(function() {
-                    $.post("/api/1.0/user/preferences", {
-                        id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
-                        preferences: {
-                            'DASHBOARD_BLOCS': sortOrder
-                        }
-                    });
-                }, saveTimeoutMilliseconds);
-            }
-        }
-
-        $container.packery( 'on', 'layoutComplete', orderItems );
-        //$container.packery( 'on', 'dragItemPositioned', orderItems );
-
-        $('#reinitBlocOrder').click(function() {
-            $.post("/api/1.0/user/preferences", {
-                id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
-                preferences: {
-                    'DASHBOARD_BLOCS': null
-                }
-            }, function() {
-                window.location.reload();
+        // On lance la récupération des contenus
+        <?php foreach($this->blocs as $bloc) : ?>
+            $('#<?php echo $bloc['id'] ?>').find('a.btn').click(function() {
+                $.ajax({
+                    type: 'get',
+                    url: "/index/bloc",
+                    data: {id: '<?php echo $bloc['id'] ?>', light: 1},
+                    beforeSend : function() {
+                        $('#<?php echo $bloc['id'] ?>').find('.panel-body').css('text-align', 'left');
+                        $('#<?php echo $bloc['id'] ?>').find('.panel-body').html('<p style="text-align: center"><img src="/img/load.gif" /></p>');
+                    },
+                    success: function(data) {
+                        $('#<?php echo $bloc['id'] ?>').find('.panel-body').html(data);
+                        dashboard.packery('layout');
+                        bindEtsMarquee($('#<?php echo $bloc['id'] ?>'));
+                        bindEtsPopup($('#<?php echo $bloc['id'] ?>'));
+                    }
+                });
             });
-        });
+        <?php endforeach ?>
 
-        $(".panel-heading .icon").click(function() {
-            var $self = $(this);
-            var $panel = $self.parents('.panel');
-            $panel.toggleClass('folded');
-            if ($self.hasClass('icon-chevron-right')) {
-                $self.removeClass('icon-chevron-right').addClass('icon-chevron-down');
-                if ($panel.hasClass('empty') && !$panel.hasClass('loading')) {
-                    $panel.find('.panel-body img').show();
-                    loadBloc($panel);
-                } else {
-                    $panel.find('.panel-body').show();
-                    $container.packery('fit', $panel.get(0));
-                }
-            } else {
-                $self.removeClass('icon-chevron-down').addClass('icon-chevron-right');
-                $panel.find('.panel-body').hide();
-                $container.packery('fit', $panel.get(0));
-            }
+        // Sauvegarde de la position des blocs
+        dashboard.on('dragItemPositioned', function() {
+            dashboard.packery('layout');
+            setTimeout(function() {
+                var blocs = dashboard.packery('getItemElements').map(function(bloc) {
+                    return $(bloc).attr('id');
+                });
+                $.post("/api/1.0/user/preferences", {
+                    id: <?php echo $this->user['ID_UTILISATEUR'] ?>,
+                    preferences: {'DASHBOARD_BLOCS': blocs}
+                });
+            }, 400);
         });
 
     });
+
 </script>

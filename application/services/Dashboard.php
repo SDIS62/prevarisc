@@ -6,7 +6,6 @@ class Service_Dashboard
 
     protected $blocsConfig = array(
 
-        // lié aux commissions
         'nextCommissions' => array(
             'service' => 'Service_Dashboard',
             'method'  => 'getNextCommission',
@@ -16,7 +15,6 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-
         'nextCommissionsOdj' => array(
             'service' => 'Service_Dashboard',
             'method'  => 'getNextCommission',
@@ -26,8 +24,6 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-
-        // lié aux établissements
         'ERPSuivis' => array(
             'service' => 'Service_Dashboard',
             'method'  => 'getERPSuivis',
@@ -82,8 +78,6 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-
-        // lié aux dossiers
         'DossiersSuivisSansAvis' => array(
             'service' => 'Service_Dashboard',
             'method'  => 'getDossiersSuivisSansAvis',
@@ -129,7 +123,6 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-        // autres blocs
         'feeds' => array(
             'service' => 'Service_Feed',
             'method'  => 'getFeeds',
@@ -139,7 +132,6 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-        // bloc levée prescriptions
         'leveePresc' => array(
             'service' => 'Service_Dashboard',
             'method'  => 'getLeveePresc',
@@ -149,7 +141,6 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-        // bloc absence de quorum
         'absQuorum' => array(
             'service' => 'Service_Dashboard',
             'method'  => 'getAbsenceQuorum',
@@ -159,7 +150,6 @@ class Service_Dashboard
             'height'  => 'small',
             'width'   => 'small',
         ),
-        // bloc npsp
         'npsp' => array(
             'service' => 'Service_Dashboard',
             'method'  => 'getNpsp',
@@ -168,12 +158,15 @@ class Service_Dashboard
             'type'    => 'dossiers',
             'height'  => 'small',
             'width'   => 'small',
-        ),
+        )
+
     );
 
-    public function __construct($options = array()) {
+    public function __construct($options = array())
+    {
+        // On enlève les config à null
+        $options = array_filter($options);
 
-        // default options
         $this->options = array_merge(array(
             'next_commissions_days' => 15,
             'dossiers_sans_avis_days' => 15,
@@ -181,11 +174,28 @@ class Service_Dashboard
         ), $options);
     }
 
-    public function getBlocConfig() {
+    public function getBlocConfig()
+    {
         return $this->blocsConfig;
     }
 
-    protected function getCommissionUser($user) {
+    private function cache($id, $callable)
+    {
+        // Récupération de la ressource cache à partir du bootstrap
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+
+        // On check le cache, si on ne trouve pas de données, on le met à jour
+        if(($results = unserialize($cache->load($id))) === false) {
+            $results = $callable();
+        }
+
+        $cache->save(serialize($results), $id, array(), 30);
+
+        return $results;
+    }
+
+    protected function getCommissionUser($user)
+    {
         $commissionsUser = array();
 
         if (isset($user['commissions']) && is_array($user['commissions'])) {
@@ -197,271 +207,342 @@ class Service_Dashboard
         return $commissionsUser;
     }
 
-    protected function getCommissionODJ($commission) {
+    protected function getCommissionODJ($commission)
+    {
         $dbDossierAffectation = new Model_DbTable_DossierAffectation;
+
         $odj = array_merge(
-                $dbDossierAffectation->getDossierNonAffect($commission["ID_DATECOMMISSION"]),
-                $dbDossierAffectation->getDossierAffect($commission["ID_DATECOMMISSION"])
+            $dbDossierAffectation->getDossierNonAffect($commission["ID_DATECOMMISSION"]),
+            $dbDossierAffectation->getDossierAffect($commission["ID_DATECOMMISSION"])
         );
+
         $odj = array_unique($odj, SORT_REGULAR);
+
         return $odj;
     }
 
-    public function getNextCommission($user) {
+    public function getNextCommission($user)
+    {
+        return $this->cache('dashboard_getNextCommission_'.$user['ID_UTILISATEUR'], function() use ($user) {
 
-        $dbDateCommission = new Model_DbTable_DateCommission;
+            $dbDateCommission = new Model_DbTable_DateCommission;
 
-        $prochainesCommission = $dbDateCommission->getNextCommission(
+            $prochainesCommission = $dbDateCommission->getNextCommission(
                 $this->getCommissionUser($user),
                 time(), time() + 3600 * 24 * $this->options['next_commissions_days']
-        );
+            );
 
-        // on récupère pour chaque prochaine commission le nombre de dossiers affectés
-        $commissions = array();
-        foreach($prochainesCommission as $commissiondujour)
-        {
-           $commissions[] = array(
-               "id"   => $commissiondujour['ID_DATECOMMISSION'],
-               "LIBELLE_COMMISSION" => $commissiondujour["LIBELLE_COMMISSION"],
-               "LIBELLE_DATECOMMISSION" => $commissiondujour['LIBELLE_DATECOMMISSION'],
-               "ID_COMMISSIONTYPEEVENEMENT" => $commissiondujour["ID_COMMISSIONTYPEEVENEMENT"],
-               "DATE_COMMISSION" => $commissiondujour["DATE_COMMISSION"],
-               "HEUREDEB_COMMISSION" => $commissiondujour["HEUREDEB_COMMISSION"],
-               "HEUREFIN_COMMISSION" => $commissiondujour["HEUREFIN_COMMISSION"],
-               "heure" => substr($commissiondujour["HEUREDEB_COMMISSION"], 0, 5) . ' - ' . substr($commissiondujour["HEUREFIN_COMMISSION"], 0, 5),
-               "odj" => $this->getCommissionODJ($commissiondujour),
-           );
-        }
+            // on récupère pour chaque prochaine commission le nombre de dossiers affectés
+            $commissions = array();
+            foreach($prochainesCommission as $commissiondujour)
+            {
+                $commissions[] = array(
+                    "id"   => $commissiondujour['ID_DATECOMMISSION'],
+                    "LIBELLE_COMMISSION" => $commissiondujour["LIBELLE_COMMISSION"],
+                    "LIBELLE_DATECOMMISSION" => $commissiondujour['LIBELLE_DATECOMMISSION'],
+                    "ID_COMMISSIONTYPEEVENEMENT" => $commissiondujour["ID_COMMISSIONTYPEEVENEMENT"],
+                    "DATE_COMMISSION" => $commissiondujour["DATE_COMMISSION"],
+                    "HEUREDEB_COMMISSION" => $commissiondujour["HEUREDEB_COMMISSION"],
+                    "HEUREFIN_COMMISSION" => $commissiondujour["HEUREFIN_COMMISSION"],
+                    "heure" => substr($commissiondujour["HEUREDEB_COMMISSION"], 0, 5) . ' - ' . substr($commissiondujour["HEUREFIN_COMMISSION"], 0, 5),
+                    "odj" => $this->getCommissionODJ($commissiondujour),
+                );
+            }
 
-        return $commissions;
+            return $commissions;
+
+        });
     }
 
-    public function getDossierDateCommissionEchu($user) {
-        $dbDossier = new Model_DbTable_Dossier();
-        $commissionsUser = $this->getCommissionUser($user);
-        return $dbDossier->listeDesDossierDateCommissionEchu($commissionsUser, $this->options['dossiers_sans_avis_days']);
+    public function getDossierDateCommissionEchu($user)
+    {
+        return $this->cache('dashboard_getDossierDateCommissionEchu_'.$user['ID_UTILISATEUR'], function() use ($user) {
+
+            $dbDossier = new Model_DbTable_Dossier();
+            $commissionsUser = $this->getCommissionUser($user);
+            return $dbDossier->listeDesDossierDateCommissionEchu($commissionsUser, $this->options['dossiers_sans_avis_days']);
+
+        });
     }
 
-    public function getERPOuvertsSousAvisDefavorable($user) {
-        $dbEtablissement = new Model_DbTable_Etablissement;
-        return $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable();
+    public function getERPOuvertsSousAvisDefavorable($user)
+    {
+        return $this->cache('dashboard_getERPOuvertsSousAvisDefavorable_'.$user['ID_UTILISATEUR'], function() use ($user) {
+
+            $dbEtablissement = new Model_DbTable_Etablissement;
+            return $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable();
+
+        });
     }
 
-    public function getERPOuvertsSousAvisDefavorableSuivis($user) {
-        $dbEtablissement = new Model_DbTable_Etablissement;
-        return $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable(null, null, $user["ID_UTILISATEUR"]);
+    public function getERPOuvertsSousAvisDefavorableSuivis($user)
+    {
+        return $this->cache('dashboard_getERPOuvertsSousAvisDefavorableSuivis_'.$user['ID_UTILISATEUR'], function() use ($user) {
+
+            $dbEtablissement = new Model_DbTable_Etablissement;
+            return $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable(null, null, $user["ID_UTILISATEUR"]);
+
+        });
     }
 
-    public function getERPOuvertsSousAvisDefavorableSurCommune($user) {
-        $dbEtablissement = new Model_DbTable_Etablissement;
+    public function getERPOuvertsSousAvisDefavorableSurCommune($user)
+    {
+        return $this->cache('dashboard_getERPOuvertsSousAvisDefavorableSurCommune_'.$user['ID_UTILISATEUR'], function() use ($user) {
 
-        if (!$user["NUMINSEE_COMMUNE"]) {
-            return array();
-        }
+            $dbEtablissement = new Model_DbTable_Etablissement;
 
-        return $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable(null, $user["NUMINSEE_COMMUNE"]);
+            if (!$user["NUMINSEE_COMMUNE"]) {
+                return array();
+            }
+
+            return $dbEtablissement->listeDesERPOuvertsSousAvisDefavorable(null, $user["NUMINSEE_COMMUNE"]);
+
+        });
     }
 
-    public function getERPOuvertsSansProchainesVisitePeriodiques($user) {
-        $dbEtablissement = new Model_DbTable_Etablissement;
-        $commissionsUser = $this->getCommissionUser($user);
-        return $dbEtablissement->listeErpOuvertsSansProchainesVisitePeriodiques($commissionsUser);
+    public function getERPOuvertsSansProchainesVisitePeriodiques($user)
+    {
+        return $this->cache('dashboard_getERPOuvertsSansProchainesVisitePeriodiques_'.$user['ID_UTILISATEUR'], function() use ($user) {
+
+            $dbEtablissement = new Model_DbTable_Etablissement;
+            $commissionsUser = $this->getCommissionUser($user);
+            return $dbEtablissement->listeErpOuvertsSansProchainesVisitePeriodiques($commissionsUser);
+
+        });
     }
 
-    public function getERPSansPreventionniste($user) {
-        $dbEtablissement = new Model_DbTable_Etablissement;
-        return $dbEtablissement->listeERPSansPreventionniste();
+    public function getERPSansPreventionniste($user)
+    {
+        return $this->cache('dashboard_getERPSansPreventionniste_'.$user['ID_UTILISATEUR'], function() use ($user) {
+
+            $dbEtablissement = new Model_DbTable_Etablissement;
+            return $dbEtablissement->listeERPSansPreventionniste();
+
+        });
     }
 
-    public function getERPSuivis($user) {
+    public function getERPSuivis($user)
+    {
+        return $this->cache('dashboard_getERPSuivis_'.$user['ID_UTILISATEUR'], function() use ($user) {
 
-        $etablissements = array();
-        $id_user = $user['ID_UTILISATEUR'];
+            $etablissements = array();
+            $id_user = $user['ID_UTILISATEUR'];
 
-        // Ets 1 - 4ème catégorie
-        $search = new Model_DbTable_Search;
-        $search->setItem("etablissement");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
-        $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
-        $search->setCriteria("etablissementinformations.ID_CATEGORIE", array("1","2","3","4"));
-        $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+            // Ets 1 - 4ème catégorie
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", array("1","2","3","4"));
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
-        // 5ème catégorie defavorable
-        $search = new Model_DbTable_Search;
-        $search->setItem("etablissement");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
-        $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
-        $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
-        $search->setCriteria("avis.ID_AVIS", 2);
-        $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+            // 5ème catégorie defavorable
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
+            $search->setCriteria("avis.ID_AVIS", 2);
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
-        // 5ème catégorie avec local à sommeil
-        $search = new Model_DbTable_Search;
-        $search->setItem("etablissement");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
-        $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
-        $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
-        $search->setCriteria("etablissementinformations.ID_GENRE", 2);
-        $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
-        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+            // 5ème catégorie avec local à sommeil
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
+            $search->setCriteria("etablissementinformations.ID_CATEGORIE", "5");
+            $search->setCriteria("etablissementinformations.ID_GENRE", 2);
+            $search->setCriteria("etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", "1");
+            $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
-        // EIC - IGH - HAB - Autres
-        $search = new Model_DbTable_Search;
-        $search->setItem("etablissement");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
-        $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
-        $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4", '7', '8', '9', '10'));
-        $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
+            // EIC - IGH - HAB - Autres
+            $search = new Model_DbTable_Search;
+            $search->setItem("etablissement");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("etablissementinformations.ID_STATUT", array('2', '4'));
+            $search->sup("etablissementinformations.PERIODICITE_ETABLISSEMENTINFORMATIONS", 0);
+            $search->setCriteria("etablissementinformations.ID_GENRE", array("6","5","4", '7', '8', '9', '10'));
+            $etablissements = array_merge($search->run(false, null, false)->toArray(), $etablissements);
 
-        $etablissements = array_unique($etablissements, SORT_REGULAR);
+            $etablissements = array_unique($etablissements, SORT_REGULAR);
 
-        return $etablissements;
+            return $etablissements;
+
+        });
     }
 
-    public function getDossierAvecAvisDiffere($user) {
-        $dbDossier = new Model_DbTable_Dossier ;
-        $commissionsUser = $this->getCommissionUser($user);
-        return $dbDossier->listeDossierAvecAvisDiffere($commissionsUser);
+    public function getDossierAvecAvisDiffere($user)
+    {
+        return $this->cache('dashboard_getDossierAvecAvisDiffere_'.$user['ID_UTILISATEUR'], function() use ($user) {
+
+            $dbDossier = new Model_DbTable_Dossier ;
+            $commissionsUser = $this->getCommissionUser($user);
+            return $dbDossier->listeDossierAvecAvisDiffere($commissionsUser);
+
+        });
     }
 
-    public function getCourrierSansReponse($user) {
-        $dbDossier = new Model_DbTable_Dossier ;
-        return $dbDossier->listeDesCourrierSansReponse($this->options['courrier_sans_reponse_days']);
+    public function getCourrierSansReponse($user)
+    {
+        return $this->cache('dashboard_getCourrierSansReponse_'.$user['ID_UTILISATEUR'], function() use ($user) {
+
+            $dbDossier = new Model_DbTable_Dossier ;
+            return $dbDossier->listeDesCourrierSansReponse($this->options['courrier_sans_reponse_days']);
+
+        });
     }
 
-    public function getDossiersSuivisNonVerrouilles($user) {
+    public function getDossiersSuivisNonVerrouilles($user)
+    {
+        return $this->cache('dashboard_getDossiersSuivisNonVerrouilles_'.$user['ID_UTILISATEUR'], function() use ($user) {
 
-        $dossiers = array();
-        $id_user = $user['ID_UTILISATEUR'];
+            $dossiers = array();
+            $id_user = $user['ID_UTILISATEUR'];
 
-        // Dossiers suivis
-        $search = new Model_DbTable_Search;
-        $search->setItem("dossier");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
-        $search->setCriteria("d.VERROU_DOSSIER", 0);
-        $search->order('IFNULL(d.DATEVISITE_DOSSIER, d.DATEINSERT_DOSSIER) desc');
-        $dossiers = $search->run(false, null, false)->toArray();
+            // Dossiers suivis
+            $search = new Model_DbTable_Search;
+            $search->setItem("dossier");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            $search->setCriteria("d.VERROU_DOSSIER", 0);
+            $search->order('IFNULL(d.DATEVISITE_DOSSIER, d.DATEINSERT_DOSSIER) desc');
+            $dossiers = $search->run(false, null, false)->toArray();
 
-        return $dossiers;
+            return $dossiers;
+
+        });
     }
 
-    public function getDossiersSuivisSansAvis($user) {
+    public function getDossiersSuivisSansAvis($user)
+    {
+        return $this->cache('dashboard_getDossiersSuivisSansAvis_'.$user['ID_UTILISATEUR'], function() use ($user) {
 
-        $dossiers = array();
+            $dossiers = array();
 
-        $id_user = $user['ID_UTILISATEUR'];
+            $id_user = $user['ID_UTILISATEUR'];
 
-        // Dossiers suivis
-        $search = new Model_DbTable_Search;
-        $search->setItem("dossier");
-        $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
+            // Dossiers suivis
+            $search = new Model_DbTable_Search;
+            $search->setItem("dossier");
+            $search->setCriteria("utilisateur.ID_UTILISATEUR", $id_user);
 
-        $conditionEtudesSansAvis = "d.AVIS_DOSSIER IS NULL AND (d.AVIS_DOSSIER_COMMISSION IS NULL OR d.AVIS_DOSSIER_COMMISSION = 0) AND d.TYPE_DOSSIER = 1";
-        $conditionCourriersSansReponse = "d.DATEREP_DOSSIER IS NULL AND d.TYPE_DOSSIER = 5";
+            $conditionEtudesSansAvis = "d.AVIS_DOSSIER IS NULL AND (d.AVIS_DOSSIER_COMMISSION IS NULL OR d.AVIS_DOSSIER_COMMISSION = 0) AND d.TYPE_DOSSIER = 1";
+            $conditionCourriersSansReponse = "d.DATEREP_DOSSIER IS NULL AND d.TYPE_DOSSIER = 5";
 
-        $search->setCriteria("($conditionEtudesSansAvis) OR ($conditionCourriersSansReponse)");
+            $search->setCriteria("($conditionEtudesSansAvis) OR ($conditionCourriersSansReponse)");
 
-        $search->order('d.DATEINSERT_DOSSIER desc');
+            $search->order('d.DATEINSERT_DOSSIER desc');
 
-        $dossiers = $search->run(false, null, false)->toArray();
+            $dossiers = $search->run(false, null, false)->toArray();
 
-        return $dossiers;
+            return $dossiers;
+
+        });
     }
-
 
     public function getLeveePresc()
     {
-        $DBdossierLie = new Model_DbTable_DossierLie;
-        $DBdossierNautre = new Model_DbTable_DossierNature;
+        return $this->cache('dashboard_getLeveePresc', function() {
 
-        $search = new Model_DbTable_Search;
-        $search->setItem("dossier");
-        $search->setCriteria("DELAIPRESC_DOSSIER IS NOT NULL");
-        $dossiers = $search->run(false, null, false)->toArray();
+            $DBdossierLie = new Model_DbTable_DossierLie;
+            $DBdossierNautre = new Model_DbTable_DossierNature;
 
-        $valCpt = 0;
+            $search = new Model_DbTable_Search;
+            $search->setItem("dossier");
+            $search->setCriteria("DELAIPRESC_DOSSIER IS NOT NULL");
+            $dossiers = $search->run(false, null, false)->toArray();
 
-        foreach($dossiers as $dossier){
-            $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
-            foreach( $listeDossiersLies as $lien){
-                if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
-                    $idLien = $lien['ID_DOSSIER2'];
-                }else{
-                    $idLien = $lien['ID_DOSSIER1'];
+            $valCpt = 0;
+
+            foreach($dossiers as $dossier){
+                $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
+                foreach( $listeDossiersLies as $lien){
+                    if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
+                        $idLien = $lien['ID_DOSSIER2'];
+                    }else{
+                        $idLien = $lien['ID_DOSSIER1'];
+                    }
+                    $idNature = $DBdossierNautre->getDossierNaturesId($idLien)['ID_NATURE'];
+                    if($idNature == 19 || $idNature == 7 || $idNature == 46){
+                        unset($dossiers[$valCpt]);
+                    }
                 }
-                $idNature = $DBdossierNautre->getDossierNaturesId($idLien)['ID_NATURE'];
-                if($idNature == 19 || $idNature == 7 || $idNature == 46){
-                    unset($dossiers[$valCpt]);
-                }
+                $valCpt++;
             }
-            $valCpt++;
-        }
-        return $dossiers;
+            return $dossiers;
+
+        });
     }
 
-    public function getAbsenceQuorum(){
-        $search = new Model_DbTable_Search;
-        $DBdossier = new Model_DbTable_Dossier;
-        $DBdossierLie = new Model_DbTable_DossierLie;
+    public function getAbsenceQuorum()
+    {
+        return $this->cache('dashboard_getAbsenceQuorum', function() {
 
-        $search->setItem("dossier");
-        $search->setCriteria("ABSQUORUM_DOSSIER = 1");
-        $dossiers = $search->run(false, null, false)->toArray();
+            $search = new Model_DbTable_Search;
+            $DBdossier = new Model_DbTable_Dossier;
+            $DBdossierLie = new Model_DbTable_DossierLie;
+
+            $search->setItem("dossier");
+            $search->setCriteria("ABSQUORUM_DOSSIER = 1");
+            $dossiers = $search->run(false, null, false)->toArray();
 
 
-        $valCpt = 0;
-        foreach($dossiers as $dossier){
-            $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
-            foreach( $listeDossiersLies as $lien){
-                if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
-                    $idLien = $lien['ID_DOSSIER2'];
-                }else{
-                    $idLien = $lien['ID_DOSSIER1'];
+            $valCpt = 0;
+            foreach($dossiers as $dossier){
+                $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
+                foreach( $listeDossiersLies as $lien){
+                    if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
+                        $idLien = $lien['ID_DOSSIER2'];
+                    }else{
+                        $idLien = $lien['ID_DOSSIER1'];
+                    }
+                    $tabType = $DBdossier->getTypeDossier($idLien);
+                    if($tabType['TYPE_DOSSIER'] == 0 || $tabType['TYPE_DOSSIER'] == 5){
+                        unset($dossiers[$valCpt]);
+                    }
                 }
-                $tabType = $DBdossier->getTypeDossier($idLien);
-                if($tabType['TYPE_DOSSIER'] == 0 || $tabType['TYPE_DOSSIER'] == 5){
-                    unset($dossiers[$valCpt]);
-                }
+                $valCpt++;
             }
-            $valCpt++;
-        }
-        return $dossiers;
+            return $dossiers;
+
+        });
     }
 
-    public function getNpsp(){
-        $search = new Model_DbTable_Search;
-        $DBdossier = new Model_DbTable_Dossier;
-        $DBdossierLie = new Model_DbTable_DossierLie;
+    public function getNpsp()
+    {
+        return $this->cache('dashboard_getNpsp', function() {
 
-        $search->setItem("dossier");
-        $search->setCriteria("NPSP_DOSSIER = 1");
-        $dossiers = $search->run(false, null, false)->toArray();
+            $search = new Model_DbTable_Search;
+            $DBdossier = new Model_DbTable_Dossier;
+            $DBdossierLie = new Model_DbTable_DossierLie;
+
+            $search->setItem("dossier");
+            $search->setCriteria("NPSP_DOSSIER = 1");
+            $dossiers = $search->run(false, null, false)->toArray();
 
 
-        $valCpt = 0;
-        foreach($dossiers as $dossier){
-            $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
-            foreach( $listeDossiersLies as $lien){
-                if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
-                    $idLien = $lien['ID_DOSSIER2'];
-                }else{
-                    $idLien = $lien['ID_DOSSIER1'];
+            $valCpt = 0;
+            foreach($dossiers as $dossier){
+                $listeDossiersLies = $DBdossierLie->getDossierLie($dossier['ID_DOSSIER']);
+                foreach( $listeDossiersLies as $lien){
+                    if($lien['ID_DOSSIER1'] == $dossier['ID_DOSSIER']){
+                        $idLien = $lien['ID_DOSSIER2'];
+                    }else{
+                        $idLien = $lien['ID_DOSSIER1'];
+                    }
+                    $tabType = $DBdossier->getTypeDossier($idLien);
+                    if($tabType['TYPE_DOSSIER'] == 0 || $tabType['TYPE_DOSSIER'] == 5){
+                        unset($dossiers[$valCpt]);
+                    }
                 }
-                $tabType = $DBdossier->getTypeDossier($idLien);
-                if($tabType['TYPE_DOSSIER'] == 0 || $tabType['TYPE_DOSSIER'] == 5){
-                    unset($dossiers[$valCpt]);
-                }
+                $valCpt++;
             }
-            $valCpt++;
-        }
-        return $dossiers;
+            return $dossiers;
+
+        });
     }
-
-
 }
