@@ -4,13 +4,13 @@
         protected $_name="etablissementdossier";
         protected $_primary = "ID_ETABLISSEMENTDOSSIER";
 
-		public function getEtablissementListe($idDossier)
-		{
-			$select = $this->select()
-				->setIntegrityCheck(false)
-				->from(array('ed' => 'etablissementdossier'))
-				->where("ID_DOSSIER = ?", $idDossier);
+        public function getEtablissementListe($idDossier)
+        {
+                $select = $this->select()
+                        ->setIntegrityCheck(false)
+                        ->from(array('ed' => 'etablissementdossier'))
+                        ->where("ID_DOSSIER = ?", $idDossier);
 
-			return $this->getAdapter()->fetchAll($select);
-		}
+                return $this->getAdapter()->fetchAll($select);
+        }
     }
