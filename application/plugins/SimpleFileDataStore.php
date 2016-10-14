@@ -136,21 +136,33 @@ implements Plugin_Interface_DataStore {
             '%TYPE_OBJET%' => $linkedObjectType,
             '%CODE_TYPE_OBJET%' => strtoupper(substr($linkedObjectType, 0, 3)),
             '%SHORT_CODE_TYPE_OBJET%' => strtoupper(substr($linkedObjectType, 0, 1)),
+            '%NUMEROID_ETABLISSEMENT%' => null,
         );
         
         switch($linkedObjectType) {
             case 'etablissement':
                 $service = new Service_Etablissement;
                 $etablissement = $service->get($linkedObjectId);
-                $tokens['%NUMEROID_ETABLISSEMENT%'] = $etablissement['general']['NUMEROID_ETABLISSEMENT'] ? $etablissement['general']['NUMEROID_ETABLISSEMENT'] : $linkedObjectId;
+                $tokens[] = $etablissement['general']['NUMEROID_ETABLISSEMENT'] ? $etablissement['general']['NUMEROID_ETABLISSEMENT'] : $linkedObjectId;
                 break;
             case 'dossier':
                 $db = new Model_DbTable_EtablissementDossier;
                 $dossiers = $db->getEtablissementListe($linkedObjectId);
-                if ($dossiers && count($dossiers) > 0) {
-                    $service = new Service_Etablissement;
-                    $etablissement = $service->get($dossiers[0]['ID_ETABLISSEMENT']);
-                    $tokens['%NUMEROID_ETABLISSEMENT%'] = $etablissement['general']['NUMEROID_ETABLISSEMENT'] ? $etablissement['general']['NUMEROID_ETABLISSEMENT'] : $linkedObjectId;
+                $default_numeroid = array();
+                if ($dossiers) {
+                    foreach($dossiers as $dossier) {                        
+                        $service = new Service_Etablissement;
+                        $etablissement = $service->get($dossier['ID_ETABLISSEMENT']);
+                        $numero_id = $etablissement['general']['NUMEROID_ETABLISSEMENT'] ? $etablissement['general']['NUMEROID_ETABLISSEMENT'] : $linkedObjectId;
+                        if (stripos($piece_jointe['DESCRIPTION_PIECEJOINTE'], $numero_id) !== false) {
+                            $tokens['%NUMEROID_ETABLISSEMENT%'] = $numero_id;
+                            break;
+                        }
+                        $default_numeroid[] = $numero_id;
+                    }
+                    if (!$tokens['%NUMEROID_ETABLISSEMENT%']) {
+                       $tokens['%NUMEROID_ETABLISSEMENT%'] = implode("_", $default_numeroid);
+                    }
                 } else
                 {
                     $tokens['%NUMEROID_ETABLISSEMENT%'] = $linkedObjectId;
