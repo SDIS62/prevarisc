@@ -877,7 +877,7 @@
                     <action>textesapplicables</action>
                     <privilege>view_doss</privilege>
                 </textesapplicables>
-				<edit-textesapplicables>
+                <edit-textesapplicables>
                      <label>Édition des textes applicables</label>
                     <controller>dossier</controller>
                     <action>edit-textes-applicables</action>
@@ -1086,54 +1086,42 @@
                     <privilege>view_ets</privilege>
                 </historique>
                 <alerteform>
+                    <label>Alerte email</label>
                     <controller>etablissement</controller>
                     <action>alerteform</action>
+                    <privilege>view_ets</privilege>
                 </alerteform>
             </pages>
         </etablissement>
-
-        <!-- Listing -->
-        <listing>
-            <label>Listes</label>
-            <controller>Listing</controller>
-            <pages>
-                <etablissements>
-                    <label>Établissements</label>
-                    <controller>Listing</controller>
-                    <action>etablissements</action>
-                </etablissements>
-                <dossiers>
-                    <label>Dossiers</label>
-                    <controller>Listing</controller>
-                    <action>dossiers</action>
-                </dossiers>
-            </pages>
-        </listing>
 
         <!-- Recherche -->
         <search>
             <label>Recherche Prevarisc</label>
             <controller>search</controller>
+            <resource>search</resource>
             <pages>
                 <etablissement>
                     <label>Établissements</label>
                     <controller>search</controller>
                     <action>etablissement</action>
+                    <privilege>search_ets</privilege>
                 </etablissement>
                 <dossier>
                     <label>Dossiers</label>
                     <controller>search</controller>
                     <action>dossier</action>
+                    <privilege>search_dossiers</privilege>
                 </dossier>
-                <utilisateur>
-                    <label>Utilisateurs</label>
+                <displayAjaxSearchEtablissement>
                     <controller>search</controller>
-                    <action>utilisateur</action>
-                </utilisateur>
-                <displayAjaxSearch>
+                    <action>display-ajax-search-etablissement</action>
+                    <privilege>search_ets</privilege>
+                </displayAjaxSearchEtablissement>
+                <displayAjaxSearchDossier>
                     <controller>search</controller>
-                    <action>display-ajax-search</action>
-                </displayAjaxSearch>
+                    <action>display-ajax-search-dossier</action>
+                    <privilege>search_dossiers</privilege>
+                </displayAjaxSearchDossier>
             </pages>
         </search>
 
@@ -1151,7 +1139,7 @@
                     <controller>statistiques</controller>
                     <action>ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle</action>
                 </ccdsa-liste-erp-en-exploitation-connus-soumis-a-controle>
-        <liste-erp-avec-visite-periodique-sur-un-an>
+                <liste-erp-avec-visite-periodique-sur-un-an>
                     <controller>statistiques</controller>
                     <action>liste-erp-avec-visite-periodique-sur-un-an</action>
                 </liste-erp-avec-visite-periodique-sur-un-an>
@@ -1169,9 +1157,9 @@
 
         <!-- Contrôle de la session -->
         <session>
-      <controller>session</controller>
-      <label>Prevarisc</label>
-      <pages>
+            <controller>session</controller>
+            <label>Prevarisc</label>
+            <pages>
                 <login>
                     <label>Se connecter</label>
                     <controller>session</controller>
@@ -1187,9 +1175,9 @@
 
         <!-- A propos -->
         <about>
-      <controller>about</controller>
-      <label>Prevarisc</label>
-      <pages>
+            <controller>about</controller>
+            <label>Prevarisc</label>
+            <pages>
                 <index>
                     <label>A propos</label>
                     <controller>about</controller>

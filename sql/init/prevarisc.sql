@@ -2413,7 +2413,10 @@ INSERT INTO `privileges` VALUES
 (59,'edit_ets','Modifier',55),
 (60,'alerte_statut','Changement de statut',56),
 (61,'alerte_avis','Changement d''avis',56),
-(62,'alerte_classement','Changement de classement',56);
+(62,'alerte_classement','Changement de classement',56),
+(63,'search_ets','Etablissements',57),
+(64,'search_dossiers','Dossiers',57);
+
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(100,"view_ets_avis_defavorable", "Voir les établissements sous avis défavorable",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(101,"view_doss_sans_avis", "Voir dossiers de commissions échus sans avis",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(102,"view_ets_ouverts_sans_prochaine_vp", "Voir ets sans prochaine visite périodique",100);
@@ -2461,7 +2464,8 @@ INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(52,'etablissement_c
 (53,'etablissement_temp_0_0','Manifestation temporaire (Ignorer les groupements - Ignorer la commune)'),
 (54,'etablissement_iop_0_0','IOP (Ignorer les groupements - Ignorer la commune)'),
 (55,'etablissement_zone_0_0_0','Zone (Toutes les classes - Ignorer les groupements - Ignorer la commune)'),
-(56,'alerte_email','Alertes');
+(56,'alerte_email','Alertes'),
+(57,'search','Recherche');
 INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(100,"dashboard", "Tableau de bord");
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 UNLOCK TABLES;
