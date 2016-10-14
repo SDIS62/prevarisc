@@ -142,25 +142,38 @@ class SearchController extends Zend_Controller_Action
             }
         }
     }
-
-    public function displayAjaxSearchAction()
+    
+    public function displayAjaxSearchEtablissementAction()
     {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
 
         $service_search = new Service_Search;
 
-        if($this->_request->items == 'etablissement') {
-            $data = $service_search->etablissements(null, null, null, null, null, null, null, null, null, null, null, null, $this->_request->parent, null, null, 1000);
-        }
-        else {
-            $data = $service_search->dossiers(null, null, null, $this->_request->parent, null, 100);
-        }
+        $data = $service_search->etablissements(null, null, null, null, null, null, null, null, null, null, null, null, $this->_request->parent, null, null, 1000);
 
         $data = $data['results'];
 
         $html = "<ul class='recherche_liste'>";
-        $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/' . $this->_request->items . '.phtml', (array) $data );
+        $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/etablissement.phtml', (array) $data );
+        $html .= "</ul>";
+
+        echo $html;
+    }
+    
+    public function displayAjaxSearchDossierAction()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+
+        $service_search = new Service_Search;
+
+        $data = $service_search->dossiers(null, null, null, $this->_request->parent, null, 100);
+
+        $data = $data['results'];
+
+        $html = "<ul class='recherche_liste'>";
+        $html .= Zend_Layout::getMvcInstance()->getView()->partialLoop('search/results/dossier.phtml', (array) $data );
         $html .= "</ul>";
 
         echo $html;

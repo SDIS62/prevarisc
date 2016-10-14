@@ -43,7 +43,7 @@
           }
           else {
               $(container).find(".load").show();
-              $.post("/search/display-ajax-search", {items: 'dossier', parent: $(this).attr("id")}, function(html) {
+              $.post("/search/display-ajax-search-dossier", {parent: $(this).attr("id")}, function(html) {
                   $(container).toggleClass("active").find(".load").hide();
                   $(container).after("<li class='ui-helper-hidden' style='overflow: auto; height: auto;' >" + html + "</li>").next().slideDown();
               });
