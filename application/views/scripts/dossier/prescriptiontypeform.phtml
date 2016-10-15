@@ -31,12 +31,16 @@ echo "
 $nbPrescType = count($this->prescriptionType);
 for($i=0; $i < $nbPrescType; $i++)
 {
+        $nbAssoc = count($this->prescriptionType[$i]);
+        if ($nbAssoc == 0) {
+            continue;
+        }
+        
 	echo "
 		<li id='prescriptiontype_".$this->prescriptionType[$i][0]['ID_PRESCRIPTIONTYPE']."' style='list-style-type:none;'>
 			<table style='width:900px;'>
 	";
-
-	$nbAssoc = count($this->prescriptionType[$i]);
+	
 	$cpt = true;
 	for($j=0; $j < $nbAssoc; $j++)
 	{

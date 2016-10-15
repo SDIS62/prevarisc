@@ -98,7 +98,7 @@ foreach($this->informationsMembre as $val => $membre){
 				$odf = new Odf(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR."courriers".DIRECTORY_SEPARATOR.$nomFichier);
 
 				$model_groupement = new Model_DbTable_Groupement();
-				$infosGroupement = $model_groupement->get($membre->ID_GROUPEMENT);
+				$infosGroupement = $model_groupement->get($membre['infosFiles'][0]['ID_GROUPEMENT']);
 
 				$grpLoop = $odf->setSegment('grpLoop');
 
