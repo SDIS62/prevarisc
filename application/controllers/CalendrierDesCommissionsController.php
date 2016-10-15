@@ -1052,6 +1052,9 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
 
 		foreach($listeDossiers as $val => $ue)
 		{
+                    $listeDossiers[$val]['preventionnistes'] = array();
+                    $listeDossiers[$val]['listeDocUrba'] = array();
+                    $listeDossiers[$val]['infosEtab'] = array();
                     
                     $listePrev = $dbDossier->getPreventionnistesDossier($ue['ID_DOSSIER']);
                     if (count($listePrev) > 0) {

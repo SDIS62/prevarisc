@@ -635,7 +635,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
         try {
 
-            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = (!isset($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']) && $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == null) ? 0 : $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'];
+            $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] = isset($data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS']) && $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] !== null ? $data['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] : 0;
 
             $etablissement = $id_etablissement == null ? $DB_etablissement->createRow() : $DB_etablissement->find($id_etablissement)->current();
 
