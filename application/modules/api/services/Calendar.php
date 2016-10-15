@@ -5,6 +5,8 @@ use Sabre\VObject;
 class Api_Service_Calendar
 {
 
+    const LF = "\r\n";
+    
     public function sync($userid, $commission = null) 
     {
 
@@ -90,19 +92,14 @@ class Api_Service_Calendar
             $etsService = new Service_Etablissement;
             $ets = $etsService->get($commissionEvent["ID_ETABLISSEMENT"]);
 
-            $parentsLibelle = array();
+            $etsLibelleArray = array();
             foreach($ets['parents'] as $parent) {
-                $parentsLibelle[] = $parent['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+                $etsLibelleArray[] = trim($parent['LIBELLE_ETABLISSEMENTINFORMATIONS']);
             }
-
-            if (count($parentsLibelle) > 0) {
-                $parentsStr = implode(" ", $parentsLibelle);
-            } else {
-                $parentsStr = '';
-            }
-            if ($parentsStr !== '') {
-                $parentsStr .= ' - '; 
-            }
+            
+            $etsLibelleArray[] = trim($ets['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS']);
+            $etsLibelle = implode(" - ", $etsLibelleArray);
+            $commune = count($ets["adresses"]) > 0 ? $ets["adresses"][0]["LIBELLE_COMMUNE"] : '';
             // Cas d'une commission en salle
             if ($commissionEvent["ID_COMMISSIONTYPEEVENEMENT"] === 1) {
                 if ($commissionEvent["TYPE_DOSSIER"] === 3) {
@@ -110,15 +107,21 @@ class Api_Service_Calendar
                 } else {
                     $libelleSum = $commissionEvent["OBJET_DOSSIER"];
                 }
-                $summary = sprintf("%s%s %s - %s",
-                                $parentsStr,
+                $summary = sprintf("#%s %s (%s) : %s %s - %s",
+                                $ets['general']['NUMEROID_ETABLISSEMENT'],
+                                $etsLibelle,
+                                $commune,
                                 $commissionEvent["LIBELLE_DOSSIERTYPE"],
                                 $commissionEvent["LIBELLE_DOSSIERNATURE"],
-                                $libelleSum);
+                                trim($libelleSum));
                 $geo = sprintf("Commission en salle de %s", $commissionEvent["LIBELLE_COMMISSION"]);
             // Cas d'une visite d'une commission ou d'un groupe de visite
             } else {
-                $summary = sprintf('%s%s', $parentsStr, $commissionEvent["LIBELLE_DATECOMMISSION"]);
+                $summary = sprintf('#%s %s : %s', 
+                        $ets['general']['NUMEROID_ETABLISSEMENT'], 
+                        $etsLibelle,
+                        $commissionEvent["LIBELLE_DATECOMMISSION"]
+                        );
                 $adresse = count($ets["adresses"]) > 0 ? $ets["adresses"][0] : null;
                 if ($adresse) {
                     $geo = sprintf("%s %s %s, %s %s",
@@ -147,7 +150,7 @@ class Api_Service_Calendar
                         new DateTimeZone(date_default_timezone_get()));
 
             $event = array(
-                "SUMMARY"       => $summary,
+                "SUMMARY"       => substr($summary, 0, 255),
                 "LOCATION"      => $geo,
                 "DESCRIPTION"   => $this->getEventCorps($commissionEvent, $ets),
                 "DTSTART"       => $dtStart,
@@ -188,7 +191,7 @@ class Api_Service_Calendar
 
     private function getEventCorps($commissionEvent, $ets)
     {
-        $corpus = "Coordonnées des participants :\r\n";
+        $corpus = "Contacts du dossier :".self::LF;
 
         $dossierService = new Service_Dossier;
         $servEtab = new Service_Etablissement;
@@ -201,18 +204,21 @@ class Api_Service_Calendar
                 $corpus .= $this->formatUtilisateurInformations($contact);
             }    
         } else {
-            $corpus .= 'Aucun contact.';
+            $corpus .= "Aucun contact".self::LF;
         }
         
-        $corpus .= "\r\n\r\n";
+        $corpus .= self::LF.self::LF;
 
         $adresseService = new Service_Adresse;
         $maire = $adresseService->getMaire($commissionEvent["NUMINSEE_COMMUNE"]);
         if ($maire && count($maire) > 0) {
-            $corpus .= sprintf("Coordonnées de la mairie :\r\n%s\r\n\r\n",
-                    $this->formatUtilisateurInformations($maire));
+            $corpus .= sprintf("Coordonnées de la mairie :%s%s%s",
+                    self::LF,
+                    $this->formatUtilisateurInformations($maire),
+                    self::LF.self::LF
+                    );
         } else {
-            $corpus .= 'Aucune coordonées pour la mairie.';
+             $corpus .= "Aucune coordonées pour la mairie.".self::LF.self::LF;
         }
         
         if ($commissionEvent["ID_DOSSIERTYPE"] === 1) {
@@ -226,21 +232,21 @@ class Api_Service_Calendar
                                     $serviceInstruct[0] : null;
             }
             if ($maire && count($maire) > 0) {
-                $corpus .= sprintf("Coordonnées du service instructeur :\n%s\n\n",
-                        $this->formatUtilisateurInformations($serviceInstruct));
+                $corpus .= sprintf("Coordonnées du service instructeur :%s%s%s",
+                        self::LF,
+                        $this->formatUtilisateurInformations($serviceInstruct)
+                        .self::LF.self::LF
+                        );
             } else {
-                $corpus .= 'Aucune coordonées pour le service instructeur.';
+                $corpus .= "Aucune coordonées pour le service instructeur.".self::LF.self::LF;
             }
         }
         
-        $lastVisite = new DateTime($ets["last_visite"]);
-        if ($lastVisite) {
-            $lastVisitestr = $lastVisite->format('d/m/Y');
-        } else {
-            $lastVisitestr = 'Aucune date.';
-        }
-        $corpus .= sprintf("Date de la dernière visite périodique : %s\r\n\r\n",
-                           $lastVisitestr);
+        $lastVisitestr = $ets["last_visite"] ? : 'Aucune date.';
+        $corpus .= sprintf("Date de la dernière visite périodique : %s%s",
+                           $lastVisitestr,
+                           self::LF.self::LF
+                );
 
         $corpus .= sprintf("Avis d'exploitation de l'établissement : %s",
                             $this->getAvisEtablissement($commissionEvent, $ets));
@@ -251,9 +257,11 @@ class Api_Service_Calendar
     private function formatUtilisateurInformations($user) 
     {
         $str = "";
+        
         if ($user && is_array($user)) {
             if ($user["NOM_UTILISATEURINFORMATIONS"]) {
-                $str .= sprintf("- %s %s",
+                $str .= sprintf("- %s : %s %s",
+                        $user["LIBELLE_FONCTION"],
                         $user["NOM_UTILISATEURINFORMATIONS"],
                         $user["PRENOM_UTILISATEURINFORMATIONS"]);
                 if ($user["NUMEROADRESSE_UTILISATEURINFORMATIONS"]
