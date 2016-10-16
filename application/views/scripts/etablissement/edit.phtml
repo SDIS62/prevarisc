@@ -951,25 +951,6 @@
                         }
                     }
 
-                    viewer.getViewer().getMap().events.register("moveend", viewer.getViewer().getMap(), function(e) {
-                        if (geolocalizing) {
-                            geolocalizing = false;
-                            var map = viewer.getViewer().getMap();
-                            var center = map.getCenter().transform(map.getProjection(), 'EPSG:4326');
-                            if(center && center.lon && center.lat) {
-                                $("span.result").text("Géolocalisée IGN");
-                                $("input[name='lon']").val(center.lon);
-                                $("input[name='lat']").val(center.lat);
-                                putMarkerAt(map, map.getCenter(), map.getProjection());
-                            }
-                            else {
-                                $("span.result").text("Introuvable");
-                                $("input[name='lon']").val(0);
-                                $("input[name='lat']").val(0);
-                            }
-                        }
-                    });
-
                     OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
                         defaultHandlerOptions:{
                             'single': true,
@@ -1014,7 +995,6 @@
                 }
             );
 
-            geolocalizing = false;
             $('#adresse-modal #geolocme').click(function(e) {
                 e.preventDefault();
                 var adresse = "";
@@ -1036,10 +1016,24 @@
                 adresse += voie + ", " + codepostal +  " " + commune;
                 $("span.result").text("Géolocalisation en cours...");
 
-                geolocalizing = true;
                 console.log('Geolocalising : '+adresse);
                 viewer.setCenterAtLocation({
-                    address: adresse
+                    address: adresse,
+                    afterCentered: function() {
+                        var map = viewer.getViewer().getMap();
+                        var center = map.getCenter().transform(map.getProjection(), 'EPSG:4326');
+                        if(center && center.lon && center.lat) {
+                            $("span.result").text("Géolocalisée IGN");
+                            $("input[name='lon']").val(center.lon);
+                            $("input[name='lat']").val(center.lat);
+                            putMarkerAt(map, map.getCenter(), map.getProjection());
+                        }
+                        else {
+                            $("span.result").text("Introuvable");
+                            $("input[name='lon']").val(0);
+                            $("input[name='lat']").val(0);
+                        }
+                    }
                 });
 
                 return false;
@@ -1185,7 +1179,7 @@
                             putMarkerAt(map, lonlat, map.getProjection());
                             viewer.setCenter(parseFloat(geolocations[0].lon), parseFloat(geolocations[0].lat));
                             viewer.setZoom(17);
-                        <?php elseif ($this->geoconcept_url): ?>
+                        <?php elseif ($this->geoconcept_url != null): ?>
                             var lonlat = new OpenLayers.LonLat(geolocations[0].lon, geolocations[0].lat);
                             lonlat = lonlat.transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection(map.getProjection()));
                             map.moveTo(lonlat, 8);
