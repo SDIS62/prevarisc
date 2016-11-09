@@ -81,10 +81,11 @@ class Plugin_ACL extends Zend_Controller_Plugin_Abstract
             }
 
             // Initialize phpCAS
-            phpCAS::client(getenv('PREVARISC_CAS_VERSION') ?  : CAS_VERSION_2_0, getenv('PREVARISC_CAS_HOST'), (int) getenv('PREVARISC_CAS_PORT'), getenv('PREVARISC_CAS_CONTEXT'), false);
+            if (!phpCAS::isInitialized()) {
+                phpCAS::client(getenv('PREVARISC_CAS_VERSION') ?  : CAS_VERSION_2_0, getenv('PREVARISC_CAS_HOST'), (int) getenv('PREVARISC_CAS_PORT'), getenv('PREVARISC_CAS_CONTEXT'), false);
 
-            phpCAS::setLang(PHPCAS_LANG_FRENCH);
-
+                 phpCAS::setLang(PHPCAS_LANG_FRENCH);
+            }
             if (getenv('PREVARISC_CAS_NO_SERVER_VALIDATION') == 1) {
                 phpCAS::setNoCasServerValidation();
             }
