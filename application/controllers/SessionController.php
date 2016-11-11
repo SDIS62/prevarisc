@@ -43,7 +43,7 @@ class SessionController extends Zend_Controller_Action
             }
             
             if ($username) {
-            
+                
                 // Récupération de l'utilisateur
                 $user = $service_user->findByUsername($username);
 
@@ -57,7 +57,7 @@ class SessionController extends Zend_Controller_Action
                 $adapters = array();
 
                 // Adaptateur SSO noauth
-                if (getenv('PREVARISC_CAS_ENABLED') == 1 || getenv('PREVARISC_NTLM_ENABLED') == 1 ) {    
+                if (getenv('PREVARISC_CAS_ENABLED') == 1 || getenv('PREVARISC_NTLM_ENABLED') == 1 ) {
                     $adapters['sso'] = new Service_PassAuthAdapater($username);
                 
                 // Cas classique s'il y a déjà eu des login infructueux
@@ -115,7 +115,9 @@ class SessionController extends Zend_Controller_Action
     public function logoutAction()
     {
         $auth = Zend_Auth::getInstance();
-
+        
+        $user = $auth->getIdentity();
+        
         if($auth->hasIdentity()) {
             $service_user = new Service_User;
 
@@ -126,6 +128,9 @@ class SessionController extends Zend_Controller_Action
         
         if (getenv('PREVARISC_CAS_ENABLED') == 1) {
             phpCAS::logout();
+        // On test si l'utilisateur est connecté en NTLM
+        } else if (getenv('PREVARISC_NTLM_ENABLED') == 1 && $user && $user['PASSWD_UTILISATEUR'] == null) {
+            $this->_helper->layout->setLayout('error');
         } else {
             $this->_helper->redirector->gotoUrl($this->view->url(array("controller" => null, "action" => null)));
         }
