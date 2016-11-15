@@ -22,13 +22,13 @@ function addPrescription($listePrescription,$type,$odf){
         try{
 			$prescription = $odf->listeExploitation;
 		} catch (Exception $e) {
-
+                    
 		}
     }else if ($type == 2){
         try{
 			$prescription = $odf->listeAmelioration;
 		} catch (Exception $e) {
-
+                    
 		}
     }
 
@@ -71,25 +71,29 @@ function addPrescription($listePrescription,$type,$odf){
                     }
                     if($cpt)
                     {
-                        if($type != 0){
-                            $prescription->setVars('num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
-                        }
+                        addChamp($prescription, 'num', $listePrescription[$i][0]['NUM_PRESCRIPTION_DOSSIER']);
 
                         if( $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'] == '')
                         {
-                            $prescription->setVars('libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE'], true, 'UTF-8');
+                            addChamp($prescription, 'libelle', $listePrescription[$i][0]['PRESCRIPTIONTYPE_LIBELLE']);
                         }else{
-                            $prescription->setVars('libelle', $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER'], true, 'UTF-8');
+                            addChamp($prescription, 'libelle', $listePrescription[$i][0]['LIBELLE_PRESCRIPTION_DOSSIER']);
                         }
                         $cpt = false;
                     }
                     $nbCpt--;
                 }
-                $prescription->setVars('textearticle',$textearticle,true,'UTF-8');
+                addChamp($prescription, 'textearticle', $textearticle);
                 $prescription->merge();
             }
 
+        } else {
+            addChamp($prescription, 'num', "");
+            addChamp($prescription, 'libelle', "");
+            addChamp($prescription, 'textearticle', "");
+            $prescription->merge();
         }
+        
     }
 
 }
