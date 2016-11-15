@@ -531,6 +531,7 @@ class DossierController extends Zend_Controller_Action
             //Récupération de la liste des natures pour la génération du select
             $DBdossierNatureListe = new Model_DbTable_DossierNatureliste();
             $this->view->dossierNatureListe = $DBdossierNatureListe->getDossierNature($this->view->infosDossier['TYPE_DOSSIER']);
+            //var_dump($DBdossierNatureListe->getDossierNature($this->view->infosDossier['TYPE_DOSSIER']));
 
             //Récupération de la liste des documents d'urbanismes
             $DBdossierDocUrba = new Model_DbTable_DossierDocUrba();
@@ -641,6 +642,7 @@ class DossierController extends Zend_Controller_Action
             unset($preventionnistes[-1]);
             $this->view->preventionnistes = $preventionnistes;
             $this->view->listeDocManquant = array();
+            $this->view->dossierNatureListe = array();
         }
 
         //23/10/12 Ajout du service instructeur remplacé par le select des groupements de communes
@@ -1512,7 +1514,7 @@ class DossierController extends Zend_Controller_Action
                 $date = "0000-00-00";
             }
             $ref = str_replace("\"","''",$_POST['ref_'.$idValid]);
-            $libelle =  $_POST['libelle_'.$idValid];
+            $libelle =  isset($_POST['libelle_'.$idValid]) ? $_POST['libelle_'.$idValid] : "";
 
             //on définit s'il sagid d'un doc ajouté ou nom
             $tabNom = explode("_",$idValid);
@@ -1632,10 +1634,18 @@ class DossierController extends Zend_Controller_Action
             $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
             
             $deleteEtabDossier = $DBetablissementDossier->find($this->_getParam("idEtabDossier"))->current();
+            if (!$deleteEtabDossier) {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'warning',
+                    'title' => "L'établissement n'est pas lié à ce dossier.",
+                    'message' => '',
+                ));
+                return ;
+            }
+            
             $idEtablissement = $deleteEtabDossier['ID_ETABLISSEMENT'];
             $idDossier  = $deleteEtabDossier['ID_DOSSIER'];
             $etablissement = $dbEtab->find($idEtablissement)->current();
-            
             $deleteEtabDossier->delete();
 
             $this->_helper->flashMessenger(array(
@@ -2638,6 +2648,7 @@ class DossierController extends Zend_Controller_Action
         $listeExploit = $dbPrescDossier->recupPrescDossier($idDossier, 1);
         foreach($listeExploit as $prescDossier){
             $prescCount = $dbPrescDossier->find($prescDossier['ID_PRESCRIPTION_DOSSIER'])->current();
+            if (!$prescCount) continue;
             $prescCount->NUM_PRESCRIPTION_DOSSIER = $nbPresc;
             $prescCount->save();
             $nbPresc++;
@@ -2646,6 +2657,7 @@ class DossierController extends Zend_Controller_Action
         $listeAmelio = $dbPrescDossier->recupPrescDossier($idDossier, 2);
         foreach($listeAmelio as $prescDossier){
             $prescCount = $dbPrescDossier->find($prescDossier['ID_PRESCRIPTION_DOSSIER'])->current();
+            if (!$prescCount) continue;
             $prescCount->NUM_PRESCRIPTION_DOSSIER = $nbPresc;
             $prescCount->save();
             $nbPresc++;
