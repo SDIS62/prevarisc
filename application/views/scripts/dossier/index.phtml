@@ -1,6 +1,72 @@
 <script type='text/javascript' >
 
-	$(document).ready(function(){
+    $(document).ready(function() {
+
+        $(".alerte-link").click(function() {
+            var idEts = $(this).attr("data-ets");
+            var changement = $(this).attr("data-value");
+            var dialogAlerte = $('<div style="display:none;"></div>').appendTo('body');
+    
+            dialogAlerte.dialog({
+                title: "Alerte",
+                modal: true,
+                autoOpen: false,
+                width: 600,
+                height: 'auto',
+                buttons: [{
+                    text: "Envoyer",
+                    "id": "mail-button-envoi",
+                    click: function() {
+                        tinymce.triggerSave();
+                        if ($("#mail-button-envoi").text() === "Envoyer") {
+                            $.ajax({
+                                type: "POST",
+                                url: "/changement/sendmailalerte",
+                                data: $("#formAlerte").serialize()
+                            });
+                        }
+
+                        tinymce.remove();
+                        dialogAlerte.html("");
+                        dialogAlerte.dialog("close");
+                        dialogAlerte.remove();
+                    }
+                }],
+                close: function(event, ui){
+                    tinymce.remove();
+                    dialogAlerte.html("");
+                    dialogAlerte.dialog("close");
+                    dialogAlerte.remove();
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "/changement/alerteform",
+                data: { "id_etablissement": idEts, "changement": changement },
+                success: function(msg) {
+                    dialogAlerte.html(msg);
+                    tinymce.init({
+                        selector: '.tinyarea',
+                        height: 220,
+                        menubar: false,
+                        statusbar: false,
+                        toolbar: false,
+                        plugins: [
+                            'advlist autolink lists link image charmap print preview anchor',
+                            'searchreplace visualblocks code fullscreen',
+                            'insertdatetime media table contextmenu paste code'
+                        ],
+                        content_css: [
+                            '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+                            '//www.tinymce.com/css/codepen.min.css'
+                        ]
+                    });
+                    dialogAlerte.dialog("open");
+                }
+            });
+            return false;
+            
+        });
 
 		// Texte de l'auto complete utilisateurs
 		// Auto-complétion des préventionnistes
@@ -13,10 +79,10 @@
                     data: {
                         name: query,
                         fonctions: 13,
-                        limit: 100,
+                        limit: 100
                     },
                     success: function (result) {
-                        preventionnistes = [];
+                        var preventionnistes = [];
                         $.each(result.response.results, function (i, preventionniste) {
                             preventionnistes.push("<span data-id='" + preventionniste.uid + "'>" + preventionniste.NOM_UTILISATEURINFORMATIONS + " " + preventionniste.PRENOM_UTILISATEURINFORMATIONS + "</span>");
                         });
@@ -26,9 +92,9 @@
                 });
             },
             highlighter: function (item) {
-                libelle = $($.parseHTML(item)).last().text();
+                var libelle = $($.parseHTML(item)).last().text();
                 libelle = libelle.replace( new RegExp( '(' + this.query + ')', 'gi' ), "<strong>$1</strong>" );
-                html = $.parseHTML(item);
+                var html = $.parseHTML(item);
                 $(html).last().text(libelle);
                 html = $(html).text();
                 return item.replace( item, html );
@@ -63,95 +129,95 @@
         });
 
 
-		$("#commissionSelect").live('change',function(){
-			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
-			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
-			if($(this).val()){
-				$("#COMMISSION_DOSSIER").val($(this).val());
-				$("#showCommission").hide();
-				if($("#TYPE_DOSSIER").val() == 2 || $("#TYPE_DOSSIER").val() == 3){
-					$("#showVisite").show();
-					$("#showCommission").show();
-				}else{
-					$("#showCommission").show();
-				}
-				$(".changeCommission").click();
-			}else{
-				$(".showCalendar").hide();
-				$(".changeCommission").click();
-			}
-			return false;
-		});
+        $("#commissionSelect").live('change',function(){
+                $("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
+                $("#ID_AFFECTATION_DOSSIER_VISITE").val('');
+                if($(this).val()){
+                        $("#COMMISSION_DOSSIER").val($(this).val());
+                        $("#showCommission").hide();
+                        if($("#TYPE_DOSSIER").val() == 2 || $("#TYPE_DOSSIER").val() == 3){
+                                $("#showVisite").show();
+                                $("#showCommission").show();
+                        }else{
+                                $("#showCommission").show();
+                        }
+                        $(".changeCommission").click();
+                }else{
+                        $(".showCalendar").hide();
+                        $(".changeCommission").click();
+                }
+                return false;
+        });
 
-		$(".changeCommission").live('click',function(){
-			//ICI SUPPRIMER TOUTES LES LIGNES CORRESPONDANT AU DOSSIER DANS  dossieraffectation ou dans le save...
-			$("#DATEVISITE_INPUT").val('');
-			$("#ID_AFFECTATION_DOSSIER_VISITE").val('');
-			$("#DATECOMM_INPUT").val('');
-			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
+        $(".changeCommission").live('click',function(){
+                //ICI SUPPRIMER TOUTES LES LIGNES CORRESPONDANT AU DOSSIER DANS  dossieraffectation ou dans le save...
+                $("#DATEVISITE_INPUT").val('');
+                $("#ID_AFFECTATION_DOSSIER_VISITE").val('');
+                $("#DATECOMM_INPUT").val('');
+                $("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
 
-			$(".hideCalendar").hide();
+                $(".hideCalendar").hide();
 
-			//a verifier
-			$("#calendar").hide();
-			$("#calendar").parent().hide();
-			$("#calendar").html('');
+                //a verifier
+                $("#calendar").hide();
+                $("#calendar").parent().hide();
+                $("#calendar").html('');
 
-			$("#calendarVisite").hide();
-			$("#calendarVisite").parent().hide();
-			$("#calendarVisite").html('');
+                $("#calendarVisite").hide();
+                $("#calendarVisite").parent().hide();
+                $("#calendarVisite").html('');
 
-			$("#commissionSelect").removeAttr('disabled');
+                $("#commissionSelect").removeAttr('disabled');
 
-			$(this).hide();
-			return false;
-		});
+                $(this).hide();
+                return false;
+        });
 
-		$(".showCalendar").live('click',function(){
-			var typeCalendar = $(this).parent().parent().attr('id');
-			var divName;
-			var mois;
-			var annee;
-			if(typeCalendar == 'DATEVISITE'){
-				divName = 'calendarVisite';
-				mois = $("#month_visite").val();
-				annee = $("#year_visite").val();
-			}else if (typeCalendar == 'DATECOMM'){
-				divName = 'calendar';
-				mois = $("#month_comm").val();
-				annee = $("#year_comm").val();
-			}
+        $(".showCalendar").live('click',function(){
+                var typeCalendar = $(this).parent().parent().attr('id');
+                var divName;
+                var mois;
+                var annee;
+                if(typeCalendar == 'DATEVISITE'){
+                        divName = 'calendarVisite';
+                        mois = $("#month_visite").val();
+                        annee = $("#year_visite").val();
+                }else if (typeCalendar == 'DATECOMM'){
+                        divName = 'calendar';
+                        mois = $("#month_comm").val();
+                        annee = $("#year_comm").val();
+                }
 
-			$("#"+divName).show();
-			$("#"+divName).parent().show();
+                $("#"+divName).show();
+                $("#"+divName).parent().show();
 
-			$("#"+divName).afficheCalendar($("#COMMISSION_DOSSIER").val(),'dossier',$('#TYPE_DOSSIER').val(),divName,$(this).attr('id'),mois,annee);
+                $("#"+divName).afficheCalendar($("#COMMISSION_DOSSIER").val(),'dossier',$('#TYPE_DOSSIER').val(),divName,$(this).attr('id'),mois,annee);
 
-			$(this).hide();
-			$("#"+typeCalendar).find(".hideCalendar").show();
+                $(this).hide();
+                $("#"+typeCalendar).find(".hideCalendar").show();
 
-			return false;
-		});
+                return false;
+        });
 
-		$(".hideCalendar").live('click',function(){
+        $(".hideCalendar").live('click',function(){
 
-			var typeCalendar = $(this).parent().parent().attr('id');
-			var divName;
-			if(typeCalendar == 'DATEVISITE'){
-				divName = 'calendarVisite';
-			}else if (typeCalendar == 'DATECOMM'){
-				divName = 'calendar';
-			}
+                var typeCalendar = $(this).parent().parent().attr('id');
+                var divName;
+                if(typeCalendar == 'DATEVISITE'){
+                        divName = 'calendarVisite';
+                }else if (typeCalendar == 'DATECOMM'){
+                        divName = 'calendar';
+                }
 
-			$("#"+divName).hide();
-			$("#"+divName).parent().hide();
-			$("#"+divName).html('');
+                $("#"+divName).hide();
+                $("#"+divName).parent().hide();
+                $("#"+divName).html('');
 
-			$(this).hide();
-			$("#"+typeCalendar).find(".showCalendar").show();
+                $(this).hide();
+                $("#"+typeCalendar).find(".showCalendar").show();
 
-			return false;
-		});
+                return false;
+        });
 
 		//Affichage de la nature en fonction du type choisi... Si on choisi le type 0 Alors on cache la nature
 		//génére via la vue fonction le select
@@ -285,43 +351,43 @@
 		{
 			$('.showCalendar').show();
 		}
-	}
+	};
 
 	afficherCacherAvis = function ()
 	{
-		var typeDossier = $("#TYPE_DOSSIER").val();
+            var typeDossier = $("#TYPE_DOSSIER").val();
 
-		var cpt = 0;
-		$(".hideavis").each(function(){
-			if($(this).is(":checked"))
-				cpt++;
-		});
+            var $hideAvis = $(".hideavis:checked");
 
-		if(cpt == 0)
-		{
-			//act = 0 on affiche
-			if(typeDossier == 1){
-				$("#AVIS").show();
-				$("#AVIS_COMMISSION").show();
-				$("#DATECOMM").show();
-			}else if(typeDossier == 2){
-				$("#AVIS_COMMISSION").show();
-			}else if(typeDossier == 3){
-				$("#AVIS").show();
-				$("#AVIS_COMMISSION").show();
-				$("#DATECOMM").show();
-			}
-		}else if (cpt > 0){
-			//act = 1 on cache
-			$("#AVIS").hide();
-			$("#AVIS_DOSSIER option[value='0']").attr('selected', true);
-			$("#AVIS_COMMISSION").hide();
-			$("#AVIS_DOSSIER_COMMISSION option[value='0']").attr('selected', true);
-			$("#DATECOMM").hide();
-			$("#DATECOMM_INPUT").val('');
-			$("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
-		}
-	}
+            if($hideAvis.length == 0)
+            {
+                //act = 0 on affiche
+                if(typeDossier == 1){
+                    $("#AVIS").show();
+                    $("#AVIS_COMMISSION").show();
+                    $("#DATECOMM").show();
+                }else if(typeDossier == 2){
+                    $("#AVIS_COMMISSION").show();
+                }else if(typeDossier == 3){
+                    $("#AVIS").show();
+                    $("#AVIS_COMMISSION").show();
+                    $("#DATECOMM").show();
+                }
+            }else {
+                if ($hideAvis.not('.absquorum').not('.npsp').length > 0) {
+                    /* On ne cache pas l'avis du rapporteur pour certains types de dossiers*/
+                    $("#AVIS").hide();
+                    $("#AVIS_DOSSIER option[value='0']").attr('selected', true);
+                } else {
+                    $("#AVIS").show();
+                }                
+                $("#AVIS_COMMISSION").hide();
+                $("#AVIS_DOSSIER_COMMISSION option[value='0']").attr('selected', true);
+                $("#DATECOMM").hide();
+                $("#DATECOMM_INPUT").val('');
+                $("#ID_AFFECTATION_DOSSIER_COMMISSION").val('');
+            }
+	};
 
 	function majAvisSelect()
 	{
@@ -381,7 +447,7 @@
 			}
 		});
 
-	}
+	};
 
 	$.fn.afficheCalendar = function(idComm,emplacement,type,divInfo,infoCalendar,mois,annee) {
 		var calendar = $("#"+divInfo).fullCalendar( {
@@ -845,11 +911,14 @@
 					$("#AVIS_COMMISSION").hide();
 					$("#HORSDELAI").hide();
 					$("#DATECOMM").hide();
-				}else if (horsdelai || absquorum || npsp){
+				}else if (horsdelai){
 					$("#AVIS").hide();
 					$("#AVIS_COMMISSION").hide();
 					$("#DATECOMM").hide();
-				}
+				} else if (absquorum || npsp) {
+					$("#AVIS_COMMISSION").hide();
+					$("#DATECOMM").hide();
+                                }
 
 				var type = $("#TYPE_DOSSIER").val();
 				if(type == 2 || type == 3)
@@ -1654,7 +1723,7 @@ echo "
 						</span>
 					</div>
 				</li>
-				<li class='row-fluid' id='AVIS_COMMISSION' style='".(($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '0' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && 1 == $this->afficheAvis) ? "" : "display:none;")."margin-bottom:20px;'>
+				<li class='row-fluid' id='AVIS_COMMISSION' style='".(($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '0' && 1 == $this->afficheAvis) ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
 						<span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
