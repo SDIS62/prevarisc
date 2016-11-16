@@ -14,16 +14,6 @@
                 </p>
                 </dd>
 
-                <dt>Clé IGN</dt>
-                <dd>
-                <p><?php echo $this->key_ign != null ? $this->key_ign : 'Aucune clé' ?></p>
-                </dd>
-
-                <dt>Clé Google MAP</dt>
-                <dd>
-                <p><?php echo $this->key_googlemap != null ? $this->key_googlemap : 'Aucune clé' ?></p>
-                </dd>
-
                 <dt>Authentification</dt>
                 <dd>
                 <p><?php echo $this->authentification ?></p>
@@ -40,6 +30,27 @@
                     <p><?php echo $this->cache_adapter ?></p>
                     <p><?php echo $this->cache_url ?></p>
                     <p><?php echo $this->cache_lifetime ?> sec de durée de vie</p>
+                <?php else: ?>
+                    <p>Désactivé</p>
+                <?php endif ?>
+                </dd>
+                
+                <dt>Clé IGN</dt>
+                <dd>
+                <p><?php echo $this->key_ign != null ? $this->key_ign : 'Aucune clé' ?></p>
+                </dd>
+
+                <dt>Clé Google MAP</dt>
+                <dd>
+                <p><?php echo $this->key_googlemap != null ? $this->key_googlemap : 'Aucune clé' ?></p>
+                </dd>
+                
+                <dt>Carte Geoconcept</dt>
+                <dd>
+                <?php if ($this->geoconcept_url): ?>
+                    <?php foreach($this->geoconcept_infos as $key => $info): ?>
+                        <p><?php echo $key . " : " . $info ?></p>
+                    <?php endforeach ?>
                 <?php else: ?>
                     <p>Désactivé</p>
                 <?php endif ?>

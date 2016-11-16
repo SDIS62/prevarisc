@@ -15,6 +15,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
         $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
 
         $this->view->etablissement = $etablissement;
         $this->view->default_periodicite = $DB_periodicite->gn4ForEtablissement($etablissement);
@@ -39,6 +40,9 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->etablissement = $etablissement;
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
+        $this->view->default_lon = getenv('PREVARISC_CARTO_DEFAULT_LON') ? : "2.71490430425517";
+        $this->view->default_lat = getenv('PREVARISC_CARTO_DEFAULT_LAT') ? : "50.4727273438818";
 
         $service_genre = new Service_Genre;
         $service_statut = new Service_Statut;
@@ -65,7 +69,6 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_classement = $service_classement->getAll();
         
         $this->view->couches_cartographiques = $service_carto->getAll();
-        $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
 
         $this->view->add = false;
 
@@ -118,6 +121,9 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->add = true;
         
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
+        $this->view->default_lon = getenv('PREVARISC_CARTO_DEFAULT_LON') ? : "2.71490430425517";
+        $this->view->default_lat = getenv('PREVARISC_CARTO_DEFAULT_LAT') ? : "50.4727273438818";
         $this->view->couches_cartographiques = $service_carto->getAll();
 
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');

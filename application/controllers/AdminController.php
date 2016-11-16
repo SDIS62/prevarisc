@@ -26,6 +26,15 @@ class AdminController extends Zend_Controller_Action
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
         $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
+        $this->view->geoconcept_infos = array(
+            'Url' => $this->view->geoconcept_url,
+            'Layer' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_LAYER'),
+            'App ID' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_APP_ID'),
+            'Projection' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_PROJECTION') ? : "Non paramétrée",
+            'Token' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_TOKEN'),
+            'Geocoder Url' => getenv('PREVARISC_PLUGIN_GEOCONCEPT_GEOCODER'),
+        );
         $this->view->dbname = getenv('PREVARISC_DB_DBNAME');
         $this->view->db_url = getenv('PREVARISC_DB_HOST').(getenv('PREVARISC_DB_PORT') ? ':'.getenv('PREVARISC_DB_PORT') : '');
         $this->view->api_enabled = getenv('PREVARISC_SECURITY_KEY') != "";
@@ -39,7 +48,7 @@ class AdminController extends Zend_Controller_Action
         } else if (getenv('PREVARISC_LDAP_ENABLED')) {
             $this->view->authentification = sprintf("LDAP + BDD : %s:%d/%s", 
                 getenv("PREVARISC_LDAP_HOST"), 
-                getenv("PREVARISC_LDAP_PORT"),
+                getenv("PREVARISC_LDAP_PORT") ? : '389',
                 getenv("PREVARISC_LDAP_BASEDN"));
         } else {
             $this->view->authentification = "BDD";

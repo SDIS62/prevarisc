@@ -9,6 +9,10 @@ class CouchesCartographiquesController extends Zend_Controller_Action
         $service_carto = new Service_Carto;
         $this->view->couches_cartographiques = $service_carto->getAll();
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
+        $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
+        $this->view->key_googlemap = getenv('PREVARISC_PLUGIN_GOOGLEMAPKEY');
+        $this->view->default_lon = getenv('PREVARISC_CARTO_DEFAULT_LON') ? : "2.71490430425517";
+        $this->view->default_lat = getenv('PREVARISC_CARTO_DEFAULT_LAT') ? : "50.4727273438818";
     }
 
     public function addAction()

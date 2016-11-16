@@ -322,8 +322,8 @@ function putMarkerAt(map, point, sourceProjection) {
     var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
     if (vectorLayers.length > 0) {
         var vectorLayer = vectorLayers[0];
-        if (vectorLayer.features.length > 0) {
-            vectorLayer.features[0].destroy();
+        for(var j = 0 ; j < vectorLayer.features.length ; j++) {
+            vectorLayer.features[j].destroy();
         }
         var lonlat = point.transform(
             sourceProjection, vectorLayer.projection.toString()
