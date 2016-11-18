@@ -2514,10 +2514,11 @@ class DossierController extends Zend_Controller_Action
 
     public function prescriptionwordsearchAction()
     {
+        $this->view->tabMotCles = array();
         if ($this->_getParam('motsCles')) {
-            $tabMotCles = explode(" ", $this->_getParam('motsCles'));
+            $this->view->tabMotCles = explode(" ", $this->_getParam('motsCles'));
             $dbPrescType = new Model_DbTable_PrescriptionType();
-            $listePrescType = $dbPrescType->getPrescriptionTypeByWords($tabMotCles);
+            $listePrescType = $dbPrescType->getPrescriptionTypeByWords($this->view->tabMotCles);
 
             $dbPrescAssoc = new Model_DbTable_PrescriptionTypeAssoc();
             $prescriptionArray = array();
@@ -2605,7 +2606,8 @@ class DossierController extends Zend_Controller_Action
         $idPrescType = $this->_getParam('idPrescType');
         $idDossier = $this->_getParam('idDossier');
         $this->view->typePrescDossier = $this->_getParam('typePrescriptionDossier');
-
+        $this->view->idDossier = $idDossier;
+        
         //on recup le num max de prescription du dossier
         $dbPrescDossier = new Model_DbTable_PrescriptionDossier();
         $numMax = $dbPrescDossier->recupMaxNumPrescDossier($idDossier, $this->_getParam('typePrescriptionDossier'));

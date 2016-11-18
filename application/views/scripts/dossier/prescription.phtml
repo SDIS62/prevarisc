@@ -297,23 +297,29 @@ $(document).ready(function(){
 	}
 	
 	$(".add").live('click',function(){
-		var tabId = $(this).attr('id').split('_');
-		var id = tabId[1];
+            var $this = $(this);
+            var tabId = $this.attr('id').split('_');
+            var id = tabId[1];
 
-		var typePresc = $("#TYPE_PRESCRIPTION_DOSSIER").val();
-		//On enregistre la prescription associée au dossier puis on integre le tableau retourné dans le li class=listePrescriptions
+            var typePresc = $("#TYPE_PRESCRIPTION_DOSSIER").val();
+            //On enregistre la prescription associée au dossier puis on integre le tableau retourné dans le li class=listePrescriptions
 
-		$.ajax({
-			type: "POST",
-			url: "/dossier/prescriptionaddtype",
-			data: "&idPrescType="+id+"&idDossier="+$("#idDossier").val()+"&typePrescriptionDossier="+typePresc,
-			beforeSend: function(){
-				$("#listePrescriptionType").html("<img src='/images/load.gif' />");
-			},
-			success: function(msg){
-				window.location = '/dossier/prescription/id/'+$("#idDossier").val();
-			}
-		});
+            $.ajax({
+                type: "POST",
+                url: "/dossier/prescriptionaddtype",
+                data: "&idPrescType="+id+"&idDossier="+$("#idDossier").val()+"&typePrescriptionDossier="+typePresc,
+                success: function(msg){
+                    var $list = $('#prescRappelReg');
+                    if (typePresc == 1) {
+                        $list = $('#prescExploitation');
+                    } else if (typePresc == 2) {
+                        $list = $('#prescExploitation');
+                    }
+                    $list.find('> div').remove(); /* Retrait du message empty list */
+                    $list.append(msg);
+                    $this.attr('disabled', 'disabled').html('Ajouté ');
+                }
+            });
 		return false;	
 	});
 
