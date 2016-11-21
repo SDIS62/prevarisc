@@ -66,6 +66,7 @@ $application = new Zend_Application('production', array(
     ),
     'security' => array(
         'salt' => getenv('PREVARISC_SECURITY_SALT'),
+        'session_max_lifetime' => getenv('PREVARISC_SESSION_MAX_LIFETIME'),
     ),
     'phpSettings' => array(
         'display_startup_errors' => getenv('PREVARISC_DEBUG_ENABLED'),

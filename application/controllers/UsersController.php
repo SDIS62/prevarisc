@@ -30,7 +30,9 @@ class UsersController extends Zend_Controller_Action
         $this->view->fonctions = $service_user->getAllFonctions();
         $this->view->communes = $service_adresse->getAllCommunes();
         $this->view->groupes = $service_user->getAllGroupes();
-        $this->view->params = array("LDAP_ACTIF" => getenv('PREVARISC_LDAP_ENABLED'));
+        $this->view->params = array("LDAP_ACTIF" => getenv('PREVARISC_LDAP_ENABLED') 
+                                                 || getenv('PREVARISC_NTLM_ENABLED') 
+                                                 || getenv('PREVARISC_CAS_ENABLED'));
 
         $this->view->add = false;
 
@@ -61,7 +63,9 @@ class UsersController extends Zend_Controller_Action
         $this->view->fonctions = $service_user->getAllFonctions();
         $this->view->communes = $service_adresse->getAllCommunes();
         $this->view->groupes = $service_user->getAllGroupes();
-        $this->view->params = array("LDAP_ACTIF" => getenv('PREVARISC_LDAP_ENABLED'));
+        $this->view->params = array("LDAP_ACTIF" => getenv('PREVARISC_LDAP_ENABLED') 
+                                                 || getenv('PREVARISC_NTLM_ENABLED') 
+                                                 || getenv('PREVARISC_CAS_ENABLED'));
 
         $this->view->add = true;
 

@@ -1065,7 +1065,12 @@ class Service_Etablissement implements Service_Interface_Etablissement
     {
 
         $extension = strtolower(strrchr($file['name'], "."));
-
+        
+        // Extension du fichier
+        if (in_array($extension, array('.php', '.php4', '.php5', '.sh', '.ksh', '.csh'))) {
+            throw new Exception("Ce type de fichier n'est pas autorisé en upload");
+        }
+            
         $DBpieceJointe = new Model_DbTable_PieceJointe;
 
         $piece_jointe = array(

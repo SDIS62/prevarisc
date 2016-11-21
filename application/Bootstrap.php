@@ -146,5 +146,33 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         return new $className($options);
     }
+    
+    public function _initTranslator() {
+        $translator = new Zend_Translate(
+            array(
+                'adapter' => 'array',
+                'content' => implode(DS, array(
+                    APPLICATION_PATH,
+                    "..",
+                    "vendor",
+                    "zendframework",
+                    'zendframework1',
+                    'resources',
+                    'languages',
+                )),
+                'locale'  => "fr",
+                'scan' => Zend_Translate::LOCALE_DIRECTORY
+            )
+        );
+        Zend_Validate_Abstract::setDefaultTranslator($translator);
+    }
+    
+    public function _initAuth() {
+        $options = $this->getOption('cache');
+        $max_lifetime = isset($options['session_max_lifetime']) ? (int) $options['session_max_lifetime'] : 7200;
+        $namespace = new Zend_Session_Namespace('Zend_Auth');
+        $namespace->setExpirationSeconds($max_lifetime);
+        return $namespace;
+    }
 
 }

@@ -60,27 +60,6 @@ class GestionDesDocumentsController extends Zend_Controller_Action
 
         $this->view->path = DATA_PATH . "/uploads/documents";
         $this->view->liste_commission = $liste_commission;
-
-
-
-/*
-        //on liste les documents présents dans $path déclaré global pour le controller
-        $path = $this->path; // dossier listé (pour lister le répertoir courant : $dir_nom = '.'  --> ('point')
-        $dir = opendir($path) or die('Erreur de listage : le répertoire n\'existe pas'); // on ouvre le contenu du dossier courant
-        $fichier= array(); // on déclare le tableau contenant le nom des fichiers
-        $dossier= array(); // on déclare le tableau contenant le nom des dossiers
-
-        while ($element = readdir($dir)) {
-            if ($element != '.' && $element != '..') {
-                if($element != '.gitignore')
-                    if (!is_dir($path.DS.$element)) {$fichier[] = $element;} else {$dossier[] = $element;}
-            }
-        }
-        closedir($dir);
-        sort($fichier);
-        $this->view->path = DATA_PATH . "/uploads/documents";
-        $this->view->listeFichiers = $fichier;
-*/
     }
 
     public function formAction()
@@ -93,22 +72,27 @@ class GestionDesDocumentsController extends Zend_Controller_Action
     public function addAction()
     {
         try {
+            
+            $this->_helper->layout->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
+            
+            // Extension du fichier
+            $filename = str_replace(DS, '', $_FILES['fichier']['name']);
+            $extension = strtolower(strrchr($filename, "."));
+            if (!in_array($extension, array('.odt'))) {
+                throw new Exception("Seuls les fichiers .odt sont autorisés en upload.");
+            }
+            
             //Si besoin verificaiton de l'extension du fichier (uniquement odt)
-            if (move_uploaded_file($_FILES['fichier']['tmp_name'], $this->path . DS. $this->_getParam('commission') .DS. $_FILES['fichier']['name'])) {
-                // Echappement des "backslashes" si le serveur est une machine Windows (Dossier\Fichier => DossierFichier)
-                $filePath = str_replace("\\", "\\\\", $this->_getParam('commission') . DS . $_FILES['fichier']['name']);
-                echo '
-                    <script type="text/javascript">
-                        window.top.window.callback("'.$filePath.'");
-                    </script>
-                ';
+            if (!move_uploaded_file($_FILES['fichier']['tmp_name'], $this->path . DS. $this->_getParam('commission') .DS. $filename)) {
+                throw new Exception('Impossible de déplacer le fichier uploadé');
             }
             $this->_helper->flashMessenger(array(
                 'context' => 'success',
                 'title' => 'Le document a bien été ajouté',
                 'message' => ''
             ));
+            
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
                 'context' => 'error',
@@ -116,32 +100,30 @@ class GestionDesDocumentsController extends Zend_Controller_Action
                 'message' => $e->getMessage()
             ));
         }
-    }
-
-    public function checkAction()
-    {
-        //On verifie si le fichier existe
-        $this->view->exists = file_exists( $this->path .DS. $this->_request->nomFich);
+        echo '
+            <script type="text/javascript">
+                window.top.window.location.reload();
+            </script>
+        ';
     }
 
     public function suppdocAction()
     {
         try {
+            $this->_helper->layout->disableLayout();
             $this->_helper->viewRenderer->setNoRender();
 
             $path = $this->path.DS.$this->_getParam('idCommission');
+            
+            $filename = str_replace(DS, '', $this->_getParam('name'));
+            
             //On verifie si le fichier existe
-            $exist = file_exists( $path .DS. $this->_getParam('name'));
-            unlink($path .DS. $this->_getParam('name'));
-            $exist2 = file_exists( $path .DS. $this->_getParam('name'));
+            $exist = file_exists($path .DS. $filename);
+            unlink($path .DS. $filename);
+            $exist2 = file_exists($path .DS. $filename);
 
-            if ($exist != $exist2) {
-                echo "le fichier ".$this->_getParam('name')." a bien été supprimé";
-                $this->_helper->flashMessenger(array(
-                    'context' => 'success',
-                    'title' => 'Le document '.$this->_getParam('name').' a bien été supprimé',
-                    'message' => ''
-                ));
+            if ($exist == $exist2) {
+                throw new Exception('Impossible de supprimer le fichier '.$filename);
             }
         } catch (Exception $e) {
             $this->_helper->flashMessenger(array(
@@ -149,6 +131,7 @@ class GestionDesDocumentsController extends Zend_Controller_Action
                 'title' => 'Erreur lors de la suppression du document',
                 'message' => $e->getMessage()
             ));
+            echo $e->getMessage();
         }
     }
 

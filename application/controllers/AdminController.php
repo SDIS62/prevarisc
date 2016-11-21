@@ -7,7 +7,7 @@ class AdminController extends Zend_Controller_Action
         $cache_config = $this->getInvokeArg('bootstrap')->getOption('cache');
 
         $this->_helper->layout->setLayout('menu_admin');
-
+        
         if (getenv('PREVARISC_BRANCH') == false) {
             try {
                 $git = new SebastianBergmann\Git(APPLICATION_PATH . DS . '..');
@@ -49,6 +49,8 @@ class AdminController extends Zend_Controller_Action
         $this->view->cache_url = $cache_config['host']. ($cache_config['port'] ? ':'.$cache_config['port'] : '');
         $this->view->cache_lifetime = $cache_config['lifetime'];
         $this->view->cache_enabled = $cache_config['enabled'];
+        
+        $this->view->enforce_security = getenv('PREVARISC_ENFORCE_SECURITY') == 1;
 
         $service_search = new Service_Search;
         $users = $service_search->users(null, null, null, true, 1000)['results'];
