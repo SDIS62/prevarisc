@@ -1676,6 +1676,7 @@ class DossierController extends Zend_Controller_Action
             $idEtablissement = $deleteEtabDossier['ID_ETABLISSEMENT'];
             $idDossier  = $deleteEtabDossier['ID_DOSSIER'];
             $etablissement = $dbEtab->find($idEtablissement)->current();
+
             $deleteEtabDossier->delete();
 
             $this->_helper->flashMessenger(array(
