@@ -2410,7 +2410,10 @@ INSERT INTO `privileges` VALUES
 (56,'view_ets','Lecture',54),
 (57,'edit_ets','Modifier',54),
 (58,'view_ets','Lecture',55),
-(59,'edit_ets','Modifier',55);
+(59,'edit_ets','Modifier',55),
+(60,'alerte_statut','Changement de statut',56),
+(61,'alerte_avis','Changement d''avis',56),
+(62,'alerte_classement','Changement de classement',56);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(100,"view_ets_avis_defavorable", "Voir les établissements sous avis défavorable",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(101,"view_doss_sans_avis", "Voir dossiers de commissions échus sans avis",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(102,"view_ets_ouverts_sans_prochaine_vp", "Voir ets sans prochaine visite périodique",100);
@@ -2457,7 +2460,8 @@ INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(51,"statut_etabliss
 INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(52,'etablissement_camp_0_0','Camping (Ignorer les groupements - Ignorer la commune)'),
 (53,'etablissement_temp_0_0','Manifestation temporaire (Ignorer les groupements - Ignorer la commune)'),
 (54,'etablissement_iop_0_0','IOP (Ignorer les groupements - Ignorer la commune)'),
-(55,'etablissement_zone_0_0_0','Zone (Toutes les classes - Ignorer les groupements - Ignorer la commune)');
+(55,'etablissement_zone_0_0_0','Zone (Toutes les classes - Ignorer les groupements - Ignorer la commune)'),
+(56,'alerte_email','Alertes');
 INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(100,"dashboard", "Tableau de bord");
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2899,3 +2903,23 @@ CREATE TABLE `cache` (
   `EXPIRE_CACHE` int,
   PRIMARY KEY (`ID_CACHE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- -----------------------------------------------------
+-- Table`changement` 
+-- -----------------------------------------------------
+
+DROP TABLE IF EXISTS `changement`;
+
+CREATE TABLE `changement` (
+  `ID_CHANGEMENT` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `LIBELLE_CHANGEMENT` varchar(255) DEFAULT NULL,
+  `MESSAGE_CHANGEMENT` text,
+  PRIMARY KEY (`ID_CHANGEMENT`)
+) 
+ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `changement` WRITE;
+INSERT INTO `changement` VALUES (1,'Changement de statut','<p>Bonjour,</p>\r\n<p>L\'&eacute;tablissement {etablissementNumeroId} {etablissementLibelle} est pass&eacute; au statut {etablissementStatut}.</p>\r\n<p>Bonne journ&eacute;e,</p>\r\n<p>Pr&eacute;varisc.</p>'),(2,'Changement d\'avis','<p>Bonjour,</p>\r\n<p>L\'&eacute;tablissement {etablissementNumeroId} {etablissementLibelle} est maintenant sous avis {etablissementAvis}.</p>\r\n<p>Bonne journ&eacute;e,</p>\r\n<p>Pr&eacute;varisc.</p>'),(3,'Changement de classement','<p>Bonjour,</p>\r\n<p>L\'&eacute;tablissement {etablissementNumeroId} {etablissementLibelle} est maintenant de cat&eacute;gorie {categorieEtablissement}, de type {typePrincipalEtablissement} - {activitePrincipaleEtablissement}.</p>\r\n<p>Bonne journ&eacute;e,</p>\r\n<p>Pr&eacute;varisc.</p>');
+UNLOCK TABLES;
+

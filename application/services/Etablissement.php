@@ -2,6 +2,8 @@
 
 class Service_Etablissement implements Service_Interface_Etablissement
 {
+    const STATUT_CHANGE = 1;
+    const CLASSEMENT_CHANGE = 3;
     /**
      * Récupération d'un établissement
      *
@@ -605,6 +607,47 @@ class Service_Etablissement implements Service_Interface_Etablissement
 
         return (null != ($row = $DB_information->fetchRow("ID_ETABLISSEMENT = '" .  $id_etablissement . "' AND DATE_ETABLISSEMENTINFORMATIONS = '" . $date . "'"))) ? true : false;
     }
+
+
+    public function checkAlerte($ets, $postData)
+    {
+        $alerte = false;
+
+        if ($ets && $postData) {
+
+            if ($ets["informations"]["ID_STATUT"] != $postData["ID_STATUT"]) {
+                $alerte = self::STATUT_CHANGE;
+            }
+
+
+            if ($ets["informations"]["ID_CATEGORIE"] != $postData["ID_CATEGORIE"]
+                || $ets["informations"]["ID_TYPE"] != $postData["ID_TYPE"]
+                || $ets["informations"]["ID_TYPEACTIVITE"] != $postData["ID_TYPEACTIVITE"]
+                || $this->compareActivitesSecondaires($ets, $postData)) {
+                $alerte = self::CLASSEMENT_CHANGE;
+            }
+
+        }
+
+        return $alerte;
+    }
+
+    private function compareActivitesSecondaires($ets, $postData)
+    {
+        $result = false;
+
+        foreach($ets['types_activites_secondaires'] as $typesASecondaires) {
+            if ( ! array_key_exists($typesASecondaires[
+                'ID_ETABLISSEMENTINFORMATIONSTYPESACTIVITESSECONDAIRES'],
+                $postData['TYPES_ACTIVITES_SECONDAIRES'])) {
+                $result = true;
+                break;
+            }
+        }
+
+        return $result;
+    } 
+
 
     /**
      * Sauvegarde d'un établissement

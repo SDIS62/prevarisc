@@ -1,0 +1,72 @@
+
+<form action="/changement" method="post">
+    <div class='pull-right' >
+        <input type='button' class="btn see-balises" value="Voir les balises disponibles">
+        <input type='submit' class="btn btn-success" value="Modifier les messages">
+    </div>
+    <?php foreach($this->changements as $changement) : ?>
+        <h3>
+            Message de <?php echo strtolower($changement["LIBELLE_CHANGEMENT"]); ?>
+        </h3>
+        <textarea class="tinyarea" 
+            name='<?php echo $changement["ID_CHANGEMENT"]; ?>_MESSAGE'
+        ><?php if ($changement["MESSAGE_CHANGEMENT"]) { echo $changement["MESSAGE_CHANGEMENT"]; } ?></textarea>
+    <?php endforeach ?>
+</form>
+
+
+<script type='text/javascript'>
+    tinymce.init({
+        selector: '.tinyarea',
+        height: 150,
+        menubar: false,
+        statusbar: false,
+        plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table contextmenu paste code'
+        ],
+        toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link',
+        content_css: [
+            '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+            '//www.tinymce.com/css/codepen.min.css'
+        ]
+    });
+
+    $(document).ready(function() {
+        $(".see-balises").click(function() {
+            var idEts = "<?php echo $this->etablissement['general']['ID_ETABLISSEMENT'] ?>";
+            var changement = $(this).attr("data-value");
+            var dialogAlerte = $('<div style="display:none;"></div>').appendTo('body');
+    
+            dialogAlerte.dialog({
+                title: "Liste des balises disponibles",
+                modal: true,
+                autoOpen: false,
+                width: 600,
+                height: 'auto',
+                buttons: {
+                    "Fermer": function() {
+                        dialogAlerte.html("");
+                        dialogAlerte.dialog("close");
+                    }
+                },
+                close: function(event, ui){
+                    dialogAlerte.html("");
+                    dialogAlerte.dialog("close");
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "/changement/balises",
+                data: { "id_etablissement": idEts, "changement": changement },
+                success: function(msg){
+                    dialogAlerte.html(msg);
+                    dialogAlerte.dialog("open");
+                },
+            });
+            return false;
+            
+        });
+    });
+</script>

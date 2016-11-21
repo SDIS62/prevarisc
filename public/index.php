@@ -70,6 +70,17 @@ $application = new Zend_Application('production', array(
     'phpSettings' => array(
         'display_startup_errors' => getenv('PREVARISC_DEBUG_ENABLED'),
         'display_errors' => getenv('PREVARISC_DEBUG_ENABLED'),
+    ),
+    'mail' => array(
+        'enabled'           => getenv('PREVARISC_MAIL_ENABLED'),
+        'transport'         => getenv('PREVARISC_MAIL_ENABLED') ?  getenv('PREVARISC_MAIL_TRANSPORT') : '',
+        'host'              => getenv('PREVARISC_MAIL_ENABLED') ?  getenv('PREVARISC_MAIL_HOST') : '',
+        'port'              => getenv('PREVARISC_MAIL_ENABLED') ?  getenv('PREVARISC_MAIL_PORT') : '',
+        'authentication'    => getenv('PREVARISC_MAIL_ENABLED') && getenv('PREVARISC_MAIL_USERNAME') !== '',
+        'username'          => getenv('PREVARISC_MAIL_ENABLED') ?  getenv('PREVARISC_MAIL_USERNAME') : '',
+        'password'          => getenv('PREVARISC_MAIL_ENABLED') ?  getenv('PREVARISC_MAIL_PASSWORD') : '',
+        'sender'            => getenv('PREVARISC_MAIL_ENABLED') ?  getenv('PREVARISC_MAIL_SENDER') : '',
+        'sender_name'       => getenv('PREVARISC_MAIL_ENABLED') ?  getenv('PREVARISC_MAIL_SENDER_NAME') : ''
     )
 ));
 
