@@ -79,7 +79,7 @@ class PieceJointeController extends Zend_Controller_Action
             $piece_jointe = $DBused->affichagePieceJointe("datecommissionpj", "piecejointe.ID_PIECEJOINTE", $this->_request->idpj);
         }
         
-        if (!$piece_jointe || count($piece_jointe) != 1) {
+        if (!$piece_jointe || count($piece_jointe) == 0) {
             throw new Zend_Controller_Action_Exception('Cannot find piece jointe for id '.$this->_request->idpj, 404);
         }
         
