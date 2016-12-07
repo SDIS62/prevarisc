@@ -16,6 +16,24 @@
             "homepage": "https://github.com/SDIS62/prevarisc/contributors"
         }
     ],
+    
+    "repositories": [{
+	    "type": "package",
+	    "package": {
+	        "name": "PHPOffice/PHPExcel",
+	        "version": "1.8.1",
+	        "source": {
+	            "url": "https://github.com/PHPOffice/PHPExcel.git",
+	            "type": "git",
+	            "reference": "1.8.1"
+	        },
+	        "autoload": {
+	            "psr-0": {
+	                "PHPExcel": "Classes/"
+	            }
+	        }
+	    }
+	}],
 
     "require": {
         "php": "^5.5|^7.0",
@@ -25,7 +43,8 @@
         "kdubuc/gd_resize": "^1.0",
         "SDIS62/toolbox": "dev-master",
         "sebastian/git": "^1.0",
-        "sabre/vobject": "^4.0"
+        "sabre/vobject": "^4.0",
+        "PHPOffice/PHPExcel": "1.8.*"
     },
 
     "suggest": {
