@@ -522,7 +522,7 @@
             // On va chercher les valeurs par défauts pour faire apparaitre la boite de confirmation
             var etablissements_enfants = [];
             $("table#etablissements_enfants tbody tr.etablissement_enfant").each(function(index) { etablissements_enfants[index] = $(this).find('input[name="ID_FILS_ETABLISSEMENT[]"]').first().val(); });
-            $.getJSON('/api/1.0/etablissement/defaults_values', {
+            $.post('/api/1.0/etablissement/defaults_values', {
                 genre: $("select[name='ID_GENRE']").find('option:selected').val(),
                 numinsee: $("#adresses").find('tr.adresse').first().find('input[type="hidden"]').first().val(),
                 type: $("select[name='ID_TYPE']").find('option:selected').val(),
