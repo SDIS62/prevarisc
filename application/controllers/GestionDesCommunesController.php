@@ -33,6 +33,8 @@ class GestionDesCommunesController extends Zend_Controller_Action
     public function saveAction()
     {
         try {
+            if(isset($_POST["ID_UTILISATEURCIVILITE"]) && $_POST["ID_UTILISATEURCIVILITE"] == "null")
+                unset($_POST["ID_UTILISATEURCIVILITE"]);
 
             $this->_helper->viewRenderer->setNoRender();
 
