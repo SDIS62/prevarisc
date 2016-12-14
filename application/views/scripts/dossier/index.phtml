@@ -1208,6 +1208,13 @@ echo "
 						&nbsp;<button class='today btn'><i class='icon-calendar'></i>&nbsp;Aujourd'hui</button>
 					</div>
 				</li>
+				<li class='row-fluid' id='REFCOURRIER' style='".((in_array('REFCOURRIER', $this->afficherChamps) && $this->infosDossier['REFCOURRIER_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
+					<div class='left libelle span3' style='float:left;'>Référence courrier</div>
+					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".$this->infosDossier['REFCOURRIER_DOSSIER']."</div>
+					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
+						<input type='text' id='REFCOURRIER_DOSSIER' name='REFCOURRIER_DOSSIER' value='".(($this->infosDossier['REFCOURRIER_DOSSIER']) ? htmlspecialchars($this->infosDossier['REFCOURRIER_DOSSIER'], ENT_QUOTES) : "")."' size='15' maxlength='15'/><br/>
+					</div>
+				</li>
 				<li class='row-fluid' id='OBJET' style='".((in_array('OBJET', $this->afficherChamps) && $this->infosDossier['OBJET_DOSSIER'] != '') ? "" : "display:none;")."margin-bottom:20px;'>
 					<div class='left libelle span3' style='float:left;'>Objet</div>
 					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "")."> ".nl2br($this->infosDossier['OBJET_DOSSIER'])."</div >

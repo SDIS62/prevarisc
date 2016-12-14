@@ -26,6 +26,7 @@ if(isset($this->commissionInfos['LIBELLE_COMMISSION'])) {
 
 addChamp($odf, 'date_commEntete',$this->dateCommEntete);
 addChamp($odf, 'numWinPrev',$this->numWinPrev);
+addChamp($odf, 'referenceCourrier',$this->infosDossier['REFCOURRIER_DOSSIER']);
 addChamp($odf, 'objetDossier',$this->infosDossier['OBJET_DOSSIER']);
 addChamp($odf, 'analyseRisque',$this->infosDossier['ANOMALIE_DOSSIER']);
 addChamp($odf, 'observationDossier',$this->infosDossier['OBSERVATION_DOSSIER']);
