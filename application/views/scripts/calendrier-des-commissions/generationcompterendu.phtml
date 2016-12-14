@@ -41,7 +41,7 @@ if (file_exists(REAL_DATA_PATH.DIRECTORY_SEPARATOR."uploads".DIRECTORY_SEPARATOR
 				addChamp($dossInfos,'objetDossier', $dossierInfos['OBJET_DOSSIER']);
 				addChamp($dossInfos,'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
 
-				$dateComm = new Zend_Date($this->dateComm);
+				$dateComm = new Zend_Date($this->dateComm, Zend_Date::DATES );
 				addChamp($dossInfos,'dateCommission', $dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
 
 				if(isset($dossierInfos["DATEVISITE_DOSSIER"]) && $dossierInfos["DATEVISITE_DOSSIER"] != NULL){

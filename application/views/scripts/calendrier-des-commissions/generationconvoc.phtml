@@ -77,8 +77,8 @@ foreach($this->informationsMembre as $val => $membre){
 				setVars($villeODF,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 
 
-				$dateComm = new Zend_Date($this->dateComm);
-				setVars($villeODF,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+				$dateComm = new Zend_Date($this->dateComm, Zend_Date::DATES );
+				setVars($villeODF,'dateCommission',$dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
 
 				$heureCommTab = explode(":",$this->heureDeb);
 				$heureComm = $heureCommTab[0].":".$heureCommTab[1];
@@ -297,9 +297,9 @@ function retrieveInfoGroupementCommission($odf, $commissionInfos, $heureDeb, $da
     setVars($odf,'rueGrp',$infosGroupement["RUEADRESSE_UTILISATEURINFORMATIONS"]);
     setVars($odf,'cpGrp',$infosGroupement["CPADRESSE_UTILISATEURINFORMATIONS"]);
 
-    $dateComm = new Zend_Date($dateComm);
+    $dateComm = new Zend_Date($dateComm, Zend_Date::DATES );
 
-    setVars($odf,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+    setVars($odf,'dateCommission',$dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
     setVars($odf,'heureDebutComm',$heureDeb);
 
     $maires = array();
