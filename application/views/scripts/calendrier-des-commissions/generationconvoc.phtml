@@ -114,7 +114,7 @@ foreach($this->informationsMembre as $val => $membre){
 							//ICI ON DOIT VERIFIER LES DROITS DES MEMBRES AVANT D'AJOUTER LE DOSSIER
 							if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE'])
 							{
-                                                            retrieveInfoDossier($infosDoss, $dossierInfos);
+                                                            retrieveInfoDossier($infosDoss, $dossierInfos, $dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
                                                             $villeODF->infosDoss->merge();
                                                         }else{
 								//cas membre n'a pas les droits
@@ -164,7 +164,8 @@ foreach($this->informationsMembre as $val => $membre){
 				//Lorsque les deux correspondent, on récupère les éléments du dossier pour générer le document
                                 if(count($dossierInfos['infosEtab']['adresses']) > 0 && $dossierInfos['infosEtab']['adresses'][0]['NUMINSEE_COMMUNE'] == $val['NUMINSEE_COMMUNE']){
                                     if($membre['categories'][ $dossierInfos['infosEtab']['informations']['ID_CATEGORIE']]['ID_COMMISSIONMEMBRE'] && $membre['types'][ $dossierInfos['infosEtab']['informations']['ID_TYPEACTIVITE']]['ID_COMMISSIONMEMBRE'] && $membre['dossiertypes'][ $dossierInfos['TYPE_DOSSIER']]['ID_COMMISSIONMEMBRE']){
-                                        retrieveInfoDossier($grpLoop, $dossierInfos);
+                                    	$dateComm = new Zend_Date($this->dateComm, Zend_Date::DATES );
+                                    	retrieveInfoDossier($grpLoop, $dossierInfos, $dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
                                         setVars($odf, 'nomEtab',$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
                                         setVars($odf, 'numWinPrev', $dossierInfos['infosEtab']['general']['NUMEROID_ETABLISSEMENT']);
                                         $dossierExported = true;
@@ -228,7 +229,7 @@ function savePj($dateCommId, $membreNom){
 	return $nouvellePJ;
 }
 
-function retrieveInfoDossier($segment, $dossierInfos) {
+function retrieveInfoDossier($segment, $dossierInfos, $dateCommission) {
     setVars($segment, 'nomEtab',$dossierInfos['infosEtab']['informations']["LIBELLE_ETABLISSEMENTINFORMATIONS"]);
     $nomPere = "";
     if(isset($dossierInfos['infosEtab']['parents'][0]["LIBELLE_ETABLISSEMENTINFORMATIONS"])) {
@@ -248,6 +249,7 @@ function retrieveInfoDossier($segment, $dossierInfos) {
     setVars($segment, 'typeLettreP', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"]);
     setVars($segment, 'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
     setVars($segment, 'objetDossier', $dossierInfos["OBJET_DOSSIER"]);
+    setVars($segment, 'dateComm', $dateCommission);
     setVars($segment, 'avisDossierCommission', getAvis($dossierInfos["AVIS_DOSSIER_COMMISSION"]));
     setVars($segment, 'avisDossier', getAvis($dossierInfos["AVIS_DOSSIER"]));
 
