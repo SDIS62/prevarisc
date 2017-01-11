@@ -278,7 +278,7 @@ class Service_Search
     		->joinLeft("adresserue", "adresserue.ID_RUE = etablissementadresse.ID_RUE", "LIBELLE_RUE")
     		->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", array("CODEPOSTAL_COMMUNE","LIBELLE_COMMUNE"))
     		->joinLeft("groupementcommune", "groupementcommune.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE")
-    		->joinLeft("groupement", "groupement.ID_GROUPEMENT = groupementcommune.ID_GROUPEMENT AND groupement.ID_GROUPEMENTTYPE = 5", "LIBELLE_GROUPEMENT")
+    		->joinLeft("groupement", "groupement.ID_GROUPEMENT = groupementcommune.ID_GROUPEMENT", "LIBELLE_GROUPEMENT")
     		->joinLeft("etablissementlie", "e.ID_ETABLISSEMENT = etablissementlie.ID_FILS_ETABLISSEMENT")
     		->joinLeft(array("etablissementinformationspere" => "etablissementinformations"), "etablissementinformationspere.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT", array("LIBELLE_ETABLISSEMENT_PERE" => "LIBELLE_ETABLISSEMENTINFORMATIONS"))
     		->joinLeft(array("etablissementadressesite" => "etablissementadresse"), "etablissementadressesite.ID_ETABLISSEMENT = (SELECT ID_FILS_ETABLISSEMENT FROM etablissementlie WHERE ID_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_SITE")
@@ -292,6 +292,9 @@ class Service_Search
      		->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
     		->group("e.ID_ETABLISSEMENT")
     		;
+    		
+    		// Gestion des groupements territoriaux liés aux établissements et des établissements sans adresse (et donc sans groupement territorial lié)
+    		$select->where('groupement.ID_GROUPEMENTTYPE = 5 or groupement.ID_GROUPEMENTTYPE IS NULL');
     
     		// Critères : nom de l'établissement
     		if($label !== null) {
