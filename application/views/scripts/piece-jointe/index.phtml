@@ -100,7 +100,7 @@
                         if (file.previewElement !== undefined) {
                             file.previewElement.remove();
                         }
-                        $('#dropzone').hide();
+                        $('#dropzone').removeClass("dz-started").hide();
                     } else
                     {
                         document.location.reload();
