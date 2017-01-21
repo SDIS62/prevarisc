@@ -1013,10 +1013,9 @@
                 if (numero) {
                     adresse += numero + ", ";
                 }
-                adresse += voie + ", " + codepostal +  " " + commune;
+                adresse += voie + ", " + codepostal +  ", " + commune;
                 $("span.result").text("Géolocalisation en cours...");
 
-                console.log('Geolocalising : '+adresse);
                 viewer.setCenterAtLocation({
                     address: adresse,
                     afterCentered: function() {
@@ -1129,7 +1128,6 @@
                 }
                 adresse += voie;
                 $("span.result").text("Géolocalisation en cours...");
-                console.log('Geolocalising : '+adresse + ", " + codepostal +  " " + commune);
                 geoConceptGeocode(geocoderUrl, map, adresse, codepostal, commune, function(result) {
                     if (result) {
                         $("span.result").text("Géolocalisée Geoconcept");
