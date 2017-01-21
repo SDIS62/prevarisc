@@ -1020,7 +1020,7 @@
                 if (numero) {
                     adresse += numero + ", ";
                 }
-                adresse += voie + ", " + codepostal +  " " + commune;
+                adresse += voie + ", " + codepostal +  ", " + commune;
                 $("span.result").text("Géolocalisation en cours...");
 
                 geolocalizing = true;
@@ -1035,7 +1035,7 @@
             
 
         <?php endif ?>
-
+        
         // Géolocalisation de l'adresse
         $('#adresse-modal #geolocme_nominatim').click(function() {
             element = $(this);
