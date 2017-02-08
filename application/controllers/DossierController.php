@@ -664,6 +664,50 @@ class DossierController extends Zend_Controller_Action
         $this->view->dossierNatureListe = $DBdossiernatureliste->getDossierNature($idType);
     }
 
+    
+    public function defaultcommissionAction(){
+    	$idType = (int) $this->_getParam("idType");
+    	$idEtablissement = (int) $this->_getParam("idEtablissement");
+    	
+    	// Modèle de données
+    	$model_typesDesCommissions = new Model_DbTable_CommissionType();
+    	$model_commission = new Model_DbTable_Commission();
+    	
+    	// On cherche tous les types de commissions
+    	$rowset_typesDesCommissions = $model_typesDesCommissions->fetchAll();
+    	
+    	// Tableau de résultats
+    	$array_commissions = array();
+    	
+    	// Pour tous les types, on cherche leur commission
+    	foreach ($rowset_typesDesCommissions as $row_typeDeCommission) {
+    		$array_commissions[$row_typeDeCommission->ID_COMMISSIONTYPE] = array(
+    				"LIBELLE" => $row_typeDeCommission->LIBELLE_COMMISSIONTYPE,
+    				"ARRAY" => $model_commission->fetchAll("ID_COMMISSIONTYPE = ".$row_typeDeCommission->ID_COMMISSIONTYPE)->toArray(),
+    		);
+    	}
+    	$this->view->array_commissions = $array_commissions;
+    	
+    	// Récupération des infos de l'établissement pour appliquer les règles de commission par défaut
+        if ($idEtablissement) {
+        	
+        	// Correspondance de valeur entre dossier de type "Visite" ou "Groupe de visite" et le critère de la règle de commission par défaut correspondant
+        	if ($idType == 2 || $idType == 3){
+        		$idType = 0;
+        	}
+        	
+        	$DBetablissement = new Model_DbTable_Etablissement();
+        	$etablissementTab = $DBetablissement->getInformations($idEtablissement);
+        	$etablissement = $etablissementTab->toArray();
+        	
+        	$model_adresse = new Model_DbTable_EtablissementAdresse();
+        	$array_adresses = $model_adresse->get($idEtablissement);
+        	
+        	$service_dossier = new Service_Dossier();
+        	$this->view->default_commission = $service_dossier->getDefaultCommission($array_adresses[0]["NUMINSEE_COMMUNE"], $etablissement['ID_CATEGORIE'], $etablissement['ID_TYPE'], $etablissement['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'], $idType);
+        }
+    }
+    
     public function showchampsAction(){
         $this->_helper->viewRenderer->setNoRender();
         $listeNature = $this->_getParam("listeNature");

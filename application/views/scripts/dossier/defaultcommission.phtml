@@ -1,0 +1,13 @@
+<?php
+echo "<input type='hidden' name='COMMISSION_DOSSIER' id='COMMISSION_DOSSIER' value='".(($this->default_commission["ID_COMMISSION"] != '') ? $this->default_commission["ID_COMMISSION"] : $this->infosDossier['COMMISSION_DOSSIER'])."' />";
+echo "<select name='commissionSelect' id='commissionSelect' >";
+	echo "<option value='0'>Aucune commission</option>";
+	foreach ($this->array_commissions as $array_commission) {
+    	echo "<optgroup label='".htmlspecialchars($array_commission["LIBELLE"], ENT_QUOTES)."' >";
+        foreach ($array_commission["ARRAY"] as $item) {
+        	echo "<option value='".$item["ID_COMMISSION"]."' ".(($this->default_commission["ID_COMMISSION"] != '' && $this->default_commission["ID_COMMISSION"] == $item["ID_COMMISSION"]) ? "selected" : "")." >".htmlspecialchars($item["LIBELLE_COMMISSION"]." (".$array_commission["LIBELLE"].")", ENT_QUOTES)."</option>";
+        }
+        echo "</optgroup>";
+	}
+	echo "</select>";
+?>

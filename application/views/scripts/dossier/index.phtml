@@ -194,6 +194,26 @@
 						return false;
 					}
 				});
+
+				if($("#do").val() == 'new'  && (idType == 1 || idType == 2 || idType == 3)){
+					$.ajax({
+						url: "/dossier/defaultcommission",
+						data: "idType="+idType+"&idEtablissement="+$("#idEtablissement").val(),
+						type:"POST",
+						beforeSend: function(){
+							$("#chargement").html("<img src='/images/load.gif' />");
+						},
+						success: function(affichageResultat){
+							$("#COMMISSION > .form").html(affichageResultat);
+							$("#COMMISSION").show();
+							$("#chargement").html("");
+							return false;
+						},
+						error: function(){
+							return false;
+						}
+					});
+				}
 				majAvisSelect();
 			}
 			return false;
