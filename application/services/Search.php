@@ -24,7 +24,7 @@ class Service_Search
      * @param int $page par défaut = 1
      * @return array
      */
-    public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types_activites = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $city = null, $street_id = null, $count = 10, $page = 1)
+    public function etablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types_activites = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $city = null, $street_id = null, $commissions = null, $groupements_territoriaux = null, $count = 10, $page = 1)
     {
         // Récupération de la ressource cache à partir du bootstrap
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
@@ -62,6 +62,7 @@ class Service_Search
                 //->joinLeft("utilisateur", "utilisateur.ID_UTILISATEUR = etablissementinformationspreventionniste.ID_UTILISATEUR", "ID_UTILISATEUR")
                 ->joinLeft("etablissementadresse", "e.ID_ETABLISSEMENT = etablissementadresse.ID_ETABLISSEMENT", array("NUMINSEE_COMMUNE", "LON_ETABLISSEMENTADRESSE", "LAT_ETABLISSEMENTADRESSE", "ID_ADRESSE", "ID_RUE"))
                 ->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_DEFAULT")
+                ->joinLeft("groupementcommune", "groupementcommune.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE")
                 ->joinLeft("adresserue", "adresserue.ID_RUE = etablissementadresse.ID_RUE", "LIBELLE_RUE")
                 ->joinLeft(array("etablissementadressesite" => "etablissementadresse"), "etablissementadressesite.ID_ETABLISSEMENT = (SELECT ID_FILS_ETABLISSEMENT FROM etablissementlie WHERE ID_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_SITE")
                 ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
@@ -162,7 +163,17 @@ class Service_Search
                 }
                 $select->where('('.implode(' OR ', $clauses).')');
             }
-
+            
+            // Critère : commission
+            if($commissions !== null) {
+            	$this->setCriteria($select, "ID_COMMISSION", $commissions);
+            }
+            
+            // Critère : groupement territorial
+            if($groupements_territoriaux !== null) {
+            	$this->setCriteria($select, "ID_GROUPEMENT", $groupements_territoriaux);
+            }
+            
             // Critères : géolocalisation
             if($lon !== null && $lat !== null) {
                $this->setCriteria($select, "etablissementadresse.LON_ETABLISSEMENTADRESSE", $lon);
@@ -198,6 +209,219 @@ class Service_Search
         }
 
         return $results;
+    }
+    
+    /**
+     * Recherche des établissements pour l'extraction Calc
+     *
+     * @param string $label
+     * @param string $identifiant
+     * @param string|array $genre
+     * @param string|array $categorie
+     * @param string|array $classe
+     * @param string|array $famille
+     * @param string|array $types_activites
+     * @param bool $avis_favorable
+     * @param string|array $statuts
+     * @param bool $local_sommeil
+     * @param float $lon
+     * @param float $lat
+     * @param int $parent
+     * @param string $city
+     * @param int $street_id
+     * @return array
+     */
+    public function extractionEtablissements($label = null, $identifiant = null, $genres = null, $categories = null, $classes = null, $familles = null, $types_activites = null, $avis_favorable = null, $statuts = null, $local_sommeil = null, $lon = null, $lat = null, $parent = null, $city = null, $street_id = null, $commissions = null, $groupements_territoriaux = null)
+    {
+    	// Récupération de la ressource cache à partir du bootstrap
+    	$cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+    
+    	// Identifiant de la recherche
+    	$search_id = 'extract_etablissements_' . md5(serialize(func_get_args()));
+    
+    	if(($results = unserialize($cache->load($search_id))) === false) {
+    
+    		// Création de l'objet recherche
+    		$select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
+    
+    		// Requête principale
+    		$select->from(array("e" => "etablissement"), array("NUMEROID_ETABLISSEMENT"))
+    		->columns(array(
+    				"DATE_DERNIERE_VISITE" => new Zend_Db_Expr("(SELECT MAX(dossier.DATEVISITE_DOSSIER)
+                        FROM dossier
+    					INNER JOIN dossiernature ON dossier.ID_DOSSIER = dossiernature.ID_DOSSIER
+                        INNER JOIN etablissementdossier ON dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
+                        WHERE dossiernature.ID_NATURE IN (21, 26, 47, 48) AND etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"),
+    				"DATE_DERNIER_AVIS" => new Zend_Db_Expr("(SELECT CASE
+							WHEN d.DATEVISITE_DOSSIER IS NOT NULL THEN (SELECT dossier.DATEVISITE_DOSSIER FROM dossier where dossier.ID_DOSSIER = d.ID_DOSSIER)
+						    WHEN d.DATECOMM_DOSSIER IS NOT NULL THEN (SELECT dossier.DATECOMM_DOSSIER FROM dossier where dossier.ID_DOSSIER = d.ID_DOSSIER)
+						    WHEN d.DATEINSERT_DOSSIER IS NOT NULL THEN (SELECT dossier.DATEINSERT_DOSSIER FROM dossier where dossier.ID_DOSSIER = d.ID_DOSSIER)
+						END
+                        FROM dossier d
+                        WHERE d.ID_DOSSIER = e.ID_DOSSIER_DONNANT_AVIS)"),
+    				"DATE_PREMIER_AVIS_DEFAVORABLE_CONSECUTIF" => new Zend_Db_Expr("(SELECT DISTINCT d1.DATEVISITE_DOSSIER FROM dossier d1 LEFT JOIN etablissementdossier ed ON d1.ID_DOSSIER = ed.ID_DOSSIER
+    					WHERE d1.DATEVISITE_DOSSIER = (select min(DATEVISITE_DOSSIER) AS date_visite_defavorable_mini from dossier d2 INNER JOIN etablissementdossier on etablissementdossier.ID_DOSSIER = d2.ID_DOSSIER
+								WHERE d2.AVIS_DOSSIER_COMMISSION = 2 and d2.TYPE_DOSSIER = 2 and etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT
+								and not exists (SELECT * FROM dossier INNER JOIN etablissementdossier on etablissementdossier.ID_DOSSIER = dossier.ID_DOSSIER
+												WHERE dossier.AVIS_DOSSIER_COMMISSION = 1 and dossier.TYPE_DOSSIER = 2 and dossier.DATEVISITE_DOSSIER >= d2.DATEVISITE_DOSSIER and etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT))
+    					AND ed.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)")))
+    		->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
+    		->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER", "DIFFEREAVIS_DOSSIER"))
+    		->joinLeft("avis", "dossier.AVIS_DOSSIER_COMMISSION = avis.ID_AVIS")
+    		->joinLeft("categorie", "etablissementinformations.ID_CATEGORIE = categorie.ID_CATEGORIE", "LIBELLE_CATEGORIE")
+    		->joinLeft("type", "etablissementinformations.ID_TYPE = type.ID_TYPE", "LIBELLE_TYPE")
+    		->joinLeft("typeactivite", "etablissementinformations.ID_TYPEACTIVITE = typeactivite.ID_TYPEACTIVITE", "LIBELLE_ACTIVITE")
+    		->joinLeft("commission", "etablissementinformations.ID_COMMISSION = commission.ID_COMMISSION", "LIBELLE_COMMISSION")
+    		->joinLeft("statut", "etablissementinformations.ID_STATUT = statut.ID_STATUT", "LIBELLE_STATUT")
+    		->join("genre", "etablissementinformations.ID_GENRE = genre.ID_GENRE", "LIBELLE_GENRE")
+    		->joinLeft("etablissementadresse", "e.ID_ETABLISSEMENT = etablissementadresse.ID_ETABLISSEMENT", array("NUMINSEE_COMMUNE", "ID_ADRESSE", "ID_RUE", "NUMERO_ADRESSE", "COMPLEMENT_ADRESSE"))
+    		->joinLeft("adresserue", "adresserue.ID_RUE = etablissementadresse.ID_RUE", "LIBELLE_RUE")
+    		->joinLeft("adressecommune", "etablissementadresse.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE", array("CODEPOSTAL_COMMUNE","LIBELLE_COMMUNE"))
+    		->joinLeft("groupementcommune", "groupementcommune.NUMINSEE_COMMUNE = adressecommune.NUMINSEE_COMMUNE")
+    		->joinLeft("groupement", "groupement.ID_GROUPEMENT = groupementcommune.ID_GROUPEMENT AND groupement.ID_GROUPEMENTTYPE = 5", "LIBELLE_GROUPEMENT")
+    		->joinLeft("etablissementlie", "e.ID_ETABLISSEMENT = etablissementlie.ID_FILS_ETABLISSEMENT")
+    		->joinLeft(array("etablissementinformationspere" => "etablissementinformations"), "etablissementinformationspere.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT", array("LIBELLE_ETABLISSEMENT_PERE" => "LIBELLE_ETABLISSEMENTINFORMATIONS"))
+    		->joinLeft(array("etablissementadressesite" => "etablissementadresse"), "etablissementadressesite.ID_ETABLISSEMENT = (SELECT ID_FILS_ETABLISSEMENT FROM etablissementlie WHERE ID_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_SITE")
+    		->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
+    		->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
+    		->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
+     		->order("adressecommune.LIBELLE_COMMUNE ASC")
+     		->order("categorie.LIBELLE_CATEGORIE ASC")
+     		->order("type.LIBELLE_TYPE ASC")
+     		->order("statut.LIBELLE_STATUT ASC")
+     		->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
+    		->group("e.ID_ETABLISSEMENT")
+    		;
+    
+    		// Critères : nom de l'établissement
+    		if($label !== null) {
+    
+    			$cleanLabel = trim($label);
+    
+    			// recherche par id
+    			if (substr($cleanLabel, 0, 1) == "#") {
+    				$this->setCriteria($select, "e.NUMEROID_ETABLISSEMENT", substr($cleanLabel, 1), false);
+    
+    				// on test si la chaine contient uniquement des caractères de type identifiant sans espace
+    			} else  if (preg_match('/^[E0-9\/\-\.]+([0-9A-Z]{1,2})?$/', $cleanLabel) === 1) {
+    				$this->setCriteria($select, "e.NUMEROID_ETABLISSEMENT", $cleanLabel, false);
+    
+    				// cas par défaut
+    			} else {
+    				$this->setCriteria($select, "etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS", $cleanLabel, false);
+    			}
+    		}
+    
+    		// Critères : identifiant
+    		if($identifiant !== null) {
+    			$this->setCriteria($select, "e.NUMEROID_ETABLISSEMENT", $identifiant);
+    		}
+    
+    		// Critères : genre
+    		if($genres !== null) {
+    			$this->setCriteria($select, "genre.ID_GENRE", $genres);
+    		}
+    
+    		// Critères : catégorie
+    		if($categories !== null) {
+    			$this->setCriteria($select, "categorie.ID_CATEGORIE", $categories);
+    		}
+    
+    		// Critères : classe
+    		if($classes !== null) {
+    			$this->setCriteria($select, "etablissementinformations.ID_CLASSE", $classes);
+    		}
+    
+    		// Critères : famille
+    		if($familles !== null) {
+    			$this->setCriteria($select, "etablissementinformations.ID_FAMILLE", $familles);
+    		}
+    
+    		// Critères : type
+    		if($types_activites !== null) {
+    			$this->setCriteria($select, "typeactivite.ID_TYPEACTIVITE", $types_activites);
+    		}
+    
+    		// Critères : avis favorable
+    		if($avis_favorable !== null) {
+    			$this->setCriteria($select, "avis.ID_AVIS", $avis_favorable ? 1 : 2);
+    		}
+    
+    		// Critères : statuts
+    		if($statuts !== null) {
+    			$this->setCriteria($select, "etablissementinformations.ID_STATUT", $statuts);
+    		}
+    
+    		// Critères : statuts
+    		if($local_sommeil !== null) {
+    			$this->setCriteria($select, "etablissementinformations.LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS", $local_sommeil);
+    		}
+    
+    		// Critère : commune et rue
+    		if($street_id !== null) {
+    			$clauses = array();
+    			$clauses[] = "etablissementadresse.ID_RUE = ".$select->getAdapter()->quote($street_id);
+    			if($genres == null || in_array('1', $genres)) {
+    				$clauses[] = "etablissementadressesite.ID_RUE = ".$select->getAdapter()->quote($street_id);
+    			}
+    			if($genres == null || in_array('3', $genres)) {
+    				$clauses[] = "etablissementadressecell.ID_RUE = ".$select->getAdapter()->quote($street_id);
+    			}
+    			$select->where('('.implode(' OR ', $clauses).')');
+    		}
+    		else if($city !== null) {
+    			$clauses = array();
+    			$clauses[] = "etablissementadresse.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+    			if($genres == null || in_array('1', $genres)) {
+    				$clauses[] = "etablissementadressesite.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+    			}
+    			if($genres == null || in_array('3', $genres)) {
+    				$clauses[] = "etablissementadressecell.NUMINSEE_COMMUNE = ". $select->getAdapter()->quote($city);
+    			}
+    			$select->where('('.implode(' OR ', $clauses).')');
+    		}
+    		
+    		// Critère : commission
+    		if($commissions !== null) {
+    			$this->setCriteria($select, "commission.ID_COMMISSION", $commissions);
+    		}
+    		
+    		// Critère : groupement territorial
+    		if($groupements_territoriaux !== null) {
+    			$this->setCriteria($select, "groupement.ID_GROUPEMENT", $groupements_territoriaux);
+    		}
+    
+    		// Critères : géolocalisation
+    		if($lon !== null && $lat !== null) {
+    			$this->setCriteria($select, "etablissementadresse.LON_ETABLISSEMENTADRESSE", $lon);
+    			$this->setCriteria($select, "etablissementadresse.LAT_ETABLISSEMENTADRESSE", $lat);
+    		}
+    
+    		// Critères : parent
+    		if($parent !== null) {
+    			$select->where($parent == 0 ? "etablissementlie.ID_ETABLISSEMENT IS NULL" : "etablissementlie.ID_ETABLISSEMENT = ?", $parent);
+    		}
+    
+    		// Performance optimisation : avoid sorting on big queries, and sort only if
+    		// there is at least one where part
+    		if (count($select->getPart(Zend_Db_Select::WHERE)) > 0) {
+    			$select->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC");
+    		}
+    
+    		// Construction du résultat
+    		$rows_counter = new Zend_Paginator_Adapter_DbSelect($select);
+    		$results = array(
+    				'results' => $select->query()->fetchAll(),
+    				'search_metadata' => array(
+    						'search_id' => $search_id,
+    						'count' => count($rows_counter)
+    				)
+    		);
+    
+    		$cache->save(serialize($results));
+    	}
+    
+    	return $results;
     }
 
     /**
