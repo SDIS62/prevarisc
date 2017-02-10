@@ -212,8 +212,8 @@
 		display_criteres_by_genres();
 
 		// Slide des établissements enfants contenant d'autres établissements
-		$("ul.recherche_liste li.slide").live("click", function() {
-			if($(this).is('a')) {
+		$("ul.recherche_liste li.slide").live("click", function(e) {
+			if (e.target.tagName === 'A' || e.target.tagName === 'INPUT'){
 				return;
 			}
 			var container = this;

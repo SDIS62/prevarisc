@@ -77,6 +77,10 @@
         ?>
 
     </div>
+    
+    <?php if($this->NB_ENFANTS > 0) : ?>
+    	<input type='submit' class='btn btn-success' id='exporterPereFils' name='ExporterPereFils_<?php echo $this->ID_ETABLISSEMENT ?>' value='Export Calc' <?php echo ((unserialize(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache')->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "export", "export_ets")) ? ' style="margin-top: -5px; position:absolute; right:300px;"' : 'style="visibility: hidden;"') ?>>
+    <?php endif ?>
 
     <div class='pull-right'>
 

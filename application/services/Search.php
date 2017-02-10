@@ -285,11 +285,6 @@ class Service_Search
     		->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
     		->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
     		->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
-     		->order("adressecommune.LIBELLE_COMMUNE ASC")
-     		->order("categorie.LIBELLE_CATEGORIE ASC")
-     		->order("type.LIBELLE_TYPE ASC")
-     		->order("statut.LIBELLE_STATUT ASC")
-     		->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
     		->group("e.ID_ETABLISSEMENT")
     		;
     		
@@ -402,7 +397,15 @@ class Service_Search
     
     		// Critères : parent
     		if($parent !== null) {
-    			$select->where($parent == 0 ? "etablissementlie.ID_ETABLISSEMENT IS NULL" : "etablissementlie.ID_ETABLISSEMENT = ?", $parent);
+    			$select->where($parent == 0 ? "etablissementlie.ID_ETABLISSEMENT IS NULL" : "etablissementlie.ID_ETABLISSEMENT = ? or e.ID_ETABLISSEMENT = ?", $parent);
+    			$select->order("genre.ID_GENRE")
+    			->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC");
+    		} else {
+    			$select->order("adressecommune.LIBELLE_COMMUNE ASC")
+    			->order("categorie.LIBELLE_CATEGORIE ASC")
+    			->order("type.LIBELLE_TYPE ASC")
+    			->order("statut.LIBELLE_STATUT ASC")
+    			->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC");
     		}
     
     		// Performance optimisation : avoid sorting on big queries, and sort only if

@@ -42,210 +42,356 @@ class SearchController extends Zend_Controller_Action
         	
         	if (!empty($_GET)) {
         		
-        		// Export Calc
-        		if (isset($_GET['Exporter'])) {
-        			 
-        			try {
+        		$param_exportPereFils_trouve = false;
+        		$param_idEtabPere = 0;
         		
-        				$parameters = $this->_request->getQuery();
-        				$page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
-        				$label = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] != '#' ? $parameters['label'] : null;
-        				$identifiant = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] == '#'? substr($parameters['label'], 1) : null;
-        				$genres = array_key_exists('genres', $parameters) ? $parameters['genres'] : null;
-        				$categories = array_key_exists('categories', $parameters) ? $parameters['categories'] : null;
-        				$classes = array_key_exists('classes', $parameters) ? $parameters['classes'] : null;
-        				$familles = array_key_exists('familles', $parameters) ? $parameters['familles'] : null;
-        				$types_activites = array_key_exists('types_activites', $parameters) ? $parameters['types_activites'] : null;
-        				$avis_favorable = array_key_exists('avis', $parameters) && count($parameters['avis']) == 1 ? $parameters['avis'][0] == 'true' : null;
-        				$statuts = array_key_exists('statuts', $parameters) ? $parameters['statuts'] : null;
-        				$local_sommeil = array_key_exists('presences_local_sommeil', $parameters) && count($parameters['presences_local_sommeil']) == 1 ? $parameters['presences_local_sommeil'][0] == 'true' : null;
-        				$city = array_key_exists('city', $parameters) && $parameters['city'] != '' ? $parameters['city'] : null;
-        				$street = array_key_exists('street', $parameters) && $parameters['street'] != '' ? $parameters['street'] : null;
-        				$commissions = array_key_exists('commissions', $parameters) && $parameters['commissions'] != '' ? $parameters['commissions'] : null;
-        				$groupements_territoriaux = array_key_exists('groupements_territoriaux', $parameters) && $parameters['groupements_territoriaux'] != '' ? $parameters['groupements_territoriaux'] : null;
-        		
-        				$search = $service_search->extractionEtablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, $commissions, $groupements_territoriaux);
-        				
-        				// Gestion du cache pour ne pas dépasser la taille maximale authorisée
-        				//$cacheMethod = PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
-        				//$cacheSettings = array( ' memoryCacheSize ' => '8MB');
-        				//PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
-        				 
-        				$objPHPExcel = new PHPExcel ();
-        				$objPHPExcel->setActiveSheetIndex ( 0 );
-        				$sheet = $objPHPExcel->getActiveSheet ();
-        				$sheet->setTitle ( 'Liste des établissements' );
-        				 
-        				$objPHPExcel->getDefaultStyle()->getFont()->setName('Arial')->setSize(10)->setBold(false);
-        				$sheet->getDefaultRowDimension()->setRowHeight(-1);
-        				 
-        				// Formattage des titres de colonnes
-        				$styleArray = array(
-        						'borders' => array(
-        								'allborders' => array(
-        										'style' => PHPExcel_Style_Border::BORDER_THIN
-        								)
-        						)
-        				);
-        				$sheet->getStyle('A1:T1')->applyFromArray($styleArray);
-        				unset($styleArray);
-        				$sheet->getStyle('A1:T1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-        				$sheet->getStyle('A1:T1')->getFont()->setSize(11)->setBold(true);
-        				 
-        				foreach(range('A','T') as $columnID) {
-        					$sheet->getColumnDimension($columnID)->setAutoSize(true);
-        				}
-        				 
-        				$sheet->setCellValueByColumnAndRow ( 0, 1, "Commune" );
-        				$sheet->setCellValueByColumnAndRow ( 1, 1, "Catégorie" );
-        				$sheet->setCellValueByColumnAndRow ( 2, 1, "Type" );
-        				$sheet->setCellValueByColumnAndRow ( 3, 1, "Activité" );
-        				$sheet->setCellValueByColumnAndRow ( 4, 1, "Commission compétente" );
-        				$sheet->setCellValueByColumnAndRow ( 5, 1, "Code/identifiant établissement" );
-        				$sheet->setCellValueByColumnAndRow ( 6, 1, "Libellé établissement" );
-        				$sheet->setCellValueByColumnAndRow ( 7, 1, "Statut" );
-        				$sheet->setCellValueByColumnAndRow ( 8, 1, "Avis" );
-        				$sheet->setCellValueByColumnAndRow ( 9, 1, "Date du dernier avis" );
-        				$sheet->setCellValueByColumnAndRow ( 10, 1, "Date du premier avis défavorable consécutif" );
-        				$sheet->setCellValueByColumnAndRow ( 11, 1, "Effectif total" );
-        				$sheet->setCellValueByColumnAndRow ( 12, 1, "Effectif public" );
-        				$sheet->setCellValueByColumnAndRow ( 13, 1, "Effectif personnel" );
-        				$sheet->setCellValueByColumnAndRow ( 14, 1, "Date de dernière visite" );
-        				$sheet->setCellValueByColumnAndRow ( 15, 1, "Date de prochaine visite" );
-        				$sheet->setCellValueByColumnAndRow ( 16, 1, "Adresse" );
-        				$sheet->setCellValueByColumnAndRow ( 17, 1, "Groupement territorial compétent" );
-        				$sheet->setCellValueByColumnAndRow ( 18, 1, "Libellé du père/site" );
-        				$sheet->setCellValueByColumnAndRow ( 19, 1, "Genre" );
-        				 
-        				$ligne = 2;
-        				foreach ($search['results'] as $row) {
-        					 
-        					$sheet->setCellValueByColumnAndRow ( 0, $ligne, $row ['LIBELLE_COMMUNE'] );
-        					$sheet->setCellValueByColumnAndRow ( 1, $ligne, $row ['LIBELLE_CATEGORIE'] );
-        					$sheet->setCellValueByColumnAndRow ( 2, $ligne, $row ['LIBELLE_TYPE'] );
-        					$sheet->setCellValueByColumnAndRow ( 3, $ligne, $row ['LIBELLE_ACTIVITE'] );
-        					$sheet->setCellValueByColumnAndRow ( 4, $ligne, $row ['LIBELLE_COMMISSION'] );
-        					$sheet->setCellValueByColumnAndRow ( 5, $ligne, $row ['NUMEROID_ETABLISSEMENT'] );
-        					$sheet->setCellValueByColumnAndRow ( 6, $ligne, $row ['LIBELLE_ETABLISSEMENTINFORMATIONS'] );
-        					$sheet->setCellValueByColumnAndRow ( 7, $ligne, $row ['LIBELLE_STATUT'] );
-        					$sheet->setCellValueByColumnAndRow ( 8, $ligne, $row ['LIBELLE_AVIS'] );
-        					 
-        					if ($row ['DATE_DERNIER_AVIS'] != '') {
-        						$dateDernierAvis = explode("-",$row ['DATE_DERNIER_AVIS']);
-        						$datetimeDernierAvis = PHPExcel_Shared_Date::FormattedPHPToExcel($dateDernierAvis[0], $dateDernierAvis[1], $dateDernierAvis[2]);
-        						$sheet->setCellValueByColumnAndRow ( 9, $ligne, $datetimeDernierAvis );
-        						$sheet->getStyleByColumnAndRow( 9, $ligne)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
-        					}
-        					 
-        					if ($row ['DATE_PREMIER_AVIS_DEFAVORABLE_CONSECUTIF'] != '') {
-        						$datePremierAvisDefavorableConsecutif = explode("-",$row ['DATE_PREMIER_AVIS_DEFAVORABLE_CONSECUTIF']);
-        						$datetimePremierAvisDefavorableConsecutif = PHPExcel_Shared_Date::FormattedPHPToExcel($datePremierAvisDefavorableConsecutif[0], $datePremierAvisDefavorableConsecutif[1], $datePremierAvisDefavorableConsecutif[2]);
-        						$sheet->setCellValueByColumnAndRow ( 10, $ligne, $datetimePremierAvisDefavorableConsecutif );
-        						$sheet->getStyleByColumnAndRow( 10, $ligne)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
-        					}
-        					 
-        					$sheet->setCellValueByColumnAndRow ( 11, $ligne, $row ['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] + $row ['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] );
-        					$sheet->setCellValueByColumnAndRow ( 12, $ligne, $row ['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] );
-        					$sheet->setCellValueByColumnAndRow ( 13, $ligne, $row ['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] );
-        					 
-        					if ($row ['DATE_DERNIERE_VISITE'] != '') {
-        						 
-        						$dateDerniereVisite = explode("-",$row ['DATE_DERNIERE_VISITE']);
-        						$datetimeDerniereVisite = PHPExcel_Shared_Date::FormattedPHPToExcel($dateDerniereVisite[0], $dateDerniereVisite[1], $dateDerniereVisite[2]);
-        						$sheet->setCellValueByColumnAndRow ( 14, $ligne, $datetimeDerniereVisite );
-        						$sheet->getStyleByColumnAndRow( 14, $ligne)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
-        						 
-        						if($row ['PERIODICITE_ETABLISSEMENTINFORMATIONS'] != 0) {
-        							 
-        							$dateProchaineVisite = date ( 'Y-m-j' , strtotime("+".$row ['PERIODICITE_ETABLISSEMENTINFORMATIONS']." months", strtotime($row ['DATE_DERNIERE_VISITE'])) );
-        							$dateProchaineVisite = explode("-",$dateProchaineVisite);
-        							$datetimeProchaineVisite = PHPExcel_Shared_Date::FormattedPHPToExcel($dateProchaineVisite[0], $dateProchaineVisite[1], $dateProchaineVisite[2]);
-        							$sheet->setCellValueByColumnAndRow(15, $ligne, $datetimeProchaineVisite);
-        							$sheet->getStyleByColumnAndRow(15, $ligne)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
-        		
-        						}
-        						 
-        					}
-        		
-        					$sheet->setCellValueByColumnAndRow ( 16, $ligne, $row ['NUMERO_ADRESSE'] . " " . $row ['LIBELLE_RUE'] . " " . $row ['COMPLEMENT_ADRESSE'] . " " . $row ['CODEPOSTAL_COMMUNE'] );
-        					$sheet->setCellValueByColumnAndRow ( 17, $ligne, $row ['LIBELLE_GROUPEMENT'] );
-        					$sheet->setCellValueByColumnAndRow ( 18, $ligne, $row ['LIBELLE_ETABLISSEMENT_PERE'] );
-        					$sheet->setCellValueByColumnAndRow ( 19, $ligne, $row ['LIBELLE_GENRE'] );
-        					 
-        					$ligne ++;
-        				}
-        				 
-        				$this->view->writer = PHPExcel_IOFactory::createWriter ( $objPHPExcel, 'Excel5' );
-        				 
-        				// Ensuite j'ai choisi de désactiver mon layout
-        				$this->_helper->layout ()->disableLayout ();
-        				 
-        				header("Content-Type: application/vnd.oasis.opendocument.spreadsheet");
-        				header("Content-Disposition: attachment; filename=\"Export_Etablissements_".date('Y-m-d_H-i-s').".ods\"");
-        				$this->view->writer->save('php://output');
-        				exit();
-        				 
-        			} catch ( Exception $e ) {
-        				$this->_helper->flashMessenger ( array (
-        						'context' => 'error',
-        						'title' => 'Problème d\'export',
-        						'message' => 'L\'export a rencontré un problème. Veuillez rééssayez. (' . $e->getMessage () . ')'
-        				) );
+        		foreach (array_keys($this->_request->getQuery()) as $param) {
+        			if (substr($param, 0, 17) === "ExporterPereFils_") {
+        				$param_exportPereFils_trouve = true;
+        				$param_idEtabPere = explode('_', $param)[1];
+        				break;
         			}
-        			 
+        		}
+        		
+        		// Export Calc Père + Fils
+        		if ($param_exportPereFils_trouve && $param_idEtabPere > 0) {
+        		
+        		try {
+						
+						$service_search = new Service_Search ();
+						
+						$search = $service_search->extractionEtablissements(null, null, null, null, null, null, null, null, null, null, null, null, $param_idEtabPere, null, null, null, null);
+						
+						$objPHPExcel = new PHPExcel ();
+						$objPHPExcel->setActiveSheetIndex ( 0 );
+						$sheet = $objPHPExcel->getActiveSheet ();
+						$sheet->setTitle ( 'Liste des établissements' );
+						
+						$objPHPExcel->getDefaultStyle ()->getFont ()->setName ( 'Arial' )->setSize ( 10 )->setBold ( false );
+						$sheet->getDefaultRowDimension ()->setRowHeight ( - 1 );
+						
+						// Formattage des titres de colonnes
+						$styleArray = array (
+								'borders' => array (
+										'allborders' => array (
+												'style' => PHPExcel_Style_Border::BORDER_THIN 
+										) 
+								) 
+						);
+						$sheet->getStyle ( 'A1:T1' )->applyFromArray ( $styleArray );
+						unset ( $styleArray );
+						$sheet->getStyle ( 'A1:T1' )->getAlignment ()->setHorizontal ( PHPExcel_Style_Alignment::HORIZONTAL_CENTER );
+						$sheet->getStyle ( 'A1:T1' )->getFont ()->setSize ( 11 )->setBold ( true );
+						
+						foreach ( range ( 'A', 'T' ) as $columnID ) {
+							$sheet->getColumnDimension ( $columnID )->setAutoSize ( true );
+						}
+						
+						$sheet->setCellValueByColumnAndRow ( 0, 1, "Commune" );
+						$sheet->setCellValueByColumnAndRow ( 1, 1, "Catégorie" );
+						$sheet->setCellValueByColumnAndRow ( 2, 1, "Type" );
+						$sheet->setCellValueByColumnAndRow ( 3, 1, "Activité" );
+						$sheet->setCellValueByColumnAndRow ( 4, 1, "Commission compétente" );
+						$sheet->setCellValueByColumnAndRow ( 5, 1, "Code/identifiant établissement" );
+						$sheet->setCellValueByColumnAndRow ( 6, 1, "Libellé établissement" );
+						$sheet->setCellValueByColumnAndRow ( 7, 1, "Statut" );
+						$sheet->setCellValueByColumnAndRow ( 8, 1, "Avis" );
+						$sheet->setCellValueByColumnAndRow ( 9, 1, "Date du dernier avis" );
+						$sheet->setCellValueByColumnAndRow ( 10, 1, "Date du premier avis défavorable consécutif" );
+						$sheet->setCellValueByColumnAndRow ( 11, 1, "Effectif total" );
+						$sheet->setCellValueByColumnAndRow ( 12, 1, "Effectif public" );
+						$sheet->setCellValueByColumnAndRow ( 13, 1, "Effectif personnel" );
+						$sheet->setCellValueByColumnAndRow ( 14, 1, "Date de dernière visite" );
+						$sheet->setCellValueByColumnAndRow ( 15, 1, "Date de prochaine visite" );
+						$sheet->setCellValueByColumnAndRow ( 16, 1, "Adresse" );
+						$sheet->setCellValueByColumnAndRow ( 17, 1, "Groupement territorial compétent" );
+						$sheet->setCellValueByColumnAndRow ( 18, 1, "Libellé du père/site" );
+						$sheet->setCellValueByColumnAndRow ( 19, 1, "Genre" );
+						
+						$ligne = 2;
+						foreach ( $search ['results'] as $row ) {
+							
+							$sheet->setCellValueByColumnAndRow ( 0, $ligne, $row ['LIBELLE_COMMUNE'] );
+							$sheet->setCellValueByColumnAndRow ( 1, $ligne, $row ['LIBELLE_CATEGORIE'] );
+							$sheet->setCellValueByColumnAndRow ( 2, $ligne, $row ['LIBELLE_TYPE'] );
+							$sheet->setCellValueByColumnAndRow ( 3, $ligne, $row ['LIBELLE_ACTIVITE'] );
+							$sheet->setCellValueByColumnAndRow ( 4, $ligne, $row ['LIBELLE_COMMISSION'] );
+							$sheet->setCellValueByColumnAndRow ( 5, $ligne, $row ['NUMEROID_ETABLISSEMENT'] );
+							$sheet->setCellValueByColumnAndRow ( 6, $ligne, $row ['LIBELLE_ETABLISSEMENTINFORMATIONS'] );
+							$sheet->setCellValueByColumnAndRow ( 7, $ligne, $row ['LIBELLE_STATUT'] );
+							$sheet->setCellValueByColumnAndRow ( 8, $ligne, $row ['LIBELLE_AVIS'] );
+							
+							if ($row ['DATE_DERNIER_AVIS'] != '') {
+								$dateDernierAvis = explode ( "-", $row ['DATE_DERNIER_AVIS'] );
+								$datetimeDernierAvis = PHPExcel_Shared_Date::FormattedPHPToExcel ( $dateDernierAvis [0], $dateDernierAvis [1], $dateDernierAvis [2] );
+								$sheet->setCellValueByColumnAndRow ( 9, $ligne, $datetimeDernierAvis );
+								$sheet->getStyleByColumnAndRow ( 9, $ligne )->getNumberFormat ()->setFormatCode ( PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY );
+							}
+							
+							if ($row ['DATE_PREMIER_AVIS_DEFAVORABLE_CONSECUTIF'] != '') {
+								$datePremierAvisDefavorableConsecutif = explode ( "-", $row ['DATE_PREMIER_AVIS_DEFAVORABLE_CONSECUTIF'] );
+								$datetimePremierAvisDefavorableConsecutif = PHPExcel_Shared_Date::FormattedPHPToExcel ( $datePremierAvisDefavorableConsecutif [0], $datePremierAvisDefavorableConsecutif [1], $datePremierAvisDefavorableConsecutif [2] );
+								$sheet->setCellValueByColumnAndRow ( 10, $ligne, $datetimePremierAvisDefavorableConsecutif );
+								$sheet->getStyleByColumnAndRow ( 10, $ligne )->getNumberFormat ()->setFormatCode ( PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY );
+							}
+							
+							$sheet->setCellValueByColumnAndRow ( 11, $ligne, $row ['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] + $row ['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] );
+							$sheet->setCellValueByColumnAndRow ( 12, $ligne, $row ['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] );
+							$sheet->setCellValueByColumnAndRow ( 13, $ligne, $row ['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] );
+							
+							if ($row ['DATE_DERNIERE_VISITE'] != '') {
+								
+								$dateDerniereVisite = explode ( "-", $row ['DATE_DERNIERE_VISITE'] );
+								$datetimeDerniereVisite = PHPExcel_Shared_Date::FormattedPHPToExcel ( $dateDerniereVisite [0], $dateDerniereVisite [1], $dateDerniereVisite [2] );
+								$sheet->setCellValueByColumnAndRow ( 14, $ligne, $datetimeDerniereVisite );
+								$sheet->getStyleByColumnAndRow ( 14, $ligne )->getNumberFormat ()->setFormatCode ( PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY );
+								
+								if ($row ['PERIODICITE_ETABLISSEMENTINFORMATIONS'] != 0) {
+									
+									$dateProchaineVisite = date ( 'Y-m-j', strtotime ( "+" . $row ['PERIODICITE_ETABLISSEMENTINFORMATIONS'] . " months", strtotime ( $row ['DATE_DERNIERE_VISITE'] ) ) );
+									$dateProchaineVisite = explode ( "-", $dateProchaineVisite );
+									$datetimeProchaineVisite = PHPExcel_Shared_Date::FormattedPHPToExcel ( $dateProchaineVisite [0], $dateProchaineVisite [1], $dateProchaineVisite [2] );
+									$sheet->setCellValueByColumnAndRow ( 15, $ligne, $datetimeProchaineVisite );
+									$sheet->getStyleByColumnAndRow ( 15, $ligne )->getNumberFormat ()->setFormatCode ( PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY );
+								}
+							}
+							
+							$sheet->setCellValueByColumnAndRow ( 16, $ligne, $row ['NUMERO_ADRESSE'] . " " . $row ['LIBELLE_RUE'] . " " . $row ['COMPLEMENT_ADRESSE'] . " " . $row ['CODEPOSTAL_COMMUNE'] );
+							$sheet->setCellValueByColumnAndRow ( 17, $ligne, $row ['LIBELLE_GROUPEMENT'] );
+							$sheet->setCellValueByColumnAndRow ( 18, $ligne, $row ['LIBELLE_ETABLISSEMENT_PERE'] );
+							$sheet->setCellValueByColumnAndRow ( 19, $ligne, $row ['LIBELLE_GENRE'] );
+							
+							$ligne ++;
+						}
+						
+						$this->view->writer = PHPExcel_IOFactory::createWriter ( $objPHPExcel, 'Excel5' );
+        				 
+						// Ensuite j'ai choisi de désactiver mon layout
+						$this->_helper->layout ()->disableLayout ();
+						 
+						header("Content-Type: application/vnd.oasis.opendocument.spreadsheet");
+						$filename = "Export_Etablissements_".date('Y-m-d_H-i-s').".ods";
+						header("Content-Disposition: attachment; filename=".$filename."");
+						$this->view->writer->save('php://output');
+						exit();
+						
+					} catch ( Exception $e ) {
+						$this->_helper->flashMessenger ( array (
+								'context' => 'error',
+								'title' => 'Problème d\'export',
+								'message' => 'L\'export a rencontré un problème. Veuillez rééssayez. (' . $e->getMessage () . ')' 
+						) );
+					}
+    
+        				
         		} else {
-        		// Recherche
-        			
-        			// Si premier affichage de la page
-        			if (!isset($_GET['Rechercher'])) {
-        				// Si l'utilisateur est rattaché à un groupement territorial, présélection de celui-ci dans le filtre
-        				$service_user = new Service_User;
-        				$this->view->user = $service_user->find(Zend_Auth::getInstance()->getIdentity()['ID_UTILISATEUR']);
-        			}
-        			
-        			try {
-        			
-        				$parameters = $this->_request->getQuery();
-        				$page = array_key_exists('page', $parameters) ? $parameters['page'] : null;
-        				$label = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] != '#' ? $parameters['label'] : null;
-        				$identifiant = array_key_exists('label', $parameters) && $parameters['label'] != '' && (string) $parameters['label'][0] == '#'? substr($parameters['label'], 1) : null;
-        				$genres = array_key_exists('genres', $parameters) ? $parameters['genres'] : null;
-        				$categories = array_key_exists('categories', $parameters) ? $parameters['categories'] : null;
-        				$classes = array_key_exists('classes', $parameters) ? $parameters['classes'] : null;
-        				$familles = array_key_exists('familles', $parameters) ? $parameters['familles'] : null;
-        				$types_activites = array_key_exists('types_activites', $parameters) ? $parameters['types_activites'] : null;
-        				$avis_favorable = array_key_exists('avis', $parameters) && count($parameters['avis']) == 1 ? $parameters['avis'][0] == 'true' : null;
-        				$statuts = array_key_exists('statuts', $parameters) ? $parameters['statuts'] : null;
-        				$local_sommeil = array_key_exists('presences_local_sommeil', $parameters) && count($parameters['presences_local_sommeil']) == 1 ? $parameters['presences_local_sommeil'][0] == 'true' : null;
-        				$city = array_key_exists('city', $parameters) && $parameters['city'] != '' ? $parameters['city'] : null;
-        				$street = array_key_exists('street', $parameters) && $parameters['street'] != '' ? $parameters['street'] : null;
-        				$commissions = array_key_exists('commissions', $parameters) && $parameters['commissions'] != '' ? $parameters['commissions'] : null;
-        				if (array_key_exists('groupements_territoriaux', $parameters) && $parameters['groupements_territoriaux'] != '') {
-        					$groupements_territoriaux = $parameters['groupements_territoriaux'];
-        				} else {
-        					if ($this->view->user != null && array_key_exists('groupements', $this->view->user) && count($this->view->user['groupements']) > 0) {
-        						$groupements_territoriaux = array();
-        						foreach ($this->view->user['groupements'] as $groupement) {
-        							if ($groupement['ID_GROUPEMENT'] != null) {
-        								array_push($groupements_territoriaux, $groupement['ID_GROUPEMENT']);
-        							}
-        						}
-        					} else {
-        						$groupements_territoriaux = null;
-        					}
-        				}
+						
+					// Export Calc
+					if (isset ( $_GET ['Exporter'] )) {
+						
+						try {
+							
+							$parameters = $this->_request->getQuery ();
+							$page = array_key_exists ( 'page', $parameters ) ? $parameters ['page'] : null;
+							$label = array_key_exists ( 'label', $parameters ) && $parameters ['label'] != '' && ( string ) $parameters ['label'] [0] != '#' ? $parameters ['label'] : null;
+							$identifiant = array_key_exists ( 'label', $parameters ) && $parameters ['label'] != '' && ( string ) $parameters ['label'] [0] == '#' ? substr ( $parameters ['label'], 1 ) : null;
+							$genres = array_key_exists ( 'genres', $parameters ) ? $parameters ['genres'] : null;
+							$categories = array_key_exists ( 'categories', $parameters ) ? $parameters ['categories'] : null;
+							$classes = array_key_exists ( 'classes', $parameters ) ? $parameters ['classes'] : null;
+							$familles = array_key_exists ( 'familles', $parameters ) ? $parameters ['familles'] : null;
+							$types_activites = array_key_exists ( 'types_activites', $parameters ) ? $parameters ['types_activites'] : null;
+							$avis_favorable = array_key_exists ( 'avis', $parameters ) && count ( $parameters ['avis'] ) == 1 ? $parameters ['avis'] [0] == 'true' : null;
+							$statuts = array_key_exists ( 'statuts', $parameters ) ? $parameters ['statuts'] : null;
+							$local_sommeil = array_key_exists ( 'presences_local_sommeil', $parameters ) && count ( $parameters ['presences_local_sommeil'] ) == 1 ? $parameters ['presences_local_sommeil'] [0] == 'true' : null;
+							$city = array_key_exists ( 'city', $parameters ) && $parameters ['city'] != '' ? $parameters ['city'] : null;
+							$street = array_key_exists ( 'street', $parameters ) && $parameters ['street'] != '' ? $parameters ['street'] : null;
+							$commissions = array_key_exists ( 'commissions', $parameters ) && $parameters ['commissions'] != '' ? $parameters ['commissions'] : null;
+							$groupements_territoriaux = array_key_exists ( 'groupements_territoriaux', $parameters ) && $parameters ['groupements_territoriaux'] != '' ? $parameters ['groupements_territoriaux'] : null;
+							
+							$search = $service_search->extractionEtablissements ( $label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, $commissions, $groupements_territoriaux );
+							
+							// Gestion du cache pour ne pas dépasser la taille maximale authorisée
+							// $cacheMethod = PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
+							// $cacheSettings = array( ' memoryCacheSize ' => '8MB');
+							// PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+							
+							$objPHPExcel = new PHPExcel ();
+							$objPHPExcel->setActiveSheetIndex ( 0 );
+							$sheet = $objPHPExcel->getActiveSheet ();
+							$sheet->setTitle ( 'Liste des établissements' );
+							
+							$objPHPExcel->getDefaultStyle ()->getFont ()->setName ( 'Arial' )->setSize ( 10 )->setBold ( false );
+							$sheet->getDefaultRowDimension ()->setRowHeight ( - 1 );
+							
+							// Formattage des titres de colonnes
+							$styleArray = array (
+									'borders' => array (
+											'allborders' => array (
+													'style' => PHPExcel_Style_Border::BORDER_THIN 
+											) 
+									) 
+							);
+							$sheet->getStyle ( 'A1:T1' )->applyFromArray ( $styleArray );
+							unset ( $styleArray );
+							$sheet->getStyle ( 'A1:T1' )->getAlignment ()->setHorizontal ( PHPExcel_Style_Alignment::HORIZONTAL_CENTER );
+							$sheet->getStyle ( 'A1:T1' )->getFont ()->setSize ( 11 )->setBold ( true );
+							
+							foreach ( range ( 'A', 'T' ) as $columnID ) {
+								$sheet->getColumnDimension ( $columnID )->setAutoSize ( true );
+							}
+							
+							$sheet->setCellValueByColumnAndRow ( 0, 1, "Commune" );
+							$sheet->setCellValueByColumnAndRow ( 1, 1, "Catégorie" );
+							$sheet->setCellValueByColumnAndRow ( 2, 1, "Type" );
+							$sheet->setCellValueByColumnAndRow ( 3, 1, "Activité" );
+							$sheet->setCellValueByColumnAndRow ( 4, 1, "Commission compétente" );
+							$sheet->setCellValueByColumnAndRow ( 5, 1, "Code/identifiant établissement" );
+							$sheet->setCellValueByColumnAndRow ( 6, 1, "Libellé établissement" );
+							$sheet->setCellValueByColumnAndRow ( 7, 1, "Statut" );
+							$sheet->setCellValueByColumnAndRow ( 8, 1, "Avis" );
+							$sheet->setCellValueByColumnAndRow ( 9, 1, "Date du dernier avis" );
+							$sheet->setCellValueByColumnAndRow ( 10, 1, "Date du premier avis défavorable consécutif" );
+							$sheet->setCellValueByColumnAndRow ( 11, 1, "Effectif total" );
+							$sheet->setCellValueByColumnAndRow ( 12, 1, "Effectif public" );
+							$sheet->setCellValueByColumnAndRow ( 13, 1, "Effectif personnel" );
+							$sheet->setCellValueByColumnAndRow ( 14, 1, "Date de dernière visite" );
+							$sheet->setCellValueByColumnAndRow ( 15, 1, "Date de prochaine visite" );
+							$sheet->setCellValueByColumnAndRow ( 16, 1, "Adresse" );
+							$sheet->setCellValueByColumnAndRow ( 17, 1, "Groupement territorial compétent" );
+							$sheet->setCellValueByColumnAndRow ( 18, 1, "Libellé du père/site" );
+							$sheet->setCellValueByColumnAndRow ( 19, 1, "Genre" );
+							
+							$ligne = 2;
+							foreach ( $search ['results'] as $row ) {
+								
+								$sheet->setCellValueByColumnAndRow ( 0, $ligne, $row ['LIBELLE_COMMUNE'] );
+								$sheet->setCellValueByColumnAndRow ( 1, $ligne, $row ['LIBELLE_CATEGORIE'] );
+								$sheet->setCellValueByColumnAndRow ( 2, $ligne, $row ['LIBELLE_TYPE'] );
+								$sheet->setCellValueByColumnAndRow ( 3, $ligne, $row ['LIBELLE_ACTIVITE'] );
+								$sheet->setCellValueByColumnAndRow ( 4, $ligne, $row ['LIBELLE_COMMISSION'] );
+								$sheet->setCellValueByColumnAndRow ( 5, $ligne, $row ['NUMEROID_ETABLISSEMENT'] );
+								$sheet->setCellValueByColumnAndRow ( 6, $ligne, $row ['LIBELLE_ETABLISSEMENTINFORMATIONS'] );
+								$sheet->setCellValueByColumnAndRow ( 7, $ligne, $row ['LIBELLE_STATUT'] );
+								$sheet->setCellValueByColumnAndRow ( 8, $ligne, $row ['LIBELLE_AVIS'] );
+								
+								if ($row ['DATE_DERNIER_AVIS'] != '') {
+									$dateDernierAvis = explode ( "-", $row ['DATE_DERNIER_AVIS'] );
+									$datetimeDernierAvis = PHPExcel_Shared_Date::FormattedPHPToExcel ( $dateDernierAvis [0], $dateDernierAvis [1], $dateDernierAvis [2] );
+									$sheet->setCellValueByColumnAndRow ( 9, $ligne, $datetimeDernierAvis );
+									$sheet->getStyleByColumnAndRow ( 9, $ligne )->getNumberFormat ()->setFormatCode ( PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY );
+								}
+								
+								if ($row ['DATE_PREMIER_AVIS_DEFAVORABLE_CONSECUTIF'] != '') {
+									$datePremierAvisDefavorableConsecutif = explode ( "-", $row ['DATE_PREMIER_AVIS_DEFAVORABLE_CONSECUTIF'] );
+									$datetimePremierAvisDefavorableConsecutif = PHPExcel_Shared_Date::FormattedPHPToExcel ( $datePremierAvisDefavorableConsecutif [0], $datePremierAvisDefavorableConsecutif [1], $datePremierAvisDefavorableConsecutif [2] );
+									$sheet->setCellValueByColumnAndRow ( 10, $ligne, $datetimePremierAvisDefavorableConsecutif );
+									$sheet->getStyleByColumnAndRow ( 10, $ligne )->getNumberFormat ()->setFormatCode ( PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY );
+								}
+								
+								$sheet->setCellValueByColumnAndRow ( 11, $ligne, $row ['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] + $row ['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] );
+								$sheet->setCellValueByColumnAndRow ( 12, $ligne, $row ['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'] );
+								$sheet->setCellValueByColumnAndRow ( 13, $ligne, $row ['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'] );
+								
+								if ($row ['DATE_DERNIERE_VISITE'] != '') {
+									
+									$dateDerniereVisite = explode ( "-", $row ['DATE_DERNIERE_VISITE'] );
+									$datetimeDerniereVisite = PHPExcel_Shared_Date::FormattedPHPToExcel ( $dateDerniereVisite [0], $dateDerniereVisite [1], $dateDerniereVisite [2] );
+									$sheet->setCellValueByColumnAndRow ( 14, $ligne, $datetimeDerniereVisite );
+									$sheet->getStyleByColumnAndRow ( 14, $ligne )->getNumberFormat ()->setFormatCode ( PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY );
+									
+									if ($row ['PERIODICITE_ETABLISSEMENTINFORMATIONS'] != 0) {
+										
+										$dateProchaineVisite = date ( 'Y-m-j', strtotime ( "+" . $row ['PERIODICITE_ETABLISSEMENTINFORMATIONS'] . " months", strtotime ( $row ['DATE_DERNIERE_VISITE'] ) ) );
+										$dateProchaineVisite = explode ( "-", $dateProchaineVisite );
+										$datetimeProchaineVisite = PHPExcel_Shared_Date::FormattedPHPToExcel ( $dateProchaineVisite [0], $dateProchaineVisite [1], $dateProchaineVisite [2] );
+										$sheet->setCellValueByColumnAndRow ( 15, $ligne, $datetimeProchaineVisite );
+										$sheet->getStyleByColumnAndRow ( 15, $ligne )->getNumberFormat ()->setFormatCode ( PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY );
+									}
+								}
+								
+								$sheet->setCellValueByColumnAndRow ( 16, $ligne, $row ['NUMERO_ADRESSE'] . " " . $row ['LIBELLE_RUE'] . " " . $row ['COMPLEMENT_ADRESSE'] . " " . $row ['CODEPOSTAL_COMMUNE'] );
+								$sheet->setCellValueByColumnAndRow ( 17, $ligne, $row ['LIBELLE_GROUPEMENT'] );
+								$sheet->setCellValueByColumnAndRow ( 18, $ligne, $row ['LIBELLE_ETABLISSEMENT_PERE'] );
+								$sheet->setCellValueByColumnAndRow ( 19, $ligne, $row ['LIBELLE_GENRE'] );
+								
+								$ligne ++;
+							}
+							
+							$this->view->writer = PHPExcel_IOFactory::createWriter ( $objPHPExcel, 'Excel5' );
+        				 
+							// Ensuite j'ai choisi de désactiver mon layout
+							$this->_helper->layout ()->disableLayout ();
+							 
+							header("Content-Type: application/vnd.oasis.opendocument.spreadsheet");
+							$filename = "Export_Etablissements_".date('Y-m-d_H-i-s').".ods";
+							header("Content-Disposition: attachment; filename=".$filename."");
+							$this->view->writer->save('php://output');
+							exit();
+							
+						} catch ( Exception $e ) {
+							$this->_helper->flashMessenger ( array (
+									'context' => 'error',
+									'title' => 'Problème d\'export',
+									'message' => 'L\'export a rencontré un problème. Veuillez rééssayez. (' . $e->getMessage () . ')' 
+							) );
+						}
+					} else {
+						// Recherche
+						
+						// Si premier affichage de la page
+						if (! isset ( $_GET ['Rechercher'] )) {
+							// Si l'utilisateur est rattaché à un groupement territorial, présélection de celui-ci dans le filtre
+							$service_user = new Service_User ();
+							$this->view->user = $service_user->find ( Zend_Auth::getInstance ()->getIdentity () ['ID_UTILISATEUR'] );
+						}
+						
+						try {
+							
+							$parameters = $this->_request->getQuery ();
+							$page = array_key_exists ( 'page', $parameters ) ? $parameters ['page'] : null;
+							$label = array_key_exists ( 'label', $parameters ) && $parameters ['label'] != '' && ( string ) $parameters ['label'] [0] != '#' ? $parameters ['label'] : null;
+							$identifiant = array_key_exists ( 'label', $parameters ) && $parameters ['label'] != '' && ( string ) $parameters ['label'] [0] == '#' ? substr ( $parameters ['label'], 1 ) : null;
+							$genres = array_key_exists ( 'genres', $parameters ) ? $parameters ['genres'] : null;
+							$categories = array_key_exists ( 'categories', $parameters ) ? $parameters ['categories'] : null;
+							$classes = array_key_exists ( 'classes', $parameters ) ? $parameters ['classes'] : null;
+							$familles = array_key_exists ( 'familles', $parameters ) ? $parameters ['familles'] : null;
+							$types_activites = array_key_exists ( 'types_activites', $parameters ) ? $parameters ['types_activites'] : null;
+							$avis_favorable = array_key_exists ( 'avis', $parameters ) && count ( $parameters ['avis'] ) == 1 ? $parameters ['avis'] [0] == 'true' : null;
+							$statuts = array_key_exists ( 'statuts', $parameters ) ? $parameters ['statuts'] : null;
+							$local_sommeil = array_key_exists ( 'presences_local_sommeil', $parameters ) && count ( $parameters ['presences_local_sommeil'] ) == 1 ? $parameters ['presences_local_sommeil'] [0] == 'true' : null;
+							$city = array_key_exists ( 'city', $parameters ) && $parameters ['city'] != '' ? $parameters ['city'] : null;
+							$street = array_key_exists ( 'street', $parameters ) && $parameters ['street'] != '' ? $parameters ['street'] : null;
+							$commissions = array_key_exists ( 'commissions', $parameters ) && $parameters ['commissions'] != '' ? $parameters ['commissions'] : null;
+							if (array_key_exists ( 'groupements_territoriaux', $parameters ) && $parameters ['groupements_territoriaux'] != '') {
+								$groupements_territoriaux = $parameters ['groupements_territoriaux'];
+							} else {
+								if ($this->view->user != null && array_key_exists ( 'groupements', $this->view->user ) && count ( $this->view->user ['groupements'] ) > 0) {
+									$groupements_territoriaux = array ();
+									foreach ( $this->view->user ['groupements'] as $groupement ) {
+										if ($groupement ['ID_GROUPEMENT'] != null) {
+											array_push ( $groupements_territoriaux, $groupement ['ID_GROUPEMENT'] );
+										}
+									}
+								} else {
+									$groupements_territoriaux = null;
+								}
+							}
+							
+							$search = $service_search->etablissements ( $label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, $commissions, $groupements_territoriaux, 50, $page );
+							
+							$paginator = new Zend_Paginator ( new SDIS62_Paginator_Adapter_Array ( $search ['results'], $search ['search_metadata'] ['count'] ) );
+							$paginator->setItemCountPerPage ( 50 )->setCurrentPageNumber ( $page )->setDefaultScrollingStyle ( 'Elastic' );
+							
+							$this->view->results = $paginator;
+						} catch ( Exception $e ) {
+							$this->_helper->flashMessenger ( array (
+									'context' => 'error',
+									'title' => 'Problème de recherche',
+									'message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage () . ')' 
+							) );
+						}
+					}
         				
-        				$search = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, $commissions, $groupements_territoriaux, 50, $page);
-        			
-        				$paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
-        				$paginator->setItemCountPerPage(50)->setCurrentPageNumber($page)->setDefaultScrollingStyle('Elastic');
-        			
-        				$this->view->results = $paginator;
-        			
-        			} catch(Exception $e) {
-        				$this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage() . ')'));
-        			}
-        			
         		}
         		
         	}
