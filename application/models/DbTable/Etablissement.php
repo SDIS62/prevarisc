@@ -184,11 +184,11 @@
         {
             $result = $this->getParent($id_etablissement);
 
-            if($result == null) {
+            if($result == null)
+
                 return $result;
-            } else {
+            else
                 return array($result, $this->getParent($result["ID_ETABLISSEMENT"]));
-            }
         }
 
         public function getDiaporama($id_etablissement)
@@ -345,5 +345,8 @@
             return $this->fetchRow($select);
         }
 
+        public function getAllIdEtablissement() {
+            return $this->fetchAll($this->select()->from('etablissement', array("ID_ETABLISSEMENT")));
+        }
 
     }
