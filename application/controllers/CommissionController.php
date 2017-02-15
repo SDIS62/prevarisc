@@ -276,62 +276,6 @@
                 ));
             }
         }
-        
-        public function applyReglesAction2()
-        {
-            try {
-                $this->_helper->viewRenderer->setNoRender();
-
-                // Modèles et services
-                $model_etablissement = new Model_DbTable_Etablissement;
-                $model_etablissementInformation = new Model_DbTable_EtablissementInformations;
-                $model_etablissementAdresse = new Model_DbTable_EtablissementAdresse;
-                $model_commission = new Model_DbTable_Commission;
-                
-                // On récup tout les établissements
-                $rowset_ets = $model_etablissement->getAllIdEtablissement();
-                
-                // Pour tout les ets, on récup leur commission par défaut
-                foreach ($rowset_ets as $row) {
-
-                    // Adresses
-                    $rowset_adresse = $model_etablissementAdresse->get($row["ID_ETABLISSEMENT"]);
-
-                    // Si il y a une adresse
-                    if (count($rowset_adresse) == 0) {
-                        continue;
-                    }
-
-                    // On récupère les infos
-                    $info = $model_etablissement->getInformations($row["ID_ETABLISSEMENT"])->toArray();
-                    
-                    if (!in_array($info['ID_GENRE'], array(2, 3, 5))) {
-                        continue;
-                    }
-
-                    // On merge l'adresse
-                    $info["NUMINSEE_COMMUNE"] = $rowset_adresse[0]["NUMINSEE_COMMUNE"];
-
-                    // On récupère la commission
-
-                    $commission = $model_commission->getCommission($info["NUMINSEE_COMMUNE"], $info['ID_CATEGORIE'], $info['ID_TYPE'], $info['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] ? 1 : 0);
-
-                    // Si elle n'est pas nulle on l'applique
-                    if ($commission !== null) {
-                        $row_ets = $model_etablissementInformation->find($info["ID_ETABLISSEMENTINFORMATIONS"])->current();
-                        $row_ets->ID_COMMISSION = $commission[0]["ID_COMMISSION"];
-                        $row_ets->save();
-                    }
-                }
-            } catch (Exception $e) {
-                $this->_helper->flashMessenger(array(
-                    'context' => 'error',
-                    'title' => 'Erreur inattendue',
-                    'message' => $e->getMessage()
-                ));
-                var_dump($e);
-            }
-        }
 
         // Membres de la commission
         public function membresAction()
