@@ -345,6 +345,9 @@
             return $this->fetchRow($select);
         }
 
+        public function getAllIdEtablissement() {
+            return $this->fetchAll($this->select()->from('etablissement', array("ID_ETABLISSEMENT")));
+        }
 
 
 

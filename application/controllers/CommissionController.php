@@ -215,38 +215,112 @@
             try {
                 $this->_helper->viewRenderer->setNoRender();
 
-                // Modèles
+                // Modèles et services
+                $model_etablissementInformation = new Model_DbTable_EtablissementInformations;
+                $model_commission = new Model_DbTable_Commission;
+                
+                if (!isset($_POST['ID_COMMISSION']) && !$_POST['ID_COMMISSION']) {
+                    throw new Exception('Aucun ID de commission fournit dans la requête');
+                }
+                
+                $id_commission = $_POST['ID_COMMISSION'];
+                $regles = $model_commission->getRegles($id_commission);
+                
+                $search = new Model_DbTable_Search;
+                $search->setItem("etablissement");
+                $search->setCriteria("etablissementinformations.ID_GENRE", array(2, 5));
+                $search->setCriteria("etablissementadresse.NUMINSEE_COMMUNE IS NOT NULL");
+                $rowset_ets = $search->run(false, null, false)->toArray();
+                
+                $ets_to_update = array();
+                
+                // Pour tout les ets, on récup leur commission par défaut
+                foreach ($rowset_ets as $key => $row) {
+                    
+                    // On récupère la commission
+                    foreach($regles as $regle) {
+                        
+                        if ($row['ID_GENRE'] == 2 
+                                && in_array($row['NUMINSEE_COMMUNE'], $regle['NUMINSEE_COMMUNE']) 
+                                && $row['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] == $regle['LOCALSOMMEIL']
+                                && $row['ID_TYPE'] == $regle['ID_TYPE']
+                                && $row['ID_CATEGORIE'] == $regle['ID_CATEGORIE'])
+                        {
+                            $ets_to_update[] = $row['ID_ETABLISSEMENTINFORMATIONS'];
+                            break;
+                        }
+                        else if ($row['ID_GENRE'] == 5 
+                                && in_array($row['NUMINSEE_COMMUNE'], $regle['NUMINSEE_COMMUNE']) 
+                                && $row['ID_CLASSE'] == $regle['ID_CLASSE'])
+                        {
+                            $ets_to_update[] = $row['ID_ETABLISSEMENTINFORMATIONS'];
+                            break;
+                        }
+                    }
+                    
+                    // save memory
+                    unset($rowset_ets[$key]);
+                }
+                
+                if ($ets_to_update) {
+                    $model_etablissementInformation->update(array('ID_COMMISSION' => $id_commission), 'ID_ETABLISSEMENTINFORMATIONS IN ('.implode(',', $ets_to_update).')');
+                    
+                    // removes cache if any changes
+                    Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache')->clean(Zend_Cache::CLEANING_MODE_ALL);
+                }
+            } catch (Exception $e) {
+                $this->_helper->flashMessenger(array(
+                    'context' => 'error',
+                    'title' => 'Erreur inattendue',
+                    'message' => $e->getMessage()
+                ));
+            }
+        }
+        
+        public function applyReglesAction2()
+        {
+            try {
+                $this->_helper->viewRenderer->setNoRender();
+
+                // Modèles et services
                 $model_etablissement = new Model_DbTable_Etablissement;
                 $model_etablissementInformation = new Model_DbTable_EtablissementInformations;
-                $model_etablissementAdressse = new Model_DbTable_EtablissementAdresse;
-
+                $model_etablissementAdresse = new Model_DbTable_EtablissementAdresse;
+                $model_commission = new Model_DbTable_Commission;
+                
                 // On récup tout les établissements
-                $rowset_ets = $model_etablissement->fetchAll();
-
+                $rowset_ets = $model_etablissement->getAllIdEtablissement();
+                
                 // Pour tout les ets, on récup leur commission par défaut
                 foreach ($rowset_ets as $row) {
 
                     // Adresses
-                    $rowset_adresse = $model_etablissementAdressse->get($row["ID_ETABLISSEMENT"]);
+                    $rowset_adresse = $model_etablissementAdresse->get($row["ID_ETABLISSEMENT"]);
 
                     // Si il y a une adresse
-                    if (count($rowset_adresse) > 0) {
+                    if (count($rowset_adresse) == 0) {
+                        continue;
+                    }
 
-                        // On récupère les infos
-                        $info = $model_etablissement->getInformations($row["ID_ETABLISSEMENT"])->toArray();
+                    // On récupère les infos
+                    $info = $model_etablissement->getInformations($row["ID_ETABLISSEMENT"])->toArray();
+                    
+                    if (!in_array($info['ID_GENRE'], array(2, 3, 5))) {
+                        continue;
+                    }
 
-                        // On merge l'adresse
-                        $info["NUMINSEE_COMMUNE"][0] = $rowset_adresse[0]["NUMINSEE_COMMUNE"];
+                    // On merge l'adresse
+                    $info["NUMINSEE_COMMUNE"] = $rowset_adresse[0]["NUMINSEE_COMMUNE"];
 
-                        // On récupère la commission
-                        $commission = $model_etablissement->getDefaultCommission($info);
+                    // On récupère la commission
 
-                        // Si elle n'est pas nulle on l'applique
-                        if ($commission != null) {
-                            $row_ets = $model_etablissementInformation->find($info["ID_ETABLISSEMENTINFORMATIONS"])->current();
-                            $row_ets->ID_COMMISSION = $commission[0]["ID_COMMISSION"];
-                            $row_ets->save();
-                        }
+                    $commission = $model_commission->getCommission($info["NUMINSEE_COMMUNE"], $info['ID_CATEGORIE'], $info['ID_TYPE'], $info['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'] ? 1 : 0);
+
+                    // Si elle n'est pas nulle on l'applique
+                    if ($commission !== null) {
+                        $row_ets = $model_etablissementInformation->find($info["ID_ETABLISSEMENTINFORMATIONS"])->current();
+                        $row_ets->ID_COMMISSION = $commission[0]["ID_COMMISSION"];
+                        $row_ets->save();
                     }
                 }
             } catch (Exception $e) {
@@ -255,6 +329,7 @@
                     'title' => 'Erreur inattendue',
                     'message' => $e->getMessage()
                 ));
+                var_dump($e);
             }
         }
 
