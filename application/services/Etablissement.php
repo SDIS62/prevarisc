@@ -357,7 +357,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
           }
 
           if ( $value != null && (!isset( $historique[$key] ) || $tmp["valeur"] != $value )) {
-            $date = new Zend_Date($dossier->DATEVISITE_DOSSIER != null ? $dossier->DATEVISITE_DOSSIER : $dossier->DATECOMM_DOSSIER, Zend_Date::DATES);
+
+            $date = new Zend_Date($dossier->DATECOMM_DOSSIER != null ? $dossier->DATECOMM_DOSSIER : $dossier->DATEVISITE_DOSSIER, Zend_Date::DATES);
             if ($tmp != null) {
               $historique[$key][ count($historique[$key])-1 ]["fin"] = $date->get( Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR );
             }
