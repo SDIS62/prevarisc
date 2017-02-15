@@ -45,17 +45,19 @@
             return $this->fetchAll($select)->toArray();
         }
 
-        public function isRegistered($login)
+        public function isRegistered($id_user, $login)
         {
             $select = $this->select()
-                ->setIntegrityCheck(false)
                 ->from("utilisateur")
-                ->where("USERNAME_UTILISATEUR = ?", $login)
-                ->limit(1);
+                ->where("USERNAME_UTILISATEUR = ?", $login);
+                if ($id_user !== null) {
+                    $select->where("ID_UTILISATEUR <> ?", $id_user);
+                }
+                $select->limit(1);
 
             $result = $this->fetchRow($select);
 
-            return ( $result != null ) ? true : false;
+            return $result != null;
         }
 
         public function getId($login)

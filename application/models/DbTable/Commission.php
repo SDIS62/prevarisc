@@ -200,5 +200,60 @@
 
             }
         }
+        
+        public function getRegles($id_commission)
+        {
+
+            $model_groupementCommune = new Model_DbTable_GroupementCommune;
+            
+            $regles = array();
+            
+            $select = $this->select()
+                ->setIntegrityCheck(false)
+                ->from("commissionregle", array("ID_GROUPEMENT", "NUMINSEE_COMMUNE") )
+                ->joinLeft("commission", "commission.ID_COMMISSION = commissionregle.ID_COMMISSION", null)
+                ->joinLeft("commissionregletype", "commissionregle.ID_REGLE = commissionregletype.ID_REGLE", array("ID_TYPE"))
+                ->joinLeft("commissionreglecategorie", "commissionregle.ID_REGLE = commissionreglecategorie.ID_REGLE", array("ID_CATEGORIE"))
+                    ->joinLeft("commissionregleclasse", "commissionregle.ID_REGLE = commissionregleclasse.ID_REGLE", array("ID_CLASSE"))
+                ->joinLeft("commissionreglelocalsommeil", "commissionregle.ID_REGLE = commissionreglelocalsommeil.ID_REGLE", array("LOCALSOMMEIL"))
+                ->joinLeft("adressecommune", "adressecommune.NUMINSEE_COMMUNE = commissionregle.NUMINSEE_COMMUNE", null)
+                ->where("commission.ID_COMMISSION = ?", $id_commission);
+
+            $results = $this->fetchAll($select);
+
+            if ($results == null) {
+                return $regles;
+            }
+            
+            $groupement_cache = array();
+            foreach($results as $result) {
+                
+                $communes = array();
+                if ($result->NUMINSEE_COMMUNE != null) {
+                    $communes = array($result->NUMINSEE_COMMUNE);
+                } elseif ($result->ID_GROUPEMENT != null) {
+
+                    if (!isset($groupement_cache[$result->ID_GROUPEMENT])) {
+                        $groupement_cache[$result->ID_GROUPEMENT] = array();
+                        $row_groupement = $model_groupementCommune->fetchAll("ID_GROUPEMENT = '" . $result->ID_GROUPEMENT . "'");
+                        foreach($row_groupement as $row) {
+                            $groupement_cache[$result->ID_GROUPEMENT][] = $row['NUMINSEE_COMMUNE'];
+                        }
+                    }
+                    $communes = $groupement_cache[$result->ID_GROUPEMENT];
+                }
+                
+                $regles[] = array(
+                    'NUMINSEE_COMMUNE' => $communes,
+                    'LOCALSOMMEIL' => $result->LOCALSOMMEIL,
+                    'ID_TYPE' => $result->ID_TYPE ,
+                    'ID_CLASSE' => $result->ID_CLASSE,
+                    'ID_CATEGORIE' => $result->ID_CATEGORIE,
+                );
+
+            }
+            
+            return $regles;
+        }
 
     }
