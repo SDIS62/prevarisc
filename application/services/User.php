@@ -113,7 +113,7 @@ class Service_User
         $db->beginTransaction();
 
         try {
-            if ($id_user === null && $DB_user->isRegistered($data['USERNAME_UTILISATEUR'])) {
+            if ($DB_user->isRegistered($id_user, $data['USERNAME_UTILISATEUR'])) {
                 throw new Exception("Nom d'utilisateur déjà enregistré. Veuillez en choisir un autre.");
             }
             $user = $id_user == null ? $DB_user->createRow() : $DB_user->find($id_user)->current();
