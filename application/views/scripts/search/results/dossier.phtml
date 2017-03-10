@@ -16,11 +16,11 @@
                     <i class="icon-file"></i>
                 </a>
             <?php endif ?>
-            <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . $this->OBJET_DOSSIER : ""), ENT_QUOTES) ?>'>
+            <a href='/dossier/index/id/<?php echo $this->ID_DOSSIER ?>' title='<?php echo htmlspecialchars($this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . $this->OBJET_DOSSIER : "") . (!empty($this->NOM_UTILISATEURINFORMATIONS) ? " (" . $this->NOM_UTILISATEURINFORMATIONS . " " . $this->PRENOM_UTILISATEURINFORMATIONS . ")" : ""), ENT_QUOTES) ?>'>
                 <?php if($this->LIBELLE_ETABLISSEMENTINFORMATIONS != null): ?>
                     <?php echo '[' . $this->LIBELLE_ETABLISSEMENTINFORMATIONS . '] ' ?>
                 <?php endif ?>
-                <?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . substr($this->OBJET_DOSSIER, 0, 70) . ( strlen($this->OBJET_DOSSIER) > 70 ? "(...)" : "" ) : "") . ( $this->NB_URBA != '' ? " - " . $this->NB_URBA : '') ?>
+                <?php echo $this->LIBELLE_DOSSIERTYPE . " - " . $this->LIBELLE_DOSSIERNATURE . (!empty($this->OBJET_DOSSIER) ? " - " . substr($this->OBJET_DOSSIER, 0, 70) . ( strlen($this->OBJET_DOSSIER) > 70 ? "(...)" : "" ) : "") . (!empty($this->NOM_UTILISATEURINFORMATIONS) ? " (" . $this->NOM_UTILISATEURINFORMATIONS . " " . $this->PRENOM_UTILISATEURINFORMATIONS . ")" : "") . ( $this->NB_URBA != '' ? " - " . $this->NB_URBA : '') ?>
             </a>
         </span>
 
