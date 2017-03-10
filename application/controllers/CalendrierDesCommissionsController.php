@@ -124,21 +124,49 @@ class CalendrierDesCommissionsController extends Zend_Controller_Action
         $service_etablissement = new Service_Etablissement;
         $DB_prev = new Model_DbTable_DossierPreventionniste;
 
-        foreach($listeDossiersNonAffect as $val => $ue)
+        foreach($listeDossiersNonAffect as $indiceDossierNonAffecte => $dossierNonAffecte)
         {
             //On recupere la liste des établissements qui concernent le dossier
-            $listeEtab = $dbDossier->getEtablissementDossierGenConvoc($ue['ID_DOSSIER']);
-            //on recupere la liste des infos des établissement
+            $listeEtab = $dbDossier->getEtablissementDossierGenConvoc($dossierNonAffecte['ID_DOSSIER']);
+            
+            if (isset($dossierNonAffecte['LIBELLE_ETABLISSEMENTINFORMATIONS'])) {
+            	// Info pour le tri auto des dossiers dans l'ODJ
+            	$etablissement[$indiceDossierNonAffecte] = $dossierNonAffecte['LIBELLE_ETABLISSEMENTINFORMATIONS'];
+            } else {
+            	$etablissement[$indiceDossierNonAffecte] = "";
+            }
 
             if(count($listeEtab) > 0)
             {
+            	//on recupere la liste des infos des établissement
                 $etablissementInfos = $service_etablissement->get($listeEtab[0]['ID_ETABLISSEMENT']);
-                $listeDossiersNonAffect[$val]['infosEtab'] = $etablissementInfos;
-                $listeDocUrba = $dbDocUrba->getDossierDocUrba($ue['ID_DOSSIER']);
-                $listeDossiersNonAffect[$val]['listeDocUrba'] = $listeDocUrba;
+                
+                if (!empty($etablissementInfos)) {
+                	$listeDossiersNonAffect[$indiceDossierNonAffecte]['infosEtab'] = $etablissementInfos;
+                	
+                	// Info pour le tri auto des dossiers dans l'ODJ
+                	if (isset($listeDossiersNonAffect[$indiceDossierNonAffecte]['infosEtab']['adresses'][0])) {
+                		$commune[$indiceDossierNonAffecte] = $listeDossiersNonAffect[$indiceDossierNonAffecte]['infosEtab']['adresses'][0]['LIBELLE_COMMUNE'];
+                	} else {
+                		$commune[$indiceDossierNonAffecte] = "";
+                	}
+                	
+                }
+                
+                $listeDocUrba = $dbDocUrba->getDossierDocUrba($dossierNonAffecte['ID_DOSSIER']);
+                $listeDossiersNonAffect[$indiceDossierNonAffecte]['listeDocUrba'] = $listeDocUrba;
 
-                $listeDossiersNonAffect[$val]['preventionnistes'] = $DB_prev->getPrevDossier( $ue['ID_DOSSIER'] );
-            }
+                $listeDossiersNonAffect[$indiceDossierNonAffecte]['preventionnistes'] = $DB_prev->getPrevDossier( $dossierNonAffecte['ID_DOSSIER'] );
+            	
+            }  else {
+				$commune [$indiceDossierNonAffecte] = "";
+			}
+        }
+        
+        // Trie les données par commune croissante, établissement croissant
+        // Ajoute $data en tant que dernier paramètre, pour trier par la clé commune
+        if (!empty($commune) && !empty($etablissement) && !empty($listeDossiersNonAffect)) {
+        	array_multisort($commune, SORT_ASC, $etablissement, SORT_ASC, $listeDossiersNonAffect);
         }
 		
         //Gestion de l'affichage de la date de la commission
