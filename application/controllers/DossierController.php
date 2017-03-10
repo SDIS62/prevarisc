@@ -703,8 +703,11 @@ class DossierController extends Zend_Controller_Action
         	$model_adresse = new Model_DbTable_EtablissementAdresse();
         	$array_adresses = $model_adresse->get($idEtablissement);
         	
-        	$service_dossier = new Service_Dossier();
-        	$this->view->default_commission = $service_dossier->getDefaultCommission($array_adresses[0]["NUMINSEE_COMMUNE"], $etablissement['ID_CATEGORIE'], $etablissement['ID_TYPE'], $etablissement['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'], $idType);
+        	if(count($array_adresses) > 0) {
+        		$service_dossier = new Service_Dossier();
+        		$this->view->default_commission = $service_dossier->getDefaultCommission($array_adresses[0]["NUMINSEE_COMMUNE"], $etablissement['ID_CATEGORIE'], $etablissement['ID_TYPE'], $etablissement['LOCALSOMMEIL_ETABLISSEMENTINFORMATIONS'], $idType);
+        	}
+        	
         }
     }
     
