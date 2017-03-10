@@ -817,4 +817,31 @@ class Service_Dossier
        $dbDossier = new Model_DbTable_Dossier;
        return $dbDossier->getCommissionV2($idDossier);
     }
+    
+    /**
+     * Récupération de la commission par défaut en fonction des critères donnés pour un dossier et son établissement
+     *
+     * @param int $numinsee
+	 * @param int $categorie
+     * @param int $type
+     * @param bool $local_sommeil
+     * @param int $etudevisite
+     * @return array
+     */
+    public function getDefaultCommission($numinsee = null, $categorie = null, $type = null, $local_sommeil = null, $etudevisite = null)
+    {
+    	$model_etablissement = new Model_DbTable_Etablissement;
+    	$model_commission = new Model_DbTable_Commission;
+    	
+    	$defaultCommission = 0;
+    	
+    	if ($numinsee !== null && $categorie !== null && $type !== null && $local_sommeil !== null) {
+        	$commission = $model_commission->getCommissionDossier($numinsee, $categorie, $type, $local_sommeil ? 1 : 0, $etudevisite);
+            if($commission !== null) {
+            	$defaultCommission = $commission[0];
+       		}
+    	}
+    	
+    	return $defaultCommission;
+    }
 }
