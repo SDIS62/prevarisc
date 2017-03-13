@@ -2427,6 +2427,7 @@ INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(112
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(113,"view_doss_levee_prescriptions", "Date de levée des prescriptions",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(114,"view_doss_absence_quorum", "Dossier avec absence de quorum",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(115,"view_doss_npsp", "Dossiers avec statut ne peut se prononcer",100);
+INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(200,"export_ets", "Etablissements",200);
 /*!40000 ALTER TABLE `privileges` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2459,6 +2460,7 @@ INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(52,'etablissement_c
 (54,'etablissement_iop_0_0','IOP (Ignorer les groupements - Ignorer la commune)'),
 (55,'etablissement_zone_0_0_0','Zone (Toutes les classes - Ignorer les groupements - Ignorer la commune)');
 INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(100,"dashboard", "Tableau de bord");
+INSERT INTO `resources`(`id_resource`,`name`, `text`) VALUES(200,"export", "Export Calc");
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 UNLOCK TABLES;
 
