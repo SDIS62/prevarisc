@@ -185,6 +185,7 @@ function retrieveInfoDoss($segment, $dossierInfos) {
     addChamp($segment->infosDoss, 'typeLettreP', $dossierInfos['infosEtab']['informations']["LIBELLE_TYPE_PRINCIPAL"]);
     
     addChamp($segment->infosDoss, 'natureDossier', $dossierInfos["LIBELLE_DOSSIERNATURE"]);
+    addChamp($segment->infosDoss, 'referenceCourrier',$dossierInfos["REFCOURRIER_DOSSIER"]);
     addChamp($segment->infosDoss, 'objetDossier', $dossierInfos["OBJET_DOSSIER"]);
     $commune = "";
     if (count($dossierInfos["infosEtab"]["adresses"]) > 0) {

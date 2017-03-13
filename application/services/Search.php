@@ -321,8 +321,13 @@ class Service_Search
             if (isset($criterias['permis']) && $criterias['permis'] !== null){
                 $this->setCriteria($select, "dossierdocurba.NUM_DOCURBA", $criterias['permis']);
             }
+            
+            // Critères : courrier
+            if (isset($criterias['courrier']) && $criterias['courrier'] !== null){
+            	$this->setCriteria($select, "d.REFCOURRIER_DOSSIER", $criterias['courrier'], false);
+            }
 
-            // Critères : permis
+            // Critères : preventionniste
             if (isset($criterias['preventionniste']) && $criterias['preventionniste'] !== null){
                 $this->setCriteria($select, "dossierpreventionniste.ID_PREVENTIONNISTE", $criterias['preventionniste']);
             }

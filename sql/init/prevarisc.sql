@@ -828,6 +828,7 @@ CREATE TABLE `dossier` (
   `OBSERVATION_DOSSIER` text,
   `DATERVRAT_DOSSIER` date DEFAULT NULL,
   `DELAIPRESC_DOSSIER` date DEFAULT NULL,
+  `REFCOURRIER_DOSSIER` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`ID_DOSSIER`),
   KEY `fk_dossier_dossiertype1_idx` (`TYPE_DOSSIER`),
   KEY `fk_dossier_avis1_idx` (`AVIS_DOSSIER`),
