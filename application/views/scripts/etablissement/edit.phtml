@@ -917,7 +917,7 @@
 
         // Auto complétion de la rue
         $("input[name='voie_ac']").autocomplete('/api/1.0/adresse/get_voies', {
-            minChars: 3,
+            minChars: 2,
             extraParams: { code_insee: function(){ return $("#adresse-modal input[name='code_insee']").val() } },
             parse: function(data) {
                 return $.map(data["response"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
