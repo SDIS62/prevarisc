@@ -861,6 +861,10 @@
 					}
 					$("#ANOMALIE").show();
 				}else if(type == 1){
+					if($("#selectNature").val() == 19 && $("#AVIS_DOSSIER_COMMISSION").val() == 2)
+					{
+						$("#FACTDANGE").show();
+					}
 					$("#ANOMALIE").show();
 				}
 
@@ -1038,6 +1042,14 @@
 			}else{
 				$("#FACTDANGE").hide();
 				$("#ECHEANCIERTRAV").hide();
+			}
+		}
+		if(type == 1 && $("#selectNature").val() == 19)
+		{
+			if($(this).val() == 2){
+				$("#FACTDANGE").show();
+			}else{
+				$("#FACTDANGE").hide();
 			}
 		}
 	});
