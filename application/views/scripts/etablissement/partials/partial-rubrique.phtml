@@ -3,6 +3,8 @@
         <select class="input-medium champs_icpe_rubrique_id" name='RUBRIQUES[<?php echo $this->rubrique === null ? -1 : $this->rubrique['ID_ETABLISSEMENTINFORMATIONSRUBRIQUE'] ?>][ID_RUBRIQUE]'>
             <option value='1' >Substance</option>
             <option value='2' <?php if( isset($this->rubrique["ID_RUBRIQUE"]) && $this->rubrique["ID_RUBRIQUE"] == 2 ) echo "selected" ?> >Activité</option>
+            <option value='3' <?php if( isset($this->rubrique["ID_RUBRIQUE"]) && $this->rubrique["ID_RUBRIQUE"] == 3 ) echo "selected" ?> >IED</option>
+            <option value='4' <?php if( isset($this->rubrique["ID_RUBRIQUE"]) && $this->rubrique["ID_RUBRIQUE"] == 4 ) echo "selected" ?> >Produits dangereux</option>
         </select>
     </td>
     <td>
