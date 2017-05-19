@@ -76,6 +76,7 @@
                          ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
                          ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
                          ->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
+                         ->where("e.DATESUPPRESSION_ETABLISSEMENT IS NULL")
                          ->order("CAST(etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS AS UNSIGNED)")
                          ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS")
                          ->group("e.ID_ETABLISSEMENT");
@@ -131,6 +132,7 @@
                             )",
                             "LIBELLE_ETABLISSEMENTINFORMATIONS"
                          )
+                         ->where("d.DATESUPPRESSION_DOSSIER IS NULL")
                          ->group("d.ID_DOSSIER");
                     break;
 

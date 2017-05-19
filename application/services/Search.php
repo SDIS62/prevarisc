@@ -44,13 +44,15 @@ class Service_Search
                     "NB_ENFANTS" => new Zend_Db_Expr("( SELECT COUNT(etablissementlie.ID_FILS_ETABLISSEMENT)
                         FROM etablissement
                         INNER JOIN etablissementlie ON etablissement.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT
-                        WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)"),
+                        WHERE etablissement.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT
+                        AND etablissement.DATESUPPRESSION_ETABLISSEMENT IS NULL)"),
                     "PRESENCE_ECHEANCIER_TRAVAUX" => new Zend_Db_Expr("(SELECT COUNT(dossierlie.ID_DOSSIER1)
                         FROM dossier
                         INNER JOIN etablissementdossier ON dossier.ID_DOSSIER = etablissementdossier.ID_DOSSIER
                         INNER JOIN dossierlie ON dossier.ID_DOSSIER = dossierlie.ID_DOSSIER2
                         INNER JOIN dossiernature ON dossierlie.ID_DOSSIER1 = dossiernature.ID_DOSSIER
-                        WHERE dossiernature.ID_NATURE = 46 AND etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT)")))
+                        WHERE dossiernature.ID_NATURE = 46 AND etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT
+                        AND dossier.DATESUPPRESSION_DOSSIER IS NULL)")))
                 //->join(array("etablissementinformations" => new Zend_Db_Expr("(SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS), etablissementinformations.* FROM etablissementinformations group by ID_ETABLISSEMENT)")), "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT")
                 ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT AND etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
                 ->joinLeft("dossier", "e.ID_DOSSIER_DONNANT_AVIS = dossier.ID_DOSSIER", array("DATEVISITE_DOSSIER", "DATECOMM_DOSSIER", "DATEINSERT_DOSSIER", "DIFFEREAVIS_DOSSIER"))
@@ -68,7 +70,7 @@ class Service_Search
                 ->joinLeft(array("adressecommunesite" => "adressecommune"), "etablissementadressesite.NUMINSEE_COMMUNE = adressecommunesite.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_SITE")
                 ->joinLeft(array("etablissementadressecell" => "etablissementadresse"), "etablissementadressecell.ID_ETABLISSEMENT = (SELECT ID_ETABLISSEMENT FROM etablissementlie WHERE ID_FILS_ETABLISSEMENT = e.ID_ETABLISSEMENT LIMIT 1)", "ID_RUE AS ID_RUE_CELL")
                 ->joinLeft(array("adressecommunecell" => "adressecommune"), "etablissementadressecell.NUMINSEE_COMMUNE = adressecommunecell.NUMINSEE_COMMUNE", "LIBELLE_COMMUNE AS LIBELLE_COMMUNE_ADRESSE_CELLULE")
-
+                ->where("e.DATESUPPRESSION_ETABLISSEMENT IS NULL")
                 // Vincent MICHEL le 12/11/2014 : retrait de cette clause qui tue les performances
                 // sur la recherche. Je n'ai pas vu d'impact sur le retrait du group by.
                 // Cyprien DEMAEGDT le 03/08/2015 : rétablissement de la clause pour résoudre le
@@ -190,7 +192,7 @@ class Service_Search
 
             // Performance optimisation : avoid sorting on big queries, and sort only if
             // there is at least one where part
-            if (count($select->getPart(Zend_Db_Select::WHERE)) > 0) {
+            if (count($select->getPart(Zend_Db_Select::WHERE)) > 1) {
                 $select->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC");
             }
 
@@ -276,6 +278,7 @@ class Service_Search
                 ->joinLeft("datecommission","datecommission.ID_DATECOMMISSION = dossieraffectation.ID_DATECOMMISSION_AFFECT",null)
                 ->joinLeft("dossierpreventionniste","dossierpreventionniste.ID_DOSSIER = d.ID_DOSSIER",null)
                 ->joinLeft(array("ea" => "etablissementadresse"),"ea.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT",null)
+                ->where("d.DATESUPPRESSION_DOSSIER IS NULL")
                 ->group("d.ID_DOSSIER")
                 ;
 
@@ -370,7 +373,7 @@ class Service_Search
 
             // Performance optimisation : avoid sorting on big queries, and sort only if
             // there is at least one where part
-            if (count($select->getPart(Zend_Db_Select::WHERE)) > 0) {
+            if (count($select->getPart(Zend_Db_Select::WHERE)) > 1) {
                 $select->order("d.DATEINSERT_DOSSIER DESC");
             }
 

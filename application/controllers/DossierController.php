@@ -181,6 +181,9 @@ class DossierController extends Zend_Controller_Action
             $this->view->idDossier = ($this->_getParam("id"));
 
             $this->view->verrou = $dossier->VERROU_DOSSIER;
+
+
+
         }
     }
 
@@ -248,6 +251,9 @@ class DossierController extends Zend_Controller_Action
         $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
 
         $this->view->is_allowed_change_avis = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "avis_commission", "edit_avis_com");
+
+        // Autorisation de suppression du dossier
+        $this->view->is_allowed_delete_dossier = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "suppression", "delete_dossier");
 
         $service_etablissement = new Service_Etablissement();
 
@@ -2762,5 +2768,32 @@ class DossierController extends Zend_Controller_Action
         $lockDosier->VERROU_USER_DOSSIER = null;
         $lockDosier->save();
         echo $lockDosier->ID_DOSSIER;
+    }
+
+    //GESTION DE LA SUPPRESSION
+    public function deleteAction()
+    {
+        try {
+
+            $service_dossier = new Service_Dossier();
+            $service_dossier->delete($this->_getParam("id"));
+
+            // Récupération de la ressource cache à partir du bootstrap
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+            $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
+
+            $this->_helper->flashMessenger(array(
+                    'context' => 'success',
+                    'title' => 'Mise à jour réussie !',
+                    'message' => 'Le dossier a bien été supprimé.',
+            ));
+            $this->redirect("/search/dossier?objet=&page=1");;
+        } catch (Exception $e) {
+            $this->_helper->flashMessenger(array(
+                'context' => 'error',
+                'title' => '',
+                'message' => 'L\'établissement n\'a pas été mis à jour. Veuillez rééssayez. (' . $e->getMessage() .')',
+            ));
+        }
     }
 }
