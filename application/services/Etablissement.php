@@ -1396,4 +1396,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $DBEtab = new Model_DbTable_Etablissement;
         return $DBEtab->getDossierDonnantAvis($idEtablissement);
     }
+
+    public function delete($idEtablissement) {
+        $date = new DateTime();
+        $DB_Etab = new Model_DbTable_Etablissement;
+
+        $etablissement = $DB_Etab->find($idEtablissement)->current();
+        $etablissement->DATESUPPRESSION_ETABLISSEMENT = $date->format('Y-m-d');
+        $etablissement->save();
+    }
 }

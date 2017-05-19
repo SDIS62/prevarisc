@@ -821,4 +821,28 @@ class Service_Dossier
        $dbDossier = new Model_DbTable_Dossier;
        return $dbDossier->getCommissionV2($idDossier);
     }
+
+    public function delete($idDossier, $date = null) {
+        
+        if (!$date) {
+           $date = new DateTime(); 
+        }
+        
+        $DB_dossier = new Model_DbTable_Dossier();
+
+        $dossier = $DB_dossier->find($idDossier)->current();
+        $dossier->DATESUPPRESSION_DOSSIER = $date->format('Y-m-d');
+        $dossier->save();
+    }
+
+    public function deleteByEtab($idEtablissement) {
+        $date = new DateTime();
+        $DB_dossier = new Model_DbTable_Dossier();
+
+        $dossiers = $DB_dossier->getDossiersEtab($idEtablissement);
+
+        foreach ($dossiers as $dossier) {
+        $this->delete($dossier['ID_DOSSIER'], $date);
+        }
+    }
 }

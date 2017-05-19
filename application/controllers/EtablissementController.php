@@ -4,6 +4,7 @@ class EtablissementController extends Zend_Controller_Action
 {
     public function indexAction()
     {
+
         $this->_helper->layout->setLayout('etablissement');
         $this->view->headScript()->appendFile('/js/tinymce.min.js');
 
@@ -25,6 +26,10 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
         $this->view->store = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('dataStore');
+
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        // Autorisation de suppression de l'établissement
+        $this->view->is_allowed_delete_etablissement = unserialize($cache->load('acl'))->isAllowed(Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'], "suppression", "delete_etablissement");
     }
 
     public function editAction()
@@ -454,5 +459,31 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->avis = $service_etablissement->getAvisEtablissement($this->view->etablissement['general']['ID_ETABLISSEMENT'], $this->view->etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
 
         $this->view->historique = $service_etablissement->getHistorique($this->_request->id);
+    }
+
+    public function deleteAction()
+    {
+        try {
+
+            $idEtablissement = $this->_getParam("id");
+
+            // On supprime les dossiers de l'établissement
+            $service_dossier = new Service_Dossier();
+            $service_dossier->deleteByEtab($idEtablissement);
+
+            // On supprime l'établissement
+            $service_etablissement = new Service_Etablissement();
+            $service_etablissement->delete($idEtablissement);
+
+            // Récupération de la ressource cache à partir du bootstrap
+            $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
+            $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
+            
+            $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement a bien été supprimé.'));
+            $this->redirect("/search/etablissement?label=&page=1");
+        }
+        catch(Exception $e) {
+                $this->_helper->flashMessenger(array('context' => 'error','title' => '','message' => 'L\'établissement n\'a pas été supprimé. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+        }
     }
 }
