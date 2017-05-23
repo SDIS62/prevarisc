@@ -121,5 +121,4 @@
 
             return $this->fetchAll($select)->toArray();
         }
-
     }

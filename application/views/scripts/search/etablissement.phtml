@@ -29,6 +29,7 @@
                     <input type='hidden' name='zone_de_recherche_text' value="<?php if(array_key_exists('zone_de_recherche_text', $_GET)) echo $_GET['zone_de_recherche_text'] ?>" />
                     <input type='hidden' name='city' value="<?php if(array_key_exists('city', $_GET)) echo $_GET['city'] ?>" />
                     <input type='hidden' name='street' value="<?php if(array_key_exists('street', $_GET)) echo $_GET['street'] ?>" />
+                    <input type='hidden' name='number' value="<?php if(array_key_exists('number', $_GET)) echo $_GET['number'] ?>" />
 	        </small>
 	    </p>
 	</div>
@@ -132,6 +133,10 @@
                 <input type='text' name='voie_ac' placeholder='Nom de la voie ...' disabled />
                 <input type='hidden' name='voie' />
             </dd>
+            <dt>Numéro</dt>
+            <dd>
+                <input name='numero_ac' type='text' placeholder='Numéro de la voie ...' disabled />
+            </dd>
         </dl>
     </div>
 
@@ -206,6 +211,7 @@
 
             $("input[name='city']").val("");
             $("input[name='street']").val("");
+            $("input[name='number']").val("");
         });
 
 
@@ -221,10 +227,13 @@
         }).result(function(e, item) {
             $("input[name='code_insee']").val( item.NUMINSEE_COMMUNE );
             $("input[name='voie_ac']").removeAttr('disabled');
+            $("input[name='numero_ac']").removeAttr('disabled');
         }).click(function() {
             $(this).val("");
             $("input[name='voie_ac']").val("").attr("disabled", true).blur();
             $("input[name='voie']").val("").blur();
+            $("input[name='numero_ac']").val("").attr("disabled", true).blur();
+            $("input[name='numero_voie']").val("").blur();
         });
 
         // Auto complétion de la rue
@@ -239,9 +248,13 @@
             }
         }).result(function(e, item) {
             $("input[name='voie']").val( item.ID_RUE );
+            $("input[name='numero_ac']").removeAttr('disabled');
         }).click(function() {
             $(this).val("");
+            $("input[name='numero_ac']").val("").attr("disabled", true).blur();
+            $("input[name='numero_voie']").val("").blur();
         });
+
 
         // Validation de la zone de recherche
         $('form#zone_de_recherche_modal a.submit').click(function() {
@@ -251,13 +264,18 @@
                     var text = $("input[name='commune_ac']").val();
                     if($("input[name='voie_ac']").val() != '') {
                             var text = $("input[name='commune_ac']").val() + ', ' + $("input[name='voie_ac']").val();
+                            if($("input[name='numero_ac']").val() != '') {
+                                var text = $("input[name='commune_ac']").val() + ', ' + $("input[name='voie_ac']").val() + ', ' + $("input[name='numero_ac']").val();
+                            }
                     }
             }
+
             $("input[name='zone_de_recherche_text']").val(text);
             $(".zone_de_recherche_text").text(text);
 
             $("input[name='city']").val($("input[name='code_insee']").val());
             $("input[name='street']").val($("input[name='voie']").val());
+            $("input[name='number']").val($("input[name='numero_ac']").val());
             $('form#zone_de_recherche_modal').modal('hide');
         });
 	});
