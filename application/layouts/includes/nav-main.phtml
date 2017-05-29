@@ -90,9 +90,12 @@
                         LIBELLE_COMMUNE = item.LIBELLE_COMMUNE_ADRESSE_DEFAULT;
                 }
 
-
-
-                return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
+                if (LIBELLE_COMMUNE) {
+                    return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS + " (" + LIBELLE_COMMUNE + ")";
+                }
+                else {
+                    return "[" + item.LIBELLE_GENRE + "] " + item.LIBELLE_ETABLISSEMENTINFORMATIONS;
+                }
             }
         }).result(function(e, item) {
             window.location.href= "/etablissement/index/id/" + item.ID_ETABLISSEMENT;
