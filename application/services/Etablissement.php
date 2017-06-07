@@ -991,14 +991,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 break;
 
-            // Habitation
-            case 4:
-                // Préventionnistes du site ou des groupements de communes
-                if($numinsee !== null || ($id_etablissement_pere !== null  && $id_etablissement_pere != '')) {
-                    $results['preventionnistes'] = $model_prev->getPrev($numinsee === null ? '' : $numinsee, $id_etablissement_pere === null ? '' : $id_etablissement_pere);
-                }
-                break;
-
             // IGH
             case 5:
                 // Périodicité en fonction de la classe
@@ -1027,8 +1019,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 break;
 
-            // EIC
-            case 6:
+            // Autres genres
+            default:
                 // Préventionnistes du site ou des groupements de communes
                 if($numinsee !== null || $id_etablissement_pere !== null) {
                     $results['preventionnistes'] = $model_prev->getPrev($numinsee === null ? '' : $numinsee, $id_etablissement_pere === null ? '' : $id_etablissement_pere);
