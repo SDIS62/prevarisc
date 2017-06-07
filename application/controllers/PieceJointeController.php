@@ -281,7 +281,7 @@ class PieceJointeController extends Zend_Controller_Action
             }
 
             // On supprime dans la BDD et physiquement
-            if ($DBitem != null) {
+            if ($pj != null && $DBitem != null) {
                 
                 $file_path = $this->store->getFilePath($pj, $this->_request->type, $this->_request->id);
                 $miniature_pj = $pj;
