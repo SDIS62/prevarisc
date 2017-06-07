@@ -849,14 +849,14 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 foreach($data['ID_FILS_ETABLISSEMENT'] as $id_etablissement_enfant) {
                     if($id_etablissement_enfant > 0) {
                         $genre_enfant = $DB_etablissement->getInformations($id_etablissement_enfant)->ID_GENRE;
-                        if($id_genre == 1 && ($genre_enfant != 2 && $genre_enfant != 4 && $genre_enfant != 5 && $genre_enfant != 6)) {
-                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne ne peut contenir que des établissements)', 500);
+                        if($id_genre == 1 && !in_array($genre_enfant, array(2,4,5,6,7,8,9))) {
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne ne peut contenir que des établissements, habitations, EIC, camping, manifestation, IOP)', 500);
                         }
-                        elseif($id_genre == 2 && $genre_enfant != 3) {
-                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
+                        elseif(in_array($id_genre, array(2,5)) && $genre_enfant != 3) {
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ou IGH ne ne peut contenir que des cellules)', 500);
                         }
                         elseif($genre_enfant == 1){
-                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne peut pas être un établissement enfant)', 500);
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne peut être enfant)', 500);
                         }
                         elseif($genre_enfant == null) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
@@ -876,11 +876,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
             if(array_key_exists("ID_PERE", $data) && !empty($data['ID_PERE'])) {
                 $genre_pere = $DB_etablissement->getInformations($data['ID_PERE'])->ID_GENRE;
 
-                if($id_genre == 2 && $genre_pere != 1) {
+                if(in_array($id_genre, array(2,4,5,6,7,8,9)) && $genre_pere != 1) {
                     throw new Exception('Le père n\'est pas compatible (Un établissement a comme père un site)', 500);
                 }
-                elseif($id_genre == 3 && $genre_pere != 2) {
-                    throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
+                elseif($id_genre == 3 && !in_array($genre_pere, array(2, 5))) {
+                    throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement ou IGH)', 500);
                 }
                 elseif($id_genre == 1) {
                     throw new Exception('Le type n\'est pas compatible (Un site ne peut pas avoir de père)', 500);
