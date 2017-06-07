@@ -145,6 +145,7 @@
                          ->joinLeft("etablissementinformations", "etablissementinformations.ID_ETABLISSEMENTINFORMATIONS = etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS")
                          ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(infos.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations as infos WHERE etablissementinformations.ID_ETABLISSEMENT = infos.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL")
                          ->where("u.ACTIF_UTILISATEUR = 1")
+                         ->order(array("utilisateurinformations.NOM_UTILISATEURINFORMATIONS", "utilisateurinformations.PRENOM_UTILISATEURINFORMATIONS"))
                          ->group("u.ID_UTILISATEUR");
 
                     break;
