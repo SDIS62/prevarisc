@@ -320,16 +320,28 @@ class Service_Etablissement implements Service_Interface_Etablissement
         }
 
         // On traite le cas particulier des dossiers
-        $key = "avis";
         $dossiers = $this->getDossiers($id_etablissement);
         $dossiers_merged = $dossiers['etudes'];
         $dossiers_merged = array_merge($dossiers_merged, $dossiers['visites']);
         $dossiers_merged = array_merge($dossiers_merged, $dossiers['autres']);
-
+        
+        // on filtre les dossiers ne donnant pas avis
+        foreach($dossiers_merged as $key => $dossier) {
+            if(!in_array($dossier['AVIS_DOSSIER_COMMISSION'], array(1, 2))) {
+                unset($dossiers_merged[$key]);
+            }
+            else if(!in_array($dossier['ID_DOSSIERNATURE'], array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28, 29, 48)) ) {
+               unset($dossiers_merged[$key]);
+            }
+            else if(!$dossier['DATECOMM_DOSSIER'] && !$dossier['DATEVISITE_DOSSIER']) {
+               unset($dossiers_merged[$key]);
+            }
+        }
+        
         @usort($dossiers_merged, function($a, $b) {
           
-          $date_a = @new Zend_Date($a['DATEVISITE_DOSSIER'] != null ? $a['DATEVISITE_DOSSIER'] : $a['DATECOMM_DOSSIER'], Zend_Date::DATES);
-          $date_b = @new Zend_Date($b['DATEVISITE_DOSSIER'] != null ? $b['DATEVISITE_DOSSIER'] : $b['DATECOMM_DOSSIER'], Zend_Date::DATES);
+          $date_a = @new Zend_Date($a['DATECOMM_DOSSIER'] != null ? $a['DATECOMM_DOSSIER'] : $a['DATEVISITE_DOSSIER'], Zend_Date::DATES);
+          $date_b = @new Zend_Date($b['DATECOMM_DOSSIER'] != null ? $b['DATECOMM_DOSSIER'] : $b['DATEVISITE_DOSSIER'], Zend_Date::DATES);
 
           if ($date_a == $date_b || $a === null || $b === null) {
             return 0;
@@ -342,18 +354,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
           }
         });
 
+        $key = "avis";
         foreach($dossiers_merged as $dossier) {
           $dossier = (object) $dossier;
           $tmp = ( array_key_exists($key, $historique) ) ? $historique[$key][ count($historique[$key])-1 ] : null;
-          $value = null;
+          $value = $dossier->AVIS_DOSSIER_COMMISSION == 1 ? "Favorable" : "Défavorable";
           $author = null;
-
-          if($dossier->AVIS_DOSSIER_COMMISSION && ($dossier->AVIS_DOSSIER_COMMISSION == 1 || $dossier->AVIS_DOSSIER_COMMISSION == 2)) {
-            if( in_array($dossier->ID_DOSSIERNATURE, array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28, 29, 48)) ) {
-              $value = $dossier->AVIS_DOSSIER_COMMISSION == 1 ? "Favorable" : "Défavorable";
-            }
-          }
-
+          
           if ( $value != null && (!isset( $historique[$key] ) || $tmp["valeur"] != $value )) {
             $date = new Zend_Date($dossier->DATEVISITE_DOSSIER != null ? $dossier->DATEVISITE_DOSSIER : $dossier->DATECOMM_DOSSIER, Zend_Date::DATES);
             if ($tmp != null) {
