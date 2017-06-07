@@ -212,6 +212,7 @@
 		// Auto complétion de la ville
         $("form#zone_de_recherche_modal input[name='commune_ac']").autocomplete("/api/1.0/adresse/get_communes", {
             minChars: 3,
+            cacheLength: 0,
             parse: function(data) {
                 return $.map(data["response"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
             },
@@ -229,7 +230,12 @@
 
         // Auto complétion de la rue
         $("form#zone_de_recherche_modal input[name='voie_ac']").autocomplete('/api/1.0/adresse/get_voies', {
+<<<<<<< HEAD
             minChars: 3,
+=======
+            minChars: 2,
+            cacheLength: 0,
+>>>>>>> 7a90138... * Correction de l'autocompletion qui fonctionnait mal notamment lorsque le nom contient des doubles quotes
             extraParams: { code_insee: function(){ return $("input[name='code_insee']").val() } },
             parse: function(data) {
                 return $.map(data["response"], function(row) { return {data: row,value: row.LIBELLE_RUE,result: row.LIBELLE_RUE} });
