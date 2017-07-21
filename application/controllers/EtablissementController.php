@@ -4,7 +4,6 @@ class EtablissementController extends Zend_Controller_Action
 {
     public function indexAction()
     {
-
         $this->_helper->layout->setLayout('etablissement');
         $this->view->headScript()->appendFile('/js/tinymce.min.js');
 
@@ -42,7 +41,7 @@ class EtablissementController extends Zend_Controller_Action
         $etablissement = $service_etablissement->get($this->_request->id);
 
         $this->view->avis = $service_etablissement->getAvisEtablissement($etablissement['general']['ID_ETABLISSEMENT'], $etablissement['general']['ID_DOSSIER_DONNANT_AVIS']);
-        
+
         $this->view->etablissement = $etablissement;
 
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
@@ -73,7 +72,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_famille = $service_famille->getAll();
         $this->view->DB_classe = $service_classe->getAll();
         $this->view->DB_classement = $service_classement->getAll();
-        
+
         $this->view->couches_cartographiques = $service_carto->getAll();
 
         $this->view->add = false;
@@ -94,9 +93,9 @@ class EtablissementController extends Zend_Controller_Action
                             $service_alerte = new Service_Alerte;
                             $options = $service_alerte->getLink($typeAlerte);
                         }
-                    }    
+                    }
                 }
-                
+
                 $date = date("Y-m-d");
                 $service_etablissement->save($post['ID_GENRE'], $post, $this->_request->id, $date);
                 $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement a bien été mis à jour.' . $options));
@@ -137,7 +136,7 @@ class EtablissementController extends Zend_Controller_Action
         $this->view->DB_classement = $service_classement->getAll();
 
         $this->view->add = true;
-        
+
         $this->view->key_ign = getenv('PREVARISC_PLUGIN_IGNKEY');
         $this->view->geoconcept_url = getenv('PREVARISC_PLUGIN_GEOCONCEPT_URL');
         $this->view->default_lon = getenv('PREVARISC_CARTO_DEFAULT_LON') ? : "2.71490430425517";
@@ -478,7 +477,7 @@ class EtablissementController extends Zend_Controller_Action
             // Récupération de la ressource cache à partir du bootstrap
             $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cacheSearch');
             $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
-            
+
             $this->_helper->flashMessenger(array('context' => 'success', 'title' => 'Mise à jour réussie !', 'message' => 'L\'établissement a bien été supprimé.'));
             $this->redirect("/search/etablissement?label=&page=1");
         }

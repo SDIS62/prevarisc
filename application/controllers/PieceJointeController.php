@@ -263,7 +263,6 @@ class PieceJointeController extends Zend_Controller_Action
             // On récupère la pièce jointe
             $pj = $DBpieceJointe->find($this->_request->id_pj)->current();
 
-//            var_dump($pj);exit();
             // Selon le type, on fixe le modèle à utiliser
             switch ($this->_request->type) {
 
