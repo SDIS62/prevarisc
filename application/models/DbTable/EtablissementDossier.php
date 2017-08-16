@@ -8,7 +8,7 @@
         {
             $select = $this->select()
                     ->setIntegrityCheck(false)
-                    ->from(array('ed' => 'etablissementdossier')
+                    ->from(array('ed' => 'etablissementdossier'))
                     ->joinLeftUsing(array('e' => 'etablissement'), 'ID_ETABLISSEMENT')
                     ->where("ID_DOSSIER = ?", $idDossier)
                     ->where("e.DATESUPPRESSION_ETABLISSEMENT IS NULL");
