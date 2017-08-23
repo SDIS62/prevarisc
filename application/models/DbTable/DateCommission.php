@@ -55,7 +55,7 @@
                 ORDER BY DATE_COMMISSION, HEUREDEB_COMMISSION";
             return $this->getAdapter()->fetchAll($select);
         }
-        
+
         public function getMonthCommission($mois,$annee,$idcom)
         {
             $select = "SELECT *
@@ -154,24 +154,24 @@
 				 ->where("dc.ID_DATECOMMISSION = ?",$idDateComm)
 				 ->orWhere("dc.DATECOMMISSION_LIEES = ?",$idDateComm)
 				 ->order("DATE_COMMISSION");
-				 
+
 			return $this->getAdapter()->fetchAll($select);
 		}
-                
+
         public function updateDependingDossierDates($datecommission)
         {
             $dbAffectDossier = new Model_DbTable_DossierAffectation();
             $dbDossier = new Model_DbTable_Dossier();
-            
+
             // on récupère les dossiers liés à la commission
             $dossiersAffecte = $dbAffectDossier->fetchAll('ID_DATECOMMISSION_AFFECT = '.$datecommission->ID_DATECOMMISSION);
             $dossiersAffecteIds = array();
             foreach($dossiersAffecte as $dossierAffecte) {
                 $dossiersAffecteIds[] = $dossierAffecte['ID_DOSSIER_AFFECT'];
             }
-            
+
             // si des dossiers sont liés, en fonction du type,
-            // on update les dates en text dans les différents fields du dossiers pour 
+            // on update les dates en text dans les différents fields du dossiers pour
             // des cohérences de données
             if ($dossiersAffecteIds) {
                 if (in_array($datecommission->ID_COMMISSIONTYPEEVENEMENT, array(1))) {
@@ -185,20 +185,28 @@
             }
         }
 
-        public function getEventInCommission($idUtilisateur = null, $idCommission = null, $start = null, $end = null) 
-        {
+        public function getEventInCommission(
+            $idUtilisateur = null,
+            $idCommission = null,
+            $start = null,
+            $end = null,
+            $ignoreEts = false) {
             $select = $this->select()
                            ->setIntegrityCheck(false)
                            ->from(array('d' => 'dossier'))
-                           ->join(array('da' => 'dossieraffectation'), 'da.ID_DOSSIER_AFFECT = d.ID_DOSSIER')
-                           ->join(array('dc' => 'datecommission'), 'dc.ID_DATECOMMISSION = da.ID_DATECOMMISSION_AFFECT')
-                           ->join(array('c' => 'commission'), 'c.ID_COMMISSION = dc.COMMISSION_CONCERNE')
-                           ->join(array('ed' => 'etablissementdossier'), 'ed.ID_DOSSIER = d.ID_DOSSIER')
-                           ->join(array('dn' => 'dossiernature'), 'dn.ID_DOSSIER = d.ID_DOSSIER')
-                           ->join(array('dnl' => 'dossiernatureliste'), 'dnl.ID_DOSSIERNATURE = dn.ID_NATURE')
-                           ->join(array('dt' => 'dossiertype'), 'dt.ID_DOSSIERTYPE = d.TYPE_DOSSIER')
-                           ->join(array('dp' => 'dossierpreventionniste'), 'dp.ID_DOSSIER = d.ID_DOSSIER')
-                           ->join(array('u' => 'utilisateur'), 'u.ID_UTILISATEUR = dp.ID_PREVENTIONNISTE');
+                           ->join(array('da' => 'dossieraffectation'), 'd.ID_DOSSIER = da.ID_DOSSIER_AFFECT')
+                           ->join(array('dc' => 'datecommission'), 'da.ID_DATECOMMISSION_AFFECT = dc.ID_DATECOMMISSION')
+                           ->join(array('c' => 'commission'), 'dc.COMMISSION_CONCERNE = c.ID_COMMISSION');
+            if ($ignoreEts) {
+                $select->joinLeft(array('ed' => 'etablissementdossier'), 'd.ID_DOSSIER = ed.ID_DOSSIER');
+            } else {
+                $select->join(array('ed' => 'etablissementdossier'), 'd.ID_DOSSIER = ed.ID_DOSSIER');
+            }
+            $select->join(array('dn' => 'dossiernature'), 'd.ID_DOSSIER = dn.ID_DOSSIER')
+                   ->join(array('dnl' => 'dossiernatureliste'), 'dn.ID_NATURE = dnl.ID_DOSSIERNATURE')
+                   ->join(array('dt' => 'dossiertype'), 'd.TYPE_DOSSIER = dt.ID_DOSSIERTYPE')
+                   ->join(array('dp' => 'dossierpreventionniste'), 'd.ID_DOSSIER = dp.ID_DOSSIER')
+                   ->join(array('u' => 'utilisateur'), 'dp.ID_PREVENTIONNISTE = u.ID_UTILISATEUR');
             if ($idUtilisateur !== null) {
                 $select->where('u.ID_UTILISATEUR =  ?', $idUtilisateur);
             }
@@ -206,12 +214,13 @@
                 $select->where('dc.COMMISSION_CONCERNE =  ?', $idCommission);
             }
             if ($start !== null) {
-                $select->where('YEAR(dc.DATE_COMMISSION) >= ?', $start);
+                $select->where('YEAR(dc.DATE_COMMISSION) = ?', '2017');
+                $select->where('MONTH(dc.DATE_COMMISSION) = ?', '08');
             }
             if ($end !== null) {
-                $select->where('YEAR(dc.DATE_COMMISSION) <= ?', $end);   
+                $select->where('YEAR(dc.DATE_COMMISSION) <= ?', $end);
             }
-            
+
             return $this->getAdapter()->fetchAll($select);
         }
 

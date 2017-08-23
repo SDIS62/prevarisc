@@ -8,7 +8,7 @@
 	});
 
 	/**APPLIQUER DES CLASSES JQUERY SUR LES INPUT DATE ET HEURE
-	**/	
+	**/
 	$('.time').live('focus', function() {
 		$(this).timeEntry($.timeEntry.regional['fr']);
 	});
@@ -46,7 +46,7 @@
 					error: function(){
 						return false;
 					}
-				});			
+				});
 			}else{
 				//Dans le cas d'une création on ajoute simplement la ligne
 				$.ajax({
@@ -77,7 +77,7 @@
 	});
 
 	$(".cancelAddDate").live('click',function(){
-		//Annulation de l'ajout de date 
+		//Annulation de l'ajout de date
 		$("#addDate").attr('value','');
 		$("#divAddDate").hide();
 		$("#dialogComm").buttonShow();
@@ -100,12 +100,12 @@
 		$("#dialogComm").buttonShow();
 		$("#dialogComm").reapeatHide();
 	});
-	
-	$("#annule_periodicite").live('click',function(){		
+
+	$("#annule_periodicite").live('click',function(){
 		$("#dialogComm").buttonShow();
 		$("#dialogComm").reapeatHide();
 	});
-	
+
 	$("#valid_periodicite").live('click',function(){
 		//alert('');
 	});
@@ -117,7 +117,7 @@
 			//alert(action+" - "+type+" - "+$("#listeDates ul").length);
 			if(action == 'add'){
 				$("#addReapeat").hide();
-				//$("#repeat").attr('checked',false);	
+				//$("#repeat").attr('checked',false);
 				$("#planification").hide();
 			}else if(action == 'supp'){
 				if(type == 'edit'){
@@ -150,7 +150,7 @@
 		$.fn.reapeatShow = function(){
 			$("#addReapeat").show();
 			$("#planification").show();
-			$("#listeDates").countLigne('new');		
+			$("#listeDates").countLigne('new');
 		};
 	})(jQuery);
 </script>
@@ -173,7 +173,7 @@ if(isset($this->do) && $this->do == 'edit'){
 				".afficheTypeDateComm($this->typeComLibelle)."
 			</div>
 			</p>
-				".afficheTabListeDates($this->listeDates)."	
+				".afficheTabListeDates($this->listeDates)."
 			<br/>
 				".divAddDate()."
 			<br/>
@@ -185,7 +185,7 @@ if(isset($this->do) && $this->do == 'edit'){
 }else if(isset($this->do) && $this->do == 'newComm'){
 		/**
 		***
-		***AFFICHAGE BOITE DIALOGUE PERMETTANT LA CREATION DES COMMISSIONS 
+		***AFFICHAGE BOITE DIALOGUE PERMETTANT LA CREATION DES COMMISSIONS
 		***
 		**/
 

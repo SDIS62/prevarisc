@@ -13,6 +13,13 @@
             <i class="icon-calendar"></i> Exporter pour Outlook
         </a>
     </li>
+    <?php if ($this->is_view_all) : ?>
+        <li>
+            <a id='viewAllLink'  href='#'>
+                <i class="icon-eye-open"></i> Voir tous les évènements
+            </a>
+        </li>
+    <?php endif ?>
     <?php if($this->array_commissions): ?>
         <?php if (getenv('PREVARISC_SECURITY_KEY') && getenv('PREVARISC_SECURITY_KEY') !== '') : ?>
             <li>
@@ -35,7 +42,7 @@
                     </li>
                   <?php endif ?>
                 <?php endforeach ?>
-                </li>            
+                </li>
             <?php endif ?>
         <?php endforeach ?>
     <?php endif ?>
@@ -69,10 +76,25 @@
 <div id="dialogComm" title="Planification commission" class='ui-helper-hidden' ></div>
 <script type="text/javascript">
 	$(document).ready( function() {
-                if($("#idCommission").val() != '')
-		{
-                    $(".commissionLink[data-value='"+$("#idCommission").val()+"'").click();
+            if ($("#idCommission").val() != '') {
+                $(".commissionLink[data-value='"+$("#idCommission").val()+"'").click();
+            <?php if ($this->is_view_all) : ?>
+                } else {
+                    $("#calendar").html('').afficheCalendar(null, 'calendrierComm');
+                    $('#syncCal').show();
+                    $('#syncCom').hide();
+            <?php endif ?>
+            }
+
+            $('.menu_dashboard').on({
+                click: function() {
+                    $("#calendar").html('').afficheCalendar(null, 'calendrierComm');
+                    $(".commissionLink").parent().removeClass('active');
+                    $('#syncCal').show();
+                    $('#syncCom').hide();
+                    $(this).parent().addClass('active');
                 }
+            }, '#viewAllLink');
     	});
 
 	// Selection de la commission
@@ -80,6 +102,7 @@
             e.preventDefault();
             var $self = $(this);
             var idCommission = $self.attr('data-value');
+            $('#viewAllLink').parent().removeClass('active');
             $(".commissionLink").parent().removeClass('active');
             $self.parent().addClass('active');
             $("#infosCom").html("<input type='hidden' name='commissionId' id='commissionId' value='" + idCommission + "' />");
@@ -93,6 +116,11 @@
 
 	( function($) {
 		$.fn.afficheCalendar = function(idComm,emplacement) {
+                    if (idComm === null || undefined === typeof(idComm)) {
+                        datas = { format: 'json' };
+                    } else {
+                        datas = { format: 'json', idComm: idComm };
+                    }
                     var calendar = $('#calendar').fullCalendar( {
                         buttonText: {
                             month: 'Mois',
@@ -138,10 +166,7 @@
                         events: function(start, end, callback) {
                             $.ajax({
                                 url: '/calendrier-des-commissions/recupevenement?start='+start.getTime()+"&end="+end.getTime(),
-                                data: {
-                                    format: 'json',
-                                    idComm: idComm
-                                },
+                                data: datas,
                                 success: function( result ) {
                                     var events = [];
                                     for( var x in result["items"] ) {
@@ -174,6 +199,9 @@
                         },
                         //Lorsque l'on selectionne une ou plusieurs dates on ouvre la boite de dialogue correspondante
                         select: function(start, end, allDay) {
+                            if (idComm === null || undefined === typeof(idComm)) {
+                                return false;
+                            }
                             var dateSelected = new Date(start);
                             // On empêche la selection d'un samedi ou d'un dimanche
                             //if( dateSelected.getDay() != 6 && dateSelected.getDay() != 0) {
@@ -187,7 +215,7 @@
                                                     return false;
                                                 }
 
-                                                if($("#libelle_comm").val() == ''){
+                                                if ($("#libelle_comm").val() == ''){
                                                     $("#libelle_comm").focus();
                                                     return false;
                                                 }
