@@ -214,7 +214,7 @@
                 $select->where('dc.COMMISSION_CONCERNE =  ?', $idCommission);
             }
             if ($start !== null) {
-                $select->where('YEAR(dc.DATE_COMMISSION) = ?', $start);
+                $select->where('YEAR(dc.DATE_COMMISSION) >= ?', $start);
             }
             if ($end !== null) {
                 $select->where('YEAR(dc.DATE_COMMISSION) <= ?', $end);
