@@ -78,14 +78,14 @@ class Api_Service_Calendar
      * [createRequestForWebcalEvent description]
      * @return string La requête générée
      */
-    private function createRequestForWebcalEvent($userid, $commission, $isAllowedToViewAll = false)
+    private function createRequestForWebcalEvent($userid, $commission, $isAllowedToViewAll)
     {
         $today = new \DateTime();
         $yearBefore = $today->modify("-1 year")->format("Y");
 
         $dbDateCommission = new Model_DbTable_DateCommission;
 
-        if ($isAllowedToViewAll) {
+        if (!$isAllowedToViewAll) {
             $userid = null;
             $commission = null;
         }

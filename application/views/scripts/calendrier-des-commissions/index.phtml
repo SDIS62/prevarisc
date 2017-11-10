@@ -78,12 +78,9 @@
 	$(document).ready( function() {
             if ($("#idCommission").val() != '') {
                 $(".commissionLink[data-value='"+$("#idCommission").val()+"'").click();
-            <?php if ($this->is_view_all) : ?>
-                } else {
-                    $("#calendar").html('').afficheCalendar(null, 'calendrierComm');
-                    $('#syncCal').show();
+                $("#calendar").html('').afficheCalendar(null, 'calendrierComm');
+                $('#syncCal').show();
                     $('#syncCom').hide();
-            <?php endif ?>
             }
 
             $('.menu_dashboard').on({
@@ -92,6 +89,7 @@
                     $(".commissionLink").parent().removeClass('active');
                     $('#syncCal').show();
                     $('#syncCom').hide();
+                    $('#exportCom').hide();
                     $(this).parent().addClass('active');
                 }
             }, '#viewAllLink');
