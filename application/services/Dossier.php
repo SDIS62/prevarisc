@@ -821,4 +821,10 @@ class Service_Dossier
        $dbDossier = new Model_DbTable_Dossier;
        return $dbDossier->getCommissionV2($idDossier);
     }
+    
+    public function getPreventionniste($idDossier) {
+        $DB_prev = new Model_DbTable_DossierPreventionniste;
+        
+        return $DB_prev->getPrevDossier($idDossier);        
+    }
 }

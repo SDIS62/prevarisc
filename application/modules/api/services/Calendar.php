@@ -275,10 +275,51 @@ class Api_Service_Calendar
            self::LF.self::LF
         );
 
-        $corpus .= sprintf("Avis d'exploitation de l'établissement : %s",
-                            $this->getAvisEtablissement($commissionEvent, $ets));
-
+        $corpus .= sprintf("Avis d'exploitation de l'établissement : %s%s",               
+                            $this->getAvisEtablissement($commissionEvent, $ets),
+                            self::LF.self::LF);
+        
+        /* Ajout Grade, prenom, nom préventionniste dans calendrier dossier detail */
+        $dossierService = new Service_Dossier;
+        $preventionnistes = $dossierService->getPreventionniste($commissionEvent["ID_DOSSIER"]);            
+        
+        $preventionniste = $this->formatPrevisionniste($preventionnistes);
+        
+        $corpus .= "Préventionniste(s) du dossier : ".self::LF;        
+        $corpus .= sprintf("%s%s",
+                            $preventionniste,
+                            self::LF.self::LF
+                            );
+        print($corpus);
+        
         return $corpus;
+    }
+    
+    private function formatPrevisionniste($preventionnistes)
+    {
+        $result = "";             
+        if(count($preventionnistes) > 1)            
+        {            
+            for($i = 0 ; $i < count($preventionnistes) ; $i++)
+            {
+                $result .= sprintf("- %s%s%s%s",
+                                    $preventionnistes[$i]['GRADE_UTILISATEURINFORMATIONS'],
+                                    $preventionnistes[$i]['PRENOM_UTILISATEURINFORMATIONS'],
+                                    $preventionnistes[$i]['NOM_UTILISATEURINFORMATIONS'],
+                                    self::LF
+                                    );
+            }
+        }
+        else
+        {
+            $result = sprintf("- $s %s %s %s",
+                                $preventionnistes[0]['GRADE_UTILISATEURINFORMATIONS'], 
+                                $preventionnistes[0]['PRENOM_UTILISATEURINFORMATIONS'],
+                                $preventionnistes[0]['NOM_UTILISATEURINFORMATIONS'],
+                                self::LF.self::LF
+                                );            
+        }
+        return $result;
     }
 
     private function formatUtilisateurInformations($user)
