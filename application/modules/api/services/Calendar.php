@@ -269,7 +269,7 @@ class Api_Service_Calendar
             }
         }
 
-        $lastVisitestr = $ets && $ets["last_visite"] ? : 'Aucune date.';
+        $lastVisitestr = $ets && $ets["last_visite"] ? $ets["last_visite"] : 'Aucune date.';
         $corpus .= sprintf("Date de la dernière visite périodique : %s%s",
            $lastVisitestr,
            self::LF.self::LF
