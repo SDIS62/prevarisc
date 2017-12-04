@@ -78,14 +78,14 @@ class Api_Service_Calendar
      * [createRequestForWebcalEvent description]
      * @return string La requête générée
      */
-    private function createRequestForWebcalEvent($userid, $commission, $isAllowedToViewAll = false)
+    private function createRequestForWebcalEvent($userid, $commission, $isAllowedToViewAll)
     {
         $today = new \DateTime();
         $yearBefore = $today->modify("-1 year")->format("Y");
 
         $dbDateCommission = new Model_DbTable_DateCommission;
 
-        if ($isAllowedToViewAll) {
+        if (!$isAllowedToViewAll) {
             $userid = null;
             $commission = null;
         }
@@ -282,7 +282,7 @@ class Api_Service_Calendar
         /* Ajout Grade, prenom, nom préventionniste dans calendrier dossier detail */
         $dossierService = new Service_Dossier;
         $preventionnistes = $dossierService->getPreventionniste($commissionEvent["ID_DOSSIER"]);            
-
+        
         $preventionniste = $this->formatPrevisionniste($preventionnistes);
           
         $corpus .= "Préventionniste(s) du dossier : ".self::LF;        
@@ -296,6 +296,7 @@ class Api_Service_Calendar
     private function formatPrevisionniste($preventionnistes)
     {
         $result = "";
+        // Si plusieurs préventionnistes liés au dossier
         if(count($preventionnistes) > 1)            
         {
             for($i = 0 ; $i < count($preventionnistes) ; $i++)
@@ -338,6 +339,7 @@ class Api_Service_Calendar
         return $result;
     }
     
+    // Vérifie que toutes les informations liés au préventionnistes, grade / prenom / nom, est non null
     private function isPreventionnisteExist($preventionnistes, $index)
     {
         if(empty($preventionnistes[$index]['GRADE_UTILISATEURINFORMATIONS']) ||
