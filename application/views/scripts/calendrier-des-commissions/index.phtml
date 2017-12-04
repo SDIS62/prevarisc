@@ -80,7 +80,7 @@
                 $(".commissionLink[data-value='"+$("#idCommission").val()+"'").click();
                 $("#calendar").html('').afficheCalendar(null, 'calendrierComm');
                 $('#syncCal').show();
-                    $('#syncCom').hide();
+                $('#syncCom').hide();                
             }
 
             $('.menu_dashboard').on({
@@ -110,6 +110,7 @@
             $("#ordre_jour").button( "option", "disabled", false );
             $("h2.page-header").html('Calendrier de la '+$self.attr('data-type')+' de "'+$self.html().trim()+'"');
             $("#calendar").html('').afficheCalendar(idCommission,'calendrierComm');
+            $('#exportCom').show();
         });
 
 	( function($) {
@@ -315,8 +316,7 @@
                             var date = $("#calendar").fullCalendar('getDate');
                             var month_int = date.getMonth()+1;
                             var year_int = date.getFullYear();
-                            $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionId").val()+"/Mois/"+month_int+"/Annee/"+year_int);
-                            $('#exportCom').show();
+                            $('#exportCom').attr('href', '/calendrier-des-commissions/exportoutlookmois/CommId/'+ $("#commissionId").val()+"/Mois/"+month_int+"/Annee/"+year_int);                            
                             var host = window.location.host;
                             $('#syncCal').hide();
                             $('#syncCom').show();
