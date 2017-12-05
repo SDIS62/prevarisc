@@ -315,7 +315,7 @@ class DossierController extends Zend_Controller_Action
         if (isset($commissionEtab)) {
             $this->view->commissionEtab = $commissionEtab;
         }
-        
+
         $genreInfo = $this->view->genre;
 
         if (isset($idEtablissement)) {
@@ -539,7 +539,6 @@ class DossierController extends Zend_Controller_Action
             //Récupération de la liste des natures pour la génération du select
             $DBdossierNatureListe = new Model_DbTable_DossierNatureliste();
             $this->view->dossierNatureListe = $DBdossierNatureListe->getDossierNature($this->view->infosDossier['TYPE_DOSSIER']);
-            //var_dump($DBdossierNatureListe->getDossierNature($this->view->infosDossier['TYPE_DOSSIER']));
 
             //Récupération de la liste des documents d'urbanismes
             $DBdossierDocUrba = new Model_DbTable_DossierDocUrba();
