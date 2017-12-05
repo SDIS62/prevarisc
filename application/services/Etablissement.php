@@ -322,16 +322,28 @@ class Service_Etablissement implements Service_Interface_Etablissement
         }
 
         // On traite le cas particulier des dossiers
-        $key = "avis";
         $dossiers = $this->getDossiers($id_etablissement);
         $dossiers_merged = $dossiers['etudes'];
         $dossiers_merged = array_merge($dossiers_merged, $dossiers['visites']);
         $dossiers_merged = array_merge($dossiers_merged, $dossiers['autres']);
-
+        
+        // on filtre les dossiers ne donnant pas avis
+        foreach($dossiers_merged as $key => $dossier) {
+            if(!in_array($dossier['AVIS_DOSSIER_COMMISSION'], array(1, 2))) {
+                unset($dossiers_merged[$key]);
+            }
+            else if(!in_array($dossier['ID_DOSSIERNATURE'], array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28, 29, 48)) ) {
+               unset($dossiers_merged[$key]);
+            }
+            else if(!$dossier['DATECOMM_DOSSIER'] && !$dossier['DATEVISITE_DOSSIER']) {
+               unset($dossiers_merged[$key]);
+            }
+        }
+        
         @usort($dossiers_merged, function($a, $b) {
           
-          $date_a = @new Zend_Date($a['DATEVISITE_DOSSIER'] != null ? $a['DATEVISITE_DOSSIER'] : $a['DATECOMM_DOSSIER'], Zend_Date::DATES);
-          $date_b = @new Zend_Date($b['DATEVISITE_DOSSIER'] != null ? $b['DATEVISITE_DOSSIER'] : $b['DATECOMM_DOSSIER'], Zend_Date::DATES);
+          $date_a = @new Zend_Date($a['DATECOMM_DOSSIER'] != null ? $a['DATECOMM_DOSSIER'] : $a['DATEVISITE_DOSSIER'], Zend_Date::DATES);
+          $date_b = @new Zend_Date($b['DATECOMM_DOSSIER'] != null ? $b['DATECOMM_DOSSIER'] : $b['DATEVISITE_DOSSIER'], Zend_Date::DATES);
 
           if ($date_a == $date_b || $a === null || $b === null) {
             return 0;
@@ -344,18 +356,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
           }
         });
 
+        $key = "avis";
         foreach($dossiers_merged as $dossier) {
           $dossier = (object) $dossier;
           $tmp = ( array_key_exists($key, $historique) ) ? $historique[$key][ count($historique[$key])-1 ] : null;
-          $value = null;
+          $value = $dossier->AVIS_DOSSIER_COMMISSION == 1 ? "Favorable" : "Défavorable";
           $author = null;
-
-          if($dossier->AVIS_DOSSIER_COMMISSION && ($dossier->AVIS_DOSSIER_COMMISSION == 1 || $dossier->AVIS_DOSSIER_COMMISSION == 2)) {
-            if( in_array($dossier->ID_DOSSIERNATURE, array(7, 16, 17, 19, 21, 23, 24, 47, 26, 28, 29, 48)) ) {
-              $value = $dossier->AVIS_DOSSIER_COMMISSION == 1 ? "Favorable" : "Défavorable";
-            }
-          }
-
+          
           if ( $value != null && (!isset( $historique[$key] ) || $tmp["valeur"] != $value )) {
 
             $date = new Zend_Date($dossier->DATECOMM_DOSSIER != null ? $dossier->DATECOMM_DOSSIER : $dossier->DATEVISITE_DOSSIER, Zend_Date::DATES);
@@ -893,14 +900,14 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 foreach($data['ID_FILS_ETABLISSEMENT'] as $id_etablissement_enfant) {
                     if($id_etablissement_enfant > 0) {
                         $genre_enfant = $DB_etablissement->getInformations($id_etablissement_enfant)->ID_GENRE;
-                        if($id_genre == 1 && ($genre_enfant != 2 && $genre_enfant != 4 && $genre_enfant != 5 && $genre_enfant != 6)) {
-                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne ne peut contenir que des établissements)', 500);
+                        if($id_genre == 1 && !in_array($genre_enfant, array(2,4,5,6,7,8,9))) {
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne ne peut contenir que des établissements, habitations, EIC, camping, manifestation, IOP)', 500);
                         }
-                        elseif($id_genre == 2 && $genre_enfant != 3) {
-                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ne ne peut contenir que des cellules)', 500);
+                        elseif(in_array($id_genre, array(2,5)) && $genre_enfant != 3) {
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un établissement ou IGH ne ne peut contenir que des cellules)', 500);
                         }
                         elseif($genre_enfant == 1){
-                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne peut pas être un établissement enfant)', 500);
+                            throw new Exception('L\'établissement enfant n\'est pas compatible (Un site ne peut être enfant)', 500);
                         }
                         elseif($genre_enfant == null) {
                             throw new Exception('L\'établissement enfant n\'est pas compatible', 500);
@@ -920,11 +927,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
             if(array_key_exists("ID_PERE", $data) && !empty($data['ID_PERE'])) {
                 $genre_pere = $DB_etablissement->getInformations($data['ID_PERE'])->ID_GENRE;
 
-                if($id_genre == 2 && $genre_pere != 1) {
+                if(in_array($id_genre, array(2,4,5,6,7,8,9)) && $genre_pere != 1) {
                     throw new Exception('Le père n\'est pas compatible (Un établissement a comme père un site)', 500);
                 }
-                elseif($id_genre == 3 && $genre_pere != 2) {
-                    throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement)', 500);
+                elseif($id_genre == 3 && !in_array($genre_pere, array(2, 5))) {
+                    throw new Exception('Le père n\'est pas compatible (Les cellules ont comme père un établissement ou IGH)', 500);
                 }
                 elseif($id_genre == 1) {
                     throw new Exception('Le type n\'est pas compatible (Un site ne peut pas avoir de père)', 500);
@@ -1035,14 +1042,6 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 break;
 
-            // Habitation
-            case 4:
-                // Préventionnistes du site ou des groupements de communes
-                if($numinsee !== null || ($id_etablissement_pere !== null  && $id_etablissement_pere != '')) {
-                    $results['preventionnistes'] = $model_prev->getPrev($numinsee === null ? '' : $numinsee, $id_etablissement_pere === null ? '' : $id_etablissement_pere);
-                }
-                break;
-
             // IGH
             case 5:
                 // Périodicité en fonction de la classe
@@ -1071,8 +1070,8 @@ class Service_Etablissement implements Service_Interface_Etablissement
                 }
                 break;
 
-            // EIC
-            case 6:
+            // Autres genres
+            default:
                 // Préventionnistes du site ou des groupements de communes
                 if($numinsee !== null || $id_etablissement_pere !== null) {
                     $results['preventionnistes'] = $model_prev->getPrev($numinsee === null ? '' : $numinsee, $id_etablissement_pere === null ? '' : $id_etablissement_pere);

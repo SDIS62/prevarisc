@@ -55,6 +55,7 @@
 	
 	$(".commune").autocomplete("/api/1.0/adresse/get_communes", {
             minChars: 3,
+            cacheLength: 0,
             parse: function(data) {
                 return $.map(data["response"], function(row) {return {data: row,value: row.LIBELLE_COMMUNE,result: row.LIBELLE_COMMUNE}});
             },

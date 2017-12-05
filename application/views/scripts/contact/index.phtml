@@ -178,6 +178,7 @@
 		
 		$("#nom_contact_existant").autocomplete("/contact/get?format=json", {
 			minChars: 3,
+                        cacheLength: 0,
 			max: 100,
 			parse: function(data) {
 				return $.map(data["resultats"], function(row) {
