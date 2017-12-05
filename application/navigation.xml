@@ -710,6 +710,14 @@
                     <action>index</action>
                     <privilege>view_doss</privilege>
                 </index>
+                 <delete>
+                    <controller>dossier</controller>
+                    <action>delete</action>
+                    <!--
+                    <resource>suppression</resource>
+                    <privilege>delete_dossier</privilege>
+                    -->
+                </delete>
                 <verrou>
                     <controller>dossier</controller>
                     <action>verrou</action>
@@ -976,6 +984,12 @@
                     <action>index</action>
                     <privilege>view_ets</privilege>
                 </index>
+                <delete>
+                    <controller>etablissement</controller>
+                    <action>delete</action> 
+                    <resource>suppression</resource>
+                    <privilege>delete_etablissement</privilege>
+                </delete>
                 <edit>
                     <label>Édition</label>
                     <controller>etablissement</controller>

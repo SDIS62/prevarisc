@@ -106,7 +106,8 @@
                 ->joinLeft("etablissementinformationspreventionniste", "etablissementinformationspreventionniste.ID_ETABLISSEMENTINFORMATIONS = etablissementinformations.ID_ETABLISSEMENTINFORMATIONS", null)
                 ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = e.ID_ETABLISSEMENT ) ")
                 ->where("etablissementinformationspreventionniste.ID_UTILISATEUR = " . $id_user)
-                ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL");
+                ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT ) OR etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS IS NULL")
+                ->where("e.DATESUPPRESSION_ETABLISSEMENT IS NULL");
 
             return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
         }
@@ -118,8 +119,10 @@
             $select = $DB_information->select()
                 ->setIntegrityCheck(false)
                 ->from("etablissementinformations")
-                ->where("ID_ETABLISSEMENT = '$id_etablissement'")
-                ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = '$id_etablissement' ) ");
+                ->joinLeft("etablissement", "etablissement.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT")
+                ->where("etablissementinformations.ID_ETABLISSEMENT = '$id_etablissement'")
+                ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = '$id_etablissement' ) ")
+                ->where("etablissement.DATESUPPRESSION_ETABLISSEMENT IS NULL");
 
             return $DB_information->fetchRow($select);
         }
@@ -131,6 +134,7 @@
             $select	->from(array("e" => "etablissement"), null)
                     ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", "LIBELLE_ETABLISSEMENTINFORMATIONS")
                     ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
+                    ->where("e.DATESUPPRESSION_ETABLISSEMENT IS NULL")
                     ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
                     ->where("e.ID_ETABLISSEMENT = ?", $id_etablissement);
 
@@ -144,6 +148,7 @@
             $select	->from(array("e" => "etablissement"), null)
                     ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", "PERIODICITE_ETABLISSEMENTINFORMATIONS")
                     ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
+                    ->where("e.DATESUPPRESSION_ETABLISSEMENT IS NULL")
                     ->order("etablissementinformations.LIBELLE_ETABLISSEMENTINFORMATIONS ASC")
                     ->where("e.ID_ETABLISSEMENT = ?", $id_etablissement);
 
@@ -162,6 +167,7 @@
                     ->join("etablissementinformations", "e.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT", "ID_GENRE")
                     ->join("genre", "etablissementinformations.ID_GENRE = genre.ID_GENRE", "LIBELLE_GENRE")
                     ->where("etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS = ( SELECT MAX(etablissementinformations.DATE_ETABLISSEMENTINFORMATIONS) FROM etablissementinformations WHERE etablissementinformations.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT )")
+                    ->where("e.DATESUPPRESSION_ETABLISSEMENT IS NULL")
                     ->where("e.ID_ETABLISSEMENT = ?", $id_etablissement);
 
             return ( $this->fetchRow( $select ) != null ) ? $this->fetchRow( $select )->toArray() : null;
@@ -174,8 +180,10 @@
                 ->from("etablissementlie", null)
                 ->joinLeft("etablissementinformations", "etablissementinformations.ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT")
                 ->joinLeft("categorie", "categorie.ID_CATEGORIE = etablissementinformations.ID_CATEGORIE")
+                ->joinLeft("etablissement", "etablissement.ID_ETABLISSEMENT = etablissementinformations.ID_ETABLISSEMENT")
                 ->where("etablissementlie.ID_FILS_ETABLISSEMENT = '$id_etablissement'")
-                ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT ) ");
+                ->where("DATE_ETABLISSEMENTINFORMATIONS = (select max(DATE_ETABLISSEMENTINFORMATIONS) from etablissementinformations where ID_ETABLISSEMENT = etablissementlie.ID_ETABLISSEMENT ) ")
+                ->where("etablissement.DATESUPPRESSION_ETABLISSEMENT IS NULL");
 
             return ( $this->fetchRow( $select ) != null ) ? $this->fetchRow( $select )->toArray() : null;
         }

@@ -2,6 +2,9 @@
 
     <div class='pull-right' >
         <a class='btn' href="<?php echo $this->url(array('action' => 'edit')) ?>">Modifier la fiche</a>
+        <?php if($this->is_allowed_delete_etablissement): ?>
+                <a id="suppressionEtablissement" class="btn-danger btn" >Supprimer l'établissement</a>
+            <?php endif ?>
     </div>
 
     <h3>Fiche d'informations générales</h3>
@@ -554,6 +557,23 @@
 
 </div>
 
+<!-- Boite de confirmation de la suppression (cachée par défaut) -->
+<div id="confirm-modal" class="modal hide fade" >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Confirmation de la suppression</h3>
+    </div>
+
+    <div class="modal-body">
+        <p> Etes-vous sûr de vouloir supprimer l'établissement ? </p>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <a href="<?php echo $this->url(array($this->idEtablissement, 'action' => 'delete')); ?>" class='btn btn-success'>Confirmer</a>
+    </div>
+</div>
+
 <script type="text/javascript">
 
     $(document).ready(function() {
@@ -625,5 +645,11 @@
             return false;
             
         });
+
+        // fenetre de confirmation de la suppression
+        $("#suppressionEtablissement").click(function(){
+            $('#confirm-modal').modal({show:true});
+        }); 
+
     });
 </script>
