@@ -57,16 +57,18 @@ class Service_Adresse
     
     /**
      * Retourne le maire de la commune concernée
-     * 
+     *
      * @param int $numinsee le numéro insee de la commune
      * @return array les informations de la fiche contact du maire
      */
-    public function getMaire($numinsee) {
+    public function getMaire($numinsee)
+    {
         $select = new Zend_Db_Select(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('db'));
 
-        $select->from("adressecommune")
-            ->join("utilisateurinformations", "utilisateurinformations.ID_UTILISATEURINFORMATIONS = adressecommune.ID_UTILISATEURINFORMATIONS")
-            ->where("adressecommune.NUMINSEE_COMMUNE = ?", $numinsee)
+        $select->from(array('ac' => "adressecommune"))
+            ->join(array('ui' => "utilisateurinformations"), "ui.ID_UTILISATEURINFORMATIONS = ac.ID_UTILISATEURINFORMATIONS")
+            ->join(array('f' => 'fonction'), 'ui.ID_FONCTION = f.ID_FONCTION')
+            ->where("ac.NUMINSEE_COMMUNE = ?", $numinsee)
             ->limit(1);
 
         return $select->query()->fetch();

@@ -12,14 +12,17 @@
             $model_groupes = new Model_DbTable_Groupe;
 
             // Récupération du groupe de l'user
-            if($auth->ID_UTILISATEUR != $id_user)
+            if ((is_array($auth) && $auth['ID_UTILISATEUR'] != $id_user)
+                || (is_object($auth) && $auth->ID_UTILISATEUR != $id_user)) {
                 $id_groupe = $this->find($id_user)->current()->ID_GROUPE;
-            else
-                $id_groupe = $auth->ID_GROUPE;
+            } else {
+                $id_groupe = is_array($auth) ? $auth['ID_GROUPE'] : $auth->ID_GROUPE;
+            }
 
             // On retourne les droits de l'user
             return $model_groupes->getDroits($id_groupe);
         }
+
 
         public function getUsersWithInformations($group = null)
         {

@@ -3,7 +3,7 @@
 class Model_DbTable_GroupePrivilege extends Zend_Db_Table_Abstract
 {
     protected $_name = "groupe-privileges";
-    
+
     protected $_referenceMap    = array(
         'Groupe' => array(
             'columns'           => array('ID_GROUPE'),

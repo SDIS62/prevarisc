@@ -820,6 +820,7 @@ class Service_Dossier
        return $dbDossier->getCommissionV2($idDossier);
     }
 
+
     public function delete($idDossier, $date = null, $uniqueEtab = false)
     {
         if (!$date) {
@@ -849,5 +850,11 @@ class Service_Dossier
         foreach ($dossiers as $dossier) {
             $this->delete($dossier['ID_DOSSIER'], $date, true);
         }
+    }
+    
+    public function getPreventionniste($idDossier) {
+        $DB_prev = new Model_DbTable_DossierPreventionniste;
+        
+        return $DB_prev->getPrevDossier($idDossier);
     }
 }

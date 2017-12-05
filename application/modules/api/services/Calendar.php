@@ -6,25 +6,30 @@ class Api_Service_Calendar
 {
 
     const LF = "\r\n";
-    
-    public function sync($userid, $commission = null) 
+
+    public function sync($userid, $commission = null)
     {
-
-        $dossierEvent = $this->createRequestForWebcalEvent($userid, 
-                                                           $commission);
-
+        $cache = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('cache');
+        $isAllowedToViewAll = unserialize($cache->load('acl'))->isAllowed(
+            Zend_Auth::getInstance()->getIdentity()['group']['LIBELLE_GROUPE'],
+            "commission",
+            "calendar_view_all"
+        );
+        $dossierEvent = $this->createRequestForWebcalEvent($userid,
+                                                           $commission,
+                                                           $isAllowedToViewAll);
         $calendrierNom = "Prévarisc";
         if ($commission) {
             $dbCommission = new Model_DbTable_Commission;
             $resultLibelle = $dbCommission->getLibelleCommissions($commission);
             if (count($resultLibelle) > 0) {
-                $calendrierNom .= " " . $resultLibelle[0]['LIBELLE_COMMISSION']; 
+                $calendrierNom .= " " . $resultLibelle[0]['LIBELLE_COMMISSION'];
             }
         }
 
         // Le refresh est par défaut à 5 minutes
-        $refreshTime = (getenv('PREVARISC_CALENDAR_REFRESH_TIME') 
-                        && getenv('PREVARISC_CALENDAR_REFRESH_TIME') !== '') ? 
+        $refreshTime = (getenv('PREVARISC_CALENDAR_REFRESH_TIME')
+                        && getenv('PREVARISC_CALENDAR_REFRESH_TIME') !== '') ?
                         getenv('PREVARISC_CALENDAR_REFRESH_TIME') : 'PT5M';
 
         $calendar = new VObject\Component\VCalendar(array(
@@ -40,7 +45,7 @@ class Api_Service_Calendar
         foreach ($dossierEvent as $commissionEvent) {
             $event = $this->createICSEvent($commissionEvent);
             if ($event) {
-                $calendar->add("VEVENT", $event);    
+                $calendar->add("VEVENT", $event);
             }
         }
 
@@ -51,20 +56,20 @@ class Api_Service_Calendar
     {
         $vtimezone = new VObject\Component\VTimeZone($calendar, "VTIMEZONE");
         $daylight = new VObject\Component($calendar, "DAYLIGHT", [
-                "DTSTART" => new DateTime("16010325T020000"),
-                "RRULE" => "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3",
-                "TZOFFSETFROM" => "+0100",
-                "TZOFFSETTO" => "+0200"
-            ]);
+            "DTSTART" => new DateTime("16010325T020000"),
+            "RRULE" => "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3",
+            "TZOFFSETFROM" => "+0100",
+            "TZOFFSETTO" => "+0200"
+        ]);
         $standard = new VObject\Component($calendar, "STANDARD", [
-                "DTSTART" => new DateTime("16011028T030000"),
-                "RRULE" => "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10",
-                "TZOFFSETFROM" => "+0200",
-                "TZOFFSETTO" => "+0100"
-            ]);
-        $vtimezone->TZID = date_default_timezone_get(); 
+            "DTSTART" => new DateTime("16011028T030000"),
+            "RRULE" => "FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10",
+            "TZOFFSETFROM" => "+0200",
+            "TZOFFSETTO" => "+0100"
+        ]);
+        $vtimezone->TZID = date_default_timezone_get();
         $vtimezone->add($standard);
-        $vtimezone->add($daylight); 
+        $vtimezone->add($daylight);
 
         return $vtimezone;
     }
@@ -73,14 +78,25 @@ class Api_Service_Calendar
      * [createRequestForWebcalEvent description]
      * @return string La requête générée
      */
-    private function createRequestForWebcalEvent($userid, $commission)
+    private function createRequestForWebcalEvent($userid, $commission, $isAllowedToViewAll)
     {
         $today = new \DateTime();
         $yearBefore = $today->modify("-1 year")->format("Y");
 
         $dbDateCommission = new Model_DbTable_DateCommission;
 
-        return $dbDateCommission->getEventInCommission($userid, $commission, $yearBefore);
+        if (!$isAllowedToViewAll) {
+            $userid = null;
+            $commission = null;
+        }
+
+        return $dbDateCommission->getEventInCommission(
+            $userid,
+            $commission,
+            $yearBefore,
+            null,
+            $isAllowedToViewAll
+        );
     }
 
 
@@ -89,17 +105,21 @@ class Api_Service_Calendar
         $event = null;
 
         if (is_array($commissionEvent)) {
-            $etsService = new Service_Etablissement;
-            $ets = $etsService->get($commissionEvent["ID_ETABLISSEMENT"]);
+            if (isset($commissionEvent["ID_ETABLISSEMENT"])) {
+                $etsService = new Service_Etablissement;
+                $ets = $etsService->get($commissionEvent["ID_ETABLISSEMENT"]);
 
-            $etsLibelleArray = array();
-            foreach($ets['parents'] as $parent) {
-                $etsLibelleArray[] = trim($parent['LIBELLE_ETABLISSEMENTINFORMATIONS']);
+                $etsLibelleArray = array();
+                foreach ($ets['parents'] as $parent) {
+                    $etsLibelleArray[] = trim($parent['LIBELLE_ETABLISSEMENTINFORMATIONS']);
+                }
+
+                $etsLibelleArray[] = trim($ets['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS']);
+                $etsLibelle = implode(" - ", $etsLibelleArray);
+            } else {
+                $etsLibelle = '';
             }
-            
-            $etsLibelleArray[] = trim($ets['informations']['LIBELLE_ETABLISSEMENTINFORMATIONS']);
-            $etsLibelle = implode(" - ", $etsLibelleArray);
-            $commune = count($ets["adresses"]) > 0 ? $ets["adresses"][0]["LIBELLE_COMMUNE"] : '';
+            $commune = $ets && count($ets["adresses"]) > 0 ? $ets["adresses"][0]["LIBELLE_COMMUNE"] : '';
             // Cas d'une commission en salle
             if ($commissionEvent["ID_COMMISSIONTYPEEVENEMENT"] === 1) {
                 if ($commissionEvent["TYPE_DOSSIER"] === 3) {
@@ -108,7 +128,7 @@ class Api_Service_Calendar
                     $libelleSum = $commissionEvent["OBJET_DOSSIER"];
                 }
                 $summary = sprintf("#%s %s (%s) : %s %s - %s",
-                                $ets['general']['NUMEROID_ETABLISSEMENT'],
+                                $ets ? $ets['general']['NUMEROID_ETABLISSEMENT'] : '',
                                 $etsLibelle,
                                 $commune,
                                 $commissionEvent["LIBELLE_DOSSIERTYPE"],
@@ -117,12 +137,12 @@ class Api_Service_Calendar
                 $geo = sprintf("Commission en salle de %s", $commissionEvent["LIBELLE_COMMISSION"]);
             // Cas d'une visite d'une commission ou d'un groupe de visite
             } else {
-                $summary = sprintf('#%s %s : %s', 
-                        $ets['general']['NUMEROID_ETABLISSEMENT'], 
+                $summary = sprintf('#%s %s : %s',
+                        $ets ? $ets['general']['NUMEROID_ETABLISSEMENT'] : '',
                         $etsLibelle,
                         $commissionEvent["LIBELLE_DATECOMMISSION"]
-                        );
-                $adresse = count($ets["adresses"]) > 0 ? $ets["adresses"][0] : null;
+                );
+                $adresse = $ets && count($ets["adresses"]) > 0 ? $ets["adresses"][0] : null;
                 if ($adresse) {
                     $geo = sprintf("%s %s %s, %s %s",
                         $adresse["NUMERO_ADRESSE"],
@@ -135,16 +155,16 @@ class Api_Service_Calendar
                     $geo = '';
                 }
             }
-            $dateStartHour = $commissionEvent["HEURE_DEB_AFFECT"] ? 
+            $dateStartHour = $commissionEvent["HEURE_DEB_AFFECT"] ?
                                 "HEURE_DEB_AFFECT" : "HEUREDEB_COMMISSION";
-            $dateEndHour = $commissionEvent["HEURE_FIN_AFFECT"] ? 
+            $dateEndHour = $commissionEvent["HEURE_FIN_AFFECT"] ?
                                 "HEURE_FIN_AFFECT" : "HEUREFIN_COMMISSION";
-            $dtStart = new \DateTime(sprintf("%s %s", 
+            $dtStart = new \DateTime(sprintf("%s %s",
                         $commissionEvent["DATE_COMMISSION"],
                         $commissionEvent[$dateStartHour]),
                         new DateTimeZone(date_default_timezone_get()));
 
-            $dtEnd = new \DateTime(sprintf("%s %s", 
+            $dtEnd = new \DateTime(sprintf("%s %s",
                         $commissionEvent["DATE_COMMISSION"],
                         $commissionEvent[$dateEndHour]),
                         new DateTimeZone(date_default_timezone_get()));
@@ -156,57 +176,64 @@ class Api_Service_Calendar
                 "DTSTART"       => $dtStart,
                 "DTEND"         => $dtEnd
             );
-            
         }
 
         return $event;
     }
 
-    private function getAvisEtablissement($event, $ets)
+    private function getAvisEtablissement($event, $ets = null)
     {
-        $servEtab = new Service_Etablissement;
-        $avisDoss = $servEtab->getAvisEtablissement(
-            $ets['general']['ID_ETABLISSEMENT'], 
-            $ets['general']['ID_DOSSIER_DONNANT_AVIS']
-        );
-        if ($ets['presence_avis_differe'] && $avisDoss === "avisDiff") {
-            $avis = "Dossier avec avis differé";
-        } elseif ($ets['avis'] === 1) {
-            $avis = "Favorable";
-            if ($ets['informations']["ID_GENRE"] === 3) {
-                $avis .= " à l'exploitation";
-            }
-        } elseif ($ets['avis'] === 2) {
-            $avis = "Défavorable";
-            if ($ets['informations']["ID_GENRE"] === 3) {
-                $avis .= " à l'exploitation";
+        if ($ets) {
+            $servEtab = new Service_Etablissement;
+            $avisDoss = $servEtab->getAvisEtablissement(
+                $ets['general']['ID_ETABLISSEMENT'],
+                $ets['general']['ID_DOSSIER_DONNANT_AVIS']
+            );
+            if ($ets['presence_avis_differe'] && $avisDoss === "avisDiff") {
+                $avis = "Dossier avec avis differé";
+            } elseif ($ets['avis'] === 1) {
+                $avis = "Favorable";
+                if ($ets['informations']["ID_GENRE"] === 3) {
+                    $avis .= " à l'exploitation";
+                }
+            } elseif ($ets['avis'] === 2) {
+                $avis = "Défavorable";
+                if ($ets['informations']["ID_GENRE"] === 3) {
+                    $avis .= " à l'exploitation";
+                }
+            } else {
+                $avis = "Avis d'exploitation indisponible";
             }
         } else {
             $avis = "Avis d'exploitation indisponible";
         }
-        
+
         return $avis;
     }
 
 
-    private function getEventCorps($commissionEvent, $ets)
+    private function getEventCorps($commissionEvent, $ets = null)
     {
         $corpus = "Contacts du dossier :".self::LF;
 
-        $dossierService = new Service_Dossier;
-        $servEtab = new Service_Etablissement;
-        $contactsDossier = $dossierService->getAllContacts(
-            $commissionEvent["ID_DOSSIER"]);
-        $contactsEts = $servEtab->getAllContacts($ets['general']['ID_ETABLISSEMENT']);
-        $contacts = array_merge($contactsDossier, $contactsEts);
-        if (count($contacts) > 0) {
-            foreach ($contacts as $contact) {
-                $corpus .= $this->formatUtilisateurInformations($contact);
-            }    
+        if ($ets) {
+            $servEtab = new Service_Etablissement;
+            $dossierService = new Service_Dossier;
+            $contactsDossier = $dossierService->getAllContacts(
+                $commissionEvent["ID_DOSSIER"]);
+            $contactsEts = $servEtab->getAllContacts($ets['general']['ID_ETABLISSEMENT']);
+            $contacts = array_merge($contactsDossier, $contactsEts);
+            if (count($contacts) > 0) {
+                foreach ($contacts as $contact) {
+                    $corpus .= $this->formatUtilisateurInformations($contact);
+                }
+            } else {
+                $corpus .= "Aucun contact".self::LF;
+            }
         } else {
             $corpus .= "Aucun contact".self::LF;
         }
-        
+
         $corpus .= self::LF.self::LF;
 
         $adresseService = new Service_Adresse;
@@ -220,7 +247,7 @@ class Api_Service_Calendar
         } else {
              $corpus .= "Aucune coordonées pour la mairie.".self::LF.self::LF;
         }
-        
+
         if ($commissionEvent["ID_DOSSIERTYPE"] === 1) {
             if ($commissionEvent["TYPESERVINSTRUC_DOSSIER"] === "servInstCommune") {
                 $serviceInstruct = $maire;
@@ -241,23 +268,93 @@ class Api_Service_Calendar
                 $corpus .= "Aucune coordonées pour le service instructeur.".self::LF.self::LF;
             }
         }
-        
-        $lastVisitestr = $ets["last_visite"] ? : 'Aucune date.';
+
+        $lastVisitestr = $ets && $ets["last_visite"] ? $ets["last_visite"] : 'Aucune date.';
         $corpus .= sprintf("Date de la dernière visite périodique : %s%s",
-                           $lastVisitestr,
-                           self::LF.self::LF
-                );
-
-        $corpus .= sprintf("Avis d'exploitation de l'établissement : %s",
-                            $this->getAvisEtablissement($commissionEvent, $ets));
-
+           $lastVisitestr,
+           self::LF.self::LF
+        );
+        
+        $corpus .= sprintf("Avis d'exploitation de l'établissement : %s%s",               
+                            $this->getAvisEtablissement($commissionEvent, $ets),
+                            self::LF.self::LF.self::LF);
+        
+        /* Ajout Grade, prenom, nom préventionniste dans calendrier dossier detail */
+        $dossierService = new Service_Dossier;
+        $preventionnistes = $dossierService->getPreventionniste($commissionEvent["ID_DOSSIER"]);            
+        
+        $preventionniste = $this->formatPrevisionniste($preventionnistes);
+          
+        $corpus .= "Préventionniste(s) du dossier : ".self::LF;        
+        $corpus .= sprintf("%s%s",
+                            $preventionniste,
+                            self::LF.self::LF
+                            );
         return $corpus;
     }
+    
+    private function formatPrevisionniste($preventionnistes)
+    {
+        $result = "";
+        // Si plusieurs préventionnistes liés au dossier
+        if(count($preventionnistes) > 1)            
+        {
+            for($i = 0 ; $i < count($preventionnistes) ; $i++)
+            {                
+                if($this->isPreventionnisteExist($preventionnistes, $i))
+                {
+                    $result .= sprintf("- %s%s%s%s",
+                                    $preventionnistes[$i]['GRADE_UTILISATEURINFORMATIONS'],
+                                    $preventionnistes[$i]['PRENOM_UTILISATEURINFORMATIONS'],
+                                    $preventionnistes[$i]['NOM_UTILISATEURINFORMATIONS'],
+                                    self::LF.self::LF
+                                    );
+                } else 
+                {
+                    $result .= sprintf("- %s%s",
+                            " Informations du prévisionniste incomplètes ou absentes",
+                            self::LF.self::LF
+                            );
+                }
+            }
+        }
+        else
+        {            
+            if($this->isPreventionnisteExist($preventionnistes, 0))
+            {
+                $result = sprintf("- %s%s%s%s",
+                                $preventionnistes[0]['GRADE_UTILISATEURINFORMATIONS'] . " ", 
+                                $preventionnistes[0]['PRENOM_UTILISATEURINFORMATIONS'] . " ",
+                                $preventionnistes[0]['NOM_UTILISATEURINFORMATIONS'],
+                                self::LF.self::LF.self::LF
+                                );       
+            } else
+            {
+                $result .= sprintf("- %s%s",
+                                "- Informations du prévisionniste incomplètes ou absentes",
+                                self::LF.self::LF
+                                );
+            }
+        }
+        return $result;
+    }
+    
+    // Vérifie que toutes les informations liés au préventionnistes, grade / prenom / nom, est non null
+    private function isPreventionnisteExist($preventionnistes, $index)
+    {
+        if(empty($preventionnistes[$index]['GRADE_UTILISATEURINFORMATIONS']) ||
+           empty($preventionnistes[$index]['PRENOM_UTILISATEURINFORMATIONS']) ||
+           empty($preventionnistes[$index]['NOM_UTILISATEURINFORMATIONS']))
+        {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-    private function formatUtilisateurInformations($user) 
+    private function formatUtilisateurInformations($user)
     {
         $str = "";
-        
         if ($user && is_array($user)) {
             if ($user["NOM_UTILISATEURINFORMATIONS"]) {
                 $str .= sprintf("- %s : %s %s",
@@ -277,15 +374,15 @@ class Api_Service_Calendar
                             );
                 }
                 if ($user["TELFIXE_UTILISATEURINFORMATIONS"]) {
-                    $str .= sprintf(", %s", 
+                    $str .= sprintf(", %s",
                         $user["TELFIXE_UTILISATEURINFORMATIONS"]);
                 }
                 if ($user["TELFAX_UTILISATEURINFORMATIONS"]) {
-                    $str .= sprintf(", %s", 
+                    $str .= sprintf(", %s",
                         $user["TELFAX_UTILISATEURINFORMATIONS"]);
                 }
                 if ($user["MAIL_UTILISATEURINFORMATIONS"]) {
-                    $str .= sprintf(", %s", 
+                    $str .= sprintf(", %s",
                         $user["MAIL_UTILISATEURINFORMATIONS"]);
                 }
                 $str .= "\n";
@@ -293,6 +390,5 @@ class Api_Service_Calendar
         }
 
         return $str;
-        
     }
 }
