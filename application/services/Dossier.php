@@ -836,6 +836,11 @@ class Service_Dossier
         }
         if ($deleteDossier) {
             $dossier->DATESUPPRESSION_DOSSIER = $date->format('Y-m-d');
+
+            //suppression de la date de passage en commission
+            $dbAffectDossier = new Model_DbTable_DossierAffectation();
+            $affectDossier = $dbAffectDossier->deleteDateDossierAffect($idDossier);
+
             $dossier->save();
         }
     }
