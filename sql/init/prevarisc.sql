@@ -2415,7 +2415,8 @@ INSERT INTO `privileges` VALUES
 (61,'alerte_avis','Changement d''avis',56),
 (62,'alerte_classement','Changement de classement',56),
 (63,'search_ets','Etablissements',57),
-(64,'search_dossiers','Dossiers',57);
+(64,'search_dossiers','Dossiers',57),
+(80, 'calendar_view_all', 'Voir tous les dossiers et commissions', 2);
 
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(100,"view_ets_avis_defavorable", "Voir les établissements sous avis défavorable",100);
 INSERT INTO `privileges`(`id_privilege`,`name`, `text`,`id_resource`) VALUES(101,"view_doss_sans_avis", "Voir dossiers de commissions échus sans avis",100);
