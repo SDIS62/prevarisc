@@ -35,6 +35,12 @@ $(document).ready(function(){
 			$("#OBJET_DOSSIER").css("border-color","black");
 		}
 	});	
+        
+        $("#OBSERVATION_DOSSIER").blur(function(){
+		if($("#OBSERVATION_DOSSIER").val() != ''){
+			$("#OBSERVATION_DOSSIER").css("border-color","black");
+		}
+	});	
 	
 	//Permet de vider un input d'une date pour que celle-ci ne s'affiche plus
 	$(".suppDate").live('click',function(){

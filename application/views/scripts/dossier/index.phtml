@@ -1052,6 +1052,14 @@
 				return false;
 			}
 		}
+                
+                if($("#OBSERVATION_DOSSIER").val() == ''){
+                        $("#OBSERVATION_DOSSIER").focus();
+                        $("#OBSERVATION_DOSSIER").css("border-color","red");
+                        return false;
+                }                 
+                
+   
 
 		if($("#DATEINSERT_INPUT").val() == ''){
 			$("#DATEINSERT_INPUT").next(".today").click();
