@@ -781,9 +781,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     break;
 
                 // Camping
-                case 7:
-                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
-                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                case 7:                    
+                    $informations->EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS'];                    
                     break;
 
                 // Manifestation temporaire
