@@ -262,11 +262,17 @@
                 <dd class='effectif_emplacement_nu'>
                     <input type='text' name='EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS"] ?>' />
                 </dd>      
+                               
+                <!-- Emplacements autres -->
+                <dt class='effectif_autre_camping'>Autres emplacements</dt>
+                <dd class='effectif_autre_camping'>
+                    <input type='text' name='EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS"] ?>' />
+                </dd>      
 
                 <!-- Total Camping emplacements / Règle => valeur pouvant être modifié par l'utilisateur -->
                 <dt class='effectif_total_camping'>Total</dt>
                 <dd class='effectif_total_camping'>
-                    <input type='text' name='EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS"] ?>' />
+                    <input type='text' name='EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS' value='' disabled />
                 </dd>                
 
             </dl>
@@ -704,7 +710,7 @@
 
                 // Camping
                 case '7':
-                    $('.champ_effectif_camping, .effectif_habitation, .effectif_caravane, .effectif_emplacement_nu, .effectif_total_camping, .champ_adresse, .champ_plans').show();
+                    $('.champ_effectif_camping, .effectif_habitation, .effectif_caravane, .effectif_emplacement_nu, .effectif_autre_camping, .effectif_total_camping, .champ_adresse, .champ_plans').show();
                     $('.etablissements_enfants').hide();
                     break;
 
@@ -1230,10 +1236,10 @@
             return false;
         });
         
-        $('input[name=EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS], input[name=EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS], input[name=EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS]').on('keydown keyup', function() {
+        $('input[name=EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS], input[name=EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS], input[name=EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS], input[name=EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS]').on('keydown keyup', function() {
             setTotalEmplacementCamping();
-        });
-        
+        });        
+        $('input[name=EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS').val(setTotalEmplacementCamping());
         
     });
             
@@ -1242,13 +1248,17 @@
         var nbHabitation = parseInt($('input[name=EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS]').val());
         var nbCaravane = parseInt($('input[name=EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS]').val());
         var nbEmplacementNu = parseInt($('input[name=EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS]').val());
-        
+        var nbAutre = parseInt($('input[name=EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS]').val());
+
         var nbHabitation = (isNaN(nbHabitation)) ? 0 : nbHabitation;
         var nbCaravane = (isNaN(nbCaravane)) ? 0 : nbCaravane;
         var nbEmplacementNu = (isNaN(nbEmplacementNu)) ? 0 : nbEmplacementNu;
+        var nbAutre = (isNaN(nbAutre)) ? 0 : nbAutre;
         
-        var totalEmplacement = nbHabitation + nbCaravane + nbEmplacementNu;
+        var totalEmplacement = nbHabitation + nbCaravane + nbEmplacementNu + nbAutre;
                     
-        $('input[name=EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS]').val(totalEmplacement);                    
+        $('input[name=EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS]').val(totalEmplacement);      
+        
+        return totalEmplacement;
     }
 </script>

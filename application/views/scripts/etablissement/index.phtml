@@ -151,11 +151,17 @@
                         <p><?php echo $this->etablissement['informations']['EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS'] ?></p>
                     </dd>
                     
+                    <dt>Autres emplacements</dt>
+                    <dd>
+                        <p><?php echo $this->etablissement['informations']['EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS'] ?></p>
+                    </dd>
+                    
                     <dt>&nbsp;</dt><dd><hr></dd>
                     
                     <dt>Total</dt>
                     <dd>
-                        <p><?php echo $this->etablissement['informations']['EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS'] ?></p>
+                        <p><?php echo (int) $this->etablissement['informations']['EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS'] + (int) $this->etablissement['informations']['EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS']
+                            + (int) $this->etablissement['informations']['EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS'] + (int) $this->etablissement['informations']['EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS'] ?></p>
                     </dd>
                 </dl>
                 
