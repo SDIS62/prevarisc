@@ -132,6 +132,41 @@
             </table>
             <?php endif ?>
             <?php endif ?>
+            
+            <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(7))) : ?>
+                <h4 class='h4_subtitle'>Nombre d'emplacements</h4>
+                <dl class='dl-horizontal champ_effectif_camping index_camping'>
+                    <dt>Mobil-homes ou habitations</dt>
+                    <dd>
+                        <p><?php echo $this->etablissement['informations']['EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS'] ?></p>
+                    </dd>
+                    
+                    <dt>Autocaravanes</dt>
+                    <dd>
+                        <p><?php echo $this->etablissement['informations']['EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS'] ?></p>
+                    </dd>
+                    
+                    <dt>Emplacements nus</dt>
+                    <dd>
+                        <p><?php echo $this->etablissement['informations']['EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS'] ?></p>
+                    </dd>
+                    
+                    <dt>Autres emplacements</dt>
+                    <dd>
+                        <p><?php echo $this->etablissement['informations']['EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS'] ?></p>
+                    </dd>
+                    
+                    <dt>&nbsp;</dt><dd><hr></dd>
+                    
+                    <dt>Total</dt>
+                    <dd>
+                        <p><?php echo (int) $this->etablissement['informations']['EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS'] + (int) $this->etablissement['informations']['EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS']
+                            + (int) $this->etablissement['informations']['EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS'] + (int) $this->etablissement['informations']['EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS'] ?></p>
+                    </dd>
+                </dl>
+                
+            <?php 
+            endif; ?>
 
             <!-- Les effectifs -->
             <?php if(in_array($this->etablissement['informations']['ID_GENRE'], array(2, 3, 5, 6))) : ?>

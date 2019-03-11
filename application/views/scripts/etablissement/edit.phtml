@@ -242,6 +242,41 @@
                 </dd>
             </dl>
 
+            <!-- Les emplacements camping -->
+            <h4 class='champ_effectif_camping champs h4_subtitle'>Nombre d'emplacements</h4>
+            <dl class='dl-horizontal champ_effectif_camping champs'>
+                <!-- mobil-home ou habitation légère de loisir -->
+                <dt class='effectif_habitation'>Mobil-homes ou habitations</dt>
+                <dd class='effectif_habitation'>
+                    <input type='text' name='EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS"] ?>' />
+                </dd>
+                
+                <!-- Aire de stationnement pour autocaravanes -->
+                <dt class='effectif_caravane'>Autocaravanes</dt>
+                <dd class='effectif_caravane'>
+                    <input type='text' name='EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS"] ?>' />
+                </dd> 
+                
+                <!-- Emplacements nus -->
+                <dt class='effectif_emplacement_nu'>Emplacements nus</dt>
+                <dd class='effectif_emplacement_nu'>
+                    <input type='text' name='EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS"] ?>' />
+                </dd>      
+                               
+                <!-- Emplacements autres -->
+                <dt class='effectif_autre_camping'>Autres emplacements</dt>
+                <dd class='effectif_autre_camping'>
+                    <input type='text' name='EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS' value='<?php echo $this->etablissement['informations']["EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS"] ?>' />
+                </dd>      
+
+                <!-- Total Camping emplacements / Règle => valeur pouvant être modifié par l'utilisateur -->
+                <dt class='effectif_total_camping'>Total</dt>
+                <dd class='effectif_total_camping'>
+                    <input type='text' name='EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS' value='' disabled />
+                </dd>                
+
+            </dl>
+            
             <!-- Plan -->
             <h4 class="champ_plans champs h4_subtitle">Plans d'intervention <a href='#' style='font-size: 0.85em; float: right; font-weight: normal;' onclick="time = Date.now(); $('#prototype_plan').clone().appendTo( $(this).parent().next() ).removeClass('hide prototypes').attr('id', '').find('input, select').each(function() {$(this).attr('name', $(this).attr('name').replace(/-1/gi, time)); }); return false;">Ajouter un plan</a></h4>
             <table class='table table-condensed champ_plans champs'>
@@ -682,7 +717,7 @@
 
                 // Camping
                 case '7':
-                    $('.champ_effectifs, .effectif_public, .champ_adresse, .champ_plans').show();
+                    $('.champ_effectif_camping, .effectif_habitation, .effectif_caravane, .effectif_emplacement_nu, .effectif_autre_camping, .effectif_total_camping, .champ_adresse, .champ_plans').show();
                     $('.etablissements_enfants').hide();
                     break;
 
@@ -1231,5 +1266,30 @@
 
             return false;
         });
+        
+        $('input[name=EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS], input[name=EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS], input[name=EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS], input[name=EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS]').on('keydown keyup', function() {
+            setTotalEmplacementCamping();
+        });        
+        $('input[name=EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS').val(setTotalEmplacementCamping());
+        
     });
+            
+    function setTotalEmplacementCamping() {
+    
+        var nbHabitation = parseInt($('input[name=EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS]').val());
+        var nbCaravane = parseInt($('input[name=EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS]').val());
+        var nbEmplacementNu = parseInt($('input[name=EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS]').val());
+        var nbAutre = parseInt($('input[name=EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS]').val());
+
+        var nbHabitation = (isNaN(nbHabitation)) ? 0 : nbHabitation;
+        var nbCaravane = (isNaN(nbCaravane)) ? 0 : nbCaravane;
+        var nbEmplacementNu = (isNaN(nbEmplacementNu)) ? 0 : nbEmplacementNu;
+        var nbAutre = (isNaN(nbAutre)) ? 0 : nbAutre;
+        
+        var totalEmplacement = nbHabitation + nbCaravane + nbEmplacementNu + nbAutre;
+                    
+        $('input[name=EFFECTIFTOTALCAMPING_ETABLISSEMENTINFORMATIONS]').val(totalEmplacement);      
+        
+        return totalEmplacement;
+    }
 </script>

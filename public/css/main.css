@@ -1231,3 +1231,12 @@ a.alerte-link:hover {
 #listePrescriptionTypeSearch .noresult {
     border: 0 none;
 }
+
+dl.champ_effectif_camping dt {
+    width: 225px;
+    padding-right: 20px;
+}
+
+dl.champ_effectif_camping dd input {
+    width: 139px;
+}
