@@ -532,6 +532,7 @@
             <script src="/js/sdk-ol/GpSDK3D.js"></script>
             <link rel="stylesheet" href="/js/sdk-ol/GpSDK3D.css" />
             <!-- FIN SDK -->
+            <script type="text/javascript" src="/js/main.js"></script>
             <!-- Déplacement du bouton FullScreen (sinon supperposé avec le gestionnaire de couches) -->
             <style>
             .ol-full-screen {right:9px; top:49px}
@@ -539,7 +540,7 @@
         <?php endif ?>
         
         <?php if($this->geoconcept_url != null) : ?>
-            <div id='geoconcept-container'  style="height: 400px; width: 100%"></div>
+            <div id='geoconcept-container' style="height: 400px; width: 100%"></div>
             <script type="text/javascript" src="/js/geoconcept/OpenLayers.js"></script>
             <script type="text/javascript" src="/js/geoconcept/proj4js.js"></script>
             <script type="text/javascript" src="/js/geoconcept/htc-lite.js"></script>
@@ -1057,16 +1058,11 @@
                     // Outils additionnels à proposer sur la carte
                     controlsOptions : {
                         "layerSwitcher" : {},
-                        "search" : {
-                            //maximised : true
-                        },
-                        //"overview" : {},
+                        "search" : {},
                         "orientation" : {},
                         "graphicscale" : {},
                         "mouseposition" : {},
-                        //"isocurve" : {},
                         "graticule" : {},
-                        //"layerimport" : {},
                         "getfeatureinfo" : {
                             layers : [
                                 {
@@ -1083,28 +1079,33 @@
                             },
                         },
                     },
-                    // Repères visuels
-                    markersOptions : [{
-                        content : numero+', '+voie+'</br>'+codepostal+' '+commune 
-                    }],
                     // Appel de la fonction après le chargement de la carte
                     mapEventsOptions : {
                         "mapLoaded" : afterInitMap,
-                        "centerChanged" : afterCenterChanged // ou located, à voir
+                        "located" : afterPositionLocated
                     }
-                });
+                });                
                 // Ajout du bouton FullScreen sur la carte
                 function afterInitMap () {
                     var fsControl = new ol.control.FullScreen({});
                     viewer.getLibMap().addControl(fsControl);
-                    $("span.result").text("Géolocalisée IGN");                    
+                    nbCouches = viewer.getLibMap().getLayers().getLength();
                 };
-                function afterCenterChanged () {
+                function afterPositionLocated () {
+                    $("span.result").text("Géolocalisée IGN");
                     // Conversion des coordonnées de la projection EPSG:3857 vers la projection EPSG:4326 pour le stockage en base
                     var lonlat = new ol.proj.transform([viewer.getCenter().x, viewer.getCenter().y],'EPSG:3857', 'EPSG:4326');
                     $("input[name='lon']").val(lonlat[0]);
                     $("input[name='lat']").val(lonlat[1]);
+                    putMarkerAt(viewer.getLibMap(), lonlat, nbCouches);                                  
                 };
+                viewer.getLibMap().on('singleclick', function(evt) {          
+                    // Changement des coordonnées et du marker
+                    var lonlat = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                    $("input[name='lon']").val(lonlat[0]);
+                    $("input[name='lat']").val(lonlat[1]);
+                    putMarkerAt(viewer.getLibMap(), lonlat, nbCouches);
+                });     
 
                 return false;
             });

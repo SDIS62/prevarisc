@@ -153,182 +153,253 @@ function loadBloc($bloc) {
     });
 };
 
-function initViewer(divId, ignKey, points, wmsLayers, onView) {
-    if (points.length === 0) {
-        return ;
-    }
+// function initViewer(divId, ignKey, points, wmsLayers, onView) {
+//     if (points.length === 0) {
+//         return ;
+//     }
     
-    var viewer = Geoportal.load(divId, ignKey, {
-            lat: points[0].lat,
-            lon: points[0].lon
-        }, 17, OpenLayers.Util.extend({
-            controls: [new Geoportal.Control.GraphicScale(), new Geoportal.Control.ToolBox()],
-            language:'fr',
-            displayProjection: 'EPSG:4326',
-            proxy: '/proxy?url=',
-            onView: function() {
-                var map = viewer.getViewer().getMap();
+//     var viewer = Geoportal.load(divId, ignKey, {
+//             lat: points[0].lat,
+//             lon: points[0].lon
+//         }, 17, OpenLayers.Util.extend({
+//             controls: [new Geoportal.Control.GraphicScale(), new Geoportal.Control.ToolBox()],
+//             language:'fr',
+//             displayProjection: 'EPSG:4326',
+//             proxy: '/proxy?url=',
+//             onView: function() {
+//                 var map = viewer.getViewer().getMap();
                 
-                // Récupération de la toolbox pour l'identifiant
-                var toolBox= viewer.getViewer().getMap().getControlsByClass('Geoportal.Control.ToolBox')[0];
+//                 // Récupération de la toolbox pour l'identifiant
+//                 var toolBox= viewer.getViewer().getMap().getControlsByClass('Geoportal.Control.ToolBox')[0];
 
-                // Création de la barre de navigation
-                map.addControl(new Geoportal.Control.NavToolbar({
-                    // Div où la barre doit être ajoutée
-                    div: OpenLayers.Util.getElement(toolBox.id+'_navbar'),
-                    // Div où le resultat des mesures est affiché
-                    targetElement: OpenLayers.Util.getElement(toolBox.id+'_navbar')
-                })); 
+//                 // Création de la barre de navigation
+//                 map.addControl(new Geoportal.Control.NavToolbar({
+//                     // Div où la barre doit être ajoutée
+//                     div: OpenLayers.Util.getElement(toolBox.id+'_navbar'),
+//                     // Div où le resultat des mesures est affiché
+//                     targetElement: OpenLayers.Util.getElement(toolBox.id+'_navbar')
+//                 })); 
 
-                // Création de la barre de mesure
-                map.addControl(new Geoportal.Control.MeasureToolbar({
-                    // Div où la barre doit être ajoutée
-                    div: OpenLayers.Util.getElement(toolBox.id+'_measure'),
-                    // Div où le resultat des mesures est affiché
-                    targetElement: OpenLayers.Util.getElement(toolBox.id+'_meares')
-                }));
+//                 // Création de la barre de mesure
+//                 map.addControl(new Geoportal.Control.MeasureToolbar({
+//                     // Div où la barre doit être ajoutée
+//                     div: OpenLayers.Util.getElement(toolBox.id+'_measure'),
+//                     // Div où le resultat des mesures est affiché
+//                     targetElement: OpenLayers.Util.getElement(toolBox.id+'_meares')
+//                 }));
 
-                // Création de la barre de zoom
-                map.addControl(new Geoportal.Control.ZoomBar({
-                    // Div où la barre doit être ajoutée
-                    div: OpenLayers.Util.getElement(toolBox.id+'_zoombar'),
-                    targetElement: OpenLayers.Util.getElement(toolBox.id+'_zoombar')
-                }));
+//                 // Création de la barre de zoom
+//                 map.addControl(new Geoportal.Control.ZoomBar({
+//                     // Div où la barre doit être ajoutée
+//                     div: OpenLayers.Util.getElement(toolBox.id+'_zoombar'),
+//                     targetElement: OpenLayers.Util.getElement(toolBox.id+'_zoombar')
+//                 }));
     
-                // Création de la barre de zoom
-                map.addControl(new Geoportal.Control.LayerSwitcher({
-                    // Div où la barre doit être ajoutée
-                    div: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher'),
-                    targetElement: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher')
-                }));
+//                 // Création de la barre de zoom
+//                 map.addControl(new Geoportal.Control.LayerSwitcher({
+//                     // Div où la barre doit être ajoutée
+//                     div: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher'),
+//                     targetElement: OpenLayers.Util.getElement(toolBox.id+'_layerswitcher')
+//                 }));
                 
-                // Ajout des couches WMS
-                if (wmsLayers && wmsLayers.length > 0) {
-                    $('#reponse-modal').dialog({
-                        resizable: true,
-                        title: 'WMS Information',
-                        height: '500',
-                        width: '800',
-                        autoOpen: false,
-                        close: function() {
-                           $(this).empty(); 
-                        },
-                        modal: false}
-                    );
+//                 // Ajout des couches WMS
+//                 if (wmsLayers && wmsLayers.length > 0) {
+//                     $('#reponse-modal').dialog({
+//                         resizable: true,
+//                         title: 'WMS Information',
+//                         height: '500',
+//                         width: '800',
+//                         autoOpen: false,
+//                         close: function() {
+//                            $(this).empty(); 
+//                         },
+//                         modal: false}
+//                     );
                 
-                    for (var i = 0 ; i < wmsLayers.length ; i++) {
-                        console.log(wmsLayers[i].URL_COUCHECARTO);
-                        // ajout de la couche sur la carte
-                        var layer = new OpenLayers.Layer.WMS(
-                            wmsLayers[i].NOM_COUCHECARTO,
-                            wmsLayers[i].URL_COUCHECARTO.replace('\{key\}', ignKey), {
-                                layers: wmsLayers[i].LAYERS_COUCHECARTO,
-                                format: wmsLayers[i].FORMAT_COUCHECARTO,
-                                transparent: wmsLayers[i].TRANSPARENT_COUCHECARTO === 1 ? 'true' : 'false'
-                            }, {
-                                projection: 'EPSG:4326',
-                                singleTile: false,
-                                opacity: 1,
-                                visibility: true
-                            }
-                        );
+//                     for (var i = 0 ; i < wmsLayers.length ; i++) {
+//                         console.log(wmsLayers[i].URL_COUCHECARTO);
+//                         // ajout de la couche sur la carte
+//                         var layer = new OpenLayers.Layer.WMS(
+//                             wmsLayers[i].NOM_COUCHECARTO,
+//                             wmsLayers[i].URL_COUCHECARTO.replace('\{key\}', ignKey), {
+//                                 layers: wmsLayers[i].LAYERS_COUCHECARTO,
+//                                 format: wmsLayers[i].FORMAT_COUCHECARTO,
+//                                 transparent: wmsLayers[i].TRANSPARENT_COUCHECARTO === 1 ? 'true' : 'false'
+//                             }, {
+//                                 projection: 'EPSG:4326',
+//                                 singleTile: false,
+//                                 opacity: 1,
+//                                 visibility: true
+//                             }
+//                         );
 
-                        /*var infoFeature = new OpenLayers.Control.WMSGetFeatureInfo({
-                            url: wmsLayers[i].URL_COUCHECARTO, 
-                            title: 'Identify features by clicking',
-                            layers: [layer],
-                            queryVisible: true
-                        });
+//                         /*var infoFeature = new OpenLayers.Control.WMSGetFeatureInfo({
+//                             url: wmsLayers[i].URL_COUCHECARTO, 
+//                             title: 'Identify features by clicking',
+//                             layers: [layer],
+//                             queryVisible: true
+//                         });
 
-                        infoFeature.events.register("getfeatureinfo", map, function(event) {
-                            var $response = $(event.text);
-                            var time = (new Date()).getTime();
-                            $('#wms').append("<iframe id='wms-'>"+event.text+"</iframe>");
-                        });*/
-                        map.addLayer(layer);
-                        //map.addControl(infoFeature);
-                        //infoFeature.activate();
-                    }
-                }
+//                         infoFeature.events.register("getfeatureinfo", map, function(event) {
+//                             var $response = $(event.text);
+//                             var time = (new Date()).getTime();
+//                             $('#wms').append("<iframe id='wms-'>"+event.text+"</iframe>");
+//                         });*/
+//                         map.addLayer(layer);
+//                         //map.addControl(infoFeature);
+//                         //infoFeature.activate();
+//                     }
+//                 }
                 
-                // Suppression des markers par défaut
-                var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
-                if (vectorLayers.length > 0) {
-                    var vectorLayer = vectorLayers[0];
-                    if (vectorLayer.features.length > 0) {
-                        vectorLayer.features[0].destroy();
-                    }
-                }
+//                 // Suppression des markers par défaut
+//                 var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
+//                 if (vectorLayers.length > 0) {
+//                     var vectorLayer = vectorLayers[0];
+//                     if (vectorLayer.features.length > 0) {
+//                         vectorLayer.features[0].destroy();
+//                     }
+//                 }
                 
-                // Ajout des POI avec les adresses sur la carte
-                var epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
-                var projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
+//                 // Ajout des POI avec les adresses sur la carte
+//                 var epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
+//                 var projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
                 
-                var vectorLayer = new OpenLayers.Layer.Vector("Etablissement");
+//                 var vectorLayer = new OpenLayers.Layer.Vector("Etablissement");
     
-                // Define markers as "features" of the vector layer:
-                for (var i = 0 ; i < points.length ; i++) {
+//                 // Define markers as "features" of the vector layer:
+//                 for (var i = 0 ; i < points.length ; i++) {
                     
-                    var feature = new OpenLayers.Feature.Vector(
-                        new OpenLayers.Geometry.Point(points[i].lon, points[i].lat).transform(epsg4326, projectTo),
-                        {description:points[i].description} ,
-                        {externalGraphic: '/images/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  }
-                    );    
-                    vectorLayer.addFeatures(feature);
-                }
+//                     var feature = new OpenLayers.Feature.Vector(
+//                         new OpenLayers.Geometry.Point(points[i].lon, points[i].lat).transform(epsg4326, projectTo),
+//                         {description:points[i].description} ,
+//                         {externalGraphic: '/images/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  }
+//                     );    
+//                     vectorLayer.addFeatures(feature);
+//                 }
                 
-                map.addLayer(vectorLayer);
+//                 map.addLayer(vectorLayer);
     
-                //Add a selector control to the vectorLayer with popup functions
-                var controls = {
-                  selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
-                };
+//                 //Add a selector control to the vectorLayer with popup functions
+//                 var controls = {
+//                   selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
+//                 };
 
-                function createPopup(feature) {
-                  feature.popup = new OpenLayers.Popup.FramedCloud("pop",
-                      feature.geometry.getBounds().getCenterLonLat(),
-                      null,
-                      '<div class="markerContent">'+feature.attributes.description+'</div>',
-                      null,
-                      true,
-                      function() { controls['selector'].unselectAll(); }
-                  );
-                  //feature.popup.closeOnMove = true;
-                  map.addPopup(feature.popup);
-                }
+//                 function createPopup(feature) {
+//                   feature.popup = new OpenLayers.Popup.FramedCloud("pop",
+//                       feature.geometry.getBounds().getCenterLonLat(),
+//                       null,
+//                       '<div class="markerContent">'+feature.attributes.description+'</div>',
+//                       null,
+//                       true,
+//                       function() { controls['selector'].unselectAll(); }
+//                   );
+//                   //feature.popup.closeOnMove = true;
+//                   map.addPopup(feature.popup);
+//                 }
 
-                function destroyPopup(feature) {
-                  feature.popup.destroy();
-                  feature.popup = null;
-                }
+//                 function destroyPopup(feature) {
+//                   feature.popup.destroy();
+//                   feature.popup = null;
+//                 }
 
-                map.addControl(controls['selector']);
-                controls['selector'].activate();
+//                 map.addControl(controls['selector']);
+//                 controls['selector'].activate();
                 
                 
-                if (onView !== undefined) {
-                    onView();
+//                 if (onView !== undefined) {
+//                     onView();
+//                 }
+//             }
+//         })
+//     );
+
+//     return viewer;
+// }
+
+function initViewer(divId, ignKey, adresse) { // Voir pour update avec des listen+addLayers
+    viewer = Gp.Map.load(
+         divId, // identifiant du conteneur HTML
+         {                 
+         apiKey : ignKey,
+         // chargement de la cartographie en 2D
+         viewMode : "2d",
+         // niveau de zoom de la carte (de 1 à 21)
+         zoom : 16,
+         // centrage de la carte
+         center : {
+             location : adresse,
+             projection : "EPSG:4326"                     
+         },
+         layersOptions : {
+            // COUCHE DE BASE
+            "ORTHOIMAGERY.ORTHOPHOTOS" : {},
+            "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD": {
+                opacity : 0
+            }        
+         },
+         // Outils additionnels à proposer sur la carte
+         controlsOptions : {
+            "layerSwitcher" : {},
+            "search" : {},
+            "orientation" : {},
+            "graphicscale" : {},
+            "mouseposition" : {},
+            "graticule" : {},
+            "getfeatureinfo" : {
+                layers : [
+                    {
+                        "ORTHOIMAGERY.ORTHOPHOTOS" : {},
+                        "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD" : {},
+                    }
+                ],
+                options : {
+                    auto : true,
+                    active: true,
+                    defaultInfoFormat: "text/html",
+                    defaultEvent: "singleclick",
+                    cursorStyle: "pointer"
                 }
             }
-        })
-    );
-    
+         }        
+    });
+
     return viewer;
-    
 }
 
-
-function putMarkerAt(map, point, sourceProjection) {
-    var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
-    if (vectorLayers.length > 0) {
-        var vectorLayer = vectorLayers[0];
-        for(var j = 0 ; j < vectorLayer.features.length ; j++) {
-            vectorLayer.features[j].destroy();
-        }
-        var lonlat = point.transform(
-            sourceProjection, vectorLayer.projection.toString()
-        );
-        point = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat);
-        vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point, {}, {externalGraphic: '/images/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  })]);
+function putMarkerAt(viewer, center, nbCouches) {
+    if(viewer.getLayers().getLength() != nbCouches) {
+        var toRemove = viewer.getLayers().item(viewer.getLayers().getLength()-1);
+        viewer.removeLayer(toRemove);
     }
+    var coordinates = ol.proj.fromLonLat([center[0],center[1]]);
+    var point = new ol.geom.Point(coordinates);
+    var marker = new ol.Feature(point);
+    var vectorSource = new ol.source.Vector({
+        features: [marker]
+    });
+    var styleMarker = new ol.style.Style({
+        image: new ol.style.Icon({
+            src: "/images/red-dot.png"
+        })
+    });
+    var vectorLayer = new ol.layer.Vector({
+        source: vectorSource,
+        style: styleMarker
+    });
+    viewer.addLayer(vectorLayer);
 }
+
+// function putMarkerAt(map, point, sourceProjection) {
+//     var vectorLayers = map.getLayersByClass('OpenLayers.Layer.Vector');
+//     if (vectorLayers.length > 0) {
+//         var vectorLayer = vectorLayers[0];
+//         for(var j = 0 ; j < vectorLayer.features.length ; j++) {
+//             vectorLayer.features[j].destroy();
+//         }
+//         var lonlat = point.transform(
+//             sourceProjection, vectorLayer.projection.toString()
+//         );
+//         point = new OpenLayers.Geometry.Point(lonlat.lon,lonlat.lat);
+//         vectorLayer.addFeatures([new OpenLayers.Feature.Vector(point, {}, {externalGraphic: '/images/red-dot.png', graphicHeight: 30, graphicWidth: 30, graphicXOffset:-15, graphicYOffset:-30  })]);
+//     }
+// }
