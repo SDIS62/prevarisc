@@ -315,10 +315,8 @@
                                 projection : "EPSG:4326"},                       
                             layersOptions : {                                
                                 // COUCHE DE BASE
+                                "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD" : {},
                                 "ORTHOIMAGERY.ORTHOPHOTOS" : {},
-                                "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD" : {
-                                    opacity : 0
-                                },
                                 // Autres couches à afficher rajoutées par l'utilisateur
                                 <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
                                     <?php if ($couche_cartographique['URL_COUCHECARTO'] != null) : ?>
@@ -326,14 +324,12 @@
                                             "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>" : {
                                                     title : "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
                                                     format : "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
-                                                    version : "1.3.0",
-                                                    url : "<?php echo $couche_cartographique['URL_COUCHECARTO'] ?>",
+                                                    url : "<?php echo str_replace("{key}",$this->key_ign,$couche_cartographique['URL_COUCHECARTO']) ?>",
                                                     layers : ["<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>"],
                                                     outputFormat : "<?php echo $couche_cartographique['FORMAT_COUCHECARTO'] ?>",
                                                     tiled : true,
                                                     visibility : <?php if ($couche_cartographique['TRANSPARENT_COUCHECARTO'] == 0) : ?>false<?php else : ?>true<?php endif ?>,
                                                     queryable : true,
-                                                    gfiFormat : "text/html",
                                                     },
                                         <?php elseif ($couche_cartographique['TYPE_COUCHECARTO'] == 'WFS') : ?>
                                             "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>" : {
@@ -341,8 +337,6 @@
                                                     format : "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
                                                     url : "<?php echo $couche_cartographique['URL_COUCHECARTO'] ?>",
                                                     typeNames : "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>",
-                                                    version : "2.0.0",
-                                                    //maxFeatures : 200,
                                                     visibility : <?php if ($couche_cartographique['TRANSPARENT_COUCHECARTO'] == 0) : ?>false<?php else : ?>true<?php endif ?>,
                                                     queryable : true,
                                                     },
@@ -357,16 +351,11 @@
                                 // Outils additionnels à proposer sur la carte
                                 controlsOptions : {
                                     "layerSwitcher" : {},
-                                    "search" : {
-                                        //maximised : true
-                                    },
-                                    //"overview" : {},
+                                    "search" : {},
                                     "orientation" : {},
                                     "graphicscale" : {},
                                     "mouseposition" : {},
-                                    //"isocurve" : {},
                                     "graticule" : {},
-                                    //"layerimport" : {},
                                     "length" : {},
                                     "area" : {},
                                     "azimuth" : {},
@@ -375,6 +364,7 @@
                                         layers : [
                                             {
                                                 "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD" : {},
+                                                "ORTHOIMAGERY.ORTHOPHOTOS" : {},
                                             }
                                         ],
                                         options : {
