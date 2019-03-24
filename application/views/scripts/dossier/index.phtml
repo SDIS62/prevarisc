@@ -68,6 +68,11 @@
             
         });
 
+		// fenetre de confirmation de la suppression
+		$("#suppressionDossier").click(function(){
+			$('#confirm-modal').modal({show:true});
+		});
+
 		// Texte de l'auto complete utilisateurs
 		// Auto-complétion des préventionnistes
         $("#preventionnistes-autocomplete").typeahead({
@@ -1047,6 +1052,18 @@
 				return false;
 			}
 		}
+              
+        if($(".docManquant").val() == '') {
+            $(".docManquant").focus();
+            $(".docManquant").css("border-color","red");
+            return false;
+        }
+        
+        if($("[name='dateDocManquant[]'").val() == '') {
+            $("[name='dateDocManquant[]'").focus();
+            $("[name='dateDocManquant[]'").css("border-color","red");
+            return false;
+        }
 
 		if($("#DATEINSERT_INPUT").val() == ''){
 			$("#DATEINSERT_INPUT").next(".today").click();
@@ -1189,6 +1206,8 @@
 			$("#delaipresc_form").hide();
 		}
 	});
+
+
 
 </script>
 <?php $action = $this->do; ?>
@@ -2005,6 +2024,8 @@ echo "
 	</div>
 ";
 
+
+
 function listeGroupementServInstructeur($selected, $id_type_groupement = null, $type)
 {
     // Modèles
@@ -2045,3 +2066,20 @@ function listeGroupementServInstructeur($selected, $id_type_groupement = null, $
 }
 
 ?>
+
+<!-- Boite de confirmation de la suppression (cachée par défaut) -->
+<div id="confirm-modal" class="modal hide fade" >
+	<div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	    <h3>Confirmation de la suppression</h3>
+	</div>
+
+    <div class="modal-body">
+        <p> Etes-vous sûr de vouloir supprimer le dossier ? </p>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn">Annuler</a>
+        <a href="<?php echo $this->url(array($this->idDossier, 'action' => 'delete')); ?>" class='btn btn-success'>Confirmer</a>
+    </div>
+</div>

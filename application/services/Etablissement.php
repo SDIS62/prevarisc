@@ -41,13 +41,13 @@ class Service_Etablissement implements Service_Interface_Etablissement
             $general = $model_etablissement->find($id_etablissement)->current();
 
             // Si l'établissement n'existe pas, on généère une erreur
-            if($general === null) {
+            if($general === null
+                || null !== $general['DATESUPPRESSION_ETABLISSEMENT']) {
                 throw new Exception("L'établissement n'existe pas.");
             }
 
             // On récupère la dernière fiche d'informations de l'établissement
             $informations = $model_etablissement->getInformations($id_etablissement);
-
             // Si l'établissement n'existe pas, on généère une erreur
             if($informations === null) {
                 throw new Exception("La fiche d'informations de l'établissement n'existe pas.");
@@ -101,7 +101,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                         $tmp_date = new Zend_Date($tmp_date->get( Zend_Date::WEEKDAY." ".Zend_Date::DAY_SHORT." ".Zend_Date::MONTH_NAME_SHORT." ".Zend_Date::YEAR ), Zend_Date::DATES);
                         $tmp_date->add($informations->PERIODICITE_ETABLISSEMENTINFORMATIONS, Zend_Date::MONTH);
                         $next_visite =  $tmp_date->get(Zend_Date::MONTH_NAME." ".Zend_Date::YEAR );
-                    }    
+                    }
                 } else {
                     $last_visite = null;
                 }
@@ -165,7 +165,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
             else if ($informations->ID_GENRE == 3 && $parent_direct) {
                 // la catégorie d'une cellule est celle de l'établissement parent
                 $informations->ID_CATEGORIE = $parent_direct['ID_CATEGORIE'];
-                
+
                 $donnees_pratiques = array(
                     'NBPREV_ETABLISSEMENT' => $general->NBPREV_ETABLISSEMENT,
                     'DUREEVISITE_ETABLISSEMENT' => $general->DUREEVISITE_ETABLISSEMENT
@@ -189,19 +189,18 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     } else if($etablissement['ID_STATUT'] != 2) {
                         continue;
                     }
-                    
+
                     if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] === null) {
                         $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
                     } else if ($informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] > $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS']) {
                         $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = $etablissement['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
                     }
-                    
+
                 }
             } else if ($informations->ID_GENRE == 3 && $etablissement_parents) {
                 $informations['PERIODICITE_ETABLISSEMENTINFORMATIONS'] = end($etablissement_parents)['PERIODICITE_ETABLISSEMENTINFORMATIONS'];
             }
-            
-            
+
             $commission = @$DB_commission->find($informations->ID_COMMISSION)->current();
             $etablissement = array(
                 'general' => $general->toArray(),
@@ -518,7 +517,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     case "DEFENSE": $title = "Défense incendie"; break;
                     case "RISQUES": $title = "Risques"; break;
                 }
-                
+
                 $champs_descriptif_technique[$title][array_key_exists($key, $translation_champs_des_tech) ? $translation_champs_des_tech[$key] : $key] = array(
                     'value' => $value,
                     'type' => $dbtable_info_etablissement['metadata'][$key]['DATA_TYPE'],
@@ -654,7 +653,7 @@ class Service_Etablissement implements Service_Interface_Etablissement
         }
 
         return $result;
-    } 
+    }
 
 
     /**
@@ -782,9 +781,11 @@ class Service_Etablissement implements Service_Interface_Etablissement
                     break;
 
                 // Camping
-                case 7:
-                    $informations->EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPUBLIC_ETABLISSEMENTINFORMATIONS'];
-                    $informations->EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFPERSONNEL_ETABLISSEMENTINFORMATIONS'];
+                case 7:                    
+                    $informations->EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFCARAVANE__ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFHABITATION_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFEMPLACEMENTNU_ETABLISSEMENTINFORMATIONS'];
+                    $informations->EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS = (int) $data['EFFECTIFDIVERS_ETABLISSEMENTINFORMATIONS'];
                     break;
 
                 // Manifestation temporaire
@@ -1108,12 +1109,12 @@ class Service_Etablissement implements Service_Interface_Etablissement
     {
 
         $extension = strtolower(strrchr($file['name'], "."));
-        
+
         // Extension du fichier
         if (in_array($extension, array('.php', '.php4', '.php5', '.sh', '.ksh', '.csh'))) {
             throw new Exception("Ce type de fichier n'est pas autorisé en upload");
         }
-            
+
         $DBpieceJointe = new Model_DbTable_PieceJointe;
 
         $piece_jointe = array(
@@ -1371,10 +1372,10 @@ class Service_Etablissement implements Service_Interface_Etablissement
         $infosDossierDonnantAvis = $DBdossier->find($idDossierDonnantAvis)->current();
         $dateInsertDossierDonnantAvis = $infosDossierDonnantAvis['DATEINSERT_DOSSIER'];
         $dateInsertDossierDonnantAvis = new Zend_Date($dateInsertDossierDonnantAvis, Zend_Date::DATES);
-        
+
         $search = new Model_DbTable_Search;
         $dossierDiff = $search->setItem("dossier")->setCriteria("e.ID_ETABLISSEMENT", $id_etablissement)->setCriteria("d.DIFFEREAVIS_DOSSIER", 1)->order("DATEINSERT_DOSSIER DESC")->run()->getAdapter()->getItems(0, 1)->toArray();
-        
+
         //Si l'etablissement ne comporte pas d'avis différé on prend l'avis correspondant à ID_DOSSIERDONNANTAVIS
         if(count($dossierDiff) > 0){
             $dateInsertDossierDiffere = $dossierDiff[0]['DATEINSERT_DOSSIER'];
@@ -1390,9 +1391,18 @@ class Service_Etablissement implements Service_Interface_Etablissement
             return "avisDiff";
         }
     }
-    
+
     public function getDossierDonnantAvis($idEtablissement) {
         $DBEtab = new Model_DbTable_Etablissement;
         return $DBEtab->getDossierDonnantAvis($idEtablissement);
+    }
+
+    public function delete($idEtablissement) {
+        $date = new DateTime();
+        $DB_Etab = new Model_DbTable_Etablissement;
+
+        $etablissement = $DB_Etab->find($idEtablissement)->current();
+        $etablissement->DATESUPPRESSION_ETABLISSEMENT = $date->format('Y-m-d');
+        $etablissement->save();
     }
 }

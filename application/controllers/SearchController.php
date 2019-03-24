@@ -45,8 +45,9 @@ class SearchController extends Zend_Controller_Action
                 $local_sommeil = array_key_exists('presences_local_sommeil', $parameters) && count($parameters['presences_local_sommeil']) == 1 ? $parameters['presences_local_sommeil'][0] == 'true' : null;
                 $city = array_key_exists('city', $parameters) && $parameters['city'] != '' ? $parameters['city'] : null;
                 $street = array_key_exists('street', $parameters) && $parameters['street'] != '' ? $parameters['street'] : null;
+                $number = array_key_exists('number', $parameters) && $parameters['number'] != '' ? $parameters['number'] : null;
 
-                $search = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, 50, $page);
+                $search = $service_search->etablissements($label, $identifiant, $genres, $categories, $classes, $familles, $types_activites, $avis_favorable, $statuts, $local_sommeil, null, null, null, $city, $street, $number, 50, $page);
 
                 $paginator = new Zend_Paginator(new SDIS62_Paginator_Adapter_Array($search['results'], $search['search_metadata']['count']));
                 $paginator->setItemCountPerPage(50)->setCurrentPageNumber($page)->setDefaultScrollingStyle('Elastic');
@@ -54,7 +55,7 @@ class SearchController extends Zend_Controller_Action
                 $this->view->results = $paginator;
             }
             catch(Exception $e) {
-                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectué correctement. Veuillez rééssayez. (' . $e->getMessage() . ')'));
+                $this->_helper->flashMessenger(array('context' => 'error','title' => 'Problème de recherche','message' => 'La recherche n\'a pas été effectuée correctement. Veuillez réessayer. (' . $e->getMessage() . ')'));
             }
         }
     }
@@ -150,7 +151,7 @@ class SearchController extends Zend_Controller_Action
 
         $service_search = new Service_Search;
 
-        $data = $service_search->etablissements(null, null, null, null, null, null, null, null, null, null, null, null, $this->_request->parent, null, null, 1000);
+        $data = $service_search->etablissements(null, null, null, null, null, null, null, null, null, null, null, null, $this->_request->parent, null, null, null);
 
         $data = $data['results'];
 

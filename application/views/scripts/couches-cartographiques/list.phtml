@@ -1,24 +1,110 @@
 <?php if ($this->key_ign != null) : ?>
     <div id='geoportail-container'  style="height: 350px; max-height: 350px;"></div>
-    
-    <script type="text/javascript" src="//api.ign.fr/geoportail/api/js/2.1.2/GeoportalExtended.js"></script>
-    <script>
-        $(document).ready(function() {
-            var points = [];
-            points.push({
-                lat: <?php echo $this->default_lat ?>,
-                lon: <?php echo $this->default_lon ?>,
-                description: "Centre par défaut"
-            });
-
-            viewer = initViewer(
-                "geoportail-container",
-                "<?php echo $this->key_ign ?>",
-                points,
-                <?php echo json_encode($this->couches_cartographiques) ?>
-            );
+    <div id="info"></div>
+    <!-- SDK Géoportail -->
+    <script src="/js/sdk-ol/GpSDK3D.js"></script>
+    <link rel="stylesheet" href="/js/sdk-ol/GpSDK3D.css" />
+    <!-- FIN SDK -->
+    <!-- Déplacement du bouton FullScreen (sinon supperposé avec le gestionnaire de couches)
+    et du panel Profil Altimétrique (sinon coupé en 2) -->
+    <style>
+    .ol-full-screen {right:9px; top:49px;}
+    div[id^=GPelevationPathPanel-] {top:-75px;}
+    </style>
+    <script type="text/javascript">
+        viewer = Gp.Map.load("geoportail-container", {
+         apiKey : '<?php echo $this->key_ign ?>',
+         // chargement de la cartographie en 2D
+         viewMode : "2d",
+         // niveau de zoom de la carte (de 1 à 21)
+        zoom : 16,
+        center : {
+            x : <?php echo $this->default_lon ?>,
+            y : <?php echo $this->default_lat ?>,
+            projection : "EPSG:4326"
+        },
+        layersOptions : {                                
+            // COUCHE DE BASE            
+            "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD" : {},
+            "ORTHOIMAGERY.ORTHOPHOTOS" : {},
+            // Autres couches à afficher rajoutées par l'utilisateur
+            <?php foreach($this->couches_cartographiques as $couche_cartographique) : ?>
+                <?php if ($couche_cartographique['URL_COUCHECARTO'] != null) : ?>
+                    <?php if ($couche_cartographique['TYPE_COUCHECARTO'] == 'WMS') : ?>
+                        "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>" : {
+                                title : "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
+                                format : "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
+                                url : "<?php echo str_replace("{key}",$this->key_ign,$couche_cartographique['URL_COUCHECARTO']) ?>",
+                                layers : ["<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>"],
+                                outputFormat : "<?php echo $couche_cartographique['FORMAT_COUCHECARTO'] ?>",
+                                tiled : true,
+                                visibility : <?php if ($couche_cartographique['TRANSPARENT_COUCHECARTO'] == 0) : ?>false<?php else : ?>true<?php endif ?>,
+                                queryable : true,
+                                },
+                    <?php elseif ($couche_cartographique['TYPE_COUCHECARTO'] == 'WFS') : ?>
+                        "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>" : {
+                                title : "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
+                                format : "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
+                                url : "<?php echo str_replace("{key}",$this->key_ign,$couche_cartographique['URL_COUCHECARTO']) ?>",
+                                typeNames : "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>",
+                                visibility : <?php if ($couche_cartographique['TRANSPARENT_COUCHECARTO'] == 0) : ?>false<?php else : ?>true<?php endif ?>,
+                                queryable : true,
+                                },
+                    <?php endif ?>
+                <?php else : ?>
+                    "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>" : {
+                    visibility : <?php if ($couche_cartographique['TRANSPARENT_COUCHECARTO'] == 0) : ?>false<?php else : ?>true<?php endif ?>
+                    },
+                <?php endif ?>
+            <?php endforeach ?>         
+            },
+            // Outils additionnels à proposer sur la carte
+            controlsOptions : {
+                "layerSwitcher" : {},
+                "search" : {},
+                "orientation" : {},
+                "graphicscale" : {},
+                //"mouseposition" : {},
+                "graticule" : {},
+                "length" : {},
+                "area" : {},
+                "azimuth" : {},
+                //"elevationpath" : {},
+                "getfeatureinfo" : {
+                    layers : [
+                        {
+                            "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD" : {},
+                            "ORTHOIMAGERY.ORTHOPHOTOS" : {},
+                        }
+                    ],
+                    options : {
+                    auto : true,
+                    active: true,
+                    defaultInfoFormat: "text/html",
+                    defaultEvent: "singleclick",
+                    cursorStyle: "pointer",
+                    },
+                },
+            },
+            // Repères visuels
+            markersOptions : [{
+                content : "<b>Centre par défaut</b>"
+            }],
+            // Appel de la fonction après le chargement de la carte
+            mapEventsOptions : {
+                "mapLoaded" : afterInitMap
+            }
         });
+        // Ajout du bouton FullScreen
+        function afterInitMap () {
+            var fsControl = new ol.control.FullScreen({});
+            viewer.getLibMap().addControl(fsControl);
+        };
+        // Affichage de la version du SDK et de sa date de création
+        var infoDiv = document.getElementById("info");
+        infoDiv.innerHTML = "<h6><p><b><i> SDK version " + Gp.sdkVersion + " (" + Gp.sdkDate + ")</b></i></p></h6>";
     </script>
+    
 <?php elseif ($this->geoconcept_url != null) : ?>
     <div id='geoconcept-container'  style="height: 350px; max-height: 350px;width: 100%"></div>
     <script type="text/javascript" src="/js/geoconcept/OpenLayers.js"></script>

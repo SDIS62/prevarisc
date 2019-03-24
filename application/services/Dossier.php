@@ -325,7 +325,7 @@ class Service_Dossier
      */
     public function getPrescriptions($id_dossier,$type)
     {
-        /* 
+        /*
             suivant la valeur de $type
             0 = rappel réglementaire
             1 = a l'exploitation
@@ -426,7 +426,7 @@ class Service_Dossier
                 }
 
                 $nbPresc = 1;
-                $listeExploit = $dbPrescDossier->recupPrescDossier($post['id_dossier'], 1);                
+                $listeExploit = $dbPrescDossier->recupPrescDossier($post['id_dossier'], 1);
                 foreach($listeExploit as $prescDossier){
                     $prescCount = $dbPrescDossier->find($prescDossier['ID_PRESCRIPTION_DOSSIER'])->current();
                     $prescCount->NUM_PRESCRIPTION_DOSSIER = $nbPresc;
@@ -491,7 +491,7 @@ class Service_Dossier
             }
 
             $nbPresc = 1;
-            $listeExploit = $dbPrescDossier->recupPrescDossier($post['id_dossier'], 1);                
+            $listeExploit = $dbPrescDossier->recupPrescDossier($post['id_dossier'], 1);
             foreach($listeExploit as $prescDossier){
                 $prescCount = $dbPrescDossier->find($prescDossier['ID_PRESCRIPTION_DOSSIER'])->current();
                 $prescCount->NUM_PRESCRIPTION_DOSSIER = $nbPresc;
@@ -519,7 +519,7 @@ class Service_Dossier
             $prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $post['PRESCRIPTION_LIBELLE'];
             $prescEdit->TYPE_PRESCRIPTION_DOSSIER = $post['TYPE_PRESCRIPTION_DOSSIER'];
             $prescEdit->save();
-            
+
             $nombreAssoc = count($post['texte']);
             for ($i = 0; $i< $nombreAssoc; $i ++) {
                 $newAssoc = $dbPrescDossierAssoc->createRow();
@@ -650,8 +650,8 @@ class Service_Dossier
             $prescEdit = $dbPrescDossier->createRow();
             $prescEdit->ID_DOSSIER = $idDossier;
             if (array_key_exists(0, $ue) && array_key_exists('PRESCRIPTIONREGL_LIBELLE', $ue[0])) {
-                $prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $ue[0]['PRESCRIPTIONREGL_LIBELLE'];    
-            } 
+                $prescEdit->LIBELLE_PRESCRIPTION_DOSSIER = $ue[0]['PRESCRIPTIONREGL_LIBELLE'];
+            }
             $prescEdit->TYPE_PRESCRIPTION_DOSSIER = 0;
             $prescEdit->NUM_PRESCRIPTION_DOSSIER = $j++;
             $prescEdit->save();
@@ -667,7 +667,7 @@ class Service_Dossier
             }
         }
     }
-    
+
     public function changePosPrescription($tabId){
         $DBprescDossier = new Model_DbTable_PrescriptionDossier();
 
@@ -730,10 +730,10 @@ class Service_Dossier
         }
 
     }
-    
+
     public function isDossierDonnantAvis($dossier, $idNature) {
-        
-        return 
+
+        return
             //Cas d'une étude uniquement dans le cas d'une levée de reserve
             in_array($idNature, array(19, 7, 17, 16)) && $dossier->DATECOMM_DOSSIER
             //Cas d'une viste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
@@ -741,33 +741,31 @@ class Service_Dossier
             //Cas d'un groupe deviste uniquement dans le cas d'une VP, inopinée, avant ouverture ou controle
             || in_array($idNature, array(26, 28, 29, 48)) && $dossier->DATECOMM_DOSSIER;
     }
-    
+
     public function getDateDossier($dossier) {
-        
         $date = $dossier->DATEINSERT_DOSSIER;
-        
         if($dossier->TYPE_DOSSIER == 1 || $dossier->TYPE_DOSSIER == 3){
 
             if($dossier->DATECOMM_DOSSIER != NULL && $dossier->DATECOMM_DOSSIER != ''){
                 $date = $dossier->DATECOMM_DOSSIER;
             }
-            
+
         } else if($dossier->TYPE_DOSSIER == 2) {
             if($dossier->DATEVISITE_DOSSIER != NULL && $dossier->DATEVISITE_DOSSIER != ''){
                 $date = $dossier->DATEVISITE_DOSSIER;
             }
         }
-        
+
         return new Zend_Date($date, Zend_Date::DATES);
     }
-    
+
     public function saveDossierDonnantAvis($nouveauDossier, $listeEtab, $cache, $repercuterAvis = false) {
         $dbEtab = new Model_DbTable_Etablissement();
         $DBdossier = new Model_DbTable_Dossier();
         $service_etablissement = new Service_Etablissement();
 
         $updatedEtab = array();
-        
+
         foreach ($listeEtab as $val => $ue) {
             $etabToEdit = $dbEtab->find($ue['ID_ETABLISSEMENT'])->current();
             $MAJEtab = 0;
@@ -792,7 +790,7 @@ class Service_Dossier
                 $etabToEdit->ID_DOSSIER_DONNANT_AVIS = $nouveauDossier->ID_DOSSIER;
                 $etabToEdit->save();
                 $updatedEtab[] = $etabToEdit;
-                
+
                 if ($repercuterAvis) {
                     $etablissementInfos = $service_etablissement->get($ue['ID_ETABLISSEMENT']);
                     foreach ($etablissementInfos["etablissement_lies"] as $etabEnfant) {
@@ -806,25 +804,62 @@ class Service_Dossier
                 }
             }
         }
-        
+
         foreach($updatedEtab as $etablissement) {
             $cache->remove(sprintf('etablissement_id_%d', $etablissement['ID_ETABLISSEMENT']));
             if ($parent = $dbEtab->getParent($etablissement['ID_ETABLISSEMENT'])) {
                 $cache->remove(sprintf('etablissement_id_%d', $parent['ID_ETABLISSEMENT']));
             }
         }
-        
+
         return $updatedEtab;
     }
-    
+
     public function getCommission($idDossier) {
        $dbDossier = new Model_DbTable_Dossier;
        return $dbDossier->getCommissionV2($idDossier);
+    }
+
+
+    public function delete($idDossier, $date = null, $uniqueEtab = false)
+    {
+        if (!$date) {
+           $date = new DateTime();
+        }
+        $DB_dossier = new Model_DbTable_Dossier();
+
+        $dossier = $DB_dossier->find($idDossier)->current();
+        $deleteDossier = true;
+        if ($uniqueEtab) {
+            $DB_etsDossier = new Model_DbTable_EtablissementDossier();
+            $deleteDossier = !(count($DB_etsDossier->getEtablissementListe($idDossier)) > 1);
+        }
+        if ($deleteDossier) {
+            $dossier->DATESUPPRESSION_DOSSIER = $date->format('Y-m-d');
+
+            //suppression de la date de passage en commission
+            $dbAffectDossier = new Model_DbTable_DossierAffectation();
+            $affectDossier = $dbAffectDossier->deleteDateDossierAffect($idDossier);
+
+            $dossier->save();
+        }
+    }
+
+    public function deleteByEtab($idEtablissement)
+    {
+        $date = new DateTime();
+        $DB_dossier = new Model_DbTable_Dossier();
+
+        $dossiers = $DB_dossier->getDossiersEtab($idEtablissement);
+
+        foreach ($dossiers as $dossier) {
+            $this->delete($dossier['ID_DOSSIER'], $date, true);
+        }
     }
     
     public function getPreventionniste($idDossier) {
         $DB_prev = new Model_DbTable_DossierPreventionniste;
         
-        return $DB_prev->getPrevDossier($idDossier);        
+        return $DB_prev->getPrevDossier($idDossier);
     }
 }

@@ -35,6 +35,18 @@ $(document).ready(function(){
 			$("#OBJET_DOSSIER").css("border-color","black");
 		}
 	});	
+
+        $(".docManquant").blur(function() {
+            if($(".docManquant").val() != '') {
+                $(".docManquant").css("border-color","black");
+            }
+        });
+        
+        $("[name='dateDocManquant[]'").blur(function() {
+            if($("[name='dateDocManquant[]'").val() != '') {
+                $("[name='dateDocManquant[]'").css("border-color","black");
+            }
+        });
 	
 	//Permet de vider un input d'une date pour que celle-ci ne s'affiche plus
 	$(".suppDate").live('click',function(){

@@ -2,7 +2,6 @@
 
     class Model_DbTable_Dossier extends Zend_Db_Table_Abstract
     {
-		
         protected $_name="dossier"; // Nom de la base
         protected $_primary = "ID_DOSSIER"; // Cl� primaire
 
@@ -15,6 +14,7 @@
             AND commission.id_commissiontype = commissiontype.id_commissiontype
             AND dossier.type_dossier = dossiertype.id_dossiertype
             AND dossier.nature_dossier = dossiernature.id_dossiernature
+            AND dossier.datesuppression_dossier IS NULL
             AND dossier.id_dossier = '".$id."';";
             //echo $select;
             return $this->getAdapter()->fetchRow($select);
@@ -40,12 +40,13 @@
         //Fonction qui récup tous les établissements liés au dossier LAST VERSION
         public function getEtablissementDossier($id_dossier)
         {
-		
 			//retourne la liste des catégories de prescriptions par ordre
             $select = "
                 SELECT etablissementdossier.ID_ETABLISSEMENTDOSSIER ,t1.ID_ETABLISSEMENT, LIBELLE_ETABLISSEMENTINFORMATIONS, LIBELLE_GENRE
-                FROM etablissementdossier, etablissementinformations t1, genre
+                FROM etablissementdossier, etablissement e, etablissementinformations t1, genre
                 WHERE etablissementdossier.ID_ETABLISSEMENT = t1.ID_ETABLISSEMENT
+                AND etablissementdossier.ID_ETABLISSEMENT = e.ID_ETABLISSEMENT
+                AND e.DATESUPPRESSION_ETABLISSEMENT IS NULL
                 AND t1.ID_GENRE = genre.ID_GENRE
                 AND etablissementdossier.ID_DOSSIER = '".$id_dossier."'
                 AND t1.DATE_ETABLISSEMENTINFORMATIONS = (
@@ -58,14 +59,16 @@
             //echo $select;
             return $this->getAdapter()->fetchAll($select);
         }
-        
+
         // Fonction optimisée pour les ACL
         public function getEtablissementDossier2($id_dossier)
         {
             $select = $this->select()
                 ->setIntegrityCheck(false)
                 ->from("etablissementdossier", array("etablissementdossier.ID_ETABLISSEMENT"))
-                ->where("etablissementdossier.ID_DOSSIER = ?", $id_dossier);
+                ->joinLeftUsing(array('e' => 'etablissement'), 'ID_ETABLISSEMENT')
+                ->where("etablissementdossier.ID_DOSSIER = ?", $id_dossier)
+                ->where("e.DATESUPPRESSION_ETABLISSEMENT IS NULL");
 
             return $this->fetchAll($select)->toArray();
         }
@@ -140,7 +143,7 @@
                 ->join(array("c" => "commission") , "d.COMMISSION_DOSSIER = c.ID_COMMISSION")
                 ->join(array("ct" => "commissiontype"), "c.ID_COMMISSIONTYPE = ct.ID_COMMISSIONTYPE")
                 ->where("d.ID_DOSSIER = ?",$idDossier);
-            
+
             return $this->getAdapter()->fetchRow($select);
         }
 
@@ -169,6 +172,7 @@
                 ->join("dossier", "etablissementdossier.ID_DOSSIER = dossier.ID_DOSSIER", array("ID_DOSSIER","LIBELLE_DOSSIER", "OBJET_DOSSIER", "DESCRIPTIFGEN_DOSSIER", "DATESECRETARIAT_DOSSIER"))
                 ->join("dossiertype", "dossier.TYPE_DOSSIER = dossiertype.ID_DOSSIERTYPE", "VISITEBOOL_DOSSIERTYPE")
                 ->where("etablissementdossier.ID_ETABLISSEMENT = $etablissement")
+                ->where("dossier.DATESUPPRESSION_DOSSIER IS NULL")
                 ->order("dossier.DATESECRETARIAT_DOSSIER DESC");
 
             if($type == "1" || $type == "0")
@@ -206,6 +210,7 @@
                 FROM dossierlie
                 WHERE ID_DOSSIER1 = ".$idDossier."
             )
+            AND dossier.DATESUPPRESSION_DOSSIER IS NULL
             ORDER BY dossier.DATEINSERT_DOSSIER
             ;";
             //echo $select;
@@ -368,6 +373,20 @@
 		GROUP BY usr.ID_UTILISATEUR;
             ";
             //echo $select;
+            return $this->getAdapter()->fetchAll($select);
+        }
+
+        // Retourne la liste de tout les dossiers d'un Etablissement
+        public function getDossiersEtab($etablissement)
+        {
+            $select = "
+                    SELECT dossier.ID_DOSSIER
+                    from dossier
+                    join etablissementdossier ON etablissementdossier.ID_DOSSIER = dossier.ID_DOSSIER
+                    where etablissementdossier.ID_ETABLISSEMENT = '".$etablissement."'
+                    and dossier.DATESUPPRESSION_DOSSIER IS NULL;
+                    ";
+
             return $this->getAdapter()->fetchAll($select);
         }
     }
