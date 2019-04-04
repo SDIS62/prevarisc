@@ -1084,7 +1084,6 @@
                                         };
                                         function afterPositionLocated () {
                                             $("span.result").text("Géolocalisée IGN");
-                                            nbCouches = viewer.getLibMap().getLayers().getLength();
                                             // Conversion des coordonnées de la projection EPSG:3857 vers la projection EPSG:4326 pour le stockage en base  
                                             var lonlat = new ol.proj.transform([viewer.getCenter().x, viewer.getCenter().y],'EPSG:3857', 'EPSG:4326');
                                             $("input[name='lon']").val(lonlat[0]);
