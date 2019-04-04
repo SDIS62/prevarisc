@@ -14,15 +14,15 @@
     <script type="text/javascript">
         viewer = Gp.Map.load("geoportail-container", {
          apiKey : '<?php echo $this->key_ign ?>',
-         //configUrl : "/js/sdk-ol/autoconf-https.json",
          // chargement de la cartographie en 2D
          viewMode : "2d",
          // niveau de zoom de la carte (de 1 à 21)
         zoom : 16,
         center : {
-            x : 4.842830,
-            y : 46.329265,
-            projection : "EPSG:4326"},
+            x : <?php echo $this->default_lon ?>,
+            y : <?php echo $this->default_lat ?>,
+            projection : "EPSG:4326"
+        },
         layersOptions : {                                
             // COUCHE DE BASE            
             "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD" : {},
@@ -45,7 +45,7 @@
                         "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>" : {
                                 title : "<?php echo $couche_cartographique['NOM_COUCHECARTO'] ?>",
                                 format : "<?php echo $couche_cartographique['TYPE_COUCHECARTO'] ?>",
-                                url : "<?php echo $couche_cartographique['URL_COUCHECARTO'] ?>",
+                                url : "<?php echo str_replace("{key}",$this->key_ign,$couche_cartographique['URL_COUCHECARTO']) ?>",
                                 typeNames : "<?php echo $couche_cartographique['LAYERS_COUCHECARTO'] ?>",
                                 visibility : <?php if ($couche_cartographique['TRANSPARENT_COUCHECARTO'] == 0) : ?>false<?php else : ?>true<?php endif ?>,
                                 queryable : true,
@@ -64,12 +64,12 @@
                 "search" : {},
                 "orientation" : {},
                 "graphicscale" : {},
-                "mouseposition" : {},
+                //"mouseposition" : {},
                 "graticule" : {},
                 "length" : {},
                 "area" : {},
                 "azimuth" : {},
-                "elevationpath" : {},
+                //"elevationpath" : {},
                 "getfeatureinfo" : {
                     layers : [
                         {
@@ -88,7 +88,7 @@
             },
             // Repères visuels
             markersOptions : [{
-                content : "<b>SDIS 71</b><br/>4 Rue des Grandes Varennes</br>71000 Sancé"
+                content : "<b>Centre par défaut</b>"
             }],
             // Appel de la fonction après le chargement de la carte
             mapEventsOptions : {
