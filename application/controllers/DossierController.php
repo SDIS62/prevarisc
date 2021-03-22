@@ -167,6 +167,7 @@ class DossierController extends Zend_Controller_Action
             //Si on à l'id d'un dossier, on récupére tous les établissements liés à ce dossier
             $DBdossier = new Model_DbTable_Dossier();
             $dossier = $DBdossier->find($id_dossier)->current();
+            $this->view->id_platau = null !== $dossier['ID_PLATAU'] ? $dossier['ID_PLATAU'] : null;
 
             $DBdossierType = new Model_DbTable_DossierType();
             $libelleType = $DBdossierType->find($dossier->TYPE_DOSSIER)->current();

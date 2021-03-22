@@ -66,6 +66,9 @@
 
     <div class="pull-right">
 
+        <?php if($this->ID_PLATAU !== null) : echo "<span class='label label-info'>CONSULTATION PLATAU : " . $this->ID_PLATAU . "</span>"; endif ?>
+        <?php if($this->ID_PLATAU !== null && $this->INCOMPLET_DOSSIER === null) : echo "<span class='label label-info'>EN ATTENTE DE PEC</span>"; endif ?>
+
         <?php /* Avis du dossier */ ?>
         <?php if($this->INCOMPLET_DOSSIER == 1) : ?>
         <span class='avis' style='background-color: #f89406;'>Dossier incomplet</span>

@@ -156,6 +156,10 @@ endif; ?>
                 <small><br/>".nl2br($this->objetDossier)."</small>
         ";
 
+        if($this->id_platau !== null) {
+            echo "<p style='font-size: medium;' class='label label-info'><strong>CONSULTATION PLATAU : " . $this->id_platau . "</strong></p>";
+        }
+
         echo "
                 <div style='margin:10px;' id='infosEtabs'>
         ";
