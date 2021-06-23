@@ -85,6 +85,11 @@
             <a class="sep" href='/calendrier-des-commissions/gestionodj/dateCommId/<?php echo $this->idDateCommissionAffect; ?>'><i class='icon-calendar icon-black'></i> Afficher ordre du jour</a>
         </li>
         <?php endif; ?>
+        <?php if(!$verrou && $this->is_allowed_delete_dossier) : ?>
+        <li>
+            <a id="suppressionDossier" href="#"><i class="icon-remove icon-black"></i>Supprimer le dossier</a>
+        </li>
+        <?php endif; ?>
     </ul>
 <?php $this->placeholder('lateral_navigation')->captureEnd();
 endif; ?>
