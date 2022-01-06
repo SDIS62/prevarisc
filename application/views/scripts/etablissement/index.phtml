@@ -121,7 +121,7 @@
                 <tbody>
                     <?php foreach($this->etablissement['rubriques'] as $rubrique) : ?>
                         <tr>
-                            <td><?php echo $rubrique["ID_RUBRIQUE"] == 1 ? 'Substance' : 'Activité' ?></td>
+                            <td><?php echo $rubrique["ID_RUBRIQUE"] == 1 ? 'Substance' : ($rubrique["ID_RUBRIQUE"] == 2 ? 'Activité' : ($rubrique["ID_RUBRIQUE"] == 3 ? 'IED' : 'Produits dangereux')) ?></td>
                             <td><?php echo $rubrique["NUMERO_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
                             <td><?php echo $rubrique["NOM_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
                             <td><?php echo $rubrique["VALEUR_ETABLISSEMENTINFORMATIONSRUBRIQUE"] ?></td>
