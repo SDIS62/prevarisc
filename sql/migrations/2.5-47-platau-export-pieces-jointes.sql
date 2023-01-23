@@ -1,0 +1,16 @@
+SET NAMES 'utf8';
+
+CREATE TABLE IF NOT EXISTS `piecejointestatut` (
+  `ID_PIECEJOINTESTATUT` int(20) NOT NULL AUTO_INCREMENT,
+  `NOM_STATUT` varchar(50),
+  PRIMARY KEY (`ID_PIECEJOINTESTATUT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `piecejointestatut`(`NOM_STATUT`) VALUES
+('not_exported'),
+('to_be_exported'),
+('exported');
+
+ALTER TABLE `piecejointe` ADD COLUMN `ID_PIECEJOINTESTATUT` int(20) DEFAULT 1;
+ALTER TABLE `piecejointe`
+  ADD CONSTRAINT `fk_piecejointe_piecejointestatut1` FOREIGN KEY (`ID_PIECEJOINTESTATUT`) REFERENCES `piecejointestatut` (`ID_PIECEJOINTESTATUT`) ON DELETE SET NULL ON UPDATE CASCADE;
