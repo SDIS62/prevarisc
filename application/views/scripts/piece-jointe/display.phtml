@@ -1,29 +1,52 @@
 <?php foreach ($this->listePj as $pj) : ?>
-<tr>   
-    <?php /* Lien de la pièce jointe */ ?>
-    <td>
-        <a 
-            class="file <?php echo substr(strtolower($pj['EXTENSION_PIECEJOINTE']), 1, 3) ?>"
-            href='<?php echo $this->url(array('controller' => 'piece-jointe', 'action' => 'get', 'id' => $this->id, 'idpj' => $pj['ID_PIECEJOINTE'], 'type' => $this->type)) ?>' <?php if ($pj['DESCRIPTION_PIECEJOINTE']): ?> title="<?php echo $pj['DESCRIPTION_PIECEJOINTE'] ?>" <?php endif ?> target='_blank' ><?php echo $pj['NOM_PIECEJOINTE'].$pj['EXTENSION_PIECEJOINTE'] ?></a>
-    </td>
-    
-    <?php /* Description */ ?>
-    <td><?php echo nl2br(str_replace("<br />", "" ,$pj['DESCRIPTION_PIECEJOINTE'])) ?></td>
-    
-    <?php /* date de création*/ ?>
-    <td>
-        <?php
-            $date = new Zend_Date($pj['DATE_PIECEJOINTE'], Zend_Date::DATES);
-            echo $date->get( Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR );
-        ?>
-    </td>
-    <?php /* Action*/ ?>
-    <td>
-        <?php if($this->verrou != 1): ?>
-            <a class='delete' href='/piece-jointe/delete?id_pj=<?php echo $pj["ID_PIECEJOINTE"] ?>&type=<?php echo $this->type ?>&id=<?php echo $this->id ?>'>
-                <i class="icon-trash"></i>
-            </a>
-        <?php endif ?>
-    </td>
-</tr>
+    <tr>
+        <!-- Lien de la pièce jointe -->
+        <td>
+            <a
+                class="file <?php echo substr(strtolower($pj['EXTENSION_PIECEJOINTE']), 1, 3) ?>"
+                href='<?php echo $this->url(array('controller' => 'piece-jointe', 'action' => 'get', 'id' => $this->id, 'idpj' => $pj['ID_PIECEJOINTE'], 'type' => $this->type)) ?>'
+                <?php if ($pj['DESCRIPTION_PIECEJOINTE']): ?> title="<?php echo $pj['DESCRIPTION_PIECEJOINTE'] ?>" <?php endif ?>
+                target='_blank' >
+                    <?php echo $pj['NOM_PIECEJOINTE'].$pj['EXTENSION_PIECEJOINTE'] ?>
+                </a>
+        </td>
+
+        <!-- Description -->
+        <td><?php echo nl2br(str_replace("<br />", "" ,$pj['DESCRIPTION_PIECEJOINTE'])) ?></td>
+
+        <!-- Date de création -->
+        <td>
+            <?php
+                $date = new Zend_Date($pj['DATE_PIECEJOINTE'], Zend_Date::DATES);
+                echo $date->get( Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR );
+            ?>
+        </td>
+
+        <!-- TODO Faire des vrais badges d'alerte -->
+        <td class="checkbox">
+            <?php switch ($pj['NOM_STATUT']):
+                case 'not_exported': ?>
+                    <input type="checkbox" name="export-pj-platau" />
+            <?php break;
+                case 'to_be_exported': ?>
+                    <div class="alert alert-info">En attente d'envoi</div>
+            <?php break;
+                case 'exported': ?>
+                    <div class="alert alert-success">Envoyé</div>
+            <?php break;
+                case null:
+                default: ?>
+                    <div class="alert alert-error">Statut inconnu</div>
+            <?php endswitch ?>
+        </td>
+
+        <!-- Action -->
+        <td>
+            <?php if($this->verrou != 1): ?>
+                <a class='delete' href='/piece-jointe/delete?id_pj=<?php echo $pj["ID_PIECEJOINTE"] ?>&type=<?php echo $this->type ?>&id=<?php echo $this->id ?>'>
+                    <i class="icon-trash"></i>
+                </a>
+            <?php endif ?>
+        </td>
+    </tr>
 <?php endforeach ?>

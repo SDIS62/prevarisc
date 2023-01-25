@@ -1,0 +1,7 @@
+.table td.checkbox {
+    text-align: center;
+}
+
+.table td.checkbox input {
+    float: none;
+}

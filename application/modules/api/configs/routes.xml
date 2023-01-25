@@ -135,7 +135,7 @@
                     </contacts>
                 </chains>
             </dossier>
-            
+
             <!-- user -->
             <user type="Zend_Controller_Router_Route">
                 <route>user</route>
@@ -163,7 +163,7 @@
                     </get>
                 </chains>
             </calendar>
-            
+
         </chains>
     </api_1_0>
 
