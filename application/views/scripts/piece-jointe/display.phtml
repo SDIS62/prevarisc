@@ -33,6 +33,9 @@
                 case 'exported': ?>
                     <div class="label label-success">Envoyé</div>
             <?php break;
+                case 'on_error': ?>
+                    <div class="label label-important">Erreur lors de l'envoi</div>
+            <?php break;
                 case null:
                 default: ?>
                     <div class="label label-warning">Statut inconnu</div>

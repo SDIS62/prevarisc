@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS `piecejointestatut` (
 INSERT INTO `piecejointestatut`(`NOM_STATUT`) VALUES
 ('not_exported'),
 ('to_be_exported'),
-('exported');
+('exported'),
+('on_error');
 
 ALTER TABLE `piecejointe` ADD COLUMN `ID_PIECEJOINTESTATUT` int(20) DEFAULT 1;
 ALTER TABLE `piecejointe`
