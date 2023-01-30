@@ -1,7 +1,7 @@
-.table td.checkbox {
-    text-align: center;
+.table td.checkbox input {
+    margin-left: 0;
 }
 
-.table td.checkbox input {
-    float: none;
+.table td.checkbox > .alert {
+    margin: auto;
 }

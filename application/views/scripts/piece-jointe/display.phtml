@@ -22,21 +22,20 @@
             ?>
         </td>
 
-        <!-- TODO Faire des vrais badges d'alerte -->
         <td class="checkbox">
             <?php switch ($pj['NOM_STATUT']):
                 case 'not_exported': ?>
-                    <input type="checkbox" name="export-pj-platau" />
+                    <input type="checkbox" name="export-pj-platau" data-id="<?= $pj['ID_PIECEJOINTE'] ?>" value="0" />
             <?php break;
                 case 'to_be_exported': ?>
-                    <div class="alert alert-info">En attente d'envoi</div>
+                    <div class="label label-info">En attente d'envoi</div>
             <?php break;
                 case 'exported': ?>
-                    <div class="alert alert-success">Envoyé</div>
+                    <div class="label label-success">Envoyé</div>
             <?php break;
                 case null:
                 default: ?>
-                    <div class="alert alert-error">Statut inconnu</div>
+                    <div class="label label-warning">Statut inconnu</div>
             <?php endswitch ?>
         </td>
 

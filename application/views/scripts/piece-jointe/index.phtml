@@ -9,24 +9,29 @@
 </h3>
 <div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>
 
-<div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
-	<table id='tabPieceJointe' class='table table-striped'>
-		<thead>
-			<tr>
-				<th>Nom</th>
-				<th>Description</th>
-				<th>Date d'ajout</th>
-				<th>Envoyer vers Plat'AU</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-            <?php
-                echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou))
-            ?>
-		</tbody>
-	</table>
-</div>
+<form id="export-pj-platau">
+    <div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
+        <table id='tabPieceJointe' class='table table-striped'>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Date d'ajout</th>
+                    <th>Envoyer vers Plat'AU</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou))
+                ?>
+            </tbody>
+        </table>
+    </div>
+
+    <input id="export-platau" type="button" class="btn btn-success pull-right" value="Sauvegarder" />
+</form>
+
 <script type="text/javascript">
     Dropzone.autoDiscover = false;
 
@@ -175,6 +180,25 @@
         }
         disabledTest();
 
+        $('#export-platau').click(function() {
+            const formData = []
+
+            const inputs = document.querySelectorAll('input[name="export-pj-platau"]')
+            inputs.forEach(input => {
+                const idPj = input['attributes']['data-id'].value
+
+                const object = { 'id': idPj, 'value': input.checked }
+                formData.push(object)
+            })
+
+            $.post(
+                "/piece-jointe/export-platau",
+                { formData },
+                () => {
+                    location.reload()
+                }
+            )
+        })
     });
 
     // Si un fichier est bien uploadé, on l'ajoute à la liste
@@ -208,4 +232,3 @@
         });
     }
 </script>
-
