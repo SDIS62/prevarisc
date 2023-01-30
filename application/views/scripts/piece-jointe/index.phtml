@@ -181,19 +181,18 @@
         disabledTest();
 
         $('#export-platau').click(function() {
-            const formData = []
+            const formData = {}
 
             const inputs = document.querySelectorAll('input[name="export-pj-platau"]')
             inputs.forEach(input => {
                 const idPj = input['attributes']['data-id'].value
 
-                const object = { 'id': idPj, 'value': input.checked }
-                formData.push(object)
+                formData[idPj] = input.checked
             })
 
             $.post(
                 "/piece-jointe/export-platau",
-                { formData },
+                formData,
                 () => {
                     location.reload()
                 }

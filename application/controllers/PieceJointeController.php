@@ -372,17 +372,12 @@ class PieceJointeController extends Zend_Controller_Action
         $dbPj = new Model_DbTable_PieceJointe();
         $post = $this->getRequest()->getPost();
 
-        $formData = $post['formData'];
-        $toBeExported = [];
-
-        $toBeExported = array_filter($formData, function ($v) {
-            $checkboxValue = filter_var($v['value'], FILTER_VALIDATE_BOOLEAN);
-
-            return $checkboxValue === true;
+        $toBeExported = array_filter($post, function ($v) {
+            return filter_var($v, FILTER_VALIDATE_BOOLEAN) === true;
         });
 
-        array_map(function ($value) use ($dbPj) {
-            $dbPj->updatePlatauStatus($value['id'], 2);
-        }, $toBeExported);
+        foreach (array_keys($toBeExported) as $idPj) {
+            $dbPj->updatePlatauStatus($idPj, 2);
+        }
     }
 }
