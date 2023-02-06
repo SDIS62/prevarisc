@@ -44,7 +44,7 @@
 
         <!-- Action -->
         <td>
-            <?php if($this->verrou != 1): ?>
+            <?php if($this->verrou != 1 && !in_array($pj['NOM_STATUT'], ['to_be_exported', 'exported'])): ?>
                 <a class='delete' href='/piece-jointe/delete?id_pj=<?php echo $pj["ID_PIECEJOINTE"] ?>&type=<?php echo $this->type ?>&id=<?php echo $this->id ?>'>
                     <i class="icon-trash"></i>
                 </a>
