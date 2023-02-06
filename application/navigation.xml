@@ -691,6 +691,11 @@
                             <action>exportPlatau</action>
                             <privilege>modification_odj</privilege>
                         </export-platau>
+                        <retry-export-platau>
+                            <controller>piece-jointe</controller>
+                            <action>retryExportPlatau</action>
+                            <privilege>modification_odj</privilege>
+                        </retry-export-platau>
                     </pages>
                 </piece-jointe>
             </pages>

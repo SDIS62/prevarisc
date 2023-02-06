@@ -35,6 +35,9 @@
             <?php break;
                 case 'on_error': ?>
                     <div class="label label-important">Erreur lors de l'envoi</div>
+                    <div>
+                        <a href="#" class="retry-export-platau" data-id="<?= $pj['ID_PIECEJOINTE'] ?>">Renvoyer</a>
+                    </div>
             <?php break;
                 case null:
                 default: ?>

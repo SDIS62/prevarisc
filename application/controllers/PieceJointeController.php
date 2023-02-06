@@ -3,6 +3,7 @@
 class PieceJointeController extends Zend_Controller_Action
 {
     public $store;
+    private $dbPj;
 
     public function init()
     {
@@ -15,10 +16,13 @@ class PieceJointeController extends Zend_Controller_Action
             ->addActionContext('export-platau', 'json')
             ->initContext()
         ;
+
+        $this->dbPj = new Model_DbTable_PieceJointe();
     }
 
     public function indexAction()
     {
+        $this->view->headScript()->appendFile('/js/dossier/pieceJointe.js', 'text/javascript');
         $this->view->headLink()->appendStylesheet('/css/pieces-jointes.css', 'all');
 
         // Modèles
@@ -369,7 +373,6 @@ class PieceJointeController extends Zend_Controller_Action
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
 
-        $dbPj = new Model_DbTable_PieceJointe();
         $post = $this->getRequest()->getPost();
 
         $toBeExported = array_filter($post, function ($v) {
@@ -377,7 +380,17 @@ class PieceJointeController extends Zend_Controller_Action
         });
 
         foreach (array_keys($toBeExported) as $idPj) {
-            $dbPj->updatePlatauStatus($idPj, 2);
+            $this->dbPj->updatePlatauStatus($idPj, 'to_be_exported');
         }
+    }
+
+    public function retryExportPlatauAction()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender();
+
+        $idPj = filter_var($this->getRequest()->getPost()['idPj'], FILTER_VALIDATE_INT);
+
+        $this->dbPj->updatePlatauStatus($idPj, 'to_be_exported');
     }
 }
