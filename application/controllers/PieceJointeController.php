@@ -13,7 +13,6 @@ class PieceJointeController extends Zend_Controller_Action
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext
             ->addActionContext('check', 'json')
-            ->addActionContext('export-platau', 'json')
             ->initContext()
         ;
 
@@ -367,7 +366,7 @@ class PieceJointeController extends Zend_Controller_Action
        }
     }
 
-    public function exportPlatauAction()
+    public function exportPlatauAction(): void
     {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
@@ -383,7 +382,7 @@ class PieceJointeController extends Zend_Controller_Action
         }
     }
 
-    public function retryExportPlatauAction()
+    public function retryExportPlatauAction(): void
     {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
