@@ -324,6 +324,7 @@ class PieceJointeController extends Zend_Controller_Action
     {
         // Modèle
         $DBused = new Model_DbTable_PieceJointe;
+        $modelDossier = new Model_DbTable_Dossier();
 
         // Cas dossier
        if ($this->_request->type == "dossier") {
@@ -356,14 +357,15 @@ class PieceJointeController extends Zend_Controller_Action
        
        if ($this->view->exists) {
             // Données de la pj
-            $this->view->html = $this->view->partial("piece-jointe/display.phtml", array (
-                "path" => $this->getHelper('url')->url(array('controller' => 'piece-jointe', 'id' => $this->_request->id, 'action' => 'get', 'idpj' => $this->_request->idpj, 'type' => $this->_request->type)),
-                "listePj" => $listePj,
-                "droit_ecriture" => true,
-                "type" => $this->_request->type,
-                "id" => $this->_request->id,
-            ));
-       }
+            $this->view->html = $this->view->partial('piece-jointe/display.phtml', [
+                'path' => $this->getHelper('url')->url(['controller' => 'piece-jointe', 'id' => $this->_request->id, 'action' => 'get', 'idpj' => $this->_request->idpj, 'type' => $this->_request->type]),
+                'listePj' => $listePj,
+                'droit_ecriture' => true,
+                'type' => $this->_request->type,
+                'id' => $this->_request->id,
+                'isPlatau' => $modelDossier->isPlatau($this->_request->id),
+            ]);
+        }
     }
 
     public function exportPlatauAction(): void
