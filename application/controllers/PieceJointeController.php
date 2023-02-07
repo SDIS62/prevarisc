@@ -26,20 +26,19 @@ class PieceJointeController extends Zend_Controller_Action
         $this->view->headLink()->appendStylesheet('/css/pieces-jointes.css', 'all');
 
         // Modèles
-        $DBused = new Model_DbTable_PieceJointe;
+        $DBused = new Model_DbTable_PieceJointe();
+        $modelDossier = new Model_DbTable_Dossier();
 
         // Cas dossier
         if ($this->_request->type == "dossier") {
             $this->view->type = "dossier";
             $this->view->identifiant = $this->_request->id;
             $this->view->pjcomm = $this->_request->pjcomm;
-            $listePj = $DBused->affichagePieceJointe("dossierpj", "dossierpj.ID_DOSSIER", $this->_request->id);
-			$this->view->verrou = $this->_request->verrou;
-        }
-
-        // Cas établissement
-        else if ($this->_request->type == "etablissement") {
-            $this->view->type = "etablissement";
+            $listePj = $DBused->affichagePieceJointe('dossierpj', 'dossierpj.ID_DOSSIER', $this->_request->id);
+            $this->view->verrou = $this->_request->verrou;
+            $this->view->isPlatau = $modelDossier->isPlatau($this->getRequest()->getParam('id'));
+        } elseif ('etablissement' == $this->_request->type) { // Cas établissement
+            $this->view->type = 'etablissement';
             $this->view->identifiant = $this->_request->id;
             $listePj = $DBused->affichagePieceJointe("etablissementpj", "etablissementpj.ID_ETABLISSEMENT", $this->_request->id);
         }
@@ -375,8 +374,8 @@ class PieceJointeController extends Zend_Controller_Action
 
         $post = $this->getRequest()->getPost();
 
-        $toBeExported = array_filter($post, function ($v) {
-            return filter_var($v, FILTER_VALIDATE_BOOLEAN) === true;
+        $toBeExported = array_filter($post, function ($value) {
+            return filter_var($value, FILTER_VALIDATE_BOOLEAN);
         });
 
         foreach (array_keys($toBeExported) as $idPj) {

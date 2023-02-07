@@ -370,4 +370,15 @@
             //echo $select;
             return $this->getAdapter()->fetchAll($select);
         }
+
+        public function isPlatau(int $idDossier): bool
+        {
+            $select = $this->select(self::SELECT_WITH_FROM_PART)
+                ->where('ID_DOSSIER = ?', $idDossier)
+            ;
+
+            $result = $this->fetchRow($select);
+
+            return null !== $result['ID_PLATAU'];
+        }
     }

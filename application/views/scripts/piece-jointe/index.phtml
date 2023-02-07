@@ -17,19 +17,23 @@
                     <th>Nom</th>
                     <th>Description</th>
                     <th>Date d'ajout</th>
-                    <th>Statut Plat'AU</th>
+                    <?php if ($this->isPlatau): ?>
+                        <th>Statut Plat'AU</th>
+                    <?php endif ?>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                    echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou))
+                    echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou, "isPlatau" => $this->isPlatau))
                 ?>
             </tbody>
         </table>
     </div>
 
-    <input id="export-platau" type="button" class="btn btn-success pull-right" value="Envoyer vers Plat'AU" />
+    <?php if ($this->isPlatau && count($this->listePj) > 0): ?>
+        <input id="export-platau" type="button" class="btn btn-success pull-right" value="Envoyer vers Plat'AU" />
+    <?php endif ?>
 </form>
 
 <script type="text/javascript">

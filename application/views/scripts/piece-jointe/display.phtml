@@ -22,28 +22,30 @@
             ?>
         </td>
 
-        <td class="checkbox">
-            <?php switch ($pj['NOM_STATUT']):
-                case 'not_exported': ?>
-                    <input type="checkbox" name="export-pj-platau" data-id="<?= $pj['ID_PIECEJOINTE'] ?>" value="0" />
-            <?php break;
-                case 'to_be_exported': ?>
-                    <div class="label label-info">En attente d'envoi</div>
-            <?php break;
-                case 'exported': ?>
-                    <div class="label label-success">Envoyé</div>
-            <?php break;
-                case 'on_error': ?>
-                    <div class="label label-important">Erreur lors de l'envoi</div>
-                    <div>
-                        <a href="#" class="retry-export-platau" data-id="<?= $pj['ID_PIECEJOINTE'] ?>">Renvoyer</a>
-                    </div>
-            <?php break;
-                case null:
-                default: ?>
-                    <div class="label label-warning">Statut inconnu</div>
-            <?php endswitch ?>
-        </td>
+        <?php if ($this->isPlatau): ?>
+            <td class="checkbox">
+                <?php switch ($pj['NOM_STATUT']):
+                    case 'not_exported': ?>
+                        <input type="checkbox" name="export-pj-platau" data-id="<?= $pj['ID_PIECEJOINTE'] ?>" value="0" />
+                <?php break;
+                    case 'to_be_exported': ?>
+                        <div class="label label-info">En attente d'envoi</div>
+                <?php break;
+                    case 'exported': ?>
+                        <div class="label label-success">Envoyé</div>
+                <?php break;
+                    case 'on_error': ?>
+                        <div class="label label-important">Erreur lors de l'envoi</div>
+                        <div>
+                            <a href="#" class="retry-export-platau" data-id="<?= $pj['ID_PIECEJOINTE'] ?>">Renvoyer</a>
+                        </div>
+                <?php break;
+                    case null:
+                    default: ?>
+                        <div class="label label-warning">Statut inconnu</div>
+                <?php endswitch ?>
+            </td>
+        <?php endif ?>
 
         <!-- Action -->
         <td>
