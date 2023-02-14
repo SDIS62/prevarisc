@@ -1,0 +1,18 @@
+<li id="PIECESJOINTES" class="row-fluid" style="margin-bottom: 20px;" tabindex="0">
+    <div class="span3 pull-left">
+        <i class="icon-warning-sign"></i>
+        Liste des pièces jointes pouvant être envoyées vers Plat'AU
+    </div>
+    <div class="span9">
+        <?php foreach ($this->piecesJointes as $pieceJointe): ?>
+            <div class="row-fluid">
+                <div class="span10">
+                    <?= $pieceJointe['NOM_PIECEJOINTE'].$pieceJointe['EXTENSION_PIECEJOINTE'] ?>
+                </div>
+                <div class="span2">
+                    <input type="checkbox" name="export-pj-platau" data-id="<?= $pieceJointe['ID_PIECEJOINTE'] ?>" value="0" />
+                </div>
+            </div>
+        <?php endforeach ?>
+    </div>
+</li>

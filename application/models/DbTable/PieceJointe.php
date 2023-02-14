@@ -40,4 +40,18 @@ class Model_DbTable_PieceJointe extends Zend_Db_Table_Abstract
 
         $this->update(['ID_PIECEJOINTESTATUT' => $idStatus], "ID_PIECEJOINTE = {$id}");
     }
+
+    public function getWithStatus(int $idDossier, string $status): Zend_Db_Table_Rowset_Abstract
+    {
+        $select = $this->select()
+            ->setIntegrityCheck(false)
+            ->from(['pj' => 'piecejointe'])
+            ->join(['dpj' => 'dossierpj'], 'pj.ID_PIECEJOINTE = dpj.ID_PIECEJOINTE', [])
+            ->join(['pjs' => 'piecejointestatut'], 'pj.ID_PIECEJOINTESTATUT = pjs.ID_PIECEJOINTESTATUT', [])
+            ->where('dpj.ID_DOSSIER = ?', $idDossier)
+            ->where('pjs.NOM_STATUT = ?', $status)
+        ;
+
+        return $this->fetchAll($select);
+    }
 }

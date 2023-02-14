@@ -1108,7 +1108,53 @@
 		}
 	});
 
+	function afficheInfosPlatau(parentRow) {
+		$.post(
+			'/piece-jointe/display-pj-platau',
+			{ idDossier: $('#idDossier').val() },
+			function(data) {
+				parentRow.after(data)
+			}
+		)
+		$('.label.label-warning').removeClass('ui-helper-hidden')
+	}
+
+	function masqueInfosPlatau() {
+		$('#PIECESJOINTES').remove()
+		$('.label.label-warning').addClass('ui-helper-hidden')
+	}
+
+	$('.incomplet').live('click', function() {
+		afficheInfosPlatau($('#INCOMPLET'))
+	})
+	$('.cancelIncomplet').live('click', function() {
+		masqueInfosPlatau()
+	})
+
+	$('#AVIS_DOSSIER_COMMISSION').live('change', function() {
+		const avis = $('#AVIS_DOSSIER_COMMISSION').val()
+		const infosPlatauExists = !!document.getElementById('PIECESJOINTES')
+
+		if (avis !== '0') {
+			if (!infosPlatauExists) {
+				afficheInfosPlatau($('#AVIS_COMMISSION'))
+			}
+		} else {
+			masqueInfosPlatau()
+		}
+	})
+
+	$('#select-platau').live('click', function(e) {
+		e.preventDefault()
+		document.getElementById('PIECESJOINTES').scrollIntoView()
+		$('#PIECESJOINTES').focus()
+	})
 </script>
+
+<span class="label label-warning ui-helper-hidden">
+    N'oubliez pas de <a href="#" id="select-platau">sélectionner les documents</a> à envoyer vers Plat'AU
+</span>
+
 <?php $action = $this->do; ?>
 <?php if ($this->verrouDossier != 1 && 'edit' == $action): ?>
     <div class='pull-right' style='font-weight:normal'>
@@ -1894,7 +1940,7 @@ echo "
 					</div>
 					<div class='right form span9' ".(($action != 'new') ? "style='display:none;'" : "").">
 						<ul class='unstyled'>
-							<li style='liste-style-type:none' id='liste_prev'>
+							<li style='list-style-type:none' id='liste_prev'>
 					";
                     if (count($this->preventionnistes) > 0) {
                         foreach ($this->preventionnistes as $prev) {
