@@ -10,7 +10,7 @@
                     <?= $pieceJointe['NOM_PIECEJOINTE'].$pieceJointe['EXTENSION_PIECEJOINTE'] ?>
                 </div>
                 <div class="span2">
-                    <input type="checkbox" name="export-pj-platau" data-id="<?= $pieceJointe['ID_PIECEJOINTE'] ?>" value="0" />
+                    <input type="checkbox" name="export-pj-platau[<?= $pieceJointe['ID_PIECEJOINTE'] ?>]" />
                 </div>
             </div>
         <?php endforeach ?>

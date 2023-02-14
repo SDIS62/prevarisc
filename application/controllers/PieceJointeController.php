@@ -368,23 +368,6 @@ class PieceJointeController extends Zend_Controller_Action
         }
     }
 
-    // TODO A supprimer
-    public function exportPlatauAction(): void
-    {
-        $this->_helper->layout->disableLayout();
-        $this->_helper->viewRenderer->setNoRender();
-
-        $post = $this->getRequest()->getPost();
-
-        $toBeExported = array_filter($post, function ($value) {
-            return filter_var($value, FILTER_VALIDATE_BOOLEAN);
-        });
-
-        foreach (array_keys($toBeExported) as $idPj) {
-            $this->dbPj->updatePlatauStatus($idPj, 'to_be_exported');
-        }
-    }
-
     public function retryExportPlatauAction(): void
     {
         $this->_helper->layout->disableLayout();
@@ -403,7 +386,7 @@ class PieceJointeController extends Zend_Controller_Action
         $idDossier = $this->getRequest()->getParam('idDossier');
         $canBeExported = $this->dbPj->getWithStatus($idDossier, 'not_exported');
 
-        $html = Zend_Layout::getMvcInstance()->getView()->partial('piece-jointe/export.phtml', [ 'piecesJointes' => $canBeExported ]);
+        $html = Zend_Layout::getMvcInstance()->getView()->partial('piece-jointe/export.phtml', ['piecesJointes' => $canBeExported]);
 
         echo $html;
     }
