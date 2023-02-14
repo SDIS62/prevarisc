@@ -177,6 +177,12 @@
 					$("#AVIS_DOSSIER").parent().prev().prev().html("Avis du groupe de visite");
 				}
 
+				if (idType == 1) {
+					gestionAffichageInfosPlatau()
+				} else {
+					gestionMasquageInfosPlatau()
+				}
+
 				$.ajax({
 					url: "/dossier/shownature",
 					data: "idType="+idType,
@@ -925,8 +931,66 @@
 
 		//Gestion des cas calendrier comm visite en fonction du type de dossier
 		$(".hideCalendar").hide();
+
+		if ($('#TYPE_DOSSIER').val() === '1') {
+			gestionAffichageInfosPlatau()
+		}
+
 		return false;
 	});
+
+	function gestionAffichageInfosPlatau() {
+		$('.incomplet').live('click.platau', function() {
+			afficheInfosPlatau($('#INCOMPLET'))
+		})
+		$('.cancelIncomplet').live('click.platau', function() {
+			masqueInfosPlatau()
+		})
+
+		$('#AVIS_DOSSIER_COMMISSION').live('change.platau', function() {
+			const avis = $('#AVIS_DOSSIER_COMMISSION').val()
+			const infosPlatauExists = !!document.getElementById('PIECESJOINTES')
+
+			if (avis !== '0') {
+				if (!infosPlatauExists) {
+					afficheInfosPlatau($('#AVIS_COMMISSION'))
+				}
+			} else {
+				masqueInfosPlatau()
+			}
+		})
+
+		$('#select-platau').live('click.platau', function(e) {
+			e.preventDefault()
+			document.getElementById('PIECESJOINTES').scrollIntoView()
+			$('#PIECESJOINTES').focus()
+		})
+	}
+
+	function gestionMasquageInfosPlatau() {
+		$('.incomplet').die('click.platau')
+		$('.cancelIncomplet').die('click.platau')
+		$('#AVIS_DOSSIER_COMMISSION').die('change.platau')
+		$('#select-platau').die('click.platau')
+	}
+
+	function afficheInfosPlatau(parentRow) {
+		$.post(
+			'/piece-jointe/display-pj-platau',
+			{ idDossier: $('#idDossier').val() },
+			function(data) {
+				if ('' !== data) {
+					parentRow.after(data)
+					$('.label.label-warning').removeClass('ui-helper-hidden')
+				}
+			}
+		)
+	}
+
+	function masqueInfosPlatau() {
+		$('#PIECESJOINTES').remove()
+		$('.label.label-warning').addClass('ui-helper-hidden')
+	}
 
 	//Selection d'une nature et affichage des champs en fonction de la ou des natures
 	$("#selectNature").live('change',function(){
@@ -1107,48 +1171,6 @@
 			$("#delaipresc_form").hide();
 		}
 	});
-
-	function afficheInfosPlatau(parentRow) {
-		$.post(
-			'/piece-jointe/display-pj-platau',
-			{ idDossier: $('#idDossier').val() },
-			function(data) {
-				parentRow.after(data)
-			}
-		)
-		$('.label.label-warning').removeClass('ui-helper-hidden')
-	}
-
-	function masqueInfosPlatau() {
-		$('#PIECESJOINTES').remove()
-		$('.label.label-warning').addClass('ui-helper-hidden')
-	}
-
-	$('.incomplet').live('click', function() {
-		afficheInfosPlatau($('#INCOMPLET'))
-	})
-	$('.cancelIncomplet').live('click', function() {
-		masqueInfosPlatau()
-	})
-
-	$('#AVIS_DOSSIER_COMMISSION').live('change', function() {
-		const avis = $('#AVIS_DOSSIER_COMMISSION').val()
-		const infosPlatauExists = !!document.getElementById('PIECESJOINTES')
-
-		if (avis !== '0') {
-			if (!infosPlatauExists) {
-				afficheInfosPlatau($('#AVIS_COMMISSION'))
-			}
-		} else {
-			masqueInfosPlatau()
-		}
-	})
-
-	$('#select-platau').live('click', function(e) {
-		e.preventDefault()
-		document.getElementById('PIECESJOINTES').scrollIntoView()
-		$('#PIECESJOINTES').focus()
-	})
 </script>
 
 <span class="label label-warning ui-helper-hidden">

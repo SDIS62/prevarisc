@@ -378,13 +378,20 @@ class PieceJointeController extends Zend_Controller_Action
         $this->dbPj->updatePlatauStatus($idPj, 'to_be_exported');
     }
 
-    public function displayPjPlatauAction(): void
+    /**
+     * @return null|void
+     */
+    public function displayPjPlatauAction()
     {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender();
 
         $idDossier = $this->getRequest()->getParam('idDossier');
         $canBeExported = $this->dbPj->getWithStatus($idDossier, 'not_exported');
+
+        if (0 === count($canBeExported)) {
+            return null;
+        }
 
         $html = Zend_Layout::getMvcInstance()->getView()->partial('piece-jointe/export.phtml', ['piecesJointes' => $canBeExported]);
 
