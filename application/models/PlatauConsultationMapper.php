@@ -29,18 +29,11 @@ class Model_PlatauConsultationMapper
     public function save(Model_PlatauConsultation $consultation): void
     {
         $data = [
-            'statutAvis' => $consultation->getStatutAvis(),
-            'dateAvis' => $consultation->getDateAvis(),
-            'statutPec' => $consultation->getStatutPec(),
-            'datePec' => $consultation->getDatePec(),
+            'STATUT_AVIS' => $consultation->getStatutAvis(),
+            'STATUT_PEC' => $consultation->getStatutPec(),
         ];
 
-        if (null === ($id = $consultation->getId())) {
-            unset($data['id']);
-            $this->getDbTable()->insert($data);
-        } else {
-            $this->getDbTable()->update($data, ['id = ?' => $id]);
-        }
+        $this->getDbTable()->update($data, ['ID_PLATAU = ?' => $consultation->getId()]);
     }
 
     /**
@@ -63,26 +56,5 @@ class Model_PlatauConsultationMapper
         ;
 
         return $consultation;
-    }
-
-    // TODO A voir si utile, à priori je pense pas
-    public function fetchAll(): array
-    {
-        $resultSet = $this->getDbTable()->fetchAll();
-        $consultations = [];
-
-        foreach ($resultSet as $row) {
-            $consultation = new Model_PlatauConsultation();
-            $consultation->setId($row->id)
-                ->setStatutAvis($row->STATUT_AVIS)
-                ->setDateAvis($row->DATE_AVIS)
-                ->setStatutPec($row->STATUT_PEC)
-                ->setDatePec($row->DATE_PEC)
-            ;
-
-            $consultations[] = $consultation;
-        }
-
-        return $consultations;
     }
 }

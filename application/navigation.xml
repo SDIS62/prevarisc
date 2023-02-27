@@ -686,11 +686,6 @@
                             <action>check</action>
                             <privilege>modification_odj</privilege>
                         </check>
-                        <retry-export-platau>
-                            <controller>piece-jointe</controller>
-                            <action>retryExportPlatau</action>
-                            <privilege>modification_odj</privilege>
-                        </retry-export-platau>
                     </pages>
                 </piece-jointe>
             </pages>
