@@ -169,6 +169,23 @@ class DossierController extends Zend_Controller_Action
             $dossier = $DBdossier->find($id_dossier)->current();
             $this->view->id_platau = null !== $dossier['ID_PLATAU'] ? $dossier['ID_PLATAU'] : null;
 
+            if (null !== $dossier['ID_PLATAU']) {
+                $platauConsultationMapper = new Model_PlatauConsultationMapper();
+                $platauConsultationModel = new Model_PlatauConsultation();
+                $this->view->enumStatutsPec = new Model_Enum_PlatauStatutPec();
+                $this->view->enumStatutsAvis = new Model_Enum_PlatauStatutAvis();
+
+                $this->view->statutPec = $this->view->enumStatutsPec::INCONNU;
+                $this->view->statutAvis = $this->view->enumStatutsAvis::INCONNU;
+
+                $platauConsultation = $platauConsultationMapper->find($dossier['ID_PLATAU'], $platauConsultationModel);
+
+                if (null !== $platauConsultation) {
+                    $this->view->statutPec = $platauConsultation->getStatutPec();
+                    $this->view->statutAvis = $platauConsultation->getStatutAvis();
+                }
+            }
+
             $DBdossierType = new Model_DbTable_DossierType();
             $libelleType = $DBdossierType->find($dossier->TYPE_DOSSIER)->current();
 
