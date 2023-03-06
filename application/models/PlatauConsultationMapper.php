@@ -49,9 +49,9 @@ class Model_PlatauConsultationMapper
 
         $row = $result->current();
         $consultation->setId($row->ID_PLATAU)
-            ->setStatutAvis($row->STATUT_AVIS)
+            ->setStatutAvis($row->STATUT_AVIS ?? Model_Enum_PlatauStatutAvis::INCONNU)
             ->setDateAvis($row->DATE_AVIS)
-            ->setStatutPec($row->STATUT_PEC)
+            ->setStatutPec($row->STATUT_PEC ?? Model_Enum_PlatauStatutPec::INCONNU)
             ->setDatePec($row->DATE_PEC)
         ;
 

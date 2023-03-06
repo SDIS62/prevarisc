@@ -32,14 +32,14 @@ class Model_PlatauConsultation
         return $this->statutAvis;
     }
 
-    public function setDateAvis(string $dateAvis): self
+    public function setDateAvis(?string $dateAvis): self
     {
         $this->dateAvis = $dateAvis;
 
         return $this;
     }
 
-    public function getDateAvis(): string
+    public function getDateAvis(): ?string
     {
         return $this->dateAvis;
     }
@@ -56,14 +56,14 @@ class Model_PlatauConsultation
         return $this->statutPec;
     }
 
-    public function setDatePec(string $datePec): self
+    public function setDatePec(?string $datePec): self
     {
         $this->datePec = $datePec;
 
         return $this;
     }
 
-    public function getDatePec(): string
+    public function getDatePec(): ?string
     {
         return $this->datePec;
     }
