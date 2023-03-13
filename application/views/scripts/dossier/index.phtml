@@ -965,6 +965,14 @@
 			document.getElementById('PIECESJOINTES').scrollIntoView()
 			$('#PIECESJOINTES').focus()
 		})
+
+		if ($('#statut-pec').hasClass('label-warning')) {
+			afficheInfosPlatau($('#INCOMPLET'))
+		}
+
+		if ($('#statut-avis').hasClass('label-warning')) {
+			afficheInfosPlatau($('#AVIS_COMMISSION'))
+		}
 	}
 
 	function gestionMasquageInfosPlatau() {

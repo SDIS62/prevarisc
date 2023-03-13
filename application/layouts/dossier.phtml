@@ -160,13 +160,13 @@ endif; ?>
 
             <?php if ($this->enumStatutsPec::INCONNU !== $this->statutPec): ?>
                 <?php if ($this->enumStatutsPec::EN_ATTENTE === $this->statutPec): ?>
-                    <p style='font-size: medium;' class='label label-info'>
+                    <p id="statut-pec" style='font-size: medium;' class='label label-info'>
                 <?php elseif ($this->enumStatutsPec::PRISE_EN_COMPTE === $this->statutPec): ?>
-                    <p style='font-size: medium;' class='label label-success'>
+                    <p id="statut-pec" style='font-size: medium;' class='label label-success'>
                 <?php elseif ($this->enumStatutsPec::A_RENVOYER === $this->statutPec): ?>
-                    <p style='font-size: medium;' class='label label-warning'>
+                    <p id="statut-pec" style='font-size: medium;' class='label label-warning'>
                 <?php elseif ($this->enumStatutsPec::EN_ERREUR === $this->statutPec): ?>
-                    <p style='font-size: medium;' class='label label-important'>
+                    <p id="statut-pec" style='font-size: medium;' class='label label-important'>
                 <?php endif ?>
                         <strong>
                             Statut de la prise en compte métier : <?= $this->enumStatutsPec->getLabel($this->statutPec) ?>
@@ -189,13 +189,13 @@ endif; ?>
 
             <?php if ($this->enumStatutsAvis::INCONNU !== $this->statutAvis): ?>
                 <?php if ($this->enumStatutsAvis::EN_COURS === $this->statutAvis): ?>
-                    <p style='font-size: medium;' class='label label-info'>
+                    <p id="statut-avis" style='font-size: medium;' class='label label-info'>
                 <?php elseif ($this->enumStatutsAvis::TRAITE === $this->statutAvis): ?>
-                    <p style='font-size: medium;' class='label label-success'>
+                    <p id="statut-avis" style='font-size: medium;' class='label label-success'>
                 <?php elseif ($this->enumStatutsAvis::A_RENVOYER === $this->statutAvis): ?>
-                    <p style='font-size: medium;' class='label label-warning'>
+                    <p id="statut-avis" style='font-size: medium;' class='label label-warning'>
                 <?php elseif ($this->enumStatutsAvis::EN_ERREUR === $this->statutAvis): ?>
-                    <p style='font-size: medium;' class='label label-important'>
+                    <p id="statut-avis" style='font-size: medium;' class='label label-important'>
                 <?php endif ?>
                         <strong>Statut de l'avis : <?= $this->enumStatutsAvis->getLabel($this->statutAvis) ?></strong>
 
