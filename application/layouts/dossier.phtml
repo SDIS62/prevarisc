@@ -165,6 +165,8 @@ endif; ?>
                     <p style='font-size: medium;' class='label label-success'>
                 <?php elseif ($this->enumStatutsPec::A_RENVOYER === $this->statutPec): ?>
                     <p style='font-size: medium;' class='label label-warning'>
+                <?php elseif ($this->enumStatutsPec::EN_ERREUR === $this->statutPec): ?>
+                    <p style='font-size: medium;' class='label label-important'>
                 <?php endif ?>
                         <strong>
                             Statut de la prise en compte métier : <?= $this->enumStatutsPec->getLabel($this->statutPec) ?>
@@ -189,6 +191,8 @@ endif; ?>
                     <p style='font-size: medium;' class='label label-success'>
                 <?php elseif ($this->enumStatutsAvis::A_RENVOYER === $this->statutAvis): ?>
                     <p style='font-size: medium;' class='label label-warning'>
+                <?php elseif ($this->enumStatutsAvis::EN_ERREUR === $this->statutAvis): ?>
+                    <p style='font-size: medium;' class='label label-important'>
                 <?php endif ?>
                         <strong>Statut de l'avis : <?= $this->enumStatutsAvis->getLabel($this->statutAvis) ?></strong>
 
