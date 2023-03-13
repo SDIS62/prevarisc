@@ -175,7 +175,10 @@ endif; ?>
                                 le <?= $this->datePec ?>
                             <?php endif ?>
 
-                            <?php if ($this->enumStatutsPec::PRISE_EN_COMPTE === $this->statutPec): ?>
+                            <?php if (
+                                $this->enumStatutsPec::PRISE_EN_COMPTE === $this->statutPec &&
+                                null === $this->dateAvis
+                            ): ?>
                                 <a id="retry-export-pec" href="#" title="Renvoyer la prise en compte métier" data-id="<?= $this->id_platau ?>">
                                     <i class='icon-repeat icon-white'></i>
                                 </a>
