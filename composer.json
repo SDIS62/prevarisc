@@ -1,6 +1,6 @@
 {
 
-    "name": "SDIS62/prevarisc",
+    "name": "sdis62/prevarisc",
 
     "description": "Application web open-source gérant l'ensemble de l'activité du service prévention au sein d'un SDIS.",
 
@@ -23,7 +23,7 @@
         "cybermonde/odtphp": "^1.0",
         "michelf/php-markdown": "^1.0",
         "kdubuc/gd_resize": "^1.0",
-        "SDIS62/toolbox": "dev-master",
+        "sdis62/toolbox": "dev-master",
         "sebastian/git": "^1.0",
         "sabre/vobject": "^4.0"
     },
