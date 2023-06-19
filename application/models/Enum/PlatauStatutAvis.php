@@ -16,7 +16,7 @@ class Model_Enum_PlatauStatutAvis
     public const A_RENVOYER = 'to_export';
     public const EN_ERREUR = 'in_error';
 
-    public function getLabel(string $enumValue): string
+    public function getLabel(string $enumValue): ?string
     {
         return self::LABELS[$enumValue];
     }
