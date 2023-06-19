@@ -4,10 +4,10 @@ class Model_Enum_PlatauStatutAvis
 {
     public const LABELS = [
         self::INCONNU => null,
-        self::EN_COURS => 'En cours',
-        self::TRAITE => 'Traité',
-        self::A_RENVOYER => 'Traité (en attente de renvoi)',
-        self::EN_ERREUR => 'En erreur',
+        self::EN_COURS => 'En attente de complétude sur Prevarisc',
+        self::TRAITE => 'Traité sur Plat\'AU',
+        self::A_RENVOYER => 'Traité sur Plat\'AU (en attente de renvoi)',
+        self::EN_ERREUR => 'En erreur sur Plat\'AU',
     ];
 
     public const INCONNU = 'unknown';

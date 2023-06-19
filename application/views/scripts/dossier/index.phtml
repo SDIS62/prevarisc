@@ -1216,6 +1216,74 @@ echo "
                 <div id='chargement'></div>
 			</div>
 			<h3>Informations générales</h3>
+";
+
+			if (null !== $this->id_platau): ?>
+				<h4 class="title">Informations sur Plat'AU</h4>
+				<ul class="list unstyled">
+					<li class="row-fluid" style="margin-bottom: 20px;">
+						<div class="left span3">Identifiant de la consultation</div>
+						<div class="right span9"><?= $this->id_platau ?></div>
+					</li>
+					<li class="row-fluid" style="margin-bottom: 20px;">
+						<?php
+							$classPec = '';
+						if ($this->enumStatutsPec::EN_ATTENTE === $this->statutPec):
+							$classPec = 'text-info';
+						elseif ($this->enumStatutsPec::PRISE_EN_COMPTE === $this->statutPec):
+							$classPec = 'text-success';
+						elseif ($this->enumStatutsPec::A_RENVOYER === $this->statutPec):
+							$classPec = 'text-warning';
+						elseif ($this->enumStatutsPec::EN_ERREUR === $this->statutPec):
+							$classPec = 'text-error';
+						endif ?>
+						<div class="left span3">Prise en compte métier</div>
+						<div class="right span9">
+							<span id="statut-pec" class="<?= $classPec ?>"><?= $this->enumStatutsPec->getLabel($this->statutPec) ?></span>
+							<?php if ($this->datePec): ?>
+								le <?= $this->datePec ?>
+							<?php endif ?>
+	
+							<?php if (
+									$this->enumStatutsPec::PRISE_EN_COMPTE === $this->statutPec &&
+									null === $this->dateAvis
+								): ?>
+								<a id="retry-export-pec" href="#" title="Renvoyer la prise en compte métier" data-id="<?= $this->id_platau ?>">
+									<i class='icon-repeat icon-black'></i>
+								</a>
+							<?php endif ?>
+						</div>
+					</li>
+					<li class="row-fluid" style="margin-bottom: 20px;">
+						<?php
+							$classAvis = '';
+						if ($this->enumStatutsAvis::EN_COURS === $this->statutAvis):
+							$classAvis = 'text-info';
+						elseif ($this->enumStatutsAvis::TRAITE === $this->statutAvis):
+							$classAvis = 'text-success';
+						elseif ($this->enumStatutsAvis::A_RENVOYER === $this->statutAvis):
+							$classAvis = 'text-warning';
+						elseif ($this->enumStatutsAvis::EN_ERREUR === $this->statutAvis):
+							$classAvis = 'text-error';
+						endif ?>
+						<div class="left span3">Avis</div>
+						<div class="right span9">
+							<span id="statut-avis" class="<?= $classAvis ?>"><?= $this->enumStatutsAvis->getLabel($this->statutAvis) ?></span>
+							<?php if ($this->dateAvis): ?>
+								le <?= $this->dateAvis ?>
+							<?php endif ?>
+	
+							<?php if ($this->enumStatutsAvis::TRAITE === $this->statutAvis): ?>
+								<a id="retry-export-avis" href="#" title="Renvoyer l'avis" data-id="<?= $this->id_platau ?>">
+									<i class='icon-repeat icon-black'></i>
+								</a>
+							<?php endif ?>
+						</div>
+					</li>
+				</ul>
+			<?php endif;
+
+		echo "
 			<!-- BEGIN UL Type/Nature -->
 			<h4>Type et nature du dossier</h4>
 			<ul class='list unstyled'>
@@ -1730,63 +1798,7 @@ echo "
 						</span>
 					</div>
 				</li>
-				<li class='row-fluid' id='AVIS_COMMISSION' style='".(($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '0' && $this->infosDossier['HORSDELAI_DOSSIER'] != 1 && 1 == $this->afficheAvis) ? "" : "display:none;")."margin-bottom:20px;'>
-					<div class='left libelle span3' style='float:left;'>Avis de la commission</div>
-					<div class='right value span9' ".(('new' == $action) ? "style='display:none;'" : "").">
-						<span class='avis ".$this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'][0]."'>";
-                        echo $this->AVIS_COMMISSION_VALUE['LIBELLE_AVIS'];
-                        if (1 == $this->infosDossier['TYPE_DOSSIER']) {
-                            //etude
-                            if ($this->natureConcerne[0]['ID_NATURE'] == 19 || $this->natureConcerne[0]['ID_NATURE'] == 7 || $this->natureConcerne[0]['ID_NATURE'] == 17  || $this->natureConcerne[0]['ID_NATURE'] == 16) {
-                                echo " à l'exploitation";
-                            } else {
-                                echo " à l'étude";
-                            }
-                        } elseif (2 == $this->infosDossier['TYPE_DOSSIER'] || 3 == $this->infosDossier['TYPE_DOSSIER']) {
-                            //visite et groupe de visite
-                            if (in_array($this->natureConcerne[0]['ID_NATURE'], array(20, 25))) : ?>
-								<!-- Reception de travaux -->
-								à la reception des travaux
-							<?php else : ?>
-								<!-- Reste des visites -->
-								à l'exploitation
-							<?php endif ?>
-						<?php } ?>
-                    </span>
-                </div>
-                <div class='right form span9' <?php echo ($action != 'new') ? "style='display:none;'" : "" ?>>
-                    <select name='AVIS_DOSSIER' id='AVIS_DOSSIER'>
-                        <option value='0'></option>
-                        <?php foreach ($this->listeAvis as $avis) : ?>
-                        <option value='<?php echo $avis["ID_AVIS"] ?>'
-                            <?php echo ($this->AVIS_VALUE['ID_AVIS'] == $avis["ID_AVIS"]) ? "selected='selected'" : "" ?>>
-                            <?php echo $avis['LIBELLE_AVIS'] ?>
-                        </option>
-                        <?php endforeach ?>
-                    </select>
-                </div>
-            </li>
-            <li class='row-fluid' id='DELAIPRESC'
-                style='<?php echo ($action != 'new' && in_array('DELAIPRESC', $this->afficherChamps) && $this->infosDossier['DELAIPRESC_DOSSIER']  != '0000-00-00' && $this->infosDossier['DELAIPRESC_DOSSIER']  != '') ? "" : "display:none;" ?>margin-bottom:20px;'>
-                <div class='left libelle span3' style='float:left;'>Date avant laquelle les prescriptions doivent être
-                    levées</div>
-                <div class='right value span9' <?php echo ('new' == $action) ? "style='display:none;'" : "" ?>>
-                    <?php echo $this->infosDossier['DELAIPRESC_DOSSIER'] ?>
-                </div>
-                <div class='right form span9' <?php echo ($action != 'new') ? "style='display:none;'" : "" ?>>
-                    <input type='checkbox' class='delaipresc'
-                        <?php echo ($this->infosDossier['DELAIPRESC_DOSSIER']) ? "checked" : "" ?>>
-                    <span id='delaipresc_form'
-                        style='<?php echo ($action != 'new' && in_array('DELAIPRESC', $this->afficherChamps) && $this->infosDossier['DELAIPRESC_DOSSIER']  != '0000-00-00' && $this->infosDossier['DELAIPRESC_DOSSIER']  != '') ? "" : "display:none;" ?>'>
-                        <input type='text' class='date' name='DELAIPRESC_DOSSIER' id='DELAIPRESC_INPUT'
-                            value='<?php echo ($this->DELAIPRESC_INPUT) ? $this->DELAIPRESC_INPUT : "" ?>' />
-                        &nbsp;
-                        <button class='today btn'>
-                            <i class='icon-calendar' aria-hidden='true'></i>&nbsp;Aujourd'hui
-                        </button>
-                    </span>
-                </div>
-            </li>
+			"; ?>
             <li class='row-fluid' id='AVIS_COMMISSION'
                 style='<?php echo ($action != 'new' && in_array('AVIS_COMMISSION', $this->afficherChamps) && $this->infosDossier['AVIS_DOSSIER_COMMISSION'] != '0' && 1 == $this->afficheAvis) ? "" : "display:none;" ?>margin-bottom:20px;'>
                 <div class='left libelle span3' style='float:left;'>Avis de la commission</div>
@@ -2131,13 +2143,12 @@ echo "
 									style='float: left; padding: 2px; margin: 0pt 2px 1em 0pt; display: block;'>
 									<input type='hidden' name='preventionniste[]' value='<?php echo $prev["uid"] ?>' />
 									<span>
-										".$prev["NOM_UTILISATEURINFORMATIONS"]." ".$prev["PRENOM_UTILISATEURINFORMATIONS"]."
+										<?= $prev["NOM_UTILISATEURINFORMATIONS"]." ".$prev["PRENOM_UTILISATEURINFORMATIONS"] ?>
 									</span>
 									<a onclick='$(this).parent().remove(); return false;' style='text-decoration: none;' href=''>×</a>
 								</span>
-							";
-                        }
-                    }
+								<?php endforeach;
+							endif;
                     echo "
 							</li>
 						</ul>

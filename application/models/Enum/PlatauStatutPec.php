@@ -4,10 +4,10 @@ class Model_Enum_PlatauStatutPec
 {
     public const LABELS = [
         self::INCONNU => null,
-        self::EN_ATTENTE => 'En attente',
-        self::PRISE_EN_COMPTE => 'Prise en compte',
-        self::A_RENVOYER => 'Prise en compte (en attente de renvoi)',
-        self::EN_ERREUR => 'En erreur',
+        self::EN_ATTENTE => 'En attente de complétude sur Prevarisc',
+        self::PRISE_EN_COMPTE => 'Prise en compte sur Plat\'AU',
+        self::A_RENVOYER => 'Prise en compte sur Plat\'AU (en attente de renvoi)',
+        self::EN_ERREUR => 'En erreur sur Plat\'AU',
     ];
 
     public const INCONNU = 'unknown';
