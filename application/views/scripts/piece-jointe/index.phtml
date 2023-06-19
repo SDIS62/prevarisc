@@ -9,28 +9,25 @@
 </h3>
 <div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>
 
-<form id="export-pj-platau">
-    <div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
-        <table id='tabPieceJointe' class='table table-striped'>
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Description</th>
-                    <th>Date d'ajout</th>
-                    <?php if ($this->isPlatau): ?>
-                        <th>Statut Plat'AU</th>
-                    <?php endif ?>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                    echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou, "isPlatau" => $this->isPlatau))
-                ?>
-            </tbody>
-        </table>
-    </div>
-</form>
+<div id='listePieceJointe' class='<?php if(count($this->listePj)===0) echo "ui-helper-hidden"?>' >
+    <table id='tabPieceJointe' class='table table-striped'>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Date d'ajout</th>
+                <?php if ($this->isPlatau): ?>
+                    <th>Statut Plat'AU</th>
+                <?php endif ?>
+            </tr>
+        </thead>
+        <tbody>
+        <?=
+            $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou, "isPlatau" => $this->isPlatau))
+        ?>
+        </tbody>
+    </table>
+</div>
 
 <script type="text/javascript">
     Dropzone.autoDiscover = false;
@@ -179,25 +176,6 @@
 
         }
         disabledTest();
-
-        $('#export-platau').click(function() {
-            const formData = {}
-
-            const inputs = document.querySelectorAll('input[name="export-pj-platau"]')
-            inputs.forEach(input => {
-                const idPj = input['attributes']['data-id'].value
-
-                formData[idPj] = input.checked
-            })
-
-            $.post(
-                "/piece-jointe/export-platau",
-                formData,
-                () => {
-                    location.reload()
-                }
-            )
-        })
     });
 
     // Si un fichier est bien uploadé, on l'ajoute à la liste
