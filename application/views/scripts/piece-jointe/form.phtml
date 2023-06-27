@@ -1,39 +1,39 @@
 <form method='post' id='formUpload' name='formUpload' enctype='multipart/form-data' action='/piece-jointe/add' target='hiddeniframe' >
 
 	<dl class='dl-horizontal'>
-	
+
 		<dt>Fichier à envoyer</dt>
 		<dd><input type='file' name='fichier' id='fichier' size='30' /></dd>
 
 		<?php if($this->type == 'etablissement') : ?>
-		<dt>Mise en avant (si c'est une image)</dt>
-		<dd>
-			<ul class='unstyled'>
-				<li><input type='radio' name='PLACEMENT_ETABLISSEMENTPJ' value='null' checked />Seulement dans la liste principale</li>
-				<li><input type='radio' name='PLACEMENT_ETABLISSEMENTPJ' value='1' />Afficher l'image dans le diaporama</li>
-				<li><input type='radio' name='PLACEMENT_ETABLISSEMENTPJ' value='0' />Afficher l'image dans les plans</li>
-			</ul>
-		</dd>
+            <dt>Mise en avant (si c'est une image)</dt>
+            <dd>
+                <ul class='unstyled'>
+                    <li><input type='radio' name='PLACEMENT_ETABLISSEMENTPJ' value='null' checked />Seulement dans la liste principale</li>
+                    <li><input type='radio' name='PLACEMENT_ETABLISSEMENTPJ' value='1' />Afficher l'image dans le diaporama</li>
+                    <li><input type='radio' name='PLACEMENT_ETABLISSEMENTPJ' value='0' />Afficher l'image dans les plans</li>
+                </ul>
+            </dd>
 		<?php endif ?>
-		
+
 		<dt>Libellé de la pièce jointe (laissez vide pour conserver le nom par défaut)</dt>
 		<dd><input type='text' name='nomFichier' id='nomFichier' /></dd>
-		
+
 		<dt>Description</dt>
 		<dd><textarea name='descriptionFichier' id='descriptionFichier' cols='50' rows='4'></textarea></dd>
-		
+
 		<?php if($this->type == 'dossier') : ?>
 			<dt>Entités avec lesquels vous souhaitez lier la pièce jointe<br/></dt>
 			<dd>
-			<?php foreach($this->listeEtablissement as $etab) : ?>
-				<input type='checkbox' name='etab[]' value='<?php echo $etab['ID_ETABLISSEMENT'] ?>' /><?php echo $etab['LIBELLE_ETABLISSEMENTINFORMATIONS'] ?> ( <?php echo $etab['LIBELLE_GENRE'] ?> ) <br/>
-			<?php endforeach ?>
+                <?php foreach($this->listeEtablissement as $etab) : ?>
+                    <input type='checkbox' name='etab[]' value='<?php echo $etab['ID_ETABLISSEMENT'] ?>' /><?php echo $etab['LIBELLE_ETABLISSEMENTINFORMATIONS'] ?> ( <?php echo $etab['LIBELLE_GENRE'] ?> ) <br/>
+                <?php endforeach ?>
 			</dd>
 		<?php endif ?>
-	
+
 	</dl>
 
 	<input type='hidden' name='type' id='typeUpload' value='<?php echo $this->type ?>' />
 	<input type='hidden' name='id' id='identifiant' value='<?php echo $this->identifiant ?>' />
-	
+
 </form>

@@ -1,136 +1,131 @@
 <input type='hidden' name='typePJ' id='typePJ' value='<?php echo $this->type ?>' />
 <input type='hidden' name='idLinkPJ' id='idLinkPJ' value='<?php echo $this->identifiant ?>' />
 
-
 <h3>Liste de pièces jointes
-<?php
-	echo "
-		<button id='addPJ' class='btn' >Ajouter une piece jointe</button>
-		<button id='addPJQuick' class='btn' >Ajout rapide</button>
-	";
-?>
+    <button id='addPJ' class='btn' >Ajouter une piece jointe</button>
+    <button id='addPJQuick' class='btn' >Ajout rapide</button>
+
     <div id='dropzone' class='dropzone' style='display:none'></div>
 </h3>
 <div id='formAddPJ' title='Ajouter une pièce jointe' class='ui-helper-hidden' ></div>
 
-<div id='listePieceJointe' class='<?php if(count($this->listePj)==0) echo "ui-helper-hidden"?>' >
-	<table id='tabPieceJointe' class='table table-striped'> 
-		<thead> 
-			<tr>
-				<th>Nom</th> 
-				<th>Description</th>
-				<th>Date d'ajout</th>
-				<th></th>
-			</tr> 
-		</thead> 
-		<tbody>
-		<?php 
-			echo $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou)) 
-		?>
-		</tbody>
-	</table>
+<div id='listePieceJointe' class='<?php if(count($this->listePj)===0) echo "ui-helper-hidden"?>' >
+    <table id='tabPieceJointe' class='table table-striped'>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Date d'ajout</th>
+                <?php if ($this->isPlatau): ?>
+                    <th>Statut Plat'AU</th>
+                <?php endif ?>
+            </tr>
+        </thead>
+        <tbody>
+        <?=
+            $this->partial("piece-jointe/display.phtml", array("path" => $this->path, "listePj" => $this->listePj, "type" => $this->type, "id" => $this->identifiant, "verrou" => $this->verrou, "isPlatau" => $this->isPlatau))
+        ?>
+        </tbody>
+    </table>
 </div>
 
 <script type="text/javascript">
-        
-        Dropzone.autoDiscover = false;
-        
-	$(document).ready(function() {
+    Dropzone.autoDiscover = false;
 
-		$("body").append("<iframe name='hiddeniframe' id='hiddeniframe' src='about:blank' style='width:0px; height:0px' >");
+    $(document).ready(function() {
+        $("body").append("<iframe name='hiddeniframe' id='hiddeniframe' src='about:blank' style='width:0px; height:0px' >");
 
-		// Bouton de la pièce jointe
-		$("#addPJ").button({
-		
-			icons: {
-				primary: 'ui-icon-pin-s'
-			},
-			text: true
-			
-		}).click(function() {
+        // Bouton de la pièce jointe
+        $("#addPJ").button({
+            icons: {
+                primary: 'ui-icon-pin-s'
+            },
+            text: true
+        }).click(function() {
+            // Dialogue du formulaire
+            $.ajax({
+                url: "/piece-jointe/form",
+                data: "id=" + $("#idLinkPJ").val() + "&type=" + $("#typePJ").val(),
+                type: "post",
+                success: function(result) {
+                    $("#formAddPJ").html(result).dialog({
+                        resizable: false,
+                        height: 500,
+                        width: 580,
+                        modal: true,
+                        buttons: {
+                            'Ajouter la pièce jointe': function() {
+                                // Envoi du formulaire dans form
+                                $("#formUpload").submit();
 
-			// Dialogue du formulaire
-			$.ajax({
-				url: "/piece-jointe/form",
-				data: "id=" + $("#idLinkPJ").val() + "&type=" + $("#typePJ").val(),
-				type: "post",
-				success: function(result) {
-					
-					$("#formAddPJ").html(result).dialog({
-						resizable: false,
-						height: 500,
-						width: 580,
-						modal: true,
-						buttons: {
-							'Ajouter la pièce jointe': function() {
-								
-								// Envoi du formulaire dans form
-								$("#formUpload").submit();
-								
-								// On ferme la boite de dialogue
-								$(this).dialog('close'); 
-								
-								// On ouvre la barre de chargement
-								$("<div id='load' style='text-align: center'><img src='/images/bar.gif' alt='Upload en cours' /></div>").dialog({
-									resizable: false,
-									height: 45,
-									width: 250,
-									modal: true,
-									dialogClass: 'noTitleStuff'
-								});
-							}
-						}
-					});
-				}
-			});
-		});
-                
-                /* GESTION DU GLISSEZ DEPOSER */
-                $("#addPJQuick").click(function() {
-                    $('#dropzone').toggle();
-                });
-                
-                var myDropzone = new Dropzone("#dropzone", { 
-                    url: "/piece-jointe/add?id=" + $("#idLinkPJ").val() + "&type=" + $("#typePJ").val(),
-                    paramName: "fichier"
-                });
-                myDropzone.on("success", function(file, responseText) {
-                    if (responseText !== undefined) {
-                        $('body').append(responseText);
-                        if (file.previewElement !== undefined) {
-                            file.previewElement.remove();
+                                // On ferme la boite de dialogue
+                                $(this).dialog('close');
+
+                                // On ouvre la barre de chargement
+                                $("<div id='load' style='text-align: center'><img src='/images/bar.gif' alt='Upload en cours' /></div>").dialog({
+                                    resizable: false,
+                                    height: 45,
+                                    width: 250,
+                                    modal: true,
+                                    dialogClass: 'noTitleStuff'
+                                });
+                            }
                         }
-                        $('#dropzone').hide();
-                    } else
-                    {
-                        document.location.reload();
+                    });
+                }
+            });
+        });
+
+        /* GESTION DU GLISSEZ DEPOSER */
+        $("#addPJQuick").click(function() {
+            $('#dropzone').toggle();
+        });
+
+        var myDropzone = new Dropzone("#dropzone", {
+            url: "/piece-jointe/add?id=" + $("#idLinkPJ").val() + "&type=" + $("#typePJ").val(),
+            paramName: "fichier"
+        });
+
+        myDropzone.on("success", function(file, responseText) {
+            if (responseText !== undefined) {
+                $('body').append(responseText);
+
+                if (file.previewElement !== undefined) {
+                    file.previewElement.remove();
+                }
+
+                $('#dropzone').removeClass("dz-started").hide();
+            } else {
+                document.location.reload();
+            }
+        });
+
+        // Supp. d'une pièce jointe
+        $("a.delete").live("click", function(e) {
+            e.preventDefault();
+            if (confirm('Etes-vous sûr de vouloir supprimer cette pièce jointe ?')){
+                var a = this;
+
+                $.ajax({
+                    url: a.href,
+                    data: "&type=<?php echo $this->type ?>",
+                    type: "post",
+                    success: function(result) {
+                        $(a).parent().parent().remove();
                     }
                 });
 
-		// Supp. d'une pièce jointe
-		$("a.delete").live("click", function(e) {
-                    e.preventDefault();
-                    if (confirm('Etes-vous sûr de vouloir supprimer cette pièce jointe ?')){
-			var a = this;
-			$.ajax({
-				url: a.href,
-				data: "&type=<?php echo $this->type ?>",
-				type: "post",
-				success: function(result) {
-					$(a).parent().parent().remove();
-				}
-			});
-			return false;
-                    } 
-		});
-		
+                return false;
+            }
+        });
+
         $('a[href$=png], a[href$=jpg], a[href$=jpeg]').fancybox({
             'transitionIn'	:	'elastic',
             'transitionOut'	:	'elastic',
-            'speedIn'		:	600, 
-            'speedOut'		:	200, 
+            'speedIn'		:	600,
+            'speedOut'		:	200,
         });
-        
+
         $(".select").live('click',function(){
             var idAvantSplit = $(this).attr('id');
             var tabId = idAvantSplit.split('_');
@@ -141,7 +136,7 @@
                 data: "do=pjPassageCommission&idPjCommission="+id+"&idDossier="+$("#idDossier").val()+"&checked="+checked,
                 type:"POST",
                 beforeSend: function(){
-                    
+
                 },
                 success: function(affichageResultat){
                     //alert(checked);
@@ -162,69 +157,55 @@
                 }
             });
         });
-        
+
         function disabledTest(){
             var test = 0;
             $(".select").each(function(){
                 if($(this).attr('checked')){
                     test = 1;
                 }
-                
+
             });
             if(test == 1){
                 $(".select").each(function(){
                     if(!$(this).attr('checked')){
                         $(this).attr('disabled','disabled');
-                    }			
+                    }
                 });
             }
-        
+
         }
         disabledTest();
-		
-	});
-	
-	// Si un fichier est bien uploadé, on l'ajoute à la liste
-	function callback(id, ext) {
+    });
 
-		$.ajax({
-			url: "/piece-jointe/check",
-			data: {
-				"format": "json",
-				"idpj" : id,
-				"ext" : ext,
-				"type" : "<?php echo $this->type ?>",
-				"id" : "<?php echo $this->identifiant ?>"
-			},
-			type: "post",
-			success: function(result) {
-			
-				// On détruit la fenetre de load
-				//$("#load").dialog('destroy');
-				$("#load").remove();
-			
-				if( result.exists ) {
-					// Message d'info
-					$("#uploadSucces").show();
-					setTimeout( function() { $(".message").fadeOut(); }, 2500);
-					
-					// Ajout d'une ligne
-					$("#tabPieceJointe tbody").prepend(result.html);
-					
-					// Mise à jour
-					$("#listePieceJointe table").trigger("update");
-					$("#listePieceJointe table").trigger("sorton", [[3,1]]);
-				}
-				else {
-					// Message d'information
-					$("#uploadError").show();
-					setTimeout( function() { $(".message").fadeOut(); }, 2500);
-				}
-				
-				$("#listePieceJointe").show();
-				$("#listePieceJointe-no").hide();
-			}
-		});
-	}
+    // Si un fichier est bien uploadé, on l'ajoute à la liste
+    function callback(id, ext) {
+        $.ajax({
+            url: "/piece-jointe/check",
+            data: {
+                "format": "json",
+                "idpj" : id,
+                "ext" : ext,
+                "type" : "<?php echo $this->type ?>",
+                "id" : "<?php echo $this->identifiant ?>"
+            },
+            type: "post",
+            success: function(result) {
+                // On détruit la fenetre de load
+                $("#load").remove();
 
+                if (result.exists) {
+                    // Ajout d'une ligne
+                    $("#tabPieceJointe tbody").prepend(result.html);
+
+                    // Mise à jour
+                    $("#listePieceJointe table").trigger("update");
+                    $("#listePieceJointe table").trigger("sorton", [[3,1]]);
+                }
+
+                $("#listePieceJointe").show();
+                $("#listePieceJointe-no").hide();
+            }
+        });
+    }
 </script>

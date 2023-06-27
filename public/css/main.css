@@ -1155,3 +1155,7 @@ a.list-group-item-danger.active:focus {
 #geoportail-container img {
     max-width: none;
 }
+
+#dossierInfos li:focus {
+    outline: solid 2px blue;
+}

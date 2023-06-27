@@ -1,29 +1,57 @@
 <?php
 
-    class Model_DbTable_PieceJointe extends Zend_Db_Table_Abstract
+class Model_DbTable_PieceJointe extends Zend_Db_Table_Abstract
+{
+    protected $_name="piecejointe"; // Nom de la base
+    protected $_primary = "ID_PIECEJOINTE"; // Clï¿½ primaire
+
+    public function affichagePieceJointe($table, $champ, $identifiant)
     {
-        protected $_name="piecejointe"; // Nom de la base
-        protected $_primary = "ID_PIECEJOINTE"; // Clé primaire
+        $select = $this->select()
+            ->setIntegrityCheck(false)
+            ->from(['piecejointe'])
+            ->join($table, "piecejointe.ID_PIECEJOINTE = {$table}.ID_PIECEJOINTE")
+            ->joinLeft(['pjs' => 'piecejointestatut'], 'piecejointe.ID_PIECEJOINTESTATUT = pjs.ID_PIECEJOINTESTATUT', ['NOM_STATUT'])
+            ->where($champ.' = '.$identifiant)
+            ->order('piecejointe.ID_PIECEJOINTE DESC')
+        ;
 
-        public function affichagePieceJointe($table, $champ, $identifiant)
-        {
-            $select = $this->select()
-                ->setIntegrityCheck(false)
-                ->from("piecejointe")
-                ->join($table, "piecejointe.ID_PIECEJOINTE = $table.ID_PIECEJOINTE")
-                ->where($champ." = ".$identifiant)
-                ->order("piecejointe.ID_PIECEJOINTE DESC");
-
-            return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
-        }
-
-        public function maxPieceJointe()
-        {
-            //echo "les champs : ".$table.$champ.$identifiant."<br/>";
-            $select = "SELECT MAX(ID_PIECEJOINTE)
-            FROM piecejointe
-            ;";
-            //echo $select;
-            return $this->getAdapter()->fetchRow($select);
-        }
+        return ( $this->fetchAll( $select ) != null ) ? $this->fetchAll( $select )->toArray() : null;
     }
+
+    public function maxPieceJointe()
+    {
+        $select = 'SELECT MAX(ID_PIECEJOINTE)
+        FROM piecejointe
+        ;';
+
+        return $this->getAdapter()->fetchRow($select);
+    }
+
+    public function updatePlatauStatus(int $id, string $status): void
+    {
+        $modelPjStatus = new Model_DbTable_PieceJointeStatut();
+
+        $idStatus = $modelPjStatus->fetchRow(
+            $modelPjStatus->select()
+                ->from('piecejointestatut')
+                ->where('NOM_STATUT = ?', $status)
+        )['ID_PIECEJOINTESTATUT'];
+
+        $this->update(['ID_PIECEJOINTESTATUT' => $idStatus], "ID_PIECEJOINTE = {$id}");
+    }
+
+    public function getWithStatus(int $idDossier, string $status): Zend_Db_Table_Rowset_Abstract
+    {
+        $select = $this->select()
+            ->setIntegrityCheck(false)
+            ->from(['pj' => 'piecejointe'])
+            ->join(['dpj' => 'dossierpj'], 'pj.ID_PIECEJOINTE = dpj.ID_PIECEJOINTE', [])
+            ->join(['pjs' => 'piecejointestatut'], 'pj.ID_PIECEJOINTESTATUT = pjs.ID_PIECEJOINTESTATUT', [])
+            ->where('dpj.ID_DOSSIER = ?', $idDossier)
+            ->where('pjs.NOM_STATUT = ?', $status)
+        ;
+
+        return $this->fetchAll($select);
+    }
+}
