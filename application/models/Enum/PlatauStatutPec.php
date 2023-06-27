@@ -3,7 +3,7 @@
 class Model_Enum_PlatauStatutPec
 {
     public const LABELS = [
-        self::INCONNU => null,
+        self::INCONNU => 'Statut inconnu',
         self::EN_ATTENTE => 'En attente de complétude sur Prevarisc',
         self::PRISE_EN_COMPTE => 'Prise en compte sur Plat\'AU',
         self::A_RENVOYER => 'Prise en compte sur Plat\'AU (en attente de renvoi)',
@@ -16,8 +16,12 @@ class Model_Enum_PlatauStatutPec
     public const A_RENVOYER = 'to_export';
     public const EN_ERREUR = 'in_error';
 
-    public function getLabel(string $enumValue): ?string
+    public function getLabel(?string $enumValue): ?string
     {
+        if (null === $enumValue) {
+            $enumValue = self::INCONNU;
+        }
+
         return self::LABELS[$enumValue];
     }
 }

@@ -1227,7 +1227,7 @@ echo "
 					</li>
 					<li class="row-fluid" style="margin-bottom: 20px;">
 						<?php
-							$classPec = '';
+							$classPec = 'muted';
 						if ($this->enumStatutsPec::EN_ATTENTE === $this->statutPec):
 							$classPec = 'text-info';
 						elseif ($this->enumStatutsPec::PRISE_EN_COMPTE === $this->statutPec):
@@ -1259,7 +1259,7 @@ echo "
 					</li>
 					<li class="row-fluid" style="margin-bottom: 20px;">
 						<?php
-							$classAvis = '';
+							$classAvis = 'muted';
 						if ($this->enumStatutsAvis::EN_COURS === $this->statutAvis):
 							$classAvis = 'text-info';
 						elseif ($this->enumStatutsAvis::TRAITE === $this->statutAvis):
