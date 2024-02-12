@@ -49,8 +49,8 @@ foreach($this->informationsMembre as $val => $membre){
                                         $dateDuJour = new Zend_Date();
                                         addChamp($membreLoop,'date',$dateDuJour->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
 										
-					$dateComm = new Zend_Date($this->dateComm);
-					addChamp($membreLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+					$dateComm = new Zend_Date($this->dateComm,Zend_Date::DATES);
+			 		addChamp($membreLoop,'dateCommission',$dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
 					
 					$heureCommTab = explode(":",$this->heureDeb);
 					$heureComm = $heureCommTab[0].":".$heureCommTab[1];
@@ -111,9 +111,9 @@ foreach($this->informationsMembre as $val => $membre){
 				addChamp($grpLoop,'numGrp',$infosGroupement["NUMEROADRESSE_UTILISATEURINFORMATIONS"]);
 				addChamp($grpLoop,'rueGrp',$infosGroupement["RUEADRESSE_UTILISATEURINFORMATIONS"]);
 				addChamp($grpLoop,'cpGrp',$infosGroupement["CPADRESSE_UTILISATEURINFORMATIONS"]);
-				$dateComm = new Zend_Date($this->dateComm);
-				//echo $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." - ".$this->heureDeb." <br/><br/><br/>";
-				addChamp($grpLoop,'dateCommission',$dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR));
+				$dateComm = new Zend_Date($this->dateComm,Zend_Date::DATES);
+			   	//echo $dateComm->get(Zend_Date::DAY."/".Zend_Date::MONTH."/".Zend_Date::YEAR)." - ".$this->heureDeb." <br/><br/><br/>";
+			   	addChamp($grpLoop,'dateCommission',$dateComm->get(Zend_Date::DAY." ".Zend_Date::MONTH_NAME." ".Zend_Date::YEAR));
 				addChamp($grpLoop,'heureDebutComm',$this->heureDeb);
 
 				//On commence par parcourir les dossier pour récuperer la ville concernée
